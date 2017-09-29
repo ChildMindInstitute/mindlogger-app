@@ -1,5 +1,5 @@
-import counter from './counter';
+import survey from '../modules/survey/reducer';
 
 export {
-  counter
+  survey
 };

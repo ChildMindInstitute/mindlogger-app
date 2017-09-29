@@ -24,9 +24,6 @@ import SurveyApp from '../modules/survey';
 const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
 const reducer = combineReducers(reducers);
 const store = createStoreWithMiddleware(reducer);
-const styles = StyleSheet.create({
-  
-});
 
 export default class App extends Component {
   render() {
@@ -34,11 +31,10 @@ export default class App extends Component {
       <Provider store={store}>
         <Router
         >
-          <Modal>
-          <Scene key="home" component={mainApp}/>
-            
-          <Scene key="survey" component={SurveyApp} title="Survey"/>
-          </Modal>
+        <Scene key="root" hideNavBar>
+        <Scene key="home" component={mainApp}/>
+        { SurveyApp }
+        </Scene>
         </Router>
       </Provider>
     );
