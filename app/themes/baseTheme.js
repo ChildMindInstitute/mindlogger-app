@@ -5,7 +5,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: null,
     height: null,
-    padding: 20
+    padding: 20,
+    backgroundColor:'#fff'
   },
   view: { 
     flex: 1,

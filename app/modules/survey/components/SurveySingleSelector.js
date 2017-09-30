@@ -3,15 +3,11 @@ import {StyleSheet, View} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body, Radio } from 'native-base';
 import { connect } from 'react-redux';
 import baseTheme from '../../../themes/baseTheme'
+import SurveyInputComponent from './SurveyInputComponent'
 
-class SurveyMultiSelector extends Component {
+class SurveySingleSelector extends SurveyInputComponent {
   constructor(props) {
     super(props);
-  }
-
-  componentWillMount() {
-    this.setState({answer: this.props.answer})
-    console.log(this.state)
   }
 
   render() {
@@ -21,31 +17,35 @@ class SurveyMultiSelector extends Component {
     console.log(this.state)
 
     return (
-      <View style={baseTheme.centerCol}>
+      <View style={{alignItems:'stretch'}}>
         <Text style={baseTheme.paddingView}>{text}</Text>
-        <View>
+        <List>
         {
           rows.map((row, idx) => {
             return (
-              <ListItem onPress={() => onSelect(row.value)}>
+              <ListItem onPress={() => {
+                console.log("press", row)
+                this.selectAnswer(row.value)
+              }} key={idx}>
+              <Body>
               <Text>{row.text}</Text>
+              </Body>
               <Right>
-                <Radio selected={row.value === answer} />
+                <Radio selected={row.value === this.state.answer} />
               </Right>
             </ListItem>
               )
           })
         }
-        </View>
+        </List>
       </View>
     )
   }
 }
 
 export default connect(state => ({
-    answers: state.survey && state.survey.answers
   }),
   (dispatch) => ({
     //actions: bindActionCreators(counterActions, dispatch)
   })
-)(SurveyMultiSelector);
+)(SurveySingleSelector);

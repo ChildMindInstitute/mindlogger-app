@@ -10,6 +10,7 @@ import baseTheme from '../../../themes/baseTheme'
 import * as surveyActions from '../actions'
 
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
+import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 
 class SurveyQuestionScreen extends Component {
@@ -32,8 +33,8 @@ class SurveyQuestionScreen extends Component {
     switch(type) {
       case 'bool':
         return (<SurveyBoolSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
-      case 'multi':
-        return (<SurveyMultiSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+      case 'single_sel':
+        return (<SurveySingleSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
     }
     return (
       <View>

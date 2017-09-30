@@ -3,17 +3,12 @@ import {StyleSheet, View} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body } from 'native-base';
 import { connect } from 'react-redux';
 import baseTheme from '../../../themes/baseTheme'
+import SurveyInputComponent from './SurveyInputComponent'
 
-class SurveyBoolSelector extends Component {
+class SurveyBoolSelector extends SurveyInputComponent {
   constructor(props) {
     super(props);
   }
-
-  componentWillMount() {
-    this.setState({answer: this.props.answer})
-    console.log(this.state)
-  }
-
   render() {
     const { answer, question} = this.props
     const { text, rows } =question
@@ -31,10 +26,7 @@ class SurveyBoolSelector extends Component {
         if (values[idx] === this.state.answer) {
           return (<Button success onPress={() => { onSelect(values[idx]) }} key={idx}><Text>{text}</Text></Button>)
         } else {
-          return (<Button light onPress={() => { 
-            this.setState({ answer: values[idx] })
-            onSelect(values[idx]) 
-          }} key={idx}><Text>{text}</Text></Button>)
+          return (<Button light onPress={() => {this.selectAnswer(values[idx])}} key={idx}><Text>{text}</Text></Button>)
         }
       })}
       </View>
@@ -44,7 +36,7 @@ class SurveyBoolSelector extends Component {
 }
 
 export default connect(state => ({
-    answers: state.survey && state.survey.answers
+    
   }),
   (dispatch) => ({
     //actions: bindActionCreators(counterActions, dispatch)
