@@ -9,6 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import baseTheme from '../../../themes/baseTheme'
 import * as surveyActions from '../actions'
 
+import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
@@ -31,10 +32,14 @@ class SurveyQuestionScreen extends Component {
     let answer = answers[questionIndex]
     const { type } = question
     switch(type) {
+      case 'text':
+        return (<SurveyTextInput onSelect={this.onInputAnswer} question={question} answer={answer}/>)
       case 'bool':
         return (<SurveyBoolSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
       case 'single_sel':
         return (<SurveySingleSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+      case 'multi_sel':
+        return (<SurveyMultiSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
     }
     return (
       <View>

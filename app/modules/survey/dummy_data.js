@@ -1,7 +1,25 @@
 export default [
   {
+    text: 'Input name',
+    type: 'text'
+  },
+  {
     text: 'Fill out in session?',
     type: 'bool'
+  },
+  {
+    text: 'Skills',
+    type: 'multi_sel',
+    rows: [
+    {text:'Not thought about or used', value: 0},
+    {text:'Thought about, not used, didn\'t want to', value: 1},
+    {text:'Thought about, not used, wanted to', value: 2},
+    {text:'Tried but couldn\'t use them', value: 3},
+    {text:'Tried, could do them but they didn\'t help', value: 4},
+    {text:'Tried, could use them, helped', value: 5},
+    {text:'Didn\'t try, used them, didn\'t help', value: 6},
+    {text:'Didn\'t try, used them, helped', value: 7}
+    ]
   },
   {
     text: 'Self Harm Urge',
@@ -89,4 +107,5 @@ export default [
     {text:'Didn\'t try, used them, helped', value: 7}
     ]
   },
+  
 ]
