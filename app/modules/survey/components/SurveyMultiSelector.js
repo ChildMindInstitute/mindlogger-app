@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
-import { Content, List, ListItem, Text, Button, Right, Body, Radio } from 'native-base';
+import { Content, List, ListItem, Text, Button, Right, Body, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 import baseTheme from '../../../themes/baseTheme'
 
@@ -10,8 +10,18 @@ class SurveyMultiSelector extends Component {
   }
 
   componentWillMount() {
-    this.setState({answer: this.props.answer})
-    console.log(this.state)
+    this.setState({answer: this.props.answer || []})
+  }
+
+  checkValue(value) {
+    let answer = [...this.state.answer]
+    const index = answer.indexOf(value)
+    if(index<0) {
+      answer.push(value)
+    } else {
+      answer.splice(index, 1)
+    }
+    this.setState({answer})
   }
 
   render() {
@@ -21,21 +31,26 @@ class SurveyMultiSelector extends Component {
     console.log(this.state)
 
     return (
-      <View style={baseTheme.centerCol}>
+      <View style={{alignItems:'stretch'}}>
         <Text style={baseTheme.paddingView}>{text}</Text>
         <View>
         {
           rows.map((row, idx) => {
             return (
-              <ListItem onPress={() => onSelect(row.value)}>
-              <Text>{row.text}</Text>
+              <ListItem key={idx} onPress={() => this.checkValue(row.value)}>
+              <Body><Text>{row.text}</Text></Body>
               <Right>
-                <Radio selected={row.value === answer} />
+                <CheckBox checked={this.state.answer.includes(row.value)} />
               </Right>
             </ListItem>
               )
           })
         }
+        </View>
+        <View style={baseTheme.centerCol}>
+        <View style={baseTheme.paddingView}>
+          <Button onPress={() => this.selectAnswer(this.state.text)}><Text>Submit</Text></Button>
+        </View>
         </View>
       </View>
     )
