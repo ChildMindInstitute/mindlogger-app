@@ -15,7 +15,7 @@ import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 
-class SurveySummaryScreen extends Component {
+class SurveyAccordionScreen extends Component {
   constructor(props) {
     super(props) 
   }
@@ -52,7 +52,7 @@ class SurveySummaryScreen extends Component {
       style = baseTheme.disabledColor
     }
     var header = (
-      <ListItem key={idx} onPress={() => { this.onExpand(idx)}}>
+      <ListItem onPress={() => { this.onExpand(idx)}}>
         <Body>
         <Text style={style}>{question.text}</Text>
         </Body>
@@ -67,7 +67,7 @@ class SurveySummaryScreen extends Component {
     );
  
     return (
-      <View>
+      <View key={idx}>
       {header}
       {content}
       </View>
@@ -110,4 +110,4 @@ export default connect(state => ({
     answers: state.survey && state.survey.answers
   }),
   (dispatch) => bindActionCreators(surveyActions, dispatch)
-)(SurveySummaryScreen);
+)(SurveyAccordionScreen);

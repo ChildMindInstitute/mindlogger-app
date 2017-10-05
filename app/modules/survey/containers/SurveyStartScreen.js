@@ -18,27 +18,26 @@ class SurveyStartScreen extends Component {
     this.props.actions.getQuestions()
   }
 
-  onStartSurvey() {
+  onStartSequence() {
     Actions.survey_question({ questionIndex:0})
   }
 
-  onStartSummary() {
-    Actions.survey_summary()
+  onStartAccordion() {
+    Actions.survey_accordion()
   }
 
   render() {
     
-
     return (
       <Container>
       <View style={baseTheme.view}>
         <View style={{height:200}}>
           <Text style={{flex:1}}>We have questions to start</Text>
           <View style={baseTheme.centerRow}>
-            <Button onPress={this.onStartSurvey}><Text>Start</Text></Button>
+            <Button onPress={this.onStartSequence}><Text>Sequence</Text></Button>
           </View>
           <View style={baseTheme.centerRow}>
-          <Button onPress={this.onStartSummary}><Text>Summary</Text></Button>
+          <Button onPress={this.onStartAccordion}><Text>Accordion</Text></Button>
           </View>
         </View>
       </View>
