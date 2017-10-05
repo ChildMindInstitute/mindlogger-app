@@ -1,11 +1,10 @@
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 
-const styles = StyleSheet.create({
+const styles = {
   content: {
     flex: 1,
     width: null,
     height: null,
-    padding: 20,
     backgroundColor:'#fff'
   },
   view: { 
@@ -37,6 +36,6 @@ const styles = StyleSheet.create({
   paddingView: {
     padding: 20
   }
-});
+};
 
 export default styles

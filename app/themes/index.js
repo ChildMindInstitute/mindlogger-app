@@ -1,1 +1,2 @@
-export * from './lightTheme'
+import lightTheme from './lightTheme'
+export default {lightTheme}
