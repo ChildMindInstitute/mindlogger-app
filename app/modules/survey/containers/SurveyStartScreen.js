@@ -22,6 +22,10 @@ class SurveyStartScreen extends Component {
     Actions.survey_question({ questionIndex:0})
   }
 
+  onStartSummary() {
+    Actions.survey_summary()
+  }
+
   render() {
     
 
@@ -32,6 +36,9 @@ class SurveyStartScreen extends Component {
           <Text style={{flex:1}}>We have questions to start</Text>
           <View style={baseTheme.centerRow}>
             <Button onPress={this.onStartSurvey}><Text>Start</Text></Button>
+          </View>
+          <View style={baseTheme.centerRow}>
+          <Button onPress={this.onStartSummary}><Text>Summary</Text></Button>
           </View>
         </View>
       </View>

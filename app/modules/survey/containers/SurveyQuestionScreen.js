@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, Header } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 
 
-import baseTheme from '../../../themes/baseTheme'
+import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
 
 import SurveyTextInput from '../components/SurveyTextInput'
@@ -33,13 +33,13 @@ class SurveyQuestionScreen extends Component {
     const { type } = question
     switch(type) {
       case 'text':
-        return (<SurveyTextInput onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+        return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
       case 'bool':
-        return (<SurveyBoolSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+        return (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
       case 'single_sel':
-        return (<SurveySingleSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+        return (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
       case 'multi_sel':
-        return (<SurveyMultiSelector onSelect={this.onInputAnswer} question={question} answer={answer}/>)
+        return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
     }
     return (
       <View>
@@ -52,7 +52,6 @@ class SurveyQuestionScreen extends Component {
     const {questionIndex} = this.props
     return (
       <View style={baseTheme.spacedRow}>
-
       <Button onPress={() => Actions.pop()} iconLeft transparent  small bordered>
         <Icon name='arrow-back' />
         <Text>Back</Text>
@@ -70,10 +69,13 @@ class SurveyQuestionScreen extends Component {
 
     return (
       <Container>
-      <StatusBar />
+      <Header />
       <Content style={baseTheme.content}>
+      <View style={baseTheme.paddingView}>
       {this.renderButtons()}
+      </View>
       { this.renderQuestion()}
+      
       </Content>
       </Container>
     )

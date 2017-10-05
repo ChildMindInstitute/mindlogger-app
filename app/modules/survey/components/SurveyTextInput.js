@@ -15,18 +15,17 @@ class SurveyTextInput extends SurveyInputComponent {
     this.setState({text: answer})
   }
   render() {
-    const { answer, question} = this.props
-    const { onSelect } = this.props
+    const { answer, question} = this.props.data
     return (
       <View style={baseTheme.centerCol}>
-      <Text style={baseTheme.paddingView}>{question.text}</Text>
-      <Item rounded>
-        <Input placeholder='' onChangeText={(text) => this.setState({text})}
-        value={this.state.text}/>
-      </Item>
-      <View style={baseTheme.paddingView}>
-      <Button onPress={() => this.selectAnswer(this.state.text)}><Text>Submit</Text></Button>
-      </View>
+        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{question.text}</Text>) }
+        <Item rounded>
+          <Input placeholder='' onChangeText={(text) => this.setState({text})}
+          value={this.state.text}/>
+        </Item>
+        <View style={baseTheme.paddingView}>
+        <Button onPress={() => this.selectAnswer(this.state.text)}><Text>Submit</Text></Button>
+        </View>
       </View>
     )
   }

@@ -11,14 +11,12 @@ class SurveySingleSelector extends SurveyInputComponent {
   }
 
   render() {
-    const { answer, question} = this.props
+    const { answer, question} = this.props.data
     const { text, rows } =question
-    const { onSelect } = this.props
-    console.log(this.state)
 
     return (
       <View style={{alignItems:'stretch'}}>
-        <Text style={baseTheme.paddingView}>{text}</Text>
+        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{text}</Text>) }
         <List>
         {
           rows.map((row, idx) => {

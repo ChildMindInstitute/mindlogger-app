@@ -10,12 +10,12 @@ export default class SurveyInputComponent extends Component {
   }
 
   componentWillMount() {
-    this.setState({answer: this.props.answer})
+    this.setState({answer: this.props.data.answer})
   }
   selectAnswer = (answer) => {
+    const {question, ...data} = this.props.data
     this.setState({ answer })
-    this.props.onSelect(answer)
-    console.log(this.state)
+    this.props.onSelect(answer, data)
   }
   render() {
     return (<View></View>)

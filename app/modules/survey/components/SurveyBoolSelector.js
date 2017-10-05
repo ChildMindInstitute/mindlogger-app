@@ -10,26 +10,24 @@ class SurveyBoolSelector extends SurveyInputComponent {
     super(props);
   }
   render() {
-    const { answer, question} = this.props
+    const { answer, question} = this.props.data
     const { text, rows } =question
-    const { onSelect } = this.props
 
     let texts = rows ? rows : ["YES", "NO"]
     let values = [true, false]
-    console.log(this.state)
 
     return (
       <View style={baseTheme.centerCol}>
-      <Text style={baseTheme.paddingView}>{text}</Text>
-      <View style={baseTheme.spacedRow}>
-      { texts.map((text, idx) => {
-        if (values[idx] === this.state.answer) {
-          return (<Button success onPress={() => { onSelect(values[idx]) }} key={idx}><Text>{text}</Text></Button>)
-        } else {
-          return (<Button light onPress={() => {this.selectAnswer(values[idx])}} key={idx}><Text>{text}</Text></Button>)
-        }
-      })}
-      </View>
+        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{text}</Text>) }
+        <View style={baseTheme.spacedRow}>
+        { texts.map((text, idx) => {
+          if (values[idx] === this.state.answer) {
+            return (<Button success onPress={() => { onSelect(values[idx]) }} key={idx}><Text>{text}</Text></Button>)
+          } else {
+            return (<Button light onPress={() => {this.selectAnswer(values[idx])}} key={idx}><Text>{text}</Text></Button>)
+          }
+        })}
+        </View>
       </View>
     )
   }
