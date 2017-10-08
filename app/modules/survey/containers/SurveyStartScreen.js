@@ -26,6 +26,10 @@ class SurveyStartScreen extends Component {
     Actions.survey_accordion()
   }
 
+  onTableToggle() {
+    Actions.survey_table({ questionIndex:0})
+  }
+
   render() {
     
     return (
@@ -38,6 +42,9 @@ class SurveyStartScreen extends Component {
           </View>
           <View style={baseTheme.centerRow}>
           <Button onPress={this.onStartAccordion}><Text>Accordion</Text></Button>
+          </View>
+          <View style={baseTheme.centerRow}>
+          <Button onPress={this.onTableToggle}><Text>Table</Text></Button>
           </View>
         </View>
       </View>
