@@ -41,9 +41,9 @@ class SurveyToggleSelector extends SurveyInputComponent {
       rowContent = (
         <Row key={i}>{cols.map((row,idx) => 
           (<Col size={1} key={idx}>
-            <View onPress={() => this.checkValue(row.value)}>
+            <View >
               <Text numberOfLines={5}>{row.text}</Text>
-              <CheckBox checked={answer.includes(row.value)} />
+              <CheckBox onPress={() => this.checkValue(row.value)} checked={answer.includes(row.value)} />
             </View>
           </Col>)
         )}

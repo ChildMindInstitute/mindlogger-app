@@ -20,7 +20,7 @@ class SurveyTableScreen extends Component {
   onInputAnswer = (result) => {
     const {questionIndex} = this.props
     this.props.postAnswer(questionIndex, result)
-    Actions.survey_question({ questionIndex:questionIndex+1})
+    Actions.survey_table({ questionIndex:questionIndex+1})
   }
 
   renderQuestion() {

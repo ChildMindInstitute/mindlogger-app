@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 
-import baseTheme from '../../../themes/baseTheme'
+import baseTheme from '../../../themes/baseTheme' 
 
 import SurveyInputComponent from './SurveyInputComponent'
 
