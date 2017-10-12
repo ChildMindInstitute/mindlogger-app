@@ -75,7 +75,7 @@ class SurveyTableScreen extends Component {
 }
 
 export default connect(state => ({
-    questions: state.survey && state.survey.questions,
+    questions: state.survey && state.survey.questions.sample2,
     answers: state.survey && state.survey.answers
   }),
   (dispatch) => bindActionCreators(surveyActions, dispatch)
