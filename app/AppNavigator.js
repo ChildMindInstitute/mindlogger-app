@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { BackHandler, StatusBar, NavigationCardStack, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import { StyleProvider, variables, Drawer } from 'native-base';
+import { Root, StyleProvider, variables, Drawer } from 'native-base';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { Router, Scene } from 'react-native-router-flux';
 
@@ -10,9 +10,16 @@ import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
 import { closeDrawer } from './actions/drawer';
 
+// Main Screens
 import Home from './components/home/';
 import SplashPage from './components/splashscreen/';
 import SideBar from './components/sidebar';
+import ActivityScreen from './containers/activity/';
+
+//Modules
+
+import SurveyApp from './modules/survey';
+
 
 import statusBarColor from './themes/variables';
 
@@ -74,6 +81,7 @@ class AppNavigator extends Component {
 
   render() {
     return (
+      <Root>
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
           ref={(ref) => { this._drawer = ref; }}
@@ -85,13 +93,15 @@ class AppNavigator extends Component {
             backgroundColor={statusBarColor.statusBarColor}
           />
           <RouterWithRedux>
-            <Scene key="root">
-              <Scene key="home" component={Home} hideNavBar initial={true} />
-              <Scene key="activity" component={Home} />
+            <Scene key="root" hideNavBar>
+              <Scene key="home" component={Home} initial={true} />
+              <Scene key="activity" component={ActivityScreen} />
+              {SurveyApp}
             </Scene>
           </RouterWithRedux>
         </Drawer>
       </StyleProvider>
+      </Root>
     );
   }
 }

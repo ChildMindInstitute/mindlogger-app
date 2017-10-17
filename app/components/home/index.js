@@ -33,7 +33,7 @@ class Home extends Component { // eslint-disable-line
               style={{ backgroundColor: '#6FAF98', alignSelf: 'center' }}
               onPress={this.props.openDrawer}
             >
-              <Text>Lets Go!</Text>
+              <Text>Login</Text>
             </Button>
           </View>
         </ImageBackground>
