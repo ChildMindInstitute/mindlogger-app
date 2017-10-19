@@ -10,14 +10,12 @@ const initialState = {
 }
 export default function surveysReducer(state = initialState, action = {}) {
   let surveys = [...state.surveys]
-  console.log(surveys)
   switch (action.type) {
     case REHYDRATE:
       const survey = action.payload.survey
       if(survey) return {...state, ...survey}
     case types.ADD_SURVEY:
       surveys.push({...action.data, ...surveyInitialState})
-      console.log(surveys)
       return {
         ...state,
         surveys

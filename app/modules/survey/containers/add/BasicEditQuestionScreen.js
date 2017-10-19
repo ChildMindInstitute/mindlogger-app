@@ -47,10 +47,10 @@ class SurveyEditQuestionForm extends Component {
 }
 
 SurveyEditQuestionReduxForm = reduxForm({
-  form: 'survey-edit-question',
-  enableReinitialize: true,
-  destroyOnUnmount: false,
-  forceUnregisterOnUnmount: true
+    form: 'survey-edit-question',
+    enableReinitialize: true,
+    destroyOnUnmount: false,
+    forceUnregisterOnUnmount: true
 })(SurveyEditQuestionForm)
 
 const selector = formValueSelector('survey-edit-question')
@@ -63,133 +63,137 @@ SurveyEditQuestionValueForm = connect(
 
 class SurveyBasicEditQuestionScreen extends Component {
 
-  static propTypes = {
-    popRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
+    static propTypes = {
+        popRoute: React.PropTypes.func,
+        navigation: React.PropTypes.shape({
+        key: React.PropTypes.string,
+        }),
+    }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      mode: 1,
-    };
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+        mode: 1,
+        };
+    }
 
-  pushRoute(route) {
-    Actions.push(route)
-  }
+    pushRoute(route) {
+        Actions.push(route)
+    }
 
-  popRoute() {
-    Actions.pop()
-  }
+    popRoute() {
+        Actions.pop()
+    }
 
-  updateQuestion = (body) => {
-    let {surveyIdx, questionIdx, surveys} = this.props
-    if(surveyIdx < 0) {
-      surveyIdx = surveys.length + surveyIdx
+    updateQuestion = (body) => {
+        let {surveyIdx, questionIdx, surveys} = this.props
+        if(surveyIdx < 0) {
+        surveyIdx = surveys.length + surveyIdx
+        }
+        console.log(surveyIdx)
+        let survey = surveys[surveyIdx]
+        let questions = survey.questions || []
+        if(questions.length>questionIdx) {
+        questions[questionIdx] = body
+        } else {
+        questions.push(body)
+        }
+        survey.questions = questions
+		this.props.updateSurvey(surveyIdx, survey)
+		if(this.isNext) {
+			questionIdx = questionIdx + 1
+			Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
+		} else {
+			Actions.pop()
+		}
+		
     }
-    console.log(surveyIdx)
-    let survey = surveys[surveyIdx]
-    let questions = survey.questions || []
-    if(questions.length>questionIdx) {
-      questions[questionIdx] = body
-    } else {
-      questions.push(body)
-    }
-    survey.questions = questions
-    return this.props.updateSurvey(surveyIdx, survey)
-  }
 
-  updateAndNext() {
-    this.props.submitForm()
-    let {surveyIdx, questionIdx, surveys} = this.props
-    if(surveyIdx < 0) {
-      surveyIdx = surveys.length + surveyIdx
+    updateAndNext() {
+        this.isNext=true
+        this.props.submitForm()
     }
-    questionIdx = questionIdx + 1
-    Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
-  }
-  updateAndDone() {
-    this.props.submitForm()
-    this.popRoute()
-  }
-  deleteQuestion() {
-    let {surveyIdx, questionIdx, surveys} = this.props
-    if(surveyIdx < 0) {
-      surveyIdx = surveys.length + surveyIdx
+    updateAndDone() {
+		this.isNext=false
+        this.props.submitForm()
     }
-    let survey = surveys[surveyIdx]
-    let questions = survey.questions || []
-    if(questions.length>questionIdx) {
-      questions.splice(questionIdx,1)
-      this.props.updateSurvey(surveyIdx, survey)
-    } else {
+    deleteQuestion() {
+        let {surveyIdx, questionIdx, surveys} = this.props
+        if(surveyIdx < 0) {
+        	surveyIdx = surveys.length + surveyIdx
+        }
+        let survey = surveys[surveyIdx]
+        let questions = survey.questions || []
+        if(questions.length>questionIdx) {
+			questions.splice(questionIdx,1)
+			this.props.updateSurvey(surveyIdx, survey)
+        }
+        survey.questions = questions
+        questionIdx = questionIdx - 1
+        Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
     }
-    survey.questions = questions
-    questionIdx = questionIdx - 1
-    Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
-  }
 
-  render() {
-    let {surveyIdx, questionIdx, surveys} = this.props
-    if(surveyIdx < 0) {
-      surveyIdx = surveys.length + surveyIdx
+    componentWillMount() {
+        let {surveyIdx, questionIdx, surveys} = this.props
+        if(surveyIdx < 0) {
+        surveyIdx = surveys.length + surveyIdx
+        }
+        const survey = surveys[surveyIdx]
+        let question = questionInitialState
+        if(questionIdx<survey.questions.length) {
+            question = survey.questions[questionIdx]
+        } else if(questionIdx>0) {
+            question = { ...survey.questions[questionIdx-1], title: ''}
+        }
+        this.setState({survey, question, questionIdx})
     }
-    const survey = surveys[surveyIdx]
-    let question = questionInitialState
-    if(questionIdx<survey.questions.length) {
-      question = survey.questions[questionIdx]
-    } else {
-      question = questionIdx>0 && {...survey.questions[questionIdx-1], title: ''}
+
+    render() {
+        let {survey, questionIdx, question} = this.state
+        return (
+        <Container>
+            <Header>
+            <Left>
+                <Button transparent onPress={() => Actions.pop()}>
+                <Icon name="arrow-back" />
+                </Button>
+            </Left>
+            <Body style={{flex:2}}>
+                <Title>{survey.title}</Title>
+                <Subtitle>Basic {survey.accordion ? "accordion" : "sequential"} survey</Subtitle>
+            </Body>
+            <Right>
+                <Button transparent onPress={() => Actions.pop()}>
+                <Icon name="trash" />
+                </Button>
+            </Right>
+            </Header>
+            <Content padder>
+                <Text>Question {questionIdx+1}</Text>
+                <SurveyEditQuestionValueForm onSubmit={this.updateQuestion} initialValues={question}/>
+                <Row style={{ marginTop: 20 }}>
+                    <Button block onPress={() => this.updateAndNext()} style={{ margin: 15, flex:1}}>
+                    <Text>Next</Text>
+                    </Button>
+                    <Button block danger onPress={() => this.deleteQuestion()} style={{ margin: 15, flex:1}}>
+                    <Text>Delete</Text>
+                    </Button>
+                </Row>
+                <Button block style={{ margin: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
+            </Content>
+        </Container>
+        );
     }
-    return (
-      <Container>
-        <Header>
-          <Left>
-            <Button transparent onPress={() => Actions.pop()}>
-              <Icon name="arrow-back" />
-            </Button>
-          </Left>
-          <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
-            <Subtitle>{survey.accordion ? "Accordion survey" : "Sequential survey"}</Subtitle>
-          </Body>
-          <Right>
-            <Button transparent onPress={() => Actions.pop()}>
-              <Icon name="trash" />
-            </Button>
-          </Right>
-        </Header>
-        <Content padder>
-          <Text>Question {questionIdx+1}</Text>
-          <SurveyEditQuestionValueForm onSubmit={this.updateQuestion} initialValues={question}/>
-          <Row style={{ marginTop: 20 }}>
-            <Button block onPress={() => this.updateAndNext()} style={{ margin: 15, flex:1}}>
-              <Text>Next</Text>
-            </Button>
-            <Button block danger onPress={() => this.deleteQuestion()} style={{ margin: 15, flex:1}}>
-              <Text>Delete</Text>
-            </Button>
-          </Row>
-          <Button block style={{ margin: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
-          
-          
-        </Content>
-      </Container>
-    );
-  }
 } 
 
 const mapDispatchToProps = (dispatch) => ({
-  updateSurvey: (index, data) => dispatch(updateSurvey(index, data)),
-  submitForm: () => {
-    dispatch(submit('survey-edit-question'))
-  },
-  resetForm: () => {
-    dispatch(reset('survey-edit-question'))
-  },
+    updateSurvey: (index, data) => dispatch(updateSurvey(index, data)),
+    submitForm: () => {
+        dispatch(submit('survey-edit-question'))
+    },
+    resetForm: () => {
+        dispatch(reset('survey-edit-question'))
+    },
 })
 
 const mapStateToProps = state => ({

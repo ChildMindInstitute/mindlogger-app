@@ -921,7 +921,7 @@ babel-register@^6.24.1, babel-register@^6.26.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.15"
 
-babel-runtime@^6.0.0, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
+babel-runtime@6.x, babel-runtime@^6.0.0, babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.23.0, babel-runtime@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
   dependencies:
@@ -1250,6 +1250,10 @@ circular-json@^0.3.1:
 clamp@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/clamp/-/clamp-1.0.1.tgz#66a0e64011816e37196828fdc8c8c147312c8634"
+
+classnames@^2.2.0:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
 cli-cursor@^1.0.1:
   version "1.0.2"
@@ -4658,7 +4662,7 @@ promise@^7.1.1:
   dependencies:
     asap "~2.0.3"
 
-prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.5.9:
+prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.5.9:
   version "15.6.0"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.0.tgz#ceaf083022fc46b4a35f69e13ef75aed0d639856"
   dependencies:
@@ -4763,6 +4767,22 @@ raw-body@~2.1.2:
     bytes "2.4.0"
     iconv-lite "0.4.13"
     unpipe "1.0.0"
+
+rc-input-number@^3.6.8:
+  version "3.6.8"
+  resolved "https://registry.yarnpkg.com/rc-input-number/-/rc-input-number-3.6.8.tgz#ba12b62805c0592793af44229c605b8b2c6a5ff8"
+  dependencies:
+    babel-runtime "6.x"
+    classnames "^2.2.0"
+    create-react-class "^15.5.2"
+    prop-types "^15.5.7"
+    rc-touchable "^1.0.0"
+
+rc-touchable@^1.0.0:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/rc-touchable/-/rc-touchable-1.2.3.tgz#5f498324e3d0b9ba601a9c4834958eaa2c713618"
+  dependencies:
+    babel-runtime "6.x"
 
 rc@^1.1.7:
   version "1.2.1"

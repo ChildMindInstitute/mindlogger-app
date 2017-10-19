@@ -43,16 +43,30 @@ class ActivityScreen extends Component {
         title: "Please select type of activity to add"
       },
       buttonIndex => {
-        if(buttonIndex == 0) {
-          this.pushRoute('survey_basic_add')
+        switch (buttonIndex) {
+          case 0:
+            this.pushRoute('survey_basic_add')
+            break;
+          case 1:
+            this.pushRoute('survey_table_add')
+            break;
+          default:
+            break;
         }
       }
     )
   }
 
   editActivity(secId, rowId) {
+    
     if(secId === 'surveys') {
-      Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+      const survey = this.props.surveys[rowId]
+      if(survey.mode === 'table') {
+        Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
+      } else {
+        Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+      }
+      
     }
   }
 

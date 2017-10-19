@@ -8,7 +8,7 @@ import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey} from '../../actions'
 
 
-class SurveyBasicAddScreen extends Component {
+class SurveyTableAddScreen extends Component {
 
   static propTypes = {
     popRoute: React.PropTypes.func,
@@ -33,7 +33,7 @@ class SurveyBasicAddScreen extends Component {
   }
 
   onAddSurvey = (body) => {
-    return this.props.addSurvey({...body, 'activity_type':'survey', mode: 'basic'})
+    return this.props.addSurvey({...body, 'activity_type':'survey', mode: 'table'})
   }
 
   render() {
@@ -45,12 +45,12 @@ class SurveyBasicAddScreen extends Component {
               <Icon name="arrow-back" />
             </Button>
           </Left>
-          <Body>
-            <Title>New Survey</Title>
+          <Body style={{flex:3}}>
+            <Title>New Table Survey</Title>
           </Body>
           <Right />
         </Header>
-        <Content padder>
+        <Content>
           <SurveyAddForm onSubmit={this.onAddSurvey}/>
         </Content>
       </Container>
@@ -63,7 +63,7 @@ const mapDispatchToProps = (dispatch) => ({
     body.questions = []
     body.answers = {}
     dispatch(addSurvey(body))
-    Actions.replace("survey_basic_edit_question",{surveyIdx:-1, questionIdx:0})
+    Actions.replace("survey_table_edit_question",{surveyIdx:-1, questionIdx:0})
   },
 })
 
@@ -72,4 +72,4 @@ const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SurveyBasicAddScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SurveyTableAddScreen);
