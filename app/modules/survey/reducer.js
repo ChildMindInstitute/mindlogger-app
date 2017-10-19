@@ -29,7 +29,7 @@ export default function surveysReducer(state = initialState, action = {}) {
         surveys
       }
     case types.DELETE_SURVEY:
-      surveys.splice(action.index)
+      surveys.splice(action.index,1)
       return {
         ...state,
         surveys

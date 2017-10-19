@@ -83,6 +83,9 @@ class ActivityScreen extends Component {
         <Text>{data.title}</Text>
         <Text numberOfLines={1} note>{data.instruction}</Text>
       </Body>
+      <Right>
+        <Text note>{data.questions.length} questions</Text>
+      </Right>
     </ListItem>
     )
   }
@@ -113,7 +116,7 @@ class ActivityScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>List</Title>
+            <Title>Activities</Title>
           </Body>
           <Right>
             <Button transparent onPress={() => this.promptToAddActivity()}>
@@ -124,12 +127,13 @@ class ActivityScreen extends Component {
 
         <Content>
           <List
-            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys})}
+            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys, drawing:[], voice:[]})}
             renderRow={this._renderRow}
             renderLeftHiddenRow={()=>false}
             renderRightHiddenRow={this._renderRightHiddenRow}
             renderSectionHeader={this._renderSectionHeader}
             rightOpenValue={-120}
+            enableEmptySections
           />
         </Content>
       </Container>

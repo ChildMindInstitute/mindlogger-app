@@ -18,7 +18,7 @@ export const FormSwitchItem = ({ input, label, name, ...inputProps , meta: { tou
   }
   return( <Item style={{ height: 40}} error= {hasError}>
               <Label>{label}</Label>
-              <Switch style={{ margin: 20 }} {...inputProps} onValueChange={input.onChange} onBlur={input.onBlur} onFocus={input.onFocus} value={input.value && true}/>
+              <Switch style={{ margin: 20 }} {...inputProps} onValueChange={input.onChange} onBlur={input.onBlur} onFocus={input.onFocus} value={input.value ? true : false}/>
               {hasError ? <Text>{error}</Text> : <Text />}
           </Item> )
 }
