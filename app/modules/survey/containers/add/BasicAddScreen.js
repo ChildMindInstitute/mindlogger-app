@@ -2,12 +2,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment } from 'native-base';
+
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
+import {addSurvey} from '../../actions'
 
-const {
-  popRoute,
-} = actions;
 
 class SurveyBasicAddScreen extends Component {
 
@@ -34,7 +33,7 @@ class SurveyBasicAddScreen extends Component {
   }
 
   onAddSurvey = (body) => {
-
+    return this.props.addSurvey(body)
   }
 
   render() {
@@ -60,7 +59,12 @@ class SurveyBasicAddScreen extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  saveTempSurvey: body => dispatch(saveTempSurvey(body)),
+  addSurvey: body => {
+    body.questions = []
+    body.answers = {}
+    dispatch(addSurvey(body))
+    Actions.replace("survey_basic_edit_question",{surveyIdx:-1, questionIdx:0})
+  },
 })
 
 const mapStateToProps = state => ({

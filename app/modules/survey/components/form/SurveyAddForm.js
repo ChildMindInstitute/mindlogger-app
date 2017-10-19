@@ -6,7 +6,7 @@ import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right
 import { reduxForm, Field } from 'redux-form';
 import { Actions } from 'react-native-router-flux';
 
-import FormItem from '../../../../components/form/FormItem'
+import {FormInputItem, FormSwitchItem} from '../../../../components/form/FormItem'
 
 const validate = values => {
     const error= {};
@@ -29,7 +29,7 @@ const validate = values => {
   return error;
 };
 
-export class SurveyAddForm extends Component {
+class SurveyAddForm extends Component {
 
     constructor(props) {
         super(props)
@@ -37,35 +37,20 @@ export class SurveyAddForm extends Component {
 
     componentWillMount() {
         this.setState({...this.props.initialValues})
+        
     }
     
     render() {
         const { handleSubmit, onSubmit, submitting } = this.props;
-        const {accordion} = this.state;
+        let accordion = this.state && this.state.accordion
         console.log(accordion)
         return (
-            <Form onSubmit={handleSubmit(onSubmit)}>
+            <Form>
+            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
+            <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
+            <Field name="accordion" type="text" label="Sequential/Accordion" component={FormSwitchItem} />
             
-            <Item stackedLabel>
-                <Label>Title</Label>
-                <Field name="title" placeholder='eg. Behaviour' component={Input} />
-            </Item>
-            <Item stackedLabel>
-                <Label>Instruction</Label>
-                <Field component={Input} name="instruction" style={{ height: 100 }} multiline={true} placeholder='...'/>
-            </Item>
-
-            <Item style={{ height: 40}} last>
-                <Label>Sequential/Accordion</Label>
-                <Right>
-                    <Switch style={{ margin: 20 }} name="accordion" value={accordion} onValueChange={(value) => { 
-                        this.setState({ ...this.state, accordion:value})
-                        console.log(value)
-                    } } />
-                </Right>
-            </Item>
-            
-            <Button type="submit" block style={{ margin: 15, marginTop: 50 }}>
+            <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>
                 <Text>Create</Text>
             </Button>
             </Form>)
@@ -73,6 +58,5 @@ export class SurveyAddForm extends Component {
 }
 
 export default reduxForm({
-    form: 'survey-add',
-    validate
+    form: 'survey-add'
   })(SurveyAddForm)

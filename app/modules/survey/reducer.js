@@ -1,25 +1,39 @@
+import {REHYDRATE} from 'redux-persist/constants';
 import * as types from './actionTypes';
 
-const initialState = {
-  questions: [],
-  answers: {}
+const surveyInitialState = {
+  surveys: []
 };
 
-export default function questions(state = initialState, action = {}) {
+const initialState = {
+  surveys: [],
+}
+export default function surveysReducer(state = initialState, action = {}) {
+  let surveys = [...state.surveys]
+  console.log(surveys)
   switch (action.type) {
-    case types.GET_QUESTIONS:
+    case REHYDRATE:
+      const survey = action.payload.survey
+      if(survey) return {...state, ...survey}
+    case types.ADD_SURVEY:
+      surveys.push({...action.data, ...surveyInitialState})
+      console.log(surveys)
       return {
         ...state,
-        questions: (action.response && action.response.data)
-      };
-    case types.POST_ANSWER:
-      let newState = {
-        ...state
+        surveys
       }
-      newState.answers[action.index] = action.data
-      console.log(newState)
-      return newState
-
+    case types.UPDATE_SURVEY:
+      surveys[action.index] ={ ...surveys[action.index], ...action.data}
+      return {
+        ...state,
+        surveys
+      }
+    case types.DELETE_SURVEY:
+      surveys.splice(action.index)
+      return {
+        ...state,
+        surveys
+      }
     default:
       return state;
   }

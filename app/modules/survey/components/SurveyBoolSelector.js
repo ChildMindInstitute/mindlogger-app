@@ -11,7 +11,7 @@ class SurveyBoolSelector extends SurveyInputComponent {
   }
   render() {
     const { answer, question} = this.props.data
-    const {    text, rows } =question
+    const { text, rows } =question
 
     let texts = rows ? rows : ["YES", "NO"]
     let values = [true, false]
