@@ -3,55 +3,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { ListView } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
+import { deleteSurvey } from '../../modules/survey/actions';
 
 import styles from './styles';
 const {
-  pushRoute,
+  pushRoute,popRoute,
 } = actions;
-
-const sankhadeep = require('../../../img/contacts/sankhadeep.png');
-const supriya = require('../../../img/contacts/supriya.png');
-const himanshu = require('../../../img/contacts/himanshu.png');
-const shweta = require('../../../img/contacts/shweta.png');
-const shruti = require('../../../img/contacts/shruti.png');
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
-
-const datas = [
-  {
-    img: sankhadeep,
-    text: 'Sankhadeep',
-    note: 'Its time to build a difference . .',
-  },
-  {
-    img: supriya,
-    text: 'Supriya',
-    note: 'One needs courage to be happy and smiling all time . . ',
-  },
-  {
-    img: himanshu,
-    text: 'Himanshu',
-    note: 'Live a life style that matchs your vision',
-  },
-  {
-    img: shweta,
-    text: 'Shweta',
-    note: 'Failure is temporary, giving up makes it permanent',
-  },
-  {
-    img: shruti,
-    text: 'Shruti',
-    note: 'The biggest risk is a missed opportunity !!',
-  },
-];
-
-const {
-  popRoute,
-} = actions;
 
 class ActivityScreen extends Component {
 
@@ -86,25 +49,39 @@ class ActivityScreen extends Component {
       }
     )
   }
+
+  editActivity(secId, rowId) {
+    if(secId === 'surveys') {
+      Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+    }
+  }
+
+  deleteActivity(secId, rowId) {
+    if(secId === 'surveys') {
+      this.props.deleteSurvey(rowId)
+    }
+  }
+
+  _editRow = (data, secId, rowId, rowMap) => {
+    rowMap[`${secId}${rowId}`].props.closeRow()
+    this.editActivity(secId, rowId)
+  }
+
+  _deleteRow = (data, secId, rowId, rowMap) => {
+    rowMap[`${secId}${rowId}`].props.closeRow()
+    this.deleteActivity(secId, rowId)
+  }
+
+  _renderSectionHeader = (data, secId) => {
+    return (<Separator bordered><Text>{secId.toUpperCase()}</Text></Separator>)
+  }
   
   _renderRow = (data) => {
-    let swipeBtns = [
-      {
-        text: 'Edit',
-        backgroundColor: 'blue',
-        onPress: () => { this.editActivity(data)}
-      },
-      {
-        text: 'Delete',
-        backgroundColor: 'red',
-        onPress: () => { this.deleteActivity(data)}
-      }
-    ]
     return (
     <ListItem>
       <Body>
-        <Text>{data.text}</Text>
-        <Text numberOfLines={1} note>{data.note}</Text>
+        <Text>{data.title}</Text>
+        <Text numberOfLines={1} note>{data.instruction}</Text>
       </Body>
     </ListItem>
     )
@@ -113,19 +90,20 @@ class ActivityScreen extends Component {
   _renderRightHiddenRow = (data, secId, rowId, rowMap) => {
     return (
       <View style={{flexDirection:'row', height:63}}>
-        <Button full info style={{height:63, width: 60}} onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+        <Button full info style={{height:63, width: 60}} onPress={_ => this._editRow(data, secId, rowId, rowMap)}>
           <Icon active name="build" />
         </Button>
-        <Button full danger style={{height:63, width: 60}} onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+        <Button full danger style={{height:63, width: 60}} onPress={_ => this._deleteRow(data, secId, rowId, rowMap)}>
           <Icon active name="trash" />
         </Button>
       </View>
-  )
+    )
   }
-  
 
   render() {
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    const {surveys} = this.props;
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
+    
     return (
       <Container style={styles.container}>
         <Header>
@@ -146,10 +124,11 @@ class ActivityScreen extends Component {
 
         <Content>
           <List
-            dataSource={ds.cloneWithRows(datas)}
+            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys})}
             renderRow={this._renderRow}
             renderLeftHiddenRow={()=>false}
             renderRightHiddenRow={this._renderRightHiddenRow}
+            renderSectionHeader={this._renderSectionHeader}
             rightOpenValue={-120}
           />
         </Content>
@@ -163,10 +142,12 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
+    deleteSurvey: (index) => dispatch(deleteSurvey(index))
   };
 }
 
 const mapStateToProps = state => ({
+  surveys: (state.survey && state.survey.surveys) || [],
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
 });
