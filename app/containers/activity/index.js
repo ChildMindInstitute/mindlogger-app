@@ -98,7 +98,7 @@ class ActivityScreen extends Component {
         <Text numberOfLines={1} note>{data.instruction}</Text>
       </Body>
       <Right>
-        <Text note>{data.questions.length} questions</Text>
+        {data.questions && (<Text note>{data.questions.length} questions</Text>)}
       </Right>
     </ListItem>
     )
