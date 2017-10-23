@@ -12,7 +12,7 @@ import styles from './style';
 
 const drawerCover = require('../../../img/drawer-cover.png');
 
-const drawerImage = require('../../../img/logo-kitchen-sink.png');
+const drawerImage = require('../../../img/CMI_white_logo.png');
 
 const datas = [
   {

@@ -10,6 +10,7 @@ export default {
     flex: 1,
     width: null,
     height: null,
+    backgroundColor: '#5555aa'
   },
   logoContainer: {
     flex: 1,
@@ -21,7 +22,7 @@ export default {
     left: (Platform.OS === 'android') ? 40 : 50,
     top: (Platform.OS === 'android') ? 35 : 60,
     width: 280,
-    height: 100,
+    height: 86,
   },
   text: {
     color: '#D8D8D8',

@@ -7,7 +7,7 @@ import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
 const launchscreenBg = require('../../../img/launchscreen-bg.png');
-const launchscreenLogo = require('../../../img/logo-kitchen-sink.png');
+const launchscreenLogo = require('../../../img/CMI_white_h_logo.png');
 
 class Home extends Component { // eslint-disable-line
 
@@ -24,9 +24,9 @@ class Home extends Component { // eslint-disable-line
             <Image source={launchscreenLogo} style={styles.logo} />
           </View>
           <View style={{ alignItems: 'center', marginBottom: 50, backgroundColor: 'transparent' }}>
-            <H3 style={styles.text}>App to showcase</H3>
+            <H3 style={styles.text}></H3>
             <View style={{ marginTop: 8 }} />
-            <H3 style={styles.text}>NativeBase components</H3>
+            <H3 style={styles.text}>Login to start</H3>
           </View>
           <View style={{ marginBottom: 80 }}>
             <Button
