@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle } from 'native-base';
+import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../../../components/form/FormItem'
@@ -37,9 +37,9 @@ class SurveyEditQuestionForm extends Component {
             component ={FormRadioButtonGroup}
             placeholder = "Question Type"
             options   ={[
-              {text:"Text answer",value:"text"},
-              {text:"Multiple choice",value:"single_sel"},
-              {text:"Multiple selection",value:"multi_sel"},
+              {text:"Text",value:"text"},
+              {text:"Choice",value:"single_sel"},
+              {text:"Multiple",value:"multi_sel"},
             ]} />
           { (question_type && question_type !== 'text') ? (<FieldArray name="rows" component={this.renderRows}/>) : false}
           </Form>)
@@ -62,13 +62,6 @@ SurveyEditQuestionValueForm = connect(
 )(SurveyEditQuestionReduxForm)
 
 class SurveyBasicEditQuestionScreen extends Component {
-
-    static propTypes = {
-        popRoute: React.PropTypes.func,
-        navigation: React.PropTypes.shape({
-        key: React.PropTypes.string,
-        }),
-    }
 
     constructor(props) {
         super(props);
@@ -152,7 +145,7 @@ class SurveyBasicEditQuestionScreen extends Component {
         let {survey, questionIdx, question} = this.state
         return (
         <Container>
-            <Header>
+            <Header hasSubtitle>
             <Left>
                 <Button transparent onPress={() => Actions.pop()}>
                 <Icon name="arrow-back" />
@@ -163,13 +156,10 @@ class SurveyBasicEditQuestionScreen extends Component {
                 <Subtitle>Basic {survey.accordion ? "accordion" : "sequential"} survey</Subtitle>
             </Body>
             <Right>
-                <Button transparent onPress={() => Actions.pop()}>
-                <Icon name="trash" />
-                </Button>
             </Right>
             </Header>
             <Content padder>
-                <Text>Question {questionIdx+1}</Text>
+                <H1 style={{textAlign:'center'}}>{`Question ${questionIdx+1}`}</H1>
                 <SurveyEditQuestionValueForm onSubmit={this.updateQuestion} initialValues={question}/>
                 <Row style={{ marginTop: 20 }}>
                     <Button block onPress={() => this.updateAndNext()} style={{ margin: 15, flex:1}}>

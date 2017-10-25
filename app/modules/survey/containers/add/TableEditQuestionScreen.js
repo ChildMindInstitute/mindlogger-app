@@ -33,7 +33,6 @@ class SurveyTableEditQuestionForm extends Component {
                 fields.push({})
             }
         }
-        console.log("Fields:", fields)
         return (<View padder>
             {fields.map((member,index) => (
                 <Field key={index} inlineLabel label={`${label} ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
@@ -42,7 +41,6 @@ class SurveyTableEditQuestionForm extends Component {
     }
 
     render() {
-      console.log("form:", this.props)
       const { handleSubmit, onSubmit, submitting, reset } = this.props;
       let question_type = this.props.question_type || (this.props.initialValues && this.props.initialValues.type)
       return (
@@ -83,13 +81,6 @@ SurveyTableEditQuestionValueForm = connect(
 )(SurveyTableEditQuestionReduxForm)
 
 class SurveyTableEditQuestionScreen extends Component {
-
-    static propTypes = {
-        popRoute: React.PropTypes.func,
-        navigation: React.PropTypes.shape({
-        key: React.PropTypes.string,
-        }),
-    }
 
     constructor(props) {
         super(props);

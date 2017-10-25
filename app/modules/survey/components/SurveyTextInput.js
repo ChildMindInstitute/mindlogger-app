@@ -18,7 +18,7 @@ class SurveyTextInput extends SurveyInputComponent {
     const { answer, question} = this.props.data
     return (
       <View style={baseTheme.centerCol}>
-        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{question.text}</Text>) }
+        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{question.title}</Text>) }
         <Item rounded>
           <Input placeholder='' onChangeText={(text) => this.setState({text})}
           value={this.state.text}/>

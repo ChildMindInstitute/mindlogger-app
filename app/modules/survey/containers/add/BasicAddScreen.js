@@ -5,23 +5,13 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
-import {addSurvey} from '../../actions'
+import {addSurvey, updateSurvey} from '../../actions'
 
 
 class SurveyBasicAddScreen extends Component {
 
-  static propTypes = {
-    popRoute: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-    }),
-  }
-
   constructor(props) {
     super(props);
-    this.state = {
-      mode: 1,
-    };
   }
 
   pushRoute(route) {
@@ -32,11 +22,30 @@ class SurveyBasicAddScreen extends Component {
     Actions.pop()
   }
 
+  onEditSurvey = (body) => {
+    let {surveyIdx} = this.props
+    let survey = {...this.state.survey, ...body}
+    this.props.updateSurvey(surveyIdx, survey)
+    Actions.pop()
+  }
+
   onAddSurvey = (body) => {
     return this.props.addSurvey({...body, 'activity_type':'survey', mode: 'basic'})
   }
 
+  componentWillMount() {
+    let {surveys, surveyIdx} = this.props
+    if(surveyIdx) {
+      const survey = surveys[surveyIdx]
+      this.setState({survey})
+    } else {
+      this.setState({})
+    }
+  }
+
   render() {
+    const {survey} = this.state;
+    let title = survey ? survey.title : "New Survey"
     return (
       <Container>
         <Header hasTabs>
@@ -46,12 +55,12 @@ class SurveyBasicAddScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>New Survey</Title>
+            <Title>{title}</Title>
           </Body>
           <Right />
         </Header>
         <Content padder>
-          <SurveyAddForm onSubmit={this.onAddSurvey}/>
+          {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey}/>) }
         </Content>
       </Container>
     );
@@ -61,13 +70,15 @@ class SurveyBasicAddScreen extends Component {
 const mapDispatchToProps = (dispatch) => ({
   addSurvey: body => {
     body.questions = []
-    body.answers = {}
+    body.answers = []
     dispatch(addSurvey(body))
     Actions.replace("survey_basic_edit_question",{surveyIdx:-1, questionIdx:0})
   },
+  updateSurvey: (surveyIdx, body) => dispatch(updateSurvey(surveyIdx, body))
 })
 
 const mapStateToProps = state => ({
+  surveys: state.survey.surveys,
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
 });

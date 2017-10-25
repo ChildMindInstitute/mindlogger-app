@@ -70,6 +70,10 @@ export default (variables = variable) => {
       ...titleTheme(variables),
     },
 
+    'NativeBase.Subtitle': {
+      color:variables.subtitleColor,
+    },
+
     'NativeBase.InputGroup': {
       ...inputGroupTheme(variables),
     },

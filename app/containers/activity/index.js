@@ -1,5 +1,7 @@
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { actions } from 'react-native-navigation-redux-helpers';
 import { ListView } from 'react-native';
@@ -7,7 +9,7 @@ import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text ,
 import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { deleteSurvey } from '../../modules/survey/actions';
+import * as surveyActions from '../../modules/survey/actions';
 
 import styles from './styles';
 
@@ -16,9 +18,9 @@ var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 class ActivityScreen extends Component {
 
   static propTypes = {
-    openDrawer: React.PropTypes.func,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
+    openDrawer: PropTypes.func,
+    navigation: PropTypes.shape({
+      key: PropTypes.string,
     }),
   }
 
@@ -54,9 +56,9 @@ class ActivityScreen extends Component {
     if(secId == 'surveys') {
       const survey = this.props.surveys[rowId]
       if(survey.mode == 'table') {
-        Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
+        Actions.push("survey_table_add", {surveyIdx:rowId})
       } else {
-        Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+        Actions.push("survey_basic_add", {surveyIdx:rowId})
       }
       
     }
@@ -66,6 +68,34 @@ class ActivityScreen extends Component {
     if(secId === 'surveys') {
       this.props.deleteSurvey(rowId)
     }
+  }
+
+  startActivity(secId, rowId) {
+    if(secId === 'surveys') {
+      const {surveys, setSurvey} = this.props
+      const survey = surveys[rowId]
+      setSurvey({...survey, answers:[]})
+      if(survey.accordion){
+        Actions.survey_accordion()
+      } else {
+        Actions.survey_question({ questionIndex:0})
+      }
+    }
+  }
+
+  editActivityDetail(secId, rowId) {
+    if(secId == 'surveys') {
+      const survey = this.props.surveys[rowId]
+      if(survey.mode == 'table') {
+        Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
+      } else {
+        Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+      }
+    }
+  }
+
+  _selectRow = (data, secId, rowId) => {
+    this.startActivity(secId, rowId)
   }
 
   _editRow = (data, secId, rowId, rowMap) => {
@@ -78,13 +108,18 @@ class ActivityScreen extends Component {
     this.deleteActivity(secId, rowId)
   }
 
+  _editRowDetail = (data, secId, rowId, rowMap) => {
+    rowMap[`${secId}${rowId}`].props.closeRow()
+    this.editActivityDetail(secId, rowId)
+  }
+
   _renderSectionHeader = (data, secId) => {
     return (<Separator bordered><Text>{secId.toUpperCase()}</Text></Separator>)
   }
   
-  _renderRow = (data) => {
+  _renderRow = (data, secId, rowId) => {
     return (
-    <ListItem onPress>
+    <ListItem onPress={()=>this._selectRow(data, secId, rowId)}>
       <Body>
         <Text>{data.title}</Text>
         <Text numberOfLines={1} note>{data.instruction}</Text>
@@ -104,6 +139,17 @@ class ActivityScreen extends Component {
         </Button>
         <Button full danger style={{height:63, width: 60}} onPress={_ => this._deleteRow(data, secId, rowId, rowMap)}>
           <Icon active name="trash" />
+        </Button>
+        
+      </View>
+    )
+  }
+
+  _renderLeftHiddenRow = (data, secId, rowId, rowMap) => {
+    return (
+      <View style={{flexDirection:'row', height:63}}>
+        <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
+          <Icon active name="list" />
         </Button>
       </View>
     )
@@ -135,9 +181,10 @@ class ActivityScreen extends Component {
           <List
             dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys, drawing:[], voice:[]})}
             renderRow={this._renderRow}
-            renderLeftHiddenRow={()=>false}
+            renderLeftHiddenRow={this._renderLeftHiddenRow}
             renderRightHiddenRow={this._renderRightHiddenRow}
             renderSectionHeader={this._renderSectionHeader}
+            leftOpenValue={60}
             rightOpenValue={-120}
             enableEmptySections
           />
@@ -151,7 +198,8 @@ function bindAction(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
-    deleteSurvey: (index) => dispatch(deleteSurvey(index))
+    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
+    ...bindActionCreators(surveyActions, dispatch)
   };
 }
 

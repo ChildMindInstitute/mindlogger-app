@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Image } from 'react-native';
 
 const splashscreen = require('../../../img/splashscreen.png');
@@ -7,7 +8,7 @@ const splashscreen = require('../../../img/splashscreen.png');
 export default class SplashPage extends Component {
 
   static propTypes = {
-    navigator: React.PropTypes.shape({}),
+    navigator: PropTypes.shape({}),
   }
 
   componentWillMount() {

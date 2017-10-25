@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ImageBackground, Image, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Content, Text, List, ListItem, Icon, Container, Left, Right, Badge, Button, View, StyleProvider, getTheme, variables } from 'native-base';
@@ -49,10 +50,10 @@ const datas = [
 class SideBar extends Component {
 
   static propTypes = {
-    navigateTo: React.PropTypes.func,
-    themeState: React.PropTypes.string,
-    changePlatform: React.PropTypes.func,
-    changeMaterial: React.PropTypes.func,
+    navigateTo: PropTypes.func,
+    themeState: PropTypes.string,
+    changePlatform: PropTypes.func,
+    changeMaterial: PropTypes.func,
   }
 
   constructor(props) {

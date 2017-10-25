@@ -32,3 +32,8 @@ export const deleteSurvey = (index) => ({
   type: types.DELETE_SURVEY,
   index
 })
+
+export const setSurvey = (data) => ({
+  type: types.SET_SURVEY,
+  data
+})

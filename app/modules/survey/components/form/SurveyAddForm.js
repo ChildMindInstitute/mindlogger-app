@@ -41,7 +41,7 @@ class SurveyAddForm extends Component {
     }
     
     render() {
-        const { handleSubmit, onSubmit, submitting } = this.props;
+        const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
         let accordion = this.state && this.state.accordion
         console.log(accordion)
         return (
@@ -51,7 +51,7 @@ class SurveyAddForm extends Component {
             <Field name="accordion" type="text" label="Sequential/Accordion" component={FormSwitchItem} />
             
             <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>
-                <Text>Create</Text>
+                <Text>{ initialValues ? "Update" : "Create" }</Text>
             </Button>
             </Form>)
     }

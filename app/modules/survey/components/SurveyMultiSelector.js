@@ -30,12 +30,12 @@ class SurveyMultiSelector extends SurveyInputComponent {
 
   render() {
     const { question} = this.props.data
-    const { text, rows } =question
+    const { title, rows } =question
     const {answer} = this.state
 
     return (
       <View style={{alignItems:'stretch'}}>
-        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{text}</Text>) }
+        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{title}</Text>) }
         <View>
         {
           rows.map((row, idx) => {

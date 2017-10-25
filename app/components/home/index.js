@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ImageBackground, Image, View, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Button, H3, Text } from 'native-base';
@@ -12,7 +13,7 @@ const launchscreenLogo = require('../../../img/CMI_white_h_logo.png');
 class Home extends Component { // eslint-disable-line
 
   static propTypes = {
-    openDrawer: React.PropTypes.func,
+    openDrawer: PropTypes.func,
   }
 
   render() {

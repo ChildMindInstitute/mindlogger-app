@@ -3,3 +3,4 @@ export const POST_ANSWER = 'POST_ANSWER';
 export const ADD_SURVEY = 'ADD_SURVEY';
 export const UPDATE_SURVEY = 'UPDATE_SURVEY';
 export const DELETE_SURVEY = 'DELETE_SURVEY';
+export const SET_SURVEY = 'SET_SURVEY';

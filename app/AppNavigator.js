@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { BackHandler, StatusBar, NavigationCardStack, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Root, StyleProvider, variables, Drawer } from 'native-base';
@@ -32,13 +33,13 @@ const RouterWithRedux = connect()(Router);
 class AppNavigator extends Component {
 
   static propTypes = {
-    drawerState: React.PropTypes.string,
-    popRoute: React.PropTypes.func,
-    closeDrawer: React.PropTypes.func,
-    themeState: React.PropTypes.string,
-    navigation: React.PropTypes.shape({
-      key: React.PropTypes.string,
-      routes: React.PropTypes.array,
+    drawerState: PropTypes.string,
+    popRoute: PropTypes.func,
+    closeDrawer: PropTypes.func,
+    themeState: PropTypes.string,
+    navigation: PropTypes.shape({
+      key: PropTypes.string,
+      routes: PropTypes.array,
     }),
   }
 
@@ -80,6 +81,7 @@ class AppNavigator extends Component {
   }
 
   render() {
+    console.log("Theme:",getTheme((this.props.themeState === 'material') ? material : undefined))
     return (
       <Root>
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>

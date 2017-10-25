@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 
-
 import baseTheme from '../../../theme'
 import {setSurvey} from '../actions'
 
+import Stepbar from '../../../components/stepbar'
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
@@ -71,15 +71,33 @@ class SurveyBasicQuestionScreen extends Component {
   }
 
   render() {
+    const { questionIndex, survey } = this.props
+    const length = survey.questions.length
+    const index = questionIndex + 1
+    const progressValue = index/length
     return (
       <Container>
-      <Header />
-      <Content style={baseTheme.content}>
-      <View style={baseTheme.paddingView}>
-      {this.renderButtons()}
+      <Header>
+        <Left>
+          <Button transparent onPress={() => Actions.pop()}>
+          <Icon name="arrow-back" />
+          </Button>
+        </Left>
+        <Body style={{flex:2}}>
+            <Title>{survey.title}</Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => Actions.survey_question({ questionIndex:questionIndex+1})}>
+          <Icon name="arrow-forward" />
+          </Button>
+        </Right>
+      </Header>
+      <Content padder style={baseTheme.content}>
+        { this.renderQuestion()}
+      <View padder style={{marginTop: 20}}>
+        <Stepbar progress={progressValue} barStyle={{backgroundColor: '#aaaaff'}} style={{height: 20, borderColor: '#aaaada'}}/>
+        <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
       </View>
-      { this.renderQuestion()}
-      
       </Content>
       </Container>
     )
