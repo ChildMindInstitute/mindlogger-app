@@ -10,9 +10,6 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import { deleteSurvey } from '../../modules/survey/actions';
 
 import styles from './styles';
-const {
-  pushRoute,popRoute,
-} = actions;
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
@@ -20,14 +17,14 @@ class ActivityScreen extends Component {
 
   static propTypes = {
     openDrawer: React.PropTypes.func,
-    pushRoute: React.PropTypes.func,
     navigation: React.PropTypes.shape({
       key: React.PropTypes.string,
     }),
   }
 
   pushRoute(route) {
-    Actions.push(route)
+    console.log(route)
+    Actions[route]()
     //this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
   }
 
@@ -43,15 +40,10 @@ class ActivityScreen extends Component {
         title: "Please select type of activity to add"
       },
       buttonIndex => {
-        switch (buttonIndex) {
-          case 0:
-            this.pushRoute('survey_basic_add')
-            break;
-          case 1:
-            this.pushRoute('survey_table_add')
-            break;
-          default:
-            break;
+        if(buttonIndex==0) {
+          Actions.push("survey_basic_add");
+        } else if(buttonIndex == 1) {
+          Actions.survey_table_add()
         }
       }
     )
@@ -59,9 +51,9 @@ class ActivityScreen extends Component {
 
   editActivity(secId, rowId) {
     
-    if(secId === 'surveys') {
+    if(secId == 'surveys') {
       const survey = this.props.surveys[rowId]
-      if(survey.mode === 'table') {
+      if(survey.mode == 'table') {
         Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
       } else {
         Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
@@ -92,7 +84,7 @@ class ActivityScreen extends Component {
   
   _renderRow = (data) => {
     return (
-    <ListItem>
+    <ListItem onPress>
       <Body>
         <Text>{data.title}</Text>
         <Text numberOfLines={1} note>{data.instruction}</Text>
@@ -159,7 +151,6 @@ function bindAction(dispatch) {
   return {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
     deleteSurvey: (index) => dispatch(deleteSurvey(index))
   };
 }
