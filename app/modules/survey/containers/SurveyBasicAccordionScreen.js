@@ -24,7 +24,6 @@ class SurveyAccordionScreen extends Component {
   render() {
     const {survey} = this.props
     const {questions, answers} = survey
-    console.log(baseTheme)
     return (
       <Container>
       <Header>

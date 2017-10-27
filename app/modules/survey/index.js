@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import SurveyStartScreen from './containers/SurveyStartScreen';
 import SurveyBasicQuestionScreen from './containers/SurveyBasicQuestionScreen';
+import SurveyBasicQuestionSummaryScreen from './containers/SurveyBasicQuestionSummaryScreen';
 import SurveyBasicAccordionScreen from './containers/SurveyBasicAccordionScreen';
 import SurveyTableScreen from './containers/SurveyTableScreen';
 import SurveyBasicAddScreen from './containers/add/BasicAddScreen';
@@ -31,6 +32,7 @@ export default (
   [
   <Scene key="survey" component={SurveyStartScreen}/>,
   <Scene key="survey_question" component={SurveyBasicQuestionScreen} title="Question"/>,
+  <Scene key="survey_question_summary" component={SurveyBasicQuestionSummaryScreen} title="Question"/>,
   <Scene key="survey_accordion" component={SurveyBasicAccordionScreen} title="Accordion"/>,
   <Scene key="survey_table" component={SurveyTableScreen} title="Table"/>,
   <Scene key="survey_basic_add" component={SurveyBasicAddScreen} title="Survey"/>,

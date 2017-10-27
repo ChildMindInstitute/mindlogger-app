@@ -29,7 +29,24 @@ class SurveyBasicQuestionScreen extends Component {
       answers.push(result)
     }
     setSurvey({...survey, answers})
-    Actions.survey_question({ questionIndex:questionIndex+1})
+    this.nextQuestion()
+  }
+
+  nextQuestion = () => {
+    let {questionIndex, survey, setSurvey} = this.props
+    let {questions, answers} = survey
+    questionIndex = questionIndex + 1
+    if(questionIndex<questions.length) {
+      Actions.replace("survey_question", { questionIndex:questionIndex})
+    } else {
+      Actions.replace("survey_question_summary")
+    }
+  }
+
+  prevQuestion = () => {
+    let {questionIndex, survey, setSurvey} = this.props
+    let {questions, answers} = survey
+    Actions.replace("survey_question", { questionIndex:questionIndex-1})
   }
 
   renderQuestion() {
@@ -54,22 +71,6 @@ class SurveyBasicQuestionScreen extends Component {
 
   }
 
-  renderButtons() {
-    const {questionIndex} = this.props
-    return (
-      <View style={baseTheme.spacedRow}>
-      <Button onPress={() => Actions.pop()} iconLeft transparent  small bordered>
-        <Icon name='arrow-back' />
-        <Text>Back</Text>
-      </Button>
-      <Button onPress={() => Actions.survey_question({ questionIndex:questionIndex+1})} iconRight transparent small bordered>
-        <Text>Next</Text>
-        <Icon name='arrow-forward' />
-      </Button>
-      </View>
-      )
-  }
-
   render() {
     const { questionIndex, survey } = this.props
     const length = survey.questions.length
@@ -79,7 +80,7 @@ class SurveyBasicQuestionScreen extends Component {
       <Container>
       <Header>
         <Left>
-          <Button transparent onPress={() => Actions.pop()}>
+          <Button transparent onPress={() => this.prevQuestion()}>
           <Icon name="arrow-back" />
           </Button>
         </Left>
@@ -87,7 +88,7 @@ class SurveyBasicQuestionScreen extends Component {
             <Title>{survey.title}</Title>
         </Body>
         <Right>
-          <Button transparent onPress={() => Actions.survey_question({ questionIndex:questionIndex+1})}>
+          <Button transparent onPress={() => this.nextQuestion()}>
           <Icon name="arrow-forward" />
           </Button>
         </Right>
