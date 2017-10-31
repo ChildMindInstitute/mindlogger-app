@@ -19,7 +19,8 @@ import ActivityScreen from './containers/activity/';
 
 //Modules
 
-import SurveyApp from './modules/survey';
+import SurveyScenes from './modules/survey';
+import AudioScenes from './modules/audio/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -98,7 +99,8 @@ class AppNavigator extends Component {
             <Scene key="root" hideNavBar>
               <Scene key="home" component={Home} initial={true} />
               <Scene key="activity" component={ActivityScreen} />
-              {SurveyApp}
+              {SurveyScenes}
+              {AudioScenes}
             </Scene>
           </RouterWithRedux>
         </Drawer>

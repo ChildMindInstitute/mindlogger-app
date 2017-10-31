@@ -4,9 +4,11 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import SurveyStartScreen from './containers/SurveyStartScreen';
 import SurveyBasicQuestionScreen from './containers/SurveyBasicQuestionScreen';
-import SurveyBasicQuestionSummaryScreen from './containers/SurveyBasicQuestionSummaryScreen';
+import SurveyBasicSummaryScreen from './containers/SurveyBasicSummaryScreen';
+import SurveyTableSummaryScreen from './containers/SurveyTableSummaryScreen';
 import SurveyBasicAccordionScreen from './containers/SurveyBasicAccordionScreen';
 import SurveyTableScreen from './containers/SurveyTableScreen';
+import SurveyTableAccordionScreen from './containers/SurveyTableAccordionScreen';
 import SurveyBasicAddScreen from './containers/add/BasicAddScreen';
 import SurveyTableAddScreen from './containers/add/TableAddScreen'
 import SurveyBasicEditQuestionScreen from './containers/add/BasicEditQuestionScreen';
@@ -32,9 +34,11 @@ export default (
   [
   <Scene key="survey" component={SurveyStartScreen}/>,
   <Scene key="survey_question" component={SurveyBasicQuestionScreen} title="Question"/>,
-  <Scene key="survey_question_summary" component={SurveyBasicQuestionSummaryScreen} title="Question"/>,
+  <Scene key="survey_question_summary" component={SurveyBasicSummaryScreen} title="Question"/>,
   <Scene key="survey_accordion" component={SurveyBasicAccordionScreen} title="Accordion"/>,
-  <Scene key="survey_table" component={SurveyTableScreen} title="Table"/>,
+  <Scene key="survey_table_question" component={SurveyTableScreen} title="Table"/>,
+  <Scene key="survey_table_accordion" component={SurveyTableAccordionScreen} title="Table"/>,
+  <Scene key="survey_table_summary" component={SurveyTableSummaryScreen} title="Question"/>,
   <Scene key="survey_basic_add" component={SurveyBasicAddScreen} title="Survey"/>,
   <Scene key="survey_basic_edit_question" component={SurveyBasicEditQuestionScreen} title="Question"/>,
   <Scene key="survey_table_add" component={SurveyTableAddScreen} title="Survey"/>,

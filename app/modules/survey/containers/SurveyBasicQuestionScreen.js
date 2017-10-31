@@ -46,7 +46,12 @@ class SurveyBasicQuestionScreen extends Component {
   prevQuestion = () => {
     let {questionIndex, survey, setSurvey} = this.props
     let {questions, answers} = survey
-    Actions.replace("survey_question", { questionIndex:questionIndex-1})
+    questionIndex = questionIndex - 1
+    if(questionIndex>=0) {
+      Actions.replace("survey_question", { questionIndex:questionIndex })
+    } else {
+      Actions.pop()
+    }
   }
 
   renderQuestion() {

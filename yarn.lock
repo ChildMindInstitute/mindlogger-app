@@ -4406,6 +4406,10 @@ random-bytes@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/random-bytes/-/random-bytes-1.0.0.tgz#4f68a1dc0ae58bd3fb95848c30324db75d64360b"
 
+random-string@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/random-string/-/random-string-0.2.0.tgz#a46e4375352beda9a0d7b0d19ed6d321ecd1d82d"
+
 randomatic@^1.1.3:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/randomatic/-/randomatic-1.1.7.tgz#c7abe9cc8b87c0baa876b19fde83fd464797e38c"
@@ -4478,6 +4482,14 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+"react-native-audio@https://github.com/jsierles/react-native-audio.git":
+  version "3.2.2"
+  resolved "https://github.com/jsierles/react-native-audio.git#3225338e2abab1350db5060d00c9d13b79c825af"
+
+react-native-audiowaveform@^1.0.51:
+  version "1.0.51"
+  resolved "https://registry.yarnpkg.com/react-native-audiowaveform/-/react-native-audiowaveform-1.0.51.tgz#264cba1a183f0690ad075a4c3a5ca4251220d8db"
+
 react-native-button@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.1.0.tgz#a39e23292922afeea4f7be141dd43e18f1b51876"
@@ -4538,6 +4550,10 @@ react-native-navigation-redux-helpers@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/react-native-navigation-redux-helpers/-/react-native-navigation-redux-helpers-0.5.0.tgz#2cfa39422c5a8973ab8037963473ca89bc7ce0c5"
 
+react-native-orientation@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-orientation/-/react-native-orientation-3.1.0.tgz#ce470fe44a9a47df5be4995b01a1089d3f4a033e"
+
 react-native-progress-bar-classic@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-progress-bar-classic/-/react-native-progress-bar-classic-1.2.1.tgz#ec419449d075fb868152d7eb9ae64b6250cd34fa"
@@ -4559,6 +4575,10 @@ react-native-scrollable-tab-view@^0.6.0:
   resolved "https://registry.yarnpkg.com/react-native-scrollable-tab-view/-/react-native-scrollable-tab-view-0.6.7.tgz#3a5fe8a4bd5bc7eb023f306099323bbd9cc284a2"
   dependencies:
     react-timer-mixin "^0.13.3"
+
+react-native-sound@^0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.10.4.tgz#242286558f457e023dbed42e8c6cbe52cfd313d4"
 
 react-native-tab-view@^0.0.69:
   version "0.0.69"

@@ -2,6 +2,8 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, Button } from 'native-base';
 import InputNumber from 'rc-input-number';
+import AudioRecord from './AudioRecord';
+
 export const FormInputItem = ({ input, label, stackedLabel, floatingLabel,style, name, ...inputProps , meta: { touched, error, warning } }) => {
     var hasError= false;
     if(error !== undefined){
@@ -112,11 +114,14 @@ export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,
           </Item> )
 }
 
-export default {
-  FormInputItem,
-  FormInputNumberItem,
-  FormSwitchItem,
-  FormRadioGroup,
-  FormPickerGroup,
-  FormRadioButtonGroup
+export const FormInputAudio = ({ input, stackedLabel, label, style, name, ...inputProps , meta: { touched, error, warning } }) => {
+  var hasError= false;
+  if(error !== undefined){
+    hasError= true;
+  }
+  return( <View stackedLabel={stackedLabel} style={style} error= {hasError}>
+              <Text>{label}</Text>
+              <AudioRecord onRecordFile={(filePath)=>input.onChange(filePath)} path={input.value}/>
+              {hasError ? <Text>{error}</Text> : <Text />}
+          </View> )
 }

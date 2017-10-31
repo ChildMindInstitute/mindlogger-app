@@ -14,17 +14,32 @@ import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 
-class SurveyBasicQuestionSummaryScreen extends Component {
+class SurveyTableSummaryScreen extends Component {
   constructor(props) {
     super(props) 
   }
   componentWillMount() {
+    const {questions, answers} = this.survey
+    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
+    let data = {}
+    questions.forEach((question, idx) => {
+      data[idx] = answers[idx]
+    })
+    ds.cloneWithRowsAndSections(answers)
+  }
+
+  _renderRow = (data, secId, rowId) => {
+    const {questions, answers} = this.survey
+    let answer = answers[secId]
+    let question = questions[secId]
+    return (<View>{question.rows[rowId].text}: {answer[rowId]}</View>)
   }
   onSelect(questionIndex) {
     Actions.replace("survey_question", { questionIndex })
   }
   render() {
     const {survey} = this.props
+    
     const {questions, answers} = survey
     return (
       <Container>
@@ -41,11 +56,12 @@ class SurveyBasicQuestionSummaryScreen extends Component {
       </Header>
       <Content padder style={baseTheme.content}>
         <H1 style={{textAlign:'center'}}>Responses</H1>
-        <List>
-        {
-          questions.map((question, idx) => this._renderRow(idx, question, answers[idx]))
-        }
-        </List>
+        <List
+          dataSource={ds.cloneWithRowsAndSections()}
+          renderRow={this._renderRow}
+          renderSectionHeader={this._renderSectionHeader}
+          enableEmptySections
+        />
         <Button block full onPress={() => Actions.pop()}><Text>Done</Text></Button>
       </Content>
       </Container>
@@ -92,4 +108,4 @@ export default connect(state => ({
   survey: state.survey.survey_in_action,
 }),
   (dispatch) => bindActionCreators(surveyActions, dispatch)
-)(SurveyBasicQuestionSummaryScreen);
+)(SurveyTableSummaryScreen);

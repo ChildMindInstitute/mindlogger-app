@@ -46,6 +46,10 @@ class ActivityScreen extends Component {
           Actions.push("survey_basic_add");
         } else if(buttonIndex == 1) {
           Actions.survey_table_add()
+        } else if(buttonIndex == 2) {
+          Actions.push("audio_add_screen")
+        } else if(buttonIndex == 3) {
+          
         }
       }
     )
@@ -75,11 +79,20 @@ class ActivityScreen extends Component {
       const {surveys, setSurvey} = this.props
       const survey = surveys[rowId]
       setSurvey({...survey, answers:[]})
-      if(survey.accordion){
-        Actions.survey_accordion()
+      if(survey.mode == 'table') {
+        if(survey.accordion){
+          Actions.survey_table_accordion()
+        } else {
+          Actions.survey_table_question({ questionIndex:0})
+        }
       } else {
-        Actions.survey_question({ questionIndex:0})
+        if(survey.accordion){
+          Actions.survey_accordion()
+        } else {
+          Actions.survey_question({ questionIndex:0})
+        }
       }
+      
     }
   }
 
@@ -179,7 +192,7 @@ class ActivityScreen extends Component {
 
         <Content>
           <List
-            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys, drawing:[], voice:[]})}
+            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys, drawing:[], voice:this.props.audios})}
             renderRow={this._renderRow}
             renderLeftHiddenRow={this._renderLeftHiddenRow}
             renderRightHiddenRow={this._renderRightHiddenRow}
@@ -205,6 +218,8 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   surveys: (state.survey && state.survey.surveys) || [],
+  audios: (state.audio && state.audio.audios) || [],
+  drawings: (state.drawing && state.drawing.drawings) || [],
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
 });
