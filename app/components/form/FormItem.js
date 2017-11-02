@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, Button } from 'native-base';
 import InputNumber from 'rc-input-number';
-import AudioRecord from './AudioRecord';
+import AudioRecord from '../audio/AudioRecord';
 
 export const FormInputItem = ({ input, label, stackedLabel, floatingLabel,style, name, ...inputProps , meta: { touched, error, warning } }) => {
     var hasError= false;
@@ -54,7 +54,7 @@ export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLa
 export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }) => {
   var hasError= false;
   return (<Item >{options.map((option, idx)=>(
-    <Button key={idx} style={{flex:1, margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value}>
+    <Button key={idx} style={{flex:1, margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value} success={input.value == option.value}>
     <Body><Text style={{textAlign: "center" }}>{option.text}</Text></Body>
     </Button>
       ))}</Item>)

@@ -137,6 +137,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-audio-toolkit')
     compile project(':react-native-sound')
     compile project(':react-native-orientation')
     compile project(':react-native-audiowaveform')

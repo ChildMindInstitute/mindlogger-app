@@ -12,8 +12,8 @@ const questionInitialState = {
   title: "",
   rows_count: 1,
   cols_count: 1,
-  rows: [],
-  cols: [],
+  rows: [{text:''}],
+  cols: [{text:''}],
 }
 class SurveyTableEditQuestionForm extends Component {
 
@@ -22,17 +22,7 @@ class SurveyTableEditQuestionForm extends Component {
     }
 
     renderRows = ({fields, label, count, meta: {error, submitFailed}}) => {
-        if(fields.length>count) {
-            for(var i=0;i<fields.length-count;i++)
-            {
-                fields.pop()
-            }
-        } else if(fields.length<count) {
-            for(var i=0;i<count-fields.length;i++)
-            {
-                fields.push({})
-            }
-        }
+
         return (<View padder>
             {fields.map((member,index) => (
                 <Field key={index} inlineLabel label={`${label} ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
@@ -41,14 +31,18 @@ class SurveyTableEditQuestionForm extends Component {
     }
 
     render() {
-      const { handleSubmit, onSubmit, submitting, reset } = this.props;
-      let question_type = this.props.question_type || (this.props.initialValues && this.props.initialValues.type)
+      const { handleSubmit, onSubmit, submitting, reset, initialValues } = this.props;
+      let data = {...questionInitialState}
+      let rows = this.props.rows || data.rows
+      let cols = this.props.cols || data.cols
+      console.log(rows, cols)
+      let question_type = this.props.question_type || (initialValues && initialValues.type)
       return (
             <Form>
             <Field name="title" type="text" placeholder="Add a question" component={FormInputItem} />
             <Field name="rows_count" label="Number of rows" min={1} component={FormInputNumberItem} />
             <Field name="cols_count" label="Number of cols" min={1} component={FormInputNumberItem} />
-            <FieldArray name="rows" label="Row" count={this.props.rows_count} component={this.renderRows}/>
+            <FieldArray name="rows" label="Row" count={this.props.rows_count} component={this.renderRows} value={rows}/>
             <Field name="type"
             label="For Columns"
             component ={FormPickerGroup}
@@ -59,7 +53,7 @@ class SurveyTableEditQuestionForm extends Component {
                 {text:"Single selection",value:"single_sel"},
                 {text:"Multiple selection",value:"multi_sel"},
             ]} />
-            <FieldArray name="cols" label="Col" count={this.props.cols_count} component={this.renderRows}/>
+            <FieldArray name="cols" label="Col" count={this.props.cols_count} component={this.renderRows} value={cols}/>
 
           </Form>)
     }
@@ -71,12 +65,28 @@ SurveyTableEditQuestionReduxForm = reduxForm({
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true
 })(SurveyTableEditQuestionForm)
-
+const expandFields = (fields, count) => {
+    if(fields.length>count) {
+        for(var i=0;i<fields.length-count;i++)
+        {
+            fields.pop()
+        }
+    } else if(fields.length<count) {
+        for(var i=0;i<count-fields.length;i++)
+        {
+            fields.push({})
+        }
+    }
+}
 const selector = formValueSelector('survey-table-edit-question')
 SurveyTableEditQuestionValueForm = connect(
   state => {
-    const {rows_count, cols_count} = selector(state, 'rows_count', 'cols_count')
-    return {rows_count, cols_count}
+    let {rows_count, cols_count, rows, cols} = selector(state, 'rows_count', 'cols_count', 'rows', 'cols')
+    rows = rows || []
+    expandFields(rows, rows_count)
+    cols = cols || []
+    expandFields(cols, cols_count)
+    return {rows_count, cols_count, rows, cols}
   }
 )(SurveyTableEditQuestionReduxForm)
 
@@ -176,9 +186,6 @@ class SurveyTableEditQuestionScreen extends Component {
                     <Subtitle>Table {survey.accordion ? "accordion" : "sequential"} survey</Subtitle>
                 </Body>
                 <Right>
-                    <Button transparent onPress={() => Actions.pop()}>
-                    <Icon name="trash" />
-                    </Button>
                 </Right>
             </Header>
             <Content padder>
@@ -192,7 +199,7 @@ class SurveyTableEditQuestionScreen extends Component {
                 <Text>Delete</Text>
                 </Button>
             </Row>
-            <Button block style={{ margin: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
+            <Button block style={{ marginLeft: 15, marginRight: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
             
             
             </Content>

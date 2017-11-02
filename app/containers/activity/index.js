@@ -10,6 +10,7 @@ import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import * as surveyActions from '../../modules/survey/actions';
+import * as audioActions from '../../modules/audio/actions';
 
 import styles from './styles';
 
@@ -47,7 +48,7 @@ class ActivityScreen extends Component {
         } else if(buttonIndex == 1) {
           Actions.survey_table_add()
         } else if(buttonIndex == 2) {
-          Actions.push("audio_add_screen")
+          Actions.push("audio_add")
         } else if(buttonIndex == 3) {
           
         }
@@ -64,13 +65,16 @@ class ActivityScreen extends Component {
       } else {
         Actions.push("survey_basic_add", {surveyIdx:rowId})
       }
-      
+    } else if(secId == 'voice') {
+      Actions.push("audio_add", {audioIdx:rowId})
     }
   }
 
   deleteActivity(secId, rowId) {
     if(secId === 'surveys') {
       this.props.deleteSurvey(rowId)
+    } else if(secId === 'voice') {
+      this.props.deleteAudioActivity(rowId)
     }
   }
 
@@ -92,11 +96,16 @@ class ActivityScreen extends Component {
           Actions.survey_question({ questionIndex:0})
         }
       }
-      
+    } else if(secId === 'voice') {
+      const {audios, setAudio} = this.props
+      let audio = {...audios[rowId]}
+      setAudio(audio)
+      Actions.push("audio_start")
     }
   }
 
   editActivityDetail(secId, rowId) {
+    console.log(secId)
     if(secId == 'surveys') {
       const survey = this.props.surveys[rowId]
       if(survey.mode == 'table') {
@@ -159,6 +168,7 @@ class ActivityScreen extends Component {
   }
 
   _renderLeftHiddenRow = (data, secId, rowId, rowMap) => {
+
     return (
       <View style={{flexDirection:'row', height:63}}>
         <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
@@ -169,9 +179,9 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const {surveys} = this.props;
+    const {surveys, audios} = this.props;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
-    
+    console.log(audios)
     return (
       <Container style={styles.container}>
         <Header>
@@ -192,7 +202,7 @@ class ActivityScreen extends Component {
 
         <Content>
           <List
-            dataSource={ds.cloneWithRowsAndSections({surveys:this.props.surveys, drawing:[], voice:this.props.audios})}
+            dataSource={ds.cloneWithRowsAndSections({surveys, drawing:[], voice:audios})}
             renderRow={this._renderRow}
             renderLeftHiddenRow={this._renderLeftHiddenRow}
             renderRightHiddenRow={this._renderRightHiddenRow}
@@ -212,7 +222,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators(surveyActions, dispatch)
+    ...bindActionCreators({...surveyActions, ...audioActions}, dispatch)
   };
 }
 

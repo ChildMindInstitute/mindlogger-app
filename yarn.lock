@@ -241,7 +241,7 @@ async@^1.4.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.1.4, async@^2.4.0:
+async@^2.0.0, async@^2.1.4, async@^2.4.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -1933,6 +1933,10 @@ event-emitter@~0.3.5:
 event-target-shim@^1.0.5:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-1.1.1.tgz#a86e5ee6bdaa16054475da797ccddf0c55698491"
+
+eventemitter3@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
 
 exec-sh@^0.2.0:
   version "0.2.1"
@@ -4482,13 +4486,21 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+"react-native-audio-toolkit@https://github.com/futurice/react-native-audio-toolkit.git":
+  version "1.0.5"
+  resolved "https://github.com/futurice/react-native-audio-toolkit.git#1b157c4434bbb262e824b94924ebcde9092c0bfa"
+  dependencies:
+    async "^2.0.0"
+    eventemitter3 "^1.2.0"
+    lodash "^4.13.1"
+
 "react-native-audio@https://github.com/jsierles/react-native-audio.git":
   version "3.2.2"
   resolved "https://github.com/jsierles/react-native-audio.git#3225338e2abab1350db5060d00c9d13b79c825af"
 
-react-native-audiowaveform@^1.0.51:
+"react-native-audiowaveform@https://github.com/erik-ilyin/react-native-audiowaveform.git":
   version "1.0.51"
-  resolved "https://registry.yarnpkg.com/react-native-audiowaveform/-/react-native-audiowaveform-1.0.51.tgz#264cba1a183f0690ad075a4c3a5ca4251220d8db"
+  resolved "https://github.com/erik-ilyin/react-native-audiowaveform.git#352adb7f6fdbb9685550b2e2110847897ed7b82d"
 
 react-native-button@^2.0.0:
   version "2.1.0"
@@ -4557,6 +4569,10 @@ react-native-orientation@^3.1.0:
 react-native-progress-bar-classic@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-progress-bar-classic/-/react-native-progress-bar-classic-1.2.1.tgz#ec419449d075fb868152d7eb9ae64b6250cd34fa"
+
+react-native-progress-circle@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-progress-circle/-/react-native-progress-circle-2.0.0.tgz#26c883cda380690a50baa446ee39a48d31cfabce"
 
 react-native-router-flux@^4.0.0-beta.21:
   version "4.0.0-beta.22"

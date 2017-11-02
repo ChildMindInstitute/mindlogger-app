@@ -21,7 +21,7 @@ class AudioAddScreen extends Component {
   }
 
   onAddAudio = (body) => {
-    return this.props.addAudio({...body, 'activity_type':'audio', mode: 'basic'})
+    return this.props.addAudio({...body, 'activity_type':'audio'})
   }
 
   componentWillMount() {
@@ -61,7 +61,7 @@ class AudioAddScreen extends Component {
 const mapDispatchToProps = (dispatch) => ({
   addAudio: body => {
     dispatch(addAudioActivity(body))
-    Actions.replace("audio_basic_edit_question",{audioIdx:-1, questionIdx:0})
+    Actions.pop()
   },
   updateAudio: (audioIdx, body) => dispatch(updateAudioActivity(audioIdx, body))
 })

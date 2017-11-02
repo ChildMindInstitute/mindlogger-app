@@ -16,6 +16,7 @@ import Home from './components/home/';
 import SplashPage from './components/splashscreen/';
 import SideBar from './components/sidebar';
 import ActivityScreen from './containers/activity/';
+import Login from './containers/login';
 
 //Modules
 
@@ -97,8 +98,10 @@ class AppNavigator extends Component {
           />
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
-              <Scene key="home" component={Home} initial={true} />
-              <Scene key="activity" component={ActivityScreen} />
+              <Scene key="home" component={Home} initial={true}/>
+              <Scene key="login" component={Login}/>
+              <Scene key="sign_up" component={Login}/>
+              <Scene key="activity" component={ActivityScreen}/>
               {SurveyScenes}
               {AudioScenes}
             </Scene>

@@ -1,5 +1,6 @@
 import {REHYDRATE} from 'redux-persist/constants';
 import * as types from './actionTypes';
+import randomString from 'random-string';
 
 const activityInitialState = {
 };
@@ -17,13 +18,14 @@ export default function audioReducers(state = initialState, action = {}) {
       else
         return state
     case types.ADD_AUDIO:
-      audios.push({...action.data, ...activityInitialState})
+      audios.push({...action.data, ...activityInitialState, uuid: randomString({length:20})})
       return {
         ...state,
         audios
       }
     case types.UPDATE_AUDIO:
-      audios[action.index] ={ ...audio[action.index], ...action.data}
+      audios[action.index] ={ ...audios[action.index], ...action.data}
+      console.log("UPDATE", audios)
       return {
         ...state,
         audios
@@ -35,11 +37,11 @@ export default function audioReducers(state = initialState, action = {}) {
         audios
       }
     case types.SET_AUDIO:
-      return {
-        ...state,
-        audio_in_action: action.data
-      }
-      break;
+        console.log("SET", action.data)
+        return {
+            ...state,
+            audio_in_action: action.data
+        }
     default:
       return state;
   }

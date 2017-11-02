@@ -20,7 +20,7 @@ class SurveyEditQuestionForm extends Component {
     renderRows = ({fields, meta: {error, submitFailed}}) => {
       return (<View padder>
           {fields.map((member,index) => (
-            <Field key={index} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
+            <Row key={index}><Field style={{flex:1}} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/><Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button></Row>
           ))}
           <Row padder><Right><Button onPress={()=> fields.push({text:'', value:fields.length})}><Text>Add choice</Text></Button></Right></Row>
         </View>)
@@ -169,7 +169,7 @@ class SurveyBasicEditQuestionScreen extends Component {
                     <Text>Delete</Text>
                     </Button>
                 </Row>
-                <Button block style={{ margin: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
+                <Button block style={{ marginLeft: 15, marginRight: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
             </Content>
         </Container>
         );

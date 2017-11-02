@@ -65,6 +65,7 @@
 		62CE73B0C7D14F1A863769A6 /* libOGReactNativeWaveform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C5651AF33E4228BEEC843A /* libOGReactNativeWaveform.a */; };
 		84E1EEA002BC495693BD8E5E /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B2C5BCB9B0448C095A49CFF /* libRCTOrientation.a */; };
 		6536E13ED0344E5DA24BCF84 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 88935E8FF6EC4D31B38D6301 /* libRNSound.a */; };
+		DDF81C9C22754FD3BAAC29D8 /* libReactNativeAudioToolkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 70488BCA5D7247D4B376B923 /* libReactNativeAudioToolkit.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -389,6 +390,8 @@
 		3B2C5BCB9B0448C095A49CFF /* libRCTOrientation.a */ = {isa = PBXFileReference; name = "libRCTOrientation.a"; path = "libRCTOrientation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		1C7380CE58794A2CB5C43365 /* RNSound.xcodeproj */ = {isa = PBXFileReference; name = "RNSound.xcodeproj"; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		88935E8FF6EC4D31B38D6301 /* libRNSound.a */ = {isa = PBXFileReference; name = "libRNSound.a"; path = "libRNSound.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		9857FCBC8B434EBE89094B96 /* ReactNativeAudioToolkit.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeAudioToolkit.xcodeproj"; path = "../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/ReactNativeAudioToolkit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		70488BCA5D7247D4B376B923 /* libReactNativeAudioToolkit.a */ = {isa = PBXFileReference; name = "libReactNativeAudioToolkit.a"; path = "libReactNativeAudioToolkit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +426,7 @@
 				62CE73B0C7D14F1A863769A6 /* libOGReactNativeWaveform.a in Frameworks */,
 				84E1EEA002BC495693BD8E5E /* libRCTOrientation.a in Frameworks */,
 				6536E13ED0344E5DA24BCF84 /* libRNSound.a in Frameworks */,
+				DDF81C9C22754FD3BAAC29D8 /* libReactNativeAudioToolkit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,6 +668,7 @@
 				8D420BE3C5434C348BCD2FAA /* OGReactNativeWaveform.xcodeproj */,
 				DD4C5B69BB30404A9EAE8FB0 /* RCTOrientation.xcodeproj */,
 				1C7380CE58794A2CB5C43365 /* RNSound.xcodeproj */,
+				9857FCBC8B434EBE89094B96 /* ReactNativeAudioToolkit.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1308,12 +1313,14 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = MDCAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1342,12 +1349,14 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = MDCAppTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1378,6 +1387,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1405,6 +1415,7 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1438,11 +1449,13 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = "MDCApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1481,11 +1494,13 @@
 					"$(SRCROOT)/../node_modules/react-native-audiowaveform/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-orientation/iOS/RCTOrientation/**",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
+					"$(SRCROOT)/../node_modules/react-native-audio-toolkit/ios/ReactNativeAudioToolkit/**",
 				);
 				INFOPLIST_FILE = "MDCApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1526,6 +1541,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.MDCApp-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1550,6 +1566,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

@@ -21,6 +21,7 @@ class SurveyTableInput extends SurveyInputComponent {
         if(answer.length<rows.length) {
             switch(type) {
                 case 'text':
+                case 'number':
                     answer = rows.map((row)=>cols.map( (col) => '' ))
                     break;
                 case 'single_sel':
@@ -58,6 +59,8 @@ class SurveyTableInput extends SurveyInputComponent {
       switch(type) {
             case 'text':
                 return (<View key={colIdx} style={cellStyle}><Input placeholder='Text' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
+            case 'number':
+                return (<View key={colIdx} style={cellStyle}><Input placeholder='0' type='number' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
             case 'single_sel':
                 return (<View key={colIdx} style={cellStyle}><CheckBox checked={answer[rowIdx] == colIdx} onPress={() => this.onChoiceSelect(rowIdx, colIdx) }/></View>)
             case 'multi_sel':

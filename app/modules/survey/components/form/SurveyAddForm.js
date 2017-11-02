@@ -48,7 +48,7 @@ class SurveyAddForm extends Component {
             <Form>
             <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
             <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
-            <Field name="accordion" type="text" label="Sequential/Accordion" component={FormSwitchItem} />
+            <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
             
             <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>
                 <Text>{ initialValues ? "Update" : "Create" }</Text>
