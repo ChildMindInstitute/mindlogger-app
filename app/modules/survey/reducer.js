@@ -1,6 +1,6 @@
 import {REHYDRATE} from 'redux-persist/constants';
 import * as types from './actionTypes';
-
+import randomString from 'random-string';
 const surveyInitialState = {
   questions: [],
   answers: [],
@@ -19,7 +19,7 @@ export default function surveysReducer(state = initialState, action = {}) {
       else
         return state
     case types.ADD_SURVEY:
-      surveys.push({...action.data, ...surveyInitialState})
+      surveys.push({...action.data, ...surveyInitialState, uuid: randomString({length:20})})
       return {
         ...state,
         surveys

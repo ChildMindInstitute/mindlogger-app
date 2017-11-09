@@ -1,15 +1,17 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, Button } from 'native-base';
+import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, CheckBox, Button, Row, ListItem } from 'native-base';
 import InputNumber from 'rc-input-number';
-export const FormInputItem = ({ input, label, stackedLabel, floatingLabel,style, name, ...inputProps , meta: { touched, error, warning } }) => {
+import AudioRecord from '../audio/AudioRecord';
+
+export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, ...props , meta: { touched, error, warning } }) => {
     var hasError= false;
     if(error !== undefined){
       hasError= true;
     }
-    return( <Item stackedLabel={stackedLabel} floatingLabel={floatingLabel} style={style} error= {hasError}>
-                <Label>{label}</Label>
-                <Input {...inputProps} onChangeText={input.onChange} onBlur={input.onBlur} onFocus={input.onFocus} value={input.value}/>
+    return( <Item stackedLabel={stackedLabel} floatingLabel={floatingLabel} style={itemStyle} error= {hasError} last>
+                <Label style={props.style}>{label}</Label>
+                <Input {...props} onChangeText={input.onChange} {...input}/>
                 {hasError ? <Text>{error}</Text> : <Text />}
             </Item> )
 }
@@ -52,7 +54,7 @@ export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLa
 export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }) => {
   var hasError= false;
   return (<Item >{options.map((option, idx)=>(
-    <Button key={idx} style={{flex:1, margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value}>
+    <Button key={idx} style={{flex:1, margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value} success={input.value == option.value}>
     <Body><Text style={{textAlign: "center" }}>{option.text}</Text></Body>
     </Button>
       ))}</Item>)
@@ -112,11 +114,27 @@ export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,
           </Item> )
 }
 
-export default {
-  FormInputItem,
-  FormInputNumberItem,
-  FormSwitchItem,
-  FormRadioGroup,
-  FormPickerGroup,
-  FormRadioButtonGroup
+export const FormInputAudio = ({ input, stackedLabel, label, style, name, ...inputProps , meta: { touched, error, warning } }) => {
+  var hasError= false;
+  if(error !== undefined){
+    hasError= true;
+  }
+  return( <View stackedLabel={stackedLabel} style={style} error= {hasError}>
+              <Text>{label}</Text>
+              <AudioRecord onRecordFile={(filePath)=>input.onChange(filePath)} path={input.value}/>
+              {hasError ? <Text>{error}</Text> : <Text />}
+          </View> )
+}
+
+export const FormInputCheckItem = ({ input, label, style, name, itemStyle, ...props, meta: {touched, error, warning} }) => {
+  var hasError =false;
+  if(error !== undefined) {
+    hasError = true;
+  }
+  return(
+    <ListItem style={itemStyle} noBorder {...props}>
+      <CheckBox {...input} onPress={() => input.onChange(input.value == false)} checked={input.value == true} />
+      <Body><Text style={style}>{label}</Text></Body>
+    </ListItem>
+  )
 }

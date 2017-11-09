@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ImageBackground, Image, View, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Button, H3, Text } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
@@ -29,12 +30,18 @@ class Home extends Component { // eslint-disable-line
             <View style={{ marginTop: 8 }} />
             <H3 style={styles.text}>Login to start</H3>
           </View>
-          <View style={{ marginBottom: 80 }}>
+          <View style={{ marginBottom: 80, flexDirection: 'column' }}>
             <Button
-              style={{ backgroundColor: '#6FAF98', alignSelf: 'center' }}
-              onPress={this.props.openDrawer}
+              style={styles.login}
+              onPress={() => Actions.login()}
             >
               <Text>Login</Text>
+            </Button>
+            <Button
+            style={styles.signup}
+            onPress={() => Actions.sign_up()}
+            >
+            <Text>Signup</Text>
             </Button>
           </View>
         </ImageBackground>

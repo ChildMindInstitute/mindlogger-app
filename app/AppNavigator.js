@@ -16,10 +16,14 @@ import Home from './components/home/';
 import SplashPage from './components/splashscreen/';
 import SideBar from './components/sidebar';
 import ActivityScreen from './containers/activity/';
+import Login from './containers/login';
+import Consent from './containers/login/consent';
+import Signup from './containers/login/signup';
 
 //Modules
 
-import SurveyApp from './modules/survey';
+import SurveyScenes from './modules/survey';
+import AudioScenes from './modules/audio/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -96,9 +100,13 @@ class AppNavigator extends Component {
           />
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
-              <Scene key="home" component={Home} initial={true} />
-              <Scene key="activity" component={ActivityScreen} />
-              {SurveyApp}
+              <Scene key="home" component={Home} initial={true}/>
+              <Scene key="login" component={Login}/>
+              <Scene key="consent" component={Consent}/>
+              <Scene key="sign_up" component={Signup}/>
+              <Scene key="activity" component={ActivityScreen}/>
+              {SurveyScenes}
+              {AudioScenes}
             </Scene>
           </RouterWithRedux>
         </Drawer>

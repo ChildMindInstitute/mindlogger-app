@@ -28,4 +28,14 @@ export default {
     color: '#D8D8D8',
     bottom: 6,
   },
+  login: {
+    backgroundColor: '#6FAF98',
+    alignSelf: 'center',
+    margin: 4,
+  },
+  signup: {
+    backgroundColor: '#FFAF98',
+    alignSelf: 'center',
+    margin: 4,
+  }
 };

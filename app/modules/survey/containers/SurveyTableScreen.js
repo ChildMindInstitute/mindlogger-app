@@ -1,15 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
-
+import { Container, Content, Text, Button, View, Icon, Body, Header, Right, Left, Title, H1, Row } from 'native-base';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-
-import SurveyToggleSelector from '../components/SurveyToggleSelector'
+import Stepbar from '../../../components/stepbar'
+import SurveyTableInput from '../components/SurveyTableInput'
 
 class SurveyTableScreen extends Component {
   constructor(props) {
@@ -18,56 +17,69 @@ class SurveyTableScreen extends Component {
   }
 
   onInputAnswer = (result) => {
-    const {questionIndex} = this.props
-    this.props.postAnswer(questionIndex, result)
-    Actions.survey_table({ questionIndex:questionIndex+1})
-  }
-
-  renderQuestion() {
-    const { questionIndex, questions, answers } = this.props
-    let question = questions[questionIndex]
-    let answer = answers[questionIndex]
-    const { type } = question
-    console.log(question)
-    switch(type) {
-      case 'multi_sel':
-        return (<SurveyToggleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+    let {questionIndex, survey, setSurvey} = this.props
+    let {questions, answers} = survey
+    if(answers.length > questionIndex) {
+      answers[questionIndex] = result
+    } else {
+      answers.push(result)
     }
-    return (
-      <View>
-      </View>
-      )
-
+    setSurvey({...survey, answers})
+    this.nextQuestion()
   }
 
-  renderButtons() {
-    const {questionIndex} = this.props
-    return (
-      <View style={baseTheme.spacedRow}>
-      <Button onPress={() => Actions.pop()} iconLeft transparent  small bordered>
-        <Icon name='arrow-back' />
-        <Text>Back</Text>
-      </Button>
-      <Button onPress={() => Actions.survey_table({ questionIndex:questionIndex+1})} iconRight transparent small bordered>
-        <Text>Next</Text>
-        <Icon name='arrow-forward' />
-      </Button>
-      </View>
-      )
+  nextQuestion = () => {
+    let {questionIndex, survey, setSurvey} = this.props
+    let {questions, answers} = survey
+    questionIndex = questionIndex + 1
+    if(questionIndex<questions.length) {
+      Actions.replace("survey_table_question", { questionIndex:questionIndex})
+    } else {
+      //Actions.replace("survey_table_question_summary")
+      Actions.pop()
+    }
+  }
+
+  prevQuestion = () => {
+    let {questionIndex, survey, setSurvey} = this.props
+    let {questions, answers} = survey
+    questionIndex = questionIndex - 1
+    if(questionIndex>=0) {
+      Actions.replace("survey_table_question", { questionIndex:questionIndex })
+    } else {
+      Actions.pop()
+    }
   }
 
   render() {
-    
-
+    const { questionIndex, survey } = this.props
+    const length = survey.questions.length
+    const index = questionIndex + 1
+    const progressValue = index/length
+    let data = {question: survey.questions[questionIndex], answer: survey.answers[questionIndex]}
     return (
       <Container>
-      <Header />
-      <Content style={baseTheme.content}>
-      <View style={baseTheme.paddingView}>
-      {this.renderButtons()}
-      </View>
-      { this.renderQuestion()}
-      
+      <Header>
+        <Left>
+          <Button transparent onPress={() => this.prevQuestion()}>
+          <Icon name="arrow-back" />
+          </Button>
+        </Left>
+        <Body style={{flex:2}}>
+            <Title>{survey.title}</Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => this.nextQuestion()}>
+          <Icon name="arrow-forward" />
+          </Button>
+        </Right>
+      </Header>
+      <Content padder style={baseTheme.content}>
+        <SurveyTableInput onSelect={this.onInputAnswer} data={data}/>
+        <View padder style={{marginTop: 20}}>
+          <Stepbar progress={progressValue} barStyle={{backgroundColor: '#aaaaff'}} style={{height: 20, borderColor: '#aaaada'}}/>
+          <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
+        </View>
       </Content>
       </Container>
     )
@@ -75,8 +87,7 @@ class SurveyTableScreen extends Component {
 }
 
 export default connect(state => ({
-    questions: state.survey && state.survey.questions.sample2,
-    answers: state.survey && state.survey.answers
+    survey: state.survey.survey_in_action,
   }),
   (dispatch) => bindActionCreators(surveyActions, dispatch)
 )(SurveyTableScreen);
