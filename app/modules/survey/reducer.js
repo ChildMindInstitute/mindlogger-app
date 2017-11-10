@@ -18,6 +18,8 @@ export default function surveysReducer(state = initialState, action = {}) {
         return {...state, ...survey}
       else
         return state
+    case types.LOAD_SURVEYS:
+      return {...state, surveys: action.data}
     case types.ADD_SURVEY:
       surveys.push({...action.data, ...surveyInitialState, uuid: randomString({length:20})})
       return {

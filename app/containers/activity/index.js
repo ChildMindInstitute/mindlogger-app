@@ -8,6 +8,8 @@ import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
+import { auth, base} from '../../firebase'
+import {fbLoadAllActivity, fbDeleteActivity} from '../../helper'
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import * as surveyActions from '../../modules/survey/actions';
 import * as audioActions from '../../modules/audio/actions';
@@ -23,6 +25,20 @@ class ActivityScreen extends Component {
     navigation: PropTypes.shape({
       key: PropTypes.string,
     }),
+  }
+
+  componentWillMount() {
+    const {user, surveys, loadSurveys} = this.props;
+    base.syncState(`users/${user.uid}`, {
+      context: this,
+      state: 'userInfo'
+    });
+    if(surveys.length == 0) {
+      fbLoadAllActivity('surveys',user.uid).then( data => {
+        if(data && data.length>0)
+          loadSurveys(data)
+      })
+    }
   }
 
   pushRoute(route) {
@@ -65,17 +81,20 @@ class ActivityScreen extends Component {
       } else {
         Actions.push("survey_basic_add", {surveyIdx:rowId})
       }
-    } else if(secId == 'voice') {
+    } else if(secId == 'voices') {
       Actions.push("audio_add", {audioIdx:rowId})
     }
   }
 
   deleteActivity(secId, rowId) {
     if(secId === 'surveys') {
+      const survey = this.props.surveys[rowId]
       this.props.deleteSurvey(rowId)
-    } else if(secId === 'voice') {
+      fbDeleteActivity(secId, survey)
+    } else if(secId === 'voices') {
       this.props.deleteAudioActivity(rowId)
     }
+    
   }
 
   startActivity(secId, rowId) {
@@ -96,7 +115,7 @@ class ActivityScreen extends Component {
           Actions.survey_question({ questionIndex:0})
         }
       }
-    } else if(secId === 'voice') {
+    } else if(secId === 'voices') {
       const {audios, setAudio} = this.props
       let audio = {...audios[rowId]}
       setAudio(audio)
@@ -181,7 +200,6 @@ class ActivityScreen extends Component {
   render() {
     const {surveys, audios} = this.props;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
-    console.log(audios)
     return (
       <Container style={styles.container}>
         <Header>
@@ -202,7 +220,7 @@ class ActivityScreen extends Component {
 
         <Content>
           <List
-            dataSource={ds.cloneWithRowsAndSections({surveys, drawing:[], voice:audios})}
+            dataSource={ds.cloneWithRowsAndSections({surveys, drawings:[], voices:audios})}
             renderRow={this._renderRow}
             renderLeftHiddenRow={this._renderLeftHiddenRow}
             renderRightHiddenRow={this._renderRightHiddenRow}
@@ -232,6 +250,7 @@ const mapStateToProps = state => ({
   drawings: (state.drawing && state.drawing.drawings) || [],
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  user: (state.core && state.core.user)
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

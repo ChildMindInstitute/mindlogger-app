@@ -32,7 +32,7 @@ class LoginForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Email" name="email" style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Email" name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} floatingLabel />
                 <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
                 <Row style={{height: 40}}>
                     <Body>
@@ -60,14 +60,15 @@ LoginReduxForm = reduxForm({
 class Login extends Component { // eslint-disable-line
 
     render() {
-        const {login} = this.props
+        const {login, user} = this.props
+        const {email, password} = user
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
                 <View style={styles.container}>
                     <View style={styles.header}>
                     </View>
-                    <LoginReduxForm onSubmit={login} onForgot={this.onForgot} />
+                    <LoginReduxForm onSubmit={login} onForgot={this.onForgot} initialValues={{email, password}} />
                 </View>
             </Container>
         );
@@ -76,18 +77,32 @@ class Login extends Component { // eslint-disable-line
 
 const mapDispatchToProps = (dispatch) => ({
     login: (body) => {
-        console.log(body)
         return dispatch(loginUser(body)).then(res => {
             console.log(res)
-            Toast.show({text:'Success', position: 'bottom'})
-        }).catch(errors => {
-            console.log(errors)
-            Toast.show({text:'Conenction error', position: 'bottom', type: 'danger'})
+            Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
+            Actions.push('activity')
+        }).catch(err => {
+            console.log(err)
+            let errors = {}
+            Toast.show({text: err.message, position: 'bottom', type: 'danger'})
+            switch(err.code) {
+                case 'auth/wrong-password':
+                    errors.password = err.message
+                    break;
+                case 'auth/wrong-email':
+                    errors.email = err.message
+                    break;
+            }
             throw new SubmissionError(errors)
         })
     }
 })
 
-const mapStateToProps = state => ({navigation: state.cardNavigation, themeState: state.drawer.themeState, routes: state.drawer.routes});
+const mapStateToProps = state => ({
+    navigation: state.cardNavigation,
+    themeState: state.drawer.themeState,
+    routes: state.drawer.routes,
+    user: state.core.user || {},
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

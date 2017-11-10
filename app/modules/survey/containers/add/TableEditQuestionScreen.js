@@ -7,6 +7,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup} from '../../../../components/form/FormItem'
+import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
 
 const questionInitialState = {
   title: "",
@@ -125,7 +126,9 @@ class SurveyTableEditQuestionScreen extends Component {
         if(this.isNext) {
             Actions.replace("survey_table_edit_question",{surveyIdx, questionIdx:(questionIdx + 1)})
         } else {
-            this.popRoute()
+            fbUpdateActivity('surveys', survey).then(result => {
+                Actions.pop()
+            })
         }
         
     }

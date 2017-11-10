@@ -19,7 +19,7 @@ import {
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
-import {createUser} from '../../actions/api';
+import {createUser, updateUserProfile} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
 
@@ -51,15 +51,25 @@ SignUpReduxForm = reduxForm({
 })(SignUpForm)
 
 class SignUp extends Component { // eslint-disable-line
+    onSignUp = ({email, password, displayName}) => {
+        const {signUp, updateUserProfile} = this.props
+        signUp({email, password}).then(user => {
+            updateUserProfile({displayName})
+            base.post(`users/${user.uid}`, {contact: true})
+        }).catch(error => {
+            console.log(error)
+            console.warn(error.message)
+        })
+    }
     render() {
-        const {signUp} = this.props
+        
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
                 <View style={styles.container}>
                     <View style={styles.header}>
                     </View>
-                    <SignUpReduxForm onSubmit={signUp} onForgot={this.onForgot} />
+                    <SignUpReduxForm onSubmit={this.onSignUp} onForgot={this.onForgot} />
                 </View>
             </Container>
         );
@@ -67,14 +77,8 @@ class SignUp extends Component { // eslint-disable-line
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    signUp: (body) => {
-        dispatch(createUser(body)).then(res => {
-            
-        }).catch(errors => {
-            console.log(errors)
-            throw new SubmissionError(errors)
-        })
-    },
+    signUp: (body) => dispatch(createUser(body)),
+    updateUserProfile: (body) => dispatch(updateUserProfile(body)),
 })
 
 const mapStateToProps = state => ({navigation: state.cardNavigation, themeState: state.drawer.themeState, routes: state.drawer.routes});

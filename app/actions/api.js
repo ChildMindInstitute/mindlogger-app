@@ -5,7 +5,7 @@ import * as types from './actionTypes'
 
 export const createUser = (data) => ({
     firebase: 'auth',
-    type: types.LOGIN_USER,
+    type: types.REGISTER_USER,
     data,
 })
 

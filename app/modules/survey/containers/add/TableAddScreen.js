@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
-
+import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
 
 class SurveyTableAddScreen extends Component {
 
@@ -26,14 +26,18 @@ class SurveyTableAddScreen extends Component {
   }
 
   onAddSurvey = (body) => {
-    return this.props.addSurvey({...body, 'activity_type':'survey', mode: 'table'})
+    const data = {...body, 'activity_type':'survey', mode: 'table'}
+    const key = fbAddActivity('surveys', data)
+    this.props.addSurvey({...data, key})
   }
 
   onEditSurvey = (body) => {
     let {surveys, surveyIdx} = this.props
     let survey = {...this.state.survey, ...body}
     this.props.updateSurvey(surveyIdx, survey)
-    Actions.pop()
+    fbUpdateActivity('surveys', survey).then( result => {
+      Actions.pop()
+    })
   }
 
   componentWillMount() {

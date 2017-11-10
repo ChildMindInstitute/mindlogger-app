@@ -8,6 +8,13 @@ export function postAnswer(index, result) {
   };
 }
 
+export function loadSurveys(data) {
+  return {
+    type: types.LOAD_SURVEYS,
+    data
+  }
+}
+
 export const addSurvey = (data) => ({
   type: types.ADD_SURVEY,
   data

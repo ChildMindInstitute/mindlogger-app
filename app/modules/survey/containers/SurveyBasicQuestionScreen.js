@@ -4,11 +4,11 @@ import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Titl
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
+import * as Progress from 'react-native-progress';
 
 import baseTheme from '../../../theme'
 import {setSurvey} from '../actions'
 
-import Stepbar from '../../../components/stepbar'
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
@@ -101,7 +101,7 @@ class SurveyBasicQuestionScreen extends Component {
       <Content padder style={baseTheme.content}>
         { this.renderQuestion()}
       <View padder style={{marginTop: 20}}>
-        <Stepbar progress={progressValue} barStyle={{backgroundColor: '#aaaaff'}} style={{height: 20, borderColor: '#aaaada'}}/>
+        <Progress.Bar progress={progressValue} width={null} height={20}/>
         <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
       </View>
       </Content>

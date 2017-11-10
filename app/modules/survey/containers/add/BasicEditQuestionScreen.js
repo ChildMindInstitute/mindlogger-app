@@ -6,6 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../../../components/form/FormItem'
+import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
 
 const questionInitialState = {
   type: "text",
@@ -97,7 +98,9 @@ class SurveyBasicEditQuestionScreen extends Component {
 			questionIdx = questionIdx + 1
 			Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
 		} else {
-			Actions.pop()
+            fbUpdateSurvey(survey).then(result => {
+                Actions.pop()
+            })
 		}
 		
     }

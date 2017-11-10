@@ -1,11 +1,11 @@
-import types from './actionTypes'
+import * as types from './actionTypes'
 
 export const setUserLocal = (user) => ({
     type: types.SET_USER,
-    user
+    data:user
 })
 
 export const updateUserLocal = (user) => ({
     type: types.UPDATE_USER,
-    user
+    data:user
 })

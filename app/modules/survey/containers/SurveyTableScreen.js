@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import { Container, Content, Text, Button, View, Icon, Body, Header, Right, Left, Title, H1, Row } from 'native-base';
+import * as Progress from 'react-native-progress';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-import Stepbar from '../../../components/stepbar'
+
 import SurveyTableInput from '../components/SurveyTableInput'
 
 class SurveyTableScreen extends Component {
@@ -77,7 +78,7 @@ class SurveyTableScreen extends Component {
       <Content padder style={baseTheme.content}>
         <SurveyTableInput onSelect={this.onInputAnswer} data={data}/>
         <View padder style={{marginTop: 20}}>
-          <Stepbar progress={progressValue} barStyle={{backgroundColor: '#aaaaff'}} style={{height: 20, borderColor: '#aaaada'}}/>
+          <Progress.Bar progress={progressValue} width={null} height={20}/>
           <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
         </View>
       </Content>

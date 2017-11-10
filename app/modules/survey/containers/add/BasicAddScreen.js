@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
-
+import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
 
 class SurveyBasicAddScreen extends Component {
 
@@ -26,11 +26,18 @@ class SurveyBasicAddScreen extends Component {
     let {surveyIdx} = this.props
     let survey = {...this.state.survey, ...body}
     this.props.updateSurvey(surveyIdx, survey)
-    Actions.pop()
+    fbUpdateActivity('surveys', survey).then(result => {
+      Actions.pop()
+    })
   }
 
   onAddSurvey = (body) => {
-    return this.props.addSurvey({...body, 'activity_type':'survey', mode: 'basic'})
+    const {addSurvey, user} = this.props
+    let data = {...body, questions: [], 'activity_type':'survey', mode: 'basic'}
+    const key = fbAddActivity('surveys', data, result => {
+      console.log("pushed", result)
+    })
+    return addSurvey({...data, key})
   }
 
   componentWillMount() {
@@ -81,6 +88,7 @@ const mapStateToProps = state => ({
   surveys: state.survey.surveys,
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  user: state.core.user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyBasicAddScreen);

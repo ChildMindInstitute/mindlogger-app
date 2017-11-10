@@ -1,6 +1,6 @@
 import { auth, base, database} from '../firebase'
 import {saveUserLocal} from '../actions/coreActions'
-import types from '../actions/actionTypes'
+import * as types from '../actions/actionTypes'
 
 const methods = {
     REGISTER_USER: ({email, password}) => auth.createUserWithEmailAndPassword(email, password),
@@ -19,8 +19,6 @@ export default store => next => action => {
     let promise
     if(action.firebase == 'auth') {
         fbMethod = methods[action.type]
-        console.log(action.type, firebase)
-        console.log(methods)
         promise = fbMethod(action.data)
     } else if (action.method) {
         fbMethod = methods[action.method]
@@ -30,7 +28,7 @@ export default store => next => action => {
         return promise.then((result) => {
             let response = result || true
             store.dispatch({...action, response, status: 'COMPLETE'})
-            return Promise.resolve(user)
+            return Promise.resolve(result)
         }).catch((error) => {
             store.dispatch({...action, error, status: 'ERROR'})
             return Promise.reject(error)
