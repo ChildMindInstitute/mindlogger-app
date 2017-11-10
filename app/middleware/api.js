@@ -5,8 +5,8 @@ import * as types from '../actions/actionTypes'
 const methods = {
     REGISTER_USER: ({email, password}) => auth.createUserWithEmailAndPassword(email, password),
     LOGIN_USER: ({email, password}) => auth.signInWithEmailAndPassword(email, password),
-    UPDATE_USER_PASSWORD: ({password}) => auth.updatePassword(password),
-    UPDATE_USER_PROFILE: (body) => auth.updateUserProfile(body),
+    UPDATE_USER_PASSWORD: ({password}) => auth.currentUser.updatePassword(password),
+    UPDATE_USER_PROFILE: (body) => auth.currentUser.updateProfile(body),
     LOGOUT_USER: (body) => auth.signOut(),
     POST: (path, data) => base.post(path, {data}),
     GET: (path, options) => base.fetch(path, options),

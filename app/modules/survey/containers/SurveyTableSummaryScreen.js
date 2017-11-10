@@ -8,6 +8,7 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
+import {fbSaveAnswer} from '../../../helper'
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
@@ -37,6 +38,10 @@ class SurveyTableSummaryScreen extends Component {
   onSelect(questionIndex) {
     Actions.replace("survey_question", { questionIndex })
   }
+
+  onDone() {
+    fbSaveAnswer(this.props.survey)
+  }
   render() {
     const {survey} = this.props
     
@@ -62,7 +67,7 @@ class SurveyTableSummaryScreen extends Component {
           renderSectionHeader={this._renderSectionHeader}
           enableEmptySections
         />
-        <Button block full onPress={() => Actions.pop()}><Text>Done</Text></Button>
+        <Button block full onPress={() => this.onDone()}><Text>Done</Text></Button>
       </Content>
       </Container>
     );

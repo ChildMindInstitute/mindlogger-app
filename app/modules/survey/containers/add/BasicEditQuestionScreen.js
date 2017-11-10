@@ -80,17 +80,17 @@ class SurveyBasicEditQuestionScreen extends Component {
     }
 
     updateQuestion = (body) => {
-        let {surveyIdx, questionIdx, surveys} = this.props
+        let {surveyIdx, questionIdx, surveys, user} = this.props
         if(surveyIdx < 0) {
-        surveyIdx = surveys.length + surveyIdx
+            surveyIdx = surveys.length + surveyIdx
         }
         console.log(surveyIdx)
         let survey = surveys[surveyIdx]
         let questions = survey.questions || []
         if(questions.length>questionIdx) {
-        questions[questionIdx] = body
+            questions[questionIdx] = body
         } else {
-        questions.push(body)
+            questions.push(body)
         }
         survey.questions = questions
 		this.props.updateSurvey(surveyIdx, survey)
@@ -98,9 +98,14 @@ class SurveyBasicEditQuestionScreen extends Component {
 			questionIdx = questionIdx + 1
 			Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
 		} else {
-            fbUpdateSurvey(survey).then(result => {
+            if(user.role == 'clinician') {
+                fbUpdateActivity('surveys', survey).then(result => {
+                    Actions.pop()
+                })
+            } else {
                 Actions.pop()
-            })
+            }
+            
 		}
 		
     }
@@ -193,6 +198,7 @@ const mapStateToProps = state => ({
   surveys: state.survey.surveys,
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  user: state.core.user
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyBasicEditQuestionScreen);

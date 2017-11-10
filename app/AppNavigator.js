@@ -19,6 +19,7 @@ import ActivityScreen from './containers/activity/';
 import Login from './containers/login';
 import Consent from './containers/login/consent';
 import Signup from './containers/login/signup';
+import Settings from './containers/settings';
 
 //Modules
 
@@ -104,6 +105,7 @@ class AppNavigator extends Component {
               <Scene key="login" component={Login}/>
               <Scene key="consent" component={Consent}/>
               <Scene key="sign_up" component={Signup}/>
+              <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
               {SurveyScenes}
               {AudioScenes}

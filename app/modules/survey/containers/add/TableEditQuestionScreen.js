@@ -109,7 +109,7 @@ class SurveyTableEditQuestionScreen extends Component {
     }
 
     updateQuestion = (body) => {
-        let {surveyIdx, questionIdx, surveys} = this.props
+        let {surveyIdx, questionIdx, surveys, user} = this.props
         if(surveyIdx < 0) {
         surveyIdx = surveys.length + surveyIdx
         }
@@ -126,9 +126,13 @@ class SurveyTableEditQuestionScreen extends Component {
         if(this.isNext) {
             Actions.replace("survey_table_edit_question",{surveyIdx, questionIdx:(questionIdx + 1)})
         } else {
-            fbUpdateActivity('surveys', survey).then(result => {
+            if(user.role == 'clinician') {
+                fbUpdateActivity('surveys', survey).then(result => {
+                    Actions.pop()
+                })
+            } else {
                 Actions.pop()
-            })
+            }
         }
         
     }
@@ -225,6 +229,7 @@ const mapStateToProps = state => ({
   surveys: state.survey.surveys,
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  user: state.core.user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyTableEditQuestionScreen);

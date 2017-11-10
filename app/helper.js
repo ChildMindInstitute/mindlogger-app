@@ -21,8 +21,22 @@ export const fbDeleteActivity = (module, activity) => {
 export const fbLoadAllActivity = (module, uid) => {
     return base.fetch(module, {
         asArray: true,
+        })
+}
+
+export const fbLoadAllActivityByAuthor = (module, uid) => {
+    return base.fetch(module, {
+        asArray: true,
         queries: {
           orderByChild: 'author',
           equalTo: uid
         }})
+}
+
+export const fbSaveAnswer = (activity, completion) => {
+    let {key, ...data} = activity
+    data.old_key = key
+    data.participant = auth.currentUser.uid
+    var ref = base.push('answers', {data, then: completion})
+    return ref.key
 }

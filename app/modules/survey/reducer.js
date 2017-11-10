@@ -11,6 +11,8 @@ const initialState = {
 }
 export default function surveysReducer(state = initialState, action = {}) {
   let surveys = [...state.surveys]
+  let data = action.data
+  let currentTime = (new Date()).getTime()
   switch (action.type) {
     case REHYDRATE:
       const survey = action.payload.survey
@@ -27,7 +29,8 @@ export default function surveysReducer(state = initialState, action = {}) {
         surveys
       }
     case types.UPDATE_SURVEY:
-      surveys[action.index] ={ ...surveys[action.index], ...action.data}
+      data.updated_at = currentTime
+      surveys[action.index] ={ ...surveys[action.index], ...data}
       return {
         ...state,
         surveys
@@ -39,9 +42,11 @@ export default function surveysReducer(state = initialState, action = {}) {
         surveys
       }
     case types.SET_SURVEY:
+      data = action.data
+      data.updated_at = currentTime
       return {
         ...state,
-        survey_in_action: action.data
+        survey_in_action: data
       }
       break;
     default:

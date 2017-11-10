@@ -9,8 +9,9 @@ import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text ,
 import { Actions } from 'react-native-router-flux';
 
 import { auth, base} from '../../firebase'
-import {fbLoadAllActivity, fbDeleteActivity} from '../../helper'
+import {fbLoadAllActivity, fbDeleteActivity, fbLoadAllActivityByAuthor} from '../../helper'
 import { openDrawer, closeDrawer } from '../../actions/drawer';
+import {updateUserLocal} from '../../actions/coreActions';
 import * as surveyActions from '../../modules/survey/actions';
 import * as audioActions from '../../modules/audio/actions';
 
@@ -27,18 +28,32 @@ class ActivityScreen extends Component {
     }),
   }
 
-  componentWillMount() {
-    const {user, surveys, loadSurveys} = this.props;
-    base.syncState(`users/${user.uid}`, {
-      context: this,
-      state: 'userInfo'
-    });
-    if(surveys.length == 0) {
-      fbLoadAllActivity('surveys',user.uid).then( data => {
-        if(data && data.length>0)
-          loadSurveys(data)
-      })
-    }
+    componentWillMount() {
+        this.setState({})
+        const {user, surveys, loadSurveys, updateUserLocal} = this.props;
+        base.listenTo(`users/${user.uid}`, {
+        context: this,
+        then(userInfo) {
+            this.setState({userInfo})
+            const {role} = userInfo
+            updateUserLocal({...userInfo})
+            if (role == 'clinician') {
+                if (surveys.length == 0) {
+                    fbLoadAllActivityByAuthor('surveys', user.uid).then(data => {
+                        if (data && data.length > 0) 
+                            loadSurveys(data)
+                    })
+                }
+            } else if (role == 'patient') {
+                fbLoadAllActivity('surveys').then(data => {
+                    if (data && data.length > 0) {
+                        loadSurveys(data)
+                    }
+                })
+            }
+        }});
+    
+    
   }
 
   pushRoute(route) {
@@ -198,7 +213,7 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const {surveys, audios} = this.props;
+    const {surveys, audios, user} = this.props;
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
     return (
       <Container style={styles.container}>
@@ -212,9 +227,14 @@ class ActivityScreen extends Component {
             <Title>Activities</Title>
           </Body>
           <Right>
-            <Button transparent onPress={() => this.promptToAddActivity()}>
-              <Icon name="add" />
-            </Button>
+            {
+                user.role == 'clinician' && (
+                    <Button transparent onPress={() => this.promptToAddActivity()}>
+                        <Icon name="add"/>
+                    </Button>
+                )
+            }
+            
           </Right>
         </Header>
 
@@ -240,7 +260,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({...surveyActions, ...audioActions}, dispatch)
+    ...bindActionCreators({...surveyActions, ...audioActions, updateUserLocal}, dispatch)
   };
 }
 

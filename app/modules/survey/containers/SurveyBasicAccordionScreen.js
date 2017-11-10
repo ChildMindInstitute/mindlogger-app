@@ -8,6 +8,7 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
+import {fbSaveAnswer} from '../../../helper'
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
@@ -20,6 +21,10 @@ class SurveyAccordionScreen extends Component {
   }
   componentWillMount() {
     this.setState({expand:{}})
+  }
+  onDone() {
+    fbSaveAnswer(this.props.survey)
+    Actions.pop()
   }
   render() {
     const {survey} = this.props
@@ -43,6 +48,7 @@ class SurveyAccordionScreen extends Component {
         questions.map((question, idx) => this._renderRow(idx, question, answers[idx]))
       }
       </List>
+      <Button block full onPress={() => this.onDone()}><Text>Done</Text></Button>
       </Content>
       </Container>
     );
