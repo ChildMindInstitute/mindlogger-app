@@ -115,6 +115,14 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            storeFile file("mdc_app_key.keystore")
+            storePassword "mdcapp"
+            keyAlias "mdc_app"
+            keyPassword "mdcapp"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds

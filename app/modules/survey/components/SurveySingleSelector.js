@@ -22,7 +22,7 @@ class SurveySingleSelector extends SurveyInputComponent {
           rows.map((row, idx) => {
             return (
               <ListItem onPress={() => {
-                this.selectAnswer(row.value)
+                this.selectAnswer(row.value, true)
               }} key={idx}>
               <Body>
               <Text>{row.text}</Text>

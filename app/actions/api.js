@@ -25,6 +25,12 @@ export const loginUser = (data) => ({
     data
 })
 
+export const forgotPassword = (email) => ({
+    firebase: 'auth',
+    type: types.FORGOT_PASSWORD,
+    data: {email}
+})
+
 export const logoutUser = () => ({
     firebase: 'auth',
     type: types.LOGOUT_USER,

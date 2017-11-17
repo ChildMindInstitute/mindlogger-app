@@ -12,6 +12,7 @@ const methods = {
     GET: (path, options) => base.fetch(path, options),
     PUSH: (path, data) => base.push(path, {data}),
     DELETE: (path) => base.remove(path),
+    FORGOT_PASSWORD: ({email}) => auth.sendPasswordResetEmail(email),
 }
 
 export default store => next => action => {

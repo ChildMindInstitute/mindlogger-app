@@ -23,16 +23,20 @@ class SurveyBasicAddScreen extends Component {
   }
 
   onEditSurvey = (body) => {
-    let {surveyIdx} = this.props
+    let {surveyIdx, user} = this.props
     let survey = {...this.state.survey, ...body}
     this.props.updateSurvey(surveyIdx, survey)
-    fbUpdateActivity('surveys', survey).then(result => {
+    if(user.role == 'clinician') {
+      return fbUpdateActivity('surveys', survey).then(result => {
+        Actions.pop()
+      })
+    } else {
       Actions.pop()
-    })
+    }
   }
 
   onAddSurvey = (body) => {
-    const {addSurvey, user} = this.props
+    const {addSurvey} = this.props
     let data = {...body, questions: [], 'activity_type':'survey', mode: 'basic'}
     const key = fbAddActivity('surveys', data, result => {
       console.log("pushed", result)

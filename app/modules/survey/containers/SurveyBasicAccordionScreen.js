@@ -18,6 +18,7 @@ import SurveyMultiSelector from '../components/SurveyMultiSelector'
 class SurveyAccordionScreen extends Component {
   constructor(props) {
     super(props) 
+    this.lastIdx = -1
   }
   componentWillMount() {
     this.setState({expand:{}})
@@ -56,7 +57,10 @@ class SurveyAccordionScreen extends Component {
 
   onExpand = (idx) => {
     let {expand} = this.state
+    if(this.lastIdx && this.lastIdx != idx)
+      expand[this.lastIdx] = false
     expand[idx] = !expand[idx]
+    this.lastIdx = idx
     this.setState({expand})
   }
  
@@ -89,7 +93,7 @@ class SurveyAccordionScreen extends Component {
     );
   }
 
-  onInputAnswer = (result, data) => {
+  onInputAnswer = (result, data, final) => {
     questionIndex = data.index
     let {survey, setSurvey} = this.props
     let {questions, answers} = survey
@@ -99,7 +103,8 @@ class SurveyAccordionScreen extends Component {
       answers.push(result)
     }
     setSurvey({...survey, answers})
-    this.onExpand(questionIndex)
+    if(final)
+      setTimeout(() => {this.onExpand(questionIndex)}, 500)
   }
 
   renderQuestion(question, answer, data) {

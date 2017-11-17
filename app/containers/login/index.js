@@ -28,6 +28,10 @@ class LoginForm extends Component {
     onRegister = () => {
         Actions.consent()
     }
+
+    onForgotPassword = () => {
+        Actions.forgot_password()
+    }
     render() {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
@@ -38,7 +42,7 @@ class LoginForm extends Component {
                     <Body>
                     </Body>
                     <Right>
-                        <Button transparent><Text style={styles.text}>Forgot password?</Text></Button>
+                        <Button transparent onPress={this.onForgotPassword}><Text style={styles.text}>Forgot password?</Text></Button>
                     </Right>
                 </Row>
                 <Button warning block onPress={handleSubmit(onSubmit)} disabled={submitting}>
@@ -54,7 +58,8 @@ class LoginForm extends Component {
 }
 
 LoginReduxForm = reduxForm({
-    form: 'login-form'
+    form: 'login-form',
+    enableReinitialize: true
 })(LoginForm)
 
 class Login extends Component { // eslint-disable-line
@@ -62,6 +67,7 @@ class Login extends Component { // eslint-disable-line
     render() {
         const {login, user} = this.props
         const {email, password} = user
+        console.log(this.props)
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
@@ -79,12 +85,11 @@ const mapDispatchToProps = (dispatch) => ({
     login: (body) => {
         return dispatch(loginUser(body)).then(res => {
             console.log(res)
-            Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.push('activity')
         }).catch(err => {
             console.log(err)
             let errors = {}
-            Toast.show({text: err.message, position: 'bottom', type: 'danger'})
+            Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
             switch(err.code) {
                 case 'auth/wrong-password':
                     errors.password = err.message

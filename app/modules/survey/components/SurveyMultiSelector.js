@@ -24,8 +24,7 @@ class SurveyMultiSelector extends SurveyInputComponent {
     } else {
       answer.splice(index, 1)
     }
-
-    this.setState({answer})
+    this.selectAnswer(answer)
   }
 
   render() {
@@ -41,19 +40,14 @@ class SurveyMultiSelector extends SurveyInputComponent {
           rows.map((row, idx) => {
             return (
               <ListItem key={idx} onPress={() => this.checkValue(row.value)}>
-              <Body><Text>{row.text}</Text></Body>
-              <Right>
-                <CheckBox checked={answer.includes(row.value)} />
-              </Right>
-            </ListItem>
+                <Body><Text>{row.text}</Text></Body>
+                <Right>
+                  <CheckBox onPress={() => this.checkValue(row.value)} checked={answer.includes(row.value)} />
+                </Right>
+              </ListItem>
               )
           })
         }
-        </View>
-        <View style={baseTheme.centerCol}>
-        <View style={baseTheme.paddingView}>
-          <Button onPress={() => this.selectAnswer(answer)}><Text>Submit</Text></Button>
-        </View>
         </View>
       </View>
     )

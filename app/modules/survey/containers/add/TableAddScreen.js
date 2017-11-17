@@ -32,12 +32,16 @@ class SurveyTableAddScreen extends Component {
   }
 
   onEditSurvey = (body) => {
-    let {surveys, surveyIdx} = this.props
+    let {surveys, surveyIdx, user} = this.props
     let survey = {...this.state.survey, ...body}
     this.props.updateSurvey(surveyIdx, survey)
-    fbUpdateActivity('surveys', survey).then( result => {
+    if(user.role == 'clinician') {
+      fbUpdateActivity('surveys', survey).then( result => {
+        Actions.pop()
+      })
+    } else {
       Actions.pop()
-    })
+    }
   }
 
   componentWillMount() {
@@ -90,6 +94,7 @@ const mapStateToProps = state => ({
   surveys: state.survey.surveys,
   navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
+  user: state.core.user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyTableAddScreen);

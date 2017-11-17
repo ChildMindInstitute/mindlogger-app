@@ -11,21 +11,23 @@ class SurveyTextInput extends SurveyInputComponent {
   }
 
   componentWillMount() {
-    const { answer, question} = this.props
-    this.setState({text: answer})
+    const { answer, question} = this.props.data
+    this.setState({text: answer || ""})
   }
+  onInputText = () => this.selectAnswer(this.state.text) 
   render() {
     const { answer, question} = this.props.data
     return (
       <View style={baseTheme.centerCol}>
         { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{question.title}</Text>) }
         <Item rounded>
-          <Input placeholder='' onChangeText={(text) => this.setState({text})}
-          value={this.state.text}/>
+          <Input placeholder=''
+            onChangeText={(text) => this.setState({text})}
+            value={this.state.text}
+            onEndEditing={this.onInputText}
+            onBlur={this.onInputText}
+            />
         </Item>
-        <View style={baseTheme.paddingView}>
-        <Button onPress={() => this.selectAnswer(this.state.text)}><Text>Submit</Text></Button>
-        </View>
       </View>
     )
   }

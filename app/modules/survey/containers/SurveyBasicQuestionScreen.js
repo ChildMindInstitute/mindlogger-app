@@ -17,10 +17,9 @@ import SurveyMultiSelector from '../components/SurveyMultiSelector'
 class SurveyBasicQuestionScreen extends Component {
   constructor(props) {
     super(props)
-    
   }
 
-  onInputAnswer = (result) => {
+  onInputAnswer = (result, data, final=false) => {
     let {questionIndex, survey, setSurvey} = this.props
     let {questions, answers} = survey
     if(answers.length > questionIndex) {
@@ -29,7 +28,9 @@ class SurveyBasicQuestionScreen extends Component {
       answers.push(result)
     }
     setSurvey({...survey, answers})
-    this.nextQuestion()
+    console.log({...survey, answers})
+    if(final)
+      setTimeout(() => { this.nextQuestion() }, 500)
   }
 
   nextQuestion = () => {

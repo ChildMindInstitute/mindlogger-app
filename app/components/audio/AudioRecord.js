@@ -84,7 +84,7 @@ class AudioRecord extends React.Component {
     this._recordInterval = setInterval( () => {
       if (this.recorder && this.recorder.isRecording) {
         let duration = (Date.now() - this.startTime)/1000
-        if(timeLimit && timeLimt>0 && duration >= timeLimit) {
+        if(timeLimit && timeLimit>0 && duration >= timeLimit) {
           this._toggleRecord()
         }
         if(this.props.onProgress)

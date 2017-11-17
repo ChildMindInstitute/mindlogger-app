@@ -53,7 +53,10 @@ class SurveyTableAccordionScreen extends Component {
 
   onExpand = (idx) => {
     let {expand} = this.state
+    if(this.lastIdx && this.lastIdx != idx)
+      expand[this.lastIdx] = false
     expand[idx] = !expand[idx]
+    this.lastIdx = idx
     this.setState({expand})
   }
  
@@ -86,7 +89,7 @@ class SurveyTableAccordionScreen extends Component {
     );
   }
 
-  onInputAnswer = (result, data) => {
+  onInputAnswer = (result, data, final) => {
     questionIndex = data.index
     let {survey, setSurvey} = this.props
     let {questions, answers} = survey
@@ -96,7 +99,6 @@ class SurveyTableAccordionScreen extends Component {
     answers[questionIndex] = result
     console.log(questionIndex)
     setSurvey({...survey, answers})
-    this.onExpand(questionIndex)
   }
 
   renderQuestion(question, answer, data) {

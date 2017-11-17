@@ -16,12 +16,14 @@ import {
     Right,
     Row,
     Body,
+    Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 import {createUser, updateUserProfile} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
+import { auth, base} from '../../firebase'
 
 class SignUpForm extends Component {
     onRegister = () => {
@@ -38,6 +40,7 @@ class SignUpForm extends Component {
                     warning
                     block
                     style={{marginTop: 40}}
+                    disabled={submitting}
                     onPress={handleSubmit(onSubmit)}>
                     <Text>Sign Up</Text>
                 </Button>
@@ -53,12 +56,14 @@ SignUpReduxForm = reduxForm({
 class SignUp extends Component { // eslint-disable-line
     onSignUp = ({email, password, displayName}) => {
         const {signUp, updateUserProfile} = this.props
-        signUp({email, password}).then(user => {
+        return signUp({email, password}).then(user => {
             updateUserProfile({displayName})
-            base.post(`users/${user.uid}`, {contact: true})
+            base.post(`users/${user.uid}`, {data:{contact: true}})
+            Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
+            Actions.replace('login')
         }).catch(error => {
             console.log(error)
-            console.warn(error.message)
+            Toast.show({text: error.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
         })
     }
     render() {

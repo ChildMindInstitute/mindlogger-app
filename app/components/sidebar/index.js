@@ -10,6 +10,7 @@ import material from '../../../native-base-theme/variables/material';
 import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
 import navigateTo from '../../actions/sideBarNav';
 import styles from './style';
+import {logoutUser} from '../../actions/api';
 
 const drawerCover = require('../../../img/drawer-cover.png');
 
@@ -68,6 +69,17 @@ class SideBar extends Component {
     this.props.navigateTo(route, 'home');
   }
 
+  onMenu(route) {
+    const {closeDrawer, logoutUser} = this.props;
+    if(route == 'logout') {
+      logoutUser();
+      Actions.pop();
+    } else {
+      Actions.replace(route);
+    }
+    closeDrawer();
+  }
+
   render() {
     return (
       <Container>
@@ -84,7 +96,7 @@ class SideBar extends Component {
           </ImageBackground>
           <List
             dataArray={datas} renderRow={data =>
-              <ListItem button noBorder onPress={() => { Actions[data.route](); this.props.closeDrawer() }} >
+              <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
                 <Left>
                   <Icon active name={data.icon} style={{ color: '#777', fontSize: 26, width: 30 }} />
                   <Text style={styles.text}>{data.name}</Text>
@@ -113,6 +125,7 @@ function bindAction(dispatch) {
     closeDrawer: () => dispatch(closeDrawer()),
     changePlatform: () => dispatch(changePlatform()),
     changeMaterial: () => dispatch(changeMaterial()),
+    logoutUser: () => dispatch(logoutUser()),
   };
 }
 

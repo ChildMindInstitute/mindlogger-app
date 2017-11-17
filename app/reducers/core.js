@@ -16,6 +16,7 @@ export default function coreReducer(state = initialState, action = {}) {
                 return state
         case types.SET_USER:
             user = action.data
+            console.log(user)
             return {
                 ...state,
                 user

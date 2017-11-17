@@ -17,7 +17,7 @@ class SurveyTableScreen extends Component {
     
   }
 
-  onInputAnswer = (result) => {
+  onInputAnswer = (result, data, final = false) => {
     let {questionIndex, survey, setSurvey} = this.props
     let {questions, answers} = survey
     if(answers.length > questionIndex) {
@@ -26,7 +26,8 @@ class SurveyTableScreen extends Component {
       answers.push(result)
     }
     setSurvey({...survey, answers})
-    this.nextQuestion()
+    if(final)
+      this.nextQuestion()
   }
 
   nextQuestion = () => {
@@ -36,8 +37,7 @@ class SurveyTableScreen extends Component {
     if(questionIndex<questions.length) {
       Actions.replace("survey_table_question", { questionIndex:questionIndex})
     } else {
-      //Actions.replace("survey_table_question_summary")
-      Actions.pop()
+      Actions.replace("survey_table_summary")
     }
   }
 

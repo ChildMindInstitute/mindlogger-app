@@ -17,6 +17,14 @@ class Home extends Component { // eslint-disable-line
     openDrawer: PropTypes.func,
   }
 
+  componentWillMount()
+  {
+    let t = setTimeout(() => {
+      Actions.login()
+      clearTimeout(t)
+    }, 1000)
+  }
+
   render() {
     return (
       <Container>
@@ -28,21 +36,6 @@ class Home extends Component { // eslint-disable-line
           <View style={{ alignItems: 'center', marginBottom: 50, backgroundColor: 'transparent' }}>
             <H3 style={styles.text}></H3>
             <View style={{ marginTop: 8 }} />
-            <H3 style={styles.text}>Login to start</H3>
-          </View>
-          <View style={{ marginBottom: 80, flexDirection: 'column' }}>
-            <Button
-              style={styles.login}
-              onPress={() => Actions.login()}
-            >
-              <Text>Login</Text>
-            </Button>
-            <Button
-            style={styles.signup}
-            onPress={() => Actions.sign_up()}
-            >
-            <Text>Signup</Text>
-            </Button>
           </View>
         </ImageBackground>
       </Container>
