@@ -4,6 +4,7 @@ import { StyleSheet } from 'react-native';
 
 import { Container, Content, Text, View } from 'native-base';
 import Modal from 'react-native-modalbox';
+import {Root} from 'native-base';
 
 import AppNavigator from './AppNavigator';
 import ProgressBar from './components/loaders/ProgressBar';
@@ -91,7 +92,7 @@ class App extends Component {
       );
     }
 
-    return <AppNavigator />;
+    return <Root><AppNavigator /></Root>;
   }
 }
 

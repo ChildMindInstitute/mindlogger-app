@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import { BackHandler, StatusBar, NavigationCardStack, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Root, StyleProvider, variables, Drawer } from 'native-base';
-import { actions } from 'react-native-navigation-redux-helpers';
-import { Router, Scene } from 'react-native-router-flux';
+import { Router, Scene, Actions } from 'react-native-router-flux';
 
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
@@ -29,34 +28,19 @@ import AudioScenes from './modules/audio/routes';
 
 import statusBarColor from './themes/variables';
 
-const {
-  popRoute,
-} = actions;
-
 const RouterWithRedux = connect()(Router);
 
 class AppNavigator extends Component {
 
   static propTypes = {
     drawerState: PropTypes.string,
-    popRoute: PropTypes.func,
     closeDrawer: PropTypes.func,
     themeState: PropTypes.string,
-    navigation: PropTypes.shape({
-      key: PropTypes.string,
-      routes: PropTypes.array,
-    }),
   }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', () => {
-      const routes = this.props.navigation.routes;
-
-      if (routes[routes.length - 1].key === 'home') {
-        return false;
-      }
-
-      this.props.popRoute(this.props.navigation.key);
+      Actions.pop();
       return true;
     });
   }
@@ -72,7 +56,7 @@ class AppNavigator extends Component {
   }
 
   popRoute() {
-    this.props.popRoute();
+    Actions.pop();
   }
 
   openDrawer() {
@@ -88,7 +72,6 @@ class AppNavigator extends Component {
   render() {
     console.log("Theme:",getTheme((this.props.themeState === 'material') ? material : undefined))
     return (
-      <Root>
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
           ref={(ref) => { this._drawer = ref; }}
@@ -101,8 +84,7 @@ class AppNavigator extends Component {
           />
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
-              <Scene key="home" component={Home} initial={true}/>
-              <Scene key="login" component={Login}/>
+              <Scene key="login" component={Login} initial={true}/>
               <Scene key="consent" component={Consent}/>
               <Scene key="sign_up" component={Signup}/>
               <Scene key="settings" component={Settings}/>
@@ -113,7 +95,6 @@ class AppNavigator extends Component {
           </RouterWithRedux>
         </Drawer>
       </StyleProvider>
-      </Root>
     );
   }
 }
@@ -126,7 +107,6 @@ const bindAction = dispatch => ({
 const mapStateToProps = state => ({
   drawerState: state.drawer.drawerState,
   themeState: state.drawer.themeState,
-  navigation: state.cardNavigation,
 });
 
 export default connect(mapStateToProps, bindAction)(AppNavigator);

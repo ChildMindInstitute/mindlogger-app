@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import { actions } from 'react-native-navigation-redux-helpers';
 import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -23,9 +22,6 @@ class ActivityScreen extends Component {
 
   static propTypes = {
     openDrawer: PropTypes.func,
-    navigation: PropTypes.shape({
-      key: PropTypes.string,
-    }),
   }
 
     componentWillMount() {
@@ -67,7 +63,7 @@ class ActivityScreen extends Component {
     }
 
     popRoute() {
-        this.props.popRoute(this.props.navigation.key);
+        Actions.pop()
     }
 
     promptToAddActivity() {
@@ -79,11 +75,11 @@ class ActivityScreen extends Component {
         },
         buttonIndex => {
             if(buttonIndex==0) {
-            Actions.push("survey_basic_add");
+                Actions.push("survey_basic_add");
             } else if(buttonIndex == 1) {
-            Actions.survey_table_add()
+                Actions.survey_table_add()
             } else if(buttonIndex == 2) {
-            Actions.push("audio_add")
+                Actions.push("audio_add")
             } else if(buttonIndex == 3) {
             
             }
@@ -275,7 +271,6 @@ const mapStateToProps = state => ({
   surveys: (state.survey && state.survey.surveys) || [],
   audios: (state.audio && state.audio.audios) || [],
   drawings: (state.drawing && state.drawing.drawings) || [],
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   user: (state.core && state.core.user)
 });

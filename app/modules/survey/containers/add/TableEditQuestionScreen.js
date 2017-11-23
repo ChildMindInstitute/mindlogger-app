@@ -227,7 +227,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = state => ({
   surveys: state.survey.surveys,
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   user: state.core.user,
 });

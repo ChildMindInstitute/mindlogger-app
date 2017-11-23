@@ -8,7 +8,6 @@ import { Actions } from 'react-native-router-flux';
 
 import material from '../../../native-base-theme/variables/material';
 import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
-import navigateTo from '../../actions/sideBarNav';
 import styles from './style';
 import {logoutUser} from '../../actions/api';
 
@@ -51,7 +50,6 @@ const datas = [
 class SideBar extends Component {
 
   static propTypes = {
-    navigateTo: PropTypes.func,
     themeState: PropTypes.string,
     changePlatform: PropTypes.func,
     changeMaterial: PropTypes.func,
@@ -63,10 +61,6 @@ class SideBar extends Component {
       shadowOffsetWidth: 1,
       shadowRadius: 4,
     };
-  }
-
-  navigateTo(route) {
-    this.props.navigateTo(route, 'home');
   }
 
   onMenu(route) {
@@ -121,7 +115,6 @@ class SideBar extends Component {
 
 function bindAction(dispatch) {
   return {
-    navigateTo: (route, homeRoute) => dispatch(navigateTo(route, homeRoute)),
     closeDrawer: () => dispatch(closeDrawer()),
     changePlatform: () => dispatch(changePlatform()),
     changeMaterial: () => dispatch(changeMaterial()),
@@ -130,7 +123,6 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
 });
 

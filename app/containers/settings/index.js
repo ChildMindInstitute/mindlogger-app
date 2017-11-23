@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import { actions } from 'react-native-navigation-redux-helpers';
 import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Form, Toast, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -53,9 +52,6 @@ class SettingScreen extends Component {
 
   static propTypes = {
     openDrawer: PropTypes.func,
-    navigation: PropTypes.shape({
-      key: PropTypes.string,
-    }),
   }
 
   componentWillMount() {
@@ -69,11 +65,10 @@ class SettingScreen extends Component {
   pushRoute(route) {
     console.log(route)
     Actions[route]()
-    //this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
   }
 
   popRoute() {
-    this.props.popRoute(this.props.navigation.key);
+    Actions.pop()
   }
 
   onUserSubmit = ({displayName, password, role}) => {
@@ -137,7 +132,6 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   drawings: (state.drawing && state.drawing.drawings) || [],
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
   user: (state.core && state.core.user)
 });

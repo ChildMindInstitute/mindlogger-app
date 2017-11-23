@@ -68,7 +68,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = state => ({
   audios: state.audio.audios,
-  navigation: state.cardNavigation,
   themeState: state.drawer.themeState,
 });
 
