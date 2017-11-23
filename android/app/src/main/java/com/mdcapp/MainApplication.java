@@ -1,4 +1,4 @@
-package com.mdcapp;
+package lab.childmindinstitute.data;
 
 import android.app.Application;
 
