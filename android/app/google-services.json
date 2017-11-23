@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "880222053307",
+    "firebase_url": "https://dataapp-3b8c4.firebaseio.com",
+    "project_id": "dataapp-3b8c4",
+    "storage_bucket": "dataapp-3b8c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:880222053307:android:5042d84e5df57c48",
+        "android_client_info": {
+          "package_name": "lab.childmindinstitute.data"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "880222053307-fj4j55p637u4677inonse3ehf406bc8a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzTpjwWd0R5VTMYsxzJb9jzFKOa3ySTrE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
