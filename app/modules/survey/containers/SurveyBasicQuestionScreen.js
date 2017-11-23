@@ -13,6 +13,7 @@ import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
+import SurveyImageSelector from '../components/SurveyImageSelector'
 
 class SurveyBasicQuestionScreen extends Component {
   constructor(props) {
@@ -69,6 +70,8 @@ class SurveyBasicQuestionScreen extends Component {
         return (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
       case 'multi_sel':
         return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
+      case 'image_sel':
+        return (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>)
     }
     return (
       <View>

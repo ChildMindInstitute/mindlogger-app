@@ -17,7 +17,7 @@ import SurveyMultiSelector from '../components/SurveyMultiSelector'
 
 class SurveyAccordionScreen extends Component {
   constructor(props) {
-    super(props) 
+    super(props)
     this.lastIdx = -1
   }
   componentWillMount() {

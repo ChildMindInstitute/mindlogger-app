@@ -29,7 +29,7 @@ class SurveyTableInput extends SurveyInputComponent {
                     answer = rows.map((row)=>cols.map( (col) => 0 ))
                     break;
                 case 'single_sel':
-                    answer = rows.map((row) => undefined)
+                    answer = rows.map((row) => 0)
                     break;
                 case 'multi_sel':
                     answer = rows.map((row)=>cols.map( (col) => false ))
