@@ -53,9 +53,9 @@ export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLa
 
 export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }) => {
   var hasError= false;
-  return (<Item >{options.map((option, idx)=>(
-    <Button key={idx} style={{flex:1, margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value} success={input.value == option.value}>
-    <Body><Text style={{textAlign: "center" }}>{option.text}</Text></Body>
+  return (<Item style={{justifyContent: 'space-between'}} >{options.map((option, idx)=>(
+    <Button key={idx} style={{margin:4}} onPress={()=> input.onChange(option.value)} light={input.value !== option.value} success={input.value == option.value}>
+    <Text style={{textAlign: "center", fontSize: 12 }}>{option.text}</Text>
     </Button>
       ))}</Item>)
 }

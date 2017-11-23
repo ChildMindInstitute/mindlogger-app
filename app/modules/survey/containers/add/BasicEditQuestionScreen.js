@@ -2,20 +2,26 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1 } from 'native-base';
+import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1, Thumbnail, ListItem } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../../../components/form/FormItem'
 import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
+import ImageBrowser from '../../../../components/image/ImageBrowser'
 
 const questionInitialState = {
   type: "text",
-  rows: []
+  rows: [],
+  images: [],
 }
 class SurveyEditQuestionForm extends Component {
 
     constructor(props) {
       super(props)
+    }
+
+    componentWillMount() {
+        this.setState({imageSelect: false})
     }
 
     renderRows = ({fields, meta: {error, submitFailed}}) => {
@@ -26,6 +32,54 @@ class SurveyEditQuestionForm extends Component {
           <Row padder><Right><Button onPress={()=> fields.push({text:'', value:fields.length})}><Text>Add choice</Text></Button></Right></Row>
         </View>)
     }
+
+    
+
+    renderImageRows = ({fields, meta: {error, submitFailed}}) => {
+        let images = fields.getAll() || []
+        return (<View padder>
+            {images.map((item,index) => (
+                <ListItem key={index}>
+                    <Left>
+                        <Thumbnail square source={{uri: item.image_url}} />
+                    </Left>
+                    <Body>
+                        <Text>{item.name}</Text>
+                    </Body>
+                    <Right>
+                        <Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button>
+                    </Right>
+                </ListItem>
+            ))}
+            <Row padder><Right><Button onPress={()=> this.showImageBrowser(fields)}><Text>Add choice</Text></Button></Right></Row>
+          </View>)
+    }
+
+    renderExtraFields(question_type) {
+        switch(question_type) {
+            case 'single_sel':
+            case 'multi_sel':
+                return (<FieldArray name="rows" component={this.renderRows}/>)
+            case 'image_sel':
+                return (<FieldArray name="images" component={this.renderImageRows} value={this.state.images || []}/>)
+            default:
+                return false
+        }
+    }
+
+    showImageBrowser(fields) {
+        this.imageFields = fields
+        this.setState({imageSelect:true})
+    }
+
+    onSelectImage = (item, imagePath) => {
+        if(item) {
+            this.imageFields.push(item)   
+        }
+        this.setState({imagePath, imageSelect:false})
+        
+    }
+
 
     render() {
       console.log("form:", this.props)
@@ -41,8 +95,10 @@ class SurveyEditQuestionForm extends Component {
               {text:"Text",value:"text"},
               {text:"Choice",value:"single_sel"},
               {text:"Multiple",value:"multi_sel"},
+              {text:"Image", value:"image_sel"}
             ]} />
-          { (question_type && question_type !== 'text') ? (<FieldArray name="rows" component={this.renderRows}/>) : false}
+            { this.renderExtraFields(question_type) }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
           </Form>)
     }
 }
@@ -57,8 +113,8 @@ SurveyEditQuestionReduxForm = reduxForm({
 const selector = formValueSelector('survey-edit-question')
 SurveyEditQuestionValueForm = connect(
   state => {
-    const question_type = selector(state, 'type')
-    return {question_type}
+    let {type, images} = selector(state, 'type', 'images')
+    return {question_type: type, images}
   }
 )(SurveyEditQuestionReduxForm)
 
@@ -144,7 +200,7 @@ class SurveyBasicEditQuestionScreen extends Component {
         if(questionIdx<survey.questions.length) {
             question = survey.questions[questionIdx]
         } else if(questionIdx>0) {
-            question = { ...survey.questions[questionIdx-1], title: ''}
+            question = {...questionInitialState, ...survey.questions[questionIdx-1], title: ''}
         }
         this.setState({survey, question, questionIdx})
     }
