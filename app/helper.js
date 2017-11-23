@@ -3,7 +3,7 @@ import React from 'react'
 import {auth, base} from './firebase'
 
 export const fbAddActivity = (module, activity, completion) => {
-    let data = {...activity, uid:auth.currentUser.uid}
+    let data = {...activity, author:auth.currentUser.uid}
     var ref = base.push(module, {data, then: completion})
     return ref.key
 }
