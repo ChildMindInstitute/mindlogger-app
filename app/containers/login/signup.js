@@ -58,7 +58,7 @@ class SignUp extends Component { // eslint-disable-line
         const {signUp, updateUserProfile} = this.props
         return signUp({email, password}).then(user => {
             updateUserProfile({displayName})
-            base.post(`users/${user.uid}`, {data:{contact: true}})
+            base.post(`users/${user.uid}`, {data:{contact: true, role: 'patient', name: displayName, email}})
             Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {

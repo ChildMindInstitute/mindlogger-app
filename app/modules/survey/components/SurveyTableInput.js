@@ -68,7 +68,7 @@ class SurveyTableInput extends SurveyInputComponent {
       console.log(type)
       switch(type) {
             case 'text':
-                return (<View key={colIdx} style={{width:'100%', height: '100%', alignItems:'stretch'}} ><Input placeholder='Text' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
+                return (<View key={colIdx} style={{width:'100%', height: '100%', alignItems:'stretch'}} ><Input placeholder='' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
             case 'number':
                 return (<Button bordered style={{width:'100%'}} delayLongPress={600} onPress={() => this.onNumberAdd(1, rowIdx,colIdx)} onLongPress={() => this.onNumberAdd(-1, rowIdx, colIdx)}><Text style={cellTextStyle}>{answer[rowIdx][colIdx]}</Text></Button>)
             case 'single_sel':

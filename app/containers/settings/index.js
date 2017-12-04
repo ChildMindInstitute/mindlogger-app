@@ -81,7 +81,7 @@ class SettingScreen extends Component {
         arr.push(updateUserPassword(password))
     }
     if(role) {
-        this.setState({userInfo:{role}})
+        this.setState({userInfo:{role, name: displayName}})
         updateUserLocal({role})
     }
     if(arr.length > 0) {

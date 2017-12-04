@@ -63,7 +63,9 @@ LoginReduxForm = reduxForm({
 })(LoginForm)
 
 class Login extends Component { // eslint-disable-line
-
+    componentWillMount() {
+        console.ignoredYellowBox = ['Setting a timer']
+    }
     render() {
         const {login, user} = this.props
         const {email, password} = user
