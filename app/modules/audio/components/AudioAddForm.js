@@ -70,7 +70,7 @@ class AudioAddForm extends Component {
                 {text:"monthly",value:"1m"},
                 {text:"one time",value:"1"},
             ]} />
-            <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>
+            <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
                 <Text>{ initialValues ? "Update" : "Create" }</Text>
             </Button>
             </Form>)

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Spinner } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -24,7 +24,7 @@ class AudioStartScreen extends Component {
     }
 
     componentDidMount() {
-        this.player = new Player(this.props.audio.audio_path, {
+        this.player = new Player(this.props.audio.audio_url, {
             autoDestroy: true
         }).prepare((err) => {
             if (err) {
@@ -37,13 +37,16 @@ class AudioStartScreen extends Component {
         });
     }
 
+    toggleSpinner = (show = true) => {
+        this.setState({spinner: show})
+    }
+
     onBegin = () => {
         Actions.replace("audio_activity")
     }
 
     render() {
-        const {audio} = this.state
-        
+        const {audio, spinner} = this.state
         return (
         <Container>
         <Header>
@@ -59,6 +62,7 @@ class AudioStartScreen extends Component {
             </Right>
         </Header>
         <View style={{ flex: 1 }}>
+            {spinner && <Spinner />}
             <View style={{alignItems:'center', flexDirection: 'row', flex: 1}}>
                 <View style={baseTheme.centerRow}>
                     <Icon name="mic" style={{fontSize:180}} />

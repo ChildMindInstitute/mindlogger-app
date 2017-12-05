@@ -7,8 +7,7 @@ import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import { auth, base} from '../../firebase'
-import {fbLoadAllActivity, fbDeleteActivity, fbLoadAllActivityByAuthor} from '../../helper'
+import { auth, base, fbLoadAllActivity, fbDeleteActivity, fbLoadAllActivityByAuthor} from '../../firebase'
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {updateUserLocal} from '../../actions/coreActions';
 import * as surveyActions from '../../modules/survey/actions';
@@ -36,7 +35,7 @@ class ActivityScreen extends Component {
             if (role == 'clinician') {
                 if (surveys.length == 0) {
                     fbLoadAllActivityByAuthor('surveys', user.uid).then(data => {
-                        if (data && data.length > 0) 
+                        if (data && data.length > 0)
                             loadSurveys(data)
                     })
                 }
@@ -90,66 +89,68 @@ class ActivityScreen extends Component {
     editActivity(secId, rowId) {
         
         if(secId == 'surveys') {
-        const survey = this.props.surveys[rowId]
-        if(survey.mode == 'table') {
-            Actions.push("survey_table_add", {surveyIdx:rowId})
-        } else {
-            Actions.push("survey_basic_add", {surveyIdx:rowId})
-        }
+            const survey = this.props.surveys[rowId]
+            if(survey.mode == 'table') {
+                Actions.push("survey_table_add", {surveyIdx:rowId})
+            } else {
+                Actions.push("survey_basic_add", {surveyIdx:rowId})
+            }
         } else if(secId == 'voices') {
-        Actions.push("audio_add", {audioIdx:rowId})
+            Actions.push("audio_add", {audioIdx:rowId})
         }
     }
 
     deleteActivity(secId, rowId) {
         if(secId === 'surveys') {
-        const survey = this.props.surveys[rowId]
-        this.props.deleteSurvey(rowId)
-        fbDeleteActivity(secId, survey)
+            const survey = this.props.surveys[rowId]
+            this.props.deleteSurvey(rowId)
+            fbDeleteActivity(secId, survey)
         } else if(secId === 'voices') {
-        this.props.deleteAudioActivity(rowId)
+            const audio = this.props.audios[rowId]
+            this.props.deleteAudioActivity(rowId)
+            fbDeleteActivity('audios', audio)
         }
         
     }
 
     startActivity(secId, rowId) {
         if(secId === 'surveys') {
-        const {surveys, setSurvey} = this.props
-        const survey = surveys[rowId]
-        setSurvey({...survey, answers:[]})
-        if(survey.mode == 'table') {
-            if(survey.accordion){
-            Actions.survey_table_accordion()
+            const {surveys, setSurvey} = this.props
+            const survey = surveys[rowId]
+            setSurvey({...survey, answers:[]})
+            if(survey.mode == 'table') {
+                if(survey.accordion){
+                    Actions.survey_table_accordion()
+                } else {
+                    Actions.survey_table_question({ questionIndex:0})
+                }
             } else {
-            Actions.survey_table_question({ questionIndex:0})
+                if(survey.accordion){
+                    Actions.survey_accordion()
+                } else {
+                    Actions.survey_question({ questionIndex:0})
+                }
             }
-        } else {
-            if(survey.accordion){
-            Actions.survey_accordion()
-            } else {
-            Actions.survey_question({ questionIndex:0})
-            }
-        }
         } else if(secId === 'voices') {
-        const {audios, setAudio} = this.props
-        let audio = {...audios[rowId]}
-        setAudio(audio)
-        Actions.push("audio_start")
+            const {audios, setAudio} = this.props
+            let audio = {...audios[rowId]}
+            setAudio(audio)
+            Actions.push("audio_start")
         }
     }
 
     editActivityDetail(secId, rowId) {
         console.log(secId)
         if(secId == 'surveys') {
-        const survey = this.props.surveys[rowId]
-        if (survey.questions.length == 0) {
-            Toast.show({text: 'This survey have no questions. Pleaes add questions!', position: 'top', type: 'warning'})
-        }
-        if(survey.mode == 'table') {
-            Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
-        } else {
-            Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
-        }
+            const survey = this.props.surveys[rowId]
+            if (survey.questions.length == 0) {
+                Toast.show({text: 'This survey have no questions. Pleaes add questions!', position: 'top', type: 'warning'})
+            }
+            if(survey.mode == 'table') {
+                Actions.push("survey_table_edit_question", {surveyIdx:rowId, questionIdx:0})
+            } else {
+                Actions.push("survey_basic_edit_question", {surveyIdx:rowId, questionIdx:0})
+            }
         }
     }
 

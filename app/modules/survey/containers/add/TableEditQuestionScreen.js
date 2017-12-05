@@ -7,7 +7,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup} from '../../../../components/form/FormItem'
-import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
+import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 
 const questionInitialState = {
   title: "",

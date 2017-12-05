@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../../../components/form/FormItem'
-import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
+import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 import ImageBrowser from '../../../../components/image/ImageBrowser'
 
 const questionInitialState = {

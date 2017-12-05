@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
-import {fbAddActivity, fbUpdateActivity} from '../../../../helper'
+import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 
 class SurveyBasicAddScreen extends Component {
 

@@ -20,10 +20,11 @@ import {
 class AudioRecord extends React.Component {
   constructor() {
     super();
-    //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;    
-    this.filename = `file://${AudioUtils.DocumentDirectoryPath}/${randomString({length:20})}.mp3`
-    
-    console.log(this.filename)
+    //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;
+    const filename = `${randomString({length:20})}.aac`
+    const path = `${AudioUtils.DocumentDirectoryPath}/${filename}` 
+    this.filename = Platform.OS == 'android' ? `file://${path}` : filename
+    this.output_path = path
     this.state = {
 
       playPauseButton: 'Preparing...',
@@ -63,19 +64,20 @@ class AudioRecord extends React.Component {
     this.player = null;
     this.recorder = null;
     this.lastSeek = 0;
-
+    if(this.props.path) {
+      this.filename = Platform.OS == 'android' ? this.props.path : this.props.path.replace(/^.*[\\\/]/, '')
+    }
     this._checkPermission().then((hasPermission) => {
       this.setState({ hasPermission });
 
       if (!hasPermission) return;
 
-      //this._reloadPlayer();
+      this._reloadPlayer();
       this._reloadRecorder();
       
     })
-    if(this.props.path) {
-      this.filename = this.props.path
-    }
+    
+    console.log(this.filename)
     this._progressInterval = setInterval(() => {
       if (this.player && this._shouldUpdateProgressBar()) {// && !this._dragging) {
         this.setState({progress: Math.max(0, this.player.currentTime) / this.player.duration});
@@ -211,8 +213,7 @@ class AudioRecord extends React.Component {
       if (stopped) {
         this._reloadPlayer();
         this._reloadRecorder();
-        this.props.onRecordFile(this.filename, (Date.now() - this.startTime)/1000);
-        console.log(this.filename)
+        this.props.onRecordFile(this.output_path, (Date.now() - this.startTime)/1000);
       } else {
         this.startTime = Date.now()
         if(this.props.onStart) this.props.onStart(this.filename)

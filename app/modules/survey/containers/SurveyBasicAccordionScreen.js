@@ -8,7 +8,7 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-import {fbSaveAnswer} from '../../../helper'
+import {fbSaveAnswer} from '../../../firebase'
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'

@@ -1,16 +1,19 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Spinner, Toast } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import Sound from 'react-native-sound';
 import WaveForm from 'react-native-audiowaveform';
 import ProgressCircle from 'react-native-progress-circle'
+import moment from 'moment'
 
 import baseTheme from '../../../theme'
 import {setAudio} from '../actions'
 import AudioRecord from '../../../components/audio/AudioRecord'
+import {fbUploadFile, fbSaveAnswer} from '../../../firebase'
+import WaveformWrapper from '../components/WaveformWrapper'
 
 class AudioActivityScreen extends Component {
     constructor(props) {
@@ -70,11 +73,25 @@ class AudioActivityScreen extends Component {
         this.toggleToPlay()
     }
 
-    onSave = () => {
-        Actions.pop()
+    toggleSpinner = (show = true) => {
+        this.setState({spinner: show})
     }
 
-    toggleToPlay() {
+    onSave = () => {
+        let {audio} = this.state
+        this.toggleSpinner()
+        fbUploadFile(audio.output_path, `audios/${moment(audio.updated_at).format('M-D-YYYY')}`).then((url)=>{
+            fbSaveAnswer({...audio, output_url: url})
+            Actions.pop()
+        }).catch((error)=> {
+            this.toggleSpinner(false)
+            Toast.show({text: error.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+        })
+        
+    }
+
+    toggleToPlay = () => {
+        console.log(this.props)
         if(this.state.playAudio)
             return;
         this.setState({playAudio: true})
@@ -103,19 +120,18 @@ class AudioActivityScreen extends Component {
         </View>)
     }
     renderWaveForm(audio) {
-        return (<WaveForm
+        return (<WaveformWrapper
             source={{uri:`${audio.output_path}`}}
             waveFormStyle={{waveColor:'blue', scrubColor:'red'}}
             style={{
                 flex:1,
             }}
-            onPress = {(sender) => this.toggleToPlay() }
-            play={this.state.playAudio? true:false}
+            duration = {audio.duration}
         >
-        </WaveForm>)
+        </WaveformWrapper>)
     }
     render() {
-        const {audio} = this.state
+        const {audio, spinner} = this.state
         
         return (
         <Container>
@@ -146,7 +162,7 @@ class AudioActivityScreen extends Component {
                 <AudioRecord timeLimit={audio.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile} recordLabel={audio.output_path ? "Redo":"Begin"}/>
             </View>
             <View style={{marginTop:20}}>
-                <Button full block onPress={this.onSave}><Text>Save</Text></Button>
+                <Button full block onPress={this.onSave} disabled={spinner}><Text>Save</Text>{spinner && <Spinner />}</Button>
             </View>
         </View>
         </Container>

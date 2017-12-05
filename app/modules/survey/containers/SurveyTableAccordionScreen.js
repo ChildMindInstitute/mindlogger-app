@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import Collapsible from 'react-native-collapsible';
 
-import {fbSaveAnswer} from '../../../helper'
+import {fbSaveAnswer} from '../../../firebase'
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
 
