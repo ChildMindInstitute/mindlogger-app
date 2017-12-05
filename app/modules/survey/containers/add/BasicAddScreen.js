@@ -6,7 +6,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
-import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
+import {fbAddActivity,fbAddActivityWithAudio, fbUpdateActivityWithAudio} from '../../../../firebase'
 
 class SurveyBasicAddScreen extends Component {
 
@@ -23,14 +23,17 @@ class SurveyBasicAddScreen extends Component {
   }
 
   onEditSurvey = (body) => {
-    let {surveyIdx, user} = this.props
+    let {surveyIdx, user, updateSurvey} = this.props
     let survey = {...this.state.survey, ...body}
-    this.props.updateSurvey(surveyIdx, survey)
     if(user.role == 'clinician') {
-      return fbUpdateActivity('surveys', survey).then(result => {
+      return fbUpdateActivityWithAudio('surveys', survey).then(result => {
+        updateSurvey(surveyIdx, survey)
         Actions.pop()
+      }).catch(err => {
+        console.log(err, survey)
       })
     } else {
+      updateSurvey(surveyIdx, survey)
       Actions.pop()
     }
   }
@@ -38,10 +41,11 @@ class SurveyBasicAddScreen extends Component {
   onAddSurvey = (body) => {
     const {addSurvey} = this.props
     let data = {...body, questions: [], 'activity_type':'survey', mode: 'basic'}
-    const key = fbAddActivity('surveys', data, result => {
+    return fbAddActivityWithAudio('surveys', data, result => {
       console.log("pushed", result)
+    }).then(res => {
+      return addSurvey(res)
     })
-    return addSurvey({...data, key})
   }
 
   componentWillMount() {

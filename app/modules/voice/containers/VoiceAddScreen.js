@@ -5,7 +5,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import VoiceAddForm from '../components/VoiceAddForm';
 import {addVoiceActivity, updateVoiceActivity} from '../actions'
-import {fbAddActivity, fbUploadFile} from '../../../firebase'
+import {fbAddActivity, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
 
 
 class VoiceAddScreen extends Component {
@@ -18,10 +18,14 @@ class VoiceAddScreen extends Component {
     let {voiceIdx} = this.props
     let voice = {...this.state.voice, ...body}
     this.props.updateVoice(voiceIdx, voice)
-    return fbUpdateActivity('voices', survey).then(result => {
+    this.toggleSpinner(true)
+    return fbUpdateActivityWithAudio('voices', voice).then(result => {
+      this.toggleSpinner(false)
       Actions.pop()
+    }).catch(error => {
+      this.toggleSpinner(false)
+      console.log(error)
     })
-    Actions.pop()
   }
 
   toggleSpinner = (show = true) => {

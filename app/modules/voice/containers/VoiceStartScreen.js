@@ -24,7 +24,7 @@ class VoiceStartScreen extends Component {
     }
 
     componentDidMount() {
-        this.player = new Player(this.props.voice.voice_url, {
+        this.player = new Player(this.props.voice.audio_url, {
             autoDestroy: true
         }).prepare((err) => {
             if (err) {

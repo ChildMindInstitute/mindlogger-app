@@ -51,7 +51,7 @@ class SurveyAddForm extends Component {
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
             <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
             
-            <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>
+            <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
                 <Text>{ initialValues ? "Update" : "Create" }</Text>
             </Button>
             </Form>)

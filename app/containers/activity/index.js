@@ -6,6 +6,11 @@ import { connect } from 'react-redux';
 import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import {
+    Player,
+    MediaStates
+} from 'react-native-audio-toolkit';
+
 
 import { auth, base, fbLoadAllActivity, fbDeleteActivity, fbLoadAllActivityByAuthor} from '../../firebase'
 import { openDrawer, closeDrawer } from '../../actions/drawer';
@@ -118,6 +123,8 @@ class ActivityScreen extends Component {
             const {surveys, setSurvey} = this.props
             const survey = surveys[rowId]
             setSurvey({...survey, answers:[]})
+            if(survey.audio_url)
+                this.playInstruction(survey)
             if(survey.mode == 'table') {
                 if(survey.accordion){
                     Actions.survey_table_accordion()
@@ -136,6 +143,8 @@ class ActivityScreen extends Component {
             let voice = {...voices[rowId]}
             setVoice(voice)
             Actions.push("voice_start")
+        } else if(secId === 'drawing') {
+            
         }
     }
 
@@ -256,6 +265,26 @@ class ActivityScreen extends Component {
             </Content>
         </Container>
         );
+    }
+
+    playInstruction(activity) {
+        const {audio_url} = activity
+        if (this.player) {
+            this.player.destroy();
+        }
+        this.player = new Player(audio_url, {
+            autoDestroy: false
+        }).prepare((err) => {
+            if (err) {
+                console.log('error at _reloadPlayer():');
+                console.log(err);
+            } else {
+                console.log(audio_url)
+                this.player.play((err, playing) => {
+                    console.log(err,playing)
+                })
+            }
+        });
     }
 }
 

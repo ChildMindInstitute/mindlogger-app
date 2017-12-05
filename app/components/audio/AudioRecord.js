@@ -66,6 +66,7 @@ class AudioRecord extends React.Component {
     this.lastSeek = 0;
     if(this.props.path) {
       this.filename = Platform.OS == 'android' ? this.props.path : this.props.path.replace(/^.*[\\\/]/, '')
+      this.output_path = this.props.path
     }
     this._checkPermission().then((hasPermission) => {
       this.setState({ hasPermission });

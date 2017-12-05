@@ -22,10 +22,43 @@ export const fbAddActivity = (module, activity, completion) => {
     var ref = base.push(module, {data, then: completion})
     return ref.key
 }
-
 export const fbUpdateActivity = (module, activity) => {
-    const {key, ...data} = activity
-    return base.update(`${module}/${key}`,{data})
+  const {key, ...data} = activity
+  return base.update(`${module}/${key}`,{data})
+}
+
+export const fbUpdateActivityWithAudio = (module, activity) => {
+    if(activity.audio_path) {
+      var filename = activity.audio_path.replace(/^.*[\\\/]/, '')
+      return fbUploadFile(activity.audio_path, 'audios/'+filename).then(url => {
+        activity.audio_url = url
+        let {key, ...data} = activity
+        return base.update(`${module}/${key}`,{data})
+      })
+    } else {
+      let {key, ...data} = activity
+      return base.update(`${module}/${key}`,{data})
+    }
+}
+
+export const fbAddActivityWithAudio = (module, activity, completion) => {
+  return new Promise((resolve, reject) => {
+    let data = {...activity}
+    if(data.audio_path) {
+      var filename = data.audio_path.replace(/^.*[\\\/]/, '')
+      return fbUploadFile(data.audio_path,`audios/${filename}`).then(url => {
+        data.audio_url = url
+        const key = fbAddActivity(module, data, completion)
+        resolve({...data, key})
+      }).catch(err => {
+        reject(err)
+      })
+    } else {
+      const key = fbAddActivity(module, activity,completion)
+      return resolve({...data, key})
+    }
+  })
+  
 }
 
 export const fbDeleteActivity = (module, activity) => {
@@ -65,21 +98,18 @@ export const fbUploadFile = (uri, targetPath, mime = 'application/octet-stream')
         const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri
         let uploadBlob = null
         const fileRef = storageRef.child(targetPath)
-  
+        
         fs.readFile(uploadUri, 'base64')
         .then((data) => {
           return Blob.build(data, { type: `${mime};BASE64` })
         })
         .then((blob) => {
           uploadBlob = blob
-          return fileRef.put(blob, { contentType: mime })
+          return fileRef.put(blob, { cacheControl: 'public,max-age=3600', contentType: mime })
         })
-        .then(() => {
+        .then((snapshot) => {
           uploadBlob.close()
-          return fileRef.getDownloadURL()
-        })
-        .then((url) => {
-          resolve(url)
+          resolve(snapshot.downloadURL)
         })
         .catch((error) => {
           reject(error)
