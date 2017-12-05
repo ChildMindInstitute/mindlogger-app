@@ -10,12 +10,12 @@ import ProgressCircle from 'react-native-progress-circle'
 import moment from 'moment'
 
 import baseTheme from '../../../theme'
-import {setAudio} from '../actions'
+import {setVoice} from '../actions'
 import AudioRecord from '../../../components/audio/AudioRecord'
 import {fbUploadFile, fbSaveAnswer} from '../../../firebase'
 import WaveformWrapper from '../components/WaveformWrapper'
 
-class AudioActivityScreen extends Component {
+class VoiceActivityScreen extends Component {
     constructor(props) {
         super(props)
         
@@ -23,7 +23,7 @@ class AudioActivityScreen extends Component {
 
     componentWillMount() {
         
-        this.setState({audio: this.props.audio, duration:0})
+        this.setState({voice: this.props.voice, duration:0})
     }
 
     componentDidMount() {
@@ -31,12 +31,12 @@ class AudioActivityScreen extends Component {
     }
 
     async _play() {
-        const {audio} = this.state
+        const {voice} = this.state
 
         // These timeouts are a hacky workaround for some issues with react-native-sound.
         // See https://github.com/zmxv/react-native-sound/issues/89.
         setTimeout(() => {
-            var sound = new Sound(audio.output_path, '', (error) => {
+            var sound = new Sound(voice.output_path, '', (error) => {
                 if (error) {
                 console.log('failed to load the sound', error);
                 }
@@ -47,7 +47,7 @@ class AudioActivityScreen extends Component {
                 if (success) {
                     console.log('successfully finished playing');
                 } else {
-                    console.log('playback failed due to audio decoding errors');
+                    console.log('playback failed due to voice decoding errors');
                 }
                 });
             }, 100);
@@ -55,9 +55,9 @@ class AudioActivityScreen extends Component {
     }
 
     onRecordStart = (filePath) => {
-        let {audio} = this.state
-        audio.output_path = undefined
-        this.setState({audio})
+        let {voice} = this.state
+        voice.output_path = undefined
+        this.setState({voice})
     }
 
     onRecordProgress = (duration) => {
@@ -66,10 +66,10 @@ class AudioActivityScreen extends Component {
     }
 
     onRecordFile = (filePath, duration) => {
-        let {audio, setAudio} = this.props
-        audio.output_path = filePath
-        audio.duration = duration
-        setAudio(audio)
+        let {voice, setVoice} = this.props
+        voice.output_path = filePath
+        voice.duration = duration
+        setVoice(voice)
         this.toggleToPlay()
     }
 
@@ -78,10 +78,10 @@ class AudioActivityScreen extends Component {
     }
 
     onSave = () => {
-        let {audio} = this.state
+        let {voice} = this.state
         this.toggleSpinner()
-        fbUploadFile(audio.output_path, `audios/${moment(audio.updated_at).format('M-D-YYYY')}`).then((url)=>{
-            fbSaveAnswer({...audio, output_url: url})
+        fbUploadFile(voice.output_path, `voices/${moment(voice.updated_at).format('M-D-YYYY')}.aac`).then((url)=>{
+            fbSaveAnswer({...voice, output_url: url})
             Actions.pop()
         }).catch((error)=> {
             this.toggleSpinner(false)
@@ -97,21 +97,21 @@ class AudioActivityScreen extends Component {
         this.setState({playAudio: true})
         setTimeout(() => {
             this.setState({playAudio: false})
-        }, this.props.audio.duration*1000)
+        }, this.props.voice.duration*1000)
     }
     renderTimer() {
-        const {duration, audio} = this.state
+        const {duration, voice} = this.state
         console.log(duration)
         return (<View style={{alignItems: 'center'}}>
             <ProgressCircle
-            percent={duration/audio.timer*100}
+            percent={duration/voice.timer*100}
             radius={30}
             borderWidth={4}
             color="#FF9933"
             shadowColor="#999"
             bgColor="#fff">
                 <Text>
-                { audio.timer }
+                { voice.timer }
                 </Text>
                 <Text>
                 Sec
@@ -119,19 +119,19 @@ class AudioActivityScreen extends Component {
             </ProgressCircle>
         </View>)
     }
-    renderWaveForm(audio) {
+    renderWaveForm(voice) {
         return (<WaveformWrapper
-            source={{uri:`${audio.output_path}`}}
+            source={{uri:`${voice.output_path}`}}
             waveFormStyle={{waveColor:'blue', scrubColor:'red'}}
             style={{
                 flex:1,
             }}
-            duration = {audio.duration}
+            duration = {voice.duration}
         >
         </WaveformWrapper>)
     }
     render() {
-        const {audio, spinner} = this.state
+        const {voice, spinner} = this.state
         
         return (
         <Container>
@@ -142,24 +142,24 @@ class AudioActivityScreen extends Component {
             </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{audio.title}</Title>
+                <Title>{voice.title}</Title>
             </Body>
             <Right>
             </Right>
         </Header>
         <View style={{ flex: 1, margin: 20 }}>
-            {audio.timer && audio.timer>0 && this.renderTimer()}
+            {voice.timer && voice.timer>0 && this.renderTimer()}
             
             <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
                 <View style={{height: 200, width: '100%', backgroundColor:'white'}}>
-                {audio.output_path && this.renderWaveForm(audio)}
+                {voice.output_path && this.renderWaveForm(voice)}
                 </View>
             </View>
             <View style={{alignItems:'center', marginTop:20}}>
-                <Text>{audio.instruction}</Text>
+                <Text>{voice.instruction}</Text>
             </View>
             <View style={{marginTop:20}}>
-                <AudioRecord timeLimit={audio.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile} recordLabel={audio.output_path ? "Redo":"Begin"}/>
+                <AudioRecord timeLimit={voice.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile} recordLabel={voice.output_path ? "Redo":"Begin"}/>
             </View>
             <View style={{marginTop:20}}>
                 <Button full block onPress={this.onSave} disabled={spinner}><Text>Save</Text>{spinner && <Spinner />}</Button>
@@ -171,9 +171,9 @@ class AudioActivityScreen extends Component {
 }
 
 export default connect(state => ({
-    audio: state.audio.audio_in_action,
+    voice: state.voice.voice_in_action,
   }),
-  (dispatch) => bindActionCreators({setAudio}, dispatch)
-)(AudioActivityScreen);
+  (dispatch) => bindActionCreators({setVoice}, dispatch)
+)(VoiceActivityScreen);
 
 

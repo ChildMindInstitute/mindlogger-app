@@ -3,21 +3,24 @@ import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner } from 'native-base';
 
 import { Actions } from 'react-native-router-flux';
-import AudioAddForm from '../components/AudioAddForm';
-import {addAudioActivity, updateAudioActivity} from '../actions'
+import VoiceAddForm from '../components/VoiceAddForm';
+import {addVoiceActivity, updateVoiceActivity} from '../actions'
 import {fbAddActivity, fbUploadFile} from '../../../firebase'
 
 
-class AudioAddScreen extends Component {
+class VoiceAddScreen extends Component {
 
   constructor(props) {
     super(props);
   }
 
-  onEditAudio = (body) => {
-    let {audioIdx} = this.props
-    let audio = {...this.state.audio, ...body}
-    this.props.updateAudio(audioIdx, audio)
+  onEditVoice = (body) => {
+    let {voiceIdx} = this.props
+    let voice = {...this.state.voice, ...body}
+    this.props.updateVoice(voiceIdx, voice)
+    return fbUpdateActivity('voices', survey).then(result => {
+      Actions.pop()
+    })
     Actions.pop()
   }
 
@@ -25,18 +28,18 @@ class AudioAddScreen extends Component {
     this.setState({spinner: show})
   }
 
-  onAddAudio = (body) => {
-    let {addAudio} = this.props
-    let data = {...body, 'activity_type':'audio'}
+  onAddVoice = (body) => {
+    let {addVoice} = this.props
+    let data = {...body, 'activity_type':'voice'}
     var filename = data.audio_path.replace(/^.*[\\\/]/, '')
     this.toggleSpinner()
     return fbUploadFile(data.audio_path,`audios/${filename}`).then(url => {
       this.toggleSpinner(false)
       data.audio_url = url
-      const key = fbAddActivity('audios', data, result => {
+      const key = fbAddActivity('voices', data, result => {
         console.log("pushed", result)
       })
-      return addAudio({...data, key})
+      return addVoice({...data, key})
     }).catch(error => {
       this.toggleSpinner(false)
       console.log(error)
@@ -44,18 +47,18 @@ class AudioAddScreen extends Component {
   }
 
   componentWillMount() {
-    let {audios, audioIdx} = this.props
-    if(audioIdx) {
-      const audio = audios[audioIdx]
-      this.setState({audio})
+    let {voices, voiceIdx} = this.props
+    if(voiceIdx) {
+      const voice = voices[voiceIdx]
+      this.setState({voice})
     } else {
       this.setState({})
     }
   }
 
   render() {
-    const {audio, spinner} = this.state;
-    let title = audio ? audio.title : "New Audio"
+    const {voice, spinner} = this.state;
+    let title = voice ? voice.title : "New Voice"
     return (
       <Container>
         <Header hasTabs>
@@ -70,7 +73,7 @@ class AudioAddScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          {audio ? (<AudioAddForm onSubmit={this.onEditAudio} initialValues={audio}/>) : (<AudioAddForm onSubmit={this.onAddAudio}/>) }
+          {voice ? (<VoiceAddForm onSubmit={this.onEditVoice} initialValues={voice}/>) : (<VoiceAddForm onSubmit={this.onAddVoice}/>) }
           {spinner && <Spinner />}
         </Content>
       </Container>
@@ -79,16 +82,16 @@ class AudioAddScreen extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  addAudio: body => {
-    dispatch(addAudioActivity(body))
+  addVoice: body => {
+    dispatch(addVoiceActivity(body))
     Actions.pop()
   },
-  updateAudio: (audioIdx, body) => dispatch(updateAudioActivity(audioIdx, body))
+  updateVoice: (voiceIdx, body) => dispatch(updateVoiceActivity(voiceIdx, body))
 })
 
 const mapStateToProps = state => ({
-  audios: state.audio.audios,
+  voices: state.voice.voices,
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AudioAddScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(VoiceAddScreen);

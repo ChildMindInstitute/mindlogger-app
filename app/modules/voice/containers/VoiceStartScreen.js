@@ -10,21 +10,21 @@ import {
   } from 'react-native-audio-toolkit';
 
 import baseTheme from '../../../theme'
-import {setAudio} from '../actions'
+import {setVoice} from '../actions'
 import AudioRecord from '../../../components/audio/AudioRecord'
 
-class AudioStartScreen extends Component {
+class VoiceStartScreen extends Component {
     constructor(props) {
         super(props)
         
     }
 
     componentWillMount() {
-        this.setState({audio: this.props.audio})
+        this.setState({voice: this.props.voice})
     }
 
     componentDidMount() {
-        this.player = new Player(this.props.audio.audio_url, {
+        this.player = new Player(this.props.voice.voice_url, {
             autoDestroy: true
         }).prepare((err) => {
             if (err) {
@@ -42,11 +42,11 @@ class AudioStartScreen extends Component {
     }
 
     onBegin = () => {
-        Actions.replace("audio_activity")
+        Actions.replace("voice_activity")
     }
 
     render() {
-        const {audio, spinner} = this.state
+        const {voice, spinner} = this.state
         return (
         <Container>
         <Header>
@@ -56,7 +56,7 @@ class AudioStartScreen extends Component {
             </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{audio.title}</Title>
+                <Title>{voice.title}</Title>
             </Body>
             <Right>
             </Right>
@@ -69,7 +69,7 @@ class AudioStartScreen extends Component {
                 </View>
             </View>
             <View style={{alignItems:'center'}}>
-                <Text style={{margin:20}}>{audio.instruction}</Text>
+                <Text style={{margin:20}}>{voice.instruction}</Text>
             </View>
             <View style={{margin: 20}}>
             <Button full onPress={this.onBegin}><Text>Begin</Text></Button>
@@ -81,9 +81,9 @@ class AudioStartScreen extends Component {
 }
 
 export default connect(state => ({
-    audio: state.audio.audio_in_action,
+    voice: state.voice.voice_in_action,
   }),
-  (dispatch) => bindActionCreators({setAudio}, dispatch)
-)(AudioStartScreen);
+  (dispatch) => bindActionCreators({setVoice}, dispatch)
+)(VoiceStartScreen);
 
 

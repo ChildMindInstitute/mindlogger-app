@@ -6,7 +6,7 @@ import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right
 import { reduxForm, Field } from 'redux-form';
 import { Actions } from 'react-native-router-flux';
 
-import {FormInputItem, FormSwitchItem} from '../../../../components/form/FormItem'
+import {FormInputItem, FormSwitchItem, FormInputAudio} from '../../../../components/form/FormItem'
 
 const validate = values => {
     const error= {};
@@ -48,6 +48,7 @@ class SurveyAddForm extends Component {
             <Form>
             <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
             <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
+            <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
             <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
             
             <Button onPress={handleSubmit(onSubmit)} block style={{ margin: 15, marginTop: 50 }}>

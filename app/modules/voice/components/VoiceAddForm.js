@@ -30,7 +30,7 @@ const validate = values => {
 
 
 
-class AudioAddForm extends Component {
+class VoiceAddForm extends Component {
 
     constructor(props) {
         super(props)
@@ -78,5 +78,5 @@ class AudioAddForm extends Component {
 }
 
 export default reduxForm({
-    form: 'audio-add'
-})(AudioAddForm)
+    form: 'voice-add'
+})(VoiceAddForm)

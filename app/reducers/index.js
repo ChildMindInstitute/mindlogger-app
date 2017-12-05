@@ -6,7 +6,7 @@ import drawer from './drawer';
 import routes from './routes';
 
 import survey from '../modules/survey/reducer';
-import audio from '../modules/audio/reducer';
+import voice from '../modules/voice/reducer';
 
 export default combineReducers({
   form: formReducer,
@@ -14,5 +14,5 @@ export default combineReducers({
   routes,
   core,
   survey,
-  audio,
+  voice,
 });

@@ -11,7 +11,7 @@ import { auth, base, fbLoadAllActivity, fbDeleteActivity, fbLoadAllActivityByAut
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {updateUserLocal} from '../../actions/coreActions';
 import * as surveyActions from '../../modules/survey/actions';
-import * as audioActions from '../../modules/audio/actions';
+import * as voiceActions from '../../modules/voice/actions';
 
 import styles from './styles';
 
@@ -78,7 +78,7 @@ class ActivityScreen extends Component {
             } else if(buttonIndex == 1) {
                 Actions.survey_table_add()
             } else if(buttonIndex == 2) {
-                Actions.push("audio_add")
+                Actions.push("voice_add")
             } else if(buttonIndex == 3) {
             
             }
@@ -96,7 +96,7 @@ class ActivityScreen extends Component {
                 Actions.push("survey_basic_add", {surveyIdx:rowId})
             }
         } else if(secId == 'voices') {
-            Actions.push("audio_add", {audioIdx:rowId})
+            Actions.push("voice_add", {voiceIdx:rowId})
         }
     }
 
@@ -106,9 +106,9 @@ class ActivityScreen extends Component {
             this.props.deleteSurvey(rowId)
             fbDeleteActivity(secId, survey)
         } else if(secId === 'voices') {
-            const audio = this.props.audios[rowId]
-            this.props.deleteAudioActivity(rowId)
-            fbDeleteActivity('audios', audio)
+            const voice = this.props.voices[rowId]
+            this.props.deleteVoiceActivity(rowId)
+            fbDeleteActivity('voices', voice)
         }
         
     }
@@ -132,10 +132,10 @@ class ActivityScreen extends Component {
                 }
             }
         } else if(secId === 'voices') {
-            const {audios, setAudio} = this.props
-            let audio = {...audios[rowId]}
-            setAudio(audio)
-            Actions.push("audio_start")
+            const {voices, setVoice} = this.props
+            let voice = {...voices[rowId]}
+            setVoice(voice)
+            Actions.push("voice_start")
         }
     }
 
@@ -217,7 +217,7 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {surveys, audios, user} = this.props;
+        const {surveys, voices, user} = this.props;
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -244,7 +244,7 @@ class ActivityScreen extends Component {
 
             <Content>
             <List
-                dataSource={ds.cloneWithRowsAndSections({surveys, drawings:[], voices:audios})}
+                dataSource={ds.cloneWithRowsAndSections({surveys, drawings:[], voices:voices})}
                 renderRow={this._renderRow}
                 renderLeftHiddenRow={this._renderLeftHiddenRow}
                 renderRightHiddenRow={this._renderRightHiddenRow}
@@ -264,13 +264,13 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({...surveyActions, ...audioActions, updateUserLocal}, dispatch)
+    ...bindActionCreators({...surveyActions, ...voiceActions, updateUserLocal}, dispatch)
   };
 }
 
 const mapStateToProps = state => ({
   surveys: (state.survey && state.survey.surveys) || [],
-  audios: (state.audio && state.audio.audios) || [],
+  voices: (state.voice && state.voice.voices) || [],
   drawings: (state.drawing && state.drawing.drawings) || [],
   themeState: state.drawer.themeState,
   user: (state.core && state.core.user)

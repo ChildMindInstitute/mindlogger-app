@@ -23,7 +23,7 @@ import Settings from './containers/settings';
 //Modules
 
 import SurveyScenes from './modules/survey';
-import AudioScenes from './modules/audio/routes';
+import VoiceScenes from './modules/voice/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -90,7 +90,7 @@ class AppNavigator extends Component {
               <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
               {SurveyScenes}
-              {AudioScenes}
+              {VoiceScenes}
             </Scene>
           </RouterWithRedux>
         </Drawer>
