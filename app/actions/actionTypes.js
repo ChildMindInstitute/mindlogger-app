@@ -1,2 +1,8 @@
-export const INCREMENT = 'INCREMENT';
-export const DECREMENT = 'DECREMENT';
+export const SET_USER = 'SET_USER';
+export const UPDATE_USER = 'UPDATE_USER';
+export const LOGIN_USER = 'LOGIN_USER';
+export const UPDATE_USER_PASSWORD = 'UPDATE_USER_PASSWORD';
+export const UPDATE_USER_PROFILE = 'UPDATE_USER_PROFILE';
+export const REGISTER_USER = 'REGISTER_USER';
+export const LOGOUT_USER = 'LOGOUT_USER';
+export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
