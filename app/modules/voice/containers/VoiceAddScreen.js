@@ -37,16 +37,14 @@ class VoiceAddScreen extends Component {
     let data = {...body, 'activity_type':'voice'}
     var filename = data.audio_path.replace(/^.*[\\\/]/, '')
     this.toggleSpinner()
-    return fbUploadFile(data.audio_path,`audios/${filename}`).then(url => {
+    fbAddActivityWithAudio('audios',data,result => {
+      console.log("pushed", result)
+    }).then(res => {
       this.toggleSpinner(false)
-      data.audio_url = url
-      const key = fbAddActivity('voices', data, result => {
-        console.log("pushed", result)
-      })
-      return addVoice({...data, key})
-    }).catch(error => {
+      return addVoice(res)
+    }).catch(err => {
       this.toggleSpinner(false)
-      console.log(error)
+      console.log(err)
     })
   }
 
