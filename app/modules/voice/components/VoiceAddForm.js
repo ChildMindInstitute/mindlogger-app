@@ -61,7 +61,7 @@ class VoiceAddForm extends Component {
             <Field name="frequency"
             label="Frequency"
             component ={FormPickerGroup}
-            placeholder = "Select one"
+            placeholder = "Select frequency"
             options   ={[
                 {text:"3x/day",value:"8h"},
                 {text:"2x/day",value:"12h"},

@@ -25,7 +25,7 @@ class SurveyTableAddScreen extends Component {
     Actions.pop()
   }
 
-  onAddSurvey = (body) => {
+  onAddSurvey = (body) => {    
     const data = {...body, 'activity_type':'survey', mode: 'table'}
     const {addSurvey} = this.props
     return fbAddActivityWithAudio('surveys', data, result => {

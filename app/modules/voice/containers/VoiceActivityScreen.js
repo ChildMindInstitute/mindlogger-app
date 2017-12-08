@@ -111,7 +111,7 @@ class VoiceActivityScreen extends Component {
             shadowColor="#999"
             bgColor="#fff">
                 <Text>
-                { voice.timer }
+                { Math.floor(voice.timer-duration) }
                 </Text>
                 <Text>
                 Sec

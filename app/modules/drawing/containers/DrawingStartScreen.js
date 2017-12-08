@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Image} from 'react-native';
 import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Spinner } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,23 +10,22 @@ import {
   } from 'react-native-audio-toolkit';
 
 import baseTheme from '../../../theme'
-import {setVoice} from '../actions'
-import AudioRecord from '../../../components/audio/AudioRecord'
+import {setDrawing} from '../actions'
 
-class VoiceStartScreen extends Component {
+class DrawingStartScreen extends Component {
     constructor(props) {
         super(props)
         
     }
 
     componentWillMount() {
-        this.setState({voice: this.props.voice})
+        this.setState({drawing: this.props.drawing})
     }
 
     componentDidMount() {
-        const {voice} = this.props
-        if(voice.audio_url) {
-            this.player = new Player(this.props.voice.audio_url, {
+        const {drawing} = this.props
+        if(drawing.audio_url) {
+            this.player = new Player(this.props.drawing.audio_url, {
                 autoDestroy: true
             }).prepare((err) => {
                 if (err) {
@@ -45,11 +44,11 @@ class VoiceStartScreen extends Component {
     }
 
     onBegin = () => {
-        Actions.replace("voice_activity")
+        Actions.replace("drawing_activity")
     }
 
     render() {
-        const {voice, spinner} = this.state
+        const {drawing, spinner} = this.state
         return (
         <Container>
         <Header>
@@ -59,7 +58,7 @@ class VoiceStartScreen extends Component {
             </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{voice.title}</Title>
+                <Title>{drawing.title}</Title>
             </Body>
             <Right>
             </Right>
@@ -68,11 +67,14 @@ class VoiceStartScreen extends Component {
             {spinner && <Spinner />}
             <View style={{alignItems:'center', flexDirection: 'row', flex: 1}}>
                 <View style={baseTheme.centerRow}>
-                    <Icon name="mic" style={{fontSize:180}} />
+                    {drawing.image_url ? 
+                        (<Image style={{width: 300, height: 200}} source={{uri: drawing.image_url}} />) :
+                        (<Icon name="brush" style={{fontSize:180}} />)
+                    }
                 </View>
             </View>
             <View style={{alignItems:'center'}}>
-                <Text style={{margin:20}}>{voice.instruction}</Text>
+                <Text style={{margin:20}}>{drawing.instruction}</Text>
             </View>
             <View style={{margin: 20}}>
             <Button full onPress={this.onBegin}><Text>Begin</Text></Button>
@@ -84,9 +86,9 @@ class VoiceStartScreen extends Component {
 }
 
 export default connect(state => ({
-    voice: state.voice.voice_in_action,
+    drawing: state.drawing.drawing_in_action,
   }),
-  (dispatch) => bindActionCreators({setVoice}, dispatch)
-)(VoiceStartScreen);
+  (dispatch) => bindActionCreators({setDrawing}, dispatch)
+)(DrawingStartScreen);
 
 

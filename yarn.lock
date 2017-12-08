@@ -288,7 +288,13 @@ async@^1.4.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.0, async@^2.1.4, async@^2.4.0:
+async@^2.0.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.0.tgz#61a29abb6fcc026fea77e56d1c6ec53a795951f4"
+  dependencies:
+    lodash "^4.14.0"
+
+async@^2.1.4, async@^2.4.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
@@ -1273,7 +1279,7 @@ color-string@^1.4.0:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@~0.11.1:
+color@^0.11.1, color@~0.11.1:
   version "0.11.4"
   resolved "https://registry.yarnpkg.com/color/-/color-0.11.4.tgz#6d7b5c74fb65e841cd48792ad1ed5e07b904d764"
   dependencies:
@@ -4587,8 +4593,8 @@ react-devtools-core@^2.5.0:
     ws "^2.0.3"
 
 "react-native-audio-toolkit@https://github.com/futurice/react-native-audio-toolkit.git":
-  version "1.0.5"
-  resolved "https://github.com/futurice/react-native-audio-toolkit.git#1b157c4434bbb262e824b94924ebcde9092c0bfa"
+  version "1.0.6"
+  resolved "https://github.com/futurice/react-native-audio-toolkit.git#11c8904157677802b81122b882acc7e2cafba3d6"
   dependencies:
     async "^2.0.0"
     eventemitter3 "^1.2.0"
@@ -4600,7 +4606,7 @@ react-devtools-core@^2.5.0:
 
 "react-native-audiowaveform@https://github.com/erik-ilyin/react-native-audiowaveform.git":
   version "1.0.51"
-  resolved "https://github.com/erik-ilyin/react-native-audiowaveform.git#352adb7f6fdbb9685550b2e2110847897ed7b82d"
+  resolved "https://github.com/erik-ilyin/react-native-audiowaveform.git#6d5989fa9736dc81067cf31af1527d906a9fa666"
 
 react-native-button@^2.0.0:
   version "2.1.0"
@@ -4714,6 +4720,13 @@ react-native-scrollable-tab-view@^0.6.0:
 react-native-sound@^0.10.4:
   version "0.10.4"
   resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.10.4.tgz#242286558f457e023dbed42e8c6cbe52cfd313d4"
+
+react-native-svg@5.4.9:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-5.4.2.tgz#a01b4d88cda4b8ef4b2bc1adf05e11ec93a77b79"
+  dependencies:
+    color "^0.11.1"
+    lodash "^4.16.6"
 
 react-native-tab-view@^0.0.69:
   version "0.0.69"

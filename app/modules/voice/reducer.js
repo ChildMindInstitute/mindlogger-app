@@ -9,7 +9,7 @@ const initialState = {
   voices: [],
 }
 export default function voiceReducers(state = initialState, action = {}) {
-  let voices = state.voices
+  let voices = [...state.voices]
   switch (action.type) {
     case REHYDRATE:
       const voice = action.payload.voice

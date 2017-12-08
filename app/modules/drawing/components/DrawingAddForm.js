@@ -2,11 +2,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right } from 'native-base';
+import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right, Left, Thumbnail } from 'native-base';
 import { reduxForm, Field } from 'redux-form';
 import { Actions } from 'react-native-router-flux';
 
-import {FormInputItem, FormSwitchItem, FormInputAudio, FormPickerGroup} from '../../../../components/form/FormItem'
+import {FormInputItem, FormInputAudio, FormPickerGroup} from '../../../components/form/FormItem'
+import ImageBrowser from '../../../components/image/ImageBrowser'
 
 const validate = values => {
     const error= {};
@@ -29,7 +30,9 @@ const validate = values => {
   return error;
 };
 
-class SurveyAddForm extends Component {
+
+
+class DrawingAddForm extends Component {
 
     constructor(props) {
         super(props)
@@ -39,21 +42,57 @@ class SurveyAddForm extends Component {
         this.setState({...this.props.initialValues})
         
     }
-    
+
+    renderImageField = ({ input, label, style, name, itemStyle, ...props, meta: {touched, error, warning} }) => {
+        return (<Item onPress={() => this.showImageBrowser(input)}>
+            <Left>
+                <Text>Image</Text>
+            </Left>
+            <Body>
+                {input.value ? (<Thumbnail square source={{uri: input.value}} />) : (<Thumbnail square />) }
+            </Body>
+            <Right>
+                {input.value ? (<Button transparent onPress={() => input.onChange(undefined) }><Icon name="trash" style={{color: 'red'}}/></Button>) : (<View />) }
+            </Right>
+        </Item>)
+    }
+
+    showImageBrowser(input) {
+        this.imageInput = input
+        this.setState({imageSelect:true})
+    }
+
+    onSelectImage = (item, imagePath) => {
+        if(item) {
+            this.imageInput.onChange(item.image_url)
+        }
+        this.setState({imagePath, imageSelect:false})
+    }
+
     render() {
         const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
-        let accordion = this.state && this.state.accordion
-        console.log(accordion)
         return (
             <Form>
             <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
             <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
-            <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
+
+            <Field name="image_url" type="text" stackedLabel label="Fill Image" component={this.renderImageField} />
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            <Field name="timer"
+            label="Timer"
+            component ={FormPickerGroup}
+            placeholder = "Please pick time"
+            options   ={[
+                {text:"none", value:0},
+                {text:"10s",value:10},
+                {text:"30s",value:30},
+                {text:"60s",value:60},
+            ]} />
             <Field name="frequency"
             label="Frequency"
             component ={FormPickerGroup}
-            placeholder = "Frequency"
+            placeholder = "Select frequency"
             options   ={[
                 {text:"3x/day",value:"8h"},
                 {text:"2x/day",value:"12h"},
@@ -70,5 +109,5 @@ class SurveyAddForm extends Component {
 }
 
 export default reduxForm({
-    form: 'survey-add'
-  })(SurveyAddForm)
+    form: 'drawing-add'
+})(DrawingAddForm)

@@ -1,0 +1,5 @@
+export const ADD_DRAWING = 'ADD_DRAWING';
+export const UPDATE_DRAWING = 'UPDATE_DRAWING';
+export const DELETE_DRAWING = 'DELETE_DRAWING';
+export const SET_DRAWING = 'SET_DRAWING';
+export const LOAD_DRAWINGS = 'LOAD_DRAWINGS';

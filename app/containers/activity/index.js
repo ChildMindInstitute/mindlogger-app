@@ -31,7 +31,7 @@ class ActivityScreen extends Component {
 
     componentWillMount() {
         this.setState({})
-        const {user, surveys, loadSurveys, updateUserLocal} = this.props;
+        const {user, surveys, loadSurveys, updateUserLocal, loadVoices, loadDrawings} = this.props;
         base.listenTo(`users/${user.uid}`, {
         context: this,
         then(userInfo) {
@@ -46,11 +46,11 @@ class ActivityScreen extends Component {
                     })
                     fbLoadAllActivityByAuthor('voices', user.uid).then(data => {
                         if (data && data.length > 0)
-                            loadSurveys(data)
+                            loadVoices(data)
                     })
                     fbLoadAllActivityByAuthor('drawings', user.uid).then(data => {
                         if (data && data.length > 0)
-                            loadSurveys(data)
+                            loadDrawings(data)
                     })
                 }
             } else if (role == 'patient') {
@@ -118,19 +118,18 @@ class ActivityScreen extends Component {
 
     deleteActivity(secId, rowId) {
         const {deleteSurvey, deleteVoice, deleteDrawing} = this.props
+        let activity
         if(secId === 'surveys') {
-            const survey = this.props.surveys[rowId]
+            activity = this.props.surveys[rowId]
             deleteSurvey(rowId)
-            
         } else if(secId === 'voices') {
-            const voice = this.props.voices[rowId]
+            activity = this.props.voices[rowId]
             deleteVoice(rowId)
         } else if(secId === 'drawings') {
-            const voice = this.props.voices[rowId]
+            activity = this.props.drawings[rowId]
             deleteDrawing(rowId)
         }
-        fbDeleteActivity(secId, survey)
-        
+        fbDeleteActivity(secId, activity)
     }
 
     startActivity(secId, rowId) {
@@ -158,8 +157,11 @@ class ActivityScreen extends Component {
             let voice = {...voices[rowId]}
             setVoice(voice)
             Actions.push("voice_start")
-        } else if(secId === 'drawing') {
-            
+        } else if(secId === 'drawings') {
+            const {drawings, setDrawing} = this.props
+            let drawing = {...drawings[rowId]}
+            setDrawing(drawing)
+            Actions.push("drawing_start")
         }
     }
 
@@ -241,7 +243,8 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {surveys, voices, user} = this.props;
+        const {surveys, voices, drawings, user} = this.props;
+        console.log(drawings)
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -268,7 +271,7 @@ class ActivityScreen extends Component {
 
             <Content>
             <List
-                dataSource={ds.cloneWithRowsAndSections({surveys, drawings:[], voices:voices})}
+                dataSource={ds.cloneWithRowsAndSections({surveys, drawings, voices})}
                 renderRow={this._renderRow}
                 renderLeftHiddenRow={this._renderLeftHiddenRow}
                 renderRightHiddenRow={this._renderRightHiddenRow}
@@ -308,7 +311,7 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({...surveyActions, ...voiceActions, updateUserLocal}, dispatch)
+    ...bindActionCreators({...surveyActions, ...voiceActions, ...drawingActions, updateUserLocal}, dispatch)
   };
 }
 
