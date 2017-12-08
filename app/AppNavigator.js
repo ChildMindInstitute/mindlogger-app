@@ -24,6 +24,7 @@ import Settings from './containers/settings';
 
 import SurveyScenes from './modules/survey';
 import VoiceScenes from './modules/voice/routes';
+import DrawingScenes from './modules/drawing/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -91,6 +92,7 @@ class AppNavigator extends Component {
               <Scene key="activity" component={ActivityScreen}/>
               {SurveyScenes}
               {VoiceScenes}
+              {DrawingScenes}
             </Scene>
           </RouterWithRedux>
         </Drawer>

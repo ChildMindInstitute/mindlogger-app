@@ -17,6 +17,7 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {updateUserLocal} from '../../actions/coreActions';
 import * as surveyActions from '../../modules/survey/actions';
 import * as voiceActions from '../../modules/voice/actions';
+import * as drawingActions from '../../modules/drawing/actions';
 
 import styles from './styles';
 
@@ -40,6 +41,14 @@ class ActivityScreen extends Component {
             if (role == 'clinician') {
                 if (surveys.length == 0) {
                     fbLoadAllActivityByAuthor('surveys', user.uid).then(data => {
+                        if (data && data.length > 0)
+                            loadSurveys(data)
+                    })
+                    fbLoadAllActivityByAuthor('voices', user.uid).then(data => {
+                        if (data && data.length > 0)
+                            loadSurveys(data)
+                    })
+                    fbLoadAllActivityByAuthor('drawings', user.uid).then(data => {
                         if (data && data.length > 0)
                             loadSurveys(data)
                     })
@@ -81,11 +90,11 @@ class ActivityScreen extends Component {
             if(buttonIndex==0) {
                 Actions.push("survey_basic_add");
             } else if(buttonIndex == 1) {
-                Actions.survey_table_add()
+                Actions.push("survey_table_add")
             } else if(buttonIndex == 2) {
                 Actions.push("voice_add")
             } else if(buttonIndex == 3) {
-            
+                Actions.push("drawing_add")
             }
         }
         )
@@ -95,26 +104,32 @@ class ActivityScreen extends Component {
         
         if(secId == 'surveys') {
             const survey = this.props.surveys[rowId]
-            if(survey.mode == 'table') {
+            if(survey.mode === 'table') {
                 Actions.push("survey_table_add", {surveyIdx:rowId})
             } else {
                 Actions.push("survey_basic_add", {surveyIdx:rowId})
             }
-        } else if(secId == 'voices') {
+        } else if(secId === 'voices') {
             Actions.push("voice_add", {voiceIdx:rowId})
+        } else if(secId === 'drawings') {
+            Actions.push("drawing_add", {drawingIdx:rowId})
         }
     }
 
     deleteActivity(secId, rowId) {
+        const {deleteSurvey, deleteVoice, deleteDrawing} = this.props
         if(secId === 'surveys') {
             const survey = this.props.surveys[rowId]
-            this.props.deleteSurvey(rowId)
-            fbDeleteActivity(secId, survey)
+            deleteSurvey(rowId)
+            
         } else if(secId === 'voices') {
             const voice = this.props.voices[rowId]
-            this.props.deleteVoiceActivity(rowId)
-            fbDeleteActivity('voices', voice)
+            deleteVoice(rowId)
+        } else if(secId === 'drawings') {
+            const voice = this.props.voices[rowId]
+            deleteDrawing(rowId)
         }
+        fbDeleteActivity(secId, survey)
         
     }
 

@@ -17,6 +17,8 @@ export default function voiceReducers(state = initialState, action = {}) {
         return {...state, ...voice}
       else
         return state
+    case types.LOAD_VOICES:
+      return {...state, voices: action.data}
     case types.ADD_VOICE:
       voices.push({...action.data, ...activityInitialState, uuid: randomString({length:20})})
       return {

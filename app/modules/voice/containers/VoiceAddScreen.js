@@ -4,7 +4,7 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 
 import { Actions } from 'react-native-router-flux';
 import VoiceAddForm from '../components/VoiceAddForm';
-import {addVoiceActivity, updateVoiceActivity} from '../actions'
+import {addVoice, updateVoice} from '../actions'
 import {fbAddActivity, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
 
 
@@ -87,10 +87,10 @@ class VoiceAddScreen extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   addVoice: body => {
-    dispatch(addVoiceActivity(body))
+    dispatch(addVoice(body))
     Actions.pop()
   },
-  updateVoice: (voiceIdx, body) => dispatch(updateVoiceActivity(voiceIdx, body))
+  updateVoice: (voiceIdx, body) => dispatch(updateVoice(voiceIdx, body))
 })
 
 const mapStateToProps = state => ({

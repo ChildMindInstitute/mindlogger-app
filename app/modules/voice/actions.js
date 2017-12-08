@@ -1,17 +1,22 @@
 import * as types from './actionTypes';
 
-export const addVoiceActivity = (data) => ({
+export const loadVoices = (data) => ({
+  type: types.LOAD_VOICES,
+  data
+})
+
+export const addVoice = (data) => ({
   type: types.ADD_VOICE,
   data
 })
 
-export const updateVoiceActivity = (index, data) => ({
+export const updateVoice = (index, data) => ({
   type: types.UPDATE_VOICE,
   index: index,
   data
 })
 
-export const deleteVoiceActivity = (index) => ({
+export const deleteVoice = (index) => ({
   type: types.DELETE_VOICE,
   index
 })

@@ -1,13 +1,5 @@
 import * as types from './actionTypes';
 
-export function postAnswer(index, result) {
-  return {
-    type: types.POST_ANSWER,
-    index: index,
-    data: result
-  };
-}
-
 export function loadSurveys(data) {
   return {
     type: types.LOAD_SURVEYS,

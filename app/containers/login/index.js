@@ -22,6 +22,7 @@ import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field } from 'redux-form';
 import {loginUser} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
+import { auth, base} from '../../firebase'
 import styles from './styles';
 
 class LoginForm extends Component {
@@ -87,6 +88,7 @@ const mapDispatchToProps = (dispatch) => ({
     login: (body) => {
         return dispatch(loginUser(body)).then(res => {
             console.log(res)
+            base.update(`users/${res.uid}`, {data:{name: res.displayName, email: res.email}})
             Actions.push('activity')
         }).catch(err => {
             console.log(err)
