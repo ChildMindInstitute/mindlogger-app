@@ -81,13 +81,12 @@ class VoiceActivityScreen extends Component {
         let {voice} = this.state
         this.toggleSpinner()
         fbUploadFile(voice.output_path, `voices/${moment(voice.updated_at).format('M-D-YYYY')}.aac`).then((url)=>{
-            fbSaveAnswer({...voice, output_url: url})
+            fbSaveAnswer({...voice, output_url: url, updated_at: (new Date()).getTime()})
             Actions.pop()
         }).catch((error)=> {
             this.toggleSpinner(false)
             Toast.show({text: error.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
         })
-        
     }
 
     toggleToPlay = () => {

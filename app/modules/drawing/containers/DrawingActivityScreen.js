@@ -44,7 +44,7 @@ class DrawingActivityScreen extends Component {
         if(!this.board) return
         let {drawing} = this.state
         let lines = this.board.save()
-        fbSaveAnswer({...drawing, lines})
+        fbSaveAnswer({...drawing, lines, updated_at: (new Date()).getTime()})
         Actions.pop()
         
     }
