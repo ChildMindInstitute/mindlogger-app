@@ -32,6 +32,11 @@ class ActivityScreen extends Component {
     componentWillMount() {
         this.setState({})
         const {user, surveys, loadSurveys, updateUserLocal, loadVoices, loadDrawings} = this.props;
+        if(!user) {
+            console.warn("undefined user")
+            return
+        }
+        
         base.listenTo(`users/${user.uid}`, {
         context: this,
         then(userInfo) {
@@ -65,6 +70,18 @@ class ActivityScreen extends Component {
         fbLoadAllActivity('surveys').then(data => {
             if (data && data.length > 0) {
                 this.props.loadSurveys(data)
+            }
+        })
+
+        fbLoadAllActivity('voices').then(data => {
+            if (data && data.length > 0) {
+                this.props.loadVoices(data)
+            }
+        })
+
+        fbLoadAllActivity('drawings').then(data => {
+            if (data && data.length > 0) {
+                this.props.loadDrawings(data)
             }
         })
     }
@@ -218,6 +235,8 @@ class ActivityScreen extends Component {
     }
 
     _renderRightHiddenRow = (data, secId, rowId, rowMap) => {
+        const {user} = this.props
+        if(user.role !== 'clinician') return undefined
         return (
         <View style={{flexDirection:'row', height:63}}>
             <Button full info style={{height:63, width: 60}} onPress={_ => this._editRow(data, secId, rowId, rowMap)}>
