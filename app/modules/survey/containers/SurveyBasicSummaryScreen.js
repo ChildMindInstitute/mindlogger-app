@@ -77,7 +77,6 @@ class SurveyBasicSummaryScreen extends Component {
         answerText = answer
         break;
     }
-    console.log(answer, answerText)
     return (
       <ListItem key={idx} onPress={() => { this.onSelect(idx)}}>
         <Body>

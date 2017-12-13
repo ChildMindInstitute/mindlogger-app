@@ -80,6 +80,10 @@ export default class DrawingBoard extends Component {
         this.allowed = true
     }
 
+    stop() {
+        this.allowed = false
+    }
+
     save() {
         return this.state.lines
     }

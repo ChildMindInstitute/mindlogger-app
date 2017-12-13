@@ -85,6 +85,7 @@ class DrawingActivityScreen extends Component {
             if(this.state.duration>=this.state.drawing.timer) {
                 clearInterval(this.timerId)
                 this.timerId = undefined
+                this.board.stop()
             }
         }, 1000)
     }
@@ -109,7 +110,7 @@ class DrawingActivityScreen extends Component {
         <View style={{ flex: 1, margin: 20 }}>
             {drawing.timer && drawing.timer>0 && this.renderTimer()}
             <View style={{flex: 1, alignItems: 'center'}} >
-                <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} ref={board => this.board = board}/>
+                <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
             </View>
             <View style={{alignItems:'center', marginTop:20}}>
                 <Text>{drawing.instruction}</Text>
