@@ -16,6 +16,7 @@ import SplashPage from './components/splashscreen/';
 import SideBar from './components/sidebar';
 import ActivityScreen from './containers/activity/';
 import Login from './containers/login';
+import ForgotPassword from './containers/login/forgot-password';
 import Consent from './containers/login/consent';
 import Signup from './containers/login/signup';
 import Settings from './containers/settings';
@@ -88,6 +89,7 @@ class AppNavigator extends Component {
               <Scene key="login" component={Login} initial={true}/>
               <Scene key="consent" component={Consent}/>
               <Scene key="sign_up" component={Signup}/>
+              <Scene key="forgot_password" component={ForgotPassword}/>
               <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
               {SurveyScenes}

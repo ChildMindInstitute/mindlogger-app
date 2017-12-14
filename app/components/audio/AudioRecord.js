@@ -21,7 +21,7 @@ class AudioRecord extends React.Component {
   constructor() {
     super();
     //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;
-    const filename = `${randomString({length:20})}.aac`
+    const filename = Platform.OS == 'android' ? `${randomString({length:20})}.mp3` : `${randomString({length:20})}.aac`
     const path = `${AudioUtils.DocumentDirectoryPath}/${filename}` 
     this.filename = Platform.OS == 'android' ? `file://${path}` : filename
     this.output_path = path
@@ -116,7 +116,7 @@ class AudioRecord extends React.Component {
   _updateState(err) {
     this.setState({
       playPauseButton:      this.player    && this.player.isPlaying     ? 'Pause' : 'Play',
-
+      recordButton: this.recordButtonText(),
       stopButtonDisabled:   !this.player   || !this.player.canStop,
       playButtonDisabled:   !this.player   || !this.player.canPlay || this.recorder.isRecording,
       recordButtonDisabled: !this.recorder || (this.player         && !this.player.isStopped),
@@ -204,24 +204,35 @@ class AudioRecord extends React.Component {
       this.player.destroy();
     }
 
-    this.recorder.toggleRecord((err, stopped) => {
-      if (err) {
-        this.setState({
-          error: err.message
-        });
-        console.log(err)
-      }
-      if (stopped) {
-        this._reloadPlayer();
-        this._reloadRecorder();
-        this.props.onRecordFile(this.output_path, (Date.now() - this.startTime)/1000);
-      } else {
-        this.startTime = Date.now()
-        if(this.props.onStart) this.props.onStart(this.filename)
-      }
-
-      this._updateState();
-    });
+    if(this.recorder.isRecording) {
+      this.recorder.stop(err => {
+        if (err) {
+          this.setState({
+            error: err.message
+          });
+          console.log(err)
+        } else {
+          this._reloadPlayer();
+          this._reloadRecorder();
+          this.props.onRecordFile(this.output_path, (Date.now() - this.startTime)/1000);
+        }
+        this._updateState();
+      })
+    } else {
+      this.recorder.record(err => {
+        if (err) {
+          this.setState({
+            error: err.message
+          });
+          console.log(err)
+        }
+        else {
+          this.startTime = Date.now()
+          if(this.props.onStart) this.props.onStart(this.filename)
+        }
+        this._updateState();
+      })
+    }
   }
 
   _toggleLooping(value) {
@@ -245,8 +256,8 @@ class AudioRecord extends React.Component {
     return (
       <View style={{flexDirection:'column'}}>
         <View style={styles.buttonContainer}>
-          <Button disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
-            <Text>{this.recordButtonText()}</Text>
+          <Button danger disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
+            <Text>{this.state.recordButton}</Text>
           </Button>
           <Button disabled={this.state.playButtonDisabled} onPress={() => this._playPause()}>
             <Text>{this.state.playPauseButton}</Text>
@@ -268,7 +279,7 @@ class AudioRecord extends React.Component {
     return (
       <View style={{flexDirection:'column'}}>
         <View style={styles.buttonContainer}>
-          <Button disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
+          <Button danger disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
             <Text>{this.recordButtonText()}</Text>
           </Button>
           <Button disabled={this.state.playButtonDisabled} onPress={() => this._playPause()}>

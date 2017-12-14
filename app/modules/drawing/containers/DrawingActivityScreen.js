@@ -71,9 +71,11 @@ class DrawingActivityScreen extends Component {
     }
 
     onBegin = () => {
+        const {drawing} = this.state
         this.board.start()
         this.setState({started:true, duration:0})
-        this.startTimer()
+        if(drawing.timer && drawing.timer>0)
+            this.startTimer()
     }
 
     startTimer() {
@@ -92,7 +94,6 @@ class DrawingActivityScreen extends Component {
 
     render() {
         const {drawing, spinner, started} = this.state
-        
         return (
         <Container>
         <Header>
@@ -108,8 +109,8 @@ class DrawingActivityScreen extends Component {
             </Right>
         </Header>
         <View style={{ flex: 1, margin: 20 }}>
-            {drawing.timer && drawing.timer>0 && this.renderTimer()}
-            <View style={{flex: 1, alignItems: 'center'}} >
+            {drawing.timer && drawing.timer>0 ? this.renderTimer() : <Text/>}
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
                 <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
             </View>
             <View style={{alignItems:'center', marginTop:20}}>
@@ -119,7 +120,7 @@ class DrawingActivityScreen extends Component {
             <Button full block onPress={this.onBegin}><Text>{started ? 'Redo' : 'Begin'}</Text></Button>
             </View>
             <View style={{marginTop:20}}>
-                <Button full block onPress={this.onSave} disabled={spinner}><Text>Save</Text>{spinner && <Spinner />}</Button>
+                <Button full block onPress={this.onSave} disabled={spinner || !started}><Text>Save</Text>{spinner && <Spinner />}</Button>
             </View>
         </View>
         </Container>

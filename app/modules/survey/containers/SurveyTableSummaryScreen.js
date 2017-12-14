@@ -53,7 +53,6 @@ class SurveyTableSummaryScreen extends Component {
         dRows.push({secId, rowId, text })
       })
     })
-    console.log(dRows)
     return (
       <Container>
       <Header>

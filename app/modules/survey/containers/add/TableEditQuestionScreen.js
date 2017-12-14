@@ -6,7 +6,7 @@ import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 're
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle } from 'native-base';
 
 import {updateSurvey} from '../../actions'
-import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup} from '../../../../components/form/FormItem'
+import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup, required} from '../../../../components/form/FormItem'
 import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 
 const questionInitialState = {
@@ -40,7 +40,7 @@ class SurveyTableEditQuestionForm extends Component {
       let question_type = this.props.question_type || (initialValues && initialValues.type)
       return (
             <Form>
-            <Field name="title" type="text" placeholder="Add a question" component={FormInputItem} />
+            <Field name="title" type="text" placeholder="Add a question" validate={required} component={FormInputItem} />
             <Field name="rows_count" label="Number of rows" min={1} component={FormInputNumberItem} />
             <Field name="cols_count" label="Number of cols" min={1} component={FormInputNumberItem} />
             <FieldArray name="rows" label="Row" count={this.props.rows_count} component={this.renderRows} value={rows}/>
@@ -49,11 +49,12 @@ class SurveyTableEditQuestionForm extends Component {
             component ={FormPickerGroup}
             placeholder = "Question Type"
             options   ={[
+                {text:"Not selected", value:undefined},
                 {text:"Text value",value:"text"},
                 {text:"Number #",value:"number"},
                 {text:"Single selection",value:"single_sel"},
                 {text:"Multiple selection",value:"multi_sel"},
-            ]} />
+            ]} validate={required}/>
             <FieldArray name="cols" label="Col" count={this.props.cols_count} component={this.renderRows} value={cols}/>
 
           </Form>)
@@ -206,7 +207,7 @@ class SurveyTableEditQuestionScreen extends Component {
                 <Text>Delete</Text>
                 </Button>
             </Row>
-            <Button block style={{ marginLeft: 15, marginRight: 15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
+            <Button block style={{ marginLeft: 15, marginRight: 15, marginBottom:15 }} onPress={()=> this.updateAndDone()}><Text>Done</Text></Button>
             
             
             </Content>

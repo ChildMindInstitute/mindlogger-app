@@ -5,7 +5,7 @@ import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 're
 import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1, Thumbnail, ListItem } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {updateSurvey} from '../../actions'
-import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../../../components/form/FormItem'
+import {FormInputItem, FormSwitchItem, FormRadioButtonGroup, required} from '../../../../components/form/FormItem'
 import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 import ImageBrowser from '../../../../components/image/ImageBrowser'
 
@@ -87,7 +87,7 @@ class SurveyEditQuestionForm extends Component {
       let question_type = this.props.question_type || (this.props.initialValues && this.props.initialValues.type)
       return (
           <Form>
-          <Field name="title" floatingLabel type="text" placeholder="Add a question" component={FormInputItem} />
+          <Field name="title" floatingLabel type="text" validate={required} placeholder="Add a question" component={FormInputItem} />
           <Field name="type"
             component ={FormRadioButtonGroup}
             placeholder = "Question Type"
@@ -96,7 +96,7 @@ class SurveyEditQuestionForm extends Component {
               {text:"Choice",value:"single_sel"},
               {text:"Multiple",value:"multi_sel"},
               {text:"Image", value:"image_sel"}
-            ]} />
+            ]} validate={required} />
             { this.renderExtraFields(question_type) }
             { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
           </Form>)

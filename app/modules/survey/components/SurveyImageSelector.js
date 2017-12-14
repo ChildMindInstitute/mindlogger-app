@@ -61,7 +61,6 @@ class SurveyImageSelector extends SurveyInputComponent {
                   this.selectAnswer(idx, true)
                 }}>
                 <ImageBackground style={ idx == answer ? styles.imageSelected : styles.image} source={{uri: item.image_url}}>
-                    <Text style={styles.headline}>{item.name}</Text>
                 </ImageBackground>
                 </TouchableOpacity>
               )

@@ -44,11 +44,14 @@ export const FormRadioGroup = ({ type,input, name, options, stackedLabel }) => {
       ))}</View>)
 }
 
-export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLabel }) => {
+export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLabel,meta: { touched, error, warning } }) => {
   var hasError= false;
-  return (<Picker mode ="dropdown" iosHeader="Select one" {...inputProps} selectedValue={input.value} onValueChange={input.onChange}>{options.map((option, idx)=>(
-    <Item key={idx} label={option.text} value={option.value}/>
-      ))}</Picker>)
+  if(error !== undefined){
+    hasError= true;
+  }
+  return (<View><Picker mode ="dropdown" iosHeader="Select one" {...inputProps} selectedValue={input.value} onValueChange={input.onChange}>{options.map((option, idx)=>(
+    <Item key={idx} style={{color:'red'}} label={option.text} value={option.value}/>
+      ))}</Picker>{hasError && <Item error={hasError}><Body></Body><Right><Text>{error}</Text></Right></Item>}</View>)
 }
 
 export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }) => {
@@ -138,3 +141,9 @@ export const FormInputCheckItem = ({ input, label, style, name, itemStyle, ...pr
     </ListItem>
   )
 }
+
+export const required = value => value ? undefined : 'Required'
+export const maxLength = max => value =>
+  value && value.length > max ? `Must be ${max} characters or less` : undefined
+export const maxLength15 = maxLength(15)
+export const isNumber = value => value && isNaN(Number(value)) ? 'Must be a number' : undefined

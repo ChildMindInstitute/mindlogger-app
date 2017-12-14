@@ -8,6 +8,12 @@ import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
 import {fbAddActivity,fbAddActivityWithAudio, fbUpdateActivityWithAudio} from '../../../../firebase'
 
+const surveyInitial = {
+  questions:[],
+  answers:[],
+  frequency: '1d',
+}
+
 class SurveyBasicAddScreen extends Component {
 
   constructor(props) {
@@ -75,7 +81,7 @@ class SurveyBasicAddScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey}/>) }
+          {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
         </Content>
       </Container>
     );
@@ -84,8 +90,6 @@ class SurveyBasicAddScreen extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   addSurvey: body => {
-    body.questions = []
-    body.answers = []
     dispatch(addSurvey(body))
     Actions.replace("survey_basic_edit_question",{surveyIdx:-1, questionIdx:0})
   },

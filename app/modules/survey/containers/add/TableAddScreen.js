@@ -8,6 +8,12 @@ import SurveyAddForm from '../../components/form/SurveyAddForm';
 import {addSurvey, updateSurvey} from '../../actions'
 import {fbAddActivityWithAudio, fbUpdateActivityWithAudio} from '../../../../firebase'
 
+const surveyInitial = {
+  questions:[],
+  answers:[],
+  frequency: '1d',
+}
+
 class SurveyTableAddScreen extends Component {
 
   constructor(props) {
@@ -82,7 +88,7 @@ class SurveyTableAddScreen extends Component {
         </Header>
         <Content>
           <Content padder>
-            {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey}/>) }
+            {survey ? (<SurveyAddForm onSubmit={this.onEditSurvey} initialValues={survey}/>) : (<SurveyAddForm onSubmit={this.onAddSurvey} initialValues={surveyInitial}/>) }
           </Content>
         </Content>
       </Container>

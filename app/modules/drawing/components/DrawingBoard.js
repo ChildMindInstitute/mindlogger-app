@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar, View, PanResponder, Image} from 'react-native';
+import {Icon} from 'native-base';
 import { connect } from 'react-redux';
 
 import Svg,{
@@ -9,17 +10,37 @@ import Svg,{
     Polyline,
 } from 'react-native-svg'
 
+function chunckedPointStr(lines, chunk_size){
+    var results = [];
+    lines.forEach(line => {
+        let length = line.points.length
+        for (var index = 0; index < length ; index += chunk_size) {
+            myChunk = line.points.slice(index, index+chunk_size+1);
+            // Do something if you want with the group
+            results.push(myChunk.map(point => point.join(",")).join(" "));
+        }
+    });
+    return results;
+}
+
 
 export default class DrawingBoard extends Component {
     constructor(props) {
         super(props)
         this.allowed = false
+        this.startX = 0
+        this.startY = 0
+        this.lastX = 0
+        this.lastY = 0
     }
 
     addLine = (evt, gestureState) => {
         const {lines} = this.state;
         if(!this.allowed) return
-        lines.push({points:[[evt.nativeEvent.locationX,evt.nativeEvent.locationY]]})
+        const {locationX, locationY} = evt.nativeEvent
+        this.startX = locationX
+        this.startY = locationY
+        lines.push({points:[[locationX,locationY]]})
         this.setState({lines})
     }
 
@@ -27,8 +48,15 @@ export default class DrawingBoard extends Component {
         const {lines, dimensions} = this.state
         if(!this.allowed) return
         let n = lines.length-1
-        lines[n].points.push([evt.nativeEvent.locationX,evt.nativeEvent.locationY])
-        this.setState({lines})
+        const {moveX, moveY, x0, y0} = gestureState
+        const x = moveX-x0+this.startX
+        const y = moveY-y0+this.startY
+        if((Math.abs(this.lastX-x)>10) || (Math.abs(this.lastY-y)>10)) {
+            this.lastX = x
+            this.lastY = y
+            lines[n].points.push([this.lastX,this.lastY])
+            this.setState({lines})
+        }
     }
 
     componentWillMount() {
@@ -59,11 +87,10 @@ export default class DrawingBoard extends Component {
         this.setState({lines: this.props.lines || []})
     }
 
-    renderLine(line, idx) {
-        const pointStr = line.points.map(point => point.join(",")).join(" ")
+    renderLine(pointStr, idx) {
         return (<Polyline key={idx}
             points={pointStr}
-            fill={line.fill || 'none'}
+            fill= 'none'
             stroke="black"
             strokeWidth="3"
         />)
@@ -90,20 +117,23 @@ export default class DrawingBoard extends Component {
 
     render() {
         const {lines, dimensions} = this.state
+        const {placeholder} = this.props
         if (dimensions) {
             var { width, height } = dimensions
         }
+        const strArray = chunckedPointStr(lines,50)
         return (
             
             <View style={{width: 300, height: 200, alignItems: 'center', backgroundColor: 'white'}} onLayout={this.onLayout} {...this._panResponder.panHandlers}>
-                <Image style={{width:300, height: 200}} source={this.props.source}/>
+                {this.props.source && (<Image style={{width:300, height: 200}} source={this.props.source}/>)}
+                {placeholder && (<Icon name="brush" style={{fontSize:120}}/>)}
                 <View style={{width: '100%', height:'100%', position:'absolute'}}>
                     {dimensions && 
                     <Svg
                         height={height}
                         width={width}
                     >
-                    {lines.map(this.renderLine)}
+                    {strArray.map(this.renderLine)}
                     </Svg>
                     }
                 </View>

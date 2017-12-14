@@ -33,7 +33,7 @@ export default class WaveformWrapper extends Component {
                 clearTimeout(this.timerId)
                 if(this.state.playAudio)
                     this.changestate()
-            }, (this.props.duration+0.3)*1000)
+            }, (this.props.duration+0.5)*1000)
         }
         console.log(this.props.duration,this.state.playAudio)
         this.setState({playAudio: !this.state.playAudio})

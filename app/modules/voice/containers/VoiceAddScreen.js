@@ -5,8 +5,9 @@ import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Le
 import { Actions } from 'react-native-router-flux';
 import VoiceAddForm from '../components/VoiceAddForm';
 import {addVoice, updateVoice} from '../actions'
-import {fbAddActivity, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
+import {fbAddActivity, fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
 
+const voiceInitial = {frequency: '1d', timer: 0}
 
 class VoiceAddScreen extends Component {
 
@@ -35,7 +36,6 @@ class VoiceAddScreen extends Component {
   onAddVoice = (body) => {
     let {addVoice} = this.props
     let data = {...body, 'activity_type':'voice'}
-    var filename = data.audio_path.replace(/^.*[\\\/]/, '')
     this.toggleSpinner()
     fbAddActivityWithAudio('audios',data,result => {
       console.log("pushed", result)
@@ -75,7 +75,7 @@ class VoiceAddScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          {voice ? (<VoiceAddForm onSubmit={this.onEditVoice} initialValues={voice}/>) : (<VoiceAddForm onSubmit={this.onAddVoice}/>) }
+          {voice ? (<VoiceAddForm onSubmit={this.onEditVoice} initialValues={voice}/>) : (<VoiceAddForm onSubmit={this.onAddVoice} initialValues={voiceInitial}/>) }
           {spinner && <Spinner />}
         </Content>
       </Container>

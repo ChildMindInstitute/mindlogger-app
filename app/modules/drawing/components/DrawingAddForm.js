@@ -6,7 +6,7 @@ import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right
 import { reduxForm, Field } from 'redux-form';
 import { Actions } from 'react-native-router-flux';
 
-import {FormInputItem, FormInputAudio, FormPickerGroup} from '../../../components/form/FormItem'
+import {FormInputItem, FormInputAudio, FormPickerGroup, required} from '../../../components/form/FormItem'
 import ImageBrowser from '../../../components/image/ImageBrowser'
 
 const validate = values => {
@@ -73,7 +73,7 @@ class DrawingAddForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
         return (
             <Form>
-            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
+            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' validate={required} component={FormInputItem} />
             <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
 
@@ -102,7 +102,7 @@ class DrawingAddForm extends Component {
                 {text:"one time",value:"1"},
             ]} />
             <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
-                <Text>{ initialValues ? "Update" : "Create" }</Text>
+                <Text>{ initialValues.uuid ? "Update" : "Create" }</Text>
             </Button>
             </Form>)
     }

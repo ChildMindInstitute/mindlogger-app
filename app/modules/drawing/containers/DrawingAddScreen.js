@@ -7,6 +7,10 @@ import DrawingAddForm from '../components/DrawingAddForm';
 import {addDrawing, updateDrawing} from '../actions'
 import {fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
 
+const drawingInitial = {
+  frequency: '1d',
+  timer: 0
+}
 
 class DrawingAddScreen extends Component {
 
@@ -74,7 +78,7 @@ class DrawingAddScreen extends Component {
           <Right />
         </Header>
         <Content padder>
-          {drawing ? (<DrawingAddForm onSubmit={this.onEditDrawing} initialValues={drawing}/>) : (<DrawingAddForm onSubmit={this.onAddDrawing}/>) }
+          {drawing ? (<DrawingAddForm onSubmit={this.onEditDrawing} initialValues={drawing}/>) : (<DrawingAddForm onSubmit={this.onAddDrawing} initialValues={drawingInitial}/>) }
           {spinner && <Spinner />}
         </Content>
       </Container>

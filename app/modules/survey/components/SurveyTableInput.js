@@ -4,12 +4,7 @@ import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, C
 import { connect } from 'react-redux';
 import baseTheme from '../../../theme'
 import SurveyInputComponent from './SurveyInputComponent'
-
-const headerStyle={flex:1, justifyContent:'center'}
-const cellStyle={height: 50, padding: 4, alignItems: 'center', alignContent: 'center', justifyContent:'center'}
-const buttonStyle={width: '100%', alignItems: 'center', justifyContent:'center', alignContent: 'center'}
-const cellTextStyle={textAlign:'center', width:'100%'}
-const rowStyle = {height: 50}
+import styles from './styles'
 
 class SurveyTableInput extends SurveyInputComponent {
     constructor(props) {
@@ -68,13 +63,13 @@ class SurveyTableInput extends SurveyInputComponent {
       console.log(type)
       switch(type) {
             case 'text':
-                return (<View key={colIdx} style={{width:'100%', height: '100%', alignItems:'stretch'}} ><Input placeholder='' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
+                return (<View key={colIdx} style={styles.textViewStyle} ><Input placeholder='' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
             case 'number':
-                return (<Button bordered style={{width:'100%'}} delayLongPress={600} onPress={() => this.onNumberAdd(1, rowIdx,colIdx)} onLongPress={() => this.onNumberAdd(-1, rowIdx, colIdx)}><Text style={cellTextStyle}>{answer[rowIdx][colIdx]}</Text></Button>)
+                return (<Button bordered style={{width:'100%'}} delayLongPress={600} onPress={() => this.onNumberAdd(1, rowIdx,colIdx)} onLongPress={() => this.onNumberAdd(-1, rowIdx, colIdx)}><Text style={styles.cellTextStyle}>{answer[rowIdx][colIdx]}</Text></Button>)
             case 'single_sel':
-                return (<Button style={buttonStyle} transparent onPress={() => this.onChoiceSelect(rowIdx, colIdx) }><Radio selected={answer[rowIdx] == colIdx} onPress={() => this.onChoiceSelect(rowIdx, colIdx) }/></Button>)
+                return (<Button style={styles.buttonStyle} transparent onPress={() => this.onChoiceSelect(rowIdx, colIdx) }><Radio selected={answer[rowIdx] == colIdx} onPress={() => this.onChoiceSelect(rowIdx, colIdx) }/></Button>)
             case 'multi_sel':
-                return (<Button style={{...buttonStyle, marginLeft: -4}} transparent onPress={() => this.onMultiSelect(rowIdx, colIdx) }><CheckBox checked={answer[rowIdx][colIdx]} onPress={() => this.onMultiSelect(rowIdx, colIdx) } /></Button>)
+                return (<Button style={{...styles.buttonStyle, marginLeft: -4}} transparent onPress={() => this.onMultiSelect(rowIdx, colIdx) }><CheckBox checked={answer[rowIdx][colIdx]} onPress={() => this.onMultiSelect(rowIdx, colIdx) } /></Button>)
       }
     }
     render() {
@@ -82,15 +77,15 @@ class SurveyTableInput extends SurveyInputComponent {
         console.log(answer)
         return (
             <View>
-                {this.props.disableHeader ? false : <View style={rowStyle}><H2>{question.title}</H2></View> }
-                <Row style={rowStyle}>
-                    <Col style={cellStyle}><Text style={cellTextStyle}>{' '}</Text></Col>
-                    {question.cols.map((col, idx) => (<Col key={idx} style={cellStyle}><Text style={cellTextStyle}>{col.text}</Text></Col>))}
+                {this.props.disableHeader ? false : <View style={styles.rowStyle}><H2>{question.title}</H2></View> }
+                <Row style={styles.rowStyle}>
+                    <Col style={styles.cellStyle}><Text style={styles.cellTextStyle}>{' '}</Text></Col>
+                    {question.cols.map((col, idx) => (<Col key={idx} style={styles.cellStyle}><Text style={styles.cellTextStyle}>{col.text}</Text></Col>))}
                 </Row>
                 {question.rows.map((row, rowIdx) => (
-                    <Row style={rowStyle} key={rowIdx}>
-                        <Col style={cellStyle}><Text>{row.text}</Text></Col>
-                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={cellStyle}>{this.renderCell(question.type, rowIdx, colIdx)}</Col> )}
+                    <Row style={styles.rowStyle} key={rowIdx}>
+                        <Col style={styles.cellStyle}><Text>{row.text}</Text></Col>
+                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={styles.cellStyle}>{this.renderCell(question.type, rowIdx, colIdx)}</Col> )}
                     </Row>)
                 )}
             </View>

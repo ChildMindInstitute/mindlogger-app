@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar, ListView} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1 } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -59,33 +59,37 @@ class SurveyBasicSummaryScreen extends Component {
  
   _renderRow = (idx, question, answer) => {
     let style = baseTheme.enabledColor
+    let rowItem
     if(answer === undefined) {
       style = baseTheme.disabledColor
+      rowItem = <Text></Text>
+    } else {
+      switch(question.type) {
+        case 'bool':
+          rowItem = <Text>{answer ? "True":"False"}</Text>
+          break;
+        case 'single_sel':
+          rowItem = <Text>{question.rows[answer].text}</Text>
+          break;
+        case 'multi_sel':
+          rowItem = <Text>{(answer.map((item, idx) => question.rows[item].text )).join(", ")}</Text>
+          break;
+        case 'image_sel':
+          rowItem = (<Thumbnail square source={{uri: question.images[answer].image_url}} />)
+          break;
+        default:
+          answerText = <Text>{answer}</Text>
+          break;
+      }
     }
-    let answerText = answer
-    switch(question.type) {
-      case 'bool':
-        answerText = answer ? "True":"False"
-        break;
-      case 'single_sel':
-        answerText = question.rows[answer].text
-        break;
-      case 'multi_sel':
-        answerText = (answer.map((item, idx) => question.rows[item].text )).join(", ")
-        break;
-      default:
-        answerText = answer
-        break;
-    }
+    
     return (
       <ListItem key={idx} onPress={() => { this.onSelect(idx)}}>
         <Body>
-        <Text style={style}>{question.title}</Text>
+          <Text style={style}>{question.title}</Text>
         </Body>
         <Right>
-        <Text>
-        {answerText}
-        </Text>
+          {rowItem}
         </Right>
       </ListItem>
     );

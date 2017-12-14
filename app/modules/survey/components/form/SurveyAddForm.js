@@ -6,7 +6,7 @@ import { Button, Item, Label, Input, Icon, Form, Text, Switch, View, Body, Right
 import { reduxForm, Field } from 'redux-form';
 import { Actions } from 'react-native-router-flux';
 
-import {FormInputItem, FormSwitchItem, FormInputAudio, FormPickerGroup} from '../../../../components/form/FormItem'
+import {FormInputItem, FormSwitchItem, FormInputAudio, FormPickerGroup, required} from '../../../../components/form/FormItem'
 
 const validate = values => {
     const error= {};
@@ -46,7 +46,7 @@ class SurveyAddForm extends Component {
         console.log(accordion)
         return (
             <Form>
-            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' component={FormInputItem} />
+            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' validate={required} component={FormInputItem} />
             <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
             <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
@@ -63,7 +63,7 @@ class SurveyAddForm extends Component {
                 {text:"one time",value:"1"},
             ]} />
             <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
-                <Text>{ initialValues ? "Update" : "Create" }</Text>
+                <Text>{ initialValues.uuid ? "Update" : "Create" }</Text>
             </Button>
             </Form>)
     }

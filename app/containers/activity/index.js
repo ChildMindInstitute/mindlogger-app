@@ -177,8 +177,10 @@ class ActivityScreen extends Component {
         } else if(secId === 'drawings') {
             const {drawings, setDrawing} = this.props
             let drawing = {...drawings[rowId]}
+            if(drawing.audio_url)
+                this.playInstruction(drawing)
             setDrawing(drawing)
-            Actions.push("drawing_start")
+            Actions.push("drawing_activity")
         }
     }
 
@@ -225,7 +227,7 @@ class ActivityScreen extends Component {
         <ListItem onPress={()=>this._selectRow(data, secId, rowId)}>
         <Body>
             <Text>{data.title}</Text>
-            <Text numberOfLines={1} note>{data.instruction}</Text>
+            <Text numberOfLines={1} note>{data.instruction ? data.instruction : ' '}</Text>
         </Body>
         <Right>
             {data.questions && (<Text note>{data.questions.length} questions</Text>)}
@@ -251,7 +253,7 @@ class ActivityScreen extends Component {
     }
 
     _renderLeftHiddenRow = (data, secId, rowId, rowMap) => {
-
+        if(secId !== 'surveys') return undefined
         return (
         <View style={{flexDirection:'row', height:63}}>
             <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
