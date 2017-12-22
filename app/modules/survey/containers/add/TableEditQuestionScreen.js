@@ -3,10 +3,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle } from 'native-base';
+import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, ListItem, Thumbnail } from 'native-base';
 
 import {updateSurvey} from '../../actions'
 import {FormInputItem, FormInputNumberItem, FormSwitchItem, FormPickerGroup, required} from '../../../../components/form/FormItem'
+import ImageBrowser from '../../../../components/image/ImageBrowser'
 import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 
 const questionInitialState = {
@@ -21,9 +22,10 @@ class SurveyTableEditQuestionForm extends Component {
     constructor(props) {
       super(props)
     }
-
+    componentWillMount() {
+        this.setState({})
+    }
     renderRows = ({fields, label, count, meta: {error, submitFailed}}) => {
-
         return (<View padder>
             {fields.map((member,index) => (
                 <Field key={index} inlineLabel label={`${label} ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
@@ -31,14 +33,46 @@ class SurveyTableEditQuestionForm extends Component {
             </View>)
     }
 
+    renderImageComponent = ({input}) => {
+        return (<Button transparent onPress={() => this.showImageBrowser(input) }>{input.value ? <Thumbnail square source={{uri: input.value}} /> : <Icon name="image" />}</Button>)
+    }
+
+    renderImageRows = ({fields,label, count, meta: {error, submitFailed}}) => {
+        return (<View padder>
+            {fields.map((item,index) => (
+                <ListItem key={index} noBorder>
+                    <Body>
+                        <Field key={index} inlineLabel label={`${label} ${index+1}`} name={`${item}.text`} type="text" component={FormInputItem}/>
+                    </Body>
+                    <Right>
+                        <Field name={`${item}.image_url`} type="text" component={this.renderImageComponent} />
+                    </Right>
+                </ListItem>
+            ))}
+          </View>)
+    }
+
+    showImageBrowser(input) {
+        this.imageInput = input
+        this.setState({imageSelect:true})
+    }
+
+    onSelectImage = (item, imagePath) => {
+        if(item) {
+             this.imageInput.onChange(item.image_url)
+        }
+        this.setState({imagePath, imageSelect:false})
+        
+    }
+
     render() {
-      const { handleSubmit, onSubmit, submitting, reset, initialValues } = this.props;
-      let data = {...questionInitialState}
-      let rows = this.props.rows || data.rows
-      let cols = this.props.cols || data.cols
-      console.log(rows, cols)
-      let question_type = this.props.question_type || (initialValues && initialValues.type)
-      return (
+        const { handleSubmit, onSubmit, submitting, reset, initialValues } = this.props;
+        let data = {...questionInitialState}
+        let {rows, cols, type} = this.props
+        rows = rows || data.rows
+        cols = cols || data.cols
+        let question_type = this.props.question_type || (initialValues && initialValues.type)
+        return (
             <Form>
             <Field name="title" type="text" placeholder="Add a question" validate={required} component={FormInputItem} />
             <Field name="rows_count" label="Number of rows" min={1} component={FormInputNumberItem} />
@@ -54,10 +88,11 @@ class SurveyTableEditQuestionForm extends Component {
                 {text:"Number #",value:"number"},
                 {text:"Single selection",value:"single_sel"},
                 {text:"Multiple selection",value:"multi_sel"},
+                {text:"Image selection", value: "image_sel"},
             ]} validate={required}/>
-            <FieldArray name="cols" label="Col" count={this.props.cols_count} component={this.renderRows} value={cols}/>
-
-          </Form>)
+            <FieldArray name="cols" label="Col" count={this.props.cols_count} component={ type == 'image_sel' ? this.renderImageRows : this.renderRows} value={cols}/>
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+        </Form>)
     }
 }
 
@@ -83,12 +118,12 @@ const expandFields = (fields, count) => {
 const selector = formValueSelector('survey-table-edit-question')
 SurveyTableEditQuestionValueForm = connect(
   state => {
-    let {rows_count, cols_count, rows, cols} = selector(state, 'rows_count', 'cols_count', 'rows', 'cols')
+    let {rows_count, cols_count, rows, cols, type} = selector(state, 'rows_count', 'cols_count', 'rows', 'cols', 'type')
     rows = rows || []
     expandFields(rows, rows_count)
     cols = cols || []
     expandFields(cols, cols_count)
-    return {rows_count, cols_count, rows, cols}
+    return {rows_count, cols_count, rows, cols, type}
   }
 )(SurveyTableEditQuestionReduxForm)
 
@@ -115,7 +150,6 @@ class SurveyTableEditQuestionScreen extends Component {
         surveyIdx = surveys.length + surveyIdx
         }
         let survey = surveys[surveyIdx]
-        console.log("Update:", surveyIdx, survey)
         let questions = survey.questions || []
         if(questions.length>questionIdx) {
             questions[questionIdx] = body

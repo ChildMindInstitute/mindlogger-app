@@ -17,7 +17,7 @@ function chunckedPointStr(lines, chunk_size){
         for (var index = 0; index < length ; index += chunk_size) {
             myChunk = line.points.slice(index, index+chunk_size+1);
             // Do something if you want with the group
-            results.push(myChunk.map(point => point.join(",")).join(" "));
+            results.push(myChunk.map(point => point.x + "," + point.y).join(" "));
         }
     });
     return results;
@@ -35,17 +35,20 @@ export default class DrawingBoard extends Component {
     }
 
     addLine = (evt, gestureState) => {
-        const {lines} = this.state;
+        const {lines, start_time} = this.state
         if(!this.allowed) return
         const {locationX, locationY} = evt.nativeEvent
+        if(!start_time)
+            this.setState({start_time: (new Date()).getTime()})
         this.startX = locationX
         this.startY = locationY
-        lines.push({points:[[locationX,locationY]]})
+        lines.push({points:[{x:locationX, y:locationY, time:0}]})
         this.setState({lines})
     }
 
     addPoint = (evt, gestureState) => {
-        const {lines, dimensions} = this.state
+        const {lines, dimensions, start_time} = this.state
+        let time = (new Date()).getTime() - start_time
         if(!this.allowed) return
         let n = lines.length-1
         const {moveX, moveY, x0, y0} = gestureState
@@ -54,7 +57,7 @@ export default class DrawingBoard extends Component {
         if((Math.abs(this.lastX-x)>10) || (Math.abs(this.lastY-y)>10)) {
             this.lastX = x
             this.lastY = y
-            lines[n].points.push([this.lastX,this.lastY])
+            lines[n].points.push({ x: this.lastX, y:this.lastY, time})
             this.setState({lines})
         }
     }
@@ -100,7 +103,7 @@ export default class DrawingBoard extends Component {
         console.log(evt)
     }
     reset(){
-        this.setState({lines:[]})
+        this.setState({lines:[], start_time:undefined})
     }
     start() {
         this.reset()
@@ -112,25 +115,38 @@ export default class DrawingBoard extends Component {
     }
 
     save() {
-        return this.state.lines
+        const {lines, start_time} = this.state
+        const { width } = this.state.dimensions
+        results = lines.map(line => ({
+            ...line,
+            points: line.points.map( point => ({
+                ...point,
+                x: point.x/width*100,
+                y: point.y/width*100
+                }))
+            })
+        )
+        return {lines: results, start_time}
     }
 
     render() {
         const {lines, dimensions} = this.state
         const {placeholder} = this.props
         if (dimensions) {
-            var { width, height } = dimensions
+            var { width } = dimensions
         }
+        if(!width)
+            width = 300
         const strArray = chunckedPointStr(lines,50)
         return (
             
-            <View style={{width: 300, height: 200, alignItems: 'center', backgroundColor: 'white'}} onLayout={this.onLayout} {...this._panResponder.panHandlers}>
-                {this.props.source && (<Image style={{width:300, height: 200}} source={this.props.source}/>)}
+            <View style={{width: '100%', height: width || 300, alignItems: 'center', backgroundColor: 'white'}} onLayout={this.onLayout} {...this._panResponder.panHandlers}>
+                {this.props.source && (<Image style={{width: '100%', height:'100%', resizeMode: 'contain'}} source={this.props.source}/>)}
                 {placeholder && (<Icon name="brush" style={{fontSize:120}}/>)}
                 <View style={{width: '100%', height:'100%', position:'absolute'}}>
                     {dimensions && 
                     <Svg
-                        height={height}
+                        height={width}
                         width={width}
                     >
                     {strArray.map(this.renderLine)}
@@ -144,7 +160,6 @@ export default class DrawingBoard extends Component {
     onLayout = event => {
         if (this.state.dimensions) return // layout was already called
         let {width, height, top, left} = event.nativeEvent.layout
-        console.log(event.nativeEvent.layout)
         this.setState({dimensions: {width, height, top, left}})
     }
 }

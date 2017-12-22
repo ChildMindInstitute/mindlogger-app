@@ -14,6 +14,7 @@ import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
+import SurveyImageSelector from '../components/SurveyImageSelector'
 
 class SurveyAccordionScreen extends Component {
   constructor(props) {
@@ -81,7 +82,7 @@ class SurveyAccordionScreen extends Component {
     );
     var content = (
       <Collapsible style={baseTheme.paddingView} collapsed={!(expand[idx])}>
-        {this.renderQuestion(question, answer, {index: idx})}
+        {this.renderQuestion(question, answer && answer.result, {index: idx})}
       </Collapsible>
     );
  
@@ -97,10 +98,14 @@ class SurveyAccordionScreen extends Component {
     questionIndex = data.index
     let {survey, setSurvey} = this.props
     let {questions, answers} = survey
+    let answer = {
+      result,
+      time: (new Date()).getTime()
+    }
     if(answers.length > questionIndex) {
-      answers[questionIndex] = result
+      answers[questionIndex] = answer
     } else {
-      answers.push(result)
+      answers.push(answer)
     }
     setSurvey({...survey, answers})
     if(final)
@@ -109,7 +114,6 @@ class SurveyAccordionScreen extends Component {
 
   renderQuestion(question, answer, data) {
     const { type } = question
-    console.log(question)
     param = {
       question,
       answer,
@@ -124,6 +128,8 @@ class SurveyAccordionScreen extends Component {
         return (<SurveySingleSelector onSelect={this.onInputAnswer} data={param} disableHeader/>)
       case 'multi_sel':
         return (<SurveyMultiSelector onSelect={this.onInputAnswer} data={param} disableHeader/>)
+      case 'image_sel':
+        return (<SurveyImageSelector onSelect={this.onInputAnswer} data={param} disableHeader/>)
     }
     return (
       <View>

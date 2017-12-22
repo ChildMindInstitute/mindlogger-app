@@ -48,7 +48,7 @@ class SurveyBasicSummaryScreen extends Component {
         <H1 style={{textAlign:'center'}}>Responses</H1>
         <List>
         {
-          questions.map((question, idx) => this._renderRow(idx, question, answers[idx]))
+          questions.map((question, idx) => this._renderRow(idx, question, answers[idx] && answers[idx].result))
         }
         </List>
         <Button block full onPress={() => this.onDone()}><Text>Done</Text></Button>
@@ -78,7 +78,7 @@ class SurveyBasicSummaryScreen extends Component {
           rowItem = (<Thumbnail square source={{uri: question.images[answer].image_url}} />)
           break;
         default:
-          answerText = <Text>{answer}</Text>
+          rowItem = <Text>{answer}</Text>
           break;
       }
     }

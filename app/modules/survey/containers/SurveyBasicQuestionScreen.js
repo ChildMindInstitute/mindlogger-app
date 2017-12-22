@@ -23,13 +23,16 @@ class SurveyBasicQuestionScreen extends Component {
   onInputAnswer = (result, data, final=false) => {
     let {questionIndex, survey, setSurvey} = this.props
     let {questions, answers} = survey
+    let answer = {
+      result,
+      time: (new Date()).getTime()
+    }
     if(answers.length > questionIndex) {
-      answers[questionIndex] = result
+      answers[questionIndex] = answer
     } else {
-      answers.push(result)
+      answers.push(answer)
     }
     setSurvey({...survey, answers})
-    console.log({...survey, answers})
     if(final)
       setTimeout(() => { this.nextQuestion() }, 500)
   }
@@ -59,9 +62,8 @@ class SurveyBasicQuestionScreen extends Component {
   renderQuestion() {
     const { questionIndex, survey } = this.props
     let question = survey.questions[questionIndex]
-    let answer = survey.answers[questionIndex]
-    const { type } = question
-    switch(type) {
+    let answer = survey.answers[questionIndex] && survey.answers[questionIndex].result
+    switch(question.type) {
       case 'text':
         return (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />)
       case 'bool':

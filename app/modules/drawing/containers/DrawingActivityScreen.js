@@ -43,15 +43,14 @@ class DrawingActivityScreen extends Component {
     onSave = () => {
         if(!this.board) return
         let {drawing} = this.state
-        let lines = this.board.save()
-        fbSaveAnswer({...drawing, lines, updated_at: (new Date()).getTime()})
+        let result = this.board.save()
+        fbSaveAnswer({...drawing, ...result, updated_at: (new Date()).getTime()})
         Actions.pop()
         
     }
 
     renderTimer() {
         const {duration, drawing} = this.state
-        console.log(duration)
         return (<View style={{alignItems: 'center'}}>
             <ProgressCircle
             percent={duration/drawing.timer*100}

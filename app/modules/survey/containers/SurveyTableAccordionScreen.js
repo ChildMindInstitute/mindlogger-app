@@ -77,7 +77,7 @@ class SurveyTableAccordionScreen extends Component {
     );
     var content = (
       <Collapsible style={baseTheme.paddingView} collapsed={!(expand[idx])}>
-        {this.renderQuestion(question, answer, {index: idx})}
+        {this.renderQuestion(question,answer && answer.result, {index: idx})}
       </Collapsible>
     );
  
@@ -93,17 +93,19 @@ class SurveyTableAccordionScreen extends Component {
     questionIndex = data.index
     let {survey, setSurvey} = this.props
     let {questions, answers} = survey
+    let answer = {
+      result,
+      time: (new Date()).getTime()
+    }
     if(answers.length == 0) {
       answers = questions.map(question => undefined)
     }
-    answers[questionIndex] = result
-    console.log(questionIndex)
+    answers[questionIndex] = answer
     setSurvey({...survey, answers})
   }
 
   renderQuestion(question, answer, data) {
     const { type } = question
-    console.log(question)
     param = {
       question,
       answer,

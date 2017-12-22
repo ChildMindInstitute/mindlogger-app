@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
-import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, Col, Radio, CheckBox, H2, View, Grid } from 'native-base';
+import {StyleSheet, TouchableOpacity, ImageBackground} from 'react-native';
+import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, Col, Radio, CheckBox, H2, View, Grid, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import baseTheme from '../../../theme'
 import SurveyInputComponent from './SurveyInputComponent'
@@ -58,10 +58,10 @@ class SurveyTableInput extends SurveyInputComponent {
         this.selectAnswer(answer)
     }
 
-    renderCell(type, rowIdx, colIdx) {
+    renderCell(question, rowIdx, colIdx) {
       const {answer} = this.state
-      console.log(type)
-      switch(type) {
+
+      switch(question.type) {
             case 'text':
                 return (<View key={colIdx} style={styles.textViewStyle} ><Input placeholder='' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
             case 'number':
@@ -69,7 +69,16 @@ class SurveyTableInput extends SurveyInputComponent {
             case 'single_sel':
                 return (<Button style={styles.buttonStyle} transparent onPress={() => this.onChoiceSelect(rowIdx, colIdx) }><Radio selected={answer[rowIdx] == colIdx} onPress={() => this.onChoiceSelect(rowIdx, colIdx) }/></Button>)
             case 'multi_sel':
-                return (<Button style={{...styles.buttonStyle, marginLeft: -4}} transparent onPress={() => this.onMultiSelect(rowIdx, colIdx) }><CheckBox checked={answer[rowIdx][colIdx]} onPress={() => this.onMultiSelect(rowIdx, colIdx) } /></Button>)
+                return (<TouchableOpacity style={styles.buttonStyle} transparent onPress={() => this.onMultiSelect(rowIdx, colIdx) }><CheckBox style={{marginLeft:-4}} checked={answer[rowIdx][colIdx]} onPress={() => this.onMultiSelect(rowIdx, colIdx) } /></TouchableOpacity>)
+            case 'image_sel':
+                return (<TouchableOpacity key={colIdx} onPress={() => {
+                    this.onChoiceSelect(rowIdx, colIdx)
+                  }}>
+                  <ImageBackground style={styles.image} source={{uri: question.cols[colIdx].image_url}}/>
+                  { answer[rowIdx] != colIdx && <View style={styles.imageUnselected}/> }
+                  </TouchableOpacity>)
+            default:
+                  return (<Text></Text>)
       }
     }
     render() {
@@ -85,7 +94,7 @@ class SurveyTableInput extends SurveyInputComponent {
                 {question.rows.map((row, rowIdx) => (
                     <Row style={styles.rowStyle} key={rowIdx}>
                         <Col style={styles.cellStyle}><Text>{row.text}</Text></Col>
-                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={styles.cellStyle}>{this.renderCell(question.type, rowIdx, colIdx)}</Col> )}
+                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={styles.cellStyle}>{this.renderCell(question, rowIdx, colIdx)}</Col> )}
                     </Row>)
                 )}
             </View>

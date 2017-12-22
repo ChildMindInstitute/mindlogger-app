@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar, ListView} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Separator } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Separator, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -24,10 +24,31 @@ class SurveyTableSummaryScreen extends Component {
   }
 
   _renderRowAndSection = (row, idx) => {
-    if(row.rowId === undefined) {
-      return (<Separator key={idx} bordered onPress={() => this.onSelect(row.secId)}><Text>{row.text}</Text></Separator>)
+    const {secId, rowId, text, answer} = row
+    if(rowId === undefined) {
+      return (<Separator key={idx} bordered onPress={() => this.onSelect(secId)}><Text>{text}</Text></Separator>)
     } else {
-      return (<ListItem key={idx} onPress={() => this.onSelect(row.secId)}><Body><Text>{row.text}</Text></Body></ListItem>)
+      const {questions, answers} = this.props.survey
+      const question = questions[row.secId]
+      if(answer === undefined) {
+        return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body></Body></ListItem>)
+      }
+      switch(question.type)
+      {
+        case 'image_sel':
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body>{answer!==undefined ? (<Thumbnail square source={{uri: question.cols[answer].image_url}}/>) : <Text></Text>}</Body></ListItem>)
+        case 'single_sel':
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{question.cols[answer].text}</Text></Body></ListItem>)
+        case 'multi_sel':
+          result = []
+          answer.forEach((item, index) => item && result.push(question.cols[index].text))
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{result.join(", ")}</Text></Body></ListItem>)
+        case 'text':
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{answer.map((text, index) => `${question.cols[index].text}(${text})`).join(", ")}</Text></Body></ListItem>)
+        default:
+          return (<ListItem key={idx} onPress={() => this.onSelect(secId)}><Left><Text>{text}:</Text></Left><Body><Text>{answer}</Text></Body></ListItem>)
+      }
+        
     }
   }
   onSelect(questionIndex) {
@@ -48,9 +69,8 @@ class SurveyTableSummaryScreen extends Component {
     questions.forEach((question, secId) => {
       dRows.push({secId, text:question.title})
       question.rows.forEach((row, rowId) => {
-        const answer = answers[secId][rowId]
-        let text = `${row.text}: ${ answer && answer}`
-        dRows.push({secId, rowId, text })
+        const answer = answers[secId]
+        dRows.push({secId, rowId, text: row.text, answer: answer && answer.result[rowId] })
       })
     })
     return (
@@ -76,41 +96,6 @@ class SurveyTableSummaryScreen extends Component {
       </Container>
     );
   }
- 
-  // _renderRow = (idx, question, answer) => {
-  //   let style = baseTheme.enabledColor
-  //   if(answer === undefined) {
-  //     style = baseTheme.disabledColor
-  //   }
-  //   let answerText = answer
-  //   switch(question.type) {
-  //     case 'bool':
-  //       answerText = answer ? "True":"False"
-  //       break;
-  //     case 'single_sel':
-  //       answerText = question.rows[answer].text
-  //       break;
-  //     case 'multi_sel':
-  //       answerText = (answer.map((item, idx) => question.rows[item].text )).join(", ")
-  //       break;
-  //     default:
-  //       answerText = answer
-  //       break;
-  //   }
-  //   console.log(answer, answerText)
-  //   return (
-  //     <ListItem key={idx} onPress={() => { this.onSelect(idx)}}>
-  //       <Body>
-  //       <Text style={style}>{question.title}</Text>
-  //       </Body>
-  //       <Right>
-  //       <Text>
-  //       {answerText}
-  //       </Text>
-  //       </Right>
-  //     </ListItem>
-  //   );
-  // }
 }
 
 export default connect(state => ({

@@ -33,8 +33,6 @@ class SurveyEditQuestionForm extends Component {
         </View>)
     }
 
-    
-
     renderImageRows = ({fields, meta: {error, submitFailed}}) => {
         let images = fields.getAll() || []
         return (<View padder>

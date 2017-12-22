@@ -20,10 +20,14 @@ class SurveyTableScreen extends Component {
   onInputAnswer = (result, data, final = false) => {
     let {questionIndex, survey, setSurvey} = this.props
     let {questions, answers} = survey
+    let answer = {
+      result,
+      time: (new Date()).getTime()
+    }
     if(answers.length > questionIndex) {
-      answers[questionIndex] = result
+      answers[questionIndex] = answer
     } else {
-      answers.push(result)
+      answers.push(answer)
     }
     setSurvey({...survey, answers})
     if(final)
@@ -57,7 +61,7 @@ class SurveyTableScreen extends Component {
     const length = survey.questions.length
     const index = questionIndex + 1
     const progressValue = index/length
-    let data = {question: survey.questions[questionIndex], answer: survey.answers[questionIndex]}
+    let data = {question: survey.questions[questionIndex], answer: survey.answers[questionIndex] && survey.answers[questionIndex].result}
     return (
       <Container>
       <Header>
