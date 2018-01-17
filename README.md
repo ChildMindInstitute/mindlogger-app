@@ -57,9 +57,11 @@ From root directory of repository
 cd ios
 fastlane beta
 ```
-It will archeive release build for iOS and push to appstore. It will take several minutes and 
+It will archive release build for iOS and push to appstore. It will take several minutes and 
 
 Otherwise, you can do it manually using Xcode. For more info, check Xcode reference.
+
+
 Android:
 
 ```
@@ -84,6 +86,8 @@ See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-
 
 ## License
 
+Apache v2.0
+
 ## Acknowledgments
 
-* etc
+* Thanks to clinicians at the Child Mind Institute for feedback while evaluating the app!
