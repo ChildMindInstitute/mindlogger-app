@@ -11,7 +11,8 @@
   "test-bundle": "react-native bundle --dev false --platform android --entry-file index.android.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug",
   "test-build": "cd android && ./gradlew clean && ./gradlew assembleDebug",
   "prod-bundle": "react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/merged/release",
-  "prod-build": "cd android && ./gradlew assembleRelease"
+  "prod-build": "cd android && ./gradlew assembleRelease",
+  "ios-build": "cd ios && fastlane ios beta"
  },
  "dependencies": {
   "babel-core": "^6.0.0",
