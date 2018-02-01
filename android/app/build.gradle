@@ -98,7 +98,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "lab.childmindinstitute.data"
+        applicationId "com.mdcapp"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -115,19 +115,10 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
-    signingConfigs {
-        release {
-            storeFile file("mdc_app_key.keystore")
-            storePassword "mdcapp"
-            keyAlias "mdc_app"
-            keyPassword "mdcapp"
-        }
-    }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -146,13 +137,13 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-fetch-blob')
-    compile project(':react-native-audio-toolkit')
+    compile project(':react-native-vector-icons')
     compile project(':react-native-sound')
     compile project(':react-native-orientation')
+    compile project(':react-native-fetch-blob')
     compile project(':react-native-audiowaveform')
+    compile project(':react-native-audio-toolkit')
     compile project(':react-native-audio')
-    compile project(':react-native-vector-icons')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules

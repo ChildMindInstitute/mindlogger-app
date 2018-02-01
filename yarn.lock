@@ -4586,9 +4586,9 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
-"react-native-audio-toolkit@https://github.com/futurice/react-native-audio-toolkit.git":
-  version "1.0.5"
-  resolved "https://github.com/futurice/react-native-audio-toolkit.git#1b157c4434bbb262e824b94924ebcde9092c0bfa"
+"react-native-audio-toolkit@git+https://github.com/futurice/react-native-audio-toolkit.git":
+  version "1.0.6"
+  resolved "git+https://github.com/futurice/react-native-audio-toolkit.git#11c8904157677802b81122b882acc7e2cafba3d6"
   dependencies:
     async "^2.0.0"
     eventemitter3 "^1.2.0"
