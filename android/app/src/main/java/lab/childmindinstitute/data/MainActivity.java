@@ -1,4 +1,4 @@
-package com.mdcapp;
+package lab.childmindinstitute.data;
 
 import com.facebook.react.ReactActivity;
 
