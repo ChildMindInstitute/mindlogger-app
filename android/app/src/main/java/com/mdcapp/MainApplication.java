@@ -3,6 +3,9 @@ package com.mdcapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.otomogroove.OGReactNativeWaveform.OGWavePackage;
+import com.futurice.rctaudiotoolkit.AudioPackage;
+import com.rnim.rn.audio.ReactNativeAudioPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.github.yamill.orientation.OrientationPackage;
@@ -27,6 +30,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new OGWavePackage(),
+            new AudioPackage(),
+            new ReactNativeAudioPackage(),
             new VectorIconsPackage(),
             new RNSoundPackage(),
             new OrientationPackage(),
