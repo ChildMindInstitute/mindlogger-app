@@ -1,9 +1,0 @@
-app_identifier "lab.childmindinstitute.data" # The bundle identifier of your app
-apple_id "erik.ilyin@aol.com" # Your Apple email address
-
-team_id "8RHKE85KB6" # Developer Portal Team ID
-
-# you can even provide different app identifiers, Apple IDs and team names per lane:
-# More information: https://docs.fastlane.tools/advanced/#appfile
-
-itc_team_id "118723731"
