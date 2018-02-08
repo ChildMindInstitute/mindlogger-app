@@ -4627,9 +4627,9 @@ react-native-button@^2.0.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-collapsible@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-0.9.0.tgz#207849faa15493820d19fa6a5e58f7c7b6c1b910"
+react-native-collapsible@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-collapsible/-/react-native-collapsible-0.10.0.tgz#3a3db2685ea4ff1b25812840e719f1225e412936"
   dependencies:
     prop-types "^15.5.10"
 
@@ -4735,8 +4735,8 @@ react-native-sound@^0.10.4:
   resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.10.4.tgz#242286558f457e023dbed42e8c6cbe52cfd313d4"
 
 react-native-svg@5.4.9:
-  version "6.0.1-rc.3"
-  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-6.0.1-rc.3.tgz#9a54b6f70d350ee5f0169b3023ec6221254177fd"
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-6.1.3.tgz#cd69a554105d49b1071ddae5509e56ce8aaf5034"
   dependencies:
     color "^2.0.1"
     lodash "^4.16.6"
