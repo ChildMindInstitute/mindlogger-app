@@ -81,9 +81,9 @@ class SurveyTableEditQuestionForm extends Component {
             <Field name="type"
             label="For Columns"
             component ={FormPickerGroup}
-            placeholder = "Question Type"
+            placeholder = ""
             options   ={[
-                {text:"Not selected", value:undefined},
+                {text:"Response Type", value:undefined},
                 {text:"Text value",value:"text"},
                 {text:"Number #",value:"number"},
                 {text:"Single selection",value:"single_sel"},
@@ -102,7 +102,8 @@ SurveyTableEditQuestionReduxForm = reduxForm({
   destroyOnUnmount: false,
   forceUnregisterOnUnmount: true
 })(SurveyTableEditQuestionForm)
-const expandFields = (fields, count) => {
+const expandFields = (arr, count) => {
+    fields = [...arr]
     if(fields.length>count) {
         for(var i=0;i<fields.length-count;i++)
         {
@@ -114,15 +115,16 @@ const expandFields = (fields, count) => {
             fields.push({})
         }
     }
+    return fields
 }
 const selector = formValueSelector('survey-table-edit-question')
 SurveyTableEditQuestionValueForm = connect(
   state => {
     let {rows_count, cols_count, rows, cols, type} = selector(state, 'rows_count', 'cols_count', 'rows', 'cols', 'type')
     rows = rows || []
-    expandFields(rows, rows_count)
+    rows = expandFields(rows, rows_count)
     cols = cols || []
-    expandFields(cols, cols_count)
+    cols = expandFields(cols, cols_count)
     return {rows_count, cols_count, rows, cols, type}
   }
 )(SurveyTableEditQuestionReduxForm)

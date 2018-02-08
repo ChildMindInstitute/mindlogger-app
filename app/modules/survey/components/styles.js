@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
     },
     buttonStyle: {
         width: '100%',
+        height: 50,
         alignItems: 'center',
         justifyContent: 'center',
         alignContent: 'center'
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     },
     textViewStyle: {
         width: '100%',
-        height: '100%',
+        height: 50,
         alignItems: 'stretch',
         borderRadius: 4,
         borderWidth: 0.5,

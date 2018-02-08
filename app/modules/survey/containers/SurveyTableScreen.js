@@ -24,11 +24,7 @@ class SurveyTableScreen extends Component {
       result,
       time: (new Date()).getTime()
     }
-    if(answers.length > questionIndex) {
-      answers[questionIndex] = answer
-    } else {
-      answers.push(answer)
-    }
+    answers[questionIndex] = answer
     setSurvey({...survey, answers})
     if(final)
       this.nextQuestion()

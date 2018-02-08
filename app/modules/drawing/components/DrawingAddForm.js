@@ -73,8 +73,8 @@ class DrawingAddForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
         return (
             <Form>
-            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' validate={required} component={FormInputItem} />
-            <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
+            <Field name="title" type="text" label="Title" validate={required} component={FormInputItem} />
+            <Field name="instruction" type="text" label="Instruction" placeholder='' component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
 
             <Field name="image_url" type="text" stackedLabel label="Fill Image" component={this.renderImageField} />
@@ -84,7 +84,7 @@ class DrawingAddForm extends Component {
             component ={FormPickerGroup}
             placeholder = "Please pick time"
             options   ={[
-                {text:"none", value:0},
+                {text:"No timer", value:0},
                 {text:"10s",value:10},
                 {text:"30s",value:30},
                 {text:"60s",value:60},

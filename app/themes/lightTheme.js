@@ -8,7 +8,7 @@ const styles = {
     color: '#000000'
   },
   disabledColor: {
-    color: '#bbbbbb'
+    color: '#dddddd'
   }
 };
 

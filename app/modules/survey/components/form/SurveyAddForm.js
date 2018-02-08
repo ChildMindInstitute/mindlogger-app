@@ -46,10 +46,10 @@ class SurveyAddForm extends Component {
         console.log(accordion)
         return (
             <Form>
-            <Field name="title" type="text" label="Title" stackedLabel placeholder='eg. Behaviour' validate={required} component={FormInputItem} />
-            <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
+            <Field name="title" type="text" label="Title" validate={required} component={FormInputItem} />
+            <Field name="instruction" type="text" label="Instruction" placeholder='' component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
-            <Field name="accordion" type="text" label="Accordion" component={FormSwitchItem} />
+            <Field name="accordion" type="text" label="Accordion style survey?" component={FormSwitchItem} />
             <Field name="frequency"
             label="Frequency"
             component ={FormPickerGroup}

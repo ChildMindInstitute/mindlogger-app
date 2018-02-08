@@ -87,12 +87,12 @@ class SurveyTableInput extends SurveyInputComponent {
         return (
             <View>
                 {this.props.disableHeader ? false : <View style={styles.rowStyle}><H2>{question.title}</H2></View> }
-                <Row style={styles.rowStyle}>
+                <Row style={styles.rowStyle} key={0}>
                     <Col style={styles.cellStyle}><Text style={styles.cellTextStyle}>{' '}</Text></Col>
                     {question.cols.map((col, idx) => (<Col key={idx} style={styles.cellStyle}><Text style={styles.cellTextStyle}>{col.text}</Text></Col>))}
                 </Row>
                 {question.rows.map((row, rowIdx) => (
-                    <Row style={styles.rowStyle} key={rowIdx}>
+                    <Row style={styles.rowStyle} key={rowIdx+1}>
                         <Col style={styles.cellStyle}><Text>{row.text}</Text></Col>
                         {question.cols.map( (col, colIdx) => <Col key={colIdx} style={styles.cellStyle}>{this.renderCell(question, rowIdx, colIdx)}</Col> )}
                     </Row>)

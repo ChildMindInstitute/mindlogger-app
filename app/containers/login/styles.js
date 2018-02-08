@@ -19,6 +19,10 @@ export default {
   text: {
     color: '#D8D8D8',
   },
+  rightText: {
+    color: '#D8D8D8',
+    textAlign:'right'
+  },
   consentRow: {
     height: 'auto',
     marginTop: 10,

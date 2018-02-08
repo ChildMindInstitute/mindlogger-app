@@ -107,7 +107,7 @@ class DrawingActivityScreen extends Component {
             <Right>
             </Right>
         </Header>
-        <View style={{ flex: 1, margin: 20 }}>
+        <Content style={{ flex: 1, margin: 20 }}>
             {drawing.timer && drawing.timer>0 ? this.renderTimer() : <Text/>}
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
                 <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
@@ -121,7 +121,7 @@ class DrawingActivityScreen extends Component {
             <View style={{marginTop:20}}>
                 <Button full block onPress={this.onSave} disabled={spinner || !started}><Text>Save</Text>{spinner && <Spinner />}</Button>
             </View>
-        </View>
+        </Content>
         </Container>
         )
     }

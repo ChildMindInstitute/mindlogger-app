@@ -63,8 +63,8 @@ class SurveyTableAccordionScreen extends Component {
   _renderRow = (idx, question, answer) => {
     let {expand} = this.state
     let style = baseTheme.enabledColor
-    if(answer === undefined) {
-      style = baseTheme.disabledColor
+    if(answer !== undefined) {
+      style = {color: '#ccc'}
     }
     var header = (
       <ListItem onPress={() => { this.onExpand(idx)}}>
@@ -96,9 +96,6 @@ class SurveyTableAccordionScreen extends Component {
     let answer = {
       result,
       time: (new Date()).getTime()
-    }
-    if(answers.length == 0) {
-      answers = questions.map(question => undefined)
     }
     answers[questionIndex] = answer
     setSurvey({...survey, answers})

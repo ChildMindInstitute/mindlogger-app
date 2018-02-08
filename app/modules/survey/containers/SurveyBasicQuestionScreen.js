@@ -27,11 +27,7 @@ class SurveyBasicQuestionScreen extends Component {
       result,
       time: (new Date()).getTime()
     }
-    if(answers.length > questionIndex) {
-      answers[questionIndex] = answer
-    } else {
-      answers.push(answer)
-    }
+    answers[questionIndex] = answer
     setSurvey({...survey, answers})
     if(final)
       setTimeout(() => { this.nextQuestion() }, 500)

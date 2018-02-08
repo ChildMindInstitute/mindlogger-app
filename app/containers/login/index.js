@@ -37,21 +37,18 @@ class LoginForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Email" name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
-                <Row style={{height: 40}}>
-                    <Body>
-                    </Body>
-                    <Right>
-                        <Button transparent onPress={this.onForgotPassword}><Text style={styles.text}>Forgot password?</Text></Button>
-                    </Right>
-                </Row>
-                <Button warning block onPress={handleSubmit(onSubmit)} disabled={submitting}>
+                <Field component={FormInputItem} placeholder="Email" placeholderTextColor={'#aaa'} name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} />
+                <Field component={FormInputItem} placeholder="Password" placeholderTextColor={'#aaa'} name="password" style={styles.text} secureTextEntry={true}/>
+                <Button style={{marginTop:10}} warning block onPress={handleSubmit(onSubmit)} disabled={submitting}>
                     <Text>Login</Text>
                 </Button>
                 <Row style={styles.bottomRow}>
-                    <Body><Text style={styles.text}>Don't have an account</Text></Body>
-                    <Right><Button transparent onPress={this.onRegister}><Text style={styles.boldText}>Register now</Text></Button></Right>
+                    <Body>
+                        <Button transparent onPress={this.onForgotPassword}><Text style={styles.rightText}>GET A NEW PASSWORD</Text></Button>
+                    </Body>    
+                </Row>
+                <Row style={{height: 40}}>
+                    <Body><Button transparent onPress={this.onRegister}><Text style={styles.boldText}>Register now</Text></Button></Body>
                 </Row>
             </Form>
         )
