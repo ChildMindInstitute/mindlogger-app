@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity, ImageBackground} from 'react-native';
+import {StyleSheet, TouchableOpacity, ImageBackground, Image} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, Col, Radio, CheckBox, H2, View, Grid, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import baseTheme from '../../../theme'
@@ -24,7 +24,7 @@ class SurveyTableInput extends SurveyInputComponent {
                     answer = rows.map((row)=>cols.map( (col) => 0 ))
                     break;
                 case 'single_sel':
-                    answer = rows.map((row) => 0)
+                    answer = rows.map((row) => null)
                     break;
                 case 'multi_sel':
                     answer = rows.map((row)=>cols.map( (col) => false ))
@@ -59,9 +59,9 @@ class SurveyTableInput extends SurveyInputComponent {
     }
 
     renderCell(question, rowIdx, colIdx) {
-      const {answer} = this.state
+        const {answer} = this.state
 
-      switch(question.type) {
+        switch(question.type) {
             case 'text':
                 return (<View key={colIdx} style={styles.textViewStyle} ><Input placeholder='' onChangeText={(value)=>this.onTextInput(value, rowIdx, colIdx)} value={answer[rowIdx][colIdx]}/></View>)
             case 'number':
@@ -74,8 +74,7 @@ class SurveyTableInput extends SurveyInputComponent {
                 return (<TouchableOpacity key={colIdx} onPress={() => {
                     this.onChoiceSelect(rowIdx, colIdx)
                   }}>
-                  <ImageBackground style={styles.image} source={{uri: question.cols[colIdx].image_url}}/>
-                  { answer[rowIdx] != colIdx && <View style={styles.imageUnselected}/> }
+                  <Image style={answer[rowIdx] == colIdx ? { ...this.imageStyle, borderWidth: 3, borderColor: '#ee5555'} : this.imageStyle} source={{uri: question.cols[colIdx].image_url}}/>
                   </TouchableOpacity>)
             default:
                   return (<Text></Text>)
@@ -83,22 +82,46 @@ class SurveyTableInput extends SurveyInputComponent {
     }
     render() {
         const { answer, question} = this.props.data
-        console.log(answer)
+        let height = 60
+        if(this.state.dimensions && question.type == 'image_sel') {
+            height = this.state.dimensions.width/(question.cols.length + 1)
+        }
+        const cellStyle = {
+            height,
+            padding: 4,
+            alignItems: 'center',
+            alignContent: 'center',
+            justifyContent: 'center',
+        }
+        const rowStyle = {
+            height
+        }
+        this.imageStyle = {
+            width: (height-3),
+            height: (height-3),
+            padding: 3,
+        }
         return (
-            <View>
-                {this.props.disableHeader ? false : <View style={styles.rowStyle}><H2>{question.title}</H2></View> }
-                <Row style={styles.rowStyle} key={0}>
-                    <Col style={styles.cellStyle}><Text style={styles.cellTextStyle}>{' '}</Text></Col>
+            <View onLayout={this.onLayout}>
+                {this.props.disableHeader ? false : <View style={this.rowStyle}><H2>{question.title}</H2></View> }
+                <Row style={styles.rowStyle}>
+                    <Col style={cellStyle}><Text style={styles.cellTextStyle}>{' '}</Text></Col>
                     {question.cols.map((col, idx) => (<Col key={idx} style={styles.cellStyle}><Text style={styles.cellTextStyle}>{col.text}</Text></Col>))}
                 </Row>
                 {question.rows.map((row, rowIdx) => (
-                    <Row style={styles.rowStyle} key={rowIdx+1}>
-                        <Col style={styles.cellStyle}><Text>{row.text}</Text></Col>
-                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={styles.cellStyle}>{this.renderCell(question, rowIdx, colIdx)}</Col> )}
+                    <Row style={rowStyle} key={rowIdx}>
+                        <Col style={cellStyle}><Text>{row.text}</Text></Col>
+                        {question.cols.map( (col, colIdx) => <Col key={colIdx} style={cellStyle}>{this.renderCell(question, rowIdx, colIdx)}</Col> )}
                     </Row>)
                 )}
             </View>
         )
+    }
+
+    onLayout = event => {
+        if (this.state.dimensions) return // layout was already called
+        let {width, height, top, left} = event.nativeEvent.layout
+        this.setState({dimensions: {width, height, top, left}})
     }
 }
 

@@ -6,11 +6,10 @@ import { connect } from 'react-redux';
 import { ListView } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Form, Toast, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import {reduxForm, Field} from 'redux-form';
+import {reduxForm, Field, SubmissionError} from 'redux-form';
 
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../components/form/FormItem'
-import { auth, base} from '../../firebase'
-import {updateUserProfile, updateUserPassword} from '../../actions/api';
+import {updateUser, changePassword} from '../../actions/api';
 import {updateUserLocal} from '../../actions/coreActions';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 
@@ -24,14 +23,10 @@ class UserForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot, user } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="Full name" name="displayName" placeholder={user.displayName} style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
-                <Field name="role"
-                component ={FormRadioButtonGroup}
-                options   ={[
-                  {text:"Patient",value:"patient"},
-                  {text:"Clinician",value:"clinician"},
-                ]} />
+                <Field component={FormInputItem} label="First name" name="first_name" placeholder={user.first_name} style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Last name" name="last_name" placeholder={user.last_name} style={styles.text} floatingLabel />
+                <Field component={FormInputItem} label="Current password" name="current_password" style={styles.text} floatingLabel secureTextEntry={true}/>
+                <Field component={FormInputItem} label="New password" name="new_password" style={styles.text} floatingLabel secureTextEntry={true}/>
                 <Button
                     block
                     style={{marginTop: 40}}
@@ -56,10 +51,7 @@ class SettingScreen extends Component {
 
   componentWillMount() {
     const {user, surveys, loadSurveys} = this.props;
-    base.syncState(`users/${user.uid}`, {
-      context: this,
-      state: 'userInfo'
-    });
+    this.setState({user})
   }
 
   pushRoute(route) {
@@ -71,18 +63,16 @@ class SettingScreen extends Component {
     Actions.pop()
   }
 
-  onUserSubmit = ({displayName, password, role}) => {
-    const {user, updateUserProfile, updateUserPassword, updateUserLocal} = this.props
+  onUserSubmit = ({first_name, last_name, current_password, new_password}) => {
+    const {user, updateUser, changePassword, updateUserLocal} = this.props
     let arr = []
-    if(displayName != user.displayName) {
-        arr.push(updateUserProfile({displayName}))
-    }
-    if(password && password.length>0 && user.password != password) {
-        arr.push(updateUserPassword(password))
-    }
-    if(role) {
-        this.setState({userInfo:{role, name: displayName}})
-        updateUserLocal({role})
+    let body = {first_name, last_name}
+    arr.push(updateUser(body))
+    if(new_password && new_password.length>0) {
+      if(current_password == user.password)
+        arr.push(changePassword({new_password, current_password}))
+      else
+        throw new SubmissionError({current_password: "Password does not match!"})
     }
     if(arr.length > 0) {
       Promise.all(arr).then(result => {
@@ -97,7 +87,7 @@ class SettingScreen extends Component {
 
   render() {
     const {user} = this.props
-    let data = {...user, ...this.state.userInfo}
+
     return (
       <Container style={styles.container}>
         <Header>
@@ -114,7 +104,7 @@ class SettingScreen extends Component {
         </Header>
 
         <Content padder>
-            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={data} user={user} />
+            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user} user={user} />
         </Content>
       </Container>
     );
@@ -126,14 +116,14 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({updateUserProfile, updateUserPassword, updateUserLocal}, dispatch)
+    ...bindActionCreators({updateUser, changePassword, updateUserLocal}, dispatch)
   };
 }
 
 const mapStateToProps = state => ({
   drawings: (state.drawing && state.drawing.drawings) || [],
   themeState: state.drawer.themeState,
-  user: (state.core && state.core.user)
+  user: (state.core && state.core.auth)
 });
 
 export default connect(mapStateToProps, bindAction)(SettingScreen);

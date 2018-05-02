@@ -45,8 +45,8 @@ class VoiceAddForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
         return (
             <Form>
-            <Field name="title" type="text" label="Title" stackedLabel validate={required} placeholder='eg. Behaviour' component={FormInputItem} />
-            <Field name="instruction" type="text" label="Instruction" stackedLabel placeholder='' component={FormInputItem} />
+            <Field name="title" type="text" label="Title" validate={required} component={FormInputItem} />
+            <Field name="instruction" type="text" label="Instruction" component={FormInputItem} />
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
             <Field name="timer"
             label="Timer"

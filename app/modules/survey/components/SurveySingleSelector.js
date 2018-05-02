@@ -22,13 +22,13 @@ class SurveySingleSelector extends SurveyInputComponent {
           rows.map((row, idx) => {
             return (
               <ListItem onPress={() => {
-                this.selectAnswer(row.value, true)
+                this.selectAnswer(idx, true)
               }} key={idx}>
               <Body>
               <Text>{row.text}</Text>
               </Body>
               <Right>
-                <Radio selected={row.value === this.state.answer} />
+                <Radio selected={idx === this.state.answer} onPress={() => {this.selectAnswer(idx, true)}}/>
               </Right>
             </ListItem>
               )

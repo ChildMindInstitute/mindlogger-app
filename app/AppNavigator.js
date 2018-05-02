@@ -20,6 +20,7 @@ import ForgotPassword from './containers/login/forgot-password';
 import Consent from './containers/login/consent';
 import Signup from './containers/login/signup';
 import Settings from './containers/settings';
+import FrequencyScreen from './containers/activity/frequency';
 
 //Modules
 
@@ -92,6 +93,7 @@ class AppNavigator extends Component {
               <Scene key="forgot_password" component={ForgotPassword}/>
               <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
+              <Scene key="frequency" component={FrequencyScreen}/>
               {SurveyScenes}
               {VoiceScenes}
               {DrawingScenes}

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner } from 'native-base';
+import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner, Toast } from 'native-base';
 
 import { Actions } from 'react-native-router-flux';
 import VoiceAddForm from '../components/VoiceAddForm';
-import {addVoice, updateVoice} from '../actions'
-import {fbAddActivity, fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
+
+import {prepareAct} from '../../../helper'
+import { addAct, updateAct } from '../../../actions/api';
 
 const voiceInitial = {frequency: '1d', timer: 0}
 
@@ -16,16 +17,18 @@ class VoiceAddScreen extends Component {
   }
 
   onEditVoice = (body) => {
-    let {voiceIdx} = this.props
+    let {actIndex, updateAct, acts} = this.props
     let voice = {...this.state.voice, ...body}
-    this.props.updateVoice(voiceIdx, voice)
+    let {title, ...data} = voice
     this.toggleSpinner(true)
-    return fbUpdateActivityWithAudio('voices', voice).then(result => {
+    return prepareAct(data).then(act_data => {
+      return updateAct(actIndex, {id: acts[actIndex].id, title, act_data})
+    }).then(res => {
       this.toggleSpinner(false)
       Actions.pop()
     }).catch(error => {
       this.toggleSpinner(false)
-      console.log(error)
+      Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
     })
   }
 
@@ -33,26 +36,27 @@ class VoiceAddScreen extends Component {
     this.setState({spinner: show})
   }
 
-  onAddVoice = (body) => {
-    let {addVoice} = this.props
-    let data = {...body, 'activity_type':'voice'}
+  onAddVoice = ({title, ...data}) => {
+    const {addAct} = this.props
     this.toggleSpinner()
-    fbAddActivityWithAudio('audios',data,result => {
-      console.log("pushed", result)
-    }).then(res => {
+    prepareAct(data).then(act_data => {
+      return addAct({act_data, type:'voice', title})
+    })
+    .then(res => {
       this.toggleSpinner(false)
-      return addVoice(res)
+      Actions.pop()
     }).catch(err => {
+      console.log(err);
       this.toggleSpinner(false)
-      console.log(err)
+      Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
     })
   }
 
   componentWillMount() {
-    let {voices, voiceIdx} = this.props
-    if(voiceIdx) {
-      const voice = voices[voiceIdx]
-      this.setState({voice})
+    let {acts, actIndex} = this.props
+    if(actIndex!== undefined) {
+      const act = acts[actIndex]
+      this.setState({voice: {title: act.title, ...act.act_data}})
     } else {
       this.setState({})
     }
@@ -83,17 +87,14 @@ class VoiceAddScreen extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  addVoice: body => {
-    dispatch(addVoice(body))
-    Actions.pop()
-  },
-  updateVoice: (voiceIdx, body) => dispatch(updateVoice(voiceIdx, body))
-})
+const mapDispatchToProps = {
+  addAct, updateAct
+}
 
 const mapStateToProps = state => ({
-  voices: state.voice.voices,
+  acts: state.core.acts,
   themeState: state.drawer.themeState,
+  user: state.core.auth,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(VoiceAddScreen);

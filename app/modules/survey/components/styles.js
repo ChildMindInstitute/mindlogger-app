@@ -38,13 +38,5 @@ const styles = StyleSheet.create({
     bottomButtonStyle:{
         
     },
-    imageUnselected: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: '#fff8'
-    },
-    image: {
-        width: 45,
-        height: 45,
-    }
 })
 export default styles

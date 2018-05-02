@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet, StatusBar, Platform} from 'react-native';
 import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Spinner, Toast } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,9 +10,9 @@ import ProgressCircle from 'react-native-progress-circle'
 import moment from 'moment'
 
 import baseTheme from '../../../theme'
-import {setVoice} from '../actions'
+import {saveAnswer} from '../../../actions/api'
 import AudioRecord from '../../../components/audio/AudioRecord'
-import {fbUploadFile, fbSaveAnswer} from '../../../firebase'
+import {uploadFileS3} from '../../../helper'
 import WaveformWrapper from '../components/WaveformWrapper'
 
 class VoiceActivityScreen extends Component {
@@ -22,8 +22,7 @@ class VoiceActivityScreen extends Component {
     }
 
     componentWillMount() {
-        
-        this.setState({voice: this.props.voice, duration:0})
+        this.setState({voice: this.props.voice, duration:0, answer: {}})
     }
 
     componentDidMount() {
@@ -65,11 +64,8 @@ class VoiceActivityScreen extends Component {
         console.log("progress", duration)
     }
 
-    onRecordFile = (filePath, duration) => {
-        let {voice, setVoice} = this.props
-        voice.output_path = filePath
-        voice.duration = duration
-        setVoice(voice)
+    onRecordFile = (output_path, duration) => {
+        this.setState({answer: {output_path, duration}})
         this.toggleToPlay()
     }
 
@@ -78,14 +74,18 @@ class VoiceActivityScreen extends Component {
     }
 
     onSave = () => {
-        let {voice} = this.state
+        const {saveAnswer, act} = this.props
+        const {output_path, duration} = this.state.answer
         this.toggleSpinner()
-        fbUploadFile(voice.output_path, `voices/${moment(voice.updated_at).format('M-D-YYYY')}.aac`).then((url)=>{
-            fbSaveAnswer({...voice, output_url: url, updated_at: (new Date()).getTime()})
+        let filename = `${act.title}_VOICE_${moment().format('M-D-YYYY_HHmmss')}`;
+        filename = filename + (Platform.OS == 'android' ? '.mp3' : '.aac')
+        uploadFileS3(output_path, 'voices/', filename).then(url => {
+            return saveAnswer(act.id, act.act_data, {duration, output_url: url})
+        }).then(res => {
             Actions.pop()
-        }).catch((error)=> {
+        }).catch(err => {
             this.toggleSpinner(false)
-            Toast.show({text: error.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+            Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
         })
     }
 
@@ -118,20 +118,20 @@ class VoiceActivityScreen extends Component {
             </ProgressCircle>
         </View>)
     }
-    renderWaveForm(voice) {
+    renderWaveForm(answer) {
         return (<WaveformWrapper
-            source={{uri:`${voice.output_path}`}}
+            source={{uri:`${answer.output_path}`}}
             waveFormStyle={{waveColor:'blue', scrubColor:'red'}}
             style={{
                 flex:1,
             }}
-            duration = {voice.duration}
+            duration = {answer.duration}
         >
         </WaveformWrapper>)
     }
     render() {
-        const {voice, spinner} = this.state
-        
+        const {voice, spinner, answer} = this.state
+        const {act} = this.props
         return (
         <Container>
         <Header>
@@ -141,27 +141,27 @@ class VoiceActivityScreen extends Component {
             </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{voice.title}</Title>
+                <Title>{act.title}</Title>
             </Body>
             <Right>
             </Right>
         </Header>
         <View style={{ flex: 1, margin: 20 }}>
-            {voice.timer && voice.timer>0 && this.renderTimer()}
+            {voice.timer && voice.timer>0 && this.renderTimer() || false}
             
             <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
                 <View style={{height: 200, width: '100%', backgroundColor:'white'}}>
-                {voice.output_path && this.renderWaveForm(voice)}
+                {answer.output_path && this.renderWaveForm(answer)}
                 </View>
             </View>
             <View style={{alignItems:'center', marginTop:20}}>
                 <Text>{voice.instruction}</Text>
             </View>
             <View style={{marginTop:20}}>
-                <AudioRecord timeLimit={voice.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile} recordLabel={voice.output_path ? "Redo":"Begin"}/>
+                <AudioRecord timeLimit={voice.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile} recordLabel={answer.output_path ? "Redo":"Begin"}/>
             </View>
             <View style={{marginTop:20}}>
-                <Button full block onPress={this.onSave} disabled={spinner}><Text>Save</Text>{spinner && <Spinner />}</Button>
+                <Button full block onPress={this.onSave} disabled={spinner}><Text>Save</Text>{spinner && <Spinner /> || false }</Button>
             </View>
         </View>
         </Container>
@@ -170,9 +170,10 @@ class VoiceActivityScreen extends Component {
 }
 
 export default connect(state => ({
-    voice: state.voice.voice_in_action,
+    act: state.core.act,
+    voice: state.core.act.act_data,
   }),
-  (dispatch) => bindActionCreators({setVoice}, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer}, dispatch)
 )(VoiceActivityScreen);
 
 

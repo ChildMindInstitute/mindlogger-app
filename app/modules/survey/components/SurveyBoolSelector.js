@@ -22,7 +22,7 @@ class SurveyBoolSelector extends SurveyInputComponent {
         <View style={baseTheme.spacedRow}>
         { texts.map((text, idx) => {
           if (values[idx] === this.state.answer) {
-            return (<Button success onPress={() => { onSelect(values[idx]) }} key={idx}><Text>{text}</Text></Button>)
+            return (<Button success onPress={() => { this.selectAnswer(values[idx]) }} key={idx}><Text>{text}</Text></Button>)
           } else {
             return (<Button light onPress={() => {this.selectAnswer(values[idx])}} key={idx}><Text>{text}</Text></Button>)
           }

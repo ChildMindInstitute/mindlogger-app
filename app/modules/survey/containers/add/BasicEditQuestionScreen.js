@@ -1,13 +1,15 @@
 
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {reduxForm, Field, formValueSelector, FieldArray, submit, reset} from 'redux-form';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1, Thumbnail, ListItem } from 'native-base';
+import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Radio, View, Row, Subtitle, H1, Thumbnail, ListItem, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import {updateSurvey} from '../../actions'
+
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup, required} from '../../../../components/form/FormItem'
-import {fbAddActivity, fbUpdateActivity} from '../../../../firebase'
 import ImageBrowser from '../../../../components/image/ImageBrowser'
+import { updateActivity } from '../../../../actions/coreActions';
+import { updateAct } from '../../../../actions/api';
 
 const questionInitialState = {
   type: "text",
@@ -27,7 +29,11 @@ class SurveyEditQuestionForm extends Component {
     renderRows = ({fields, meta: {error, submitFailed}}) => {
       return (<View padder>
           {fields.map((member,index) => (
-            <Row key={index}><Field itemStyle={{flex:1}} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/><Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button></Row>
+            <Row key={index}>
+                <Field itemStyle={{flex:1}} inlineLabel label={`Choice ${index+1}`} name={`${member}.text`} type="text" component={FormInputItem}/>
+                {/* <Field itemStyle={{flex:1}} inlineLabel label={`Score ${index+1}`} name={`${member}.value`} type="number" component={FormInputItem}/> */}
+                <Button transparent onPress={() => fields.remove(index) }><Icon name="trash" style={{color: 'red'}}/></Button>
+            </Row>
           ))}
           <Row padder><Right><Button onPress={()=> fields.push({text:'', value:fields.length})}><Text>Add choice</Text></Button></Right></Row>
         </View>)
@@ -96,7 +102,7 @@ class SurveyEditQuestionForm extends Component {
               {text:"Image", value:"image_sel"}
             ]} validate={required} />
             { this.renderExtraFields(question_type) }
-            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onFile={this.onSelectImage}/> }
           </Form>)
     }
 }
@@ -134,32 +140,33 @@ class SurveyBasicEditQuestionScreen extends Component {
     }
 
     updateQuestion = (body) => {
-        let {surveyIdx, questionIdx, surveys, user} = this.props
-        if(surveyIdx < 0) {
-            surveyIdx = surveys.length + surveyIdx
+        let {actIndex, questionIdx, acts, user, updateActivity, updateAct} = this.props
+        if(actIndex < 0) {
+            actIndex = acts.length + actIndex
         }
-        console.log(surveyIdx)
-        let survey = surveys[surveyIdx]
-        let questions = survey.questions || []
+        const act = acts[actIndex]
+        const questions = act.act_data.questions || []
         if(questions.length>questionIdx) {
             questions[questionIdx] = body
         } else {
             questions.push(body)
         }
-        survey.questions = questions
-		this.props.updateSurvey(surveyIdx, survey)
+        act.questions = questions
+		updateActivity(actIndex, act)
 		if(this.isNext) {
 			questionIdx = questionIdx + 1
-			Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
+			Actions.replace("survey_basic_edit_question",{actIndex, questionIdx})
 		} else {
-            if(user.role == 'clinician') {
-                fbUpdateActivity('surveys', survey).then(result => {
+            if(user.role == 'admin') {
+                updateAct(actIndex, act).then(res => {
                     Actions.pop()
+                }).catch(err => {
+                    Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
+                    console.log(err)
                 })
             } else {
                 Actions.pop()
             }
-            
 		}
 		
     }
@@ -173,38 +180,43 @@ class SurveyBasicEditQuestionScreen extends Component {
         this.props.submitForm()
     }
     deleteQuestion() {
-        let {surveyIdx, questionIdx, surveys} = this.props
-        if(surveyIdx < 0) {
-        	surveyIdx = surveys.length + surveyIdx
+        let {actIndex, questionIdx, acts, updateActivity} = this.props
+        const act = acts[actIndex]
+        if(actIndex < 0) {
+        	actIndex = acts.length + actIndex
         }
-        let survey = surveys[surveyIdx]
+        const survey = act.act_data
         let questions = survey.questions || []
         if(questions.length>questionIdx) {
-			questions.splice(questionIdx,1)
-			this.props.updateSurvey(surveyIdx, survey)
+            questions.splice(questionIdx,1)
+			updateActivity(actIndex, act)
         }
         survey.questions = questions
         questionIdx = questionIdx - 1
-        Actions.replace("survey_basic_edit_question",{surveyIdx, questionIdx})
+        if(questionIdx<0) questionIdx = 0
+        Actions.replace("survey_basic_edit_question",{actIndex, questionIdx})
     }
 
     componentWillMount() {
-        let {surveyIdx, questionIdx, surveys} = this.props
-        if(surveyIdx < 0) {
-        surveyIdx = surveys.length + surveyIdx
+        let {actIndex, questionIdx, acts} = this.props
+        if(actIndex < 0) {
+            actIndex = acts.length + actIndex
         }
-        const survey = surveys[surveyIdx]
+        const act = acts[actIndex]
+        const survey = act.act_data
         let question = questionInitialState
+        survey.questions = survey.questions || []
         if(questionIdx<survey.questions.length) {
             question = survey.questions[questionIdx]
         } else if(questionIdx>0) {
             question = {...questionInitialState, ...survey.questions[questionIdx-1], title: ''}
         }
-        this.setState({survey, question, questionIdx})
+        this.setState({act, question, questionIdx})
     }
 
     render() {
-        let {survey, questionIdx, question} = this.state
+        const {act, questionIdx, question} = this.state
+        const survey = act.act_data
         return (
         <Container>
             <Header hasSubtitle>
@@ -214,7 +226,7 @@ class SurveyBasicEditQuestionScreen extends Component {
                 </Button>
             </Left>
             <Body style={{flex:2}}>
-                <Title>{survey.title}</Title>
+                <Title>{act.title}</Title>
                 <Subtitle>Basic {survey.accordion ? "accordion" : "sequential"} survey</Subtitle>
             </Body>
             <Right>
@@ -239,19 +251,19 @@ class SurveyBasicEditQuestionScreen extends Component {
 } 
 
 const mapDispatchToProps = (dispatch) => ({
-    updateSurvey: (index, data) => dispatch(updateSurvey(index, data)),
     submitForm: () => {
         dispatch(submit('survey-edit-question'))
     },
     resetForm: () => {
         dispatch(reset('survey-edit-question'))
     },
+    ...bindActionCreators({updateActivity, updateAct}, dispatch)
 })
 
 const mapStateToProps = state => ({
-  surveys: state.survey.surveys,
+  acts: state.core.acts,
   themeState: state.drawer.themeState,
-  user: state.core.user
+  user: state.core.auth
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyBasicEditQuestionScreen);

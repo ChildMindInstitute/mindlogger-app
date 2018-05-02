@@ -9,7 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import material from '../../../native-base-theme/variables/material';
 import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
 import styles from './style';
-import {logoutUser} from '../../actions/api';
+import {signOut} from '../../actions/api';
 
 const drawerCover = require('../../../img/drawer-cover.png');
 
@@ -64,9 +64,9 @@ class SideBar extends Component {
   }
 
   onMenu(route) {
-    const {closeDrawer, logoutUser} = this.props;
+    const {closeDrawer, signOut} = this.props;
     if(route == 'logout') {
-      logoutUser();
+      signOut();
       Actions.pop();
     } else {
       Actions.replace(route);
@@ -118,7 +118,7 @@ function bindAction(dispatch) {
     closeDrawer: () => dispatch(closeDrawer()),
     changePlatform: () => dispatch(changePlatform()),
     changeMaterial: () => dispatch(changeMaterial()),
-    logoutUser: () => dispatch(logoutUser()),
+    signOut: () => dispatch(signOut()),
   };
 }
 

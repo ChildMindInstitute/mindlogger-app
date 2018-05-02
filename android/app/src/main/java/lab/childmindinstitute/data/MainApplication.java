@@ -3,6 +3,10 @@ package lab.childmindinstitute.data;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.sensors.RNSensorsPackage;
+import com.imagepicker.ImagePickerPackage;
+import com.mybigday.rns3.RNS3Package;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.horcrux.svg.SvgPackage;
 import com.futurice.rctaudiotoolkit.AudioPackage;
 import com.zmxv.RNSound.RNSoundPackage;
@@ -31,6 +35,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSensorsPackage(),
+            new ImagePickerPackage(),
+            new RNS3Package(),
+            new ReactNativePushNotificationPackage(),
             new SvgPackage(),
             new AudioPackage(),
             new RNSoundPackage(),

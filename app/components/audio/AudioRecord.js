@@ -21,7 +21,11 @@ class AudioRecord extends React.Component {
   constructor() {
     super();
     //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;
-    const filename = Platform.OS == 'android' ? `${randomString({length:20})}.mp3` : `${randomString({length:20})}.aac`
+    this.resetConfig();
+  }
+
+  resetConfig() {
+    const filename = Platform.OS == 'android' ? `${randomString({length:20})}.mp4` : `${randomString({length:20})}.aac`
     const path = `${AudioUtils.DocumentDirectoryPath}/${filename}` 
     this.filename = Platform.OS == 'android' ? `file://${path}` : filename
     this.output_path = path
@@ -138,6 +142,13 @@ class AudioRecord extends React.Component {
     this.player.stop(() => {
       this._updateState();
     });
+  }
+
+  _delete() {
+    this.resetConfig();
+    this._reloadPlayer();
+    this._reloadRecorder();
+    this.props.onRecordFile(undefined);
   }
 
   _seek(percentage) {
@@ -264,6 +275,9 @@ class AudioRecord extends React.Component {
           </Button>
           <Button disabled={this.state.stopButtonDisabled} onPress={() => this._stop()}>
             <Text>Stop</Text>
+          </Button>
+          <Button disabled={this.state.stopButtonDisabled} onPress={() => this._delete()}>
+            <Text>Delete</Text>
           </Button>
         </View>
         <View style={styles.slider}>

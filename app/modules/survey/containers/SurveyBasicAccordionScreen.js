@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, StatusBar, ListView} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title } from 'native-base';
+import { Toast, Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -8,13 +8,14 @@ import Collapsible from 'react-native-collapsible';
 
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
-import {fbSaveAnswer} from '../../../firebase'
 
 import SurveyTextInput from '../components/SurveyTextInput'
 import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 import SurveyImageSelector from '../components/SurveyImageSelector'
+import { saveAnswer } from '../../../actions/api';
+import { setAnswer } from '../../../actions/coreActions';
 
 class SurveyAccordionScreen extends Component {
   constructor(props) {
@@ -25,12 +26,20 @@ class SurveyAccordionScreen extends Component {
     this.setState({expand:{}})
   }
   onDone() {
-    fbSaveAnswer(this.props.survey)
-    Actions.pop()
+    const {saveAnswer, act, answer, survey, setAnswer} = this.props
+    saveAnswer(act.id, survey, answer).then(res => {
+      Actions.pop()
+    }).catch(err => {
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
+    })
+    
   }
   render() {
-    const {survey} = this.props
-    const {questions, answers} = survey
+    const {act, survey, answer} = this.props
+    const {questions} = survey
+
+    const answers = answer.answers || []
+    
     return (
       <Container>
       <Header>
@@ -40,7 +49,7 @@ class SurveyAccordionScreen extends Component {
             </Button>
         </Left>
         <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
+            <Title>{act.title}</Title>
         </Body>
         <Right/>
       </Header>
@@ -96,8 +105,8 @@ class SurveyAccordionScreen extends Component {
 
   onInputAnswer = (result, data, final) => {
     questionIndex = data.index
-    let {survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {survey:{questions}, answer:{answers}, setAnswer} = this.props
+    answers = answers || []
     let answer = {
       result,
       time: (new Date()).getTime()
@@ -107,7 +116,7 @@ class SurveyAccordionScreen extends Component {
     } else {
       answers.push(answer)
     }
-    setSurvey({...survey, answers})
+    setAnswer({answers})
     if(final)
       setTimeout(() => {this.onExpand(questionIndex)}, 500)
   }
@@ -140,7 +149,9 @@ class SurveyAccordionScreen extends Component {
 }
 
 export default connect(state => ({
-  survey: state.survey.survey_in_action,
+  act: state.core.act,
+  survey: state.core.act.act_data,
+  answer:state.core.answer || {answers:[]},
 }),
-  (dispatch) => bindActionCreators(surveyActions, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer, setAnswer}, dispatch)
 )(SurveyAccordionScreen);

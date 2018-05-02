@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner } from 'native-base';
-
+import { Toast, Container, Header, Title, Content, Button, Item, Label, Input, Body, Left, Right, Icon, Form, Text, Segment, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { RNS3 } from 'react-native-aws3';
+
 import DrawingAddForm from '../components/DrawingAddForm';
-import {addDrawing, updateDrawing} from '../actions'
-import {fbAddActivityWithAudio, fbUpdateActivityWithAudio, fbUploadFile} from '../../../firebase'
+
+import { prepareAct } from '../../../helper';
+import { addAct, updateAct } from '../../../actions/api';
+
 
 const drawingInitial = {
   frequency: '1d',
@@ -19,16 +22,19 @@ class DrawingAddScreen extends Component {
   }
 
   onEditDrawing = (body) => {
-    let {drawingIdx} = this.props
+    
+    let {actIndex, updateAct, acts} = this.props
     let drawing = {...this.state.drawing, ...body}
-    this.props.updateDrawing(drawingIdx, drawing)
+    let {title, ...data} = drawing
     this.toggleSpinner(true)
-    return fbUpdateActivityWithAudio('drawings', drawing).then(result => {
+    return prepareAct(data).then(act_data => {
+      return updateAct(actIndex, {id: acts[actIndex].id, title, act_data})
+    }).then(res => {
       this.toggleSpinner(false)
       Actions.pop()
     }).catch(error => {
       this.toggleSpinner(false)
-      console.log(error)
+      Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
     })
   }
 
@@ -36,26 +42,27 @@ class DrawingAddScreen extends Component {
     this.setState({spinner: show})
   }
 
-  onAddDrawing = (body) => {
-    let {addDrawing} = this.props
-    let data = {...body, 'activity_type':'drawing'}
+  onAddDrawing = ({title, ...data}) => {
+    let {addAct} = this.props
     this.toggleSpinner()
-    return fbAddActivityWithAudio('drawings', data, result => {
+    prepareAct(data).then(act_data => {
+      return addAct({act_data, type:'drawing', title})
+    })
+    .then(res => {
+      console.log(res)
       this.toggleSpinner(false)
-      console.log("pushed", result)
-    }).then(res => {
-      this.toggleSpinner(false)
-      return addDrawing(res)
+      Actions.pop()
     }).catch(err => {
       this.toggleSpinner(false)
+      Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
     })
   }
 
   componentWillMount() {
-    let {drawings, drawingIdx} = this.props
-    if(drawingIdx) {
-      const drawing = drawings[drawingIdx]
-      this.setState({drawing})
+    let {acts, actIndex} = this.props
+    if(actIndex!== undefined) {
+      const act = acts[actIndex]
+      this.setState({drawing: {title: act.title, ...act.act_data}})
     } else {
       this.setState({})
     }
@@ -86,17 +93,14 @@ class DrawingAddScreen extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  addDrawing: body => {
-    dispatch(addDrawing(body))
-    Actions.pop()
-  },
-  updateDrawing: (drawingIdx, body) => dispatch(updateDrawing(drawingIdx, body))
-})
+const mapDispatchToProps = {
+  addAct, updateAct
+}
 
 const mapStateToProps = state => ({
-  drawings: state.drawing.drawings,
+  acts: state.core.acts,
   themeState: state.drawer.themeState,
+  user: state.core.auth,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DrawingAddScreen);

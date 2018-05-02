@@ -48,7 +48,7 @@ export default class DrawingBoard extends Component {
 
     addPoint = (evt, gestureState) => {
         const {lines, dimensions, start_time} = this.state
-        let time = (new Date()).getTime() - start_time
+        let time = Date.now() - start_time;
         if(!this.allowed) return
         let n = lines.length-1
         const {moveX, moveY, x0, y0} = gestureState
@@ -87,7 +87,10 @@ export default class DrawingBoard extends Component {
               return true;
             },
           });
-        this.setState({lines: this.props.lines || []})
+        this.setState({lines: []})
+        if (this.props.autoStart) {
+            this.allowed = true
+        }
     }
 
     renderLine(pointStr, idx) {
@@ -159,8 +162,21 @@ export default class DrawingBoard extends Component {
 
     onLayout = event => {
         if (this.state.dimensions) return // layout was already called
-        let {width, height, top, left} = event.nativeEvent.layout
-        this.setState({dimensions: {width, height, top, left}})
+        let {width, height, top, left} = event.nativeEvent.layout;
+        if (this.props.lines && this.props.lines.length > this.state.lines.length) {
+            let lines = this.props.lines.map(line => ({
+                ...line,
+                points: line.points.map( point => ({
+                    ...point,
+                    x: point.x*width/100,
+                    y: point.y*width/100
+                    }))
+                })
+            );
+            this.setState({dimensions: {width, height, top, left}, lines});
+        } else {
+            this.setState({dimensions: {width, height, top, left}});
+        }
     }
 }
 

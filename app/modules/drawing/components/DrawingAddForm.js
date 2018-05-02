@@ -78,7 +78,7 @@ class DrawingAddForm extends Component {
             <Field name="audio_path" type="text" stackedLabel label="Audio instruction" component={FormInputAudio} />
 
             <Field name="image_url" type="text" stackedLabel label="Fill Image" component={this.renderImageField} />
-            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onSelectImage={this.onSelectImage}/> }
+            { this.state.imageSelect && <ImageBrowser path={this.state.imagePath} onFile={this.onSelectImage}/> }
             <Field name="timer"
             label="Timer"
             component ={FormPickerGroup}
@@ -102,7 +102,7 @@ class DrawingAddForm extends Component {
                 {text:"one time",value:"1"},
             ]} />
             <Button onPress={handleSubmit(onSubmit)} disabled={submitting} block style={{ margin: 15, marginTop: 50 }}>
-                <Text>{ initialValues.uuid ? "Update" : "Create" }</Text>
+                <Text>{ initialValues.id ? "Update" : "Create" }</Text>
             </Button>
             </Form>)
     }

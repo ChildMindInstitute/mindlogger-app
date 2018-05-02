@@ -6,7 +6,8 @@ import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import Collapsible from 'react-native-collapsible';
 
-import {fbSaveAnswer} from '../../../firebase'
+import { saveAnswer } from '../../../actions/api';
+import { setAnswer } from '../../../actions/coreActions';
 import baseTheme from '../../../theme'
 import * as surveyActions from '../actions'
 
@@ -20,12 +21,15 @@ class SurveyTableAccordionScreen extends Component {
     this.setState({expand:{}})
   }
   onDone() {
-    fbSaveAnswer(this.props.survey)
-    Actions.pop()
+    const {saveAnswer, act, answers, survey} = this.props
+    saveAnswer(act.id, survey, {answers}).then(res => {
+      Actions.pop()
+    }).catch(err => {
+      Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
+    })
   }
   render() {
-    const {survey} = this.props
-    const {questions, answers} = survey
+    const {act, survey:{questions}, answers} = this.props
     return (
       <Container>
       <Header>
@@ -35,7 +39,7 @@ class SurveyTableAccordionScreen extends Component {
             </Button>
         </Left>
         <Body style={{flex:2}}>
-            <Title>{survey.title}</Title>
+            <Title>{act.title}</Title>
         </Body>
         <Right/>
       </Header>
@@ -91,14 +95,13 @@ class SurveyTableAccordionScreen extends Component {
 
   onInputAnswer = (result, data, final) => {
     questionIndex = data.index
-    let {survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {survey:{questions}, answers, setAnswer} = this.props
     let answer = {
       result,
       time: (new Date()).getTime()
     }
     answers[questionIndex] = answer
-    setSurvey({...survey, answers})
+    setAnswer({answers})
   }
 
   renderQuestion(question, answer, data) {
@@ -111,12 +114,13 @@ class SurveyTableAccordionScreen extends Component {
     return (
       <SurveyTableInput disableHeader onSelect={this.onInputAnswer} data={param}/>
       )
-
   }
 }
 
 export default connect(state => ({
-  survey: state.survey.survey_in_action,
+  act: state.core.act,
+  survey: state.core.act.act_data,
+  answers: state.core.answer && state.core.answer.answers || [],
 }),
-  (dispatch) => bindActionCreators(surveyActions, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer, setAnswer}, dispatch)
 )(SurveyTableAccordionScreen);

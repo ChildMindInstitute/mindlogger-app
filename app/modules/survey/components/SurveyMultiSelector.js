@@ -39,10 +39,10 @@ class SurveyMultiSelector extends SurveyInputComponent {
         {
           rows.map((row, idx) => {
             return (
-              <ListItem key={idx} onPress={() => this.checkValue(row.value)}>
+              <ListItem key={idx} onPress={() => this.checkValue(idx)}>
                 <Body><Text>{row.text}</Text></Body>
                 <Right>
-                  <CheckBox onPress={() => this.checkValue(row.value)} checked={answer.includes(row.value)} />
+                  <CheckBox onPress={() => this.checkValue(idx)} checked={answer.includes(idx)} />
                 </Right>
               </ListItem>
               )

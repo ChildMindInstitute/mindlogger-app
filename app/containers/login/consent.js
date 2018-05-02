@@ -39,15 +39,15 @@ class Consent extends Component { // eslint-disable-line
                             
                         </Item>
                         <Row style={styles.consentRow} onPress={()=>this.toggleState('content')} >
-                            <CheckBox checked={content}/>
+                            <CheckBox checked={content} onPress={()=>this.toggleState('content')}/>
                             <Text style={styles.consentRowText}>I understand that viewing certain images can be uncomfortable while using this app</Text>
                         </Row>
                         <Row style={styles.consentRow} onPress={()=>this.toggleState('storage')} >
-                            <CheckBox checked={storage} />
+                            <CheckBox checked={storage} onPress={()=>this.toggleState('storage')}  />
                             <Text style={styles.consentRowText}>I will allow the Child Mind Institute to store data from use of this app on a secure cloud server, and to access this information for clinical and research purposes</Text>
                         </Row>
                         <Row style={styles.consentRow} onPress={()=>this.toggleState('contact')} >
-                            <CheckBox checked={contact} />
+                            <CheckBox checked={contact} onPress={()=>this.toggleState('contact')} />
                             <Text style={styles.consentRowText}>I permit the Child Mind Institute to contact me regarding information gathered from this app for clinical or research purposes.</Text>
                         </Row>
                         <Button warning block disabled={!(content && storage)} onPress={this.onNext}>

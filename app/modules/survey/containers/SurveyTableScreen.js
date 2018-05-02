@@ -7,7 +7,7 @@ import { Container, Content, Text, Button, View, Icon, Body, Header, Right, Left
 import * as Progress from 'react-native-progress';
 
 import baseTheme from '../../../theme'
-import * as surveyActions from '../actions'
+import { setAnswer } from '../../../actions/coreActions';
 
 import SurveyTableInput from '../components/SurveyTableInput'
 
@@ -18,21 +18,21 @@ class SurveyTableScreen extends Component {
   }
 
   onInputAnswer = (result, data, final = false) => {
-    let {questionIndex, survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {questionIndex, survey, setAnswer, answers} = this.props
+    let {questions} = survey
     let answer = {
       result,
       time: (new Date()).getTime()
     }
     answers[questionIndex] = answer
-    setSurvey({...survey, answers})
+    setAnswer({answers})
     if(final)
       this.nextQuestion()
   }
 
   nextQuestion = () => {
-    let {questionIndex, survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {questionIndex, survey, setAnswer} = this.props
+    let {questions} = survey
     questionIndex = questionIndex + 1
     if(questionIndex<questions.length) {
       Actions.replace("survey_table_question", { questionIndex:questionIndex})
@@ -42,8 +42,8 @@ class SurveyTableScreen extends Component {
   }
 
   prevQuestion = () => {
-    let {questionIndex, survey, setSurvey} = this.props
-    let {questions, answers} = survey
+    let {questionIndex, survey} = this.props
+    let {questions} = survey
     questionIndex = questionIndex - 1
     if(questionIndex>=0) {
       Actions.replace("survey_table_question", { questionIndex:questionIndex })
@@ -53,11 +53,11 @@ class SurveyTableScreen extends Component {
   }
 
   render() {
-    const { questionIndex, survey } = this.props
+    const { questionIndex, survey, answers } = this.props
     const length = survey.questions.length
     const index = questionIndex + 1
     const progressValue = index/length
-    let data = {question: survey.questions[questionIndex], answer: survey.answers[questionIndex] && survey.answers[questionIndex].result}
+    let data = {question: survey.questions[questionIndex], answer: answers[questionIndex] && answers[questionIndex].result}
     return (
       <Container>
       <Header>
@@ -88,7 +88,8 @@ class SurveyTableScreen extends Component {
 }
 
 export default connect(state => ({
-    survey: state.survey.survey_in_action,
+    survey: state.core.act.act_data,
+    answers: state.core.answer && state.core.answer.answers || [],
   }),
-  (dispatch) => bindActionCreators(surveyActions, dispatch)
+  (dispatch) => bindActionCreators({setAnswer}, dispatch)
 )(SurveyTableScreen);
