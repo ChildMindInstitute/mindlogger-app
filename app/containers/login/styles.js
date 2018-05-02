@@ -10,18 +10,29 @@ export default {
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: '#5555aa',
-    padding: 20,
+    backgroundColor: '#0067A0',
+    paddingTop: 20,
+    paddingLeft: 50,
+    paddingRight: 50,
   },
   header: {
-    height: 100
+    marginTop: 60,
+    height: 100,
+    fontSize: 48,
+    textAlign: 'center',
+    color: '#FFFFFF',
   },
   text: {
-    color: '#D8D8D8',
+    color: '#FFFFFF',
+    fontSize: 20,
+    // textAlign: 'center',
   },
-  rightText: {
-    color: '#D8D8D8',
-    textAlign:'right'
+  whiteText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    lineHeight: 45,
+    padding: 0,
+    textAlign: 'center',
   },
   consentRow: {
     height: 'auto',
@@ -39,9 +50,29 @@ export default {
   },
   button:{
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 36,
+    width: 'auto',
+    height: 40,
+    backgroundColor: '#FFFFFF',
+  },
+  buttonText: {
+    color: '#0067A0',
+    fontSize: 20,
   },
   bottomRow:{
-    marginTop: 80
+    marginTop: 60,
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aboutButton: {
+    marginTop: 20,
+    justifyContent: 'center',
+  },
+  logo: {
+    height: 63,
+    width: 78,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   }
 };
