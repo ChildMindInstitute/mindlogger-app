@@ -19,34 +19,45 @@ const datas = [
   {
     name: 'Activities',
     route: 'activity',
-    icon: 'phone-portrait',
+    image: require('../../../img/menu/biking.png'),
     bg: '#C5F442',
   },
   {
     name: 'Dashboard',
     route: 'dashboard',
-    icon: 'home',
+    image: require('../../../img/menu/diagram.png'),
     bg: '#477EEA',
   },
   {
     name: 'Settings',
     route: 'settings',
-    icon: 'settings',
+    image: require('../../../img/menu/settings.png'),
     bg: '#DA4437',
   },
   {
-    name: 'About',
-    route: 'about',
+    name: 'About Codename',
+    route: 'about_codename',
     icon: 'help-buoy',
+    image: require('../../../img/menu/info.png'),
+    bg: '#4DCAE0',
+  },
+  {
+    name: 'About MindLogger',
+    route: 'about_company',
+    icon: 'help-buoy',
+    image: require('../../../img/menu/info.png'),
     bg: '#4DCAE0',
   },
   {
     name: 'Logout',
     route: 'logout',
     icon: 'log-out',
+    image: require('../../../img/menu/logout.png'),
     bg: '#1EBC7C',
   },
 ];
+
+const logoImage = require('../../../img/color_logo.png');
 class SideBar extends Component {
 
   static propTypes = {
@@ -81,18 +92,14 @@ class SideBar extends Component {
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
-          <ImageBackground source={drawerCover} style={styles.drawerCover}>
-            <Image
-              square
-              style={styles.drawerImage}
-              source={drawerImage}
-            />
-          </ImageBackground>
-          <List
+          <View style={styles.drawerCover}>
+            <Text style={styles.drawerCoverText}>MindLogger</Text>
+          </View>
+          <List style={styles.drawerList} 
             dataArray={datas} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
                 <Left>
-                  <Icon active name={data.icon} style={{ color: '#777', fontSize: 26, width: 30 }} />
+                  <Image active source={data.image} style={styles.menuImage} />
                   <Text style={styles.text}>{data.name}</Text>
                 </Left>
                 {(data.types) &&
@@ -106,6 +113,13 @@ class SideBar extends Component {
                 }
               </ListItem>}
           />
+          <View>
+            <Image
+                square
+                style={styles.drawerLogo}
+                source={logoImage}
+                />
+          </View>
 
         </Content>
       </Container>

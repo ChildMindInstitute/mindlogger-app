@@ -14,20 +14,36 @@ export default {
   drawerCover: {
     alignSelf: 'stretch',
     // resizeMode: 'cover',
-    height: deviceHeight / 3.5,
+    height: deviceHeight / 5,
     width: null,
+    backgroundColor: '#0067A0',
     position: 'relative',
     marginBottom: 10,
+    flexDirection: 'row',
   },
-  drawerImage: {
-    position: 'absolute',
+  drawerCoverText: {
+    color: '#FFFFFF',
+    width: '100%',
+    fontSize: 36,
+    alignSelf: 'center',
+    textAlign: 'center',
+  },
+  drawerList: {
+    marginLeft: 20,
+  },
+  menuImage: {
+    width: 35,
+    height: 35,
+    resizeMode: 'contain',
+  },
+  drawerLogo: {
     // left: (Platform.OS === 'android') ? 30 : 40,
-    left: (Platform.OS === 'android') ? deviceWidth / 10 : deviceWidth / 9,
-    top: (Platform.OS === 'android') ? 25 : 35,
     //top: (Platform.OS === 'android') ? deviceHeight / 13 : deviceHeight / 12,
-    width: 140,
-    height: 120,
-    resizeMode: 'cover',
+    marginTop: 40,
+    alignSelf: 'center',
+    width: 94,
+    height: 79,
+    resizeMode: 'contain',
   },
   listItemContainer: {
     flexDirection: 'row',
@@ -50,7 +66,7 @@ export default {
   },
   text: {
     fontWeight: (Platform.OS === 'ios') ? '500' : '400',
-    fontSize: 16,
+    fontSize: 20,
     marginLeft: 20,
   },
   badgeText: {
