@@ -34,7 +34,7 @@ export default {
   CheckboxIconSize: (platform === 'ios') ? 21 : 14,
   CheckboxIconMarginTop: (platform === 'ios') ? undefined : 1,
   CheckboxFontSize: (platform === 'ios') ? (23 / 0.9) : 18,
-  DefaultFontSize: 17,
+  DefaultFontSize: 18,
   checkboxBgColor: '#039BE5',
   checkboxSize: 20,
   checkboxTickColor: '#fff',
@@ -114,7 +114,7 @@ export default {
 
     // Font
   fontFamily: (platform === 'ios') ? 'System' : 'Roboto',
-  fontSizeBase: 15,
+  fontSizeBase: 18,
 
   get fontSizeH1() {
     return this.fontSizeBase * 1.8;
@@ -186,7 +186,7 @@ export default {
 
   inputGroupMarginBottom: 10,
   inputHeightBase: 50,
-  inputPaddingLeft: 5,
+  inputPaddingLeft: 0,
 
   get inputPaddingLeftIcon() {
     return this.inputPaddingLeft * 8;

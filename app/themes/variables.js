@@ -34,7 +34,7 @@ export default {
   CheckboxIconSize: (platform === 'ios') ? 21 : 14,
   CheckboxIconMarginTop: (platform === 'ios') ? undefined : 1,
   CheckboxFontSize: (platform === 'ios') ? (23 / 0.9) : 18,
-  DefaultFontSize: 17,
+  DefaultFontSize: 18,
   checkboxBgColor: '#039BE5',
   checkboxSize: 20,
   checkboxTickColor: '#fff',
@@ -186,7 +186,7 @@ export default {
 
   inputGroupMarginBottom: 10,
   inputHeightBase: 50,
-  inputPaddingLeft: 5,
+  inputPaddingLeft: 0,
 
   get inputPaddingLeftIcon() {
     return this.inputPaddingLeft * 8;
@@ -211,7 +211,7 @@ export default {
   cardBorderColor: '#ccc',
 
     // Changed Variable
-  listItemPadding: (platform === 'ios') ? 10 : 12,
+  listItemPadding: (platform === 'ios') ? 0 : 0,
 
   listNoteColor: '#808080',
   listNoteSize: 13,

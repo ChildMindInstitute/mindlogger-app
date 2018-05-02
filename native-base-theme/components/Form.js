@@ -13,13 +13,11 @@ export default (variables = variable) => {
       'NativeBase.Label': {
         paddingLeft: null,
       },
-      marginLeft: 15,
     },
     '.inlineLabel': {
       'NativeBase.Label': {
         paddingLeft: null,
       },
-      marginLeft: 15,
     },
     '.placeholderLabel': {
       'NativeBase.Input': {
@@ -34,7 +32,6 @@ export default (variables = variable) => {
         paddingLeft: null,
         marginLeft: (platform === 'ios') ? undefined : -5,
       },
-      marginLeft: 15,
     },
     '.floatingLabel': {
       'NativeBase.Input': {
@@ -74,12 +71,10 @@ export default (variables = variable) => {
     },
     '.last': {
       marginLeft:0,
-      paddingLeft:15,
     },
     'NativeBase.Label': {
       paddingRight: 5,
     },
-    marginLeft: 15,
   },
   };
 

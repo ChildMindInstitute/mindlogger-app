@@ -89,6 +89,7 @@ export default (variables = variable) => {
       '.underline': {
         'NativeBase.Input': {
           paddingLeft: 15,
+          paddingRight: 15,
         },
         '.success': {
           borderColor: variables.inputSuccessBorderColor,
