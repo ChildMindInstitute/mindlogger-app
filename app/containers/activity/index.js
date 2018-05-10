@@ -27,25 +27,6 @@ class ActivityScreen extends Component {
     static propTypes = {
         openDrawer: PropTypes.func,
     }
-
-    groupActs(actData) {
-        const {user, acts} = this.props;
-        let arr = actData || acts
-        let surveys = []
-        let voices = []
-        let drawings = []
-        for(var i=0; i<arr.length; i++) {
-            element = arr[i];
-            if(element.type == 'survey') {
-                surveys.push(i)
-            } else if(element.type == 'voice') {
-                voices.push(i)
-            } else if(element.type == 'drawing') {
-                drawings.push(i)
-            }
-        }
-        this.setState({surveys, voices, drawings})
-    }
     componentWillMount() {
         this.setState({})
         const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
@@ -88,7 +69,6 @@ class ActivityScreen extends Component {
     loadAllActivity = (isReload=false) => {
         const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
         const {role} = user
-        this.groupActs()
         if (role == 'admin') {
             getActs().then(data => {
                 
@@ -108,26 +88,14 @@ class ActivityScreen extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(nextProps.acts) {
-            this.groupActs(nextProps.acts)
-        }
-    }
-
-    activityFor(secId, rowId) {
-        let {surveys, voices, drawings} = this.state
-        let index = this.state[secId][rowId]
-        return this.props.acts[index]
-    }
-
     pushRoute(route) {
         console.log(route)
-        Actions[route]()
+        Actions[route]();
         //this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
     }
 
     popRoute() {
-        Actions.pop()
+        Actions.pop();
     }
 
     promptToAddActivity() {
@@ -143,15 +111,15 @@ class ActivityScreen extends Component {
             } else if(buttonIndex == 1) {
                 Actions.push("survey_table_add")
             } else if(buttonIndex == 2) {
-                Actions.push("voice_add")
+                Actions.push("voice_add");
             } else if(buttonIndex == 3) {
-                Actions.push("drawing_add")
+                Actions.push("drawing_add");
             }
         }
         )
     }
 
-    promptToEditActivity(secId, rowId) {
+    promptToEditActivity(rowId) {
         ActionSheet.show(
         {
             options: ["Set frequency time", "Edit questions", "Cancel"],
@@ -160,19 +128,19 @@ class ActivityScreen extends Component {
         },
         buttonIndex => {
             if(buttonIndex==0) {
-                this.editFrequency(secId, rowId)
+                this.editFrequency(rowId);
             } else if(buttonIndex == 1) {
-                this.editActivityDetail(secId, rowId)
+                this.editActivityDetail(rowId);
             }
         }
         )
     }
 
-    editActivity(secId, rowId) {
-        let actIndex = this.state[secId][rowId]
+    editActivity(act, rowId) {
+        let actIndex = rowId;
         Toast.show({text: `${this.state[secId]}`, buttonText:'ok'})
         if(secId == 'surveys') {
-            const survey = this.activityFor(secId, rowId)
+            const survey = act;
             if(survey.act_data.mode === 'table') {
                 Actions.push("survey_table_add", {actIndex})
             } else {
@@ -185,11 +153,11 @@ class ActivityScreen extends Component {
         }
     }
 
-    deleteActivity(secId, rowId) {
-        const {deleteAct} = this.props
-        let actIndex = this.state[secId][rowId]
+    deleteActivity(rowId) {
+        const {deleteAct, acts} = this.props;
+        let actIndex = rowId;
         
-        return deleteAct(actIndex, this.props.acts[actIndex]).then(res => {
+        return deleteAct(actIndex, acts[actIndex]).then(res => {
             Toast.show({text: 'Deleted successfully', buttonText: 'OK'})
         }).catch(err => {
             Toast.show({text: 'Error! '+err.message, type: 'danger', buttonText: 'OK' })
@@ -197,6 +165,7 @@ class ActivityScreen extends Component {
     }
 
     startActivity(act) {
+        console.log(act);
         const {setActivity} = this.props
         
         if(act.type === 'survey') {
@@ -230,9 +199,9 @@ class ActivityScreen extends Component {
         }
     }
 
-    editActivityDetail(secId, rowId) {
-        let actIndex = this.state[secId][rowId]
-        let act = this.props.acts[actIndex]
+    editActivityDetail(rowId) {
+        let actIndex = rowId;
+        let act = this.props.acts[actIndex];
         console.log(secId)
         if(secId == 'surveys') {
             const survey = act.act_data
@@ -247,45 +216,37 @@ class ActivityScreen extends Component {
         }
     }
 
-    _selectRow = (data, secId, rowId) => {
-        let actIndex = this.state[secId][rowId]
-        let act = this.props.acts[actIndex]
+    _selectRow = (act, rowId) => {
         this.startActivity(act)
     }
 
-    _editRow = (data, secId, rowId, rowMap) => {
-        rowMap[`${secId}${rowId}`].props.closeRow()
-        this.editActivity(secId, rowId)
+    _editRow = (act, secId, rowId, rowMap) => {
+        rowMap[`${secId}${rowId}`].props.closeRow();
+        rowMap[rowId].props.closeRow();
+        this.editActivity(act, rowId);
     }
 
-    _deleteRow = (data, secId, rowId, rowMap) => {
-        rowMap[`${secId}${rowId}`].props.closeRow()
-        this.deleteActivity(secId, rowId)
+    _deleteRow = (act, secId, rowId, rowMap) => {
+        rowMap[`${secId}${rowId}`].props.closeRow();
+        this.deleteActivity(rowId)
     }
 
-    _editRowDetail = (data, secId, rowId, rowMap) => {
-        rowMap[`${secId}${rowId}`].props.closeRow()
+    _editRowDetail = (act, secId, rowId, rowMap) => {
+        rowMap[`${secId}${rowId}`].props.closeRow();
         if(secId == 'surveys')
-            this.promptToEditActivity(secId, rowId)
+            this.promptToEditActivity(rowId);
         else
-            this.editFrequency(secId, rowId)
+            this.editFrequency(act, rowId);
     }
 
-    editFrequency = (secId, rowId) => {
-        let actIndex = this.state[secId][rowId]
-        let act = this.props.acts[actIndex]
+    editFrequency = (actIndex) => {
         Actions.push("frequency", {actIndex})
     }
 
-    _renderSectionHeader = (data, secId) => {
-        return (<Separator bordered><Text>{secId.toUpperCase()}</Text></Separator>)
-    }
-    
-    _renderRow = (rowData, secId, rowId) => {
-        let act = this.props.acts[rowData]
-        let data = act.act_data
+    _renderRow = (act, secId, rowId) => {
+        let data = act.act_data;
         return (
-        <ListItem onPress={()=>this._selectRow(data, secId, rowId)}>
+        <ListItem onPress={()=>this._selectRow(act, rowId)}>
         <Body>
             <Text>{act.title}</Text>
             <Text numberOfLines={1} note>{data.instruction ? data.instruction : ' '}</Text>
@@ -302,7 +263,7 @@ class ActivityScreen extends Component {
         if(user.role != 'admin') return false
         return (
         <View style={{flexDirection:'row', height:63}}>
-            <Button full info style={{height:63, width: 60}} onPress={_ => this._editFrequency(secId, rowId)}>
+            <Button full info style={{height:63, width: 60}} onPress={_ => this._editFrequency(rowId)}>
                 <Icon active name="brush" />
             </Button>
             <Button full info style={{height:63, width: 60}} onPress={_ => this._editRow(data, secId, rowId, rowMap)}>
@@ -326,9 +287,7 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {surveys, voices, drawings} = this.state;
-        const {user} = this.props
-        console.log(this.state, this.props.acts)
+        const {user, acts} = this.props
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -355,11 +314,10 @@ class ActivityScreen extends Component {
 
             <Content>
             <List
-                dataSource={ds.cloneWithRowsAndSections({surveys, drawings, voices})}
+                dataSource={ds.cloneWithRows(acts)}
                 renderRow={this._renderRow}
                 renderLeftHiddenRow={this._renderLeftHiddenRow}
                 renderRightHiddenRow={this._renderRightHiddenRow}
-                renderSectionHeader={this._renderSectionHeader}
                 leftOpenValue={60}
                 rightOpenValue={user.role == 'admin' ? -120 : 0}
                 enableEmptySections
