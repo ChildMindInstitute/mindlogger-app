@@ -20,6 +20,7 @@ import ForgotPassword from './containers/login/forgot-password';
 import Consent from './containers/login/consent';
 import Signup from './containers/login/signup';
 import Settings from './containers/settings';
+import AboutApp from './containers/about';
 import FrequencyScreen from './containers/activity/frequency';
 
 //Modules
@@ -88,6 +89,7 @@ class AppNavigator extends Component {
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
               <Scene key="login" component={Login} initial={true}/>
+              <Scene key="about_app" component={AboutApp} />
               <Scene key="consent" component={Consent}/>
               <Scene key="sign_up" component={Signup}/>
               <Scene key="forgot_password" component={ForgotPassword}/>

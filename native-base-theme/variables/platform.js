@@ -34,7 +34,7 @@ export default {
   CheckboxIconSize: (platform === 'ios') ? 21 : 14,
   CheckboxIconMarginTop: (platform === 'ios') ? undefined : 1,
   CheckboxFontSize: (platform === 'ios') ? (23 / 0.9) : 18,
-  DefaultFontSize: 17,
+  DefaultFontSize: 18,
   checkboxBgColor: '#039BE5',
   checkboxSize: 20,
   checkboxTickColor: '#fff',
@@ -84,8 +84,8 @@ export default {
     return this.inverseTextColor;
   },
   get btnTextSize() {
-    return (platform === 'ios') ? this.fontSizeBase * 1.1 :
-        this.fontSizeBase - 1;
+    return (platform === 'ios') ? this.fontSizeBase :
+        this.fontSizeBase;
   },
   get btnTextSizeLarge() {
     return this.fontSizeBase * 1.5;
@@ -112,7 +112,7 @@ export default {
 
 
       // Color
-  brandPrimary: (platform === 'ios') ? '#007aff' : '#3F51B5',
+  brandPrimary: '#0067A0',
   brandInfo: '#62B1F6',
   brandSuccess: '#5cb85c',
   brandDanger: '#d9534f',
@@ -158,15 +158,15 @@ export default {
 
 
     // Header
-  toolbarBtnColor: (platform === 'ios') ? '#007aff' : '#fff',
-  toolbarDefaultBg: (platform === 'ios') ? '#F8F8F8' : '#3F51B5',
+  toolbarBtnColor: (platform === 'ios') ? '#fff' : '#fff',
+  toolbarDefaultBg: '#0067A0',
   toolbarHeight: (platform === 'ios') ? 64 : 56,
   toolbarIconSize: (platform === 'ios') ? 20 : 22,
   toolbarSearchIconSize: (platform === 'ios') ? 20 : 23,
   toolbarInputColor: (platform === 'ios') ? '#CECDD2' : '#fff',
   searchBarHeight: (platform === 'ios') ? 30 : 40,
   toolbarInverseBg: '#222',
-  toolbarTextColor: (platform === 'ios') ? '#000' : '#fff',
+  toolbarTextColor: (platform === 'ios') ? '#fff' : '#fff',
   toolbarDefaultBorder: (platform === 'ios') ? '#a7a6ab' : '#3F51B5',
   iosStatusbar: (platform === 'ios') ? 'dark-content' : 'light-content',
   get statusBarColor() {

@@ -27,7 +27,7 @@ export default (variables = variable) => {
         },
         '.light': {
           'NativeBase.Text': {
-            color: '#f4f4f4',
+            color: '#0067A0',
           },
           'NativeBase.Icon': {
             color: '#f4f4f4',
@@ -36,7 +36,7 @@ export default (variables = variable) => {
             color: '#f4f4f4',
           },
           backgroundColor: 'transparent',
-          borderColor: '#f4f4f4',
+          borderColor: '#0067A0',
           borderWidth: variables.borderWidth * 2,
         },
         '.primary': {

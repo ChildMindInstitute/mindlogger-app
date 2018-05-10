@@ -43,7 +43,7 @@ const datas = [
   },
   {
     name: 'About MindLogger',
-    route: 'about_company',
+    route: 'about_app',
     icon: 'help-buoy',
     image: require('../../../img/menu/info.png'),
     bg: '#4DCAE0',

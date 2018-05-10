@@ -54,7 +54,10 @@ class Login extends Component { // eslint-disable-line
         console.ignoredYellowBox = ['Setting a timer']
     }
     onForgotPassword = () => {
-        Actions.forgot_password()
+        Actions.forgot_password();
+    }
+    onAbout = () => {
+        Actions.about_app();
     }
     render() {
         const {login, user} = this.props

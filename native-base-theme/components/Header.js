@@ -196,9 +196,13 @@ export default (variables = variable) => {
       alignItems: 'flex-start',
     },
     'NativeBase.Body': {
-      flex: 1,
+      flex: 2,
       alignItems: ((platform === 'ios') && (platformStyle!=='material')) ? 'center' : 'flex-start',
       alignSelf: 'center',
+      'NativeBase.Title': {
+        color: variables.toolbarTextColor,
+        fontSize: 20,
+      },
       'NativeBase.Segment': {
         borderWidth: 0,
         alignSelf: 'flex-end',
