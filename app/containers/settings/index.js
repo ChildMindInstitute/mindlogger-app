@@ -23,15 +23,16 @@ class UserForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot, user } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="First name" name="first_name" placeholder={user.first_name} style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Last name" name="last_name" placeholder={user.last_name} style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Current password" name="current_password" style={styles.text} floatingLabel secureTextEntry={true}/>
-                <Field component={FormInputItem} label="New password" name="new_password" style={styles.text} floatingLabel secureTextEntry={true}/>
+                <Field component={FormInputItem} name="first_name" placeholder={user.first_name} style={styles.text}/>
+                <Field component={FormInputItem} name="last_name" placeholder={user.last_name} style={styles.text}/>
+                <Field component={FormInputItem} placeholder="Current password" name="current_password" style={styles.text} secureTextEntry={true}/>
+                <Field component={FormInputItem} placeholder="New password" name="new_password" style={styles.text} secureTextEntry={true}/>
                 <Button
-                    block
-                    style={{marginTop: 40}}
-                    onPress={handleSubmit(onSubmit)}>
-                    <Text>Update</Text>
+                  light
+                  bordered
+                  style={styles.button}
+                  onPress={handleSubmit(onSubmit)}>
+                  <Text>Update</Text>
                 </Button>
             </Form>
         )
@@ -103,8 +104,13 @@ class SettingScreen extends Component {
           </Right>
         </Header>
 
-        <Content padder>
+        <Content>
+          <Text style={styles.subHeader}>Profile</Text>
+          <View style={styles.subSection}>
             <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user} user={user} />
+          </View>
+          <Text style={styles.subHeader}>Notification</Text>
+          
         </Content>
       </Container>
     );
