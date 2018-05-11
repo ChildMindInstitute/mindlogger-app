@@ -5,9 +5,11 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {StatusBar, Image} from 'react-native';
 import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left} from 'native-base';
 import {Actions} from 'react-native-router-flux';
 
+import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
 
 const logoImage = require('../../../img/color_logo.png');
@@ -65,7 +67,7 @@ class AboutApp extends Component { // eslint-disable-line
 }
 
 function bindActions(dispatch) {
-    return {};
+    return bindActionCreators({openDrawer}, dispatch)
 }
 
 const mapStateToProps = state => ({themeState: state.drawer.themeState, routes: state.drawer.routes});

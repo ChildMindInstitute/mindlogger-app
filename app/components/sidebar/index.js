@@ -78,9 +78,9 @@ class SideBar extends Component {
     const {closeDrawer, signOut} = this.props;
     if(route == 'logout') {
       signOut();
-      Actions.pop();
+      Actions.reset('login');
     } else {
-      Actions.replace(route);
+      Actions.reset(route);
     }
     closeDrawer();
   }

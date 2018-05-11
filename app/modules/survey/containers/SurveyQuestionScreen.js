@@ -24,10 +24,34 @@ import SurveyTableInput from '../components/SurveyTableInput'
 import DrawingBoard from '../../drawing/components/DrawingBoard';
 import AudioRecord from '../../../components/audio/AudioRecord';
 import { uploadFileS3 } from '../../../helper';
+import { openDrawer } from '../../../actions/drawer';
 
 const styles=StyleSheet.create({
-  row: {flexDirection:'row', justifyContent:'space-around'},
-  block: {flex: 1, margin: 8, borderRadius: 8, justifyContent: 'center', alignItems: 'center'}
+  row: {
+    flexDirection:'row',
+    justifyContent:'space-around'
+  },
+  block: {
+    flex: 1,
+    margin: 8,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  progressValue: {
+    textAlign:'center',
+    marginRight: 20
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    padding: 15,
+  },
+  footerText: {
+    fontSize: 20,
+    fontWeight: '300',
+  }
 });
 class SurveyQuestionScreen extends Component {
   constructor(props) {
@@ -105,25 +129,22 @@ class SurveyQuestionScreen extends Component {
   }
 
   renderHeader() {
-    const { act } = this.props
+    const { act, openDrawer } = this.props;
     return (<Header>
       <Left>
-        <Button transparent onPress={() => this.prevQuestion()}>
-        <Icon name="arrow-back" />
+        <Button transparent onPress={openDrawer}>
+          <Icon name="menu" />
         </Button>
       </Left>
       <Body style={{flex:2}}>
           <Title>{act.title}</Title>
       </Body>
       <Right>
-        <Button transparent onPress={() => this.nextQuestion()}>
-        <Icon name="arrow-forward" />
-        </Button>
       </Right>
     </Header>);
   }
 
-  renderContent() {
+  render() {
     const { questionIndex, survey, answers} = this.props;
     let question = survey.questions[questionIndex];
     let answer = answers[questionIndex] && answers[questionIndex].result;
@@ -206,13 +227,24 @@ class SurveyQuestionScreen extends Component {
       comp = (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>);
     }
 
-    return (<Content padder style={baseTheme.content} scrollEnabled={scroll}>
-      {comp}
-      <View padder style={{marginTop: 20}}>
-        <Progress.Bar progress={progressValue} width={null} height={20}/>
-        <Text style={{textAlign:'center'}}>{`${index}/${length}`}</Text>
-      </View>
-      </Content>);
+    return (
+      <Container>
+        { this.renderHeader() }
+        <Content padder style={baseTheme.content} scrollEnabled={scroll}>
+          <View padder style={{flexDirection:'row'}}>
+            <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
+            <Progress.Bar style={{flexGrow: 1}} progress={progressValue} width={null} height={20}/>
+          </View>
+          {comp}
+        </Content>
+        <View style={styles.footer}>
+          <Button transparent onPress={() => this.prevQuestion()}>
+            <Icon name="arrow-back" />
+          </Button>
+          <Button transparent onPress={() => this.nextQuestion()}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+        </View>
+      </Container>
+      );
   }
 
   saveDrawing = () => {
@@ -273,15 +305,6 @@ class SurveyQuestionScreen extends Component {
       </SortableGrid>
     )
   }
-
-  render() {
-    return (
-      <Container>
-        { this.renderHeader() }
-        { this.renderContent() }
-      </Container>
-    )
-  }
 }
 
 export default connect(state => ({
@@ -289,5 +312,5 @@ export default connect(state => ({
     survey: state.core.act.act_data,
     answers: state.core.answer && state.core.answer.answers || [],
   }),
-  (dispatch) => bindActionCreators({saveAnswer, setAnswer}, dispatch)
+  (dispatch) => bindActionCreators({saveAnswer, setAnswer, openDrawer}, dispatch)
 )(SurveyQuestionScreen);
