@@ -84,8 +84,8 @@ export default {
     return this.inverseTextColor;
   },
   get btnTextSize() {
-    return (platform === 'ios') ? this.fontSizeBase :
-        this.fontSizeBase;
+    return (platform === 'ios') ? (this.fontSizeBase+2) :
+        (this.fontSizeBase+2);
   },
   get btnTextSizeLarge() {
     return this.fontSizeBase * 1.5;
@@ -122,7 +122,7 @@ export default {
 
     // Font
   fontFamily: (platform === 'ios') ? 'System' : 'Roboto',
-  fontSizeBase: 15,
+  fontSizeBase: 18,
 
   get fontSizeH1() {
     return this.fontSizeBase * 1.8;
@@ -204,7 +204,7 @@ export default {
 
 
     // Line Height
-  btnLineHeight: 19,
+  btnLineHeight: 23,
   lineHeightH1: 32,
   lineHeightH2: 27,
   lineHeightH3: 22,

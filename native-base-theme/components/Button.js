@@ -426,6 +426,7 @@ export default (variables = variable) => {
         color: variables.inverseTextColor,
         fontSize: variables.btnTextSize,
         lineHeight: variables.btnLineHeight,
+        fontWeight: '300',
         // childPosition: 1
       },
 

@@ -14,13 +14,31 @@ import Svg,{
     Polygon,
     Polyline,
 } from 'react-native-svg'
+import * as Progress from 'react-native-progress';
 
 import baseTheme from '../../../theme'
 import {setDrawing} from '../actions'
-
 import DrawingBoard from '../components/DrawingBoard'
 import { saveAnswer } from '../../../actions/api';
+import ActHeader from '../../../components/header';
 
+const styles=StyleSheet.create({
+    board: {
+
+    },
+    text: {
+        padding: 20,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 15,
+    },
+    buttonText: {
+      width: 68,
+      textAlign: 'center',
+    }
+  });
 
 class DrawingActivityScreen extends Component {
     constructor(props) {
@@ -54,23 +72,8 @@ class DrawingActivityScreen extends Component {
     }
 
     renderTimer() {
-        const {duration, drawing} = this.state
-        return (<View style={{alignItems: 'center'}}>
-            <ProgressCircle
-            percent={duration/drawing.timer*100}
-            radius={30}
-            borderWidth={4}
-            color="#FF9933"
-            shadowColor="#999"
-            bgColor="#fff">
-                <Text>
-                { drawing.timer-duration }
-                </Text>
-                <Text>
-                Sec
-                </Text>
-            </ProgressCircle>
-        </View>)
+        const {duration, drawing} = this.state;
+        return (<Progress.Bar progress={duration/drawing.timer} width={null} height={20}/>)
     }
 
     onBegin = () => {
@@ -99,34 +102,22 @@ class DrawingActivityScreen extends Component {
         const {drawing, spinner, started} = this.state
         return (
         <Container>
-        <Header>
-            <Left>
-            <Button transparent onPress={() => Actions.pop()}>
-            <Icon name="arrow-back" />
-            </Button>
-            </Left>
-            <Body style={{flex:2}}>
-                <Title>{this.props.act.title}</Title>
-            </Body>
-            <Right>
-            </Right>
-        </Header>
-        <Content style={{ flex: 1, margin: 20 }}>
-            {drawing.timer && drawing.timer>0 ? this.renderTimer() : <Text/>}
-            <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
-            {/* <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
+            <ActHeader title={this.props.act.title} />
+            <Content style={{ flex: 1 }}>
+                <DrawingBoard source={drawing.image_url && {uri: drawing.image_url}} disabled={!started} ref={board => this.board = board}/>
+                {/* <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}} > 
+                    
+                </View> */}
                 
-            </View> */}
-            <View style={{alignItems:'center', marginTop:20}}>
-                <Text>{drawing.instruction}</Text>
-            </View> 
-            <View style={{marginTop:20}}>
-            <Button full block onPress={this.onBegin}><Text>{started ? 'Redo' : 'Begin'}</Text></Button>
+                {drawing.timer && drawing.timer>0 && this.renderTimer()}
+                <Text style={styles.text}>{drawing.instruction}</Text>
+            </Content>
+            <View style={styles.footer}>
+            <Button transparent onPress={this.redo}><Text style={styles.buttonText}>{started ? 'REDO' : ''}</Text></Button>
+            <Button onPress={this.onSave}><Text style={styles.buttonText}>SAVE</Text>{spinner && <Spinner />}</Button>
+            <Button transparent onPress={this.onBegin}><Text style={styles.buttonText}>{started ? 'NEXT' : 'SKIP'}</Text></Button>
             </View>
-            <View style={{marginTop:20}}>
-                <Button full block onPress={this.onSave} disabled={spinner || !started}><Text>Save</Text>{spinner && <Spinner />}</Button>
-            </View>
-        </Content>
+            
         </Container>
         )
     }

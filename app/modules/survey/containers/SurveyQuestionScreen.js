@@ -23,6 +23,7 @@ import SurveyImageSelector from '../components/SurveyImageSelector'
 import SurveyTableInput from '../components/SurveyTableInput'
 import DrawingBoard from '../../drawing/components/DrawingBoard';
 import AudioRecord from '../../../components/audio/AudioRecord';
+import ActHeader from '../../../components/header';
 import { uploadFileS3 } from '../../../helper';
 import { openDrawer } from '../../../actions/drawer';
 
@@ -45,7 +46,6 @@ const styles=StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'white',
     padding: 15,
   },
   footerText: {
@@ -129,26 +129,11 @@ class SurveyQuestionScreen extends Component {
   }
 
   renderHeader() {
-    const { act, openDrawer } = this.props;
-    return (<Header>
-      <Left>
-        <Button transparent onPress={openDrawer}>
-          <Icon name="menu" />
-        </Button>
-      </Left>
-      <Body style={{flex:2}}>
-          <Title>{act.title}</Title>
-      </Body>
-      <Right>
-        <Button transparent onPress={()=>Actions.about_app()}>
-          <Icon name="information-circle" />
-        </Button>
-      </Right>
-    </Header>);
+    
   }
 
   render() {
-    const { questionIndex, survey, answers} = this.props;
+    const { questionIndex, survey, answers, act} = this.props;
     let question = survey.questions[questionIndex];
     let answer = answers[questionIndex] && answers[questionIndex].result;
     const length = survey.questions.length
@@ -233,7 +218,7 @@ class SurveyQuestionScreen extends Component {
     return (
       <Container>
         <StatusBar barStyle='light-content'/>
-        { this.renderHeader() }
+        <ActHeader title={act.title} />
         <Content padder style={baseTheme.content} scrollEnabled={scroll}>
           <View padder style={{flexDirection:'row'}}>
             <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
