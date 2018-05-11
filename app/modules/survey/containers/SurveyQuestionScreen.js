@@ -140,6 +140,9 @@ class SurveyQuestionScreen extends Component {
           <Title>{act.title}</Title>
       </Body>
       <Right>
+        <Button transparent onPress={()=>Actions.about_app()}>
+          <Icon name="information-circle" />
+        </Button>
       </Right>
     </Header>);
   }
@@ -229,6 +232,7 @@ class SurveyQuestionScreen extends Component {
 
     return (
       <Container>
+        <StatusBar barStyle='light-content'/>
         { this.renderHeader() }
         <Content padder style={baseTheme.content} scrollEnabled={scroll}>
           <View padder style={{flexDirection:'row'}}>
