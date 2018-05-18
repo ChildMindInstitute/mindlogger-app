@@ -16,6 +16,7 @@ import {
   Recorder,
   MediaStates
 } from 'react-native-audio-toolkit';
+import { zeroFill } from '../../helper';
 
 class AudioRecord extends React.Component {
   constructor() {
@@ -69,8 +70,8 @@ class AudioRecord extends React.Component {
     this.recorder = null;
     this.lastSeek = 0;
     if(this.props.path) {
-      this.filename = Platform.OS == 'android' ? this.props.path : this.props.path.replace(/^.*[\\\/]/, '')
-      this.output_path = this.props.path
+      this.filename = Platform.OS == 'android' ? this.props.path : this.props.path.replace(/^.*[\\\/]/, '');
+      this.output_path = this.props.path;
     }
     this._checkPermission().then((hasPermission) => {
       this.setState({ hasPermission });
@@ -80,9 +81,7 @@ class AudioRecord extends React.Component {
       this._reloadPlayer();
       this._reloadRecorder();
       
-    })
-    
-    console.log(this.filename)
+    });
     this._progressInterval = setInterval(() => {
       if (this.player && this._shouldUpdateProgressBar()) {// && !this._dragging) {
         this.setState({progress: Math.max(0, this.player.currentTime) / this.player.duration});
@@ -90,12 +89,13 @@ class AudioRecord extends React.Component {
     }, 100);
     this._recordInterval = setInterval( () => {
       if (this.recorder && this.recorder.isRecording) {
-        let duration = (Date.now() - this.startTime)/1000
+        let duration = (Date.now() - this.startTime)/1000;
+        this.setState({duration});
         if(timeLimit && timeLimit>0 && duration >= timeLimit) {
-          this._toggleRecord()
+          this._toggleRecord();
         }
         if(this.props.onProgress)
-          this.props.onProgress(duration)
+          this.props.onProgress(duration);
       }
     }, 500)
   }
@@ -113,8 +113,12 @@ class AudioRecord extends React.Component {
     return Date.now() - this.lastSeek > 200;
   }
 
+
+
   recordButtonText() {
-    return this.recorder  && this.recorder.isRecording ? 'Stop' : (this.props.recordLabel || 'Record')
+    const {duration} = this.state;
+    let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
+    return this.recorder && this.recorder.isRecording ? timeStr : (this.props.recordLabel || 'Record')
   }
 
   _updateState(err) {
@@ -228,7 +232,7 @@ class AudioRecord extends React.Component {
           this.props.onRecordFile(this.output_path, (Date.now() - this.startTime)/1000);
         }
         this._updateState();
-      })
+      });
     } else {
       this.recorder.record(err => {
         if (err) {
@@ -242,7 +246,7 @@ class AudioRecord extends React.Component {
           if(this.props.onStart) this.props.onStart(this.filename)
         }
         this._updateState();
-      })
+      });
     }
   }
 
@@ -319,13 +323,13 @@ class AudioRecord extends React.Component {
     );
   }
   render() {
-    const {mode} = this.props
+    const {mode} = this.props;
     if(mode == "single") {
-      return this.renderSingleMode()
+      return this.renderSingleMode();
     } else if(mode == "advanced") {
-      return this.renderAdvancedMode()
+      return this.renderAdvancedMode();
     } else {
-      return this.renderNormalMode()
+      return this.renderNormalMode();
     }
   }
 }

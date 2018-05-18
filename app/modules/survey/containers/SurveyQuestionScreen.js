@@ -17,12 +17,12 @@ import { saveAnswer } from '../../../actions/api';
 import { setAnswer } from '../../../actions/coreActions';
 
 import QuestionScreen from './questions/QuestionScreen';
-import AudioRecord from '../../../components/audio/AudioRecord';
 import ActHeader from '../../../components/header';
 import { uploadFileS3 } from '../../../helper';
 import { openDrawer } from '../../../actions/drawer';
 import CameraScreen from './questions/CameraScreen';
 import DrawingScreen from './questions/DrawingScreen';
+import AudioScreen from './questions/AudioScreen';
 
 const styles=StyleSheet.create({
   row: {
@@ -121,12 +121,7 @@ class SurveyQuestionScreen extends Component {
         case 'drawing':
           return <DrawingScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
         case 'audio':
-          comp = (
-            <View>
-              <Text>{question.title}</Text>
-              <AudioRecord onRecordFile={(filePath)=>this.onInputAnswer(filePath)} path={answer}/>
-            </View>
-          );
+          return <AudioScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
           break;
         case 'camera':
           return (<CameraScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)

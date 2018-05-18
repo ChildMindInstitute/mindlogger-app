@@ -90,7 +90,6 @@ class VoiceActivityScreen extends Component {
     }
 
     toggleToPlay = () => {
-        console.log(this.props)
         if(this.state.playAudio)
             return;
         this.setState({playAudio: true})
@@ -99,8 +98,7 @@ class VoiceActivityScreen extends Component {
         }, this.props.voice.duration*1000)
     }
     renderTimer() {
-        const {duration, voice} = this.state
-        console.log(duration)
+        const {duration, voice} = this.state;
         return (<View style={{alignItems: 'center'}}>
             <ProgressCircle
             percent={duration/voice.timer*100}
