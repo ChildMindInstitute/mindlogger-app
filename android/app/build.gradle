@@ -146,6 +146,9 @@ android {
 }
 
 dependencies {
+    compile (project(':react-native-camera')) {
+        exclude group: "com.android.support", module: 'support-v4'
+    }
     compile project(':react-native-sensors')
     compile project(':react-native-image-picker')
     compile project(':react-native-s3')

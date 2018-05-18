@@ -3,6 +3,7 @@ package lab.childmindinstitute.data;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.reactnative.camera.RNCameraPackage;
 import com.sensors.RNSensorsPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.mybigday.rns3.RNS3Package;
@@ -35,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNCameraPackage(),
             new RNSensorsPackage(),
             new ImagePickerPackage(),
             new RNS3Package(),

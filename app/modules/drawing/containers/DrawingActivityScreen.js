@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 import Sound from 'react-native-sound';
 import WaveForm from 'react-native-audiowaveform';
-import ProgressCircle from 'react-native-progress-circle'
+import ProgressCircle from 'react-native-progress-circle';
 import moment from 'moment'
 import Svg,{
     Line,
@@ -21,6 +21,7 @@ import {setDrawing} from '../actions'
 import DrawingBoard from '../components/DrawingBoard'
 import { saveAnswer } from '../../../actions/api';
 import ActHeader from '../../../components/header';
+import { zeroFill } from '../../../helper';
 
 const styles=StyleSheet.create({
     board: {
@@ -73,7 +74,6 @@ class DrawingActivityScreen extends Component {
 
     renderTimer() {
         const {duration, drawing} = this.state;
-        return (<Progress.Bar progress={duration/drawing.timer} width={null} height={20}/>)
     }
 
     onBegin = () => {
@@ -99,7 +99,8 @@ class DrawingActivityScreen extends Component {
     }
 
     render() {
-        const {drawing, spinner, started} = this.state
+        const {duration, drawing, spinner, started} = this.state;
+        let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
         return (
         <Container>
             <ActHeader title={this.props.act.title} />
@@ -109,12 +110,12 @@ class DrawingActivityScreen extends Component {
                     
                 </View> */}
                 
-                {drawing.timer && drawing.timer>0 && this.renderTimer()}
+                {drawing.timer && drawing.timer>0 && (<Progress.Bar progress={duration/drawing.timer} width={null} height={20}/>)}
                 <Text style={styles.text}>{drawing.instruction}</Text>
             </Content>
             <View style={styles.footer}>
             <Button transparent onPress={this.redo}><Text style={styles.buttonText}>{started ? 'REDO' : ''}</Text></Button>
-            <Button onPress={this.onSave}><Text style={styles.buttonText}>SAVE</Text>{spinner && <Spinner />}</Button>
+            <Button onPress={this.onSave}><Text style={styles.buttonText}>{this.timerId ? 'SAVE' : timeStr} </Text>{spinner && <Spinner />}</Button>
             <Button transparent onPress={this.onBegin}><Text style={styles.buttonText}>{started ? 'NEXT' : 'SKIP'}</Text></Button>
             </View>
             

@@ -10,22 +10,19 @@ import ImagePicker from 'react-native-image-picker';
 import { Accelerometer } from 'react-native-sensors';
 import SortableGrid from 'react-native-sortable-grid';
 import randomString from 'random-string';
+import { RNCamera } from 'react-native-camera';
 
 import baseTheme from '../../../theme';
 import { saveAnswer } from '../../../actions/api';
 import { setAnswer } from '../../../actions/coreActions';
 
-import SurveyTextInput from '../components/SurveyTextInput'
-import SurveyBoolSelector from '../components/SurveyBoolSelector'
-import SurveySingleSelector from '../components/SurveySingleSelector'
-import SurveyMultiSelector from '../components/SurveyMultiSelector'
-import SurveyImageSelector from '../components/SurveyImageSelector'
-import SurveyTableInput from '../components/SurveyTableInput'
-import DrawingBoard from '../../drawing/components/DrawingBoard';
+import QuestionScreen from './questions/QuestionScreen';
 import AudioRecord from '../../../components/audio/AudioRecord';
 import ActHeader from '../../../components/header';
 import { uploadFileS3 } from '../../../helper';
 import { openDrawer } from '../../../actions/drawer';
+import CameraScreen from './questions/CameraScreen';
+import DrawingScreen from './questions/DrawingScreen';
 
 const styles=StyleSheet.create({
   row: {
@@ -51,6 +48,10 @@ const styles=StyleSheet.create({
   footerText: {
     fontSize: 20,
     fontWeight: '300',
+  },
+  camera: {
+    height: 300,
+    width: '100%',
   }
 });
 class SurveyQuestionScreen extends Component {
@@ -62,31 +63,13 @@ class SurveyQuestionScreen extends Component {
     this.setState({});
   }
 
-  onInputAnswer = (result, data=undefined, final=false) => {
-    let {questionIndex, survey:{questions}, answers, setAnswer} = this.props
-    let answer = {
-      result,
-      time: (new Date()).getTime()
-    }
-    answers[questionIndex] = answer
-    setAnswer({answers})
-    if(final)
-      setTimeout(() => { this.nextQuestion() }, 500)
+  save = (answer) => {
+    let {questionIndex, survey:{questions}, answers, setAnswer} = this.props;
+    answers[questionIndex] = answer;
+    setAnswer({answers});
   }
-  saveChange = () => {
-    let {questionIndex, survey} = this.props
-    let answer;
-    if(survey.mode == 'basic') {
-      switch (survey.questions[questionIndex].type) {
-        case 'drawing':
-          answer = this.board.save();
-          this.onInputAnswer(answer, null, false);
-          break;
-      }
-    }
-  }
-  nextQuestion = () => {
-    this.saveChange();
+
+  next = () => {
     let {questionIndex, survey, answers, indexMap} = this.props;
     let {questions} = survey;
     let condition_question_index, condition_choice;
@@ -109,10 +92,9 @@ class SurveyQuestionScreen extends Component {
     
   }
 
-  prevQuestion = () => {
-    this.saveChange();
-    let {questionIndex, survey:{questions}} = this.props
-    let {answers} = this.props
+  prev = () => {
+    let {questionIndex, survey:{questions}} = this.props;
+    let {answers} = this.props;
     for(questionIndex=questionIndex-1; questionIndex>=0; questionIndex--)
     {
       let { condition_question_index, condition_choice } = questions[questionIndex];
@@ -122,56 +104,22 @@ class SurveyQuestionScreen extends Component {
     }
 
     if(questionIndex>=0) {
-      Actions.replace("survey_question", { questionIndex:questionIndex })
+      Actions.replace("survey_question", { questionIndex:questionIndex });
     } else {
-      Actions.pop()
+      Actions.pop();
     }
   }
 
-  renderHeader() {
-    
-  }
-
-  render() {
+  renderContent() {
     const { questionIndex, survey, answers, act} = this.props;
     let question = survey.questions[questionIndex];
     let answer = answers[questionIndex] && answers[questionIndex].result;
-    const length = survey.questions.length
-    const index = questionIndex + 1
-    const progressValue = index/length
-
-    let scroll = true;
     let comp = (<View></View>);
     
     if(survey.mode == 'basic') {
       switch(question.type) {
-        case 'text':
-          comp = (<SurveyTextInput onSelect={this.onInputAnswer} data={{question, answer}} />);
-          break;
-        case 'bool':
-          comp = (<SurveyBoolSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
-          break;
-        case 'single_sel':
-          comp = (<SurveySingleSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
-          break;
-        case 'multi_sel':
-          comp = (<SurveyMultiSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
-          break;
-        case 'image_sel':
-          comp = (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
-          break;
         case 'drawing':
-          scroll = false;
-          comp = (
-          <View>
-            <Text>{question.title}</Text>
-            <DrawingBoard source={question.image_url && {uri: question.image_url}} ref={board => {this.board = board}} autoStart lines={answer && answer.lines}/>
-            <View style={styles.row}>
-              <Left><Button onPress={this.saveDrawing}><Text>Save</Text></Button></Left>
-              <Right><Button onPress={this.resetDrawing}><Text>Reset</Text></Button></Right>
-            </View>
-          </View>);
-          break;
+          return <DrawingScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
         case 'audio':
           comp = (
             <View>
@@ -181,17 +129,7 @@ class SurveyQuestionScreen extends Component {
           );
           break;
         case 'camera':
-          comp = (<View>
-            <Text>{question.title}</Text>
-            <View>
-                <Image source={this.state.pic_source} style={{width: null, height: 200, flex: 1, margin: 20}}/>
-            </View>
-            <View style={styles.row}>
-              <Button onPress={this.pickPhoto}><Text>Select</Text></Button>
-              <Button onPress={this.savePhoto} disabled={!this.state.pic_source}><Text>Save</Text></Button>
-            </View>
-          </View>)
-          break;
+          return (<CameraScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
         case 'capture_acc':
           comp = (<View>
             <Text>{question.title}</Text>
@@ -210,28 +148,27 @@ class SurveyQuestionScreen extends Component {
             </View>
             </View>)
           break;
+        default:
+          return (<QuestionScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
       }
     } else {
       comp = (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>);
     }
-
+  }
+  render() {
+    const { questionIndex, survey, answers, act} = this.props;
+    const length = survey.questions.length;
+    const index = questionIndex + 1;
+    const progressValue = index/length;
     return (
       <Container>
         <StatusBar barStyle='light-content'/>
         <ActHeader title={act.title} />
-        <Content padder style={baseTheme.content} scrollEnabled={scroll}>
-          <View padder style={{flexDirection:'row'}}>
-            <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
-            <Progress.Bar style={{flexGrow: 1}} progress={progressValue} width={null} height={20}/>
-          </View>
-          {comp}
-        </Content>
-        <View style={styles.footer}>
-          <Button transparent onPress={() => this.prevQuestion()}>
-            <Icon name="arrow-back" />
-          </Button>
-          <Button transparent onPress={() => this.nextQuestion()}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+        <View padder style={{flexDirection:'row'}}>
+          <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
+          <Progress.Bar style={{flexGrow: 1}} progress={progressValue} width={null} height={20}/>
         </View>
+        { this.renderContent()}
       </Container>
       );
   }
