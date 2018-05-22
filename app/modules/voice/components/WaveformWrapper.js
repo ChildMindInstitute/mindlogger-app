@@ -10,13 +10,9 @@ import  WaveForm  from 'react-native-audiowaveform'
 export default class WaveformWrapper extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
-
             playAudio:false,
             stopAudio:true,
-
-
         }
     }
     static propTypes = {
@@ -52,21 +48,14 @@ export default class WaveformWrapper extends Component {
         //WaveForm.testCallback((res) => console.log|("CDCDCDCDC :::: "+res));
 
         return (
-
             <WaveForm style={this.props.style}
-
-
-                      onPress = {(sender) => this.changestate() }
-                      source={this.props.source}
-                      stop={this.state.stopAudio? true:false}
-                      play={this.state.playAudio? true:false}
-                      autoPlay={this.props.autoPlay}
-                      waveFormStyle={{waveColor:this.props.waveFormStyle.waveColor,scrubColor:this.props.waveFormStyle.scrubColor}}
-
+                onPress = {(sender) => this.changestate() }
+                source={this.props.source}
+                stop={this.state.stopAudio? true:false}
+                play={this.state.playAudio? true:false}
+                autoPlay={this.props.autoPlay}
+                waveFormStyle={{waveColor:this.props.waveFormStyle.waveColor,scrubColor:this.props.waveFormStyle.scrubColor}}
             />
-
-
-
         );
 
 

@@ -57,7 +57,7 @@ export default class extends Component {
   }
 
   componentWillMount() {
-    this.setState({voice: this.props.answer, duration:0, answer: {}})
+    this.setState({duration:0, answer: {}})
   }
 
   onBack = () => {
