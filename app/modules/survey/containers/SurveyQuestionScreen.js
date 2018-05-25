@@ -38,7 +38,12 @@ const styles=StyleSheet.create({
   },
   progressValue: {
     textAlign:'center',
-    marginRight: 20
+    marginRight: 20,
+    fontSize: 12,
+  },
+  progress: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   footer: {
     flexDirection: 'row',
@@ -60,17 +65,18 @@ class SurveyQuestionScreen extends Component {
   }
 
   componentWillMount() {
-    this.setState({});
+    this.setState({questionIndex: this.props.questionIndex});
   }
 
   save = (answer) => {
-    let {questionIndex, survey:{questions}, answers, setAnswer} = this.props;
-    answers[questionIndex] = answer;
+    let {survey:{questions}, answers, setAnswer} = this.props;
+    answers[this.state.questionIndex] = answer;
     setAnswer({answers});
   }
 
   next = () => {
-    let {questionIndex, survey, answers, indexMap} = this.props;
+    let {survey, answers, indexMap} = this.props;
+    let {questionIndex} = this.state;
     let {questions} = survey;
     let condition_question_index, condition_choice;
     // Skip question does not match condition
@@ -85,16 +91,16 @@ class SurveyQuestionScreen extends Component {
     }while(condition_question_index>-1 && answers[condition_question_index].result != condition_choice);
 
     if(questionIndex<questions.length) {
-      Actions.replace("survey_question", {questionIndex, indexMap})
+      this.setState({questionIndex, indexMap});
     } else {
-      Actions.replace("survey_"+ survey.mode + "_summary")
+      Actions.replace("survey_"+ survey.mode + "_summary");
     }
     
   }
 
   prev = () => {
-    let {questionIndex, survey:{questions}} = this.props;
-    let {answers} = this.props;
+    let {answers, survey:{questions}} = this.props;
+    let {questionIndex} = this.state;
     for(questionIndex=questionIndex-1; questionIndex>=0; questionIndex--)
     {
       let { condition_question_index, condition_choice } = questions[questionIndex];
@@ -104,14 +110,15 @@ class SurveyQuestionScreen extends Component {
     }
 
     if(questionIndex>=0) {
-      Actions.replace("survey_question", { questionIndex:questionIndex });
+      Actions.replace("survey_question", { questionIndex });
     } else {
       Actions.pop();
     }
   }
 
   renderContent() {
-    const { questionIndex, survey, answers, act} = this.props;
+    const { survey, answers, act} = this.props;
+    const {questionIndex} = this.state;
     let question = survey.questions[questionIndex];
     let answer = answers[questionIndex] && answers[questionIndex].result;
     let comp = (<View></View>);
@@ -119,12 +126,12 @@ class SurveyQuestionScreen extends Component {
     if(survey.mode == 'basic') {
       switch(question.type) {
         case 'drawing':
-          return <DrawingScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
+          return <DrawingScreen key={questionIndex} question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
         case 'audio':
-          return <AudioScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
+          return <AudioScreen key={questionIndex} question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save} />
           break;
         case 'camera':
-          return (<CameraScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
+          return (<CameraScreen key={questionIndex} question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
         case 'capture_acc':
           comp = (<View>
             <Text>{question.title}</Text>
@@ -144,14 +151,15 @@ class SurveyQuestionScreen extends Component {
             </View>)
           break;
         default:
-          return (<QuestionScreen question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
+          return (<QuestionScreen key={questionIndex} question={question} answer={answer} onPrev={this.prev} onNext={this.next} onSave={this.save}/>)
       }
     } else {
-      comp = (<SurveyTableInput onSelect={this.onInputAnswer} data={{question, answer}}/>);
+      comp = (<SurveyTableInput key={questionIndex} onSelect={this.onInputAnswer} data={{question, answer}}/>);
     }
   }
   render() {
-    const { questionIndex, survey, answers, act} = this.props;
+    const { survey, answers, act} = this.props;
+    const {questionIndex} = this.state;
     const length = survey.questions.length;
     const index = questionIndex + 1;
     const progressValue = index/length;
@@ -159,9 +167,9 @@ class SurveyQuestionScreen extends Component {
       <Container>
         <StatusBar barStyle='light-content'/>
         <ActHeader title={act.title} />
-        <View padder style={{flexDirection:'row'}}>
+        <View padder style={styles.progress}>
           <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
-          <Progress.Bar style={{flexGrow: 1}} progress={progressValue} width={null} height={20}/>
+          <Progress.Bar style={{flexGrow: 1}} progress={progressValue} width={null} height={12}/>
         </View>
         { this.renderContent()}
       </Container>

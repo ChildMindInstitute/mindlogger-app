@@ -35,7 +35,8 @@ export default class extends Component {
   }
 
   componentWillMount() {
-    this.setState({});
+    const {answer} = this.props;
+    this.setState({answer});
   }
 
   onInputAnswer = (result, data=undefined, final=false) => {
@@ -45,14 +46,26 @@ export default class extends Component {
       time: Date.now(),
     };
 
-    onSave(answer);
     
-    if(final)
-      setTimeout(() => { onNext() }, 500)
+    
+    if(final) {
+      onSave(answer);
+      setTimeout(() => { onNext() }, 500);
+    } else {
+      this.setState({answer});
+    }
+      
+  }
+
+  saveAndNext = () => {
+    let {onSave, onNext} = this.props;
+    onSave(this.state.answer);
+    setTimeout(() => { onNext() }, 500);
   }
 
   render() {
-    const { question, answer, onSave, onPrev, onNext} = this.props;
+    const { question, onSave, onPrev, onNext} = this.props;
+    const {answer} = this.state;
     let scroll = true;
     let comp = (<View></View>);
     switch(question.type) {
@@ -82,7 +95,8 @@ export default class extends Component {
           <Button transparent onPress={() => onPrev()}>
             <Icon name="arrow-back" />
           </Button>
-          <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+          {answer !== undefined && <Button onPress={this.saveAndNext}><Text style={styles.footerText}>Next</Text></Button> }
+          <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>SKIP</Text></Button>
         </View>
       </View>
       );
