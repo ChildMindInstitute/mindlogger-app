@@ -47,21 +47,27 @@ class SurveyImageSelector extends SurveyInputComponent {
   }
 
   render() {
-    const { answer, question} = this.props.data
-    const { title, images } =question
-
+    let { data:{ answer, question }, multi } = this.props;
+    const { title, images } = question;
+    answer = answer || [];
     return (
       <View style={{alignItems:'stretch'}}>
         { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{title}</Text>) }
         <View style={styles.imagesContainer}>
         {
           images.map((item, idx) => {
+            let isSelected = multi ? answer.includes(idx) : idx == answer
             return (
-                <TouchableOpacity key={idx} onPress={() => {
-                  this.selectAnswer(idx, true)
-                }}>
-                <ImageBackground style={ idx == answer ? styles.imageSelected : styles.image} source={{uri: item.image_url}}>
-                </ImageBackground>
+                  <TouchableOpacity key={idx} onPress={() => {
+                    if (multi) {
+                      answer.push(idx)
+                      this.selectAnswer(answer, false);
+                    } else {
+                      this.selectAnswer(idx, true);
+                    }
+                  }}>
+                  <ImageBackground style={ isSelected ? styles.imageSelected : styles.image} source={{uri: item.image_url}}>
+                  </ImageBackground>
                 </TouchableOpacity>
               )
           })

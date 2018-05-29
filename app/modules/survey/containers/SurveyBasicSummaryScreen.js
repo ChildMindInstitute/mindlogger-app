@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, StatusBar, ListView } from 'react-native';
-import { Container, Content, Text, Button, View, Icon, ListItem, Body, List, Header, Right, Left, Title, H1, Thumbnail } from 'native-base';
+import { Container, Content, Text, Button, View, Icon, Item, Body, List, Header, Right, Left, Title, H1, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -15,9 +15,20 @@ import SurveyBoolSelector from '../components/SurveyBoolSelector'
 import SurveySingleSelector from '../components/SurveySingleSelector'
 import SurveyMultiSelector from '../components/SurveyMultiSelector'
 
+const styles=StyleSheet.create({
+  view: {
+    padding: 10,
+  },
+  item: {
+    padding: 10,
+  },
+  doneButton: {
+    marginTop: 20,
+  }
+});
 class SurveyBasicSummaryScreen extends Component {
   constructor(props) {
-    super(props)
+    super(props);
   }
   componentWillMount() {
     const { survey: { questions }, answer: { answers } } = this.props;
@@ -25,7 +36,7 @@ class SurveyBasicSummaryScreen extends Component {
     questions.forEach((question, index) => {
       let { condition_question_index, condition_choice } = question;
       if (condition_question_index == undefined || condition_question_index == -1 || (answers[condition_question_index] && answers[condition_question_index].result == condition_choice)) {
-        indexArray.push(index)
+        indexArray.push(index);
       }
     });
     this.setState({ indexArray });
@@ -58,63 +69,65 @@ class SurveyBasicSummaryScreen extends Component {
           </Body>
           <Right />
         </Header>
-        <Content padder style={baseTheme.content}>
+        <Content style={baseTheme.content}>
           <H1 style={{ textAlign: 'center' }}>Responses</H1>
-          <List>
+          <View style={baseTheme.paddingView}>
+            <List>
             {
               answers && 
               indexArray.map(
                 (idx, key) => this._renderRow(key, questions[idx], answers[idx] && answers[idx].result)
                 )
             }
-          </List>
-          <Button block full onPress={() => this.onDone()}><Text>Done</Text></Button>
+            </List>
+            <Button block full style={styles.doneButton} onPress={() => this.onDone()}><Text>Done</Text></Button>
+          </View>
         </Content>
       </Container>
     );
   }
 
   _renderRow = (idx, question, answer) => {
-    let style = baseTheme.enabledColor
-    let rowItem
+    let style = baseTheme.enabledColor;
+    let rowItem;
     if (answer === undefined) {
-      style = baseTheme.disabledColor
-      rowItem = <Text></Text>
+      style = baseTheme.disabledColor;
+      rowItem = (<Text></Text>);
     } else {
       switch (question.type) {
         case 'bool':
-          rowItem = <Text>{answer ? "True" : "False"}</Text>
+          rowItem = (<Text>{answer ? "True" : "False"}</Text>);
           break;
         case 'single_sel':
-          rowItem = <Text>{question.rows[answer].text}</Text>
+          rowItem = (<Text numberOfLines={1}>{question.rows[answer].text}</Text>);
           break;
         case 'multi_sel':
-          rowItem = <Text>{(answer.map((item, idx) => question.rows[item].text)).join(", ")}</Text>
+          rowItem = (<Text numberOfLines={1}>{(answer.map((item, idx) => question.rows[item].text)).join(", ")}</Text>);
           break;
         case 'image_sel':
-          rowItem = (<Thumbnail square source={{ uri: question.images[answer].image_url }} />)
+          rowItem = (<Thumbnail square source={{ uri: question.images[answer].image_url }} />);
           break;
         case 'drawing':
-          rowItem = (<Text></Text>)
+          rowItem = (<Text></Text>);
           break;
         case 'audio':
-          rowItem = (<Text></Text>)
+          rowItem = (<Text></Text>);
           break;
         default:
-          rowItem = <Text>{answer}</Text>
+          rowItem = (<Text numberOfLines={1}>{answer}</Text>);
           break;
       }
     }
 
     return (
-      <ListItem key={idx} onPress={() => { this.onSelect(idx) }}>
-        <Body>
+      <Item key={idx} style={styles.item} onPress={() => { this.onSelect(idx) }}>
+        <Left>
           <Text style={style}>{question.title}</Text>
-        </Body>
+        </Left>
         <Right>
           {rowItem}
         </Right>
-      </ListItem>
+      </Item>
     );
   }
 }

@@ -84,6 +84,9 @@ export default class extends Component {
       case 'image_sel':
         comp = (<SurveyImageSelector onSelect={this.onInputAnswer} data={{question, answer}}/>);
         break;
+      case 'image_multi_sel':
+        comp = (<SurveyImageSelector onSelect={this.onInputAnswer} multi data={{question, answer}}/>);
+        break;
     }
 
     return (
@@ -95,8 +98,8 @@ export default class extends Component {
           <Button transparent onPress={() => onPrev()}>
             <Icon name="arrow-back" />
           </Button>
-          {answer !== undefined && <Button onPress={this.saveAndNext}><Text style={styles.footerText}>Next</Text></Button> }
-          <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>SKIP</Text></Button>
+          {answer !== undefined && <Button onPress={this.saveAndNext}><Text style={styles.footerText}>Save</Text></Button> }
+          <Button transparent onPress={() => onNext()}>{ answer === undefined ? (<Text style={styles.footerText}>SKIP</Text>) : (<Icon name="arrow-forward" />)}</Button>
         </View>
       </View>
       );

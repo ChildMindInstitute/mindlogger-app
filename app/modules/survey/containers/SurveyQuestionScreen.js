@@ -110,7 +110,7 @@ class SurveyQuestionScreen extends Component {
     }
 
     if(questionIndex>=0) {
-      Actions.replace("survey_question", { questionIndex });
+      this.setState({questionIndex});
     } else {
       Actions.pop();
     }
