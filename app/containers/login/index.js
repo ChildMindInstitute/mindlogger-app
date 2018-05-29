@@ -81,11 +81,11 @@ class Login extends Component { // eslint-disable-line
                         <TouchableOpacity onPress={this.onAbout}><Text style={styles.whiteText}>What is Mindlogger?</Text></TouchableOpacity>
                     </View>
                     <View style={{marginTop: 56}}>
-                    <Image
-                        square
-                        style={styles.logo}
-                        source={logoImage}
-                        />
+                        <Image
+                            square
+                            style={styles.logo}
+                            source={logoImage}
+                            />
                     </View>
                 </View>
             </Container>

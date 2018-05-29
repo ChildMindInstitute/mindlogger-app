@@ -60,7 +60,7 @@ export default {
     fontSize: 20,
   },
   bottomRow:{
-    marginTop: 60,
+    marginTop: 40,
     flexDirection:'row',
     alignItems: 'center',
     justifyContent: 'center',
