@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar, Image} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Thumbnail, Item } from 'native-base';
+import {StyleSheet, StatusBar, Image, Platform} from 'react-native';
+import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Thumbnail, Item, Toast } from 'native-base';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
@@ -8,6 +8,7 @@ import * as Progress from 'react-native-progress';
 
 import randomString from 'random-string';
 import { RNCamera } from 'react-native-camera';
+import moment from 'moment';
 
 import SurveyTextInput from '../../components/SurveyTextInput';
 import SurveyBoolSelector from '../../components/SurveyBoolSelector';
@@ -24,10 +25,11 @@ import WaveformWrapper from '../../../voice/components/WaveformWrapper';
 const styles=StyleSheet.create({
   body: {
     flex: 1,
+    padding: 20,
   },
   box: {
     width: '100%',
-    height: 360,
+    flexGrow: 1,
     position: 'relative',
   },
   footer: {
@@ -57,29 +59,31 @@ export default class extends Component {
   }
 
   componentWillMount() {
-    this.setState({duration:0, answer: {}})
+    let answer = this.props.answer && this.props.answer.result;
+    this.setState({duration:0, answer});
   }
 
   onBack = () => {
-    if (this.state.pic_source) {
-      this.setState({answer: undefined})
-    } else {
-      this.props.onPrev();
-    }
+    this.props.onPrev();
   }
 
-  take = () => {
-    if (this.state.pic_source) {
-      this.savePhoto();
-    } else {
-      this.takePicture();
-    }
+  onSave = () => {
+    const {question, onSave, onNext} = this.props;
+    const {answer} = this.state;
+    let filename = `${question.title}_VOICE_${moment().format('M-D-YYYY_HHmmss')}_${randomString({length:10})}`;
+    filename = filename + (Platform.OS == 'android' ? '.mp3' : '.aac');
+    uploadFileS3(answer.output_path, 'voices/', filename).then(output_url => {
+      let result = { output_url, ...answer };
+      onSave({result, time:Date.now()});
+      onNext();
+    }).catch(err => {
+        Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+    })
+    
   }
 
   onRecordStart = (filePath) => {
-    let {answer} = this.state;
-    answer.output_path = undefined;
-    this.setState({answer});
+    this.setState({answer:{duration:0}});
   }
 
   onRecordProgress = (duration) => {
@@ -89,7 +93,6 @@ export default class extends Component {
   onRecordFile = (output_path, duration) => {
     let answer = {output_path, duration};
     this.setState({answer});
-    this.props.onSave({result: answer, time:Date.now()});
   }
 
   renderWaveForm(answer) {
@@ -114,14 +117,14 @@ export default class extends Component {
         <View style={styles.box}>
           <Text style={styles.text}>{question.instruction}</Text>
         </View>
-        {/* {this.renderWaveForm(answer)} */}
+        {answer && answer.output_path && this.renderWaveForm(answer)}
         {question.timer && question.timer>0 && (<Progress.Bar progress={duration/question.timer} width={null} height={20}/>)}
         <View style={styles.footer}>
           <Button transparent onPress={this.onBack}>
-            {answer ? (<Text>REDO</Text>) : <Icon name="arrow-back" />}
+            <Icon name="arrow-back" />
           </Button>
           <AudioRecord timeLimit={question.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile}/>
-          <Button transparent onPress={onNext}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+          { (answer && answer.output_url==undefined) ? (<Button transparent onPress={this.onSave}><Text>SAVE</Text></Button>) : <Button transparent onPress={onNext}>{ this.props.answer == undefined ? (<Text style={styles.footerText}>SKIP</Text>) : <Icon name="arrow-forward" /> }</Button> }
         </View>
       </View>
       );

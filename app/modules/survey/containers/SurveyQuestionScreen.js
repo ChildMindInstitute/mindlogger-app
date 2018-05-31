@@ -120,9 +120,8 @@ class SurveyQuestionScreen extends Component {
     const { survey, answers, act} = this.props;
     const {questionIndex} = this.state;
     let question = survey.questions[questionIndex];
-    let answer = answers[questionIndex] && answers[questionIndex].result;
+    let answer = answers[questionIndex];
     let comp = (<View></View>);
-    
     if(survey.mode == 'basic') {
       switch(question.type) {
         case 'drawing':

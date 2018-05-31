@@ -98,6 +98,7 @@ class AudioRecord extends React.Component {
           this.props.onProgress(duration);
       }
     }, 500)
+    this.setState({duration: 0});
   }
 
   componentWillUnmount() {

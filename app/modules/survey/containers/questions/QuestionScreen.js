@@ -45,8 +45,6 @@ export default class extends Component {
       result,
       time: Date.now(),
     };
-
-    
     
     if(final) {
       onSave(answer);
@@ -65,7 +63,7 @@ export default class extends Component {
 
   render() {
     const { question, onSave, onPrev, onNext} = this.props;
-    const {answer} = this.state;
+    const answer = this.state.answer && this.state.answer.result;
     let scroll = true;
     let comp = (<View></View>);
     switch(question.type) {
@@ -99,7 +97,7 @@ export default class extends Component {
             <Icon name="arrow-back" />
           </Button>
           {answer !== undefined && <Button onPress={this.saveAndNext}><Text style={styles.footerText}>Save</Text></Button> }
-          <Button transparent onPress={() => onNext()}>{ answer === undefined ? (<Text style={styles.footerText}>SKIP</Text>) : (<Icon name="arrow-forward" />)}</Button>
+          {answer == undefined && <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>SKIP</Text></Button>}
         </View>
       </View>
       );

@@ -51,8 +51,10 @@ export default class CameraScreen extends Component {
   }
 
   componentWillMount() {
+    const answer = this.props.answer && this.props.answer.result;
     this.setState({
       type: RNCamera.Constants.Type.back,
+      answer,
     });
   }
 
@@ -62,6 +64,7 @@ export default class CameraScreen extends Component {
     filename = `${timestamp}_${randomString({length:20})}_`+filename;
     uploadFileS3(uri, 'uploads/', filename).then(url => {
       this.props.onSave({result: url, time: Date.now()});
+      this.setState({answer: url});
       this.props.onNext();
     })
   }
@@ -100,13 +103,8 @@ export default class CameraScreen extends Component {
       this.setState({type: RNCamera.Constants.Type.back});
     }
   }
-
-  onBack = () => {
-    if (this.state.pic_source) {
-      this.setState({pic_source: undefined})
-    } else {
-      this.props.onPrev();
-    }
+  onRetake = () => {
+    this.setState({pic_source: undefined, answer: undefined});
   }
 
   take = () => {
@@ -118,19 +116,20 @@ export default class CameraScreen extends Component {
   }
 
   render() {
-    const { question, answer, onSave, onNext} = this.props;
-    const {type, pic_source} = this.state;
+    const { question, onSave, onNext, onPrev} = this.props;
+    let {type, pic_source, answer} = this.state;
+    let pic = pic_source || answer;
     return (
       <View style={styles.body}>
         <Text>{question.title}</Text>
         <View style={styles.camera}>
-          {pic_source && <Image source={this.state.pic_source} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
-          {!pic_source && <View>
+          {pic && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+          {!pic && <View>
             <RNCamera
               ref={ref => {
                 this.camera = ref;
               }}
-              style = {styles.camera}
+              style={styles.camera}
               type={type}
               flashMode={RNCamera.Constants.FlashMode.on}
               permissionDialogTitle={'Permission to use camera'}
@@ -146,11 +145,16 @@ export default class CameraScreen extends Component {
           
         </View>
         <View style={styles.footer}>
-          <Button transparent onPress={this.onBack}>
-            {pic_source ? (<Text>RETAKE</Text>) : <Icon name="arrow-back" />}
+          <Button transparent onPress={onPrev}>
+            <Icon name="arrow-back" />
           </Button>
-          <Button onPress={this.take}><Text>{this.state.pic_source ? "SAVE" : "SNAP"}</Text></Button>
-          <Button transparent onPress={onNext}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+          { pic && (<Button onPress={this.onRetake}>
+                <Text>RETAKE</Text>
+              </Button>)
+          }
+          { answer == undefined && (<Button transparent={pic} onPress={this.take}><Text>{this.state.pic_source ? "SAVE" : "SNAP"}</Text></Button>) }
+          { pic == undefined && (<Button transparent onPress={onNext}><Text style={styles.footerText}>SKIP</Text></Button>) }
+          { answer != undefined && <Button transparent onPress={onNext}><Icon name="arrow-forward" /></Button> }
         </View>
       </View>
       );

@@ -20,10 +20,11 @@ import { zeroFill } from '../../../../helper';
 const styles=StyleSheet.create({
   body: {
     flex: 1,
+    padding: 20,
   },
   box: {
     width: '100%',
-    height: 360,
+    flexGrow: 1,
     position: 'relative',
   },
   footer: {
@@ -70,66 +71,63 @@ export default class extends Component {
 
   resetDrawing = () => {
     this.board.reset();
+    this.setState({
+      duration: 0,
+      started: false,
+    });
   }
 
   onBack = () => {
-    if (this.state.pic_source) {
-      this.setState({pic_source: undefined})
-    } else {
-      this.props.onPrev();
-    }
+    this.props.onPrev();
   }
-
-  take = () => {
-    if (this.state.pic_source) {
-      this.savePhoto();
-    } else {
-      this.takePicture();
-    }
-  }
-
   beginDrawing() {
     const {question} = this.props;
     this.board.start();
     this.setState({started:true, duration:0});
-    if(question.timer && question.timer>0)
-        this.startTimer();
+    this.startTimer();
   }
   stopTimer() {
     if (this.timerId) {
       clearInterval(this.timerId);
       this.timerId = undefined;
     }
+    this.setState({started: false});
     this.board.stop();
   }
   startTimer() {
-    const {duration} = this.state;
+    const {timer} = this.props.question;
     if(this.timerId) {
       clearInterval(this.timerId);
     }
     this.timerId = setInterval(() => {
+      const {duration} = this.state;
       this.setState({duration: duration+1});
-      if(duration>=this.props.question.timer) {
+      if(timer && duration>=timer) {
         this.stopTimer();
       }
     }, 1000);
   }
 
   take = () => {
+    const {started, duration} = this.state;
     if (!this.state.started) {
-      this.beginDrawing();
+      if (duration>0)
+        this.resetDrawing();
+      else
+        this.beginDrawing();
     } else {
-      if (this.timerId) {
-        this.stopTimer();  
-      } else {
-        this.saveDrawing();
-      }
+      this.stopTimer();  
     }
+  }
+  componentWillUnmount() {
+    this.stopTimer();
   }
 
   render() {
-    const { question, answer, onSave, onNext} = this.props;
-    const {type, duration, pic_source, started} = this.state;
+    const { question, onSave, onNext} = this.props;
+    const answer = this.props.answer && this.props.answer.result;
+    const {type, duration, started} = this.state;
+    console.log(duration);
     let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
     return (
       <View style={styles.body}>
@@ -142,10 +140,14 @@ export default class extends Component {
         </View>
         <View style={styles.footer}>
           <Button transparent onPress={this.onBack}>
-            {pic_source ? (<Text>REDO</Text>) : <Icon name="arrow-back" />}
+            <Icon name="arrow-back" />
           </Button>
-          <Button onPress={this.take}><Text>{started ? (this.timerId ? timeStr : 'SAVE') : 'DRAW'} </Text></Button>
-          <Button transparent onPress={onNext}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : "NEXT" }</Text></Button>
+          <Button onPress={this.take}><Text>{(duration>0 || started) ? (this.timerId ? timeStr : 'REDO') : 'DRAW'}</Text></Button>
+          {(duration>0 && !started) ? 
+            (<Button transparent onPress={this.saveDrawing}><Text>SAVE</Text></Button>)
+            :
+            (<Button transparent onPress={onNext}>{ answer == undefined ? (<Text style={styles.footerText}>SKIP</Text>) : (<Icon name="arrow-forward" />) }</Button>)
+          }
         </View>
       </View>
       );
