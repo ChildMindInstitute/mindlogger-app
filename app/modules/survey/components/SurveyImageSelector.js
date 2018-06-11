@@ -46,10 +46,33 @@ class SurveyImageSelector extends SurveyInputComponent {
     super(props);
   }
 
+  onToggle(value) {
+    let { data:{ answer, question }, multi } = this.props;
+    if (multi) {
+      answer = answer || [];
+      const index = answer.indexOf(value)
+      if(index<0) {
+        answer.push(index);
+      } else {
+        answer.splice(index, 1);
+      }
+      this.selectAnswer(answer, false);
+    } else {
+      if (answer != value) {
+        this.selectAnswer(value, true);
+      } else {
+        this.selectAnswer(undefined, false);
+      }
+    }
+  }
+
   render() {
     let { data:{ answer, question }, multi } = this.props;
     const { title, images } = question;
-    answer = answer || [];
+    if (multi) {
+      answer = answer || [];
+    }
+
     return (
       <View style={{alignItems:'stretch'}}>
         { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{title}</Text>) }
@@ -58,14 +81,7 @@ class SurveyImageSelector extends SurveyInputComponent {
           images.map((item, idx) => {
             let isSelected = multi ? answer.includes(idx) : idx == answer
             return (
-                  <TouchableOpacity key={idx} onPress={() => {
-                    if (multi) {
-                      answer.push(idx)
-                      this.selectAnswer(answer, false);
-                    } else {
-                      this.selectAnswer(idx, true);
-                    }
-                  }}>
+                  <TouchableOpacity key={idx} onPress={() => this.onToggle(idx)}>
                   <ImageBackground style={ isSelected ? styles.imageSelected : styles.image} source={{uri: item.image_url}}>
                   </ImageBackground>
                 </TouchableOpacity>

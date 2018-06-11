@@ -111,6 +111,7 @@ export default class extends Component {
     const { question, onSave, onNext } = this.props;
     const { type, duration, started, answer } = this.state;
     let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
+    console.log(answer);
     return (
       <View style={styles.body}>
         <Text>{question.title}</Text>
@@ -120,11 +121,18 @@ export default class extends Component {
         {answer && answer.output_path && this.renderWaveForm(answer)}
         {question.timer && question.timer>0 && (<Progress.Bar progress={duration/question.timer} width={null} height={20}/>)}
         <View style={styles.footer}>
-          <Button transparent onPress={this.onBack}>
-            <Icon name="arrow-back" />
-          </Button>
-          <AudioRecord timeLimit={question.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile}/>
-          { (answer && answer.output_url==undefined) ? (<Button transparent onPress={this.onSave}><Text>SAVE</Text></Button>) : <Button transparent onPress={onNext}>{ this.props.answer == undefined ? (<Text style={styles.footerText}>SKIP</Text>) : <Icon name="arrow-forward" /> }</Button> }
+          { (!answer || answer.output_url || this.props.answer) ?
+            (<Button transparent onPress={this.onBack}>
+              <Icon name="arrow-back" />
+            </Button>)
+            :
+            (<Button transparent onPress={this.onReset}>
+              <Text>Redo</Text>
+            </Button>)
+          }
+          { !answer && <AudioRecord timeLimit={question.timer} mode="single" onStart={this.onRecordStart} onProgress={this.onRecordProgress} onRecordFile={this.onRecordFile}/> }
+          { (answer && !answer.output_url) && (<Button onPress={this.onSave}><Text>SAVE</Text></Button>) }
+          <Button transparent onPress={onNext}>{ !this.props.answer ? (<Text style={styles.footerText}>SKIP</Text>) : <Icon name="arrow-forward" /> }</Button>
         </View>
       </View>
       );

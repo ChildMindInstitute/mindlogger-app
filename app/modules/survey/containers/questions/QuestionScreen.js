@@ -97,7 +97,7 @@ export default class extends Component {
             <Icon name="arrow-back" />
           </Button>
           {answer !== undefined && <Button onPress={this.saveAndNext}><Text style={styles.footerText}>Save</Text></Button> }
-          {answer == undefined && <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>SKIP</Text></Button>}
+          <Button transparent onPress={() => onNext()}><Text style={styles.footerText}>{ answer === undefined ? "SKIP" : <Icon name="arrow-forward" /> }</Text></Button>
         </View>
       </View>
       );

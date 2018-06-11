@@ -70,6 +70,8 @@ export default class extends Component {
   }
 
   resetDrawing = () => {
+    if(this.timerId)
+      this.stopTimer();
     this.board.reset();
     this.setState({
       duration: 0,
@@ -108,12 +110,9 @@ export default class extends Component {
     }, 1000);
   }
 
-  take = () => {
+  toggle = () => {
     const {started, duration} = this.state;
     if (!this.state.started) {
-      if (duration>0)
-        this.resetDrawing();
-      else
         this.beginDrawing();
     } else {
       this.stopTimer();  
@@ -127,7 +126,8 @@ export default class extends Component {
     const { question, onSave, onNext} = this.props;
     const answer = this.props.answer && this.props.answer.result;
     const {type, duration, started} = this.state;
-    console.log(duration);
+    const hasDraw = duration>0 || started;
+    
     let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
     return (
       <View style={styles.body}>
@@ -136,18 +136,26 @@ export default class extends Component {
           <DrawingBoard source={question.image_url && {uri: question.image_url}} disabled={!started} ref={board => {this.board = board}} lines={answer && answer.lines}/>
           {question.timer && question.timer>0 && (<Progress.Bar progress={duration/question.timer} width={null} height={20}/>)}
           <Text style={styles.text}>{question.instruction}</Text>
-          
         </View>
         <View style={styles.footer}>
-          <Button transparent onPress={this.onBack}>
-            <Icon name="arrow-back" />
-          </Button>
-          <Button onPress={this.take}><Text>{(duration>0 || started) ? (this.timerId ? timeStr : 'REDO') : 'DRAW'}</Text></Button>
-          {(duration>0 && !started) ? 
-            (<Button transparent onPress={this.saveDrawing}><Text>SAVE</Text></Button>)
+          { (answer || !hasDraw) ?
+            (<Button transparent onPress={this.onBack}>
+              <Icon name="arrow-back" />
+            </Button>) 
             :
-            (<Button transparent onPress={onNext}>{ answer == undefined ? (<Text style={styles.footerText}>SKIP</Text>) : (<Icon name="arrow-forward" />) }</Button>)
+            (<Button transparent onPress={this.resetDrawing}>
+              <Text>REDO</Text>
+            </Button>)
           }
+          { answer == undefined &&
+            (
+              (duration>0 && !started) ?
+              (<Button onPress={this.saveDrawing}><Text>SAVE</Text></Button>)
+              :
+              (<Button onPress={this.toggle}><Text>{this.timerId ? timeStr : 'DRAW'}</Text></Button>)
+            )
+          }
+          <Button transparent onPress={onNext}>{ answer == undefined ? (<Text style={styles.footerText}>SKIP</Text>) : (<Icon name="arrow-forward" />) }</Button>
         </View>
       </View>
       );

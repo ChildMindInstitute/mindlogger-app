@@ -10,6 +10,16 @@ class SurveySingleSelector extends SurveyInputComponent {
     super(props);
   }
 
+  toggle(value) {
+    const { answer } = this.props.data;
+    console.log(answer, value);
+    if (answer !== value) {
+      this.selectAnswer(value, true);
+    } else {
+      this.selectAnswer(undefined, false);
+    }
+  }
+
   render() {
     const { answer, question} = this.props.data
     const { title, rows } =question
@@ -21,14 +31,12 @@ class SurveySingleSelector extends SurveyInputComponent {
         {
           rows.map((row, idx) => {
             return (
-              <ListItem onPress={() => {
-                this.selectAnswer(idx, true)
-              }} key={idx}>
+              <ListItem onPress={() => this.toggle(idx)} key={idx}>
               <Body>
               <Text>{row.text}</Text>
               </Body>
               <Right>
-                <Radio selected={idx === this.state.answer} onPress={() => {this.selectAnswer(idx, true)}}/>
+                <Radio selected={idx === answer} onPress={() => this.toggle(idx)}/>
               </Right>
             </ListItem>
               )

@@ -90,7 +90,7 @@ class SurveyBasicSummaryScreen extends Component {
   _renderRow = (idx, question, answer) => {
     let style = baseTheme.enabledColor;
     let rowItem;
-    if (answer === undefined) {
+    if (answer == undefined) {
       style = baseTheme.disabledColor;
       rowItem = (<Text></Text>);
     } else {

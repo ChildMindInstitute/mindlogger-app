@@ -64,7 +64,7 @@ export default class CameraScreen extends Component {
     filename = `${timestamp}_${randomString({length:20})}_`+filename;
     uploadFileS3(uri, 'uploads/', filename).then(url => {
       this.props.onSave({result: url, time: Date.now()});
-      this.setState({answer: url});
+      this.setState({answer: url, pic_source: undefined});
       this.props.onNext();
     })
   }
@@ -145,16 +145,16 @@ export default class CameraScreen extends Component {
           
         </View>
         <View style={styles.footer}>
-          <Button transparent onPress={onPrev}>
-            <Icon name="arrow-back" />
-          </Button>
-          { pic && (<Button onPress={this.onRetake}>
-                <Text>RETAKE</Text>
-              </Button>)
+          { pic_source ? 
+            (<Button onPress={this.onRetake}>
+              <Text>RETAKE</Text>
+            </Button>) : 
+            (<Button transparent onPress={onPrev}>
+              <Icon name="arrow-back" />
+            </Button>)
           }
           { answer == undefined && (<Button transparent={pic} onPress={this.take}><Text>{this.state.pic_source ? "SAVE" : "SNAP"}</Text></Button>) }
-          { pic == undefined && (<Button transparent onPress={onNext}><Text style={styles.footerText}>SKIP</Text></Button>) }
-          { answer != undefined && <Button transparent onPress={onNext}><Icon name="arrow-forward" /></Button> }
+          <Button transparent onPress={onNext}>{answer ? <Icon name="arrow-forward" /> : <Text style={styles.footerText}>SKIP</Text>}</Button>
         </View>
       </View>
       );

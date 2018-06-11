@@ -20,6 +20,7 @@
   "firebase": "^4.6.1",
   "moment": "^2.13.0",
   "native-base": "^2.3.2",
+  "node-pre-gyp": "^0.10.0",
   "random-string": "^0.2.0",
   "rc-input-number": "^3.6.8",
   "re-base": "^3.0.5",
