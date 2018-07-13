@@ -1,0 +1,69 @@
+---
+format_version: 1.1.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+trigger_map:
+- workflow: primary
+  push_branch: master
+- workflow: primary
+  pull_request_source_branch: master
+  pull_request_target_branch: "*"
+workflows:
+  primary:
+    steps:
+    - activate-ssh-key@3.1.1:
+        title: Activate App SSH key
+        inputs:
+        - ssh_key_save_path: "$HOME/.ssh/steplib_ssh_step_id_rsa"
+    - git-clone@3.3.4: {}
+    - script@1.1.2:
+        title: npm install
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            npm install
+    - script@1.1.2:
+        title: npm test
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            npm test
+    - install-react-native@0.1.0: {}
+    - react-native-bundle@1.0.0:
+        inputs:
+        - platform: android
+        - entry_file: "./index.android.js"
+        - out: android/app/src/main/assets/index.android.bundle
+    - set-android-manifest-versions@1.0.5:
+        inputs:
+        - version_name: testeroo
+        - manifest_file: "./android/app/src/main/AndroidManifest.xml"
+    - script@1.1.2:
+        title: gradlew
+        inputs:
+        - content: "#!/bin/bash\ncd android \nchmod +x ./gradlew\n./gradlew tasks
+            --all\n./gradlew  assembleRelease"
+          opts:
+            is_expand: true
+    - sign-apk@1.0.1:
+        inputs:
+        - apk_path: "./android/app/build/outputs/apk/app-release-unsigned.apk"
+    - script@1.1.2:
+        title: cp apk
+        inputs:
+        - content: |-
+            #!/bin/bash
+             cp $BITRISE_SIGNED_APK_PATH $BITRISE_DEPLOY_DIR/signed-app-release.apk
+    - deploy-to-bitrise-io@1.2.5:
+        inputs:
+        - deploy_path: "./android/app/build/outputs/apk/app-release-unsigned-bitrise-signed.apk"
+        - is_compress: 'false'
+        - notify_user_groups: none
+        - is_enable_public_page: 'yes'
+    - deploy-to-bitrise-io@1.2.5:
+        inputs:
+        - deploy_path: "./android/app/build/outputs"
+        - is_compress: 'true'
+        - notify_user_groups: none
+        - is_enable_public_page: 'yes'
