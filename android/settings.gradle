@@ -10,7 +10,7 @@ project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir
 include ':react-native-audiowaveform'
 project(':react-native-audiowaveform').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-audiowaveform/android')
 include ':react-native-audio-toolkit'
-project(':react-native-audio-toolkit').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-audio-toolkit/android')
+project(':react-native-audio-toolkit').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-audio-toolkit/android/lib')
 include ':react-native-audio'
 project(':react-native-audio').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-audio/android')
 
