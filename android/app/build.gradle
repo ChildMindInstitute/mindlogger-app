@@ -99,7 +99,8 @@ android {
 
     defaultConfig {
         applicationId "com.mdcapp"
-        minSdkVersion 16
+ //       minSdkVersion 16    //change to fix build bug uses-sdk:minSdkVersion 16 cannot be smaller than version 19 declared in library [MDCApp:react-native-audio-toolkit:unspecified] 
+        minSdkVersion 19
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
