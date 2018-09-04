@@ -7,8 +7,7 @@ export default {
         storageBucket: "dataapp-3b8c4.appspot.com",
         messagingSenderId: "880222053307"
     },
-    apiHost:'http://mindlogger.childmind.org/api',
-    //apiHost: 'http://localhost:8000/api',
+    apiHost:'http://mindlogger-girder-atlas.a4vwd5q7ib.us-east-1.elasticbeanstalk.com/api/v1',
     s3: {
         bucket: "cmi-dataapp",
         region: "us-west-1",
