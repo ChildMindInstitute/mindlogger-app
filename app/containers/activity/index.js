@@ -12,9 +12,9 @@ import {
 } from 'react-native-audio-toolkit';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity, setAnswer } from '../../actions/coreActions';
+import { updateUserLocal, setActivity, setVolume, setAnswer } from '../../actions/coreActions';
 
-import { getActs, getAssignedActs,deleteAct } from '../../actions/api';
+import { getObject, getCollection, getFolders, getItems } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
@@ -29,17 +29,44 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
+        const {user, acts, getCollection, getFolders, setVolume} = this.props;
         if(!user) {
             console.warn("undefined user")
             return
         }
-        this.loadAllActivity()
+        if (acts.length == 0) {
+            downloadAll();
+        }
         if (Platform.OS == 'ios') {
             PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
         }
+    }
+
+    downloadAll() {
+        const {getCollection, getFolders, setVolume, getItems} = this.props;
+        getCollection('Volumes').then(res => {
+            return getFolders(res[0]._id, 'volumes');
+        }).then(volumes => {
+            return getFolders(volumes[1]._id, 'groups', 'folder');
+        }).then(res => {
+            return getFolders(res[0]._id, 'acts', 'folder');
+        }).then(acts => {
+            return Promise.all(acts.map(act => getFolders(act._id, 'actVariants', 'folder')
+                .then(arr => {
+                    const variant = arr[arr.length-1];
+                    return getItems(variant._id);
+                })));
+        }).then(res => {
+            Toast.show({text: 'Download complete', position: 'bottom', type: 'info', buttonText: 'ok'})
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    downloadFromAct(actVariant) {
+        return getItems(actVariant._id, '')
     }
     componentWillUnmount() {
         PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
@@ -67,24 +94,8 @@ class ActivityScreen extends Component {
     }
 
     loadAllActivity = (isReload=false) => {
-        const {user, acts, getActs, updateUserLocal, getAssignedActs} = this.props;
-        const {role} = user
-        if (role == 'admin') {
-            getActs().then(data => {
-                
-            }).catch(err => {
-                console.log(err)
-                Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
-            })
-        } else if (role == 'user') {
-            if (acts.length == 0 || isReload) {
-                getAssignedActs().then(data => {
-                    
-                }).catch(err => {
-                    console.log(err)
-                    Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
-                })
-            }
+        if (isReload) {
+            this.downloadAll()
         }
     }
 
@@ -164,39 +175,13 @@ class ActivityScreen extends Component {
         })
     }
 
-    startActivity(act) {
-        console.log(act);
-        const {setActivity} = this.props
-        
-        if(act.type === 'survey') {
-            const survey = act.act_data
-            setActivity(act)
-            if(survey.audio_url)
-                this.playInstruction(survey)
-            if(survey.mode == 'table') {
-                if(survey.accordion && survey.accordion != "false"){
-                    Actions.survey_table_accordion()
-                } else {
-                    Actions.survey_question({ questionIndex:0})
-                }
-            } else {
-                if(survey.accordion && survey.accordion != "false"){
-                    Actions.survey_accordion()
-                } else {
-                    Actions.survey_question({ questionIndex:0})
-                }
-            }
-        } else if(act.type == 'voice') {
-            let voice = act
-            setActivity(act)
-            Actions.push("voice_activity")
-        } else if(act.type == 'drawing') {
-            let drawing = act.act_data
-            if(drawing.audio_url)
-                this.playInstruction(drawing)
-            setActivity(act)
-            Actions.push("drawing_activity")
-        }
+    startActivity(folder) {
+        const {setActivity, getFolders} = this.props
+        getFolders(folder._id, 'actVariants', 'folder').then(res => {
+            let index = res.length - 1;
+            setActivity(res[index]);
+            Actions.push('take_act');
+        });
     }
 
     editActivityDetail(rowId) {
@@ -244,15 +229,14 @@ class ActivityScreen extends Component {
     }
 
     _renderRow = (act, secId, rowId) => {
-        let data = act.act_data;
+        let data = act.meta || {};
         return (
         <ListItem onPress={()=>this._selectRow(act, rowId)}>
         <Body>
-            <Text>{act.title}</Text>
-            <Text numberOfLines={1} note>{data.instruction ? data.instruction : ' '}</Text>
+            <Text>{act.name}</Text>
+            <Text numberOfLines={1} note>{data.description ? data.description : ' '}</Text>
         </Body>
         <Right>
-            {data.questions && (<Text note>{data.questions.length} questions</Text>)}
         </Right>
         </ListItem>
         )
@@ -288,6 +272,7 @@ class ActivityScreen extends Component {
 
     render() {
         const {user, acts} = this.props
+        console.log(acts);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -353,15 +338,22 @@ function bindAction(dispatch) {
     openDrawer: () => dispatch(openDrawer()),
     closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({setActivity, getActs, getAssignedActs, updateUserLocal, deleteAct, setAnswer}, dispatch)
+    ...bindActionCreators({
+            setActivity,
+            setAnswer,
+            getObject,
+            getCollection,
+            getFolders,
+            getItems,
+            setVolume,
+        }, dispatch)
   };
 }
 
 const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
   user: (state.core && state.core.auth),
-  acts: state.core.acts || [],
-  act: state.core.act || {},
+  acts: (state.core.folder && state.core.folder.acts) || [],
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

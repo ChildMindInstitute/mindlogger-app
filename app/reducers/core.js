@@ -12,14 +12,18 @@ export default function coreReducer(state = initialState, action = {}) {
         switch (action.type) {
             case types.SIGN_IN:
             case types.SIGN_UP:
+                return {
+                    ...state,
+                    auth: action.response.authToken,
+                    self: action.response.user,
+                }
             case types.UPDATE_USER:
                 return {
                     ...state,
-                    auth: action.response.user
+                    self: action.response,
                 }
             case types.LOG_OUT:
                 return {
-                    ...state,
                     auth: false
                 }
             case types.ADD_ACT:
@@ -54,11 +58,61 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     acts
                 }
+            case types.GET_COLLECTION:
+                {
+                    let collection = state.collection || {};
+                    collection[action.name.toLowerCase()] = action.response[0];
+                    return {
+                        ...state,
+                        collection,
+                    }
+                }
+                break;
+            case types.LIST_OBJECTS:
+                {
+                    let newState = state;
+                    if (action.name) {
+                        let data = state[action.objectType] || {};
+                        data[action.name] = action.response;
+                        newState[action.objectType] = data;
+                    }
+                    let data = state.data || {};
+                    let tree = state.tree || {};
+                    let ids = [];
+                    action.response.forEach(obj => {
+                        let id = `${action.objectType}/${obj._id}`;
+                        data[id] = obj;
+                        ids.push(id);
+                    });
+                    tree[`${action.parentType}/${action.parentId}`] = ids;
+                    return {
+                        ...newState,
+                        data,
+                        tree,
+                    };
+                }
+            case types.GET_OBJECT:
+                {
+                    let data = state.data || {};
+                    data[action.response._id] = action.response;
+                    return {
+                        ...state,
+                        data,
+                    }
+                }
+            case types.FETCH_OBJECT:
+                {
+                    let data = state.data || {};
+                    data[action.objectPath] = action.response;
+                    return {
+                        ...state,
+                        data,
+                    }
+                }
             default:
-              return {
-                  ...state,
-                  ...action.response
-              }
+                return {
+                    ...state,
+                }
 
         }
         

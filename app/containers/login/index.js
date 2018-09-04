@@ -34,7 +34,7 @@ class LoginForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} placeholder="Email" placeholderTextColor={'#aaa'} name="email" keyboardType={'email-address'} autoCapitalize='none' style={styles.text} />
+                <Field component={FormInputItem} placeholder="Username" placeholderTextColor={'#aaa'} name="user" autoCapitalize='none' style={styles.text} />
                 <Field component={FormInputItem} placeholder="Password" placeholderTextColor={'#aaa'} name="password" style={styles.text} secureTextEntry={true}/>
                 <Button style={styles.button} block onPress={handleSubmit(onSubmit)} disabled={submitting}>
                     <Text style={styles.buttonText}>LOGIN</Text>
@@ -101,7 +101,6 @@ const mapDispatchToProps = (dispatch) => ({
         return dispatch(signIn(body)).then(res => {
             console.log(res)
             return true
-            //return auth.signInAnonymously()
         }).then(res => {
             Actions.push('activity')
         }).catch(err => {

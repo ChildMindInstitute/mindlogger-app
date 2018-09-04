@@ -23,11 +23,12 @@ import Settings from './containers/settings';
 import AboutApp from './containers/about';
 import FrequencyScreen from './containers/activity/frequency';
 
+import Act from './containers/activity/Act';
 //Modules
 
-import SurveyScenes from './modules/survey';
-import VoiceScenes from './modules/voice/routes';
-import DrawingScenes from './modules/drawing/routes';
+// import SurveyScenes from './modules/survey';
+// import VoiceScenes from './modules/voice/routes';
+// import DrawingScenes from './modules/drawing/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -96,9 +97,10 @@ class AppNavigator extends Component {
               <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
               <Scene key="frequency" component={FrequencyScreen}/>
-              {SurveyScenes}
+              <Scene key='take_act' component={Act} />
+              {/* {SurveyScenes}
               {VoiceScenes}
-              {DrawingScenes}
+              {DrawingScenes} */}
             </Scene>
           </RouterWithRedux>
         </Drawer>

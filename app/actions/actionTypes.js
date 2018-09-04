@@ -19,3 +19,15 @@ export const UPDATE_ACTIVITY = 'UPDATE_ACTIVITY';
 export const SET_ACTIVITY = 'SET_ACTIVITY';
 
 export const GET_ASSIGNED_ACTS = 'GET_ASSIGNED_ACTS';
+
+// GET OBJECTS
+
+export const GET_OBJECT = 'GET_OBJECT';
+export const FETCH_OBJECT = 'FETCH_OBJECT';
+export const ADD_OBJECT = 'CREATE_OBJECT';
+export const DELETE_OBJECT = 'DELETE_OBJECT';
+export const UPDATE_OBJECT = 'UPDATE_OBJECT';
+export const LIST_OBJECTS = 'LIST_OBJECTS';
+export const GET_COLLECTION = 'GET_COLLECTION';
+
+export const SET_DATA_OBJECT = 'SET_DATA_OBJECT';
