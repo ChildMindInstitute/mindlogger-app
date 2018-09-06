@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {CachedImage} from "react-native-img-cache";
-import { Text } from 'native-base';
+import { Content, Text } from 'native-base';
 import {
   Player,
   MediaStates
@@ -11,6 +11,7 @@ import {
 
 import {randomLink} from '../../../helper';
 import TextEntry from './TextEntry';
+import ScreenButton from './ScreenButton';
 
 const styles = StyleSheet.create({
   content: {
@@ -23,11 +24,17 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     flexDirection: 'column',
+    flexGrow: 1,
   },
   text: {
     paddingTop: 20,
     paddingBottom: 20,
-  }
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 15,
+  },
 })
 class Screen extends Component {
   static propTypes = {
@@ -60,13 +67,60 @@ class Screen extends Component {
   }
 
   answer(key) {
-    return this.state[key];
+    return this.state.answer && this.state.answer[key];
   }
+
+  handleReset = () => {
+    this.setState({answer:undefined});
+  }
+
+  handleSkip = () => {
+    const {screen: {meta: data}, onSkip} = this.props;
+    onSkip(data.skipToScreen);
+  }
+
+  handleNext = () => {
+    const {screen: {meta: data}, onNext} = this.props;
+    const {answer} = this.state;
+    onNext(answer);
+  }
+
+  renderButtons() {
+    const {screen: {meta: data}} = this.props;
+    const {answer} = this.state;
+    const {surveyType, canvasType, skippable} = data;
+    let buttonText = 'Take';
+    const spinner = false;
+    if (answer) {
+      buttonText = 'Redo';
+      return (<View style={styles.footer}>
+        <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+        <ScreenButton onPress={this.handleReset} text={buttonText}/>
+        <ScreenButton transparent onPress={this.handleNext} text=">"/>
+      </View>);
+    } else {
+      return (<View style={styles.footer}>
+        <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+        { canvasType ? 
+        (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
+        :
+        <ScreenButton transparent/>
+        }
+        { skippable ?
+          <ScreenButton transparent onPress={this.handleSkip} text="Skip"/>
+          :
+          <ScreenButton transparent/>
+        }
+      </View>);
+    }
+  }
+
+
   render() {
     const {screen: {meta: data}} = this.props;
-    console.log(data);
     return (
-      <View style={styles.content}>
+      <View style={{flex: 1}}>
+        <Content style={{ flex: 1}}>
         { data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
           <CachedImage style={{width: '100%', height: 200, resizeMode: 'cover'}} source={{uri: randomLink(data.pictureVideo.files)}}/>
         }
@@ -77,7 +131,8 @@ class Screen extends Component {
             <TextEntry config={data.textEntry} answer={this.answer('text')} onChange={text => this.setAnswer({text})} />
           }
         </View>
-        
+        </Content>
+        {this.renderButtons()}
       </View>
     )
   }

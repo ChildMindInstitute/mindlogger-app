@@ -21,8 +21,6 @@ class Act extends Component {
     this.setState({index: 0});
   }
 
-  
-
   render() {
     const {act} = this.props;
     const {meta: data} = act;
