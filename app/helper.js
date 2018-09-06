@@ -89,3 +89,16 @@ export const atob = (input = '') => {
 
   return output;
 };
+
+export const fileLink = (file) => {
+  return `${config.apiHost}/${file['@id']}/download?contentDisposition=inline`;
+}
+
+export const randomLink = (files) => {
+  var rand = files[Math.floor(Math.random() * files.length)];
+  return fileLink(rand);
+}
+
+export const downloadFile = (idPath) => {
+
+}

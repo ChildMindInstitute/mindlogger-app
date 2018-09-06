@@ -4827,9 +4827,9 @@ react-native-image-picker@^0.26.7:
   version "0.26.7"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-0.26.7.tgz#ad2ee957f7f6cc01396893ea03d84cb2adb2e376"
 
-react-native-img-cache@^1.5.2:
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/react-native-img-cache/-/react-native-img-cache-1.5.2.tgz#e871b8309937b7f9926e09b016e4e4e6758a39fa"
+react-native-img-cache@^1.5.3:
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/react-native-img-cache/-/react-native-img-cache-1.5.3.tgz#ccffba86603077d0be4f9dc08aff59e3f551090b"
   dependencies:
     crypto-js "^3.1.9-1"
 

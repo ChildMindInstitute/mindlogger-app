@@ -53,6 +53,12 @@ class Login extends Component { // eslint-disable-line
     componentWillMount() {
         console.ignoredYellowBox = ['Setting a timer']
     }
+
+    componentDidUpdate() {
+        if (this.props.auth.token) {
+            Actions.push('activity');
+        }
+    }
     onForgotPassword = () => {
         Actions.forgot_password();
     }
@@ -60,9 +66,9 @@ class Login extends Component { // eslint-disable-line
         Actions.about_app();
     }
     render() {
-        const {login, user} = this.props
+        const {login, user, auth} = this.props;
+        
         const {email, password} = user
-        console.log(this.props)
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
@@ -115,7 +121,8 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = state => ({
     themeState: state.drawer.themeState,
     routes: state.drawer.routes,
-    user: state.core.auth || {},
+    auth: state.core.auth || {},
+    user: state.core.self || {}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

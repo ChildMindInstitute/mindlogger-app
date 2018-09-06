@@ -175,13 +175,12 @@ class ActivityScreen extends Component {
         })
     }
 
-    startActivity(folder) {
-        const {setActivity, getFolders} = this.props
-        getFolders(folder._id, 'actVariants', 'folder').then(res => {
-            let index = res.length - 1;
-            setActivity(res[index]);
-            Actions.push('take_act');
-        });
+    startActivity(act) {
+        const {setActivity, tree, data} = this.props;
+        const variants = tree[`folder/${act._id}`];
+        const variantPath = variants[variants.length-1];
+        setActivity(data[variantPath]);
+        Actions.push('take_act');
     }
 
     editActivityDetail(rowId) {
@@ -272,7 +271,6 @@ class ActivityScreen extends Component {
 
     render() {
         const {user, acts} = this.props
-        console.log(acts);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -352,8 +350,11 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
-  user: (state.core && state.core.auth),
+  auth: state.core.auth,
+  user: state.core.self,
   acts: (state.core.folder && state.core.folder.acts) || [],
+  data: state.core.data || [],
+  tree: state.core.tree || [],
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

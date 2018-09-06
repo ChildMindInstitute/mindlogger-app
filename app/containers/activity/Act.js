@@ -9,7 +9,7 @@ import baseTheme from '../../themes/baseTheme';
 import { getItems, getObject, getFolders } from '../../actions/api';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
-import { Screen } from './screen';
+import Screen from './screen';
 
 class Act extends Component {
   constructor(props) {
