@@ -18,7 +18,7 @@ class TextEntry extends Component {
           <Text>{config.label}</Text>
           ) }
           <Item>
-          <Input placeholder='please type text'
+          <Input placeholder='Please type text'
             onChangeText={onChange}
             value={answer}
             />

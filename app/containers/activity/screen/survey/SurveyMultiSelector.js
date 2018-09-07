@@ -3,46 +3,55 @@ import {StyleSheet, View} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body, CheckBox } from 'native-base';
 import { connect } from 'react-redux';
 
-import baseTheme from '../../../themes/baseTheme' 
+import baseTheme from '../../../../themes/baseTheme';
+import {randomLink} from '../../../../helper';
+import { CachedImage } from 'react-native-img-cache';
 
-import SurveyInputComponent from './SurveyInputComponent'
-
-class SurveyMultiSelector extends SurveyInputComponent {
+class SurveyMultiSelector extends Component {
   constructor(props) {
     super(props);
   }
 
   componentWillMount() {
-    this.setState({answer: this.props.data.answer || []})
   }
 
   checkValue = (value) => {
-    let answer = this.state.answer
-    const index = answer.indexOf(value)
-    if(index<0) {
-      answer.push(value)
+    const { config: {optionsMax, optionsMin, options}, onChange, onNextChange} = this.props;
+    let answer = this.props.answer || [];
+    const index = answer.indexOf(value);
+    if (index<0) {
+      if (answer.length==optionsMax) {
+        answer.pop();
+      }
+      answer.push(value);
     } else {
-      answer.splice(index, 1)
+      if (answer.length>optionsMin)
+        answer.splice(index, 1);
     }
-    this.selectAnswer(answer)
+    if (optionsMax==1 && optionsMin==1) {
+      if (answer.length > 0)
+        onNextChange(options[answer[0]].screen);
+      else
+        onNextChange(undefined);
+    }
+    onChange(answer);
   }
 
   render() {
-    const { question} = this.props.data
-    const { title, rows } =question
-    const {answer} = this.state
-
+    const { config: {options, optionsMax, optionsMin}, answer} = this.props;
     return (
       <View style={{alignItems:'stretch'}}>
-        { !this.props.disableHeader && (<Text style={baseTheme.paddingView}>{title}</Text>) }
         <View>
         {
-          rows.map((row, idx) => {
+          options.map((row, idx) => {
             return (
               <ListItem key={idx} onPress={() => this.checkValue(idx)}>
-                <Body><Text>{row.text}</Text></Body>
+                <Body>
+                  {row.type == 'text' &&  <Text>{row.text}</Text>}
+                  {row.type == 'file' &&  <CachedImage source={{uri: randomLink(row.file)}}/>}
+                </Body>
                 <Right>
-                  <CheckBox onPress={() => this.checkValue(idx)} checked={answer.includes(idx)} />
+                  <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
                 </Right>
               </ListItem>
               )
@@ -55,7 +64,7 @@ class SurveyMultiSelector extends SurveyInputComponent {
 }
 
 export default connect(state => ({
-    answers: state.survey && state.survey.answers
+    
   }),
   (dispatch) => ({
     //actions: bindActionCreators(counterActions, dispatch)

@@ -146,10 +146,15 @@ export default function coreReducer(state = initialState, action = {}) {
                     acts
                 }
             case types.SET_ANSWER:
-                return {
-                    ...state,
-                    answer: action.data
+                {
+                    let answerData = state.answerData || {};
+                    answerData[state.act._id] = action.data;
+                    return {
+                        ...state,
+                        answerData,
+                    }
                 }
+                
             case types.SET_ACTIVITY:
                 if(state.act && action.data.id != state.act.id)
                     return {

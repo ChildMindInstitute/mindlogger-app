@@ -12,6 +12,7 @@ import {
 import {randomLink} from '../../../helper';
 import TextEntry from './TextEntry';
 import ScreenButton from './ScreenButton';
+import SurveySection from './survey';
 
 const styles = StyleSheet.create({
   content: {
@@ -41,7 +42,7 @@ class Screen extends Component {
     path: PropTypes.string
   }
   componentWillMount() {
-    this.setState({});
+    this.setState({answer: this.props.answer && this.props.answer.data});
   }
   componentDidMount() {
     const {screen: {meta: data}} = this.props;
@@ -70,19 +71,29 @@ class Screen extends Component {
     return this.state.answer && this.state.answer[key];
   }
 
+  onNextChange = (nextScreen) => {
+    this.setState({nextScreen})
+
+  }
+
   handleReset = () => {
     this.setState({answer:undefined});
   }
 
+  handlePrev = () => {
+    this.props.onPrev();
+  }
+
   handleSkip = () => {
     const {screen: {meta: data}, onSkip} = this.props;
-    onSkip(data.skipToScreen);
+    onNext({'@id': path, data: undefined}, data.skipToScreen);
   }
 
   handleNext = () => {
-    const {screen: {meta: data}, onNext} = this.props;
-    const {answer} = this.state;
-    onNext(answer);
+    const {screen, onNext, path} = this.props;
+    const {meta: data} = screen;
+    const {answer, nextScreen} = this.state;
+    onNext({'@id': path, data: answer}, nextScreen);
   }
 
   renderButtons() {
@@ -121,16 +132,28 @@ class Screen extends Component {
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>
-        { data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
-          <CachedImage style={{width: '100%', height: 200, resizeMode: 'cover'}} source={{uri: randomLink(data.pictureVideo.files)}}/>
-        }
-        <View style={styles.paddingContent}>
-          <Text style={styles.text}>{data.text}</Text>
-          {
-            data.textEntry && data.textEntry.display && 
-            <TextEntry config={data.textEntry} answer={this.answer('text')} onChange={text => this.setAnswer({text})} />
+          { data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
+            <CachedImage style={{width: '100%', height: 200, resizeMode: 'cover'}} source={{uri: randomLink(data.pictureVideo.files)}}/>
           }
-        </View>
+          <View style={styles.paddingContent}>
+            <Text style={styles.text}>{data.text}</Text>
+            {
+              data.textEntry && data.textEntry.display && 
+              <TextEntry
+                config={data.textEntry}
+                answer={this.answer('text')}
+                onChange={text => this.setAnswer({text})}/>
+            }
+            {
+              data.surveyType && <SurveySection
+                type={data.surveyType}
+                config={data.survey}
+                answer={this.answer('survey')}
+                onChange={survey => this.setAnswer({survey})}
+                onNextChange={this.onNextChange}
+                />
+            }
+          </View>
         </Content>
         {this.renderButtons()}
       </View>
@@ -139,7 +162,8 @@ class Screen extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  screen: state.core.data && state.core.data[ownProps.path] || {meta:{}}
+  screen: state.core.data && state.core.data[ownProps.path] || {meta:{}},
+  answers: state.core.answerData && state.core.answerData[ownProps.path],
 })
 
 const mapDispatchToProps = {
