@@ -22,7 +22,7 @@ class Act extends Component {
   }
 
   render() {
-    const {act} = this.props;
+    const {act, answers} = this.props;
     const {meta: data} = act;
     const {index} = this.state;
     const screenPath = data.screens[index]['@id'];
