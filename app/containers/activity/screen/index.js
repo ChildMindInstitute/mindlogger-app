@@ -97,15 +97,28 @@ class Screen extends Component {
   }
 
   renderButtons() {
-    const {screen: {meta: data}} = this.props;
+    const {
+      screen: {meta: data},
+      globalConfig,
+    } = this.props;
     const {answer} = this.state;
-    const {surveyType, canvasType, skippable} = data;
+    const {surveyType, canvasType} = data;
+
+    // Configuration
+    const permission = globalConfig.permission || {};
+    const skippable = data.skippable || permission.skip;
+    const prevable = permission.prev;
+
     let buttonText = 'Take';
     const spinner = false;
     if (answer) {
       buttonText = 'Redo';
       return (<View style={styles.footer}>
-        <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+        { prevable ? 
+          <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+          :
+          <ScreenButton transparent/>
+        }
         <ScreenButton onPress={this.handleReset} text={buttonText}/>
         <ScreenButton transparent onPress={this.handleNext} text=">"/>
       </View>);
@@ -128,7 +141,7 @@ class Screen extends Component {
 
 
   render() {
-    const {screen: {meta: data}} = this.props;
+    const {screen: {meta: data}, globalConfig} = this.props;
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>

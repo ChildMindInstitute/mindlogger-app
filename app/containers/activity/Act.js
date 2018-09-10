@@ -30,13 +30,14 @@ class Act extends Component {
       <Container>
         <StatusBar barStyle='light-content'/>
         <ActHeader title={act.name} />
-        { data.display && data.display.progress && <ActProgress index={index+1} length={data.screens.count} /> }
+        { data.display && data.display.progress && <ActProgress index={index+1} length={data.screens.length} /> }
         <Screen
           key={index}
           path={screenPath}
           answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}
+          globalConfig={data}
           />
       </Container>
       );
