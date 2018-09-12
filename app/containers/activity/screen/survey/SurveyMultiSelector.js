@@ -20,13 +20,9 @@ class SurveyMultiSelector extends Component {
     let answer = this.props.answer || [];
     const index = answer.indexOf(value);
     if (index<0) {
-      if (answer.length==optionsMax) {
-        answer.pop();
-      }
       answer.push(value);
     } else {
-      if (answer.length>optionsMin)
-        answer.splice(index, 1);
+      answer.splice(index, 1);
     }
     if (optionsMax==1 && optionsMin==1) {
       if (answer.length > 0)
@@ -34,7 +30,8 @@ class SurveyMultiSelector extends Component {
       else
         onNextChange(undefined);
     }
-    onChange(answer);
+    let validated = (answer.length<=optionsMax) && (answer.length>=optionsMin);
+    onChange(answer, validated);
   }
 
   render() {

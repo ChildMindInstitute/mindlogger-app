@@ -12,9 +12,12 @@ class SurveyTableSelector extends Component {
     }
 
     componentWillMount() {
-        let {answer, config, onChange} = this.props;
+        this.updateAnswer(this.props);
+    }
+
+    updateAnswer({answer, config}) {
+        answer = answer || [];
         const {rows, mode} = config;
-        answer = answer || []
         if(answer.length<rows.length) {
             switch(config.mode) {
                 case 'select':
@@ -28,18 +31,20 @@ class SurveyTableSelector extends Component {
         this.setState({answer})
     }
 
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.answer != this.props.answer) {
+            this.updateAnswer(nextProps);
+        }
+    }
+
     onChoiceSelect(rowIdx, colIdx) {
         let {answer} = this.state;
         const {config:{optionsMin, optionsMax, rows}, onChange} = this.props;
         const index = answer[rowIdx].indexOf(colIdx);
         if (index<0) {
-            if (answer[rowIdx].length==optionsMax) {
-                answer[rowIdx].pop();
-            }
             answer[rowIdx].push(colIdx);
         } else {
-            if (answer[rowIdx].length>optionsMin)
-                answer[rowIdx].splice(index, 1);
+            answer[rowIdx].splice(index, 1);
         }
         this.setState({answer});
         let validate = true;
@@ -47,9 +52,7 @@ class SurveyTableSelector extends Component {
             if (e.length<optionsMin || e.length>optionsMax)
                 validate = false;
         });
-        if (validate) {
-            onChange(answer);
-        }
+        onChange(answer, validate);
     }
 
     renderCell(config, rowIdx, colIdx) {

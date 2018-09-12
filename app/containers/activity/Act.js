@@ -33,26 +33,33 @@ class Act extends Component {
         { data.display && data.display.progress && <ActProgress index={index+1} length={data.screens.length} /> }
         <Screen
           key={index}
+          index={index}
           path={screenPath}
           answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}
           globalConfig={data}
+          length={data.screens.length}
           />
       </Container>
       );
   }
 
-  prev = () => {
+  prev = (answer) => {
     const {answers, act: {meta: data}} = this.props;
     let {index} = this.state;
+    answers[index] = answer;
+    setAnswer(answers);
     let prevIndex = index - 1;
     while(prevIndex>=0) {
       if(answers[prevIndex]['@id']) {
         this.setState({index: prevIndex});
-        break;
+        return;
       }
       prevIndex = prevIndex - 1;
+    }
+    if (prevIndex<0) {
+      Actions.pop();
     }
   }
 

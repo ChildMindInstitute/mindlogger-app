@@ -42,7 +42,10 @@ class Screen extends Component {
     path: PropTypes.string
   }
   componentWillMount() {
-    this.setState({answer: this.props.answer && this.props.answer.data});
+    this.setState({
+      answer: this.props.answer && this.props.answer.data,
+      validated: true
+    });
   }
   componentDidMount() {
     const {screen: {meta: data}} = this.props;
@@ -61,10 +64,14 @@ class Screen extends Component {
     }
   }
 
-  setAnswer(data) {
+  setAnswer(data, validated) {
     let {answer} = this.state;
     answer = {...answer, ...data};
-    this.setState({answer});
+    if (validated == undefined) {
+      this.setState({answer});
+    } else {
+      this.setState({answer, validated});
+    }
   }
 
   answer(key) {
@@ -73,7 +80,6 @@ class Screen extends Component {
 
   onNextChange = (nextScreen) => {
     this.setState({nextScreen})
-
   }
 
   handleReset = () => {
@@ -85,24 +91,28 @@ class Screen extends Component {
   }
 
   handleSkip = () => {
-    const {screen: {meta: data}, onSkip} = this.props;
+    const {screen: {meta: data}, onNext, path} = this.props;
     onNext({'@id': path, data: undefined}, data.skipToScreen);
   }
 
   handleNext = () => {
     const {screen, onNext, path} = this.props;
     const {meta: data} = screen;
-    const {answer, nextScreen} = this.state;
+    const {answer, nextScreen, validated} = this.state;
     onNext({'@id': path, data: answer}, nextScreen);
+    
   }
 
   renderButtons() {
     const {
       screen: {meta: data},
       globalConfig,
+      length,
     } = this.props;
-    const {answer} = this.state;
+    const {answer, nextScreen, validated} = this.state;
     const {surveyType, canvasType} = data;
+
+    const isFinal = (nextScreen || (this.props.index + 1)) >= length;
 
     // Configuration
     const permission = globalConfig.permission || {};
@@ -120,7 +130,12 @@ class Screen extends Component {
           <ScreenButton transparent/>
         }
         <ScreenButton onPress={this.handleReset} text={buttonText}/>
-        <ScreenButton transparent onPress={this.handleNext} text=">"/>
+        {
+          validated ?
+            <ScreenButton transparent onPress={this.handleNext} text={isFinal ? "Done" : ">"}/>
+            :
+            <ScreenButton transparent/>
+        }
       </View>);
     } else {
       return (<View style={styles.footer}>
@@ -151,20 +166,21 @@ class Screen extends Component {
           <View style={styles.paddingContent}>
             <Text style={styles.text}>{data.text}</Text>
             {
-              data.textEntry && data.textEntry.display && 
-              <TextEntry
-                config={data.textEntry}
-                answer={this.answer('text')}
-                onChange={text => this.setAnswer({text})}/>
-            }
-            {
               data.surveyType && <SurveySection
                 type={data.surveyType}
                 config={data.survey}
                 answer={this.answer('survey')}
-                onChange={survey => this.setAnswer({survey})}
+                onChange={(survey, validated) => this.setAnswer({survey}, validated)}
                 onNextChange={this.onNextChange}
                 />
+            }
+            {
+              data.textEntry && data.textEntry.display && 
+              <TextEntry
+                style={styles.text}
+                config={data.textEntry}
+                answer={this.answer('text')}
+                onChange={text => this.setAnswer({text})}/>
             }
           </View>
         </Content>

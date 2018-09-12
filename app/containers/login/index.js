@@ -59,6 +59,10 @@ class Login extends Component { // eslint-disable-line
             Actions.push('activity');
         }
     }
+
+    onRegister = () => {
+        Actions.sign_up();
+    }
     onForgotPassword = () => {
         Actions.forgot_password();
     }

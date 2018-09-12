@@ -35,7 +35,7 @@ class ActivityScreen extends Component {
             return
         }
         if (acts.length == 0) {
-            downloadAll();
+            this.downloadAll();
         }
         if (Platform.OS == 'ios') {
             PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
@@ -49,10 +49,14 @@ class ActivityScreen extends Component {
         getCollection('Volumes').then(res => {
             return getFolders(res[0]._id, 'volumes');
         }).then(volumes => {
-            return getFolders(volumes[1]._id, 'groups', 'folder');
+            if (volumes[0].meta.shortName)
+                return getFolders(volumes[1]._id, 'groups', 'folder');
         }).then(res => {
-            return getFolders(res[0]._id, 'acts', 'folder');
+            if (res.length > 0) {
+                return getFolders(res[0]._id, 'acts', 'folder');
+            }
         }).then(acts => {
+            console.log(acts);
             return Promise.all(acts.map(act => getFolders(act._id, 'actVariants', 'folder')
                 .then(arr => {
                     const variant = arr[arr.length-1];

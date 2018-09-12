@@ -36,10 +36,8 @@ export const signIn = ({user, password}) => ({
   extraHeaders: { 'Girder-Authorization': `Basic ${btoa(user + ":" + password)}` }
 });
 
-export const signOut = (body) => ({
+export const signOut = () => ({
     type: types.SIGN_OUT,
-    method: 'DELETE',
-    path: '/logout',
 })
 
 export const updateUser = (body) => ({

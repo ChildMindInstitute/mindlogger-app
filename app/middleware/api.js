@@ -1,5 +1,6 @@
 import config from '../config';
 import { AsyncStorage } from 'react-native';
+import objectToFormData from 'object-to-formdata';
 
 export default store => next => action => {
     if ((!action.method && !action.path) || action.status) return next(action)

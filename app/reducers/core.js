@@ -22,10 +22,6 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     self: action.response,
                 }
-            case types.LOG_OUT:
-                return {
-                    auth: false
-                }
             case types.ADD_ACT:
                 acts = [...state.acts]
                 acts.unshift(action.response.act)
@@ -123,7 +119,11 @@ export default function coreReducer(state = initialState, action = {}) {
                 if(core)
                     return {...state, ...core}
                 else
-                    return state
+                    return state;
+            case types.SIGN_OUT:
+                return {
+                    auth: false
+                }
             case types.SET_USER:
                 user = action.data
                 console.log(user)

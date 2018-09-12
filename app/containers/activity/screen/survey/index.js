@@ -14,7 +14,8 @@ export default class SurveySection extends Component {
         config={config}
         answer={answer}
         onChange={onChange}
-        onNextChange={onNextChange}/>);
+        onNextChange={onNextChange}
+        />);
     else if (type=='list' && config.mode=='order')
         return (
           <View></View>

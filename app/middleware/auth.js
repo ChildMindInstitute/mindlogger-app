@@ -6,7 +6,7 @@ export default store => next => action => {
         //await AsyncStorage.setItem('auth', JSON.stringify(action.response.user));
     }
 
-    if(action.type === types.LOG_OUT) {
+    if(action.type === types.SIGN_OUT) {
         //await AsyncStorage.removeItem('auth');
     }
 

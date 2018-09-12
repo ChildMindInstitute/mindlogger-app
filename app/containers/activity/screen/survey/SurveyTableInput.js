@@ -12,20 +12,29 @@ class SurveyTableInput extends Component {
     }
 
     componentWillMount() {
-        let {answer, config, onChange} = this.props;
+        this.updateAnswer(this.props);
+    }
+
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.answer != this.props.answer) {
+            this.updateAnswer(nextProps);
+        }
+    }
+
+    updateAnswer = ({answer, config}) => {
         const {rows, cols, mode} = config;
-        answer = answer || []
+        answer = answer || [];
         if(answer.length<rows.length) {
             switch(config.mode) {
                 case 'text':
-                    answer = rows.map((row)=>cols.map( (col) => '' ))
+                    answer = rows.map((row)=>cols.map( (col) => '' ));
                     break;
                 case 'number':
-                    answer = rows.map((row)=>cols.map( (col) => 0 ))
+                    answer = rows.map((row)=>cols.map( (col) => 0 ));
                     break;
             }
         }
-        this.setState({answer})
+        this.setState({answer});
     }
 
     onTextInput(value, rowIdx, colIdx) {
