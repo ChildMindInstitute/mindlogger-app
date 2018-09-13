@@ -22,7 +22,7 @@ export const signUp = (body) => ({
   body,
 });
 
-export const changePassword = (body) => ({
+export const changePassword = (id, body) => ({
   type: types.CHANGE_PASSWORD,
   method: 'PUT',
   path: `/user/${id}/password`,
@@ -40,7 +40,7 @@ export const signOut = () => ({
     type: types.SIGN_OUT,
 })
 
-export const updateUser = (body) => ({
+export const updateUser = (id, body) => ({
   type: types.UPDATE_USER,
   method: 'PUT',
   path: `/user/${id}`,

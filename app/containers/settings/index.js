@@ -19,14 +19,14 @@ class UserForm extends Component {
     onRegister = () => {
         Actions.consent()
     }
+
     render() {
-        const { handleSubmit, onSubmit, submitting, initialValues, onForgot, user } = this.props;
+        const { handleSubmit, onSubmit, submitting, initialValues, onForgot} = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} name="first_name" placeholder={user.first_name} style={styles.text}/>
-                <Field component={FormInputItem} name="last_name" placeholder={user.last_name} style={styles.text}/>
-                <Field component={FormInputItem} placeholder="Current password" name="current_password" style={styles.text} secureTextEntry={true}/>
-                <Field component={FormInputItem} placeholder="New password" name="new_password" style={styles.text} secureTextEntry={true}/>
+                <Field component={FormInputItem} name="firstName" placeholder="First Name" style={styles.text}/>
+                <Field component={FormInputItem} name="lastName" placeholder="Last Name" style={styles.text}/>
+                <Field component={FormInputItem} placeholder="New password" name="password" style={styles.text} secureTextEntry={true}/>
                 <Button
                   light
                   bordered
@@ -40,7 +40,9 @@ class UserForm extends Component {
 }
 
 UserReduxForm = reduxForm({
-    form: 'user-form'
+  form: 'user-form',
+  destroyOnUnmount: false,
+  forceUnregisterOnUnmount: true,
 })(UserForm)
 
 
@@ -52,11 +54,9 @@ class SettingScreen extends Component {
 
   componentWillMount() {
     const {user, surveys, loadSurveys} = this.props;
-    this.setState({user})
   }
 
   pushRoute(route) {
-    console.log(route)
     Actions[route]()
   }
 
@@ -64,16 +64,13 @@ class SettingScreen extends Component {
     Actions.pop()
   }
 
-  onUserSubmit = ({first_name, last_name, current_password, new_password}) => {
+  onUserSubmit = ({firstName, lastName, password}) => {
     const {user, updateUser, changePassword, updateUserLocal} = this.props
     let arr = []
-    let body = {first_name, last_name}
-    arr.push(updateUser(body))
-    if(new_password && new_password.length>0) {
-      if(current_password == user.password)
-        arr.push(changePassword({new_password, current_password}))
-      else
-        throw new SubmissionError({current_password: "Password does not match!"})
+    let body = {...user, firstName, lastName}
+    arr.push(updateUser(user._id, body))
+    if (password && password.length>0) {
+      arr.push(changePassword(user._id, {password}))
     }
     if(arr.length > 0) {
       Promise.all(arr).then(result => {
@@ -88,7 +85,6 @@ class SettingScreen extends Component {
 
   render() {
     const {user} = this.props
-
     return (
       <Container style={styles.container}>
         <Header>
@@ -107,7 +103,7 @@ class SettingScreen extends Component {
         <Content>
           <Text style={styles.subHeader}>Profile</Text>
           <View style={styles.subSection}>
-            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user} user={user} />
+            <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user}/>
           </View>
           <Text style={styles.subHeader}>Notification</Text>
           
@@ -127,9 +123,7 @@ function bindAction(dispatch) {
 }
 
 const mapStateToProps = state => ({
-  drawings: (state.drawing && state.drawing.drawings) || [],
-  themeState: state.drawer.themeState,
-  user: (state.core && state.core.auth)
+  user: (state.core && state.core.self)
 });
 
 export default connect(mapStateToProps, bindAction)(SettingScreen);
