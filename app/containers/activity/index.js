@@ -4,19 +4,19 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { ListView } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
     Player,
     MediaStates
 } from 'react-native-audio-toolkit';
+import PushNotification from 'react-native-push-notification';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import { updateUserLocal, setActivity, setVolume, setAnswer } from '../../actions/coreActions';
 
 import { getObject, getCollection, getFolders, getItems } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
-import PushNotification from 'react-native-push-notification';
 
 import styles from './styles';
 
@@ -43,17 +43,30 @@ class ActivityScreen extends Component {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
         }
     }
-
+    promptEmptyActs() {
+        Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', buttonText: 'OK'})
+        this.setState({progress: false})
+    }
     downloadAll() {
-        const {getCollection, getFolders, setVolume, getItems} = this.props;
-        getCollection('Volumes').then(res => {
-            return getFolders(res[0]._id, 'volumes');
+        const {getCollection, getFolders, setVolume, getItems, user} = this.props;
+        this.setState({progress: true});
+        return getFolders(user._id, 'collection', 'user').then(res => {
+            if (res.length>0)
+                return getFolders(res[0]._id, 'volumes', 'folder');
+            else
+                this.promptEmptyActs();
         }).then(volumes => {
+            console.log(volumes);
             if (volumes[0].meta.shortName)
-                return getFolders(volumes[1]._id, 'groups', 'folder');
+                return getFolders(volumes[0]._id, 'groups', 'folder');
+            else
+                this.promptEmptyActs();
         }).then(res => {
+            console.log(res);
             if (res.length > 0) {
                 return getFolders(res[0]._id, 'acts', 'folder');
+            } else {
+                this.promptEmptyActs();
             }
         }).then(acts => {
             console.log(acts);
@@ -63,9 +76,11 @@ class ActivityScreen extends Component {
                     return getItems(variant._id);
                 })));
         }).then(res => {
-            Toast.show({text: 'Download complete', position: 'bottom', type: 'info', buttonText: 'ok'})
+            Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
+            this.setState({progress: false});
         }).catch(err => {
             console.log(err);
+            this.setState({progress: false});
         });
     }
 
@@ -300,6 +315,7 @@ class ActivityScreen extends Component {
             </Header>
 
             <Content>
+                { this.state.progress && <Spinner /> }
             <List
                 dataSource={ds.cloneWithRows(acts)}
                 renderRow={this._renderRow}
