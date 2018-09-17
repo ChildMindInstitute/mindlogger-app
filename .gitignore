@@ -25,7 +25,8 @@ ios/Pods/
 
 # Android/IntelliJ
 #
-build/
+android/build/
+android/app/src/main/res/merged/release
 .idea
 .gradle
 local.properties
