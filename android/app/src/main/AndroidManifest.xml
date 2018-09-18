@@ -47,8 +47,5 @@
             <action android:name="com.google.android.c2dm.intent.RECEIVE" />
         </intent-filter>
     </service>
-    <service
-    android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
-    android:enabled="true" />
   </application>
 </manifest>
