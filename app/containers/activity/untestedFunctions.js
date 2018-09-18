@@ -17,7 +17,10 @@ updateNotifications(userActVersion) {
 
   }
   if (userActVersion.meta.userNotifications.scheduleType.monthly && userActVersion.meta.userNotifications.scheduleType.monthly.length) {
-
+    todayDate = today.getDate(); // Today's day of the month.
+    userActVersion.meta.userNotifications.scheduleType.monthly.forEach(function(day) {
+      notifications.days.push(todayDate<=day ? today.getMonth===11 ? new Date(today.getFullYear()+1, 0, day) : new Date(today.getFullYear(), today.getMonth+1, day) : new Date(today.getFullYear(), today.getMonth, day));
+    });
   }
   if (userActVersion.meta.userNotifications.scheduleType.weekly && userActVersion.meta.userNotifications.scheduleType.weekly.length) {
     todayDay = today.getDay(); // Today's day of the week.
