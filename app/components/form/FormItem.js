@@ -5,7 +5,7 @@ import InputNumber from 'rc-input-number';
 import AudioRecord from '../audio/AudioRecord';
 import DatePicker from 'react-native-datepicker';
 
-export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, ...props , meta: { touched, error, warning } }) => {
+export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, meta: { touched, error, warning }, ...props}) => {
     var hasError= false;
     if(error !== undefined){
       hasError= true;
@@ -16,7 +16,7 @@ export const FormInputItem = ({ input: {...input}, label, stackedLabel, floating
                 {hasError ? <Text style={{color:'#aaa'}}>{error}</Text> : <Text />}
             </Item> )
 }
-export const FormSwitchItem = ({ input, label, name, ...inputProps , meta: { touched, error, warning } }) => {
+export const FormSwitchItem = ({ input, label, name, meta: { touched, error, warning }, ...inputProps}) => {
   var hasError= false;
   if(error !== undefined){
     hasError= true;
@@ -45,7 +45,7 @@ export const FormRadioGroup = ({ type,input, name, options, stackedLabel }) => {
       ))}</View>)
 }
 
-export const FormPickerGroup = ({ input, name, ...inputProps, options, stackedLabel,meta: { touched, error, warning } }) => {
+export const FormPickerGroup = ({ input, name, options, stackedLabel,meta: { touched, error, warning }, ...inputProps }) => {
   var hasError= false;
   if(error !== undefined){
     hasError= true;
@@ -106,7 +106,7 @@ const styles = StyleSheet.create(
     borderColor: '#2DB7F5'
   }
 })
-export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,style, name, ...inputProps , meta: { touched, error, warning } }) => {
+export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,style, name, meta: { touched, error, warning }, ...inputProps}) => {
   var hasError= false;
   if(error !== undefined){
     hasError= true;
@@ -118,7 +118,7 @@ export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,
           </Item> )
 }
 
-export const FormInputAudio = ({ input, stackedLabel, label, style, name, ...inputProps , meta: { touched, error, warning } }) => {
+export const FormInputAudio = ({ input, stackedLabel, label, style, name, meta: { touched, error, warning }, ...inputProps}) => {
   var hasError= false;
   if(error !== undefined){
     hasError= true;
@@ -130,7 +130,7 @@ export const FormInputAudio = ({ input, stackedLabel, label, style, name, ...inp
           </View> )
 }
 
-export const FormInputCheckItem = ({ input, label, style, name, itemStyle, ...props, meta: {touched, error, warning} }) => {
+export const FormInputCheckItem = ({ input, label, style, name, itemStyle, meta: {touched, error, warning}, ...props}) => {
   var hasError =false;
   if(error !== undefined) {
     hasError = true;

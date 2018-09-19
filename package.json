@@ -3,7 +3,6 @@
  "version": "0.0.1",
  "private": true,
  "scripts": {
-  "postinstall": "remotedev-debugger",
   "start": "node node_modules/react-native/local-cli/cli.js start",
   "eslint": "eslint",
   "test": "jest",
@@ -19,7 +18,7 @@
   "color": "~0.11.1",
   "firebase": "^4.6.1",
   "moment": "^2.13.0",
-  "native-base": "^2.3.2",
+  "native-base": "^2.6.0",
   "node-pre-gyp": "^0.10.0",
   "object-to-formdata": "^1.5.2",
   "random-string": "^0.2.0",
@@ -61,21 +60,10 @@
   "remote-redux-devtools": "^0.3.3"
  },
  "devDependencies": {
-  "babel-jest": "21.2.0",
-  "babel-preset-react-native": "4.0.0",
-  "chai": "^3.5.0",
-  "eslint": "^3.5.0",
-  "eslint-config-airbnb": "^11.1.0",
-  "eslint-plugin-import": "^1.14.0",
-  "eslint-plugin-jsx-a11y": "^2.2.1",
-  "eslint-plugin-react": "^6.2.0",
-  "eslint-plugin-react-native": "^2.0.0",
-  "jest": "21.2.1",
-  "jest-react-native": "16.1.0",
-  "mocha": "^2.5.3",
-  "react-test-renderer": "16.0.0-beta.5",
-  "remotedev-rn-debugger": "^0.8.3",
-  "remotedev-server": "^0.1.2"
+  "babel-jest": "23.6.0",
+  "jest": "23.6.0",
+  "metro-react-native-babel-preset": "0.45.3",
+  "react-test-renderer": "16.5.0"
  },
  "jest": {
   "preset": "react-native",
