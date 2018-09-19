@@ -90,13 +90,13 @@ export const atob = (input = '') => {
   return output;
 };
 
-export const fileLink = (file) => {
-  return `${config.apiHost}/${file['@id']}/download?contentDisposition=inline`;
+export const fileLink = (file, token) => {
+  return `${config.apiHost}/${file['@id']}/download?contentDisposition=inline&token=${token}`;
 }
 
-export const randomLink = (files) => {
+export const randomLink = (files, token) => {
   var rand = files[Math.floor(Math.random() * files.length)];
-  return fileLink(rand);
+  return fileLink(rand, token);
 }
 
 export const downloadFile = (idPath) => {

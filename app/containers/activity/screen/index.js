@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {CachedImage} from "react-native-img-cache";
 import { Content, Text } from 'native-base';
 import {
   Player,
@@ -13,6 +12,7 @@ import {randomLink} from '../../../helper';
 import TextEntry from './TextEntry';
 import ScreenButton from './ScreenButton';
 import SurveySection from './survey';
+import GImage from '../../../components/image/Image';
 
 const styles = StyleSheet.create({
   content: {
@@ -161,7 +161,7 @@ class Screen extends Component {
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>
           { data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
-            <CachedImage style={{width: '100%', height: 200, resizeMode: 'cover'}} source={{uri: randomLink(data.pictureVideo.files)}}/>
+            <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
           }
           <View style={styles.paddingContent}>
             <Text style={styles.text}>{data.text}</Text>

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import baseTheme from '../../../../themes/baseTheme';
 import {randomLink} from '../../../../helper';
-import { CachedImage } from 'react-native-img-cache';
+import GImage from '../../../../components/image/Image';
 
 class SurveyMultiSelector extends Component {
   constructor(props) {
@@ -45,7 +45,7 @@ class SurveyMultiSelector extends Component {
               <ListItem key={idx} onPress={() => this.checkValue(idx)}>
                 <Body>
                   {row.type == 'text' &&  <Text>{row.text}</Text>}
-                  {row.type == 'file' &&  <CachedImage source={{uri: randomLink(row.file)}}/>}
+                  {row.type == 'file' &&  <GImage file={row.file}/>}
                 </Body>
                 <Right>
                   <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
