@@ -15,6 +15,15 @@ export default {
     paddingLeft: 50,
     paddingRight: 50,
   },
+  container2: {
+    flex: 1,
+    width: null,
+    height: null,
+    backgroundColor: '#0067A0',
+    paddingTop: 40,
+    paddingLeft: 50,
+    paddingRight: 50,
+  },
   header: {
     marginTop: 60,
     height: 100,

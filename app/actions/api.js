@@ -50,7 +50,7 @@ export const updateUser = (id, body) => ({
 export const forgotPassword = (body) => ({
     type: types.FORGOT_PASSWORD,
     method: 'POST',
-    path: '/user/forgot-password',
+    path: '/user/password/temporary',
     body,
 });
 

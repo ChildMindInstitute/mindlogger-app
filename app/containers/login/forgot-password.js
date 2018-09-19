@@ -37,10 +37,10 @@ class ForgotPassword extends Component { // eslint-disable-line
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
-                <View style={styles.container}>
-                    <Item floatingLabel>
-                        <Label style={styles.text}>Email address</Label>
-                        <Input style={styles.text} onChangeText={this.onChangeText} value={email} />
+                <View style={styles.container2}>
+                    <Text style={styles.text}>Email address</Text>
+                    <Item>
+                        <Input style={styles.text} type="email" autoCapitalize='none' onChangeText={this.onChangeText} value={email} />
                     </Item>
                     <Button full block onPress={()=>forgotPassword(email)}><Text>Reset password</Text></Button>
                 </View>
@@ -51,7 +51,7 @@ class ForgotPassword extends Component { // eslint-disable-line
 
 const mapDispatchToProps = (dispatch) => ({
     forgotPassword: (email) => {
-        return dispatch(forgotPassword(email)).then(res => {
+        return dispatch(forgotPassword({email})).then(res => {
             console.log(res)
             Actions.replace('login')
         }).catch(err => {
