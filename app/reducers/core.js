@@ -182,6 +182,11 @@ export default function coreReducer(state = initialState, action = {}) {
                         ...state,
                         act: action.data
                     }
+            case types.SET_DATA:
+                return {
+                    ...state,
+                    ...action.data,
+                }
             default:
                 return state;
         }

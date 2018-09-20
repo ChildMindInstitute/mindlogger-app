@@ -13,15 +13,17 @@ import {
 import PushNotification from 'react-native-push-notification';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity, setVolume, setAnswer } from '../../actions/coreActions';
+import { updateUserLocal, setActivity, setAnswer, setNotificationStatus } from '../../actions/coreActions';
 
 import { getObject, getCollection, getFolders, getItems } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
+import { timeArrayFrom } from './NotificationSchedule';
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
+const DAY_TS = 1000*3600*24;
 class ActivityScreen extends Component {
 
     static propTypes = {
@@ -29,13 +31,15 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getCollection, getFolders, setVolume} = this.props;
+        const {user, acts, getCollection, getFolders, } = this.props;
         if(!user) {
             console.warn("undefined user")
             return
         }
         if (acts.length == 0) {
             this.downloadAll();
+        } else {
+            this.scheduleNotifications(acts);
         }
         if (Platform.OS == 'ios') {
             PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
@@ -48,7 +52,7 @@ class ActivityScreen extends Component {
         this.setState({progress: false})
     }
     downloadAll() {
-        const {getCollection, getFolders, setVolume, getItems, user} = this.props;
+        const {getCollection, getFolders, getItems, user} = this.props;
         this.setState({progress: true});
         return getFolders(user._id, 'collection', 'user').then(res => {
             if (res.length>0)
@@ -69,7 +73,7 @@ class ActivityScreen extends Component {
                 this.promptEmptyActs();
             }
         }).then(acts => {
-            console.log(acts);
+            this.scheduleNotifications(acts);
             return Promise.all(acts.map(act => getFolders(act._id, 'actVariants', 'folder')
                 .then(arr => {
                     const variant = arr[arr.length-1];
@@ -91,21 +95,51 @@ class ActivityScreen extends Component {
         PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
     }
 
+    scheduleNotifications(acts) {
+        let { notifications, checkedTime, setNotificationStatus} = this.props;
+        console.log("last check:", checkedTime);
+        if (checkedTime && checkedTime + DAY_TS > Date.now()) return;
+        acts.forEach((act, idx) => {
+            let variant = this.getVariant(act);
+            let state = notifications[variant._id] || {};
+            let { lastTime } = state;
+            console.log(variant);
+            let times = timeArrayFrom(variant.meta.notification, lastTime);
+            let message = `Please perform activity: ${act.name}`;
+            let userInfo = { actId: act._id };
+            console.log(times);
+            times.forEach(time => {
+                PushNotification.localNotificationSchedule({
+                    id: `${idx}`,
+                //... You can use all the options from localNotifications
+                message , // (required)
+                userInfo,
+                date: time
+              });
+              lastTime = time.getTime();
+              console.log("scheduledAt", time);
+            });
+            notifications[act._id] = { modifiedAt: Date.now(), lastTime };
+        });
+        setNotificationStatus(notifications);
+    }
+
     onNotificationIOS = (notification) => {
-        let {userInfo:{act_id}} = notification;
-        this.startActivityFromId(act_id)
+        let {userInfo:{actId}} = notification;
+        this.startActivityFromId(actId)
     }
 
     onNotificationAndroid = (notification) => {
-        let act_id = floor(parseInt(notification.id)/10)
-        this.startActivityFromId(act_id)
+        const { acts } = this.props;
+        let index = parseInt(notification.id);
+        this.startActivityFromId(acts[index]);
     }
 
-    startActivityFromId(act_id){
+    startActivityFromId(actId){
         const {user, acts} = this.props;
         let act;
         acts.forEach(element => {
-            if (element.id == act_id) {
+            if (element._id == actId) {
                 act = element;
             }
         });
@@ -194,11 +228,16 @@ class ActivityScreen extends Component {
         })
     }
 
-    startActivity(act) {
-        const {setActivity, tree, data} = this.props;
+    getVariant(act) {
+        const {tree, data} = this.props;
         const variants = tree[`folder/${act._id}`];
         const variantPath = variants[variants.length-1];
-        setActivity(data[variantPath]);
+        return data[variantPath];
+    }
+
+    startActivity(act) {
+        const {setActivity} = this.props;
+        setActivity(this.getVariant(act));
         Actions.push('take_act');
     }
 
@@ -363,7 +402,7 @@ function bindAction(dispatch) {
             getCollection,
             getFolders,
             getItems,
-            setVolume,
+            setNotificationStatus
         }, dispatch)
   };
 }
@@ -371,6 +410,8 @@ function bindAction(dispatch) {
 const mapStateToProps = state => ({
   themeState: state.drawer.themeState,
   auth: state.core.auth,
+  notifications: state.core.notifications || {},
+  checkedTime: state.core.checkedTime,
   user: state.core.self,
   acts: (state.core.folder && state.core.folder.acts) || [],
   data: state.core.data || [],

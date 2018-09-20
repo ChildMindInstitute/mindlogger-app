@@ -40,3 +40,8 @@ export const setActChanged = (actChanged) => ({
     type: types.SET_DATA,
     data: { actChanged }
 })
+
+export const setNotificationStatus = (notifications) => ({
+    type: types.SET_DATA,
+    data: { notifications, checkedTime: Date.now() }
+})
