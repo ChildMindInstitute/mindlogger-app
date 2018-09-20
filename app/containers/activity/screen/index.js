@@ -157,6 +157,7 @@ class Screen extends Component {
 
   render() {
     const {screen: {meta: data}, globalConfig} = this.props;
+    console.log(this.props)
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>
@@ -191,7 +192,7 @@ class Screen extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  screen: state.core.data && state.core.data[ownProps.path] || {meta:{}},
+  screen: state.core.objects && state.core.objects[`folder/${ownProps.path}`][`item/${ownProps.name}`] || {meta:{}},
   answers: state.core.answerData && state.core.answerData[ownProps.path],
 })
 

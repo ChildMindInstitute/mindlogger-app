@@ -96,6 +96,21 @@ export default function coreReducer(state = initialState, action = {}) {
                         data,
                     }
                 }
+            case types.GET_OBJECTS_HASH:
+                {
+                    let objects = state.objects || {};
+                    let key = `${action.parentType}/${action.parentId}`;
+                    let dict = objects[key] || {};
+                    let arr = action.response;
+                    arr.forEach(obj => {
+                        dict[`${action.objectType}/${obj.name}`] = obj;
+                    });
+                    objects[key] = dict;
+                    return {
+                        ...state,
+                        objects,
+                    }
+                }
             case types.FETCH_OBJECT:
                 {
                     let data = state.data || {};

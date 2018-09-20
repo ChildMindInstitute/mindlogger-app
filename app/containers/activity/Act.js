@@ -25,7 +25,6 @@ class Act extends Component {
     const {act, answers} = this.props;
     const {meta: data} = act;
     const {index} = this.state;
-    const screenPath = data.screens[index]['@id'];
     return (
       <Container>
         <StatusBar barStyle='light-content'/>
@@ -34,7 +33,8 @@ class Act extends Component {
         <Screen
           key={index}
           index={index}
-          path={screenPath}
+          path={act._id}
+          name={data.screens[index]['name']}
           answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}

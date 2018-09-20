@@ -31,3 +31,4 @@ export const LIST_OBJECTS = 'LIST_OBJECTS';
 export const GET_COLLECTION = 'GET_COLLECTION';
 
 export const SET_DATA_OBJECT = 'SET_DATA_OBJECT';
+export const GET_OBJECTS_HASH = 'GET_OBJECTS_HASH';

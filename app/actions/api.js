@@ -218,7 +218,7 @@ export const uploadFile = (name, fileObject, parentType, parentId) => ({
 })
 
 export const getItems = (parentId) => ({
-  type: types.LIST_OBJECTS,
+  type: types.GET_OBJECTS_HASH,
   method: 'GET',
   objectType: 'item',
   parentId,
