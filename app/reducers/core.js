@@ -96,7 +96,7 @@ export default function coreReducer(state = initialState, action = {}) {
                         data,
                     }
                 }
-            case types.GET_OBJECTS_HASH:
+            case types.GET_NAMES_HASH:
                 {
                     let objects = state.objects || {};
                     let key = `${action.parentType}/${action.parentId}`;
