@@ -81,16 +81,18 @@ class ActivityScreen extends Component {
                 this.promptEmptyActs();
             }
         }).then(acts => {
-            this.scheduleNotifications(acts);
             return Promise.all(acts.map(act => getActVariant(act._id)
                 .then(arr => {
-                    console.log(arr, this.props.actData);
                     const { variant, info } = this.props.actData[act._id];
                     return getItems(variant._id).then(res => {
-                        if(info)
+                        if(info) {
+                            console.log(info);
                             return getItems(info._id)
+                        }
                     });
-                })));
+                }))).then(res => {
+                    this.scheduleNotifications(acts);
+                });
         }).then(res => {
             Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
             this.setState({progress: false});
@@ -241,9 +243,14 @@ class ActivityScreen extends Component {
         })
     }
 
+    getVariant(act) {
+        return this.props.actData[act._id].variant;
+    }
+
     startActivity(act) {
         const {setActivity, actData} = this.props;
-        setActivity(actData[act._id].variant);
+        console.log(actData[act._id]);
+        setActivity(actData[act._id].variant, actData[act._id].info);
         Actions.push('take_act');
     }
 

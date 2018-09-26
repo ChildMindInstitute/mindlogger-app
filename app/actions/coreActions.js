@@ -21,9 +21,10 @@ export const setAnswer = (data) => ({
     data
 });
 
-export const setActivity = (data) => ({
+export const setActivity = (data, info) => ({
     type: types.SET_ACTIVITY,
-    data
+    data,
+    info
 });
 
 export const setVolume = (volume) => ({

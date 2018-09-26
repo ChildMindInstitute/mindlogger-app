@@ -10,9 +10,8 @@ import { openDrawer } from '../../actions/drawer';
 class ActHeader extends Component {
 
   static propTypes = {
-    themeState: PropTypes.string,
-    changePlatform: PropTypes.func,
-    changeMaterial: PropTypes.func,
+    title: PropTypes.string,
+    onInfo: PropTypes.func,
   }
 
   constructor(props) {
@@ -24,7 +23,7 @@ class ActHeader extends Component {
   }
 
   render() {
-    const { title, openDrawer } = this.props;
+    const { title, openDrawer, onInfo } = this.props;
     return (<Header>
       <Left>
         <Button transparent onPress={openDrawer}>
@@ -35,9 +34,11 @@ class ActHeader extends Component {
           <Title>{title}</Title>
       </Body>
       <Right>
-        <Button transparent onPress={()=>Actions.about_app()}>
+        {onInfo && 
+        <Button transparent onPress={onInfo}>
           <Icon name="information-circle" />
         </Button>
+        }
       </Right>
     </Header>);
   }

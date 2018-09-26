@@ -160,7 +160,6 @@ class Screen extends Component {
   render() {
     let {screen: {meta: data}, globalConfig} = this.props;
     data = data || {};
-    
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>

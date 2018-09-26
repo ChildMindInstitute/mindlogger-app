@@ -197,12 +197,14 @@ export default function coreReducer(state = initialState, action = {}) {
                 if(state.act && action.data.id != state.act.id)
                     return {
                         ...state,
-                        act:action.data,
+                        act: action.data,
+                        actInfo: action.info,
                         answer: undefined
                     }
                 else
                     return {
                         ...state,
+                        actInfo: action.info,
                         act: action.data
                     }
             case types.SET_DATA:

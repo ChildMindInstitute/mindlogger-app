@@ -23,7 +23,8 @@ import Settings from './containers/settings';
 import AboutApp from './containers/about';
 import FrequencyScreen from './containers/activity/frequency';
 
-import Act from './containers/activity/Act';
+import Act from './containers/activity/act';
+import ActInfo from './containers/activity/act-info';
 //Modules
 
 // import SurveyScenes from './modules/survey';
@@ -102,6 +103,7 @@ class AppNavigator extends Component {
               <Scene key="activity" component={ActivityScreen}/>
               <Scene key="frequency" component={FrequencyScreen}/>
               <Scene key='take_act' component={Act} />
+              <Scene key='about_act' component={ActInfo} />
               {/* {SurveyScenes}
               {VoiceScenes}
               {DrawingScenes} */}
