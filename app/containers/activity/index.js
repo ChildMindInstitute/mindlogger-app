@@ -15,7 +15,7 @@ import PushNotification from 'react-native-push-notification';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import { updateUserLocal, setActivity, setAnswer, setNotificationStatus } from '../../actions/coreActions';
 
-import { getObject, getCollection, getFolders, getItems } from '../../actions/api';
+import { getObject, getCollection, getFolders, getItems, getActVariant } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
@@ -52,17 +52,25 @@ class ActivityScreen extends Component {
         this.setState({progress: false})
     }
     downloadAll() {
-        const {getCollection, getFolders, getItems, user} = this.props;
+        const {getCollection, getFolders, getItems, getActVariant, user} = this.props;
         this.setState({progress: true});
-        return getFolders(user._id, 'collection', 'user').then(res => {
+        getCollection('Volumes').then(res => {
             if (res.length>0)
-                return getFolders(res[0]._id, 'volumes', 'folder');
+                return getFolders(res[0]._id, 'volumes');
             else
                 this.promptEmptyActs();
         }).then(volumes => {
             console.log(volumes);
-            if (volumes[0].meta.shortName)
-                return getFolders(volumes[0]._id, 'groups', 'folder');
+            let volumeId;
+            for (let index = 0; index < volumes.length; index++) {
+                const v = volumes[index];
+                if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
+                    volumeId = v._id;
+                    break;
+                }
+            }
+            if (volumeId)
+                return getFolders(volumeId, 'groups', 'folder');
             else
                 this.promptEmptyActs();
         }).then(res => {
@@ -74,9 +82,9 @@ class ActivityScreen extends Component {
             }
         }).then(acts => {
             this.scheduleNotifications(acts);
-            return Promise.all(acts.map(act => getFolders(act._id, 'actVariants', 'folder')
+            return Promise.all(acts.map(act => getActVariant(act._id)
                 .then(arr => {
-                    const variant = arr[arr.length-1];
+                    const variant = this.props.variants[act._id];
                     return getItems(variant._id);
                 })));
         }).then(res => {
@@ -125,8 +133,9 @@ class ActivityScreen extends Component {
     }
 
     onNotificationIOS = (notification) => {
-        let {userInfo:{actId}} = notification;
-        this.startActivityFromId(actId)
+        let {userInfo} = notification;
+        if(userInfo)
+            this.startActivityFromId(userInfo.actId)
     }
 
     onNotificationAndroid = (notification) => {
@@ -229,15 +238,13 @@ class ActivityScreen extends Component {
     }
 
     getVariant(act) {
-        const {tree, data} = this.props;
-        const variants = tree[`folder/${act._id}`];
-        const variantPath = variants[variants.length-1];
-        return data[variantPath];
+        const {variants} = this.props;
+        return variants[act._id];
     }
 
     startActivity(act) {
-        const {setActivity} = this.props;
-        setActivity(this.getVariant(act));
+        const {setActivity, variants} = this.props;
+        setActivity(variants[act._id]);
         Actions.push('take_act');
     }
 
@@ -402,20 +409,20 @@ function bindAction(dispatch) {
             getCollection,
             getFolders,
             getItems,
-            setNotificationStatus
+            setNotificationStatus,
+            getActVariant
         }, dispatch)
   };
 }
 
 const mapStateToProps = state => ({
-  themeState: state.drawer.themeState,
   auth: state.core.auth,
   notifications: state.core.notifications || {},
   checkedTime: state.core.checkedTime,
   user: state.core.self,
   acts: (state.core.folder && state.core.folder.acts) || [],
   data: state.core.data || [],
-  tree: state.core.tree || [],
+  variants: state.core.variants || {},
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

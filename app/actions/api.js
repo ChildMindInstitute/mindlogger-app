@@ -225,3 +225,19 @@ export const getItems = (parentId) => ({
   parentType: 'folder',
   path: `/item?${generateQuery({folderId:parentId})}`,
 });
+
+export const getFoldersDict = (parentId, parentType='folder') => ({
+  type: types.GET_NAMES_HASH,
+  method: 'GET',
+  objectType: 'folder',
+  parentId,
+  parentType: 'folder',
+  path: `/${objectType}?${generateQuery({parentId, parentType})}`,
+});
+
+export const getActVariant = (actId, parentType='folder') => ({
+  type: types.GET_ACT_VARIANT,
+  method: 'GET',
+  actId,
+  path: `/folder?${generateQuery({parentId: actId, parentType})}`,
+});

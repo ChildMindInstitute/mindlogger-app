@@ -32,7 +32,7 @@ export const GET_COLLECTION = 'GET_COLLECTION';
 
 export const SET_DATA_OBJECT = 'SET_DATA_OBJECT';
 export const GET_NAMES_HASH = 'GET_OBJECTS_HASH';
-
+export const GET_ACT_VARIANT = 'GET_ACT_VARIANT';
 
 // CORE ACTIONS
 
