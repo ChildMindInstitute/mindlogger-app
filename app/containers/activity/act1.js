@@ -4,6 +4,8 @@ import {StyleSheet, View, StatusBar} from 'react-native';
 import { Container, Content, Text, Button, Center } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { bindActionCreators } from 'redux';
+import moment from 'moment';
+import DeviceInfo from 'react-native-device-info';
 
 import baseTheme from '../../themes/baseTheme';
 import { getItems, getObject, getFolders, addFolder, addItem } from '../../actions/api';
@@ -11,7 +13,7 @@ import { setAnswer } from '../../actions/coreActions';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import Screen from './screen';
-import moment from 'moment';
+
 
 class Act extends Component {
   constructor(props) {
@@ -94,9 +96,9 @@ class Act extends Component {
         "@id": `folder/${act._id}`,
         name: act.name
       },
-      "devices:os":"devices:iOS",
-      "devices:osversion":"iOS 12.0",
-      "deviceModel":"MLME22L/A",
+      "devices:os":`devices:${DeviceInfo.getSystemName()}`,
+      "devices:osversion":DeviceInfo.getSystemVersion(),
+      "deviceModel":DeviceInfo.getModel(),
       responses: answers,
       responseTime: Date.now()
     }
