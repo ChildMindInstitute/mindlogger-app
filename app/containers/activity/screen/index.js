@@ -93,7 +93,7 @@ class Screen extends Component {
 
   handleSkip = () => {
     const {screen: {meta: data}, onNext, path} = this.props;
-    onNext({'@id': path, data: undefined}, data.skipToScreen);
+    onNext({'@id': path,  data: undefined}, data.skipToScreen);
   }
 
   handleNext = () => {
