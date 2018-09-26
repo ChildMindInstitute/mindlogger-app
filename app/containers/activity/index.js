@@ -13,9 +13,17 @@ import {
 import PushNotification from 'react-native-push-notification';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity, setAnswer, setNotificationStatus, setVolumes } from '../../actions/coreActions';
+import { updateUserLocal, setActivity, setAnswer, setNotificationStatus, setVolumes, setVolume } from '../../actions/coreActions';
 
-import { getObject, getCollection, getFolders, getItems, getActVariant } from '../../actions/api';
+import { 
+    addFolder,
+    getObject,
+    getCollection,
+    getFolders,
+    getItems,
+    getActVariant,
+    getUserCollection
+} from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
@@ -31,7 +39,7 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getCollection, getFolders } = this.props;
+        const {user, acts, getCollection, getFolders, isLogin, volumes, setVolume } = this.props;
         if(!user) {
             console.warn("undefined user")
             return
@@ -45,6 +53,15 @@ class ActivityScreen extends Component {
             PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
+        }
+
+        if (isLogin) {
+            setupResponse();
+        }
+
+        if (volumes && volumes.length > 0) {
+            console.log(volumes);
+            setVolume(volumes[0]);
         }
     }
     promptEmptyActs() {
@@ -92,13 +109,18 @@ class ActivityScreen extends Component {
                 this.promptEmptyActs();
         }).then(volumes => {
             let volumeId;
+            let arr = [];
             for (let index = 0; index < volumes.length; index++) {
                 const v = volumes[index];
                 if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
-                    volumeId = v._id;
-                    setVolumes([v]);
-                    break;
+                    arr.push(v);
                 }
+            }
+            setVolumes(arr);
+            
+            if (arr.length>0) {
+                volumeId = arr[0]._id;
+                setVolume(arr[0]);
             }
             if (volumeId)
                 return getFolders(volumeId, 'groups', 'folder');
@@ -132,6 +154,17 @@ class ActivityScreen extends Component {
         }).catch(err => {
             console.log(err);
             this.setState({progress: false});
+        });
+    }
+
+    setupResponse() {
+        const { addFolder, getUserCollection, user} = this.props;
+        getUserCollection(user._id).then(res => {
+            if (this.props.resCollection == undefined) {
+                addFolder('Responses', {}, user._id, 'user', true).then(res => {
+                    return getUserCollection(user._id);
+                })
+            }
         });
     }
 
@@ -171,29 +204,33 @@ class ActivityScreen extends Component {
     onNotificationIOS = (notification) => {
         let {userInfo} = notification;
         if(userInfo)
-            this.startActivityFromId(userInfo.actId)
+            this.startActivityFromNotification(userInfo.actId)
     }
 
     onNotificationAndroid = (notification) => {
         const { acts } = this.props;
         let index = parseInt(notification.id);
-        this.startActivityFromId(acts[index]);
+        if(acts[index])
+            this.startActivityFromNotification(acts[index]._id);
     }
 
-    startActivityFromId(actId){
-        const {user, acts} = this.props;
-        let act;
-        acts.forEach(element => {
-            if (element._id == actId) {
-                act = element;
-            }
-        });
-        this.startActivity(act);
+    startActivityFromNotification(actId){
+        const {user, acts, setActivity, actData} = this.props;
+        if (actData[actId]) {
+            setActivity(
+                actData[actId].variant,
+                actData[actId].info,
+                {
+                    notificationTime: Date.now()
+                });
+            Actions.push('take_act');
+        }
     }
 
     loadAllActivity = (isReload=false) => {
         if (isReload) {
             this.downloadAll()
+            this.setupResponse()
         }
     }
 
@@ -279,7 +316,6 @@ class ActivityScreen extends Component {
 
     startActivity(act) {
         const {setActivity, actData} = this.props;
-        console.log(actData[act._id]);
         setActivity(actData[act._id].variant, actData[act._id].info);
         Actions.push('take_act');
     }
@@ -448,6 +484,9 @@ function bindAction(dispatch) {
             setNotificationStatus,
             getActVariant,
             setVolumes,
+            setVolume,
+            getUserCollection,
+            addFolder
         }, dispatch)
   };
 }
@@ -456,10 +495,12 @@ const mapStateToProps = state => ({
   auth: state.core.auth,
   notifications: state.core.notifications || {},
   checkedTime: state.core.checkedTime,
+  volumes: state.core.volumes,
   user: state.core.self,
   acts: (state.core.folder && state.core.folder.acts) || [],
   data: state.core.data || [],
   actData: state.core.actData || {},
+  resCollection: state.core.userData && state.core.userData[state.core.self._id] && state.core.userData[state.core.self._id].collections.Responses
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

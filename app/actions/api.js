@@ -241,3 +241,10 @@ export const getActVariant = (actId, parentType='folder') => ({
   actId,
   path: `/folder?${generateQuery({parentId: actId, parentType})}`,
 });
+
+export const getUserCollection = (userId) => ({
+  type: types.GET_USER_COLLECTION,
+  method: 'GET',
+  userId,
+  path: `/folder?${generateQuery({parentId: userId, parentType: 'user'})}`,
+});

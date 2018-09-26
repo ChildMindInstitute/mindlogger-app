@@ -1,6 +1,7 @@
 import {REHYDRATE} from 'redux-persist/constants';
 
 import * as types from '../actions/actionTypes';
+import { GET_USER_COLLECTION } from '../actions/actionTypes';
 
 const initialState = {
 };
@@ -141,7 +142,24 @@ export default function coreReducer(state = initialState, action = {}) {
                         ...state,
                         actData,
                     }
-                    
+                }
+            case GET_USER_COLLECTION:
+                {
+                    const userData = state.userData || {};
+                    let curUserData = userData[action.userId] || {};
+                    const collections = {};
+                    action.response.forEach(v => {
+                        collections[v.name] = v;
+                    });
+                    curUserData = {
+                        ...curUserData,
+                        collections
+                    }
+                    userData[action.userId] = curUserData;
+                    return {
+                        ...state,
+                        userData,
+                    }
                 }
             default:
                 return {
@@ -198,7 +216,8 @@ export default function coreReducer(state = initialState, action = {}) {
                     return {
                         ...state,
                         act: action.data,
-                        actInfo: action.info,
+                        actInfo: action.meta.info,
+                        actOptions: action.meta.options,
                         answer: undefined
                     }
                 else

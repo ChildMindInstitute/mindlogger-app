@@ -112,7 +112,7 @@ const mapDispatchToProps = (dispatch) => ({
             console.log(res)
             return true
         }).then(res => {
-            Actions.reset('activity')
+            Actions.reset('activity', {isLogin: true})
         }).catch(err => {
             console.log(err)
             let errors = {}

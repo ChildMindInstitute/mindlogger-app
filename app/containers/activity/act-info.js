@@ -61,7 +61,6 @@ class ActInfo extends Component {
     if (newIndex<data.screens.length) {
       this.setState({index: newIndex});
     } else {
-      // postAnswer()
       Actions.pop();
     }
   }
