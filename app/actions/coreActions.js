@@ -32,6 +32,11 @@ export const setVolume = (volume) => ({
     data: { volume }
 });
 
+export const setVolumes = (volumes) => ({
+    type: types.SET_DATA,
+    data: { volumes }
+});
+
 export const setDataObject = (object) => ({
     type: types.SET_DATA_OBJECT,
     object

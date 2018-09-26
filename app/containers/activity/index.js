@@ -13,7 +13,7 @@ import {
 import PushNotification from 'react-native-push-notification';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity, setAnswer, setNotificationStatus } from '../../actions/coreActions';
+import { updateUserLocal, setActivity, setAnswer, setNotificationStatus, setVolumes } from '../../actions/coreActions';
 
 import { getObject, getCollection, getFolders, getItems, getActVariant } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
@@ -31,7 +31,7 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getCollection, getFolders, } = this.props;
+        const {user, acts, getCollection, getFolders } = this.props;
         if(!user) {
             console.warn("undefined user")
             return
@@ -51,8 +51,39 @@ class ActivityScreen extends Component {
         Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', buttonText: 'OK'})
         this.setState({progress: false})
     }
+
+    downloadActGroup(actGroup) {
+        const {getFolders, getItems, getActVariant, user} = this.props;
+        return getFolders(actGroup._id, 'acts', 'folder').then(acts => {
+            return Promise.all(acts.map(act => getActVariant(act._id)
+                .then(arr => {
+                    const { variant, info } = this.props.actData[act._id];
+                    return getItems(variant._id).then(res => {
+                        if(info) {
+                            return getItems(info._id)
+                        }
+                    });
+                }))).then(res => {
+                    this.scheduleNotifications(acts);
+                });
+        });
+    }
+
+    downloadInfoGroup(group) {
+        const {getFolders, getItems, getActVariant, user} = this.props;
+        return getFolders(group._id, 'infoActs', 'folder').then(acts => {
+            return Promise.all(acts.map(act => getActVariant(act._id)
+                .then(arr => {
+                    const { variant } = this.props.actData[act._id];
+                    return getItems(variant._id)
+                }))).then(res => {
+                    this.scheduleNotifications(acts);
+                });
+        });
+    }
+
     downloadAll() {
-        const {getCollection, getFolders, getItems, getActVariant, user} = this.props;
+        const {getCollection, getFolders, getItems, getActVariant, setVolumes, user} = this.props;
         this.setState({progress: true});
         getCollection('Volumes').then(res => {
             if (res.length>0)
@@ -60,12 +91,12 @@ class ActivityScreen extends Component {
             else
                 this.promptEmptyActs();
         }).then(volumes => {
-            console.log(volumes);
             let volumeId;
             for (let index = 0; index < volumes.length; index++) {
                 const v = volumes[index];
                 if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
                     volumeId = v._id;
+                    setVolumes([v]);
                     break;
                 }
             }
@@ -74,25 +105,27 @@ class ActivityScreen extends Component {
             else
                 this.promptEmptyActs();
         }).then(res => {
-            console.log(res);
             if (res.length > 0) {
-                return getFolders(res[0]._id, 'acts', 'folder');
+                let actGroup;
+                let infoGroup;
+                res.forEach(group => {
+                    if (group.meta && group.meta.info) {
+                        infoGroup = group
+                    } else {
+                        actGroup = group
+                    }
+                });
+                let arr = [];
+                if (actGroup) {
+                    arr.push(this.downloadActGroup(actGroup));
+                }
+                if (infoGroup) {
+                    arr.push(this.downloadInfoGroup(infoGroup));
+                }
+                return Promise.all(arr);
             } else {
                 this.promptEmptyActs();
             }
-        }).then(acts => {
-            return Promise.all(acts.map(act => getActVariant(act._id)
-                .then(arr => {
-                    const { variant, info } = this.props.actData[act._id];
-                    return getItems(variant._id).then(res => {
-                        if(info) {
-                            console.log(info);
-                            return getItems(info._id)
-                        }
-                    });
-                }))).then(res => {
-                    this.scheduleNotifications(acts);
-                });
         }).then(res => {
             Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
             this.setState({progress: false});
@@ -102,9 +135,6 @@ class ActivityScreen extends Component {
         });
     }
 
-    downloadFromAct(actVariant) {
-        return getItems(actVariant._id, '')
-    }
     componentWillUnmount() {
         PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
     }
@@ -416,7 +446,8 @@ function bindAction(dispatch) {
             getFolders,
             getItems,
             setNotificationStatus,
-            getActVariant
+            getActVariant,
+            setVolumes,
         }, dispatch)
   };
 }

@@ -15,6 +15,13 @@ export default {
   text: {
     fontSize: 14,
   },
+
+  buttons: {
+    padding: 36,
+    fontSize: 18,
+    justifyContent: 'center',
+    height: '80%',
+  },
   
   button:{
     alignSelf: 'center',

@@ -35,15 +35,8 @@ const datas = [
     bg: '#DA4437',
   },
   {
-    name: 'About Codename',
-    route: 'about_codename',
-    icon: 'help-buoy',
-    image: require('../../../img/menu/info.png'),
-    bg: '#4DCAE0',
-  },
-  {
-    name: 'About MindLogger',
-    route: 'about_app',
+    name: 'About',
+    route: 'about',
     icon: 'help-buoy',
     image: require('../../../img/menu/info.png'),
     bg: '#4DCAE0',

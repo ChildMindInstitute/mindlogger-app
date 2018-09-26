@@ -20,11 +20,13 @@ import ForgotPassword from './containers/login/forgot-password';
 import Consent from './containers/login/consent';
 import Signup from './containers/login/signup';
 import Settings from './containers/settings';
-import AboutApp from './containers/about';
+import About from './containers/about';
+import AboutApp from './containers/about/app';
 import FrequencyScreen from './containers/activity/frequency';
 
 import Act from './containers/activity/act';
 import ActInfo from './containers/activity/act-info';
+import VolumeInfo from './containers/activity/volume-info';
 //Modules
 
 // import SurveyScenes from './modules/survey';
@@ -95,7 +97,7 @@ class AppNavigator extends Component {
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
               <Scene key="login" component={Login} initial={true}/>
-              <Scene key="about_app" component={AboutApp} />
+              <Scene key="about" component={About} />
               <Scene key="consent" component={Consent}/>
               <Scene key="sign_up" component={Signup}/>
               <Scene key="forgot_password" component={ForgotPassword}/>
@@ -104,6 +106,8 @@ class AppNavigator extends Component {
               <Scene key="frequency" component={FrequencyScreen}/>
               <Scene key='take_act' component={Act} />
               <Scene key='about_act' component={ActInfo} />
+              <Scene key='about_volume' component={VolumeInfo} />
+              <Scene key='about_app' component={AboutApp} />
               {/* {SurveyScenes}
               {VoiceScenes}
               {DrawingScenes} */}
