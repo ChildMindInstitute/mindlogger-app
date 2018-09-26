@@ -83,6 +83,7 @@ class Act extends Component {
       this.setState({index: newIndex});
     } else {
       return this.postAnswer().then(res => {
+        setAnswer([]);
         Actions.pop();
       });
     }
@@ -102,7 +103,6 @@ class Act extends Component {
       responses: answers,
       responseTime: Date.now()
     }
-    console.log(volume);
     return addFolder(volume.name,{},resCollection._id, 'folder', true).then(folder => {
       let answerName = moment().format('YYYY-M-D') + ' ' + act.name;
       return addItem(answerName, payload, folder._id);

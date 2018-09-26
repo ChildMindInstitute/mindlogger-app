@@ -4,16 +4,24 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { ListView } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner, Thumbnail } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
     Player,
     MediaStates
 } from 'react-native-audio-toolkit';
 import PushNotification from 'react-native-push-notification';
+import Image from '../../components/image/Image';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
-import { updateUserLocal, setActivity, setAnswer, setNotificationStatus, setVolumes, setVolume } from '../../actions/coreActions';
+import {
+    updateUserLocal,
+    setActivity,
+    setNotificationStatus,
+    setVolumes,
+    setVolume,
+    setActs,
+} from '../../actions/coreActions';
 
 import { 
     addFolder,
@@ -29,6 +37,7 @@ import {PushNotificationIOS, Platform} from 'react-native';
 import styles from './styles';
 import { timeArrayFrom } from './NotificationSchedule';
 
+
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
 const DAY_TS = 1000*3600*24;
@@ -39,12 +48,12 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getCollection, getFolders, isLogin, volumes, setVolume } = this.props;
+        const {user, acts, getCollection, getFolders, isLogin, volumes, setVolume, volume } = this.props;
         if(!user) {
             console.warn("undefined user")
             return
         }
-        if (acts.length == 0) {
+        if (volumes.length == 0) {
             this.downloadAll();
         } else {
             this.scheduleNotifications(acts);
@@ -56,12 +65,7 @@ class ActivityScreen extends Component {
         }
 
         if (isLogin) {
-            setupResponse();
-        }
-
-        if (volumes && volumes.length > 0) {
-            console.log(volumes);
-            setVolume(volumes[0]);
+            this.setupResponse();
         }
     }
     promptEmptyActs() {
@@ -81,7 +85,7 @@ class ActivityScreen extends Component {
                         }
                     });
                 }))).then(res => {
-                    this.scheduleNotifications(acts);
+                    return acts;
                 });
         });
     }
@@ -93,40 +97,13 @@ class ActivityScreen extends Component {
                 .then(arr => {
                     const { variant } = this.props.actData[act._id];
                     return getItems(variant._id)
-                }))).then(res => {
-                    this.scheduleNotifications(acts);
-                });
+                })))
         });
     }
 
-    downloadAll() {
-        const {getCollection, getFolders, getItems, getActVariant, setVolumes, user} = this.props;
-        this.setState({progress: true});
-        getCollection('Volumes').then(res => {
-            if (res.length>0)
-                return getFolders(res[0]._id, 'volumes');
-            else
-                this.promptEmptyActs();
-        }).then(volumes => {
-            let volumeId;
-            let arr = [];
-            for (let index = 0; index < volumes.length; index++) {
-                const v = volumes[index];
-                if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
-                    arr.push(v);
-                }
-            }
-            setVolumes(arr);
-            
-            if (arr.length>0) {
-                volumeId = arr[0]._id;
-                setVolume(arr[0]);
-            }
-            if (volumeId)
-                return getFolders(volumeId, 'groups', 'folder');
-            else
-                this.promptEmptyActs();
-        }).then(res => {
+    downloadVolume(volume) {
+        const {getFolders} = this.props;
+        return getFolders(volume._id, 'groups', 'folder').then(res => {
             if (res.length > 0) {
                 let actGroup;
                 let infoGroup;
@@ -137,17 +114,56 @@ class ActivityScreen extends Component {
                         actGroup = group
                     }
                 });
+                volume.acts=[];
                 let arr = [];
                 if (actGroup) {
-                    arr.push(this.downloadActGroup(actGroup));
+                    arr.push(this.downloadActGroup(actGroup).then(acts => {
+                        acts.forEach(act => {
+                            act.volumeId = volume._id;
+                        });
+                        volume.acts = acts;
+                    }));
                 }
                 if (infoGroup) {
                     arr.push(this.downloadInfoGroup(infoGroup));
                 }
                 return Promise.all(arr);
-            } else {
-                this.promptEmptyActs();
             }
+        })
+
+    }
+
+    downloadAll = () => {
+        const {getCollection, getFolders, getItems, getActVariant, setVolumes, user, setActs} = this.props;
+        this.setState({progress: true});
+        getCollection('Volumes').then(res => {
+            if (res.length>0)
+                return getFolders(res[0]._id, 'volumes');
+            else
+                this.promptEmptyActs();
+        }).then(arr => {
+            let volumeId;
+            let volumes = [];
+            for (let index = 0; index < arr.length; index++) {
+                const v = arr[index];
+                if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
+                    volumes.push(v);
+                }
+            }
+            let promiseArr = [];
+            for (let index = 0; index < volumes.length; index++) {
+                const volume = volumes[index];
+                promiseArr.push(this.downloadVolume(volume));
+            }
+            return Promise.all(promiseArr).then(res => {
+                setVolumes(volumes);
+                let acts = [];
+                volumes.forEach(v => {
+                    acts.push(v.acts)
+                });
+                setActs(acts);
+                this.scheduleNotifications(acts);
+            });
         }).then(res => {
             Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
             this.setState({progress: false});
@@ -181,6 +197,7 @@ class ActivityScreen extends Component {
             let state = notifications[variant._id] || {};
             let { lastTime } = state;
             console.log(variant);
+            if (variant.meta.notification == undefined) return;
             let times = timeArrayFrom(variant.meta.notification, lastTime);
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };
@@ -215,7 +232,14 @@ class ActivityScreen extends Component {
     }
 
     startActivityFromNotification(actId){
-        const {user, acts, setActivity, actData} = this.props;
+        const {user, acts, setActivity, actData, volumes, setVolume} = this.props;
+        const act = acts.find( a => a._id == actId )
+        const volume = volumes.find(v => v._id == act.volumeId);
+        if(volume) {
+            setVolume(volume);
+        } else {
+            return;
+        }
         if (actData[actId]) {
             setActivity(
                 actData[actId].variant,
@@ -314,8 +338,9 @@ class ActivityScreen extends Component {
         return this.props.actData[act._id].variant;
     }
 
-    startActivity(act) {
-        const {setActivity, actData} = this.props;
+    startActivity(act, secId) {
+        const {setActivity, actData, volumes} = this.props;
+        setVolume(volumes[secId]);
         setActivity(actData[act._id].variant, actData[act._id].info);
         Actions.push('take_act');
     }
@@ -366,14 +391,21 @@ class ActivityScreen extends Component {
 
     _renderRow = (act, secId, rowId) => {
         let data = act.meta || {};
+        const {volumes} = this.props;
+        console.log(volumes[secId].meta);
         return (
-        <ListItem onPress={()=>this._selectRow(act, rowId)}>
-        <Body>
-            <Text>{act.name}</Text>
-            <Text numberOfLines={1} note>{data.description ? data.description : ' '}</Text>
-        </Body>
-        <Right>
-        </Right>
+        <ListItem avatar onPress={()=>this._selectRow(act, rowId)}>
+            <Left>
+                { volumes[secId].meta && volumes[secId].meta.logoImage ?
+                <Image thumb square file={volumes[secId].meta.logoImage}/> :
+                <Button rounded><Text>{volumes[secId].meta.shortName[0]}</Text></Button> }
+            </Left>
+            <Body>
+                <Text>{act.name}</Text>
+                <Text numberOfLines={1} note>{data.description ? data.description : ' '}</Text>
+            </Body>
+            <Right>
+            </Right>
         </ListItem>
         )
     }
@@ -407,7 +439,14 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {user, acts} = this.props
+        const {user, volumes} = this.props;
+        let dataBlob = {};
+        let volumeIds = [];
+        volumes.forEach((volume,idx) => {
+            dataBlob[idx] = volume.acts || [];
+            volumeIds.push(volume._id);
+        });
+        console.log(dataBlob);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -435,7 +474,7 @@ class ActivityScreen extends Component {
             <Content>
                 { this.state.progress && <Spinner /> }
             <List
-                dataSource={ds.cloneWithRows(acts)}
+                dataSource={ds.cloneWithRowsAndSections(dataBlob)}
                 renderRow={this._renderRow}
                 renderLeftHiddenRow={this._renderLeftHiddenRow}
                 renderRightHiddenRow={this._renderRightHiddenRow}
@@ -476,7 +515,6 @@ function bindAction(dispatch) {
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
     ...bindActionCreators({
             setActivity,
-            setAnswer,
             getObject,
             getCollection,
             getFolders,
@@ -485,6 +523,7 @@ function bindAction(dispatch) {
             getActVariant,
             setVolumes,
             setVolume,
+            setActs,
             getUserCollection,
             addFolder
         }, dispatch)
@@ -493,11 +532,11 @@ function bindAction(dispatch) {
 
 const mapStateToProps = state => ({
   auth: state.core.auth,
+  acts: state.core.acts || [],
   notifications: state.core.notifications || {},
   checkedTime: state.core.checkedTime,
-  volumes: state.core.volumes,
-  user: state.core.self,
-  acts: (state.core.folder && state.core.folder.acts) || [],
+  volumes: state.core.volumes || [],
+  user: state.core.self || {},
   data: state.core.data || [],
   actData: state.core.actData || {},
   resCollection: state.core.userData && state.core.userData[state.core.self._id] && state.core.userData[state.core.self._id].collections.Responses
