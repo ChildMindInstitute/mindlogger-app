@@ -72,6 +72,8 @@ function bindActions(dispatch) {
     return bindActionCreators({openDrawer}, dispatch)
 }
 
-const mapStateToProps = state => ({themeState: state.drawer.themeState, routes: state.drawer.routes});
+const mapStateToProps = state => ({
+  themeState: state.drawer.themeState, routes: state.drawer.routes
+});
 
 export default connect(mapStateToProps, bindActions)(AboutApp);

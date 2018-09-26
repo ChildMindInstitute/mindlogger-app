@@ -56,7 +56,7 @@ class Login extends Component { // eslint-disable-line
 
     componentDidUpdate() {
         if (this.props.auth.token) {
-            Actions.push('activity');
+            Actions.reset('activity');
         }
     }
 
@@ -112,7 +112,7 @@ const mapDispatchToProps = (dispatch) => ({
             console.log(res)
             return true
         }).then(res => {
-            Actions.push('activity')
+            Actions.reset('activity')
         }).catch(err => {
             console.log(err)
             let errors = {}
@@ -123,7 +123,6 @@ const mapDispatchToProps = (dispatch) => ({
 })
 
 const mapStateToProps = state => ({
-    themeState: state.drawer.themeState,
     routes: state.drawer.routes,
     auth: state.core.auth || {},
     user: state.core.self || {}

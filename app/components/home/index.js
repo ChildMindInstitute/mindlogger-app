@@ -50,7 +50,6 @@ function bindActions(dispatch) {
 }
 
 const mapStateToProps = state => ({
-  themeState: state.drawer.themeState,
   routes: state.drawer.routes,
 });
 

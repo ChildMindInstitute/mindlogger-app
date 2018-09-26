@@ -32,6 +32,7 @@ import Act from './containers/activity/Act';
 
 
 import statusBarColor from './themes/variables';
+import DrawerCheck from './DrawerCheck';
 
 const RouterWithRedux = connect()(Router);
 
@@ -50,28 +51,30 @@ class AppNavigator extends Component {
     });
   }
 
-  componentDidUpdate() {
-    if (this.props.drawerState === 'opened') {
-      this.openDrawer();
-    }
+  // componentDidUpdate() {
+  //   if (this.props.drawerState === 'opened') {
+  //     this.openDrawer();
+  //   }
 
-    if (this.props.drawerState === 'closed') {
-      this._drawer._root.close();
-    }
-  }
+  //   if (this.props.drawerState === 'closed') {
+  //     this._drawer._root.close();
+  //   }
+  // }
 
   popRoute() {
     Actions.pop();
   }
 
-  openDrawer() {
+  openDrawer = () => {
     this._drawer._root.open();
   }
 
-  closeDrawer() {
-    if (this.props.drawerState === 'opened') {
-      this.props.closeDrawer();
-    }
+  closeDrawer = () => {
+    this._drawer._root.close();
+  }
+
+  onCloseDrawer = () => {
+    this.props.closeDrawer();
   }
 
   render() {
@@ -80,13 +83,14 @@ class AppNavigator extends Component {
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
           ref={(ref) => { this._drawer = ref; }}
-          content={<SideBar navigator={this._navigator} />}
-          onClose={() => this.closeDrawer()}
+          content={<SideBar navigator={this._navigator}/>}
+          onClose={() => this.onCloseDrawer()}
         >
           <StatusBar
             hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
             backgroundColor={statusBarColor.statusBarColor}
           />
+          <DrawerCheck onOpenDrawer={this.openDrawer} onCloseDrawer={this.closeDrawer}/>
           <RouterWithRedux>
             <Scene key="root" hideNavBar>
               <Scene key="login" component={Login} initial={true}/>
@@ -115,7 +119,7 @@ const bindAction = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  drawerState: state.drawer.drawerState,
+  
   themeState: state.drawer.themeState,
 });
 

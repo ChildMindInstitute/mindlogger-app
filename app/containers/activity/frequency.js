@@ -155,7 +155,6 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => ({
   acts: state.core.acts,
-  themeState: state.drawer.themeState,
   user: state.core.auth,
 });
 
