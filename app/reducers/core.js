@@ -120,20 +120,26 @@ export default function coreReducer(state = initialState, action = {}) {
                         data,
                     }
                 }
-            case types.GET_ACT_VARIANT:
+            case types.GET_ACT:
                 {
-                    let variants = state.variants || {};
+                    let actData = state.actData || {};
+                    let info;
                     let variant;
                     action.response.forEach(v => {
-                        if (!(v.meta && v.meta.info)) {
+                        if (v.meta && v.meta.info) {
+                            info = v;
+                        } else {
                             variant = v;
                         }
                     })
-                    if (variant)
-                        variants[action.actId] = variant;
+                    actData[action.actId] = {
+                        variant,
+                        info
+                    }
+                    
                     return {
                         ...state,
-                        variants
+                        actData,
                     }
                     
                 }

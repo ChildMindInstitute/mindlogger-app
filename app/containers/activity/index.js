@@ -84,8 +84,12 @@ class ActivityScreen extends Component {
             this.scheduleNotifications(acts);
             return Promise.all(acts.map(act => getActVariant(act._id)
                 .then(arr => {
-                    const variant = this.props.variants[act._id];
-                    return getItems(variant._id);
+                    console.log(arr, this.props.actData);
+                    const { variant, info } = this.props.actData[act._id];
+                    return getItems(variant._id).then(res => {
+                        if(info)
+                            return getItems(info._id)
+                    });
                 })));
         }).then(res => {
             Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
@@ -237,14 +241,9 @@ class ActivityScreen extends Component {
         })
     }
 
-    getVariant(act) {
-        const {variants} = this.props;
-        return variants[act._id];
-    }
-
     startActivity(act) {
-        const {setActivity, variants} = this.props;
-        setActivity(variants[act._id]);
+        const {setActivity, actData} = this.props;
+        setActivity(actData[act._id].variant);
         Actions.push('take_act');
     }
 
@@ -422,7 +421,7 @@ const mapStateToProps = state => ({
   user: state.core.self,
   acts: (state.core.folder && state.core.folder.acts) || [],
   data: state.core.data || [],
-  variants: state.core.variants || {},
+  actData: state.core.actData || {},
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

@@ -236,7 +236,7 @@ export const getFoldersDict = (parentId, parentType='folder') => ({
 });
 
 export const getActVariant = (actId, parentType='folder') => ({
-  type: types.GET_ACT_VARIANT,
+  type: types.GET_ACT,
   method: 'GET',
   actId,
   path: `/folder?${generateQuery({parentId: actId, parentType})}`,

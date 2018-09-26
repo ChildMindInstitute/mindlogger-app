@@ -48,7 +48,8 @@ class Screen extends Component {
     });
   }
   componentDidMount() {
-    const {screen: {meta: data}} = this.props;
+    let {screen: {meta: data}} = this.props;
+    data = data || {};
     if(data.audio && data.audio.display && data.audio.files.length > 0) {
       this.player = new Player(randomLink(data.audio.files), {
         autoDestroy: true
@@ -104,11 +105,12 @@ class Screen extends Component {
   }
 
   renderButtons() {
-    const {
+    let {
       screen: {meta: data},
       globalConfig,
       length,
     } = this.props;
+    data = data || {};
     const {answer, nextScreen, validated} = this.state;
     const {surveyType, canvasType} = data;
 
@@ -156,8 +158,9 @@ class Screen extends Component {
 
 
   render() {
-    const {screen: {meta: data}, globalConfig} = this.props;
-    console.log(this.props)
+    let {screen: {meta: data}, globalConfig} = this.props;
+    data = data || {};
+    
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>
