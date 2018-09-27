@@ -26,6 +26,7 @@ class UserForm extends Component {
             <Form>
                 <Field component={FormInputItem} name="firstName" placeholder="First Name" style={styles.text}/>
                 <Field component={FormInputItem} name="lastName" placeholder="Last Name" style={styles.text}/>
+                <Field component={FormInputItem} placeholder="Current password" name="oldPassword" style={styles.text} secureTextEntry={true}/>
                 <Field component={FormInputItem} placeholder="New password" name="password" style={styles.text} secureTextEntry={true}/>
                 <Button
                   light
@@ -64,13 +65,13 @@ class SettingScreen extends Component {
     Actions.pop()
   }
 
-  onUserSubmit = ({firstName, lastName, password}) => {
+  onUserSubmit = ({firstName, lastName, oldPassword, password}) => {
     const {user, updateUser, changePassword, updateUserLocal} = this.props
     let arr = []
     let body = {...user, firstName, lastName}
     arr.push(updateUser(user._id, body))
     if (password && password.length>0) {
-      arr.push(changePassword(user._id, {password}))
+      arr.push(changePassword(oldPassword, password))
     }
     if(arr.length > 0) {
       Promise.all(arr).then(result => {
@@ -105,7 +106,7 @@ class SettingScreen extends Component {
           <View style={styles.subSection}>
             <UserReduxForm onSubmit={this.onUserSubmit} initialValues={user}/>
           </View>
-          <Text style={styles.subHeader}>Notification</Text>
+          {/* <Text style={styles.subHeader}>Notification</Text> */}
           
         </Content>
       </Container>

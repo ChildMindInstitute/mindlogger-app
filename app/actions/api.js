@@ -19,14 +19,20 @@ export const signUp = (body) => ({
   type: types.SIGN_UP,
   method: 'POST',
   path: '/user',
-  body,
+  body:{
+    ...body,
+    admin: true,
+  },
 });
 
-export const changePassword = (id, body) => ({
+export const changePassword = (oldPassword, password) => ({
   type: types.CHANGE_PASSWORD,
   method: 'PUT',
-  path: `/user/${id}/password`,
-  body,
+  path: `/user/password`,
+  body:{
+    old: oldPassword,
+    new: password,
+  },
 });
 
 export const signIn = ({user, password}) => ({
@@ -49,7 +55,7 @@ export const updateUser = (id, body) => ({
 
 export const forgotPassword = (body) => ({
     type: types.FORGOT_PASSWORD,
-    method: 'POST',
+    method: 'PUT',
     path: '/user/password/temporary',
     body,
 });

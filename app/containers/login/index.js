@@ -4,6 +4,7 @@ import {StatusBar, TouchableOpacity, Image} from 'react-native';
 import {connect} from 'react-redux';
 import {
     Container,
+    Content,
     Button,
     H3,
     Text,
@@ -76,7 +77,7 @@ class Login extends Component { // eslint-disable-line
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
-                <View style={styles.container}>
+                <Content style={styles.container}>
                     <Text style={styles.header}>
                         Mindlogger
                     </Text>
@@ -90,14 +91,14 @@ class Login extends Component { // eslint-disable-line
                     <View>
                         <TouchableOpacity onPress={this.onAbout}><Text style={styles.whiteText}>What is Mindlogger?</Text></TouchableOpacity>
                     </View>
-                    <View style={{marginTop: 56}}>
+                    <View style={{marginTop: 26}}>
                         <Image
                             square
                             style={styles.logo}
                             source={logoImage}
                             />
                     </View>
-                </View>
+                </Content>
             </Container>
         );
     }

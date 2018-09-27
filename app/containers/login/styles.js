@@ -27,7 +27,7 @@ export default {
   header: {
     marginTop: 60,
     height: 100,
-    fontSize: 48,
+    fontSize: 40,
     textAlign: 'center',
     color: '#FFFFFF',
   },
@@ -69,7 +69,7 @@ export default {
     fontSize: 20,
   },
   bottomRow:{
-    marginTop: 40,
+    marginTop: 20,
     flexDirection:'row',
     alignItems: 'center',
     justifyContent: 'center',

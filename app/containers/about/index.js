@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import {StatusBar, Image} from 'react-native';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left} from 'native-base';
+import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast} from 'native-base';
 import {Actions} from 'react-native-router-flux';
 
 import { openDrawer } from '../../actions/drawer';
@@ -20,6 +20,11 @@ class AboutScreen extends Component { // eslint-disable-line
     }
 
     openAboutInfo(info){
+      if(info == undefined)
+      {
+        Toast.show({text: 'No information screen', position: 'bottom', type: 'info', buttonText: 'OK'})
+        return;
+      }
       const {actData} = this.props;
       const {variant} = actData[info._id];
       
@@ -29,11 +34,13 @@ class AboutScreen extends Component { // eslint-disable-line
     openAboutApp = () => {
       Actions.push('about_app');
     }
+    renderVolumeInfo = (volume) => {
+      const info = volume.infoActs && volume.infoActs.find(act => act.meta && act.meta.info)
+      return <Button key={volume._id} transparent onPress={() => this.openAboutInfo(info)}><Icon name="information-circle" /><Text>About {volume.name}</Text></Button>
 
+    }
     render() {
-      const {acts, volumes} = this.props;
-      let info = acts.find(act => act.meta && act.meta.info)
-      let volume = volumes[0];
+      const {volumes} = this.props;
       return (
         <Container style={styles.container}>
           <StatusBar barStyle='light-content'/>
@@ -50,7 +57,14 @@ class AboutScreen extends Component { // eslint-disable-line
           </Header>
           <View style={{flex:1}}>
             <View style={styles.buttons}>
-              {volume && info && <Button transparent onPress={() => this.openAboutInfo(info)}><Icon name="information-circle" /><Text>About {volume.name}</Text></Button>}
+              {volumes && volumes.length>0 ?
+                <Text>Find out more about each of your Activity Sets and about the Mindlogger platform.</Text>
+                :
+                <Text>You aren't currently enrolled in any Activities. Find out more about the Mindlogger data collection and analysis platform by tapping "About Mindlogger" below</Text>
+              }
+              {
+                volumes && volumes.map(this.renderVolumeInfo)
+              }
               <Button transparent onPress={this.openAboutApp}><Icon name="information-circle" /><Text>About app</Text></Button>
             </View>
           </View>
@@ -66,7 +80,6 @@ function bindActions(dispatch) {
 const mapStateToProps = state => ({
   volumes: state.core.volumes,
   actData: state.core.actData || {},
-  acts: state.core.folder.infoActs || [],
   themeState: state.drawer.themeState, routes: state.drawer.routes
 });
 

@@ -17,23 +17,23 @@ const drawerImage = require('../../../img/CMI_white_logo.png');
 
 const datas = [
   {
-    name: 'Activities',
-    route: 'activity',
-    image: require('../../../img/menu/biking.png'),
-    bg: '#C5F442',
-  },
-  {
-    name: 'Dashboard',
-    route: 'dashboard',
-    image: require('../../../img/menu/diagram.png'),
-    bg: '#477EEA',
-  },
-  {
     name: 'Settings',
     route: 'settings',
     image: require('../../../img/menu/settings.png'),
     bg: '#DA4437',
   },
+  {
+    name: 'Activities',
+    route: 'activity',
+    image: require('../../../img/menu/biking.png'),
+    bg: '#C5F442',
+  },
+  // {
+  //   name: 'Dashboard',
+  //   route: 'dashboard',
+  //   image: require('../../../img/menu/diagram.png'),
+  //   bg: '#477EEA',
+  // },
   {
     name: 'About',
     route: 'about',
@@ -86,7 +86,7 @@ class SideBar extends Component {
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
           <View style={styles.drawerCover}>
-            <Text style={styles.drawerCoverText}>MindLogger</Text>
+            <Text style={styles.drawerCoverText}>Mindlogger</Text>
           </View>
           <List style={styles.drawerList} 
             dataArray={datas} renderRow={data =>

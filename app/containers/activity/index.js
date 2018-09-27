@@ -69,7 +69,7 @@ class ActivityScreen extends Component {
         }
     }
     promptEmptyActs() {
-        Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', buttonText: 'OK'})
+        Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', duration: 1500})
         this.setState({progress: false})
     }
 
@@ -97,7 +97,9 @@ class ActivityScreen extends Component {
                 .then(arr => {
                     const { variant } = this.props.actData[act._id];
                     return getItems(variant._id)
-                })))
+                }))).then(res => {
+                    return acts;
+                })
         });
     }
 
@@ -115,6 +117,7 @@ class ActivityScreen extends Component {
                     }
                 });
                 volume.acts=[];
+                volume.infoActs=[];
                 let arr = [];
                 if (actGroup) {
                     arr.push(this.downloadActGroup(actGroup).then(acts => {
@@ -125,7 +128,10 @@ class ActivityScreen extends Component {
                     }));
                 }
                 if (infoGroup) {
-                    arr.push(this.downloadInfoGroup(infoGroup));
+                    arr.push(this.downloadInfoGroup(infoGroup).then(acts => {
+                        console.log("info", acts);
+                        volume.infoActs = acts;
+                    }));
                 }
                 return Promise.all(arr);
             }
@@ -392,7 +398,6 @@ class ActivityScreen extends Component {
     _renderRow = (act, secId, rowId) => {
         let data = act.meta || {};
         const {volumes} = this.props;
-        console.log(volumes[secId].meta);
         return (
         <ListItem avatar onPress={()=>this._selectRow(act, rowId)}>
             <Left>

@@ -16,6 +16,11 @@ export default {
     fontSize: 14,
   },
 
+  boldText: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginBottom: 8,
+  },
   buttons: {
     padding: 36,
     fontSize: 18,

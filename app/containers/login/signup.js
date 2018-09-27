@@ -4,6 +4,7 @@ import {StatusBar} from 'react-native';
 import {connect} from 'react-redux';
 import {
     Container,
+    Content,
     Button,
     H3,
     Text,
@@ -16,6 +17,7 @@ import {
     Right,
     Row,
     Body,
+    Title,
     Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
@@ -32,10 +34,10 @@ class SignUpForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} label="First name" name="first_name" style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Last name" name="last_name" style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Email" name="email" style={styles.text} floatingLabel />
-                <Field component={FormInputItem} label="Password" name="password" style={styles.text} floatingLabel secureTextEntry={true}/>
+                <Field component={FormInputItem} placeholder="First name" name="first_name" style={styles.text} placeholderTextColor="#aaa" />
+                <Field component={FormInputItem} placeholder="Last name" name="last_name" style={styles.text} placeholderTextColor="#aaa"/>
+                <Field component={FormInputItem} placeholder="Email" name="email" style={styles.text} placeholderTextColor="#aaa"/>
+                <Field component={FormInputItem} placeholder="Password" name="password" style={styles.text} placeholderTextColor="#aaa" secureTextEntry={true}/>
                 <Button
                     warning
                     block
@@ -69,11 +71,12 @@ class SignUp extends Component { // eslint-disable-line
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
-                <View style={styles.container}>
-                    <View style={styles.header}>
+                <Content style={styles.container2}>
+                    <View>
+                        <Title style={styles.text}>New User</Title>
                     </View>
                     <SignUpReduxForm onSubmit={this.onSignUp} onForgot={this.onForgot} />
-                </View>
+                </Content>
             </Container>
         );
     }

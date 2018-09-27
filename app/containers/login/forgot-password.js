@@ -38,11 +38,14 @@ class ForgotPassword extends Component { // eslint-disable-line
             <Container>
                 <StatusBar barStyle='light-content'/>
                 <View style={styles.container2}>
-                    <Text style={styles.text}>Email address</Text>
                     <Item>
-                        <Input style={styles.text} type="email" autoCapitalize='none' onChangeText={this.onChangeText} value={email} />
+                        <Input
+                            placeholder="Email address"
+                            style={styles.text}
+                            placeholderTextColor="#aaa"
+                            type="email" autoCapitalize='none' onChangeText={this.onChangeText} value={email} />
                     </Item>
-                    <Button full block onPress={()=>forgotPassword(email)}><Text>Reset password</Text></Button>
+                    <Button style={styles.button} block onPress={()=>forgotPassword(email)}><Text style={styles.buttonText}>Reset password</Text></Button>
                 </View>
             </Container>
         );
@@ -52,7 +55,7 @@ class ForgotPassword extends Component { // eslint-disable-line
 const mapDispatchToProps = (dispatch) => ({
     forgotPassword: (email) => {
         return dispatch(forgotPassword({email})).then(res => {
-            console.log(res)
+            Toast.show({text:'Reset email has been sent', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(err => {
             console.log(err)
