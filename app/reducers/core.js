@@ -178,6 +178,8 @@ export default function coreReducer(state = initialState, action = {}) {
                     return state;
             case types.SIGN_OUT:
                 return {
+                    ...state,
+                    volumes: [],
                     auth: false
                 }
             case types.SET_USER:

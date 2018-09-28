@@ -20,7 +20,7 @@ import {
     Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
 import {signIn} from '../../actions/api';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
@@ -117,7 +117,7 @@ const mapDispatchToProps = (dispatch) => ({
         }).catch(err => {
             console.log(err)
             let errors = {}
-            Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+            Toast.show({text: err.message, position: 'top', type: 'danger', buttonText: 'OK'})
             throw new SubmissionError(errors)
         })
     }

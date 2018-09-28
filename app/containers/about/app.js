@@ -49,13 +49,13 @@ class AboutApp extends Component { // eslint-disable-line
                   Mindlogger is a general-purpose data collection platform:
                   
                   {"\n"}
-                  App builder → Build iPhone/Android apps online without coding!
+                  - App builder → Build iPhone/Android apps online without coding!
                   {"\n"}
-                  Mobile apps → Collect data remotely!
+                  - Mobile apps → Collect data remotely!
                   {"\n"}
-                  Database and analytics → Securely store and analyze data in the cloud!
+                  - Database and analytics → Securely store and analyze data in the cloud!
                   {"\n"}
-                  Online dashboard → View analyzed data online!
+                  - Online dashboard → View analyzed data online!
                   {"\n"}
                 </Text>
                 <Text style={styles.boldText}>What can Mindlogger do?</Text>

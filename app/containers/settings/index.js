@@ -95,7 +95,7 @@ class SettingScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>Activities</Title>
+            <Title>Settings</Title>
           </Body>
           <Right>
           </Right>

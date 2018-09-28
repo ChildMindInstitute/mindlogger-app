@@ -13,7 +13,7 @@ export const FormInputItem = ({ input: {...input}, label, stackedLabel, floating
     return( <Item stackedLabel={stackedLabel} floatingLabel={floatingLabel} style={itemStyle} error= {hasError} last>
                 <Label style={props.style}>{label}</Label>
                 <Input {...props} onChangeText={input.onChange} {...input}/>
-                {hasError ? <Text style={{color:'#aaa'}}>{error}</Text> : <Text />}
+                {/* {hasError ? <Text style={{color:'#aaa'}}>{error}</Text> : <Text />} */}
             </Item> )
 }
 export const FormSwitchItem = ({ input, label, name, meta: { touched, error, warning }, ...inputProps}) => {

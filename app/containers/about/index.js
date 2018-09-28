@@ -36,7 +36,10 @@ class AboutScreen extends Component { // eslint-disable-line
     }
     renderVolumeInfo = (volume) => {
       const info = volume.infoActs && volume.infoActs.find(act => act.meta && act.meta.info)
-      return <Button key={volume._id} transparent onPress={() => this.openAboutInfo(info)}><Icon name="information-circle" /><Text>About {volume.name}</Text></Button>
+      return (<Button key={volume._id} iconLeft transparent style={styles.button} onPress={() => this.openAboutInfo(info)}>
+        <Icon name="information-circle" />
+        <Text style={styles.buttonText}>About {volume.name}</Text>
+        </Button>)
 
     }
     render() {
@@ -55,19 +58,23 @@ class AboutScreen extends Component { // eslint-disable-line
             </Body>
             <Right></Right>
           </Header>
-          <View style={{flex:1}}>
-            <View style={styles.buttons}>
+          <Content style={styles.content}>
+            <View>
+              <View style={styles.headerText}>
               {volumes && volumes.length>0 ?
                 <Text>Find out more about each of your Activity Sets and about the Mindlogger platform.</Text>
                 :
                 <Text>You aren't currently enrolled in any Activities. Find out more about the Mindlogger data collection and analysis platform by tapping "About Mindlogger" below</Text>
               }
-              {
-                volumes && volumes.map(this.renderVolumeInfo)
-              }
-              <Button transparent onPress={this.openAboutApp}><Icon name="information-circle" /><Text>About app</Text></Button>
+              </View>
+              <View style={styles.buttons}>
+                {
+                  volumes && volumes.map(this.renderVolumeInfo)
+                }
+                <Button iconLeft transparent style={styles.button} onPress={this.openAboutApp}><Icon name="information-circle" /><Text style={styles.buttonText}>About Mindlogger</Text></Button>
+              </View>
             </View>
-          </View>
+          </Content>
         </Container>
       );
     }

@@ -110,13 +110,13 @@ class Act extends Component {
   }
 }
 
-export default connect(state => ({
-    act: state.core.act,
-    info: state.core.actInfo,
-    actOptions: state.core.actOptions,
-    volume: state.core.volume,
-    resCollection: state.core.userData[state.core.self._id].collections.Responses,
-    answers: (state.core.answerData && state.core.answerData[state.core.act._id]) || [], 
+export default connect(({core: {self, userData, act, actInfo, answerData, volume, actOptions,...core}}) => ({
+    act,
+    info: actInfo,
+    actOptions: actOptions,
+    volume: volume,
+    resCollection: userData && self && userData[self._id].collections && userData[self._id].collections.Responses,
+    answers: (answerData && answerData[act._id]) || [], 
   }),
   {
     getObject, getItems, setAnswer, addFolder, addItem

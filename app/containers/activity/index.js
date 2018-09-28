@@ -200,6 +200,7 @@ class ActivityScreen extends Component {
         if (checkedTime && checkedTime + DAY_TS > Date.now()) return;
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
+            if (!variant) return;
             let state = notifications[variant._id] || {};
             let { lastTime } = state;
             console.log(variant);
@@ -341,7 +342,7 @@ class ActivityScreen extends Component {
     }
 
     getVariant(act) {
-        return this.props.actData[act._id].variant;
+        return this.props.actData[act._id] && this.props.actData[act._id].variant;
     }
 
     startActivity(act, secId) {
@@ -535,16 +536,16 @@ function bindAction(dispatch) {
   };
 }
 
-const mapStateToProps = state => ({
-  auth: state.core.auth,
-  acts: state.core.acts || [],
-  notifications: state.core.notifications || {},
-  checkedTime: state.core.checkedTime,
-  volumes: state.core.volumes || [],
-  user: state.core.self || {},
-  data: state.core.data || [],
-  actData: state.core.actData || {},
-  resCollection: state.core.userData && state.core.userData[state.core.self._id] && state.core.userData[state.core.self._id].collections.Responses
+const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, data, actData, userData}}) => ({
+  auth: auth,
+  acts: acts || [],
+  notifications: notifications || {},
+  checkedTime,
+  volumes: volumes || [],
+  user: self || {},
+  data: data || [],
+  actData: actData || {},
+  resCollection: userData && userData[self._id] && userData[self._id].collections && userData[self._id].collections.Responses
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

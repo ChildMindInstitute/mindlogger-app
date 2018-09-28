@@ -38,7 +38,7 @@ export default {
   },
   whiteText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 45,
     padding: 0,
     textAlign: 'center',

@@ -16,28 +16,26 @@ export default {
     fontSize: 14,
   },
 
+  headerText: {
+    marginBottom: 20,
+  },
+
   boldText: {
     fontWeight: 'bold',
     fontSize: 14,
     marginBottom: 8,
   },
   buttons: {
-    padding: 36,
-    fontSize: 18,
-    justifyContent: 'center',
-    height: '80%',
+    alignItems: 'flex-start',
   },
   
   button:{
-    alignSelf: 'center',
-    marginTop: 36,
-    width: 'auto',
-    height: 40,
-    backgroundColor: '#FFFFFF',
+    marginTop: 10,
+    paddingLeft: 0,
   },
   buttonText: {
     color: '#0067A0',
-    fontSize: 20,
+    fontSize: 16,
   },
   logo: {
     marginTop: 14,
