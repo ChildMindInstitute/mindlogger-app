@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {StyleSheet, TouchableOpacity, ImageBackground, Image} from 'react-native';
 import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, Col, Radio, CheckBox, H2, View, Grid, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
-import baseTheme from '../../../../theme'
-import SurveyInputComponent from './SurveyInputComponent'
-import styles from './styles'
+
+import baseTheme from '../../../../theme';
+import SurveyInputComponent from './SurveyInputComponent';
+import styles from './styles';
+import GImage from '../../../../components/image/Image';
 
 class SurveyTableSelector extends Component {
     constructor(props) {
@@ -70,7 +72,7 @@ class SurveyTableSelector extends Component {
                 return (<TouchableOpacity key={colIdx} onPress={() => {
                     this.onChoiceSelect(rowIdx, colIdx)
                 }}>
-                <Image style={answer[rowIdx].includes(colIdx) ? { ...this.imageStyle, borderWidth: 3, borderColor: '#ee5555'} : this.imageStyle} source={{uri: randomLink(config.rows[rowIdx][colIdx].file)}}/>
+                <GImage style={answer[rowIdx].includes(colIdx) ? { ...this.imageStyle, borderWidth: 3, borderColor: '#ee5555'} : this.imageStyle} file={config.rows[rowIdx][colIdx].file} />
                 </TouchableOpacity>)
             case 'multi_sel':
                 return (<TouchableOpacity style={styles.buttonStyle} transparent onPress={() => this.onMultiSelect(rowIdx, colIdx) }><CheckBox style={{marginLeft:-4}} checked={answer[rowIdx][colIdx]} onPress={() => this.onMultiSelect(rowIdx, colIdx) } /></TouchableOpacity>)

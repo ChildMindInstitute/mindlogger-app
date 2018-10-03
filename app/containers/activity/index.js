@@ -346,8 +346,9 @@ class ActivityScreen extends Component {
     }
 
     startActivity(act, secId) {
-        const {setActivity, actData, volumes} = this.props;
-        setVolume(volumes[secId]);
+        const {setActivity, actData, volumes, setVolume} = this.props;
+        const idx = parseInt(secId);
+        setVolume(volumes[idx]);
         setActivity(actData[act._id].variant, actData[act._id].info);
         Actions.push('take_act');
     }
@@ -369,8 +370,8 @@ class ActivityScreen extends Component {
         }
     }
 
-    _selectRow = (act, rowId) => {
-        this.startActivity(act)
+    _selectRow = (act, rowId, secId) => {
+        this.startActivity(act, secId);
     }
 
     _editRow = (act, secId, rowId, rowMap) => {
@@ -400,7 +401,7 @@ class ActivityScreen extends Component {
         let data = act.meta || {};
         const {volumes} = this.props;
         return (
-        <ListItem avatar onPress={()=>this._selectRow(act, rowId)}>
+        <ListItem avatar onPress={()=>this._selectRow(act, rowId, secId)}>
             <Left>
                 { volumes[secId].meta && volumes[secId].meta.logoImage ?
                 <Image thumb square file={volumes[secId].meta.logoImage}/> :

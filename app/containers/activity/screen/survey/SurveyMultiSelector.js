@@ -41,17 +41,27 @@ class SurveyMultiSelector extends Component {
         <View>
         {
           options.map((row, idx) => {
-            return (
-              <ListItem key={idx} onPress={() => this.checkValue(idx)}>
-                <Body>
-                  {row.type == 'text' &&  <Text>{row.text}</Text>}
-                  {row.type == 'file' &&  <GImage file={row.file}/>}
-                </Body>
-                <Right>
-                  <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
-                </Right>
-              </ListItem>
-              )
+            if (row) {
+              return (
+                <ListItem key={idx} onPress={() => this.checkValue(idx)}>
+                  <Body>
+                    {row.type == 'text' &&  <Text>{row.text}</Text>}
+                    {row.type == 'file' &&  <GImage file={row.file}/>}
+                  </Body>
+                  <Right>
+                    <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
+                  </Right>
+                </ListItem>
+                )
+            } else {
+              return (<ListItem key={idx} onPress={() => this.checkValue(idx)}>
+                  <Body>
+                  </Body>
+                  <Right>
+                    <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
+                  </Right>
+                </ListItem>)
+            }
           })
         }
         </View>

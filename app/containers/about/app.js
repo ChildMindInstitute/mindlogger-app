@@ -65,7 +65,7 @@ class AboutApp extends Component { // eslint-disable-line
                 </Text>
                 <Text style={styles.boldText}>Who uses Mindlogger?</Text>
                 <Text style={styles.text}>
-                  Mindboggle is being used to gather data in large-scale research studies, in the clinic for remote mental health assessment, and by others interested in collecting and analyzing data from themselves or from other people. 
+                  Mindlogger is being used to gather data in large-scale research studies, in the clinic for remote mental health assessment, and by others interested in collecting and analyzing data from themselves or from other people. 
                   {"\n"}
                   {"\n"}
                   
