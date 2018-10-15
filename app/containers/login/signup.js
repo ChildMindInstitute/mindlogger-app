@@ -8,14 +8,12 @@ import {
     Button,
     H3,
     Text,
-    Item,
-    Label,
-    Input,
     Form,
     View,
     Header,
+    Left,
+    Icon,
     Right,
-    Row,
     Body,
     Title,
     Toast,
@@ -71,10 +69,18 @@ class SignUp extends Component { // eslint-disable-line
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
+                <Header>
+                    <Left>
+                        <Button transparent onPress={() => Actions.pop()}>
+                        <Icon name="close" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>New User</Title>
+                    </Body>
+                    <Right></Right>
+                </Header>
                 <Content style={styles.container2}>
-                    <View>
-                        <Title style={styles.text}>New User</Title>
-                    </View>
                     <SignUpReduxForm onSubmit={this.onSignUp} onForgot={this.onForgot} />
                 </Content>
             </Container>

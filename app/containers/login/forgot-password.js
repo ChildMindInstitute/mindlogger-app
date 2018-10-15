@@ -8,13 +8,14 @@ import {
     H3,
     Text,
     Item,
-    Label,
     Input,
     Form,
     View,
     Header,
+    Left,
     Right,
-    Row,
+    Icon,
+    Title,
     Body,
     Toast,
 } from 'native-base';
@@ -37,6 +38,17 @@ class ForgotPassword extends Component { // eslint-disable-line
         return (
             <Container>
                 <StatusBar barStyle='light-content'/>
+                <Header>
+                    <Left>
+                        <Button transparent onPress={() => Actions.pop()}>
+                        <Icon name="close" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>Forgot password</Title>
+                    </Body>
+                    <Right></Right>
+                </Header>
                 <View style={styles.container2}>
                     <Item>
                         <Input

@@ -21,6 +21,9 @@ class SurveyMultiSelector extends Component {
     const index = answer.indexOf(value);
     if (index<0) {
       answer.push(value);
+      if (optionsMax==1 && optionsMin==1) {
+        answer = [value];
+      }
     } else {
       answer.splice(index, 1);
     }

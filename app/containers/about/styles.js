@@ -33,6 +33,16 @@ export default {
     marginTop: 10,
     paddingLeft: 0,
   },
+  aboutLink: {
+    flexDirection: 'row',
+    color: '#0067A0',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  aboutIcon: {
+    color: '#0067A0',
+    marginRight: 10,
+  },
   buttonText: {
     color: '#0067A0',
     fontSize: 16,

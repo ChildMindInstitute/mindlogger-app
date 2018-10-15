@@ -3,7 +3,7 @@ const text="This app is part of the Mindlogger data collection and analysis plat
 
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {StatusBar, Image} from 'react-native';
+import {StatusBar, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast} from 'native-base';
@@ -36,10 +36,13 @@ class AboutScreen extends Component { // eslint-disable-line
     }
     renderVolumeInfo = (volume) => {
       const info = volume.infoActs && volume.infoActs.find(act => act.meta && act.meta.info)
-      return (<Button key={volume._id} iconLeft transparent style={styles.button} onPress={() => this.openAboutInfo(info)}>
-        <Icon name="information-circle" />
-        <Text style={styles.buttonText}>About {volume.name}</Text>
-        </Button>)
+      return (<TouchableOpacity
+        key={volume._id}
+        style={styles.aboutLink}
+        onPress={() => this.openAboutInfo(info)}>
+        <Icon name="information-circle" style={styles.aboutIcon} />
+        <Text numberOfLines={3} style={styles.buttonText}>About {volume.name}</Text>
+        </TouchableOpacity>)
 
     }
     render() {
@@ -71,7 +74,10 @@ class AboutScreen extends Component { // eslint-disable-line
                 {
                   volumes && volumes.map(this.renderVolumeInfo)
                 }
-                <Button iconLeft transparent style={styles.button} onPress={this.openAboutApp}><Icon name="information-circle" /><Text style={styles.buttonText}>About Mindlogger</Text></Button>
+                <TouchableOpacity style={styles.aboutLink} onPress={this.openAboutApp}>
+                  <Icon name="information-circle" style={styles.aboutIcon}/>
+                  <Text style={styles.buttonText}>About Mindlogger</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </Content>
