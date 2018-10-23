@@ -129,7 +129,6 @@ class ActivityScreen extends Component {
                 }
                 if (infoGroup) {
                     arr.push(this.downloadInfoGroup(infoGroup).then(acts => {
-                        console.log("info", acts);
                         volume.infoActs = acts;
                     }));
                 }
@@ -165,7 +164,7 @@ class ActivityScreen extends Component {
                 setVolumes(volumes);
                 let acts = [];
                 volumes.forEach(v => {
-                    acts.push(v.acts)
+                    acts = acts.concat(v.acts)
                 });
                 setActs(acts);
                 this.scheduleNotifications(acts);
@@ -196,19 +195,20 @@ class ActivityScreen extends Component {
 
     scheduleNotifications(acts) {
         let { notifications, checkedTime, setNotificationStatus} = this.props;
-        console.log("last check:", checkedTime);
-        if (checkedTime && checkedTime + DAY_TS > Date.now()) return;
+        console.log("last check:", checkedTime, acts);
+        if (checkedTime && checkedTime + DAY_TS > Date.now()) {
+            console.log("Notifications: ", notifications);
+            return;
+        }
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
-            if (!variant) return;
+            console.log(variant);
+            if (!variant || variant.meta.notification == undefined) return;
             let state = notifications[variant._id] || {};
             let { lastTime } = state;
-            console.log(variant);
-            if (variant.meta.notification == undefined) return;
             let times = timeArrayFrom(variant.meta.notification, lastTime);
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };
-            console.log(times);
             times.forEach(time => {
                 PushNotification.localNotificationSchedule({
                     id: `${idx}`,
@@ -220,7 +220,7 @@ class ActivityScreen extends Component {
               lastTime = time.getTime();
               console.log("scheduledAt", time);
             });
-            notifications[act._id] = { modifiedAt: Date.now(), lastTime };
+            notifications[act._id] = { modifiedAt: Date.now(), lastTime, times };
         });
         setNotificationStatus(notifications);
     }
@@ -266,9 +266,7 @@ class ActivityScreen extends Component {
     }
 
     pushRoute(route) {
-        console.log(route)
         Actions[route]();
-        //this.props.pushRoute({ key: route, index: 1 }, this.props.navigation.key);
     }
 
     popRoute() {
@@ -357,7 +355,6 @@ class ActivityScreen extends Component {
     editActivityDetail(rowId) {
         let actIndex = rowId;
         let act = this.props.acts[actIndex];
-        console.log(secId)
         if(secId == 'surveys') {
             const survey = act.act_data
             if (!survey.questions || survey.questions.length == 0) {
@@ -454,7 +451,6 @@ class ActivityScreen extends Component {
             dataBlob[idx] = volume.acts || [];
             volumeIds.push(volume._id);
         });
-        console.log(dataBlob);
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>

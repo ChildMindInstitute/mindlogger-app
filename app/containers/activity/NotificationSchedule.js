@@ -27,7 +27,7 @@ export const timeArrayFrom = (config, lastDate) => {
   notifications.days = [];
   notifications.times = [];
   let today = new Date(); // Now.
-  if (config.calendarDay) { // Calendar dates
+  if (config.calendarDay && Array.isArray(config.calendarDay)) { // Calendar dates
     config.calendarDay.forEach(function(dayStr) {
       let day = Date.parse(dayStr);
       day>=today ? notifications.days.push(day) : null;
@@ -41,7 +41,6 @@ export const timeArrayFrom = (config, lastDate) => {
   }
   if (config.modeWeek && config.weekDay && config.weekDay.length) { // Weekly
     todayDay = today.getDay(); // Today's day of the week.
-    console.log("week mode");
     config.weekDay.forEach(function(day) {
       let aftermorrows = [day - todayDay + (day<todayDay ? 7 : 0)]; // Get the appropriate weekday this week unless that day is today or earlier, in which case get next week.
       for (var plusDays=0; aftermorrows[plusDays]<=28; plusDays++) { // Calculate 5 weeks of days.
@@ -53,15 +52,16 @@ export const timeArrayFrom = (config, lastDate) => {
         notifications.days.push(dateAssign); // Push assignment date to Array.
       });
     });
-    if (config.countPerDay){
-      let n = parseInt(config.countPerDay)
+    if (config.times && config.times.length>0){
+      let n = config.times.length
       for (let index = 0; index < n; index++) {
         let step = 1000*3600*24/n;
-        if (config.timeMode == 'scheduled') {
-          let t = Date.parse(config.time)
-          notifications.times.push(new Date(t + step*index));
-        } else if (config.timeMode == 'random') {
-          notifications.times.push(getRandomTime(config.timeStart, config.timeEnd))
+        let dayTime = config.times[index];
+        if (dayTime.timeMode == 'scheduled' && dayTime.time) {
+          let t = Date.parse(dayTime.time)
+          notifications.times.push(new Date(t));
+        } else if (dayTime.timeMode == 'random' && dayTime.timeStart && dayTime.timeEnd) {
+          notifications.times.push(getRandomTime(dayTime.timeStart, dayTime.timeEnd))
         }
       }
     }
