@@ -15,7 +15,7 @@ class GImage extends Component {
   render() {
     const {file, auth, thumb, ...props} = this.props;
     if (!thumb) {
-      if(Array.isArray(file)) 
+      if(Array.isArray(file))
         return (
           <CachedImage source={{uri: randomLink(file, auth.token)}} {...props}/>
         )

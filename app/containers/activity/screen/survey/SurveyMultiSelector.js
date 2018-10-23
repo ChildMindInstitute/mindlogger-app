@@ -49,7 +49,7 @@ class SurveyMultiSelector extends Component {
                 <ListItem key={idx} onPress={() => this.checkValue(idx)}>
                   <Body>
                     {row.type == 'text' &&  <Text>{row.text}</Text>}
-                    {row.type == 'file' &&  <GImage file={row.file}/>}
+                    {row.type == 'file' &&  <GImage file={row.file} style={{width: '60%', height: 100, resizeMode: 'cover'}}/>}
                   </Body>
                   <Right>
                     <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />

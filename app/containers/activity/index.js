@@ -349,6 +349,7 @@ class ActivityScreen extends Component {
         const {setActivity, actData, volumes, setVolume} = this.props;
         const idx = parseInt(secId);
         setVolume(volumes[idx]);
+        console.log(actData[act._id]);
         setActivity(actData[act._id].variant, actData[act._id].info);
         Actions.push('take_act');
     }

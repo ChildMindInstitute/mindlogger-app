@@ -230,8 +230,9 @@ export default function coreReducer(state = initialState, action = {}) {
                 else
                     return {
                         ...state,
-                        actInfo: action.info,
-                        act: action.data
+                        actInfo: action.meta.info,
+                        act: action.data,
+                        actOptions: action.meta.options,
                     }
             case types.SET_DATA:
                 return {

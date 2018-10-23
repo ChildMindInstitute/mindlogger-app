@@ -34,6 +34,12 @@ export default class SurveySection extends Component {
           answer={answer}
           onChange={onChange}
           />
+    // else if (type == 'audio')
+    //     return <SurveyAudio
+    //       config={config}
+    //       answer={answer}
+    //       onChange={onChange}
+    //       />
     else
       return (<View></View>);
   }

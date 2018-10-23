@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Content, Text } from 'native-base';
+import { Content, Text, Button, Icon } from 'native-base';
 import {
   Player,
   MediaStates
@@ -48,20 +48,39 @@ class Screen extends Component {
     });
   }
   componentDidMount() {
-    let {screen: {meta: data}} = this.props;
+    let {screen: {meta: data}, auth} = this.props;
     data = data || {};
     if(data.audio && data.audio.display && data.audio.files.length > 0) {
-      this.player = new Player(randomLink(data.audio.files), {
+      this.audioLink = randomLink(data.audio.files, auth.token);
+      this.playAudio();
+    }
+  }
+
+  playAudio = () => {
+    if(this.player && this.player.state != MediaStates.DESTROYED) {
+      this.player.stop();
+      this.player = null;
+    } else {
+      console.log(this.audioLink);
+      this.player = new Player(this.audioLink, {
         autoDestroy: true
       }).prepare((err) => {
           if (err) {
               console.log('error at _reloadPlayer():');
               console.log(err);
           } else {
-              this.player.playPause((err, playing) => {
+              this.player.playPause((err, audioPlaying) => {
               })
           }
       });
+    }
+  }
+
+  componentWillUnmount() {
+    let {screen: {meta: data}} = this.props;
+    data = data || {};
+    if(data.audio && this.player && this.player.state != MediaStates.DESTROYED) {
+      this.player.destroy();
     }
   }
 
@@ -101,7 +120,7 @@ class Screen extends Component {
 
   handleNext = () => {
     const {screen, onNext, path} = this.props;
-    const {meta: data} = screen;
+    const {meta: data={}} = screen;
     const {answer, nextScreen, validated} = this.state;
     let payload = {'@id': path, data: answer};
     if(data.text)
@@ -118,7 +137,7 @@ class Screen extends Component {
     } = this.props;
     data = data || {};
     const {answer, nextScreen, validated} = this.state;
-    const {surveyType, canvasType} = data;
+    const {surveyType, canvasType, textEntry} = data;
 
     const isFinal = (nextScreen || (this.props.index + 1)) >= length;
 
@@ -129,7 +148,12 @@ class Screen extends Component {
 
     let buttonText = 'Take';
     const spinner = false;
-    if (answer) {
+    if (!surveyType && !canvasType && !textEntry) {
+      return (<View style={styles.footer}>
+          <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+          <ScreenButton transparent onPress={this.handleNext} text=">"/>
+      </View>);
+    } else if (answer) {
       buttonText = 'Redo';
       return (<View style={styles.footer}>
         { prevable ? 
@@ -166,6 +190,7 @@ class Screen extends Component {
   render() {
     let {screen: {meta: data}, globalConfig} = this.props;
     data = data || {};
+    let hasAudio = data.audio && data.audio.display && data.audio.files.length>0;
     return (
       <View style={{flex: 1}}>
         <Content style={{ flex: 1}}>
@@ -173,6 +198,7 @@ class Screen extends Component {
             <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
           }
           <View style={styles.paddingContent}>
+            {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
             <Text style={styles.text}>{data.text}</Text>
             {
               data.surveyType && <SurveySection
@@ -199,9 +225,10 @@ class Screen extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  screen: state.core.objects && state.core.objects[`folder/${ownProps.path}`][`item/${ownProps.name}`] || {meta:{}},
-  answers: state.core.answerData && state.core.answerData[ownProps.path],
+const mapStateToProps = ({core: {objects, answerData, auth}}, ownProps) => ({
+  screen: (objects && objects[`folder/${ownProps.path}`][`item/${ownProps.name}`]) || {meta:{}},
+  answers: answerData && answerData[ownProps.path],
+  auth,
 })
 
 const mapDispatchToProps = {
