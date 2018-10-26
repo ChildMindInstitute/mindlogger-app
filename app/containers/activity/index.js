@@ -70,12 +70,13 @@ class ActivityScreen extends Component {
                 console.log( 'NOTIFICATION:', notification );
         
                 // process the notification
-                if (Platform.OS == 'ios') {
-                    this.onNotificationIOS(notification);
-                } else {
-                    this.onNotificationAndroid(notification);
-                }
+                // if (Platform.OS == 'ios') {
+                //     this.onNotificationIOS(notification);
+                // } else {
+                //     this.onNotificationAndroid(notification);
+                // }
                 // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+                Actions.push('push_act',{notification});
                 notification.finish(PushNotificationIOS.FetchResult.NoData);
             },
         
@@ -101,7 +102,7 @@ class ActivityScreen extends Component {
             requestPermissions: true,
         });
         if (Platform.OS == 'ios') {
-            //PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
+            PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
         }

@@ -25,6 +25,7 @@ import AboutApp from './containers/about/app';
 import FrequencyScreen from './containers/activity/frequency';
 
 import Act from './containers/activity/act';
+import PushAct from './containers/activity/push-act';
 import ActInfo from './containers/activity/act-info';
 import VolumeInfo from './containers/activity/volume-info';
 //Modules
@@ -104,6 +105,7 @@ class AppNavigator extends Component {
               <Scene key="settings" component={Settings}/>
               <Scene key="activity" component={ActivityScreen}/>
               <Scene key="frequency" component={FrequencyScreen}/>
+              <Scene key='push_act' component={PushAct} />
               <Scene key='take_act' component={Act} />
               <Scene key='about_act' component={ActInfo} />
               <Scene key='about_volume' component={VolumeInfo} />
