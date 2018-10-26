@@ -84,13 +84,13 @@ class Screen extends Component {
     }
   }
 
-  setAnswer(data, validated) {
+  setAnswer(data, validated, callback) {
     let {answer} = this.state;
     answer = {...answer, ...data};
     if (validated == undefined) {
-      this.setState({answer});
+      this.setState({answer}, callback);
     } else {
-      this.setState({answer, validated});
+      this.setState({answer, validated}, callback);
     }
   }
 
@@ -127,6 +127,20 @@ class Screen extends Component {
       payload.text = data.text;
     onNext(payload, nextScreen);
     
+  }
+
+  onSurvey = (survey, validated, next) => {
+    let { length, index } = this.props;
+    const {nextScreen, validated} = this.state;
+
+    const isFinal = (nextScreen || (index + 1)) >= length;
+    if(next && !isFinal) {
+      this.setAnswer({survey}, validated, () => {
+        this.handleNext();
+      });
+    } else {
+      this.setAnswer({survey}, validated);
+    }
   }
 
   renderButtons() {
@@ -205,7 +219,7 @@ class Screen extends Component {
                 type={data.surveyType}
                 config={data.survey}
                 answer={this.answer('survey')}
-                onChange={(survey, validated) => this.setAnswer({survey}, validated)}
+                onChange={this.onSurvey}
                 onNextChange={this.onNextChange}
                 />
             }
