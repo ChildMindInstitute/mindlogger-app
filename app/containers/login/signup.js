@@ -32,8 +32,9 @@ class SignUpForm extends Component {
         const { handleSubmit, onSubmit, submitting, initialValues, onForgot } = this.props;
         return (
             <Form>
-                <Field component={FormInputItem} placeholder="First name" name="first_name" style={styles.text} placeholderTextColor="#aaa" />
-                <Field component={FormInputItem} placeholder="Last name" name="last_name" style={styles.text} placeholderTextColor="#aaa"/>
+                <Field component={FormInputItem} placeholder="Username" name="login" style={styles.text} placeholderTextColor="#aaa" />
+                <Field component={FormInputItem} placeholder="First name" name="firstName" style={styles.text} placeholderTextColor="#aaa" />
+                <Field component={FormInputItem} placeholder="Last name" name="lastName" style={styles.text} placeholderTextColor="#aaa"/>
                 <Field component={FormInputItem} placeholder="Email" name="email" style={styles.text} placeholderTextColor="#aaa"/>
                 <Field component={FormInputItem} placeholder="Password" name="password" style={styles.text} placeholderTextColor="#aaa" secureTextEntry={true}/>
                 <Button
@@ -54,9 +55,9 @@ SignUpReduxForm = reduxForm({
 })(SignUpForm)
 
 class SignUp extends Component { // eslint-disable-line
-    onSignUp = ({email, password, first_name, last_name}) => {
+    onSignUp = (body) => {
         const {signUp, updateUserProfile} = this.props
-        return signUp({first_name, last_name, email, password, role: 'user', newsletter: true}).then(user => {
+        return signUp(body).then(user => {
             Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {
