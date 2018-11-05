@@ -8,14 +8,12 @@ import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text ,
 import { Actions } from 'react-native-router-flux';
 import {
     Player,
-    MediaStates
 } from 'react-native-audio-toolkit';
 import PushNotification from 'react-native-push-notification';
 import Image from '../../components/image/Image';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {
-    updateUserLocal,
     setActivity,
     setNotificationStatus,
     setVolumes,
@@ -48,7 +46,7 @@ class ActivityScreen extends Component {
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, getCollection, getFolders, isLogin, volumes, setVolume, volume } = this.props;
+        const {user, acts, isLogin, volumes} = this.props;
         if(!user) {
             console.warn("undefined user")
             return
@@ -117,7 +115,7 @@ class ActivityScreen extends Component {
     }
 
     downloadActGroup(actGroup) {
-        const {getFolders, getItems, getActVariant, user} = this.props;
+        const {getFolders, getItems, getActVariant} = this.props;
         return getFolders(actGroup._id, 'acts', 'folder').then(acts => {
             return Promise.all(acts.map(act => getActVariant(act._id)
                 .then(arr => {
@@ -134,7 +132,7 @@ class ActivityScreen extends Component {
     }
 
     downloadInfoGroup(group) {
-        const {getFolders, getItems, getActVariant, user} = this.props;
+        const {getFolders, getItems, getActVariant} = this.props;
         return getFolders(group._id, 'infoActs', 'folder').then(acts => {
             return Promise.all(acts.map(act => getActVariant(act._id)
                 .then(arr => {
@@ -210,7 +208,7 @@ class ActivityScreen extends Component {
                     acts = acts.concat(v.acts)
                 });
                 setActs(acts);
-                this.scheduleNotifications(acts);
+                this.scheduleNotifications(acts, true);
             });
         }).then(res => {
             Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
@@ -236,19 +234,23 @@ class ActivityScreen extends Component {
         PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
     }
 
-    scheduleNotifications(acts) {
+    scheduleNotifications(acts, isReset = false) {
         let { notifications, checkedTime, setNotificationStatus} = this.props;
         console.log("last check:", checkedTime, acts);
-        if (checkedTime && checkedTime + DAY_TS > Date.now()) {
+        if (isReset) {
+            PushNotification.cancelAllLocalNotifications();
+        } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
             console.log("Notifications: ", notifications);
             return;
         }
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
-            console.log(variant);
             if (!variant || variant.meta.notification == undefined) return;
             let state = notifications[variant._id] || {};
             let { lastTime } = state;
+            if(isReset) {
+                lastTime = undefined;
+            }
             let times = timeArrayFrom(variant.meta.notification, lastTime);
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };

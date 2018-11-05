@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
-import { Content, List, ListItem, Text, Button, Right, Body, CheckBox, Radio } from 'native-base';
+import { Content, List, ListItem, Text, Button, Right, Body, CheckBox, Radio, Toast } from 'native-base';
 import { connect } from 'react-redux';
 
 import baseTheme from '../../../../themes/baseTheme';
@@ -28,9 +28,17 @@ class SurveyMultiSelector extends Component {
     } else {
       const index = answer.indexOf(value);
       if (index<0) {
-        answer.push(value);
+        if (answer.length<optionsMax) {
+          answer.push(value);
+        } else {
+          Toast.show({text: `You can not select more than ${optionsMax} options`, type: 'info', duration: 1000});
+        }
       } else {
-        answer.splice(index, 1);
+        if (answer.length>optionsMin) {
+          answer.splice(index, 1);
+        } else if (answer.length==optionsMin) {
+          Toast.show({text: `You can not select less than ${optionsMin} options`, type: 'info', duration: 1000});
+        }
       }
     }
     this.onAnswer(answer);

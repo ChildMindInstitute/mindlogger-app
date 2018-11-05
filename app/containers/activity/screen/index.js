@@ -52,7 +52,8 @@ class Screen extends Component {
     data = data || {};
     if(data.audio && data.audio.display && data.audio.files.length > 0) {
       this.audioLink = randomLink(data.audio.files, auth.token);
-      this.playAudio();
+      if (data.audio.autoPlay)
+        this.playAudio();
     }
   }
 
@@ -121,7 +122,7 @@ class Screen extends Component {
   handleNext = () => {
     const {screen, onNext, path} = this.props;
     const {meta: data={}} = screen;
-    const {answer, nextScreen, validated} = this.state;
+    const {answer, nextScreen} = this.state;
     let payload = {'@id': path, data: answer};
     if(data.text)
       payload.text = data.text;
@@ -131,7 +132,7 @@ class Screen extends Component {
 
   onSurvey = (survey, validated, next) => {
     let { length, index } = this.props;
-    const {nextScreen, validated} = this.state;
+    const {nextScreen} = this.state;
 
     const isFinal = (nextScreen || (index + 1)) >= length;
     if(next && !isFinal) {
