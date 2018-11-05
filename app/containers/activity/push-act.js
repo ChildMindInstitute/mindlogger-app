@@ -5,12 +5,12 @@ import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner, Thumbnail } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import Image from '../../components/image/Image';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {
     setActivity,
     setVolume,
+    setNotificationStatus,
 } from '../../actions/coreActions';
 
 import { 
@@ -22,13 +22,10 @@ import {
     getActVariant,
     getUserCollection
 } from '../../actions/api';
-import {PushNotificationIOS, Platform} from 'react-native';
+import {Platform} from 'react-native';
 
 import styles from './styles';
-import { timeArrayFrom } from './NotificationSchedule';
 
-
-var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
 const DAY_TS = 1000*3600*24;
 class PushActivityScreen extends Component {
@@ -157,9 +154,7 @@ function bindAction(dispatch) {
             getItems,
             setNotificationStatus,
             getActVariant,
-            setVolumes,
             setVolume,
-            setActs,
             getUserCollection,
             addFolder
         }, dispatch)

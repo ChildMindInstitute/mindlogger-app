@@ -18,8 +18,8 @@ function timeFromString(time) {
 function getRandomTime(minTime, maxTime) {
   min = 0;
   max = maxTime - minTime;
-  minTime.setTime(minTime.getTime() + Math.floor(Math.random() * (max + 1)));
-  return minTime;
+  console.log(minTime);
+  return minTime + Math.floor(Math.random() * (max + 1));
 }
 
 export const timeArrayFrom = (config, lastDate) => {
@@ -61,7 +61,9 @@ export const timeArrayFrom = (config, lastDate) => {
           let t = Date.parse(dayTime.time)
           notifications.times.push(new Date(t));
         } else if (dayTime.timeMode == 'random' && dayTime.timeStart && dayTime.timeEnd) {
-          notifications.times.push(getRandomTime(dayTime.timeStart, dayTime.timeEnd))
+          let t1 = Date.parse(dayTime.timeStart);
+          let t2 = Date.parse(dayTime.timeEnd);
+          notifications.times.push(new Date(getRandomTime(t1, t2)))
         }
       }
     }
