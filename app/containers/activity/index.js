@@ -100,7 +100,6 @@ class ActivityScreen extends Component {
             requestPermissions: true,
         });
         if (Platform.OS == 'ios') {
-            PushNotificationIOS.addEventListener('localNotification',this.onNotificationIOS);
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
         }
@@ -231,7 +230,6 @@ class ActivityScreen extends Component {
     }
 
     componentWillUnmount() {
-        PushNotificationIOS.removeEventListener('localNotification', this.onNotificationIOS);
     }
 
     scheduleNotifications(acts, isReset = false) {

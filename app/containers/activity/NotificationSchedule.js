@@ -70,11 +70,12 @@ export const timeArrayFrom = (config, lastDate) => {
   }
   console.log(notifications);
   notifications.compiled = []; // Compile calculated dates with calculated times
+  let startTime = lastDate || Date.now();
   notifications.days.forEach(function(day) {
     notifications.times.forEach(function(time) {
       let scheduledTime = new Date(day.getFullYear(), day.getMonth(), day.getDate(), time.getHours(), time.getMinutes(), time.getSeconds());
       if (notifications.compiled.findIndex(function(x) {return x.valueOf()===scheduledTime.valueOf()})===-1){
-        if(lastDate == undefined || scheduledTime.getTime() > lastDate)
+        if(scheduledTime.getTime() > startTime)
           notifications.compiled.push(scheduledTime);
       }
     });

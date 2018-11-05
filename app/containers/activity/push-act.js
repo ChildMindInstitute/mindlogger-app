@@ -30,14 +30,13 @@ import styles from './styles';
 const DAY_TS = 1000*3600*24;
 class PushActivityScreen extends Component {
 
-    static propTypes = {
-        openDrawer: PropTypes.func,
-    }
     componentWillMount() {
       const {notification} = this.props;
       this.setState({})
-      if(Platform.OS === 'ios') {
-        this.onNotificationIOS(notification)
+      if(Platform.OS == 'ios') {
+        this.onNotificationIOS(notification);
+      } else {
+        this.onNotificationAndroid(notification);
       }
     }
     promptEmptyActs() {
@@ -63,9 +62,9 @@ class PushActivityScreen extends Component {
     }
 
     onNotificationIOS = (notification) => {
-        let {data:{userInfo}} = notification;
-        if(userInfo)
-            this.startActivityFromNotification(userInfo.actId)
+        let {data} = notification;
+        if(data)
+            this.startActivityFromNotification(data.actId)
     }
 
     onNotificationAndroid = (notification) => {
@@ -76,7 +75,7 @@ class PushActivityScreen extends Component {
     }
 
     startActivityFromNotification(actId){
-        const {user, acts, setActivity, actData, volumes, setVolume} = this.props;
+        const {acts, setActivity, actData, volumes, setVolume} = this.props;
         const act = acts.find( a => a._id == actId )
         const volume = volumes.find(v => v._id == act.volumeId);
         if(volume) {
