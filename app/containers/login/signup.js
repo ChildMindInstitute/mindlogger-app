@@ -58,11 +58,11 @@ class SignUp extends Component { // eslint-disable-line
     onSignUp = (body) => {
         const {signUp, updateUserProfile} = this.props
         return signUp(body).then(user => {
-            Toast.show({text:'Success', position: 'bottom', type:'success', duration:1000})
+            Toast.show({text:'Success', position: 'top', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(error => {
             console.log(error)
-            Toast.show({text: error.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+            Toast.show({text: error.message, position: 'top', type: 'danger', buttonText: 'ok'})
         })
     }
     render() {

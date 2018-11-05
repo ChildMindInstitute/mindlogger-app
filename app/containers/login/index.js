@@ -6,17 +6,9 @@ import {
     Container,
     Content,
     Button,
-    H3,
     Text,
-    Item,
-    Label,
-    Input,
     Form,
     View,
-    Header,
-    Right,
-    Row,
-    Body,
     Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';

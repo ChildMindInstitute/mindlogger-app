@@ -20,7 +20,6 @@ import {
     Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
-import { reduxForm, Field } from 'redux-form';
 import {forgotPassword} from '../../actions/api';
 import styles from './styles';
 
@@ -67,11 +66,11 @@ class ForgotPassword extends Component { // eslint-disable-line
 const mapDispatchToProps = (dispatch) => ({
     forgotPassword: (email) => {
         return dispatch(forgotPassword({email})).then(res => {
-            Toast.show({text:'Reset email has been sent', position: 'bottom', type:'success', duration:1000})
+            Toast.show({text:'Reset email has been sent', position: 'top', type:'success', duration:1000})
             Actions.replace('login')
         }).catch(err => {
             console.log(err)
-            Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
+            Toast.show({text: err.message, position: 'top', type: 'danger', buttonText: 'ok'})
         })
     }
 })
