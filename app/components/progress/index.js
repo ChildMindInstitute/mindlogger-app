@@ -28,7 +28,7 @@ export class ActProgress extends Component {
     const {index, length} = this.props;
     return (
       <View padder style={styles.progress}>
-        <Text style={styles.progressValue}>{`${index}/${length}`}</Text>
+        <Text style={styles.progressValue}>{`${index+1}/${length}`}</Text>
         <Progress.Bar style={{flexGrow: 1}} progress={index/length} width={null} height={12}/>
       </View>
     )

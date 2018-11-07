@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { ListView } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner, Thumbnail } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Toast, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
     Player,

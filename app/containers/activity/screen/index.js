@@ -164,10 +164,13 @@ class Screen extends Component {
     let buttonText = 'Take';
     const spinner = false;
     if (!surveyType && !canvasType && !textEntry) {
-      return (<View style={styles.footer}>
-          <ScreenButton transparent onPress={this.handlePrev} text="<"/>
-          <ScreenButton transparent onPress={this.handleNext} text=">"/>
-      </View>);
+      if (length > 1)
+        return (<View style={styles.footer}>
+            <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+            <ScreenButton transparent onPress={this.handleNext} text={isFinal ? "Done" : ">"}/>
+        </View>);
+      else 
+        return (<View></View>)
     } else if (answer) {
       buttonText = 'Redo';
       return (<View style={styles.footer}>

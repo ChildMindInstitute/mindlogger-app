@@ -36,7 +36,7 @@ class Act extends Component {
       <Container>
         <StatusBar barStyle='light-content'/>
         <ActHeader title={act.name} onInfo={info && this.showInfoScreen}/>
-        { data.display && data.display.progress && <ActProgress index={index+1} length={data.screens.length} /> }
+        { data.display && data.display.progress && <ActProgress index={index} length={data.screens.length} /> }
         <Screen
           key={index}
           index={index}

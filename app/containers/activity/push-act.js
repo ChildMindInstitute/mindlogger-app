@@ -1,9 +1,8 @@
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Separator, SwipeRow, Toast, Spinner, Thumbnail } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Toast, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import { openDrawer, closeDrawer } from '../../actions/drawer';
