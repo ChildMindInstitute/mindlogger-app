@@ -39,6 +39,7 @@ class ActInfo extends Component {
           onPrev={this.prev}
           onNext={this.next}
           globalConfig={data}
+          info={true}
           length={data.screens.length}
           />}
       </Container>
@@ -49,15 +50,19 @@ class ActInfo extends Component {
     const {act: {meta: data}} = this.props;
     let {index} = this.state;
     let prevIndex = index - 1;
+    console.log(index);
     if (prevIndex<0) {
       Actions.pop();
+    } else {
+      this.setState({index: prevIndex});
     }
   }
 
   next = (answer, index) => {
-    const {setAnswer, act: {meta: data}} = this.props;
+    const {act: {meta: data}} = this.props;
     const oldIndex = this.state.index;
     const newIndex = index || oldIndex+1;
+    console.log(answer, index);
     if (newIndex<data.screens.length) {
       this.setState({index: newIndex});
     } else {

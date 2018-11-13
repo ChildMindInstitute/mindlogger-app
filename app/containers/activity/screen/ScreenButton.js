@@ -11,12 +11,9 @@ const styles=StyleSheet.create({
 export default class ScreenButton extends Component {
   render() {
     const {transparent, onPress, text, children} = this.props;
-    if (children) {
-      return <Button transparent={transparent} onPress={onPress}><Text style={styles.buttonText}>{text}</Text>{children}</Button>
-    } else {
-      return (
-        <Button transparent={transparent} onPress={onPress}><Text style={styles.buttonText}>{text}</Text></Button>
-      )
-    }
+    return (<Button transparent={transparent} onPress={onPress}>
+      {text && <Text style={styles.buttonText}>{text}</Text> }
+      {children}
+    </Button>)
   }
 }

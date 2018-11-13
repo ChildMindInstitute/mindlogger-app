@@ -53,7 +53,7 @@ class Act extends Component {
   }
 
   prev = (answer) => {
-    const {answers, act: {meta: data}} = this.props;
+    const {setAnswer, answers} = this.props;
     let {index} = this.state;
     answers[index] = answer;
     setAnswer(answers);

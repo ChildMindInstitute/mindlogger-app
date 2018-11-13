@@ -107,27 +107,29 @@ class Screen extends Component {
     this.setState({answer:undefined});
   }
 
+  getPayload(){
+    const {path, screen} = this.props;
+    const {meta: data={}} = screen;
+    const {answer} = this.state;
+    let payload = {'@id': path, data: answer};
+    if(data.text)
+      payload.text = data.text;
+    return payload;
+  }
+
   handlePrev = () => {
-    this.props.onPrev();
+    this.props.onPrev(this.getPayload());
   }
 
   handleSkip = () => {
     const {screen: {meta: data}, onNext, path} = this.props;
     let payload = {'@id': path,  data: undefined};
-    if(data.text)
-      payload.text = data.text;
     onNext(payload, data.skipToScreen);
   }
 
   handleNext = () => {
-    const {screen, onNext, path} = this.props;
-    const {meta: data={}} = screen;
-    const {answer, nextScreen} = this.state;
-    let payload = {'@id': path, data: answer};
-    if(data.text)
-      payload.text = data.text;
-    onNext(payload, nextScreen);
-    
+    const {nextScreen} = this.state;
+    this.props.onNext(this.getPayload(), nextScreen);
   }
 
   onSurvey = (survey, validated, next) => {
@@ -148,6 +150,7 @@ class Screen extends Component {
     let {
       screen: {meta: data},
       globalConfig,
+      info,
       length,
     } = this.props;
     data = data || {};
@@ -158,16 +161,16 @@ class Screen extends Component {
 
     // Configuration
     const permission = globalConfig.permission || {};
-    const skippable = data.skippable || permission.skip;
+    const skippable = data.skippable == undefined ? permission.skip : data.skippable;
     const prevable = permission.prev;
 
     let buttonText = 'Take';
     const spinner = false;
-    if (!surveyType && !canvasType && !textEntry) {
+    if ((!surveyType && !canvasType && !textEntry) || info) {
       if (length > 1)
         return (<View style={styles.footer}>
-            <ScreenButton transparent onPress={this.handlePrev} text="<"/>
-            <ScreenButton transparent onPress={this.handleNext} text={isFinal ? "Done" : ">"}/>
+            <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
+            {isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>}
         </View>);
       else 
         return (<View></View>)
@@ -175,21 +178,22 @@ class Screen extends Component {
       buttonText = 'Redo';
       return (<View style={styles.footer}>
         { prevable ? 
-          <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+          <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
           :
           <ScreenButton transparent/>
         }
         <ScreenButton onPress={this.handleReset} text={buttonText}/>
         {
-          validated ?
-            <ScreenButton transparent onPress={this.handleNext} text={isFinal ? "Done" : ">"}/>
+          validated ? (
+            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>
+            )
             :
             <ScreenButton transparent/>
         }
       </View>);
     } else {
       return (<View style={styles.footer}>
-        <ScreenButton transparent onPress={this.handlePrev} text="<"/>
+        <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
         { canvasType ? 
         (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
         :

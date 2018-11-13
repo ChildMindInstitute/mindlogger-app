@@ -18,8 +18,8 @@ class SurveyMultiSelector extends Component {
   }
 
   checkValue = (value) => {
-    const { config: {optionsMax, optionsMin, options}, onChange, answer: oldAnswer = []} = this.props;
-    let answer = [...oldAnswer];
+    const { config: {optionsMax, optionsMin, options}, onChange, answer: oldAnswer} = this.props;
+    let answer = oldAnswer ? [...oldAnswer] : [];
     
     let next = false;
     if (optionsMax==1 && optionsMin==1) {
