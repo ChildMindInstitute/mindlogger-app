@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
-import { Content, List, ListItem, Text, Button, Right, Body, CheckBox, Radio, Toast } from 'native-base';
+import {View} from 'react-native';
+import { ListItem, Text, Right, Body, CheckBox, Radio, Toast } from 'native-base';
 import { connect } from 'react-redux';
 
-import baseTheme from '../../../../themes/baseTheme';
-import {randomLink} from '../../../../helper';
 import GImage from '../../../../components/image/Image';
 
 class SurveyMultiSelector extends Component {
@@ -18,7 +16,7 @@ class SurveyMultiSelector extends Component {
   }
 
   checkValue = (value) => {
-    const { config: {optionsMax, optionsMin, options}, onChange, answer: oldAnswer} = this.props;
+    const { config: {optionsMax, optionsMin}, onChange, answer: oldAnswer} = this.props;
     let answer = oldAnswer ? [...oldAnswer] : [];
     
     let next = false;

@@ -1,19 +1,15 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Image, Platform } from 'react-native';
+import { Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Content, Text, List, ListItem, Icon, Container, Left, Right, Badge, Button, View, StyleProvider, getTheme, variables } from 'native-base';
+import { Content, Text, List, ListItem, Container, Left, Right, Badge, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import material from '../../../native-base-theme/variables/material';
 import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
 import styles from './style';
 import {signOut} from '../../actions/api';
 
-const drawerCover = require('../../../img/drawer-cover.png');
-
-const drawerImage = require('../../../img/CMI_white_logo.png');
 
 const datas = [
   {
