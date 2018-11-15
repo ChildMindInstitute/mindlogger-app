@@ -200,7 +200,7 @@ class Screen extends Component {
         <ScreenButton transparent/>
         }
         { skippable ?
-          <ScreenButton transparent onPress={this.handleSkip} text="Skip"/>
+          <ScreenButton transparent onPress={this.handleSkip} text={isFinal ? "Done" : "Skip"}/>
           :
           <ScreenButton transparent/>
         }
@@ -208,40 +208,78 @@ class Screen extends Component {
     }
   }
 
-
-  render() {
-    let {screen: {meta: data}, globalConfig} = this.props;
+  renderPicture(data) {
+    return data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
+      <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
+  }
+  renderScrollContent() {
+    let {screen: {meta: data}} = this.props;
     data = data || {};
     let hasAudio = data.audio && data.audio.display && data.audio.files.length>0;
+    return (<Content style={{ flex: 1}}>
+      {this.renderPicture(data)}
+      <View style={styles.paddingContent}>
+        {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
+        <Text style={styles.text}>{data.text}</Text>
+        {
+          data.surveyType && <SurveySection
+            type={data.surveyType}
+            config={data.survey}
+            answer={this.answer('survey')}
+            onChange={this.onSurvey}
+            onNextChange={this.onNextChange}
+            />
+        }
+        {
+          data.textEntry && data.textEntry.display && 
+          <TextEntry
+            style={styles.text}
+            config={data.textEntry}
+            answer={this.answer('text')}
+            onChange={text => this.setAnswer({text})}/>
+        }
+      </View>
+    </Content>)
+  }
+
+  renderContent() {
+    let {screen: {meta: data}} = this.props;
+    data = data || {};
+    let hasAudio = data.audio && data.audio.display && data.audio.files.length>0;
+    return (<View style={styles.paddingContent}>
+      {this.renderPicture(data)}
+        {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
+        <Text style={styles.text}>{data.text}</Text>
+        {
+          data.surveyType && <SurveySection
+            type={data.surveyType}
+            config={data.survey}
+            answer={this.answer('survey')}
+            onChange={this.onSurvey}
+            onNextChange={this.onNextChange}
+            />
+        }
+        {
+          data.textEntry && data.textEntry.display && 
+          <TextEntry
+            style={styles.text}
+            config={data.textEntry}
+            answer={this.answer('text')}
+            onChange={text => this.setAnswer({text})}/>
+        }
+    </View>)
+  }
+
+  render() {
+    let {screen: {meta: data}} = this.props;
     return (
-      <View style={{flex: 1}}>
-        <Content style={{ flex: 1}}>
-          { data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
-            <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
-          }
-          <View style={styles.paddingContent}>
-            {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
-            <Text style={styles.text}>{data.text}</Text>
-            {
-              data.surveyType && <SurveySection
-                type={data.surveyType}
-                config={data.survey}
-                answer={this.answer('survey')}
-                onChange={this.onSurvey}
-                onNextChange={this.onNextChange}
-                />
-            }
-            {
-              data.textEntry && data.textEntry.display && 
-              <TextEntry
-                style={styles.text}
-                config={data.textEntry}
-                answer={this.answer('text')}
-                onChange={text => this.setAnswer({text})}/>
-            }
-          </View>
-        </Content>
-        {this.renderButtons()}
+      <View style={{flex: 1, flexDirection: 'column'}}>
+        {
+          data.surveyType == 'slider' ?
+          this.renderContent() : 
+             this.renderScrollContent() 
+        }
+        { this.renderButtons() }
       </View>
     )
   }

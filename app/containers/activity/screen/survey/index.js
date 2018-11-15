@@ -3,6 +3,7 @@ import { Text, View } from 'react-native'
 import SurveyMultiSelector from './SurveyMultiSelector';
 import SurveyTableInput from './SurveyTableInput';
 import SurveyTableSelector from './SurveyTableSelector';
+import SurveySliderInput from './SurveySliderInput';
 
 export default class SurveySection extends Component {
   render() {
@@ -34,6 +35,14 @@ export default class SurveySection extends Component {
           answer={answer}
           onChange={onChange}
           />
+    else if (type=='slider')
+          return <View style={{flexGrow:3}}><SurveySliderInput
+          config={config}
+          answer={answer}
+          onChange={onChange}
+          onNextChange={onNextChange}
+          /></View>
+
     // else if (type == 'audio')
     //     return <SurveyAudio
     //       config={config}
