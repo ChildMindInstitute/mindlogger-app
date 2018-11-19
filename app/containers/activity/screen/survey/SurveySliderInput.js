@@ -1,9 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import { ListItem, Text, Right, Body, CheckBox, Radio, Toast } from 'native-base';
 import { connect } from 'react-redux';
 
-import GImage from '../../../../components/image/Image';
 import Slider from '../../../../components/slider';
 
 class SurveySliderInput extends Component {
