@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import styled from "styled-components";
 
-const CIRCLE_DIAMETER = 50;
+const CIRCLE_DIAMETER = 25;
 
 export default class Slider extends React.Component {
   static propTypes = {
@@ -20,6 +20,7 @@ export default class Slider extends React.Component {
     barHeight: 200,
     deltaValue: 0,
     value: 0,
+    selected: false,
   };
 
   componentWillMount() {
@@ -44,13 +45,17 @@ export default class Slider extends React.Component {
     );
 
     this.setState({
-      deltaValue: newDeltaValue
+      deltaValue: newDeltaValue,
+      selected: true,
     });
   }
   onEndMove() {
-    const { strict, onChange } = this.props;
+    const { strict, min, max, onChange } = this.props;
     let { value, deltaValue } = this.state;
-    value = value + deltaValue
+    value = this.capValueWithinRange(value + deltaValue, [
+      min,
+      max
+    ]);
     this.setState({ value, deltaValue: 0 });
     if (strict)
       onChange(Math.floor(value));
@@ -93,7 +98,7 @@ export default class Slider extends React.Component {
   };
 
   render() {
-    const { value, deltaValue, barHeight } = this.state;
+    const { value, deltaValue, barHeight, selected } = this.state;
     const { min, max, labels, strict } = this.props;
 
     const cappedValue = this.capValueWithinRange(value + deltaValue, [
@@ -108,7 +113,7 @@ export default class Slider extends React.Component {
       barHeight
     );
     return (
-      <PageContainer>
+      <PageContainer {...this.panResponder.panHandlers}>
         
         <Container>
           {labels && 
@@ -123,9 +128,9 @@ export default class Slider extends React.Component {
           
           <BarContainer>
             <Bar onLayout={this.onBarLayout} />
-            <Circle
+            <RoundRect
               bottomOffset={bottomOffset}
-              {...this.panResponder.panHandlers}
+              isFilled={selected}
             />
             
           </BarContainer>
@@ -173,6 +178,17 @@ const Circle = styled.View`
   width: ${CIRCLE_DIAMETER};
   height: ${CIRCLE_DIAMETER};
   background-color: black;
+  position: absolute;
+  bottom: ${props => props.bottomOffset};
+`;
+
+const RoundRect = styled.View`
+  border-radius: 8;
+  width: ${CIRCLE_DIAMETER*2};
+  height: ${CIRCLE_DIAMETER};
+  background-color: ${props => props.isFilled ? 'black' : 'white'};
+  border-color: black;
+  border-width: 1;
   position: absolute;
   bottom: ${props => props.bottomOffset};
 `;

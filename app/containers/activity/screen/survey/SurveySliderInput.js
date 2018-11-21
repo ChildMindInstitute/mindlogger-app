@@ -24,7 +24,7 @@ class SurveySliderInput extends Component {
     const { config: {options}, onNextChange} = this.props;
     if(answer) {
       let index = Math.floor(answer) - 1;
-      onNextChange(options[index].screen);
+      onNextChange(options[index] && options[index].screen);
     }
   }
 
