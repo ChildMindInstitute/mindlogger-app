@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const dateSortAsc = (date1, date2) => {
   // This is a comparison function that will result in dates being sorted in
   // ASCENDING order. As you can see, JavaScript's native comparison operators
@@ -30,7 +32,7 @@ export const timeArrayFrom = (config, lastDate) => {
   if (config.calendarDay && Array.isArray(config.calendarDay)) { // Calendar dates
     config.calendarDay.forEach(function(dayStr) {
       let day = Date.parse(dayStr);
-      day>=today ? notifications.days.push(day) : null;
+      day>=today ? notifications.days.push(new Date(day)) : null;
     });
   }
   if (config.modeMonth && config.monthDay && config.monthDay.length) { // Monthly
@@ -52,22 +54,30 @@ export const timeArrayFrom = (config, lastDate) => {
         notifications.days.push(dateAssign); // Push assignment date to Array.
       });
     });
-    if (config.times && config.times.length>0){
-      let n = config.times.length
-      for (let index = 0; index < n; index++) {
-        let step = 1000*3600*24/n;
-        let dayTime = config.times[index];
-        if (dayTime.timeMode == 'scheduled' && dayTime.time) {
-          let t = Date.parse(dayTime.time)
-          notifications.times.push(new Date(t));
-        } else if (dayTime.timeMode == 'random' && dayTime.timeStart && dayTime.timeEnd) {
-          let t1 = Date.parse(dayTime.timeStart);
-          let t2 = Date.parse(dayTime.timeEnd);
-          notifications.times.push(new Date(getRandomTime(t1, t2)))
+  }
+
+  if (config.times && config.times.length>0){
+    let n = config.times.length
+    for (let index = 0; index < n; index++) {
+      let step = 1000*3600*24/n;
+      let dayTime = config.times[index];
+      if (dayTime.timeMode == 'scheduled' && dayTime.time) {
+        var t=moment(dayTime.time, "HH:mm");
+        if (t.isValid()) {
+          notifications.times.push(t.toDate());
+        }
+      } else if (dayTime.timeMode == 'random' && dayTime.timeStart && dayTime.timeEnd) {
+        let t1 = moment(dayTime.timeStart, "HH:mm");
+        let t2 = moment(dayTime.timeEnd, "HH:mm");
+        if(t1.isValid() && t2.isValid()) {
+          let d = new Date(getRandomTime(t1.valueOf(), t2.valueOf()));
+          notifications.times.push(d);
+          console.log("random time", t1,t2, d);
         }
       }
     }
   }
+
   console.log(notifications);
   notifications.compiled = []; // Compile calculated dates with calculated times
   let startTime = lastDate || Date.now();
