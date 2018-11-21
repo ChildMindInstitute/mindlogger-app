@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {StyleSheet, View, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, Center } from 'native-base';
+import { StatusBar} from 'react-native';
+import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 
 import baseTheme from '../../themes/baseTheme';
-import { getItems, getObject, getFolders, addFolder, addItem } from '../../actions/api';
-import { setAnswer } from '../../actions/coreActions';
+import { getItems, getObject, addFolder, addItem } from '../../actions/api';
+import { setAnswer, addQueue } from '../../actions/coreActions';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import Screen from './screen';
@@ -82,15 +81,14 @@ class Act extends Component {
       }
       this.setState({index: newIndex});
     } else {
-      return this.postAnswer().then(res => {
-        setAnswer([]);
-        Actions.pop();
-      });
+      this.postAnswer();
+      setAnswer([]);
+      Actions.pop();
     }
   }
 
   postAnswer() {
-    const {answers, act, addFolder, actOptions, resCollection, volume, addItem} = this.props;
+    const {answers, act, addFolder, actOptions, resCollection, volume, addItem, addQueue} = this.props;
     const payload = {
       ...actOptions,
       activity: {
@@ -103,10 +101,12 @@ class Act extends Component {
       responses: answers,
       responseTime: Date.now()
     }
-    return addFolder(volume.name,{},resCollection._id, 'folder', true).then(folder => {
-      let answerName = moment().format('YYYY-M-D') + ' ' + act.name;
-      return addItem(answerName, payload, folder._id);
-    })
+    let answerName = moment().format('YYYY-M-D') + ' ' + act.name;
+    addQueue(answerName, payload, volume.name, resCollection._id);
+    // return addFolder(volume.name,{},resCollection._id, 'folder', true).then(folder => {
+      
+    //   return addItem(answerName, payload, folder._id);
+    // })
   }
 }
 
@@ -119,6 +119,6 @@ export default connect(({core: {self, userData, act, actInfo, answerData, volume
     answers: (answerData && answerData[act._id]) || [], 
   }),
   {
-    getObject, getItems, setAnswer, addFolder, addItem
+    getObject, getItems, setAnswer, addFolder, addItem, addQueue
   }
 )(Act);

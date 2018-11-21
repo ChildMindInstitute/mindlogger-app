@@ -10,8 +10,9 @@ import {
     Player,
 } from 'react-native-audio-toolkit';
 import PushNotification from 'react-native-push-notification';
-import Image from '../../components/image/Image';
+import TimerMixin from 'react-timer-mixin';
 
+import Image from '../../components/image/Image';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {
     setActivity,
@@ -19,10 +20,12 @@ import {
     setVolumes,
     setVolume,
     setActs,
+    updateQueue,
 } from '../../actions/coreActions';
 
 import { 
     addFolder,
+    addItem,
     getObject,
     getCollection,
     getFolders,
@@ -107,6 +110,8 @@ class ActivityScreen extends Component {
         if (isLogin) {
             this.setupResponse();
         }
+
+        this.syncTimer = TimerMixin.setInterval(this.syncData, 3000);
     }
     promptEmptyActs() {
         Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', duration: 1500})
@@ -230,6 +235,7 @@ class ActivityScreen extends Component {
     }
 
     componentWillUnmount() {
+        TimerMixin.clearInterval(this.syncTimer);
     }
 
     scheduleNotifications(acts, isReset = false) {
@@ -261,9 +267,8 @@ class ActivityScreen extends Component {
                 date: time
               });
               lastTime = time.getTime();
-              console.log("scheduledAt", time);
             });
-            notifications[act._id] = { modifiedAt: Date.now(), lastTime, times };
+            notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
         });
         setNotificationStatus(notifications);
     }
@@ -486,6 +491,29 @@ class ActivityScreen extends Component {
         )
     }
 
+    syncData = () => {
+        const {answerCache, addFolder, updateQueue, addItem} = this.props;
+        var arr = [];
+        answerCache.forEach(({name, payload, volumeName, collectionId, synced}, index) => {
+            if (synced) return
+            let pr = addFolder(volumeName,{},collectionId, 'folder', true).then(folder => {
+                return addItem(name, payload, folder._id).then(res => {
+                    answerCache[index].synced = true;
+                    console.log("Synced answer", res);
+                    return true;
+                });
+            })
+            arr.push(pr);
+        });
+        if (arr.length == 0) return;
+        Promise.all(arr).then(res => {
+            updateQueue(answerCache);
+            console.log("Synced all answers", answerCache)
+        }).catch(err => {
+            console.log(err)
+        });
+    }
+
     render() {
         const {user, volumes} = this.props;
         let dataBlob = {};
@@ -572,12 +600,14 @@ function bindAction(dispatch) {
             setVolume,
             setActs,
             getUserCollection,
-            addFolder
+            addFolder,
+            addItem,
+            updateQueue,
         }, dispatch)
   };
 }
 
-const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, data, actData, userData}}) => ({
+const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, data, actData, userData, answerCache = []}}) => ({
   auth: auth,
   acts: acts || [],
   notifications: notifications || {},
@@ -586,7 +616,8 @@ const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes
   user: self || {},
   data: data || [],
   actData: actData || {},
-  resCollection: userData && userData[self._id] && userData[self._id].collections && userData[self._id].collections.Responses
+  resCollection: userData && userData[self._id] && userData[self._id].collections && userData[self._id].collections.Responses,
+  answerCache,
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

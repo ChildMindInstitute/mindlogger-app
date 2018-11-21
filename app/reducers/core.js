@@ -239,6 +239,15 @@ export default function coreReducer(state = initialState, action = {}) {
                     ...state,
                     ...action.data,
                 }
+            case types.ADD_QUEUE:
+            {
+                let answerCache = state.answerCache || [];
+                answerCache.push({...action.data, synced: false});
+                return {
+                    ...state,
+                    answerCache
+                }
+            }
             default:
                 return state;
         }
