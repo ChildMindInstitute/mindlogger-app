@@ -73,14 +73,15 @@ class Act extends Component {
     const {answers, setAnswer, act: {meta: data}} = this.props;
     const oldIndex = this.state.index;
     answers[oldIndex] = answer;
-    setAnswer(answers);
     const newIndex = index || oldIndex+1;
     if (newIndex<data.screens.length) {
       for (let i = oldIndex + 1; i < newIndex; i++) {
         answers[i] = {}
       }
+      setAnswer(answers);
       this.setState({index: newIndex});
     } else {
+      setAnswer(answers);
       this.postAnswer();
       setAnswer([]);
       Actions.pop();

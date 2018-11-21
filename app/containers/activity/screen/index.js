@@ -275,9 +275,10 @@ class Screen extends Component {
     return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         {
+          data && (
           data.surveyType == 'slider' ?
           this.renderContent() : 
-             this.renderScrollContent() 
+             this.renderScrollContent())
         }
         { this.renderButtons() }
       </View>

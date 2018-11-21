@@ -1,30 +1,27 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import {StyleSheet, View, StatusBar} from 'react-native';
-import { Container, Content, Text, Button, Center } from 'native-base';
+import { StatusBar} from 'react-native';
+import { Container} from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { bindActionCreators } from 'redux';
 
 import baseTheme from '../../themes/baseTheme';
-import { getItems, getObject, getFolders } from '../../actions/api';
-import { setAnswer } from '../../actions/coreActions';
+
 import InfoHeader from '../../components/header/info';
 import ActProgress from '../../components/progress';
 import Screen from './screen';
 
-class ActInfo extends Component {
+export default class InfoAct extends Component {
   constructor(props) {
     super(props)
   }
 
   componentWillMount() {
-    this.setState({index: 0});
+    this.setState({index: 0, answers:[]});
   }
 
   render() {
     const {act} = this.props;
     const {meta: data} = act;
-    const {index} = this.state;
+    const {index, answers} = this.state;
     return (
       <Container>
         <StatusBar barStyle='light-content'/>
@@ -36,6 +33,7 @@ class ActInfo extends Component {
           index={index}
           path={act._id}
           name={data.screens[index]['name']}
+          answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}
           globalConfig={data}
@@ -47,34 +45,35 @@ class ActInfo extends Component {
   }
 
   prev = (answer) => {
-    const {act: {meta: data}} = this.props;
-    let {index} = this.state;
+    let {index, answers} = this.state;
+    answers[index] = answer;
     let prevIndex = index - 1;
-    console.log(index);
+    console.log(answers);
+    while(prevIndex>=0) {
+      if(answers[prevIndex]['@id']) {
+        this.setState({index: prevIndex, answers});
+        return;
+      }
+      prevIndex = prevIndex - 1;
+    }
     if (prevIndex<0) {
       Actions.pop();
-    } else {
-      this.setState({index: prevIndex});
     }
   }
 
   next = (answer, index) => {
     const {act: {meta: data}} = this.props;
+    const {answers} = this.state;
     const oldIndex = this.state.index;
+    answers[oldIndex] = answer;
     const newIndex = index || oldIndex+1;
-    console.log(answer, index);
     if (newIndex<data.screens.length) {
-      this.setState({index: newIndex});
+      for (let i = oldIndex + 1; i < newIndex; i++) {
+        answers[i] = {}
+      }
+      this.setState({index: newIndex, answers});
     } else {
       Actions.pop();
     }
   }
 }
-
-export default connect(state => ({
-    act: state.core.actInfo,
-  }),
-  {
-    getObject, getItems, setAnswer
-  }
-)(ActInfo);

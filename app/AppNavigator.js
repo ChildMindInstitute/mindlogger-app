@@ -26,7 +26,7 @@ import FrequencyScreen from './containers/activity/frequency';
 
 import Act from './containers/activity/act';
 import PushAct from './containers/activity/push-act';
-import ActInfo from './containers/activity/act-info';
+import ActInfo from './containers/activity/info-act';
 import VolumeInfo from './containers/activity/volume-info';
 //Modules
 
