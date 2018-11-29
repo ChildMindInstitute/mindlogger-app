@@ -81,7 +81,7 @@ class Act extends Component {
       setAnswer(answers);
       this.setState({index: newIndex});
     } else {
-      this.postAnswer();
+      this.postAnswer(answers);
       setAnswer(undefined);
       Actions.pop();
     }

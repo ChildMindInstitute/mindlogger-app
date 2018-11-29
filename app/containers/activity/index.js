@@ -545,7 +545,6 @@ class ActivityScreen extends Component {
             dataBlob[0] = dueActs;
             dataBlob[1] = todoActs;
         }
-        console.log(dueActs);
         // let volumeIds = [];
         // volumes.forEach((volume,idx) => {
         //     dataBlob[idx] = volume.acts || [];
