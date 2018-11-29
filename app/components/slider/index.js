@@ -20,11 +20,11 @@ export default class Slider extends React.Component {
     barHeight: 200,
     deltaValue: 0,
     value: 0,
-    selected: false,
   };
 
   componentWillMount() {
     this.setState({value: this.props.value});
+    
   }
 
   panResponder = PanResponder.create({
@@ -46,7 +46,7 @@ export default class Slider extends React.Component {
 
     this.setState({
       deltaValue: newDeltaValue,
-      selected: true,
+      selected: true
     });
   }
   onEndMove() {
@@ -56,7 +56,7 @@ export default class Slider extends React.Component {
       min,
       max
     ]);
-    this.setState({ value, deltaValue: 0 });
+    this.setState({ value, deltaValue: 0, selected: false });
     if (strict)
       onChange(Math.floor(value));
     else
@@ -98,8 +98,8 @@ export default class Slider extends React.Component {
   };
 
   render() {
-    const { value, deltaValue, barHeight, selected } = this.state;
-    const { min, max, labels, strict } = this.props;
+    const { value, deltaValue, barHeight } = this.state;
+    const { min, max, labels, strict, selected } = this.props;
 
     const cappedValue = this.capValueWithinRange(value + deltaValue, [
       min,
@@ -130,7 +130,7 @@ export default class Slider extends React.Component {
             <Bar onLayout={this.onBarLayout} />
             <RoundRect
               bottomOffset={bottomOffset}
-              isFilled={selected}
+              isFilled={selected || this.state.selected}
             />
             
           </BarContainer>
@@ -198,8 +198,8 @@ const LabelContainer = styled.View`
   height: 100%;
   left: 50%;
   padding-left: 40;
-  padding-top: 20;
-  padding-bottom: 20;
+  padding-top: 0;
+  padding-bottom: 0;
   position: absolute;
   justify-content: space-between;
   flex-direction: column-reverse;
