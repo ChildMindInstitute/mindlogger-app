@@ -81,15 +81,14 @@ class Act extends Component {
       setAnswer(answers);
       this.setState({index: newIndex});
     } else {
-      setAnswer(answers);
       this.postAnswer();
-      setAnswer([]);
+      setAnswer(undefined);
       Actions.pop();
     }
   }
 
-  postAnswer() {
-    const {answers, act, addFolder, actOptions, resCollection, volume, addItem, addQueue} = this.props;
+  postAnswer(answers) {
+    const {act, addFolder, actOptions, resCollection, volume, addItem, addQueue} = this.props;
     const payload = {
       ...actOptions,
       activity: {

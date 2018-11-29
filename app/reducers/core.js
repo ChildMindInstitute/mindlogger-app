@@ -210,7 +210,7 @@ export default function coreReducer(state = initialState, action = {}) {
                 }
             case types.SET_ANSWER:
                 {
-                    let answerData = state.answerData || {};
+                    let answerData = {...state.answerData} || {};
                     answerData[state.act._id] = action.data;
                     return {
                         ...state,

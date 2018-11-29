@@ -11,6 +11,7 @@ import {
 } from 'react-native-audio-toolkit';
 import PushNotification from 'react-native-push-notification';
 import TimerMixin from 'react-timer-mixin';
+import moment from 'moment';
 
 import Image from '../../components/image/Image';
 import { openDrawer, closeDrawer } from '../../actions/drawer';
@@ -21,6 +22,7 @@ import {
     setVolume,
     setActs,
     updateQueue,
+    setAnswer,
 } from '../../actions/coreActions';
 
 import { 
@@ -240,6 +242,13 @@ class ActivityScreen extends Component {
         TimerMixin.clearInterval(this.syncTimer);
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {acts, answerData, notifications} = nextProps;
+        if (this.props.answerData != answerData) {
+            this.orderActs(acts, notifications, answerData);
+        }
+    }
+
     scheduleNotifications(acts, isReset = false) {
         let { notifications, checkedTime, setNotificationStatus} = this.props;
         console.log("last check:", checkedTime, acts);
@@ -247,65 +256,33 @@ class ActivityScreen extends Component {
             PushNotification.cancelAllLocalNotifications();
         } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
             console.log("Notifications: ", notifications);
-            return;
-        }
-        acts.forEach((act, idx) => {
-            let variant = this.getVariant(act);
-            if (!variant || variant.meta.notification == undefined) return;
-            let state = notifications[variant._id] || {};
-            let { lastTime } = state;
-            if(isReset) {
-                lastTime = undefined;
-            }
-            let times = timeArrayFrom(variant.meta.notification, lastTime);
-            let message = `Please perform activity: ${act.name}`;
-            let userInfo = { actId: act._id };
-            times.forEach(time => {
-                PushNotification.localNotificationSchedule({
-                    id: `${idx}`,
-                //... You can use all the options from localNotifications
-                message , // (required)
-                userInfo,
-                date: time
-              });
-              lastTime = time.getTime();
-            });
-            notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
-        });
-        setNotificationStatus(notifications);
-    }
-
-    onNotificationIOS = (notification) => {
-        let {data:{userInfo}} = notification;
-        if(userInfo)
-            this.startActivityFromNotification(userInfo.actId)
-    }
-
-    onNotificationAndroid = (notification) => {
-        const { acts } = this.props;
-        let index = parseInt(notification.data.id);
-        if(acts[index])
-            this.startActivityFromNotification(acts[index]._id);
-    }
-
-    startActivityFromNotification(actId){
-        const {user, acts, setActivity, actData, volumes, setVolume} = this.props;
-        const act = acts.find( a => a._id == actId )
-        const volume = volumes.find(v => v._id == act.volumeId);
-        if(volume) {
-            setVolume(volume);
         } else {
-            return;
-        }
-        if (actData[actId]) {
-            setActivity(
-                actData[actId].variant,
-                actData[actId].info,
-                {
-                    notificationTime: Date.now()
+            acts.forEach((act, idx) => {
+                let variant = this.getVariant(act);
+                if (!variant || variant.meta.notification == undefined) return;
+                let state = notifications[variant._id] || {};
+                let { lastTime } = state;
+                if(isReset) {
+                    lastTime = undefined;
+                }
+                let times = timeArrayFrom(variant.meta.notification, lastTime);
+                let message = `Please perform activity: ${act.name}`;
+                let userInfo = { actId: act._id };
+                times.forEach(time => {
+                    PushNotification.localNotificationSchedule({
+                        id: `${idx}`,
+                    //... You can use all the options from localNotifications
+                    message , // (required)
+                    userInfo,
+                    date: time
                 });
-            Actions.push('take_act');
+                lastTime = time.getTime();
+                });
+                notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
+            });
+            setNotificationStatus(notifications);
         }
+        this.orderActs(acts, notifications)
     }
 
     loadAllActivity = (isReload=false) => {
@@ -313,6 +290,27 @@ class ActivityScreen extends Component {
             this.downloadAll()
             this.setupResponse()
         }
+    }
+
+    orderActs(acts, notifications, newAnswerData) {
+        const {actData} = this.props;
+        let answerData = newAnswerData || this.props.answerData;
+        let dueActs = [];
+        let todoActs = [];
+        
+        acts.forEach(act => {
+            let variantId = actData[act._id].variant._id;
+            let nextTime = notifications[act._id] && notifications[act._id].times[0];
+            if (answerData[variantId]) {
+                dueActs.push({...act, nextTime });
+            } else {
+                todoActs.push({...act, nextTime });
+            }
+        });
+        todoActs.sort((act1, act2) => {
+            return act1.nextTime < act2.nextTime;
+        })
+        this.setState({dueActs, todoActs});
     }
 
     pushRoute(route) {
@@ -394,11 +392,16 @@ class ActivityScreen extends Component {
     }
 
     startActivity(act, secId) {
-        const {setActivity, actData, volumes, setVolume} = this.props;
-        const idx = parseInt(secId);
-        setVolume(volumes[idx]);
-        console.log(actData[act._id]);
-        setActivity(actData[act._id].variant, actData[act._id].info);
+        const {setActivity, actData, volumes} = this.props;
+        let volume = volumes.find(volume => volume._id == act.volumeId);
+        this.navigateToAct(volume, actData[act._id])
+    }
+
+    navigateToAct(volume, data, options) {
+        const {acts, setAnswer, setActivity, notifications, setVolume} = this.props;
+        setVolume(volume);
+        setActivity(data.variant, data.info, options);
+        setAnswer([]);
         Actions.push('take_act');
     }
 
@@ -447,21 +450,34 @@ class ActivityScreen extends Component {
 
     _renderRow = (act, secId, rowId) => {
         let data = act.meta || {};
-        const {volumes} = this.props;
         let buttonStyle = {width: 30, height: 30, borderRadius:15, alignItems: 'center', paddingTop: 6}
-        buttonStyle.backgroundColor = BUTTON_COLORS[secId%4];
+        buttonStyle.backgroundColor = BUTTON_COLORS[parseInt(act.volumeId.substr(-1),16)%4];
+        let volume = this.props.volumes.find(volume => volume._id == act.volumeId);
+        let index = parseInt(secId);
+        let dateStr = "";
+        if (act.nextTime) {
+            let actDate = moment(act.nextTime);
+            let currentDate = moment();
+            if (actDate.dayOfYear() == currentDate.dayOfYear()) {
+                dateStr = actDate.format("LT");
+            } else {
+                dateStr = actDate.format("MMM D")
+            }
+        }
+        
         return (
         <ListItem avatar onPress={()=>this._selectRow(act, rowId, secId)}>
             <Left>
-                { volumes[secId].meta && volumes[secId].meta.logoImage ?
-                <Image thumb square file={volumes[secId].meta.logoImage}/> :
-                <View style={buttonStyle}><Text style={styles.letter}>{volumes[secId].meta.shortName[0]}</Text></View> }
+                { volume.meta && volume.meta.logoImage ?
+                <Image thumb square file={volume.meta.logoImage}/> :
+                <View style={buttonStyle}><Text style={styles.letter}>{volume.meta.shortName[0]}</Text></View> }
             </Left>
             <Body>
-                <Text>{act.name}</Text>
-                <Text numberOfLines={1} note>{data.description ? data.description : ' '}</Text>
+                <Text style={index == 0 ? {color:"#11c"} : {}}>{act.name}</Text>
+                <Text note></Text>
             </Body>
             <Right>
+                <Text note>{ dateStr }</Text>
             </Right>
         </ListItem>
         )
@@ -486,13 +502,15 @@ class ActivityScreen extends Component {
     }
 
     _renderLeftHiddenRow = (data, secId, rowId, rowMap) => {
-        return (
-        <View style={{flexDirection:'row', height:63}}>
-            <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
-            <Icon active name="list" />
-            </Button>
-        </View>
-        )
+        return false
+        // Deprecated edit activity on mobile app
+        // return (
+        // <View style={{flexDirection:'row', height:63}}>
+        //     <Button full style={{height:63, width: 60}} onPress={_ => this._editRowDetail(data, secId, rowId, rowMap)}>
+        //     <Icon active name="list" />
+        //     </Button>
+        // </View>
+        // )
     }
 
     syncData = () => {
@@ -519,13 +537,20 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {user, volumes} = this.props;
+        const {user} = this.props;
+        const {dueActs, todoActs} = this.state;
+
         let dataBlob = {};
-        let volumeIds = [];
-        volumes.forEach((volume,idx) => {
-            dataBlob[idx] = volume.acts || [];
-            volumeIds.push(volume._id);
-        });
+        if (todoActs) {
+            dataBlob[0] = dueActs;
+            dataBlob[1] = todoActs;
+        }
+        console.log(dueActs);
+        // let volumeIds = [];
+        // volumes.forEach((volume,idx) => {
+        //     dataBlob[idx] = volume.acts || [];
+        //     volumeIds.push(volume._id);
+        // });
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -607,6 +632,7 @@ function bindAction(dispatch) {
             addFolder,
             addItem,
             updateQueue,
+            setAnswer,
         }, dispatch)
   };
 }

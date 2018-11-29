@@ -9,24 +9,13 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {
     setActivity,
     setVolume,
-    setNotificationStatus,
+    setAnswer,
 } from '../../actions/coreActions';
 
-import { 
-    addFolder,
-    getObject,
-    getCollection,
-    getFolders,
-    getItems,
-    getActVariant,
-    getUserCollection
-} from '../../actions/api';
 import {Platform} from 'react-native';
 
 import styles from './styles';
 
-
-const DAY_TS = 1000*3600*24;
 class PushActivityScreen extends Component {
 
     componentWillMount() {
@@ -37,27 +26,6 @@ class PushActivityScreen extends Component {
       } else {
         this.onNotificationAndroid(notification);
       }
-    }
-    promptEmptyActs() {
-        Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', duration: 1500})
-        this.setState({progress: false})
-    }
-
-    downloadActGroup(actGroup) {
-        const {getFolders, getItems, getActVariant, user} = this.props;
-        return getFolders(actGroup._id, 'acts', 'folder').then(acts => {
-            return Promise.all(acts.map(act => getActVariant(act._id)
-                .then(arr => {
-                    const { variant, info } = this.props.actData[act._id];
-                    return getItems(variant._id).then(res => {
-                        if(info) {
-                            return getItems(info._id)
-                        }
-                    });
-                }))).then(res => {
-                    return acts;
-                });
-        });
     }
 
     onNotificationIOS = (notification) => {
@@ -74,27 +42,27 @@ class PushActivityScreen extends Component {
     }
 
     startActivityFromNotification(actId){
-        const {acts, setActivity, actData, volumes, setVolume} = this.props;
+        const {acts, actData, volumes} = this.props;
         const act = acts.find( a => a._id == actId )
         const volume = volumes.find(v => v._id == act.volumeId);
-        if(volume) {
-            setVolume(volume);
+        if(volume && actData[actId]) {
+            this.navigateToAct(volume, actData[actId], {
+                notificationTime: Date.now()
+            });
         } else {
-            return;
-        }
-        if (actData[actId]) {
-            setActivity(
-                actData[actId].variant,
-                actData[actId].info,
-                {
-                    notificationTime: Date.now()
-                });
-            Actions.replace('take_act');
+            Actions.pop();
         }
     }
 
+    navigateToAct(volume, data, options) {
+        const {setAnswer, setActivity, setVolume} = this.props;
+        setVolume(volume);
+        setActivity(data.variant, data.info, options);
+        setAnswer([]);
+        Actions.push('take_act');
+    }
+
     render() {
-        const {user, volumes} = this.props;
         return (
         <Container style={styles.container}>
             <Header>
@@ -117,26 +85,6 @@ class PushActivityScreen extends Component {
         </Container>
         );
     }
-
-    playInstruction(activity) {
-        const {audio_url} = activity
-        if (this.player) {
-            this.player.destroy();
-        }
-        this.player = new Player(audio_url, {
-            autoDestroy: false
-        }).prepare((err) => {
-            if (err) {
-                console.log('error at _reloadPlayer():');
-                console.log(err);
-            } else {
-                console.log(audio_url)
-                this.player.play((err, playing) => {
-                    console.log(err,playing)
-                })
-            }
-        });
-    }
 }
 
 function bindAction(dispatch) {
@@ -146,15 +94,8 @@ function bindAction(dispatch) {
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
     ...bindActionCreators({
             setActivity,
-            getObject,
-            getCollection,
-            getFolders,
-            getItems,
-            setNotificationStatus,
-            getActVariant,
             setVolume,
-            getUserCollection,
-            addFolder
+            setAnswer,
         }, dispatch)
   };
 }
