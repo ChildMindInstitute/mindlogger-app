@@ -41,6 +41,8 @@ import { timeArrayFrom } from './NotificationSchedule';
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
+var BUTTON_COLORS=["#0067a0", "#919d9d", "#00c1d5", "#b5bd00"];
+
 const DAY_TS = 1000*3600*24;
 class ActivityScreen extends Component {
 
@@ -446,12 +448,14 @@ class ActivityScreen extends Component {
     _renderRow = (act, secId, rowId) => {
         let data = act.meta || {};
         const {volumes} = this.props;
+        let buttonStyle = {width: 30, height: 30, borderRadius:15, alignItems: 'center', paddingTop: 6}
+        buttonStyle.backgroundColor = BUTTON_COLORS[secId%4];
         return (
         <ListItem avatar onPress={()=>this._selectRow(act, rowId, secId)}>
             <Left>
                 { volumes[secId].meta && volumes[secId].meta.logoImage ?
                 <Image thumb square file={volumes[secId].meta.logoImage}/> :
-                <Button rounded><Text>{volumes[secId].meta.shortName[0]}</Text></Button> }
+                <View style={buttonStyle}><Text style={styles.letter}>{volumes[secId].meta.shortName[0]}</Text></View> }
             </Left>
             <Body>
                 <Text>{act.name}</Text>
@@ -607,17 +611,17 @@ function bindAction(dispatch) {
   };
 }
 
-const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, data, actData, userData, answerCache = []}}) => ({
+const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache = [], answerData}}) => ({
   auth: auth,
   acts: acts || [],
   notifications: notifications || {},
   checkedTime,
   volumes: volumes || [],
   user: self || {},
-  data: data || [],
   actData: actData || {},
   resCollection: userData && userData[self._id] && userData[self._id].collections && userData[self._id].collections.Responses,
   answerCache,
+  answerData,
 });
 
 export default connect(mapStateToProps, bindAction)(ActivityScreen);

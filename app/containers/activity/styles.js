@@ -12,4 +12,7 @@ export default {
   mb: {
     marginBottom: 15,
   },
+  letter: {
+    fontSize: 14,
+  }
 };
