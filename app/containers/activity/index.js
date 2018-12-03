@@ -18,6 +18,7 @@ import { openDrawer, closeDrawer } from '../../actions/drawer';
 import {
     setActivity,
     setNotificationStatus,
+    clearNotificationStatus,
     setVolumes,
     setVolume,
     setActs,
@@ -260,33 +261,34 @@ class ActivityScreen extends Component {
             PushNotification.cancelAllLocalNotifications();
         } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
             console.log("Notifications: ", notifications);
-        } else {
-            acts.forEach((act, idx) => {
-                let variant = this.getVariant(act);
-                if (!variant || variant.meta.notification == undefined) return;
-                let state = notifications[variant._id] || {};
-                let { lastTime } = state;
-                if(isReset) {
-                    lastTime = undefined;
-                }
-                let times = timeArrayFrom(variant.meta.notification, lastTime);
-                let message = `Please perform activity: ${act.name}`;
-                let userInfo = { actId: act._id };
-                times.forEach(time => {
-                    PushNotification.localNotificationSchedule({
-                        id: `${idx}`,
-                    //... You can use all the options from localNotifications
-                    message , // (required)
-                    userInfo,
-                    date: time
-                });
-                lastTime = time.getTime();
-                });
-                notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
-            });
-            setNotificationStatus(notifications);
+            this.orderActs(acts, notifications);
+            return;
         }
-        this.orderActs(acts, notifications)
+        acts.forEach((act, idx) => {
+            let variant = this.getVariant(act);
+            if (!variant || variant.meta.notification == undefined) return;
+            let state = notifications[variant._id] || {};
+            let { lastTime } = state;
+            if(isReset) {
+                lastTime = undefined;
+            }
+            let times = timeArrayFrom(variant.meta.notification, lastTime);
+            let message = `Please perform activity: ${act.name}`;
+            let userInfo = { actId: act._id };
+            times.forEach(time => {
+                PushNotification.localNotificationSchedule({
+                    id: `${idx}`,
+                //... You can use all the options from localNotifications
+                message , // (required)
+                userInfo,
+                date: time
+            });
+            lastTime = time.getTime();
+            });
+            notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
+        });
+        setNotificationStatus(notifications);
+        this.orderActs(acts, notifications);
     }
 
     loadAllActivity = (isReload=false) => {
@@ -635,6 +637,7 @@ function bindAction(dispatch) {
             getFolders,
             getItems,
             setNotificationStatus,
+            clearNotificationStatus,
             getActVariant,
             setVolumes,
             setVolume,
@@ -648,7 +651,7 @@ function bindAction(dispatch) {
   };
 }
 
-const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache, answerData}}) => ({
+const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache = [], answerData = {}}}) => ({
   auth: auth,
   acts: acts || [],
   notifications: notifications || {},

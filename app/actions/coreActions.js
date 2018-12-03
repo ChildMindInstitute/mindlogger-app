@@ -60,6 +60,11 @@ export const setNotificationStatus = (notifications) => ({
     data: { notifications, checkedTime: Date.now() }
 })
 
+export const clearNotificationStatus = (notifications) => ({
+    type: types.SET_DATA,
+    data: { notifications: {}, checkedTime: undefined }
+})
+
 export const addQueue = (name, payload, volumeName, collectionId) => ({
     type: types.ADD_QUEUE,
     data: {
