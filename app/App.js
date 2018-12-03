@@ -10,6 +10,7 @@ import AppNavigator from './AppNavigator';
 import ProgressBar from './components/loaders/ProgressBar';
 
 import theme from './themes/base-theme';
+import Instabug from 'instabug-reactnative';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +36,7 @@ class App extends Component {
       showInstalling: false,
       downloadProgress: 0,
     };
+    Instabug.startWithToken('de12937dca290605e0a66f106b5921bf', [Instabug.invocationEvent.screenshot]);
   }
 
   componentDidMount() {
