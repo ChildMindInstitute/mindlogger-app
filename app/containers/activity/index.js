@@ -201,16 +201,26 @@ class ActivityScreen extends Component {
         }).then(arr => {
             let volumeId;
             let volumes = [];
+            let volumeCount = 0;
+            let volumeDownloaded = 0;
             for (let index = 0; index < arr.length; index++) {
                 const v = arr[index];
+                console.log(v);
                 if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
+                    console.log(volumeCount);
                     volumes.push(v);
+                    volumeCount = volumeCount + 1;
                 }
             }
+            this.setState({volumeCount, volumeDownloaded});
             let promiseArr = [];
             for (let index = 0; index < volumes.length; index++) {
                 const volume = volumes[index];
-                promiseArr.push(this.downloadVolume(volume));
+                promiseArr.push(this.downloadVolume(volume).then(() => {
+                    volumeDownloaded = volumeDownloaded + 1;
+                    this.setState({volumeCount, volumeDownloaded});
+                    return true;
+                }));
             }
             return Promise.all(promiseArr).then(res => {
                 console.log("downloaded all.....");
@@ -551,7 +561,7 @@ class ActivityScreen extends Component {
 
     render() {
         const {user, acts} = this.props;
-        const {dueActs, todoActs} = this.state;
+        const {dueActs, todoActs, progress, volumeCount, volumeDownloaded} = this.state;
 
         let dataBlob = {};
         if (todoActs) {
@@ -589,6 +599,7 @@ class ActivityScreen extends Component {
 
             <Content>
                 { this.state.progress && <Spinner /> }
+                { this.state.progress && <Text style={styles.text}>Downloaded {volumeDownloaded} of {volumeCount} activity sets</Text> }
                 {acts && 
                 <List
                     dataSource={ds.cloneWithRowsAndSections(dataBlob)}

@@ -8,6 +8,8 @@ export default {
   text: {
     alignSelf: 'center',
     marginBottom: 7,
+    fontSize: 10,
+    color: '#aaa',
   },
   mb: {
     marginBottom: 15,

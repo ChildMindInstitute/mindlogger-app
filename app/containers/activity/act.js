@@ -22,7 +22,7 @@ class Act extends Component {
   componentWillMount() {
     const {answers, setAnswer} = this.props;
     this.setState({index: 0});
-    if(!answers) {
+    if(answers.length == 0) {
       setAnswer([]);
     }
   }
@@ -120,7 +120,7 @@ export default connect(({core: {self, userData, act, actInfo, answerData, volume
     actOptions: actOptions,
     volume: volume,
     resCollection: userData && self && userData[self._id].collections && userData[self._id].collections.Responses,
-    answers: answerData && answerData[act._id], 
+    answers: (answerData && answerData[act._id]) || [], 
   }),
   {
     getObject, getItems, setAnswer, addFolder, addItem, addQueue
