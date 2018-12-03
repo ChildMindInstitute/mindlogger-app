@@ -94,6 +94,7 @@ class ActivityScreen extends Component {
                 badge: true,
                 sound: true
             },
+            visibility: 'public',
         
             // Should the initial notification be popped automatically
             // default: true
@@ -105,6 +106,7 @@ class ActivityScreen extends Component {
               * - if not, you must call PushNotificationsHandler.requestPermissions() later
               */
             requestPermissions: true,
+            actions: '["Yes", "No"]',
         });
         if (Platform.OS == 'ios') {
         } else {
@@ -210,7 +212,9 @@ class ActivityScreen extends Component {
                 promiseArr.push(this.downloadVolume(volume));
             }
             return Promise.all(promiseArr).then(res => {
+                console.log("downloaded all.....");
                 setVolumes(volumes);
+                console.log("Volumes set.....")
                 let acts = [];
                 volumes.forEach(v => {
                     acts = acts.concat(v.acts)
@@ -308,7 +312,11 @@ class ActivityScreen extends Component {
             }
         });
         todoActs.sort((act1, act2) => {
-            return act1.nextTime < act2.nextTime;
+            if (!act1.nextTime) return 1;
+            if (!act2.nextTime) return -1;
+            if (act1.nextTime < act2.nextTime) return -1;
+            if (act1.nextTime == act2.nextTime) return 0;
+            if (act1.nextTime > act2.nextTime) return 1;
         })
         this.setState({dueActs, todoActs});
     }
@@ -398,10 +406,9 @@ class ActivityScreen extends Component {
     }
 
     navigateToAct(volume, data, options) {
-        const {acts, setAnswer, setActivity, notifications, setVolume} = this.props;
+        const {setActivity, setVolume} = this.props;
         setVolume(volume);
         setActivity(data.variant, data.info, options);
-        setAnswer([]);
         Actions.push('take_act');
     }
 
@@ -449,10 +456,14 @@ class ActivityScreen extends Component {
     }
 
     _renderRow = (act, secId, rowId) => {
-        let data = act.meta || {};
+        let volume = this.props.volumes.find(volume => volume._id == act.volumeId);
+        if(!act || !volume) 
+            return (<ListItem>
+
+            </ListItem>);
         let buttonStyle = {width: 30, height: 30, borderRadius:15, alignItems: 'center', paddingTop: 6}
         buttonStyle.backgroundColor = BUTTON_COLORS[parseInt(act.volumeId.substr(-1),16)%4];
-        let volume = this.props.volumes.find(volume => volume._id == act.volumeId);
+        
         let index = parseInt(secId);
         let dateStr = "";
         if (act.nextTime) {
@@ -537,7 +548,7 @@ class ActivityScreen extends Component {
     }
 
     render() {
-        const {user} = this.props;
+        const {user, acts} = this.props;
         const {dueActs, todoActs} = this.state;
 
         let dataBlob = {};
@@ -576,15 +587,16 @@ class ActivityScreen extends Component {
 
             <Content>
                 { this.state.progress && <Spinner /> }
-            <List
-                dataSource={ds.cloneWithRowsAndSections(dataBlob)}
-                renderRow={this._renderRow}
-                renderLeftHiddenRow={this._renderLeftHiddenRow}
-                renderRightHiddenRow={this._renderRightHiddenRow}
-                leftOpenValue={60}
-                rightOpenValue={user.role == 'admin' ? -120 : 0}
-                enableEmptySections
-            />
+                {acts && 
+                <List
+                    dataSource={ds.cloneWithRowsAndSections(dataBlob)}
+                    renderRow={this._renderRow}
+                    renderLeftHiddenRow={this._renderLeftHiddenRow}
+                    renderRightHiddenRow={this._renderRightHiddenRow}
+                    leftOpenValue={0}
+                    rightOpenValue={user.role == 'admin' ? -120 : 0}
+                    enableEmptySections
+                /> }
             </Content>
         </Container>
         );
@@ -636,7 +648,7 @@ function bindAction(dispatch) {
   };
 }
 
-const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache = [], answerData}}) => ({
+const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache, answerData}}) => ({
   auth: auth,
   acts: acts || [],
   notifications: notifications || {},
