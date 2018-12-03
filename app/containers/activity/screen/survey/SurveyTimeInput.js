@@ -17,7 +17,7 @@ class SurveyTimeInput extends Component {
 
   _handleDatePicked = (date) => {
     console.log('A date has been picked: ', date);
-    const value = moment(date).format("h:m a")
+    const value = moment(date).format("h:mm a")
     this._hideDateTimePicker();
     const {onChange} = this.props;
     onChange(value, true);
