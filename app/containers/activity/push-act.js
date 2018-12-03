@@ -36,7 +36,7 @@ class PushActivityScreen extends Component {
 
     onNotificationAndroid = (notification) => {
         const { acts } = this.props;
-        let index = parseInt(notification.data.id);
+        let index = parseInt(notification.id);
         if(acts[index])
             this.startActivityFromNotification(acts[index]._id);
     }
