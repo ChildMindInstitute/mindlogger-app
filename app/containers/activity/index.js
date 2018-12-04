@@ -275,6 +275,7 @@ class ActivityScreen extends Component {
             this.orderActs(acts, notifications);
             return;
         }
+        let c = 0;
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
             if (!variant || variant.meta.notification == undefined) return;
@@ -283,19 +284,23 @@ class ActivityScreen extends Component {
             if(isReset) {
                 lastTime = undefined;
             }
-            let times = timeArrayFrom(variant.meta.notification, lastTime);
+            let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };
-            times.forEach(time => {
+            if(times.length > 0) {
+                const time = times[0];
                 PushNotification.localNotificationSchedule({
-                    id: `${idx}`,
-                //... You can use all the options from localNotifications
-                message , // (required)
-                userInfo,
-                date: time
-            });
-            lastTime = time.getTime();
-            });
+                    //... You can use all the options from localNotifications
+                    message , // (required)
+                    tag: `${idx}`,
+                    data: userInfo,
+                    userInfo,
+                    date: time
+                });
+                c = c + 1;
+                lastTime = time.getTime();
+                console.log(c);
+            }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
         });
         setNotificationStatus(notifications);
