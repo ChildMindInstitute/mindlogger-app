@@ -275,7 +275,6 @@ class ActivityScreen extends Component {
             this.orderActs(acts, notifications);
             return;
         }
-        let c = 0;
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
             if (!variant || variant.meta.notification == undefined) return;
@@ -289,17 +288,17 @@ class ActivityScreen extends Component {
             let userInfo = { actId: act._id };
             if(times.length > 0) {
                 const time = times[0];
-                PushNotification.localNotificationSchedule({
-                    //... You can use all the options from localNotifications
-                    message , // (required)
-                    tag: `${idx}`,
-                    data: userInfo,
-                    userInfo,
-                    date: time
-                });
-                c = c + 1;
+                if (lastTime == undefined || time.getTime()>lastTime) {
+                    PushNotification.localNotificationSchedule({
+                        //... You can use all the options from localNotifications
+                        message , // (required)
+                        tag: `${idx}`,
+                        data: userInfo,
+                        userInfo,
+                        date: time
+                    });
+                }
                 lastTime = time.getTime();
-                console.log(c);
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
         });
