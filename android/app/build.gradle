@@ -92,6 +92,7 @@ def enableSeparateBuildPerCPUArchitecture = false
  * Run Proguard to shrink the Java bytecode in release builds.
  */
 def enableProguardInReleaseBuilds = false
+final String keystorePath = System.getenv('BITRISEIO_ANDROID_KEYSTORE_URL') ?: "mdc_app_key.keystore"
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -118,7 +119,7 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("mdc_app_key.keystore")
+            storeFile file(keystorePath)
             storePassword "mdcapp"
             keyAlias "mdc_app"
             keyPassword "mdcapp"
