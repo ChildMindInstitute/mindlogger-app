@@ -32,13 +32,16 @@ class PushActivityScreen extends Component {
         let {data} = notification;
         if(data)
             this.startActivityFromNotification(data.actId)
+        else
+            Actions.pop();
     }
 
     onNotificationAndroid = (notification) => {
-        const { acts } = this.props;
-        let index = parseInt(notification.id);
-        if(acts[index])
-            this.startActivityFromNotification(acts[index]._id);
+        const {data} = notification;
+        if(data)
+            this.startActivityFromNotification(data.actId)
+        else
+            Actions.pop();
     }
 
     startActivityFromNotification(actId){
@@ -55,10 +58,9 @@ class PushActivityScreen extends Component {
     }
 
     navigateToAct(volume, data, options) {
-        const {setAnswer, setActivity, setVolume} = this.props;
+        const {setActivity, setVolume} = this.props;
         setVolume(volume);
         setActivity(data.variant, data.info, options);
-        setAnswer([]);
         Actions.push('take_act');
     }
 
