@@ -55,10 +55,9 @@ class PushActivityScreen extends Component {
     }
 
     navigateToAct(volume, data, options) {
-        const {setAnswer, setActivity, setVolume} = this.props;
+        const {setActivity, setVolume} = this.props;
         setVolume(volume);
         setActivity(data.variant, data.info, options);
-        setAnswer([]);
         Actions.push('take_act');
     }
 
