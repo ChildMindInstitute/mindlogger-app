@@ -40,7 +40,7 @@ import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
 import { timeArrayFrom } from './NotificationSchedule';
-
+import Instabug from 'instabug-reactnative';
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
@@ -59,6 +59,7 @@ class ActivityScreen extends Component {
             console.warn("undefined user")
             return
         }
+        Instabug.identifyUserWithEmail(user.email, user.login);
         if (volumes.length == 0) {
             this.downloadAll();
         } else {
@@ -315,6 +316,7 @@ class ActivityScreen extends Component {
         let todoActs = [];
         
         acts.forEach(act => {
+            if (!actData[act._id]) return;
             let variantId = actData[act._id].variant._id;
             let nextTime = notifications[act._id] && notifications[act._id].times[0];
             if (answerData[variantId]) {
@@ -419,9 +421,11 @@ class ActivityScreen extends Component {
 
     navigateToAct(volume, data, options) {
         const {setActivity, setVolume} = this.props;
-        setVolume(volume);
-        setActivity(data.variant, data.info, options);
-        Actions.push('take_act');
+        if (data) {
+            setVolume(volume);
+            setActivity(data.variant, data.info, options);
+            Actions.push('take_act');
+        }
     }
 
     editActivityDetail(rowId) {
