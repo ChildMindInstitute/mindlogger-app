@@ -1,4 +1,5 @@
 import moment from 'moment';
+import hashInt from 'hash-int';
 
 const dateSortAsc = (date1, date2) => {
   // This is a comparison function that will result in dates being sorted in
@@ -17,11 +18,10 @@ function timeFromString(time) {
   }
 }
 
-function getRandomTime(minTime, maxTime) {
+function getRandomTime(minTime, maxTime, seed = 123) {
   min = 0;
   max = maxTime - minTime;
-  console.log(minTime);
-  return minTime + Math.floor(Math.random() * (max + 1));
+  return minTime + Math.floor((hashInt(maxTime + seed) % 1000) / 1000 * max);
 }
 
 export const timeArrayFrom = (config, lastDate) => {
@@ -70,15 +70,13 @@ export const timeArrayFrom = (config, lastDate) => {
         let t1 = moment(dayTime.timeStart, "HH:mm");
         let t2 = moment(dayTime.timeEnd, "HH:mm");
         if(t1.isValid() && t2.isValid()) {
-          let d = new Date(getRandomTime(t1.valueOf(), t2.valueOf()));
+          let d = new Date(getRandomTime(t1, t2, index));
           notifications.times.push(d);
           console.log("random time", t1,t2, d);
         }
       }
     }
   }
-
-  console.log(notifications);
   notifications.compiled = []; // Compile calculated dates with calculated times
   let startTime = lastDate || Date.now();
   notifications.days.forEach(function(day) {

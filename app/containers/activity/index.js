@@ -120,6 +120,7 @@ class ActivityScreen extends Component {
         }
 
         this.syncTimer = TimerMixin.setInterval(this.syncData, 3000);
+        this.notificationTimer = TimerMixin.setInterval(this.syncNotifications, 60000);
     }
     promptEmptyActs() {
         Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', duration: 1500})
@@ -272,8 +273,8 @@ class ActivityScreen extends Component {
             PushNotification.cancelAllLocalNotifications();
         } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
             console.log("Notifications: ", notifications);
-            this.orderActs(acts, notifications);
-            return;
+            // this.orderActs(acts, notifications);
+            // return;
         }
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
@@ -282,12 +283,16 @@ class ActivityScreen extends Component {
             let { lastTime } = state;
             if(isReset) {
                 lastTime = undefined;
+            } else if (lastTime != undefined && Date.now() < lastTime){
+                return;
             }
+            
             let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };
+            let time;
             if(times.length > 0) {
-                const time = times[0];
+                time = times[0];
                 if (lastTime == undefined || time.getTime()>lastTime) {
                     PushNotification.localNotificationSchedule({
                         //... You can use all the options from localNotifications
@@ -300,7 +305,7 @@ class ActivityScreen extends Component {
                 }
                 lastTime = time.getTime();
             }
-            notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times };
+            notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
         setNotificationStatus(notifications);
         this.orderActs(acts, notifications);
@@ -565,6 +570,12 @@ class ActivityScreen extends Component {
         }).catch(err => {
             console.log(err)
         });
+    }
+
+    syncNotifications = () => {
+        const {acts} = this.props;
+        if (acts.length == 0) return;
+        this.scheduleNotifications(acts);
     }
 
     render() {

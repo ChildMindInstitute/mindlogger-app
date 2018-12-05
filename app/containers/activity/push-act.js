@@ -61,7 +61,7 @@ class PushActivityScreen extends Component {
         const {setActivity, setVolume} = this.props;
         setVolume(volume);
         setActivity(data.variant, data.info, options);
-        Actions.push('take_act');
+        Actions.replace('take_act');
     }
 
     render() {
