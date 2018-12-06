@@ -32,7 +32,7 @@ export const timeArrayFrom = (config, lastDate) => {
   if (config.calendarDay && Array.isArray(config.calendarDay)) { // Calendar dates
     config.calendarDay.forEach(function(dayStr) {
       let day = Date.parse(dayStr);
-      day>=today ? notifications.days.push(new Date(day)) : null;
+      notifications.days.push(new Date(day));
     });
   }
   if (config.modeMonth && config.monthDay && config.monthDay.length) { // Monthly
@@ -72,11 +72,11 @@ export const timeArrayFrom = (config, lastDate) => {
         if(t1.isValid() && t2.isValid()) {
           let d = new Date(getRandomTime(t1, t2, index));
           notifications.times.push(d);
-          console.log("random time", t1,t2, d);
         }
       }
     }
   }
+  console.log(notifications);
   notifications.compiled = []; // Compile calculated dates with calculated times
   let startTime = lastDate || Date.now();
   notifications.days.forEach(function(day) {

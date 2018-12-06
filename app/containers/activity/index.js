@@ -288,6 +288,7 @@ class ActivityScreen extends Component {
             } else if (lastTime != undefined && Date.now() < lastTime){
                 return;
             }
+            console.log("Notifications for:", variant.name);
             
             let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
