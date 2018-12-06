@@ -60,6 +60,7 @@ class ActivityScreen extends Component {
             return
         }
         Instabug.identifyUserWithEmail(user.email, user.login);
+        console.log(volumes);
         if (volumes.length == 0) {
             this.downloadAll();
         } else {
@@ -257,6 +258,7 @@ class ActivityScreen extends Component {
 
     componentWillUnmount() {
         TimerMixin.clearInterval(this.syncTimer);
+        TimerMixin.clearInterval(this.notificationTimer);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -302,8 +304,8 @@ class ActivityScreen extends Component {
                         userInfo,
                         date: time
                     });
+                    lastTime = time.getTime();
                 }
-                lastTime = time.getTime();
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
@@ -583,7 +585,7 @@ class ActivityScreen extends Component {
         const {dueActs, todoActs, progress, volumeCount, volumeDownloaded} = this.state;
 
         let dataBlob = {};
-        if (todoActs) {
+        if (todoActs || dueActs) {
             dataBlob[0] = dueActs;
             dataBlob[1] = todoActs;
         }
