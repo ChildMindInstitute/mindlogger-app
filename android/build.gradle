@@ -32,11 +32,6 @@ allprojects {
         }
         jcenter()
     }
-
-    configurations.all {
-        // Manually set support lib v7 versions
-        resolutionStrategy.force "com.android.support:support-v4:26.1.0"
-    }
 }
 
 ext {
@@ -49,14 +44,20 @@ ext {
 
 subprojects {
   project.configurations.all {
-      afterEvaluate {project ->
-        if (project.hasProperty("android")) {
-            android {
-                compileSdkVersion 26
-                buildToolsVersion '26.0.2'
+        afterEvaluate {project ->
+            if (project.hasProperty("android")) {
+                android {
+                    compileSdkVersion 26
+                    buildToolsVersion '26.0.2'
+                }
             }
         }
-    }
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex') ) {
+                details.useVersion "26.1.0"
+            }
+        }
   }
   if (project.name.contains('react-native-fetch-blob')) {
         buildscript {
