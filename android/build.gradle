@@ -34,16 +34,6 @@ allprojects {
     }
 }
 
-subprojects {project ->
-    if (project.name.contains('react-native-fetch-blob')) {
-        buildscript {
-            repositories {
-                maven { url "https://dl.bintray.com/android/android-tools/"  }
-            }    
-        }
-    }
-}
-
 ext {
     buildToolsVersion = "26.0.3"
     minSdkVersion = 19
@@ -54,13 +44,26 @@ ext {
 
 subprojects {
   project.configurations.all {
-      afterEvaluate {project ->
-        if (project.hasProperty("android")) {
-            android {
-                compileSdkVersion 26
-                buildToolsVersion '26.0.2'
+        afterEvaluate {project ->
+            if (project.hasProperty("android")) {
+                android {
+                    compileSdkVersion 26
+                    buildToolsVersion '26.0.2'
+                }
             }
         }
-    }
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex') ) {
+                details.useVersion "26.1.0"
+            }
+        }
   }
+  if (project.name.contains('react-native-fetch-blob')) {
+        buildscript {
+            repositories {
+                maven { url "https://dl.bintray.com/android/android-tools/"  }
+            }    
+        }
+    }
 }
