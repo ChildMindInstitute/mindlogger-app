@@ -39,16 +39,6 @@ allprojects {
     }
 }
 
-subprojects {project ->
-    if (project.name.contains('react-native-fetch-blob')) {
-        buildscript {
-            repositories {
-                maven { url "https://dl.bintray.com/android/android-tools/"  }
-            }    
-        }
-    }
-}
-
 ext {
     buildToolsVersion = "26.0.3"
     minSdkVersion = 19
@@ -68,4 +58,11 @@ subprojects {
         }
     }
   }
+  if (project.name.contains('react-native-fetch-blob')) {
+        buildscript {
+            repositories {
+                maven { url "https://dl.bintray.com/android/android-tools/"  }
+            }    
+        }
+    }
 }
