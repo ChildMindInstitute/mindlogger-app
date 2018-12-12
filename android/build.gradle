@@ -32,6 +32,11 @@ allprojects {
         }
         jcenter()
     }
+
+    configurations.all {
+        // Manually set support lib v7 versions
+        resolutionStrategy.force "com.android.support:support-v7:26.1.0"
+    }
 }
 
 subprojects {project ->
