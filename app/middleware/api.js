@@ -1,6 +1,7 @@
 import config from '../config';
-import { AsyncStorage } from 'react-native';
+import RNFetchBlob from 'react-native-fetch-blob';
 import objectToFormData from 'object-to-formdata';
+import { Object } from 'core-js';
 
 export default store => next => action => {
     if ((!action.method && !action.path) || action.status) return next(action)
@@ -42,7 +43,7 @@ export default store => next => action => {
         });
 }
 
-export const makeRequest = (method, path, data, accessToken, {isMultipartUpload, isJson, extraHeaders}) => {
+export const makeRequest = (method, path, data, accessToken, {isMultipartUpload, isUpload, isJson, extraHeaders}) => {
     let headers = extraHeaders || {};
     if (headers['Girder-Authorization']) {
         
@@ -51,21 +52,19 @@ export const makeRequest = (method, path, data, accessToken, {isMultipartUpload,
     }
     
     let body = data;
-    if (!isMultipartUpload && isJson) {
-        headers.set("Content-Type", "application/json; charset=utf-8");
-        body = JSON.stringify(data);
-    }
-    if (!isJson && method !== 'GET') {
-        body = objectToFormData(data);
-    }
-
-    return fetch(`${config.apiHost}${path}`, {
+    if (!isUpload) {
+        if (!isMultipartUpload && isJson) {
+            headers.set("Content-Type", "application/json; charset=utf-8");
+            body = JSON.stringify(data);
+        } else if (!isJson && method !== 'GET') {
+            body = objectToFormData(data);
+        }
+        return fetch(`${config.apiHost}${path}`, {
             mode: 'cors',
             body,
             method,
             headers
-        })
-        .then(response => {
+        }).then(response => {
             console.log(method, `${config.apiHost}${path}`, body, response);
             const status = response.status;
             try {
@@ -76,6 +75,28 @@ export const makeRequest = (method, path, data, accessToken, {isMultipartUpload,
                 Promise.reject(error);
             }
         });
+    } else {
+        console.log(body);
+        return RNFetchBlob.fetch(
+            method,
+            `${config.apiHost}${path}`,
+            headers,
+            RNFetchBlob.wrap(body.uri)
+            ).then(response => {
+                console.log(method, `${config.apiHost}${path}`, "File Object", response);
+                try {
+                    let json = response.json();
+                    if(response.respInfo.status == 200) {
+                        Promise.resolve(json);
+                    } else {
+                        Promise.reject(json);
+                    }
+                } catch(error) {
+                    Promise.reject(error);
+                }
+                Promise.resolve({success: true});
+            });
+    }
 }
 
 const endpointGenerics = (state, path) => {

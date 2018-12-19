@@ -10,6 +10,7 @@ import {Text, Switch, View,Button} from 'native-base';
 
 import randomString from 'random-string';
 import {AudioUtils} from 'react-native-audio';
+import TimerMixin from 'react-timer-mixin';
 
 import {
   Player,
@@ -82,12 +83,12 @@ class AudioRecord extends React.Component {
       this._reloadRecorder();
       
     });
-    this._progressInterval = setInterval(() => {
+    this._progressInterval = TimerMixin.setInterval(() => {
       if (this.player && this._shouldUpdateProgressBar()) {// && !this._dragging) {
         this.setState({progress: Math.max(0, this.player.currentTime) / this.player.duration});
       }
     }, 100);
-    this._recordInterval = setInterval( () => {
+    this._recordInterval = TimerMixin.setInterval( () => {
       if (this.recorder && this.recorder.isRecording) {
         let duration = (Date.now() - this.startTime)/1000;
         this.setState({duration});
@@ -104,9 +105,9 @@ class AudioRecord extends React.Component {
   componentWillUnmount() {
     //console.log('unmount');
     // TODO
-    clearInterval(this._progressInterval);
+    TimerMixin.clearInterval(this._progressInterval);
     if(this._recordInterval)
-      clearInterval(this._recordInterval)
+      TimerMixin.clearInterval(this._recordInterval)
   }
 
   _shouldUpdateProgressBar() {

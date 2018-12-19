@@ -5,6 +5,7 @@ import SurveyTableInput from './SurveyTableInput';
 import SurveyTableSelector from './SurveyTableSelector';
 import SurveySliderInput from './SurveySliderInput';
 import SurveyTimeInput from './SurveyTimeInput';
+import SurveyAudioInput from './SurveyAudioInput';
 
 export default class SurveySection extends Component {
   render() {
@@ -49,6 +50,13 @@ export default class SurveySection extends Component {
           answer={answer}
           onChange={onChange}
           /></View>
+    else if (type=='audio')
+      return <View style={{flexGrow:3}}><SurveyAudioInput
+      config={config}
+      answer={answer}
+      onChange={onChange}
+      onNextChange={onNextChange}
+      /></View>
     // else if (type == 'audio')
     //     return <SurveyAudio
     //       config={config}

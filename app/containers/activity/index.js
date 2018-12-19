@@ -34,13 +34,15 @@ import {
     getFolders,
     getItems,
     getActVariant,
-    getUserCollection
+    getUserCollection,
+    uploadFile,
 } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
 import { timeArrayFrom } from './NotificationSchedule';
 import Instabug from 'instabug-reactnative';
+import { getFileInfoAsync } from '../../helper';
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
@@ -557,12 +559,36 @@ class ActivityScreen extends Component {
     }
 
     syncData = () => {
-        const {answerCache, addFolder, updateQueue, addItem} = this.props;
+        const {answerCache, addFolder, updateQueue, addItem, uploadFile} = this.props;
         var arr = [];
         answerCache.forEach(({name, payload, volumeName, collectionId, synced}, index) => {
             if (synced) return
             let pr = addFolder(volumeName,{},collectionId, 'folder', true).then(folder => {
                 return addItem(name, payload, folder._id).then(res => {
+                    console.log(payload);
+                    let uploadAssets = [];
+                    payload.responses.forEach(({data}) => {
+                        if (data && data.type == 'audio') {
+                            uploadAssets.push(getFileInfoAsync(data.survey).then(stat => {
+                                console.log(stat.size);
+                                return uploadFile(data.filename, 
+                                    {
+                                        uri: data.survey,
+                                        type: 'application/octet',
+                                        size: stat.size,
+                                        name: data.filename,
+                                    },
+                                    res._modelType,
+                                    res._id).then(res=>{
+                                        return true;
+                                    }).catch(err => {
+                                        console.log("Upload asset error", err);
+                                    });
+                            }));
+                        }
+                    });
+                    return Promise.all(uploadAssets);
+                }).then(res => {
                     answerCache[index].synced = true;
                     console.log("Synced answer", res);
                     return true;
@@ -576,6 +602,7 @@ class ActivityScreen extends Component {
             console.log("Synced all answers", answerCache)
         }).catch(err => {
             console.log(err)
+            this.setState({syncError: true});
         });
     }
 
@@ -684,6 +711,7 @@ function bindAction(dispatch) {
             addItem,
             updateQueue,
             setAnswer,
+            uploadFile,
         }, dispatch)
   };
 }
