@@ -85,9 +85,13 @@ class Screen extends Component {
     }
   }
 
-  setAnswer(data, validated, callback) {
+  setAnswer(newAnswer, validated, callback) {
     let {answer} = this.state;
-    answer = {...answer, ...data};
+    const {screen: {meta: data = {}}} = this.props;
+    answer = {...answer, ...newAnswer, type: data.surveyType};
+    if (data.surveyType == 'audio') {
+      answer.filename = (newAnswer.survey && newAnswer.survey.length > 0) && newAnswer.survey.split('/').pop();
+    }
     if (validated == undefined) {
       this.setState({answer}, callback);
     } else {
@@ -220,7 +224,7 @@ class Screen extends Component {
       {this.renderPicture(data)}
       <View style={styles.paddingContent}>
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
-        <Text style={styles.text}>{data.text}</Text>
+        { data.surveyType != 'audio' && <Text style={styles.text}>{data.text}</Text> }
         {
           data.surveyType && <SurveySection
             type={data.surveyType}
@@ -238,6 +242,7 @@ class Screen extends Component {
             answer={this.answer('text')}
             onChange={text => this.setAnswer({text})}/>
         }
+        { data.surveyType == 'audio' && <Text style={styles.text}>{data.text}</Text> }
       </View>
     </Content>)
   }
