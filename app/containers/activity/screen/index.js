@@ -115,7 +115,7 @@ class Screen extends Component {
     const {path, screen} = this.props;
     const {meta: data={}} = screen;
     const {answer} = this.state;
-    let payload = {'@id': path, data: answer};
+    let payload = {'@id': screen._id, data: answer};
     if(data.text)
       payload.text = data.text;
     return payload;
