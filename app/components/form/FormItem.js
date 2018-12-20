@@ -2,7 +2,6 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, CheckBox, Button, Row, ListItem } from 'native-base';
 import InputNumber from 'rc-input-number';
-import AudioRecord from '../audio/AudioRecord';
 import DatePicker from 'react-native-datepicker';
 
 export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, meta: { touched, error, warning }, ...props}) => {
@@ -116,18 +115,6 @@ export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,
               <InputNumber {...inputProps} styles={styles} keyboardType={'number-pad'} onChange={input.onChange} onBlur={input.onBlur} onFocus={input.onFocus} value={input.value || inputProps.min}/>
               {hasError ? <Text>{error}</Text> : <Text />}
           </Item> )
-}
-
-export const FormInputAudio = ({ input, stackedLabel, label, style, name, meta: { touched, error, warning }, ...inputProps}) => {
-  var hasError= false;
-  if(error !== undefined){
-    hasError= true;
-  }
-  return( <View stackedLabel={stackedLabel} style={style} error= {hasError}>
-              <Text>{label}</Text>
-              <AudioRecord onRecordFile={(filePath)=>input.onChange(filePath)} path={input.value}/>
-              {hasError ? <Text>{error}</Text> : <Text />}
-          </View> )
 }
 
 export const FormInputCheckItem = ({ input, label, style, name, itemStyle, meta: {touched, error, warning}, ...props}) => {

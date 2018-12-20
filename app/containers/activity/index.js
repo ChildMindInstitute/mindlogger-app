@@ -565,12 +565,10 @@ class ActivityScreen extends Component {
             if (synced) return
             let pr = addFolder(volumeName,{},collectionId, 'folder', true).then(folder => {
                 return addItem(name, payload, folder._id).then(res => {
-                    console.log(payload);
                     let uploadAssets = [];
                     payload.responses.forEach(({data}) => {
                         if (data && data.type == 'audio') {
                             uploadAssets.push(getFileInfoAsync(data.survey).then(stat => {
-                                console.log(stat.size);
                                 return uploadFile(data.filename, 
                                     {
                                         uri: data.survey,
