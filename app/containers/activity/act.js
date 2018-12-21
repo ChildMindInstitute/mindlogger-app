@@ -44,7 +44,7 @@ class Act extends Component {
           key={index}
           index={index}
           path={act._id}
-          name={data.screens[index]['name']}
+          name={data.screens[index] && data.screens[index]['name']}
           answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}
