@@ -5,7 +5,6 @@ import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
-import packageJson from '../../../package.json'
 
 import baseTheme from '../../themes/baseTheme';
 import { getItems, getObject, addFolder, addItem } from '../../actions/api';
@@ -45,7 +44,7 @@ class Act extends Component {
           key={index}
           index={index}
           path={act._id}
-          name={data.screens[index] && data.screens[index]['name']}
+          name={data.screens[index]['name']}
           answer={answers[index]}
           onPrev={this.prev}
           onNext={this.next}
@@ -103,14 +102,13 @@ class Act extends Component {
       "devices:os":`devices:${DeviceInfo.getSystemName()}`,
       "devices:osversion":DeviceInfo.getSystemVersion(),
       "deviceModel":DeviceInfo.getModel(),
-      "appVersion": packageJson.name + packageJson.version,
       responses: answers,
       responseTime: Date.now()
     }
     let answerName = moment().format('YYYY-M-D') + ' ' + act.name;
     addQueue(answerName, payload, volume.name, resCollection._id);
     // return addFolder(volume.name,{},resCollection._id, 'folder', true).then(folder => {
-
+      
     //   return addItem(answerName, payload, folder._id);
     // })
   }
@@ -122,7 +120,7 @@ export default connect(({core: {self, userData, act, actInfo, answerData, volume
     actOptions: actOptions,
     volume: volume,
     resCollection: userData && self && userData[self._id].collections && userData[self._id].collections.Responses,
-    answers: (answerData && answerData[act._id]) || [],
+    answers: (answerData && answerData[act._id]) || [], 
   }),
   {
     getObject, getItems, setAnswer, addFolder, addItem, addQueue
