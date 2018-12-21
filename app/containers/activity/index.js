@@ -280,21 +280,19 @@ class ActivityScreen extends Component {
         if (isReset) {
             PushNotification.cancelAllLocalNotifications();
         } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
-            console.log("Notifications: ", notifications);
-            // this.orderActs(acts, notifications);
-            // return;
+            //console.log("Notifications: ", notifications);
         }
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
             if (!variant || variant.meta.notification == undefined) return;
-            let state = notifications[variant._id] || {};
+            let state = notifications[act._id] || {};
             let { lastTime } = state;
             if(isReset) {
                 lastTime = undefined;
             } else if (lastTime != undefined && Date.now() < lastTime){
                 return;
             }
-            console.log("Notifications for:", variant.name);
+            //console.log("Notifications for:", variant.name, lastTime && Date(lastTime));
             
             let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
@@ -302,6 +300,7 @@ class ActivityScreen extends Component {
             let time;
             if(times.length > 0) {
                 time = times[0];
+                
                 if (lastTime == undefined || time.getTime()>lastTime) {
                     PushNotification.localNotificationSchedule({
                         //... You can use all the options from localNotifications
@@ -312,7 +311,9 @@ class ActivityScreen extends Component {
                         date: time
                     });
                     lastTime = time.getTime();
+                    console.log("Notification: ", message, Date(lastTime));
                 }
+                
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
