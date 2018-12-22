@@ -1,6 +1,6 @@
 # Mindlogger
 
-This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for Child Mind Institute
+This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
 
 [![Bitrise Build Status](https://app.bitrise.io/app/68551a54551c4340/status.svg?token=PHADmilvhbAjloIJf0Hylg)](https://app.bitrise.io/app/68551a54551c4340)
 
