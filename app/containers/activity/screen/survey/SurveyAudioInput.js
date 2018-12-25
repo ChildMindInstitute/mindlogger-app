@@ -12,17 +12,16 @@ class SurveyAudioInput extends Component {
   componentWillMount() {
   }
 
-  checkValue = (value) => {
-    const {onChange} = this.props;
-    //this.onAnswer(value);
-    onChange(value, true);
+  onRecord = (filePath) => {
+    let filename = (filePath && filePath.length > 0) && filePath.split('/').pop();
+    this.props.onChange({uri: filePath, filename});
   }
 
   render() {
-    const { answer, onChange} = this.props;
+    const { answer } = this.props;
     return (
       <View style={{alignItems:'stretch', flex: 1}}>
-        <AudioRecord mode="single" onRecordFile={(filePath)=>onChange(filePath)} path={answer}/>
+        <AudioRecord mode="single" onRecordFile={this.onRecord} path={answer}/>
       </View>
     )
   }

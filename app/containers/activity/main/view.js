@@ -1,9 +1,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {bindActionCreators} from 'redux';
-import { connect } from 'react-redux';
-import { ListView } from 'react-native';
+import {PushNotificationIOS, Platform, ListView} from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, List, ListItem, Text , Left, Body, Right, ActionSheet, View, Toast, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -12,37 +10,13 @@ import {
 import PushNotification from 'react-native-push-notification';
 import TimerMixin from 'react-timer-mixin';
 import moment from 'moment';
-
-import Image from '../../components/image/Image';
-import { openDrawer, closeDrawer } from '../../actions/drawer';
-import {
-    setActivity,
-    setNotificationStatus,
-    clearNotificationStatus,
-    setVolumes,
-    setVolume,
-    setActs,
-    updateQueue,
-    setAnswer,
-} from '../../actions/coreActions';
-
-import { 
-    addFolder,
-    addItem,
-    getObject,
-    getCollection,
-    getFolders,
-    getItems,
-    getActVariant,
-    getUserCollection,
-    uploadFile,
-} from '../../actions/api';
-import {PushNotificationIOS, Platform} from 'react-native';
-
-import styles from './styles';
-import { timeArrayFrom } from './NotificationSchedule';
 import Instabug from 'instabug-reactnative';
-import { getFileInfoAsync } from '../../helper';
+
+import Image from '../../../components/image/Image';
+
+import styles from '../styles';
+import { timeArrayFrom } from '../NotificationSchedule';
+
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
@@ -97,14 +71,14 @@ PushNotification.configure({
 });
 
 
-class ActivityScreen extends Component {
+export default class ActivityScreen extends Component {
 
     static propTypes = {
         openDrawer: PropTypes.func,
     }
     componentWillMount() {
         this.setState({})
-        const {user, acts, isLogin, volumes} = this.props;
+        const {user, acts, isLogin, volumes, setupResponse} = this.props;
         if(!user) {
             console.warn("undefined user")
             return
@@ -112,7 +86,7 @@ class ActivityScreen extends Component {
         Instabug.identifyUserWithEmail(user.email, user.login);
         console.log(volumes);
         if (volumes.length == 0) {
-            this.downloadAll();
+          this.resetActs();
         } else {
             this.scheduleNotifications(acts);
         }
@@ -121,145 +95,35 @@ class ActivityScreen extends Component {
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
         }
-
         if (isLogin) {
-            this.setupResponse();
+          setupResponse(user);
         }
 
         this.syncTimer = TimerMixin.setInterval(this.syncData, 3000);
         this.notificationTimer = TimerMixin.setInterval(this.syncNotifications, 60000);
     }
+
+    resetActs() {
+      const {downloadAll, user} = this.props;
+      this.setState({progress: true});
+      downloadAll(user, (volumeCount, volumeDownloaded) => {
+        if(volumeCount == 0) {
+          this.promptEmptyActs();
+        }
+        this.setState({volumeCount, volumeDownloaded})
+      }).then(acts => {
+        Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
+        this.setState({progress: false});
+        this.scheduleNotifications(acts, true);
+      }).catch(err => {
+        console.log(err);
+        this.setState({progress: false});
+      });
+    }
+
     promptEmptyActs() {
         Toast.show({text: 'No Activities', position: 'bottom', type: 'danger', duration: 1500})
         this.setState({progress: false})
-    }
-
-    downloadActGroup(actGroup) {
-        const {getFolders, getItems, getActVariant} = this.props;
-        return getFolders(actGroup._id, 'acts', 'folder').then(acts => {
-            return Promise.all(acts.map(act => getActVariant(act._id)
-                .then(arr => {
-                    const { variant, info } = this.props.actData[act._id];
-                    return getItems(variant._id).then(res => {
-                        if(info) {
-                            return getItems(info._id)
-                        }
-                    });
-                }))).then(res => {
-                    return acts;
-                });
-        });
-    }
-
-    downloadInfoGroup(group) {
-        const {getFolders, getItems, getActVariant} = this.props;
-        return getFolders(group._id, 'infoActs', 'folder').then(acts => {
-            return Promise.all(acts.map(act => getActVariant(act._id)
-                .then(arr => {
-                    const { variant } = this.props.actData[act._id];
-                    return getItems(variant._id)
-                }))).then(res => {
-                    return acts;
-                })
-        });
-    }
-
-    downloadVolume(volume) {
-        const {getFolders} = this.props;
-        return getFolders(volume._id, 'groups', 'folder').then(res => {
-            if (res.length > 0) {
-                let actGroup;
-                let infoGroup;
-                res.forEach(group => {
-                    if (group.meta && group.meta.info) {
-                        infoGroup = group
-                    } else {
-                        actGroup = group
-                    }
-                });
-                volume.acts=[];
-                volume.infoActs=[];
-                let arr = [];
-                if (actGroup) {
-                    arr.push(this.downloadActGroup(actGroup).then(acts => {
-                        acts.forEach(act => {
-                            act.volumeId = volume._id;
-                        });
-                        volume.acts = acts;
-                    }));
-                }
-                if (infoGroup) {
-                    arr.push(this.downloadInfoGroup(infoGroup).then(acts => {
-                        volume.infoActs = acts;
-                    }));
-                }
-                return Promise.all(arr);
-            }
-        })
-
-    }
-
-    downloadAll = () => {
-        const {getCollection, getFolders, getItems, getActVariant, setVolumes, user, setActs} = this.props;
-        this.setState({progress: true});
-        getCollection('Volumes').then(res => {
-            if (res.length>0)
-                return getFolders(res[0]._id, 'volumes');
-            else
-                this.promptEmptyActs();
-        }).then(arr => {
-            let volumeId;
-            let volumes = [];
-            let volumeCount = 0;
-            let volumeDownloaded = 0;
-            for (let index = 0; index < arr.length; index++) {
-                const v = arr[index];
-                console.log(v);
-                if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
-                    console.log(volumeCount);
-                    volumes.push(v);
-                    volumeCount = volumeCount + 1;
-                }
-            }
-            this.setState({volumeCount, volumeDownloaded});
-            let promiseArr = [];
-            for (let index = 0; index < volumes.length; index++) {
-                const volume = volumes[index];
-                promiseArr.push(this.downloadVolume(volume).then(() => {
-                    volumeDownloaded = volumeDownloaded + 1;
-                    this.setState({volumeCount, volumeDownloaded});
-                    return true;
-                }));
-            }
-            return Promise.all(promiseArr).then(res => {
-                console.log("downloaded all.....");
-                setVolumes(volumes);
-                console.log("Volumes set.....")
-                let acts = [];
-                volumes.forEach(v => {
-                    acts = acts.concat(v.acts)
-                });
-                setActs(acts);
-                this.scheduleNotifications(acts, true);
-            });
-        }).then(res => {
-            Toast.show({text: 'Download complete', position: 'bottom', type: 'info', duration: 1500})
-            this.setState({progress: false});
-        }).catch(err => {
-            console.log(err);
-            this.setState({progress: false});
-        });
-    }
-
-    setupResponse() {
-        const { addFolder, getUserCollection, user} = this.props;
-        getUserCollection(user._id).then(res => {
-            if (this.props.resCollection == undefined) {
-                addFolder('Responses', {}, user._id, 'user', true).then(res => {
-                    return getUserCollection(user._id);
-                })
-            }
-        });
     }
 
     componentWillUnmount() {
@@ -322,10 +186,11 @@ class ActivityScreen extends Component {
     }
 
     loadAllActivity = (isReload=false) => {
-        if (isReload) {
-            this.downloadAll()
-            this.setupResponse()
-        }
+      const {setupResponse, user} = this.props;
+      if (isReload) {
+          this.resetActs()
+          setupResponse(user);
+      }
     }
 
     orderActs(acts, notifications, newAnswerData) {
@@ -352,6 +217,16 @@ class ActivityScreen extends Component {
             if (act1.nextTime > act2.nextTime) return 1;
         })
         this.setState({dueActs, todoActs});
+    }
+
+    syncData = () => {
+      const {syncData, answerCache} = this.props;
+      syncData(answerCache).then(res => {
+        console.log("Synced all answers", answerCache)
+      }).catch(err => {
+        console.log(err)
+        this.setState({syncError: true});
+      });
     }
 
     pushRoute(route) {
@@ -433,17 +308,16 @@ class ActivityScreen extends Component {
     }
 
     startActivity(act, secId) {
-        const {setActivity, actData, volumes} = this.props;
+        const {actData, volumes} = this.props;
         let volume = volumes.find(volume => volume._id == act.volumeId);
         this.navigateToAct(volume, actData[act._id])
     }
 
     navigateToAct(volume, data, options) {
-        const {setActivity, setVolume} = this.props;
+        const {prepareToStartAct} = this.props;
         if (data) {
-            setVolume(volume);
-            setActivity(data.variant, data.info, options);
-            Actions.push('take_act');
+          prepareToStartAct(volume, data, options);
+          Actions.push('take_act');
         }
     }
 
@@ -559,51 +433,7 @@ class ActivityScreen extends Component {
         // )
     }
 
-    syncData = () => {
-        const {answerCache, addFolder, updateQueue, addItem, uploadFile} = this.props;
-        var arr = [];
-        answerCache.forEach(({name, payload, volumeName, collectionId, synced}, index) => {
-            if (synced) return
-            let pr = addFolder(volumeName,{},collectionId, 'folder', true).then(folder => {
-                return addItem(name, payload, folder._id).then(res => {
-                    let uploadAssets = [];
-                    payload.responses.forEach(({data}) => {
-                        if (data && data.type == 'audio') {
-                            uploadAssets.push(getFileInfoAsync(data.survey).then(stat => {
-                                return uploadFile(data.filename, 
-                                    {
-                                        uri: data.survey,
-                                        type: 'application/octet',
-                                        size: stat.size,
-                                        name: data.filename,
-                                    },
-                                    res._modelType,
-                                    res._id).then(res=>{
-                                        return true;
-                                    }).catch(err => {
-                                        console.log("Upload asset error", err);
-                                    });
-                            }));
-                        }
-                    });
-                    return Promise.all(uploadAssets);
-                }).then(res => {
-                    answerCache[index].synced = true;
-                    console.log("Synced answer", res);
-                    return true;
-                });
-            })
-            arr.push(pr);
-        });
-        if (arr.length == 0) return;
-        Promise.all(arr).then(res => {
-            updateQueue(answerCache);
-            console.log("Synced all answers", answerCache)
-        }).catch(err => {
-            console.log(err)
-            this.setState({syncError: true});
-        });
-    }
+    
 
     syncNotifications = () => {
         const {acts} = this.props;
@@ -620,11 +450,6 @@ class ActivityScreen extends Component {
             dataBlob[0] = dueActs;
             dataBlob[1] = todoActs;
         }
-        // let volumeIds = [];
-        // volumes.forEach((volume,idx) => {
-        //     dataBlob[idx] = volume.acts || [];
-        //     volumeIds.push(volume._id);
-        // });
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2, sectionHeaderHasChanged: (s1,s2) => s1 !==s2 });
         return (
         <Container style={styles.container}>
@@ -688,44 +513,3 @@ class ActivityScreen extends Component {
     }
 }
 
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
-    pushRoute: (route, key) => dispatch(pushRoute(route, key)),
-    ...bindActionCreators({
-            setActivity,
-            getObject,
-            getCollection,
-            getFolders,
-            getItems,
-            setNotificationStatus,
-            clearNotificationStatus,
-            getActVariant,
-            setVolumes,
-            setVolume,
-            setActs,
-            getUserCollection,
-            addFolder,
-            addItem,
-            updateQueue,
-            setAnswer,
-            uploadFile,
-        }, dispatch)
-  };
-}
-
-const mapStateToProps = ({core: {auth, acts, notifications, checkedTime, volumes, self, actData, userData, answerCache = [], answerData = {}}}) => ({
-  auth: auth,
-  acts: acts || [],
-  notifications: notifications || {},
-  checkedTime,
-  volumes: volumes || [],
-  user: self || {},
-  actData: actData || {},
-  resCollection: userData && userData[self._id] && userData[self._id].collections && userData[self._id].collections.Responses,
-  answerCache,
-  answerData,
-});
-
-export default connect(mapStateToProps, bindAction)(ActivityScreen);

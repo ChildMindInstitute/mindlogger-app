@@ -90,9 +90,6 @@ class Screen extends Component {
     let {answer} = this.state;
     const {screen: {meta: data = {}}} = this.props;
     answer = {...answer, ...newAnswer, type: data.surveyType};
-    if (data.surveyType == 'audio') {
-      answer.filename = (newAnswer.survey && newAnswer.survey.length > 0) && newAnswer.survey.split('/').pop();
-    }
     if (validated == undefined) {
       this.setState({answer}, callback);
     } else {
@@ -140,18 +137,26 @@ class Screen extends Component {
     this.props.onNext(this.getPayload(), nextScreen);
   }
 
-  onSurvey = (survey, validated, next) => {
+  onAnswer(data, validated, next) {
     let { length, index } = this.props;
     const {nextScreen} = this.state;
 
     const isFinal = (nextScreen || (index + 1)) >= length;
     if(next && !isFinal) {
-      this.setAnswer({survey}, validated, () => {
+      this.setAnswer(data, validated, () => {
         this.handleNext();
       });
     } else {
-      this.setAnswer({survey}, validated);
+      this.setAnswer(data, validated);
     }
+  }
+
+  onSurvey = (survey, validated, next) => {
+    this.onAnswer({survey}, validated, next);
+  }
+
+  onCanvas = (canvas, validated, next) => {
+    this.onAnswer({canvas}, validated, next);
   }
 
   renderButtons() {
@@ -238,7 +243,7 @@ class Screen extends Component {
             type={data.canvasType}
             config={data.canvas}
             answer={this.answer('canvas')}
-            onChange={this.onSurvey}
+            onChange={this.onCanvas}
             ref={ref => {this.canvasRef = ref}}
             onNextChange={this.onNextChange}
             />
