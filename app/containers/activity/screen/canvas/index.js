@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import CanvasDrawingInput from './CanvasDrawingInput';
+import CameraInput from './CameraInput';
 
 
 export default class DrawingSection extends Component {
@@ -11,16 +12,30 @@ export default class DrawingSection extends Component {
   render() {
     const {type, config={}, answer, onChange, onNextChange} = this.props;
     console.log(config);
-    if (type == 'draw')
-      return (
-        <CanvasDrawingInput
-          config={config}
-          answer={answer}
-          onChange={onChange}
-          onNextChange={onNextChange}
-          ref={ref => {this.drawingRef = ref}}
-        />);
-    else
-      return (<View></View>);
+    switch(type) {
+      case 'draw':
+        return (
+          <CanvasDrawingInput
+            config={config}
+            answer={answer}
+            onChange={onChange}
+            onNextChange={onNextChange}
+            ref={ref => {this.drawingRef = ref}}
+          />)
+      case 'camera':
+        return (
+          <CameraInput
+            config={config}
+            answer={answer}
+            onChange={onChange}
+            onNextChange={onNextChange}
+            ref={ref => {this.cameraRef = ref}}
+            />
+        );
+      default:
+        return (<View></View>);
+    }
+      
+    
   }
 }
