@@ -4,12 +4,16 @@ import { connect } from 'react-redux';
 import AudioRecord from '../../../../components/audio/AudioRecord';
 
 
-class SurveyAudioInput extends Component {
+export default class SurveyAudioInput extends Component {
   constructor(props) {
     super(props);
   }
 
   componentWillMount() {
+  }
+
+  reset() {
+    //this.audioRef._delete();
   }
 
   onRecord = (filePath) => {
@@ -21,16 +25,9 @@ class SurveyAudioInput extends Component {
     const { answer } = this.props;
     return (
       <View style={{alignItems:'stretch', flex: 1}}>
-        <AudioRecord mode="single" onRecordFile={this.onRecord} path={answer}/>
+        <AudioRecord mode="single" onRecordFile={this.onRecord} path={answer && answer.uri} ref={ref => this.audioRef = ref}/>
       </View>
     )
   }
 }
 
-export default connect(state => ({
-    
-  }),
-  (dispatch) => ({
-    //actions: bindActionCreators(counterActions, dispatch)
-  })
-)(SurveyAudioInput);

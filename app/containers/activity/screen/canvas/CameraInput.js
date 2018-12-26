@@ -5,7 +5,6 @@ import { Button, View, Icon } from 'native-base';
 import randomString from 'random-string';
 import { RNCamera } from 'react-native-camera';
 import ImagePicker from 'react-native-image-picker';
-import { getFileInfoAsync } from '../../../../helper';
 
 const styles=StyleSheet.create({
   body: {
@@ -64,7 +63,7 @@ export default class CameraInput extends Component {
 
   takePicture() {
     if (this.camera) {
-      const options = { quality: 0.5, base64: true };
+      const options = { quality: 0.5, fixOrientation: true, forceUpOrientation: true, pauseAfterCapture: true };
       this.camera.takePictureAsync(options).then(data => {
         console.log(data.uri);
         let picSource = {uri: data.uri, filename: `image_${randomString()}.jpg`};

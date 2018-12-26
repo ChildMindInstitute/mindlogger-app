@@ -221,8 +221,9 @@ export default class ActivityScreen extends Component {
 
     syncData = () => {
       const {syncData, answerCache} = this.props;
-      syncData(answerCache).then(res => {
-        console.log("Synced all answers", answerCache)
+      syncData(answerCache).then(syncedCount => {
+        if (syncedCount>0)
+          console.log("Synced all answers", answerCache)
       }).catch(err => {
         console.log(err)
         this.setState({syncError: true});

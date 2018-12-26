@@ -8,6 +8,12 @@ import SurveyTimeInput from './SurveyTimeInput';
 import SurveyAudioInput from './SurveyAudioInput';
 
 export default class SurveySection extends Component {
+  resetData = () => {
+    if(this.audioInput) {
+      this.audioInput.reset();
+    }
+      
+  }
   render() {
     const {type, config, answer, onChange, onNextChange} = this.props;
     if (type=='list' && config.mode=='single')
@@ -55,6 +61,7 @@ export default class SurveySection extends Component {
       answer={answer}
       onChange={onChange}
       onNextChange={onNextChange}
+      ref={ref => this.audioInput = ref}
       /></View>
     else
       return (<View></View>);

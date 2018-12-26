@@ -175,7 +175,7 @@ class AudioRecord extends React.Component {
     if (this.player) {
       this.player.destroy();
     }
-
+    if(this.props.path==undefined) return;
     this.player = new Player(this.filename, {
       autoDestroy: false
     }).prepare((err) => {

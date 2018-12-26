@@ -110,6 +110,14 @@ class Screen extends Component {
     if(this.canvasRef) {
       this.canvasRef.resetData();
     }
+    if(this.surveyRef) {
+      this.surveyRef.resetData();
+    }
+  }
+  handleAction = () => {
+    if(this.canvasRef) {
+      this.canvasRef.takeAction();
+    }
   }
 
   getPayload(){
@@ -235,6 +243,7 @@ class Screen extends Component {
             answer={this.answer('survey')}
             onChange={this.onSurvey}
             onNextChange={this.onNextChange}
+            ref={ref => {this.surveyRef = ref}}
             />
   }
 

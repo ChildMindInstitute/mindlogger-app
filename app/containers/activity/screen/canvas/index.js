@@ -9,6 +9,11 @@ export default class DrawingSection extends Component {
     if(this.drawingRef)
       this.drawingRef.resetData();
   }
+
+  takeAction() {
+    if (this.cameraRef)
+      this.cameraRef.take();
+  }
   render() {
     const {type, config={}, answer, onChange, onNextChange} = this.props;
     console.log(config);

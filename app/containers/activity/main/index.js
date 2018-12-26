@@ -224,7 +224,8 @@ const mapDispatchToProps = dispatch => {
             arr.push(pr);
         });
         return Promise.all(arr).then(res => {
-            return dispatch(updateQueue(answerCache));
+            dispatch(updateQueue(answerCache));
+            return arr.length;
         })
     }
 
