@@ -10,7 +10,6 @@ import SurveyAudioInput from './SurveyAudioInput';
 export default class SurveySection extends Component {
   render() {
     const {type, config, answer, onChange, onNextChange} = this.props;
-    console.log(config);
     if (type=='list' && config.mode=='single')
       return (
       <SurveyMultiSelector
@@ -57,12 +56,6 @@ export default class SurveySection extends Component {
       onChange={onChange}
       onNextChange={onNextChange}
       /></View>
-    // else if (type == 'audio')
-    //     return <SurveyAudio
-    //       config={config}
-    //       answer={answer}
-    //       onChange={onChange}
-    //       />
     else
       return (<View></View>);
   }

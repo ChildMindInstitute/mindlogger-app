@@ -10,13 +10,11 @@ class SurveyAudioInput extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.answer);
   }
 
   checkValue = (value) => {
     const {onChange} = this.props;
     //this.onAnswer(value);
-    console.log(value);
     onChange(value, true);
   }
 
