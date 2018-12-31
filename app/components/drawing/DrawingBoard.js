@@ -37,7 +37,6 @@ export default class DrawingBoard extends Component {
     }
 
     addLine = (evt, gestureState) => {
-        console.log(evt);
         const {lines, startTime} = this.state
         if(!this.allowed) return
 

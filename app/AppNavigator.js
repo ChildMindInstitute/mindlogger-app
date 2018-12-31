@@ -77,7 +77,6 @@ class AppNavigator extends Component {
   }
 
   render() {
-    console.log("Theme:",getTheme((this.props.themeState === 'material') ? material : undefined))
     return (
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer

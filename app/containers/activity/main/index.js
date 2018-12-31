@@ -154,9 +154,7 @@ const mapDispatchToProps = dispatch => {
             let volumeDownloaded = 0;
             for (let index = 0; index < arr.length; index++) {
                 const v = arr[index];
-                console.log(v);
                 if (v.meta && v.meta.members && v.meta.members.users.includes(user._id)) {
-                    console.log(volumeCount);
                     volumes.push(v);
                     volumeCount = volumeCount + 1;
                 }

@@ -48,7 +48,6 @@ export default class InfoAct extends Component {
     let {index, answers} = this.state;
     answers[index] = answer;
     let prevIndex = index - 1;
-    console.log(answers);
     while(prevIndex>=0) {
       if(answers[prevIndex]['@id']) {
         this.setState({index: prevIndex, answers});

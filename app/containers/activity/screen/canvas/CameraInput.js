@@ -90,10 +90,9 @@ export default class CameraInput extends Component {
   }
 
   render() {
-    const { onNext, onPrev, answer} = this.props;
+    const { answer } = this.props;
     let {type} = this.state;
     let pic = answer;
-    console.log(answer);
     return (
       <View style={styles.body}>
         <View style={styles.camera}>
