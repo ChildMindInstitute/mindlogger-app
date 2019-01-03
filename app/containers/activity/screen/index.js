@@ -189,7 +189,7 @@ class Screen extends Component {
         
         {
           validated ? (
-            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton onPress={this.handleNext} text={"Next"}></ScreenButton>
+            isFinal ? <ScreenButton onPress={this.handleNext} text={"Done"}/> : <ScreenButton onPress={this.handleNext} text={"Next"}></ScreenButton>
             )
             :
             <ScreenButton transparent/>
