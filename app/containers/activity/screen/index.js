@@ -186,14 +186,17 @@ class Screen extends Component {
           :
           <ScreenButton transparent/>
         }
-        <ScreenButton onPress={this.handleReset} text={buttonText}/>
+        
         {
           validated ? (
-            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>
+            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton onPress={this.handleNext} text={"Next"}></ScreenButton>
             )
             :
             <ScreenButton transparent/>
         }
+
+        <ScreenButton onPress={this.handleReset} transparent><Icon name="md-undo"/></ScreenButton>
+
       </View>);
     } else {
       return (<View style={styles.footer}>
