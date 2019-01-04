@@ -221,6 +221,8 @@ export const uploadFile = (name, fileObject, parentType, parentId) => ({
     mimeType: fileObject.type,
   })}`,
   body: fileObject,
+  isUpload: true, 
+  extraHeaders: { 'Content-Type': fileObject.type }
 })
 
 export const getItems = (parentId) => ({

@@ -34,13 +34,15 @@ import {
     getFolders,
     getItems,
     getActVariant,
-    getUserCollection
+    getUserCollection,
+    uploadFile,
 } from '../../actions/api';
 import {PushNotificationIOS, Platform} from 'react-native';
 
 import styles from './styles';
 import { timeArrayFrom } from './NotificationSchedule';
 import Instabug from 'instabug-reactnative';
+import { getFileInfoAsync } from '../../helper';
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
 
@@ -278,21 +280,19 @@ class ActivityScreen extends Component {
         if (isReset) {
             PushNotification.cancelAllLocalNotifications();
         } else if (checkedTime && checkedTime + DAY_TS > Date.now()) {
-            console.log("Notifications: ", notifications);
-            // this.orderActs(acts, notifications);
-            // return;
+            //console.log("Notifications: ", notifications);
         }
         acts.forEach((act, idx) => {
             let variant = this.getVariant(act);
             if (!variant || variant.meta.notification == undefined) return;
-            let state = notifications[variant._id] || {};
+            let state = notifications[act._id] || {};
             let { lastTime } = state;
             if(isReset) {
                 lastTime = undefined;
             } else if (lastTime != undefined && Date.now() < lastTime){
                 return;
             }
-            console.log("Notifications for:", variant.name);
+            //console.log("Notifications for:", variant.name, lastTime && Date(lastTime));
             
             let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
@@ -300,6 +300,7 @@ class ActivityScreen extends Component {
             let time;
             if(times.length > 0) {
                 time = times[0];
+                
                 if (lastTime == undefined || time.getTime()>lastTime) {
                     PushNotification.localNotificationSchedule({
                         //... You can use all the options from localNotifications
@@ -310,7 +311,9 @@ class ActivityScreen extends Component {
                         date: time
                     });
                     lastTime = time.getTime();
+                    console.log("Notification: ", message, Date(lastTime));
                 }
+                
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
@@ -557,12 +560,34 @@ class ActivityScreen extends Component {
     }
 
     syncData = () => {
-        const {answerCache, addFolder, updateQueue, addItem} = this.props;
+        const {answerCache, addFolder, updateQueue, addItem, uploadFile} = this.props;
         var arr = [];
         answerCache.forEach(({name, payload, volumeName, collectionId, synced}, index) => {
             if (synced) return
             let pr = addFolder(volumeName,{},collectionId, 'folder', true).then(folder => {
                 return addItem(name, payload, folder._id).then(res => {
+                    let uploadAssets = [];
+                    payload.responses.forEach(({data}) => {
+                        if (data && data.type == 'audio') {
+                            uploadAssets.push(getFileInfoAsync(data.survey).then(stat => {
+                                return uploadFile(data.filename, 
+                                    {
+                                        uri: data.survey,
+                                        type: 'application/octet',
+                                        size: stat.size,
+                                        name: data.filename,
+                                    },
+                                    res._modelType,
+                                    res._id).then(res=>{
+                                        return true;
+                                    }).catch(err => {
+                                        console.log("Upload asset error", err);
+                                    });
+                            }));
+                        }
+                    });
+                    return Promise.all(uploadAssets);
+                }).then(res => {
                     answerCache[index].synced = true;
                     console.log("Synced answer", res);
                     return true;
@@ -576,6 +601,7 @@ class ActivityScreen extends Component {
             console.log("Synced all answers", answerCache)
         }).catch(err => {
             console.log(err)
+            this.setState({syncError: true});
         });
     }
 
@@ -684,6 +710,7 @@ function bindAction(dispatch) {
             addItem,
             updateQueue,
             setAnswer,
+            uploadFile,
         }, dispatch)
   };
 }

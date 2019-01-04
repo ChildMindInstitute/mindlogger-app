@@ -76,7 +76,7 @@ export const timeArrayFrom = (config, lastDate) => {
       }
     }
   }
-  console.log(notifications);
+  
   notifications.compiled = []; // Compile calculated dates with calculated times
   let startTime = lastDate || Date.now();
   notifications.days.forEach(function(day) {

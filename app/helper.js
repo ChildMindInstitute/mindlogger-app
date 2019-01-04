@@ -4,6 +4,10 @@ import {
 } from 'react-native';
 
 import config from './config';
+import RNFetchBlob from 'react-native-fetch-blob';
+export const getFileInfoAsync = (path) =>  {
+  return RNFetchBlob.fs.stat(path)
+}
 // export const prepareAct = (data) => {
 //   return new Promise((resolve, reject) => {
 //     if (data.audio_path) {
