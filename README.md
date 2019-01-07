@@ -104,11 +104,11 @@ For this repository, the version exists in 4 places:
 1. [This README](#)
 2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json#L3)
 3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle)
-   1. ['versionName'](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L105)
-   2. ['versionCode' (integer: start at 1 and increment for dev builds, increment the patch or above and reset versionCode to 1 for pull requests)](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L104)
+   1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L105)
+   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L104) (integer: start at 1 and increment for dev builds, increment the patch or above and reset versionCode to 1 for pull requests)
 4. [ios/MDCApp/Info.plist](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/ios/MDCApp/Info.plist)
    1. [`CFBundleShortVersionString`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L19-L20)
-   2. [`CFBundleVersion` match to 'versionCode' (above)](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L23-L24)
+   2. [`CFBundleVersion`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L23-L24) (match to [`versionCode`, above](#versioncode))
 
 ## Authors
 
