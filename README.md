@@ -1,4 +1,4 @@
-# Mindlogger 1.0.1
+# Mindlogger 0.1.1
 
 This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
 
@@ -99,6 +99,13 @@ It will create app-release.apk in android/app/build/outputs folder
 ## Versioning
 
 Use [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200). Always develop in a feature-specific branch and update the version (at least the patch version, but a higher-level version if appropriate) when submitting a pull request.
+
+To increment a major or minor version, complete the relevant project board. Currently we're working on [v0.1](https://github.com/orgs/ChildMindInstitute/projects/6). [v0.2](https://github.com/orgs/ChildMindInstitute/projects/9) is on deck.
+
+*Note: the following major.minor versions will start with the listed patch versions (due to previous versioning schemes):
+  - v0.7.1
+  - v0.8.2
+  - v1.0.1
 
 For this repository, the version exists in 4 places:
 1. [This README](#)
