@@ -105,6 +105,7 @@ To increment a major or minor version, complete the relevant project board. Curr
 *Note: the following major.minor versions will start with the listed patch versions (due to previous versioning schemes):
   - v0.7.1
   - v0.8.2
+  - v0.9.2
   - v1.0.1
 
 For this repository, the version exists in 4 places:
