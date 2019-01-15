@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/056bda0c36e624bf909b9f4cb744b2c5e93ad789/app/config.js#L3-L5).
+You need to have your own Girder instance running or leave your `apiHost` set to `'https://mindlogger-dev.vasegurt.com/api/v1'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/app/config.js#L3-L5).
 
 You need [Node ≤10.11.0, npm ≥4.3.0 & ≤6.4.1](https://github.com/creationix/nvm#user-content-usage), [yarn ≥1.3.2](https://yarnpkg.com) and [React Native ≥0.49.3](https://facebook.github.io/react-native/) to be installed.
 For example
@@ -106,17 +106,17 @@ To increment a major or minor version, complete the relevant project board. Curr
   - v0.7.1
   - v0.8.2
   - v0.9.2
-  - v1.0.1
+  - v1.0.1*
 
 For this repository, the version exists in 4 places:
 1. [This README](#)
-2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json#L3)
-3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle)
-   1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L105)
-   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L104) (integer: start at `1` and increment for dev builds, increment the patch or above and reset `versionCode` to `1` for pull requests)
-4. [ios/MDCApp/Info.plist](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/ios/MDCApp/Info.plist)
-   1. [`CFBundleShortVersionString`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L19-L20)
-   2. [`CFBundleVersion`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L23-L24) (match to [`versionCode`, above](#versioncode))
+2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/package.json#L3)
+3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle)
+   1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L105)
+   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L104) (integer: start at `1` and increment for dev builds, increment the patch or above and reset `versionCode` to `1` for pull requests)
+4. [ios/MDCApp/Info.plist](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist)
+   1. [`CFBundleShortVersionString`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist#L19-L20)
+   2. [`CFBundleVersion`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist#L23-L24) (match to [`versionCode`, above](#versioncode))
 
 ## Authors
 
