@@ -106,7 +106,7 @@ To increment a major or minor version, complete the relevant project board. Curr
   - v0.7.1
   - v0.8.2
   - v0.9.2
-  - v1.0.1*
+  - v1.0.1
 
 For this repository, the version exists in 4 places:
 1. [This README](#)
