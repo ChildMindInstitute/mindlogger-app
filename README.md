@@ -1,4 +1,4 @@
-# Mindlogger Development 0.1.2
+# MindloggerDevelopment 0.1.2
 
 This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
 
