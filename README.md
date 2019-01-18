@@ -1,8 +1,8 @@
-# Mindlogger
+# MindloggerDevelopment 0.1.2
 
 This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
 
-[![Bitrise Build Status](https://app.bitrise.io/app/68551a54551c4340/status.svg?token=PHADmilvhbAjloIJf0Hylg)](https://app.bitrise.io/app/68551a54551c4340)
+[![Bitrise Build Status](https://app.bitrise.io/app/cd8e019aed55b142/status.svg?token=wFJ6Vq6YzRq4Od8HvEbwug&branch=develop)](https://app.bitrise.io/app/68551a54551c4340)
 
 ## Getting Started
 
@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/056bda0c36e624bf909b9f4cb744b2c5e93ad789/app/config.js#L3-L5).
+You need to have your own Girder instance running or leave your `apiHost` set to `'https://mindlogger-dev.vasegurt.com/api/v1'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/app/config.js#L3-L5).
 
 You need [Node ≤10.11.0, npm ≥4.3.0 & ≤6.4.1](https://github.com/creationix/nvm#user-content-usage), [yarn ≥1.3.2](https://yarnpkg.com) and [React Native ≥0.49.3](https://facebook.github.io/react-native/) to be installed.
 For example
@@ -93,16 +93,34 @@ It will create app-release.apk in android/app/build/outputs folder
 3. Clone this repository.
 4. If your issue already has a discussion, see if it has a branch. If so, checkout that branch before creating your own.
 5. Create a new branch to work in.
-6. When you're ready to submit your changes, post a pull request from your branch to the branch you branched from (ie, the branch you checked out in step 4 above or `master`).
+6. When you're ready to submit your changes, [update the version](#versioning) and submit a pull request from your branch to the branch you branched from (ie, the branch you checked out in step 4 above or `master`).
 7. One or more of the project developers will review your request and merge or request changes.
 
 ## Versioning
 
-To be defined.
+Use [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200). Always develop in a feature-specific branch and update the version (at least the patch version, but a higher-level version if appropriate) when submitting a pull request.
+
+To increment a major or minor version, complete the relevant project board. Currently we're working on [v0.1](https://github.com/orgs/ChildMindInstitute/projects/6). [v0.2](https://github.com/orgs/ChildMindInstitute/projects/9) is on deck.
+
+*Note: the following major.minor versions will start with the listed patch versions (due to previous versioning schemes):
+  - v0.7.1
+  - v0.8.2
+  - v0.9.2
+  - v1.0.1
+
+For this repository, the version exists in 4 places:
+1. [This README](#)
+2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/package.json#L3)
+3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle)
+   1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L105)
+   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L104) (integer: start at `1` and increment for dev builds, increment the patch or above and reset `versionCode` to `1` for pull requests)
+4. [ios/MDCApp/Info.plist](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist)
+   1. [`CFBundleShortVersionString`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist#L19-L20)
+   2. [`CFBundleVersion`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/ios/MDCApp/Info.plist#L23-L24) (match to [`versionCode`, above](#versioncode))
 
 ## Authors
 
-* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Indendent developer*
+* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer*
 * [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
 
 See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
