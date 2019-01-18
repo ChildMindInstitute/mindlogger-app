@@ -1,8 +1,8 @@
-# MindloggerDevelopment 0.1.2
+# MindloggerDevelopment 0.1.3
 
 This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
 
-[![Bitrise Build Status](https://app.bitrise.io/app/68551a54551c4340/status.svg?token=PHADmilvhbAjloIJf0Hylg)](https://app.bitrise.io/app/68551a54551c4340)
+[![Bitrise Build Status](https://app.bitrise.io/app/cd8e019aed55b142/status.svg?token=wFJ6Vq6YzRq4Od8HvEbwug&branch=develop)](https://app.bitrise.io/app/68551a54551c4340)
 
 ## Getting Started
 
@@ -110,7 +110,7 @@ To increment a major or minor version, complete the relevant project board. Curr
 
 For this repository, the version exists in 4 places:
 1. [This README](#)
-2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/package.json#L3)
+2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/package.json#L3)
 3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle)
    1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L105)
    2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/develop/android/app/build.gradle#L104) (integer: start at `1` and increment for dev builds, increment the patch or above and reset `versionCode` to `1` for pull requests)
@@ -120,7 +120,7 @@ For this repository, the version exists in 4 places:
 
 ## Authors
 
-* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Indendent developer*
+* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer*
 * [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
 
 See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
