@@ -141,6 +141,9 @@ export default class Slider extends React.Component {
   }
 }
 
+const borderColor = 'rgb(189, 193, 204)';
+const sliderFillColor = 'rgb(39,103,155)';
+
 const PageContainer = styled.View`
   background-color: white;
   flex-grow: 1;
@@ -169,7 +172,9 @@ const Bar = styled.View`
   width: 10;
   background-color: white;
   flex-grow: 1;
-  border-color: black;
+  border-radius: 8;
+  border-color: ${borderColor};
+  background-color: ${borderColor};
   border-width: 1;
 `;
 
@@ -177,7 +182,8 @@ const Circle = styled.View`
   border-radius: ${CIRCLE_DIAMETER / 2};
   width: ${CIRCLE_DIAMETER};
   height: ${CIRCLE_DIAMETER};
-  background-color: black;
+  background-color: ${props => props.isFilled ? '#0B3954' : 'white'};
+  border-color: ${borderColor};
   position: absolute;
   bottom: ${props => props.bottomOffset};
 `;
@@ -186,9 +192,9 @@ const RoundRect = styled.View`
   border-radius: 8;
   width: ${CIRCLE_DIAMETER*2};
   height: ${CIRCLE_DIAMETER};
-  background-color: ${props => props.isFilled ? 'black' : 'white'};
-  border-color: black;
-  border-width: 1;
+  background-color: ${props => props.isFilled ? sliderFillColor : 'white'};
+  border-color: ${sliderFillColor};
+  border-width: 3;
   position: absolute;
   bottom: ${props => props.bottomOffset};
 `;

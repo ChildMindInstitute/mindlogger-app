@@ -173,7 +173,7 @@ class Screen extends Component {
     if ((!surveyType && !canvasType && !textEntry) || info) {
       if (length > 1)
         return (<View style={styles.footer}>
-            <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
+            <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
             {isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>}
         </View>);
       else 
@@ -182,22 +182,24 @@ class Screen extends Component {
       buttonText = 'Redo';
       return (<View style={styles.footer}>
         { prevable ? 
-          <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
+          <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
           :
           <ScreenButton transparent/>
         }
-        <ScreenButton onPress={this.handleReset} text={buttonText}/>
+        
+        <ScreenButton onPress={this.handleReset} transparent text={'Undo'}></ScreenButton>
+
         {
           validated ? (
-            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>
+            isFinal ? <ScreenButton onPress={this.handleNext} text={"Done"}/> : <ScreenButton onPress={this.handleNext} text={"Next"}></ScreenButton>
             )
             :
             <ScreenButton transparent/>
-        }
+        }        
       </View>);
     } else {
       return (<View style={styles.footer}>
-        <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
+        <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
         { canvasType ? 
         (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
         :
@@ -216,6 +218,7 @@ class Screen extends Component {
     return data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
       <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
   }
+
   renderScrollContent() {
     let {screen: {meta: data}} = this.props;
     data = data || {};
@@ -254,6 +257,7 @@ class Screen extends Component {
     return (<View style={styles.paddingContent}>
       {this.renderPicture(data)}
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
+        {/* todo: animate this text below */}
         <Text style={styles.text}>{data.text}</Text>
         {
           data.surveyType && <SurveySection
