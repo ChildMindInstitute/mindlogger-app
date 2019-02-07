@@ -30,6 +30,7 @@ class SurveyTimeInput extends Component {
         <Button onPress={this._showDateTimePicker}><Text>{answer || "Set time"}</Text></Button>
         <DateTimePicker
           mode="time"
+          titleIOS="Pick a time"
           isVisible={this.state.isDateTimePickerVisible}
           onConfirm={this._handleDatePicked}
           onCancel={this._hideDateTimePicker}
