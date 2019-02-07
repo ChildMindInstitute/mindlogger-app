@@ -215,9 +215,16 @@ class Screen extends Component {
         }        
       </View>);
     } else {
+      if(canvasType == 'camera') {
+        buttonText = 'Take';
+      } else if (surveyType == 'audio') {
+        buttonText = 'Record';
+      } else {
+        buttonText = undefined;
+      }
       return (<View style={styles.footer}>
         <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
-        { canvasType ? 
+        { canvasType ?
         (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
         :
         <ScreenButton transparent/>
@@ -305,6 +312,7 @@ class Screen extends Component {
 
   render() {
     let {screen: {meta: data}} = this.props;
+    console.log("Screen:", data);
     return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         {
