@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
  "name": "MindloggerDevelopment",
  "version": "0.1.3",
+=======
+ "name": "Mindlogger",
+ "version": "0.1.4",
+>>>>>>> feature/canvas
  "private": true,
  "scripts": {
   "start": "node node_modules/react-native/local-cli/cli.js start",

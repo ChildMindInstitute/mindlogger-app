@@ -12,7 +12,6 @@ class SurveySingleSelector extends SurveyInputComponent {
 
   toggle(value) {
     const { answer } = this.props.data;
-    console.log(answer, value);
     if (answer !== value) {
       this.selectAnswer(value, true);
     } else {

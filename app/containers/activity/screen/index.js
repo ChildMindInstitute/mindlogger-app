@@ -12,6 +12,7 @@ import {randomLink} from '../../../helper';
 import TextEntry from './TextEntry';
 import ScreenButton from './ScreenButton';
 import SurveySection from './survey';
+import CanvasSection from './canvas';
 import GImage from '../../../components/image/Image';
 
 const styles = StyleSheet.create({
@@ -89,9 +90,6 @@ class Screen extends Component {
     let {answer} = this.state;
     const {screen: {meta: data = {}}} = this.props;
     answer = {...answer, ...newAnswer, type: data.surveyType};
-    if (data.surveyType == 'audio') {
-      answer.filename = (newAnswer.survey && newAnswer.survey.length > 0) && newAnswer.survey.split('/').pop();
-    }
     if (validated == undefined) {
       this.setState({answer}, callback);
     } else {
@@ -109,6 +107,17 @@ class Screen extends Component {
 
   handleReset = () => {
     this.setState({answer:undefined});
+    if(this.canvasRef) {
+      this.canvasRef.resetData();
+    }
+    if(this.surveyRef) {
+      this.surveyRef.resetData();
+    }
+  }
+  handleAction = () => {
+    if(this.canvasRef) {
+      this.canvasRef.takeAction();
+    }
   }
 
   getPayload(){
@@ -136,21 +145,29 @@ class Screen extends Component {
     this.props.onNext(this.getPayload(), nextScreen);
   }
 
-  onSurvey = (survey, validated, next) => {
+  onAnswer(data, validated, next) {
     let { length, index } = this.props;
     const {nextScreen} = this.state;
 
     const isFinal = (nextScreen || (index + 1)) >= length;
     if(next && !isFinal) {
-      this.setAnswer({survey}, validated, () => {
+      this.setAnswer(data, validated, () => {
         this.handleNext();
       });
     } else {
-      this.setAnswer({survey}, validated);
+      this.setAnswer(data, validated);
     }
   }
 
-  renderButtons() {
+  onSurvey = (survey, validated, next) => {
+    this.onAnswer({survey}, validated, next);
+  }
+
+  onCanvas = (canvas, validated, next) => {
+    this.onAnswer({canvas}, validated, next);
+  }
+
+  getButtonState() {
     let {
       screen: {meta: data},
       globalConfig,
@@ -162,59 +179,68 @@ class Screen extends Component {
     const {surveyType, canvasType, textEntry} = data;
 
     const isFinal = (nextScreen || (this.props.index + 1)) >= length;
-
-    // Configuration
+    let prevButtonText;
+    let actionButtonText;
+    let nextButtonText;
     const permission = globalConfig.permission || {};
     const skippable = data.skippable == undefined ? permission.skip : data.skippable;
     const prevable = permission.prev;
-
-    let buttonText = 'Take';
-    const spinner = false;
+    
     if ((!surveyType && !canvasType && !textEntry) || info) {
-      if (length > 1)
-        return (<View style={styles.footer}>
-            <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
-            {isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>}
-        </View>);
-      else 
-        return (<View></View>)
-    } else if (answer) {
-      buttonText = 'Redo';
-      return (<View style={styles.footer}>
-        { prevable ? 
-          <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
-          :
-          <ScreenButton transparent/>
-        }
-        <ScreenButton onPress={this.handleReset} text={buttonText}/>
-        {
-          validated ? (
-            isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>
-            )
-            :
-            <ScreenButton transparent/>
-        }
-      </View>);
+      prevButtonText = "Back";
+      nextButtonText = isFinal ? "Done" : "Next";
     } else {
-      return (<View style={styles.footer}>
-        <ScreenButton transparent onPress={this.handlePrev}><Icon name="md-arrow-back"/></ScreenButton>
-        { canvasType ? 
-        (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
-        :
-        <ScreenButton transparent/>
+      if (prevable) prevButtonText = "Back";
+      if (answer) {
+        actionButtonText = "Undo";
+        if (validated) nextButtonText = isFinal ? "Done" : "Next";
+      } else {
+        if(canvasType == 'camera') {
+          actionButtonText = "Take";
+        } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
+          actionButtonText = "Take";
         }
-        { skippable ?
-          <ScreenButton transparent onPress={this.handleSkip} text={isFinal ? "Done" : "Skip"}/>
-          :
-          <ScreenButton transparent/>
-        }
-      </View>);
+        if (skippable) nextButtonText = isFinal ? "Done" : "Next";
+      }
     }
+    return { prevButtonText, actionButtonText, nextButtonText };
+  }
+
+  renderButtons() {
+    const {answer} = this.state;
+    const {prevButtonText, actionButtonText, nextButtonText} = this.getButtonState();
+    return (<View style={styles.footer}>
+      {prevButtonText ? <ScreenButton transparent onPress={this.handlePrev} text={prevButtonText}/> : <ScreenButton transparent/> }
+      {actionButtonText ? <ScreenButton onPress={answer ? this.handleReset : this.handleAction} text={actionButtonText}/> : <ScreenButton transparent/> }
+      {nextButtonText ? <ScreenButton transparent onPress={answer ? this.handleNext : this.handleSkip} text={nextButtonText}/> : <ScreenButton transparent/> }
+    </View>)
   }
 
   renderPicture(data) {
     return data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
       <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
+  }
+
+  renderSurvey(data) {
+    return data.surveyType && <SurveySection
+            type={data.surveyType}
+            config={data.survey}
+            answer={this.answer('survey')}
+            onChange={this.onSurvey}
+            onNextChange={this.onNextChange}
+            ref={ref => {this.surveyRef = ref}}
+            />
+  }
+
+  renderCanvas(data) {
+    return data.canvasType && <CanvasSection
+            type={data.canvasType}
+            config={data.canvas}
+            answer={this.answer('canvas')}
+            onChange={this.onCanvas}
+            ref={ref => {this.canvasRef = ref}}
+            onNextChange={this.onNextChange}
+            />
   }
   renderScrollContent() {
     let {screen: {meta: data}} = this.props;
@@ -225,15 +251,8 @@ class Screen extends Component {
       <View style={styles.paddingContent}>
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
         { data.surveyType != 'audio' && <Text style={styles.text}>{data.text}</Text> }
-        {
-          data.surveyType && <SurveySection
-            type={data.surveyType}
-            config={data.survey}
-            answer={this.answer('survey')}
-            onChange={this.onSurvey}
-            onNextChange={this.onNextChange}
-            />
-        }
+        { this.renderSurvey(data) }
+        { this.renderCanvas(data) }
         {
           data.textEntry && data.textEntry.display && 
           <TextEntry
@@ -254,16 +273,10 @@ class Screen extends Component {
     return (<View style={styles.paddingContent}>
       {this.renderPicture(data)}
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
+        {/* todo: animate this text below */}
         <Text style={styles.text}>{data.text}</Text>
-        {
-          data.surveyType && <SurveySection
-            type={data.surveyType}
-            config={data.survey}
-            answer={this.answer('survey')}
-            onChange={this.onSurvey}
-            onNextChange={this.onNextChange}
-            />
-        }
+        { this.renderSurvey(data) }
+        { this.renderCanvas(data) }
         {
           data.textEntry && data.textEntry.display && 
           <TextEntry
@@ -277,11 +290,12 @@ class Screen extends Component {
 
   render() {
     let {screen: {meta: data}} = this.props;
+    console.log("Screen:", data);
     return (
       <View style={{flex: 1, flexDirection: 'column'}}>
         {
           data && (
-          data.surveyType == 'slider' ?
+          (data.surveyType == 'slider' || data.canvasType == 'draw') ?
           this.renderContent() : 
              this.renderScrollContent())
         }

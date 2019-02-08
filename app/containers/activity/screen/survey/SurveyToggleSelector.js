@@ -35,7 +35,6 @@ class SurveyToggleSelector extends SurveyInputComponent {
     const {answer} = this.state
     let colNum = 2
     let contentArray = []
-    console.log(rows)
     for (var i = 0; i < rows.length/colNum+1; i++) {
       cols = rows.slice(i*colNum, i*colNum+colNum)
       rowContent = (
