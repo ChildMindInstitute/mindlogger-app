@@ -14,7 +14,7 @@ import { closeDrawer } from './actions/drawer';
 import Home from './components/home/';
 import SplashPage from './components/splashscreen/';
 import SideBar from './components/sidebar';
-import ActivityScreen from './containers/activity/';
+import ActivityScreen from './containers/activity/main';
 import Login from './containers/login';
 import ForgotPassword from './containers/login/forgot-password';
 import Consent from './containers/login/consent';
@@ -28,11 +28,6 @@ import Act from './containers/activity/act';
 import PushAct from './containers/activity/push-act';
 import ActInfo from './containers/activity/info-act';
 import VolumeInfo from './containers/activity/volume-info';
-//Modules
-
-// import SurveyScenes from './modules/survey';
-// import VoiceScenes from './modules/voice/routes';
-// import DrawingScenes from './modules/drawing/routes';
 
 
 import statusBarColor from './themes/variables';
@@ -82,7 +77,6 @@ class AppNavigator extends Component {
   }
 
   render() {
-    console.log("Theme:",getTheme((this.props.themeState === 'material') ? material : undefined))
     return (
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
