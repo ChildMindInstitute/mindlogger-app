@@ -9,7 +9,8 @@ import Svg,{
 import GImage from '../image/Image';
 
 const styles = StyleSheet.create({
-    picture: {width: '100%', height:'100%', resizeMode: 'cover'}
+    picture: {width: '100%', height:'100%', resizeMode: 'cover'},
+    blank:{width: '100%', height:'100%', position:'absolute', borderWidth: 1, borderColor: '#d6d7da'},
 })
 
 function chunckedPointStr(lines, chunkSize){
@@ -152,7 +153,7 @@ export default class DrawingBoard extends Component {
                 {this.props.source && (<Image style={styles.picture} source={this.props.source}/>)}
                 {this.props.sourceFiles && (<GImage style={styles.picture} file={this.props.sourceFiles}/>)}
                 {placeholder && (<Icon name="brush" style={{fontSize:120}}/>)}
-                <View style={{width: '100%', height:'100%', position:'absolute'}}>
+                <View style={styles.blank}>
                     {dimensions && 
                     <Svg
                         height={width}

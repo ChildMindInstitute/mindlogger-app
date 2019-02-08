@@ -73,20 +73,35 @@ export default class CanvasDrawingInput extends Component {
 
     render() {
         const {started} = this.state;
-        const {onChange, config} = this.props;
+        const {onChange, config, answer} = this.props;
         //let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
-        return (
-        <View>
-            
-            <DrawingBoard
-                sourceFiles={config.mode == 'picture' && config.pictureFiles}
-                autoStart={true}
-                disabled={!started}
-                ref={board => this.board = board}
-                onResult={onChange}/>
-            { config.instruction && <Text style={styles.text}>{config.instruction}</Text> }
-        </View>
-        )
+        if(config.mode == 'camera') {
+            return (
+                <View>
+                    <DrawingBoard
+                        sourceFiles={config.mode == 'picture' && config.pictureFiles}
+                        autoStart={true}
+                        disabled={false}
+                        lines={answer && answer.lines}
+                        ref={board => this.board = board}
+                        onResult={onChange}/>
+                    { config.instruction && <Text style={styles.text}>{config.instruction}</Text> }
+                </View>
+                )
+        } else {
+            return (
+                <View>
+                    <DrawingBoard
+                        sourceFiles={config.mode == 'picture' && config.pictureFiles}
+                        autoStart={true}
+                        disabled={!started}
+                        lines={answer && answer.lines}
+                        ref={board => this.board = board}
+                        onResult={onChange}/>
+                    { config.instruction && <Text style={styles.text}>{config.instruction}</Text> }
+                </View>
+                )
+        }
     }
 }
 
