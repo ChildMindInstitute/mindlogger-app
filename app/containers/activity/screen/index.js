@@ -167,7 +167,7 @@ class Screen extends Component {
     this.onAnswer({canvas}, validated, next);
   }
 
-  renderButtons() {
+  getButtonState() {
     let {
       screen: {meta: data},
       globalConfig,
@@ -179,63 +179,41 @@ class Screen extends Component {
     const {surveyType, canvasType, textEntry} = data;
 
     const isFinal = (nextScreen || (this.props.index + 1)) >= length;
-
-    // Configuration
+    let prevButtonText;
+    let actionButtonText;
+    let nextButtonText;
     const permission = globalConfig.permission || {};
     const skippable = data.skippable == undefined ? permission.skip : data.skippable;
     const prevable = permission.prev;
-
-    let buttonText = 'Take';
-    const spinner = false;
+    
     if ((!surveyType && !canvasType && !textEntry) || info) {
-      if (length > 1)
-        return (<View style={styles.footer}>
-            <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
-            {isFinal ? <ScreenButton transparent onPress={this.handleNext} text={"Done"}/> : <ScreenButton transparent onPress={this.handleNext}><Icon name="md-arrow-forward"/></ScreenButton>}
-        </View>);
-      else 
-        return (<View></View>)
-    } else if (answer) {
-      buttonText = 'Redo';
-      return (<View style={styles.footer}>
-        { prevable ? 
-          <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
-          :
-          <ScreenButton transparent/>
-        }
-        
-        <ScreenButton onPress={this.handleReset} transparent text={'Undo'}></ScreenButton>
-
-        {
-          validated ? (
-            isFinal ? <ScreenButton onPress={this.handleNext} text={"Done"}/> : <ScreenButton onPress={this.handleNext} text={"Next"}></ScreenButton>
-            )
-            :
-            <ScreenButton transparent/>
-        }        
-      </View>);
+      prevButtonText = "Back";
+      nextButtonText = isFinal ? "Done" : "Next";
     } else {
-      if(canvasType == 'camera') {
-        buttonText = 'Take';
-      } else if (surveyType == 'audio') {
-        buttonText = undefined;
+      if (prevable) prevButtonText = "Back";
+      if (answer) {
+        actionButtonText = "Undo";
+        if (validated) nextButtonText = isFinal ? "Done" : "Next";
       } else {
-        buttonText = undefined;
+        if(canvasType == 'camera') {
+          actionButtonText = "Take";
+        } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
+          actionButtonText = "Take";
+        }
+        if (skippable) nextButtonText = isFinal ? "Done" : "Next";
       }
-      return (<View style={styles.footer}>
-        <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
-        { buttonText ?
-        (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
-        :
-        <ScreenButton transparent/>
-        }
-        { skippable ?
-          <ScreenButton transparent onPress={this.handleSkip} text={isFinal ? "Done" : "Skip"}/>
-          :
-          <ScreenButton transparent/>
-        }
-      </View>);
     }
+    return { prevButtonText, actionButtonText, nextButtonText };
+  }
+
+  renderButtons() {
+    const {answer} = this.state;
+    const {prevButtonText, actionButtonText, nextButtonText} = this.getButtonState();
+    return (<View style={styles.footer}>
+      {prevButtonText ? <ScreenButton transparent onPress={this.handlePrev} text={prevButtonText}/> : <ScreenButton transparent/> }
+      {actionButtonText ? <ScreenButton onPress={answer ? this.handleReset : this.handleAction} text={actionButtonText}/> : <ScreenButton transparent/> }
+      {nextButtonText ? <ScreenButton transparent onPress={answer ? this.handleNext : this.handleSkip} text={nextButtonText}/> : <ScreenButton transparent/> }
+    </View>)
   }
 
   renderPicture(data) {
