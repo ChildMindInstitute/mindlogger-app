@@ -218,13 +218,13 @@ class Screen extends Component {
       if(canvasType == 'camera') {
         buttonText = 'Take';
       } else if (surveyType == 'audio') {
-        buttonText = 'Record';
+        buttonText = undefined;
       } else {
         buttonText = undefined;
       }
       return (<View style={styles.footer}>
         <ScreenButton transparent onPress={this.handlePrev} text={'Back'}></ScreenButton>
-        { canvasType ?
+        { buttonText ?
         (<ScreenButton onPress={this.handleAction} text={buttonText}>{spinner && <Spinner />}</ScreenButton>)
         :
         <ScreenButton transparent/>

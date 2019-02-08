@@ -31,6 +31,7 @@ class AudioRecord extends React.Component {
     const path = `${AudioUtils.DocumentDirectoryPath}/${filename}` 
     this.filename = Platform.OS == 'android' ? `file://${path}` : filename
     this.output_path = path
+    this.hasFile = false
     this.state = {
 
       playPauseButton: 'Preparing...',
@@ -71,7 +72,8 @@ class AudioRecord extends React.Component {
     this.recorder = null;
     this.lastSeek = 0;
     if(this.props.path) {
-      this.filename = Platform.OS == 'android' ? this.props.path : this.props.path.replace(/^.*[\\\/]/, '');
+      this.hasFile = true
+      this.filename = Platform.OS == 'android' ? `file://${this.props.path}` : this.props.path.replace(/^.*[\\\/]/, '');
       this.output_path = this.props.path;
     }
     this._checkPermission().then((hasPermission) => {
@@ -131,6 +133,7 @@ class AudioRecord extends React.Component {
       playButtonDisabled:   !this.player   || !this.player.canPlay || this.recorder.isRecording,
       recordButtonDisabled: !this.recorder || (this.player         && !this.player.isStopped),
     });
+    console.log(this.player && this.player.canPlay);
   }
 
   _playPause() {
@@ -151,6 +154,7 @@ class AudioRecord extends React.Component {
   }
 
   _delete() {
+    this.hasFile = false;
     this.resetConfig();
     this._reloadPlayer();
     this._reloadRecorder();
@@ -175,7 +179,7 @@ class AudioRecord extends React.Component {
     if (this.player) {
       this.player.destroy();
     }
-    if(this.props.path==undefined) return;
+    if(!this.hasFile) return;
     this.player = new Player(this.filename, {
       autoDestroy: false
     }).prepare((err) => {
@@ -229,6 +233,7 @@ class AudioRecord extends React.Component {
           });
           console.log(err)
         } else {
+          this.hasFile = true
           this._reloadPlayer();
           this._reloadRecorder();
           this.props.onRecordFile(this.output_path, (Date.now() - this.startTime)/1000);
@@ -263,9 +268,13 @@ class AudioRecord extends React.Component {
   renderSingleMode() {
     return (
       <View>
-        <Button full disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
+       { this.state.playButtonDisabled ?
+        (<Button full disabled={this.state.recordButtonDisabled} onPress={() => this._toggleRecord()}>
           <Text>{this.recordButtonText()}</Text>
-        </Button>
+        </Button>) : (<Button full disabled={this.state.playButtonDisabled} onPress={() => this._playPause()}>
+            <Text>{this.state.playPauseButton}</Text>
+          </Button>)
+       }
       </View>
     );
   }
