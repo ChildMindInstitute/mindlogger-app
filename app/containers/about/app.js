@@ -11,6 +11,7 @@ import {Actions} from 'react-native-router-flux';
 
 import { openDrawer } from '../../actions/drawer';
 import styles from './styles';
+import packageJson from '../../../package.json';
 
 const logoImage = require('../../../img/color_logo.png');
 
@@ -34,7 +35,7 @@ class AboutApp extends Component { // eslint-disable-line
                   </Button>
               </Left>
               <Body>
-                  <Title>About Mindlogger</Title>
+                  <Title>About Mindlogger {packageJson.version}</Title>
               </Body>
               <Right></Right>
             </Header>
@@ -47,7 +48,7 @@ class AboutApp extends Component { // eslint-disable-line
                 <Text style={styles.boldText}>What is Mindlogger?</Text>
                 <Text style={styles.text}>
                   Mindlogger is a general-purpose data collection platform:
-                  
+
                   {"\n"}
                   - App builder → Build iPhone/Android apps online without coding!
                   {"\n"}
@@ -60,15 +61,15 @@ class AboutApp extends Component { // eslint-disable-line
                 </Text>
                 <Text style={styles.boldText}>What can Mindlogger do?</Text>
                 <Text style={styles.text}>
-                  Mindlogger's feature set is growing, and currently supports a wide variety of survey types, voice recording, and drawing and photo annotation capabilities. 
+                  Mindlogger's feature set is growing, and currently supports a wide variety of survey types, voice recording, and drawing and photo annotation capabilities.
                   {"\n"}
                 </Text>
                 <Text style={styles.boldText}>Who uses Mindlogger?</Text>
                 <Text style={styles.text}>
-                  Mindlogger is being used to gather data in large-scale research studies, in the clinic for remote mental health assessment, and by others interested in collecting and analyzing data from themselves or from other people. 
+                  Mindlogger is being used to gather data in large-scale research studies, in the clinic for remote mental health assessment, and by others interested in collecting and analyzing data from themselves or from other people.
                   {"\n"}
                   {"\n"}
-                  
+
                   We hope that you find Mindlogger to be useful! For more information, please visit matter.childmind.org.
                   {"\n"}
                   {"\n"}
