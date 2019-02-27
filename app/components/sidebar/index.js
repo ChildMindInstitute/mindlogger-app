@@ -14,16 +14,16 @@ import {signOut} from '../../actions/api';
 
 const datas = [
   {
-    name: 'Settings',
-    route: 'settings',
-    image: require('../../../img/menu/settings.png'),
-    bg: '#DA4437',
-  },
-  {
     name: 'Activities',
     route: 'activity',
     image: require('../../../img/menu/biking.png'),
     bg: '#C5F442',
+  },
+  {
+    name: 'Settings',
+    route: 'settings',
+    image: require('../../../img/menu/settings.png'),
+    bg: '#DA4437',
   },
   // {
   //   name: 'Dashboard',
@@ -86,7 +86,7 @@ class SideBar extends Component {
           <View style={styles.drawerCover}>
             <Text style={styles.drawerCoverText}>Mindlogger</Text>
           </View>
-          <List style={styles.drawerList} 
+          <List style={styles.drawerList}
             dataArray={datas} renderRow={data =>
               <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
                 <Left>
