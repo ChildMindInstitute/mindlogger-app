@@ -185,7 +185,7 @@ class Screen extends Component {
     const permission = globalConfig.permission || {};
     const skippable = data.skippable == undefined ? permission.skip : data.skippable;
     const prevable = permission.prev;
-    
+
     if ((!surveyType && !canvasType && !textEntry) || info) {
       prevButtonText = "Back";
       nextButtonText = isFinal ? "Done" : "Next";
@@ -200,7 +200,7 @@ class Screen extends Component {
         } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
           actionButtonText = "Take";
         }
-        if (skippable) nextButtonText = isFinal ? "Done" : "Next";
+        if (skippable) nextButtonText = isFinal ? "Done" : "Skip";
       }
     }
     return { prevButtonText, actionButtonText, nextButtonText };
@@ -254,7 +254,7 @@ class Screen extends Component {
         { this.renderSurvey(data) }
         { this.renderCanvas(data) }
         {
-          data.textEntry && data.textEntry.display && 
+          data.textEntry && data.textEntry.display &&
           <TextEntry
             style={styles.text}
             config={data.textEntry}
@@ -278,7 +278,7 @@ class Screen extends Component {
         { this.renderSurvey(data) }
         { this.renderCanvas(data) }
         {
-          data.textEntry && data.textEntry.display && 
+          data.textEntry && data.textEntry.display &&
           <TextEntry
             style={styles.text}
             config={data.textEntry}
@@ -296,7 +296,7 @@ class Screen extends Component {
         {
           data && (
           (data.surveyType == 'slider' || data.canvasType == 'draw') ?
-          this.renderContent() : 
+          this.renderContent() :
              this.renderScrollContent())
         }
         { this.renderButtons() }
@@ -312,7 +312,7 @@ const mapStateToProps = ({core: {objects, answerData, auth}}, ownProps) => ({
 })
 
 const mapDispatchToProps = {
-  
+
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen)
