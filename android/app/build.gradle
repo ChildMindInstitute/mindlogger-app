@@ -101,7 +101,7 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
+        versionCode 7
         versionName "0.1.4"
         ndk {
             abiFilters "armeabi-v7a", "x86"

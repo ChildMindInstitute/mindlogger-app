@@ -200,7 +200,7 @@ class Screen extends Component {
         } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
           actionButtonText = "Take";
         }
-        if (skippable) nextButtonText = isFinal ? "Skip &\nDone" : "Skip";
+        if (skippable) nextButtonText = isFinal ? "Done" : "Skip";
       }
     }
     return { prevButtonText, actionButtonText, nextButtonText };
