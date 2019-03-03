@@ -10,7 +10,6 @@ import {
 import PushNotification from 'react-native-push-notification';
 import TimerMixin from 'react-timer-mixin';
 import moment from 'moment';
-import Instabug from 'instabug-reactnative';
 
 import Image from '../../../components/image/Image';
 
@@ -83,14 +82,13 @@ export default class ActivityScreen extends Component {
             console.warn("undefined user")
             return
         }
-        Instabug.identifyUserWithEmail(user.email, user.login);
         console.log(volumes);
         if (volumes.length == 0) {
           this.resetActs();
         } else {
             this.scheduleNotifications(acts);
         }
-        
+
         if (Platform.OS == 'ios') {
         } else {
             PushNotification.registerNotificationActions(['Take', 'Cancel'])
@@ -157,14 +155,14 @@ export default class ActivityScreen extends Component {
                 return;
             }
             //console.log("Notifications for:", variant.name, lastTime && Date(lastTime));
-            
+
             let times = timeArrayFrom(variant.meta.notification, Date.now());
             let message = `Please perform activity: ${act.name}`;
             let userInfo = { actId: act._id };
             let time;
             if(times.length > 0) {
                 time = times[0];
-                
+
                 if (lastTime == undefined || time.getTime()>lastTime) {
                     PushNotification.localNotificationSchedule({
                         //... You can use all the options from localNotifications
@@ -177,7 +175,7 @@ export default class ActivityScreen extends Component {
                     lastTime = time.getTime();
                     console.log("Notification: ", message, Date(lastTime));
                 }
-                
+
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
@@ -198,7 +196,7 @@ export default class ActivityScreen extends Component {
         let answerData = newAnswerData || this.props.answerData;
         let dueActs = [];
         let todoActs = [];
-        
+
         acts.forEach(act => {
             if (!actData[act._id]) return;
             let variantId = actData[act._id].variant._id;
@@ -296,7 +294,7 @@ export default class ActivityScreen extends Component {
     deleteActivity(rowId) {
         const {deleteAct, acts} = this.props;
         let actIndex = rowId;
-        
+
         return deleteAct(actIndex, acts[actIndex]).then(res => {
             Toast.show({text: 'Deleted successfully', buttonText: 'OK'})
         }).catch(err => {
@@ -367,13 +365,13 @@ export default class ActivityScreen extends Component {
 
     _renderRow = (act, secId, rowId) => {
         let volume = this.props.volumes.find(volume => volume._id == act.volumeId);
-        if(!act || !volume) 
+        if(!act || !volume)
             return (<ListItem>
 
             </ListItem>);
         let buttonStyle = {width: 30, height: 30, borderRadius:15, alignItems: 'center', paddingTop: 6}
         buttonStyle.backgroundColor = BUTTON_COLORS[parseInt(act.volumeId.substr(-1),16)%4];
-        
+
         let index = parseInt(secId);
         let dateStr = "";
         if (act.nextTime) {
@@ -385,7 +383,7 @@ export default class ActivityScreen extends Component {
                 dateStr = actDate.format("MMM D")
             }
         }
-        
+
         return (
         <ListItem avatar onPress={()=>this._selectRow(act, rowId, secId)}>
             <Left>
@@ -434,7 +432,7 @@ export default class ActivityScreen extends Component {
         // )
     }
 
-    
+
 
     syncNotifications = () => {
         const {acts} = this.props;
@@ -471,14 +469,14 @@ export default class ActivityScreen extends Component {
                         </Button>
                     ) : (<Button transparent onPress={() => this.loadAllActivity(true)}><Icon name="refresh"/></Button>)
                 }
-                
+
             </Right>
             </Header>
 
             <Content>
                 { this.state.progress && <Spinner /> }
                 { this.state.progress && <Text style={styles.text}>Downloaded {volumeDownloaded} of {volumeCount} activity sets</Text> }
-                {acts && 
+                {acts &&
                 <List
                     dataSource={ds.cloneWithRowsAndSections(dataBlob)}
                     renderRow={this._renderRow}
@@ -513,4 +511,3 @@ export default class ActivityScreen extends Component {
         });
     }
 }
-
