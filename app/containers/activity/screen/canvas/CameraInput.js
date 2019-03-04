@@ -76,7 +76,7 @@ export default class CameraInput extends Component {
 
   flip = () => {
     if (this.state.type == RNCamera.Constants.Type.back) {
-      this.setState({type: RNCamera.Constants.Type.font});
+      this.setState({type: RNCamera.Constants.Type.front});
     } else {
       this.setState({type: RNCamera.Constants.Type.back});
     }
@@ -105,6 +105,7 @@ export default class CameraInput extends Component {
               style={styles.camera}
               type={type}
               flashMode={RNCamera.Constants.FlashMode.off}
+              pauseAfterCapture={true}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             />
