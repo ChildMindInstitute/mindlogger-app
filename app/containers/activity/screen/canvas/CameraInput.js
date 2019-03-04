@@ -47,56 +47,18 @@ const styles=StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#dbdbdb',
     marginTop: 8,
+  },
+  icon: {
+    color: '#d10000',
+    fontSize: 60,
   }
 });
 
 export default class CameraInput extends Component {
   constructor(props) {
-    super(props)
+    super(props);
   }
-
-  //pick a photo from users camera roll or take a new picture with native camera
-  takePhoto = () => {
-    let options = { title: 'Select Image',
-                    mediaType: 'photo',
-                    storageOptions: {
-                        cameraRoll: true,
-                        waitUntilSaved: true,
-                    }
-                  }
-    ImagePicker.launchCamera(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('Image Picker error: ', response.error);
-      } else {
-        let picSource = {uri: (Platform.OS == 'ios') ? response.uri.replace('file://','') : response.uri, filename: response.uri.split("/").pop()};
-        this.props.onChange(picSource);
-      }
-    })
-  }
-
-  //pick a photo from users camera roll or take a new picture with native camera
-  choosePhoto = () => {
-    let options = { title: 'Select Image',
-                    mediaType: 'photo',
-                    storageOptions: {
-                        cameraRoll: true,
-                        waitUntilSaved: true,
-                    }
-                  }
-    ImagePicker.launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('Image Picker error: ', response.error);
-      } else {
-        let picSource = {uri: (Platform.OS == 'ios') ? response.uri.replace('file://','') : response.uri, filename: response.uri.split("/").pop()};
-        this.props.onChange(picSource);
-      }
-    })
-  }
-
+  //props: video- indicates whether to allow user to upload videos. when videos is false, only photos can be uploaded
   //take a new picture/video with native camera
   take = () => {
     let options = { title: 'Select Video',
@@ -143,9 +105,8 @@ export default class CameraInput extends Component {
   }
 */
   render() {
-    //button labels depend on video/picture mode
-    let takeButtonText = ((this.props.video) ? "Record New Video" : "Take New Picture");
-    let chooseButtonText = ((this.props.video) ? "Choose Existing Video" : "Choose Existing Picture");
+    //icon depend on video/picture mode
+    let iconName = ((this.props.video) ? "video-camera" : "camera");
 
     const { answer } = this.props;
     let pic = answer;
@@ -156,7 +117,7 @@ export default class CameraInput extends Component {
           {!pic && <View>
             <TouchableOpacity onPress={this.take}
                               style={styles.takeButton}>
-                <Text style={styles.buttonText}>{takeButtonText}</Text>
+                <Icon type='Entypo' name={iconName} style={styles.icon}></Icon>
             </TouchableOpacity>
           </View> }
         </View>

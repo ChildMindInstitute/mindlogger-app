@@ -47,7 +47,11 @@ class Screen extends Component {
       answer: this.props.answer && this.props.answer.data,
       validated: true,
     });
-    this.video = true;
+
+    //temporary - sets whether camera surveys can be answered with a video.
+    //when false, only phots can be uploaded.
+    //should be connected to admin panel eventually.
+    this.video = false;
   }
   componentDidMount() {
     let {screen: {meta: data}, auth} = this.props;
