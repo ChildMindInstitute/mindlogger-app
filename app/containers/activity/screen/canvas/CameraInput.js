@@ -69,14 +69,11 @@ const styles=StyleSheet.create({
 });
 
 export default class CameraInput extends Component {
-  constructor(props) {
-    super(props);
-  }
+
   //props: video- indicates whether to allow user to upload videos. when videos is false, only photos can be uploaded
   //take a new picture/video with native camera
   take = () => {
-    let options = { title: 'Select Video',
-                    mediaType: ((this.props.video) ? 'video' : 'photo'),
+    let options = { mediaType: ((this.props.video) ? 'video' : 'photo'),
                     storageOptions: {
                         cameraRoll: true,
                         waitUntilSaved: true,
@@ -131,7 +128,7 @@ export default class CameraInput extends Component {
                                 style={styles.videoConfirmed}>
                   <Icon type='Entypo' name={"check"} style={styles.greenIcon}></Icon>
               </View> }
-            {pic && !this.props.video && <Video source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+            {pic && !this.props.video && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
             {!pic && <View>
               <TouchableOpacity onPress={this.take}
                                 style={styles.takeButton}>
