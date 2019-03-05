@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native'
+import { View } from 'react-native';
 import SurveyMultiSelector from './SurveyMultiSelector';
 import SurveyTableInput from './SurveyTableInput';
 import SurveyTableSelector from './SurveyTableSelector';
@@ -29,7 +29,7 @@ const getSurveyElement = (type, mode) => {
   }
   else
     return View;
-}
+};
 
 export default class SurveySection extends Component {
   resetData = () => {
@@ -40,7 +40,13 @@ export default class SurveySection extends Component {
   }
 
   render() {
-    const { type, config, answer, onChange, onNextChange } = this.props;
+    const {
+      type,
+      config,
+      answer,
+      onChange,
+      onNextChange,
+    } = this.props;
     const SurveyElement = getSurveyElement(type, config.mode);
     return (
       <SurveyElement
@@ -61,7 +67,7 @@ SurveySection.defaultProps = {
 SurveySection.propTypes = {
   type: PropTypes.string.isRequired,
   config: PropTypes.shape({
-
+    mode: PropTypes.string,
   }).isRequired,
   answer: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,

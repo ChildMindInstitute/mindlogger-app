@@ -1,16 +1,11 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import { ListItem, Text, Right, Body, CheckBox, Radio, Toast } from 'native-base';
-import { connect } from 'react-redux';
+import { View } from 'react-native';
+import PropTypes from 'prop-types';
+import SurveyMultiOption from './SurveyMultiOption';
+import { Toast } from 'native-base';
 
-import GImage from '../../components/image/Image';
-
-class SurveyMultiSelector extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentWillMount() {
+export default class SurveyMultiSelector extends Component {
+  componentDidMount() {
     let answer = this.props.answer || [];
     this.onAnswer(answer);
   }
@@ -46,58 +41,44 @@ class SurveyMultiSelector extends Component {
 
   onAnswer(answer) {
     const { config: {optionsMax, optionsMin, options}, onNextChange} = this.props;
-    if (optionsMax==1 && optionsMin==1) {
-      if (answer.length > 0)
+    if (optionsMax === 1 && optionsMin === 1) {
+      if (answer.length > 0) {
         onNextChange(options[answer[0]].screen);
-      else
+      }
+      else {
         onNextChange(undefined);
+      }
     }
   }
 
   render() {
-    const { config: {options, optionsMax, optionsMin}, answer} = this.props;
-    let isRadio = (optionsMax == 1) && (optionsMin == 1);
+    const { config: {options, optionsMax, optionsMin}, answer } = this.props;
+    const isRadio = (optionsMax === 1) && (optionsMin === 1);
     return (
       <View style={{alignItems:'stretch'}}>
-        <View>
         {
-          options.map((row, idx) => {
-            if (row) {
-              return (
-                <ListItem key={idx} onPress={() => this.checkValue(idx)}>
-                  <Body>
-                    {row.type == 'text' &&  <Text>{row.text}</Text>}
-                    {row.type == 'file' &&  <GImage file={row.file} style={{width: '60%', height: 100, resizeMode: 'cover'}}/>}
-                  </Body>
-                  <Right>
-                    { isRadio ?
-                    <Radio onPress={() => this.checkValue(idx)} selected={answer && answer.includes(idx)} />
-                      :
-                    <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} /> }
-                  </Right>
-                </ListItem>
-                )
-            } else {
-              return (<ListItem key={idx} onPress={() => this.checkValue(idx)}>
-                  <Body>
-                  </Body>
-                  <Right>
-                    <CheckBox onPress={() => this.checkValue(idx)} checked={answer && answer.includes(idx)} />
-                  </Right>
-                </ListItem>)
-            }
-          })
+          options.map((row, idx) => (
+            <SurveyMultiOption
+              key={idx}
+              row={row}
+              onPress={() => this.checkValue(idx)}
+              isRadio={isRadio}
+              isSelected={answer && answer.includes(idx)}
+            />
+          ))
         }
-        </View>
       </View>
-    )
+    );
   }
 }
 
-export default connect(state => ({
-    
-  }),
-  (dispatch) => ({
-    //actions: bindActionCreators(counterActions, dispatch)
-  })
-)(SurveyMultiSelector);
+SurveyMultiSelector.propTypes = {
+  config: PropTypes.shape({
+    options: PropTypes.object,
+    optionsMax: PropTypes.number,
+    optionsMin: PropTypes.number,
+  }).isRequired,
+  answer: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  onNextChange: PropTypes.func.isRequired,
+};
