@@ -16,7 +16,6 @@
  "dependencies": {
   "babel-core": "^6.0.0",
   "color": "~0.11.1",
-  "firebase": "^4.6.1",
   "hash-int": "^1.0.0",
   "instabug-reactnative": "^8.0.19",
   "moment": "^2.13.0",
@@ -31,7 +30,6 @@
   "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/futurice/react-native-audio-toolkit.git",
   "react-native-audiowaveform": "https://github.com/erik-ilyin/react-native-audiowaveform.git",
-  "react-native-camera": "^1.1.2",
   "react-native-cli": "2.0.1",
   "react-native-collapsible": "^0.10.0",
   "react-native-datepicker": "^1.6.0",

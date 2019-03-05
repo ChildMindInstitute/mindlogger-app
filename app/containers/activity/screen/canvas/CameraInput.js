@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Image, Platform, TouchableOpacity, Text} from 'react-native';
 import { Button, View, Icon } from 'native-base';
-import Video from 'react-native-video';
 import ImagePicker from 'react-native-image-picker';
 
 const styles=StyleSheet.create({
@@ -36,6 +35,17 @@ const styles=StyleSheet.create({
     borderColor: '#d10000',
     backgroundColor: '#ffdddd'
   },
+  videoConfirmed: {
+    borderRadius: 12,
+    width: '100%',
+    height: 360,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#00a30a',
+    backgroundColor: '#99ff9f'
+  },
   chooseButton: {
     borderRadius: 12,
     width: '100%',
@@ -48,8 +58,12 @@ const styles=StyleSheet.create({
     backgroundColor: '#dbdbdb',
     marginTop: 8,
   },
-  icon: {
+  redIcon: {
     color: '#d10000',
+    fontSize: 60,
+  },
+  greenIcon: {
+    color: '#00a30a',
     fontSize: 60,
   }
 });
@@ -110,19 +124,22 @@ export default class CameraInput extends Component {
 
     const { answer } = this.props;
     let pic = answer;
-    return (
-      <View style={styles.body}>
-        <View style={styles.camera}>
-          {pic && this.props.video && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
-          {pic && !this.props.video && <Video source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
-          {!pic && <View>
-            <TouchableOpacity onPress={this.take}
-                              style={styles.takeButton}>
-                <Icon type='Entypo' name={iconName} style={styles.icon}></Icon>
-            </TouchableOpacity>
-          </View> }
+      return (
+        <View style={styles.body}>
+          <View style={styles.camera}>
+            {pic && this.props.video && <View
+                                style={styles.videoConfirmed}>
+                  <Icon type='Entypo' name={"check"} style={styles.greenIcon}></Icon>
+              </View> }
+            {pic && !this.props.video && <Video source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+            {!pic && <View>
+              <TouchableOpacity onPress={this.take}
+                                style={styles.takeButton}>
+                  <Icon type='Entypo' name={iconName} style={styles.redIcon}></Icon>
+              </TouchableOpacity>
+            </View> }
+          </View>
         </View>
-      </View>
       );
   }
 }
