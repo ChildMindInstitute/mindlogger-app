@@ -11,8 +11,8 @@ import {
 import {randomLink} from '../../../helper';
 import TextEntry from './TextEntry';
 import ScreenButton from './ScreenButton';
-import SurveySection from './survey';
-import CanvasSection from './canvas';
+import SurveySection from '../../../widgets/survey';
+import CanvasSection from '../../../widgets/canvas';
 import GImage from '../../../components/image/Image';
 
 const styles = StyleSheet.create({

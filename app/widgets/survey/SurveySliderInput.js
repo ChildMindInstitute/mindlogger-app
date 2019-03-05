@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import { connect } from 'react-redux';
+import Slider from '../../components/slider';
 
-import Slider from '../../../../components/slider';
-
-class SurveySliderInput extends Component {
+export default class SurveySliderInput extends Component {
   constructor(props) {
     super(props);
   }
@@ -31,7 +29,7 @@ class SurveySliderInput extends Component {
   render() {
     const { config: {options, optionsCount, increments}, answer} = this.props;
     return (
-      <View style={{alignItems:'stretch', flex: 1}}>
+      <View style={{alignItems:'stretch', flex: 3}}>
         <Slider
           value={answer || 0}
           min={1}
@@ -46,11 +44,3 @@ class SurveySliderInput extends Component {
     )
   }
 }
-
-export default connect(state => ({
-    
-  }),
-  (dispatch) => ({
-    //actions: bindActionCreators(counterActions, dispatch)
-  })
-)(SurveySliderInput);

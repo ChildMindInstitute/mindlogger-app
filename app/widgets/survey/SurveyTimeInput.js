@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import { connect } from 'react-redux';
-import { Text, Button, Toast } from 'native-base';
+import { Text, Button } from 'native-base';
 import moment from 'moment';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 
-class SurveyTimeInput extends Component {
+export default class SurveyTimeInput extends Component {
   state = {}
   constructor(props) {
     super(props);
@@ -26,7 +25,7 @@ class SurveyTimeInput extends Component {
   render() {
     const { answer} = this.props;
     return (
-      <View style={{alignItems:'stretch', flex: 1}}>
+      <View style={{alignItems:'stretch', flex: 3}}>
         <Button onPress={this._showDateTimePicker}><Text>{answer || "Set time"}</Text></Button>
         <DateTimePicker
           mode="time"
@@ -39,11 +38,3 @@ class SurveyTimeInput extends Component {
     )
   }
 }
-
-export default connect(state => ({
-    
-  }),
-  (dispatch) => ({
-    //actions: bindActionCreators(counterActions, dispatch)
-  })
-)(SurveyTimeInput);

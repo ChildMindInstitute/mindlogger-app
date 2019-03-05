@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { Text, View } from "native-base";
-import DrawingBoard from "../../../../components/drawing/DrawingBoard";
+import DrawingBoard from "../../components/drawing/DrawingBoard";
 import CameraInput from "./CameraInput";
 
 const styles = StyleSheet.create({

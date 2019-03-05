@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
-import { connect } from 'react-redux';
-import AudioRecord from '../../../../components/audio/AudioRecord';
+import AudioRecord from '../../components/audio/AudioRecord';
 
 
 export default class SurveyAudioInput extends Component {
@@ -24,10 +23,9 @@ export default class SurveyAudioInput extends Component {
   render() {
     const { answer } = this.props;
     return (
-      <View style={{alignItems:'stretch', flex: 1}}>
+      <View style={{alignItems:'stretch', flex: 3}}>
         <AudioRecord mode="single" onRecordFile={this.onRecord} path={answer && answer.uri} ref={ref => this.audioRef = ref}/>
       </View>
     )
   }
 }
-
