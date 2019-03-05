@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native';
 import { Text, Button, GImage } from 'native-base';
 import styles from './styles';
 
-const SurveyTableSelectorCell = ({ cell, isSelected, onPress, height = 60 }) => {
+const SurveyTableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
   const imageStyle = {
     width: (height - 3),
     height: (height - 3),
@@ -35,6 +35,11 @@ const SurveyTableSelectorCell = ({ cell, isSelected, onPress, height = 60 }) => 
   }
 };
 
+SurveyTableSelectorCell.defaultProps = {
+  isSelected: false,
+  height: 60,
+};
+
 SurveyTableSelectorCell.propTypes = {
   cell: PropTypes.shape({
     file: PropTypes.number,
@@ -42,8 +47,8 @@ SurveyTableSelectorCell.propTypes = {
     type: PropTypes.string,
   }).isRequired,
   onPress: PropTypes.func.isRequired,
-  isSelected: PropTypes.bool.isRequired,
-  height: PropTypes.number.isRequired,
+  isSelected: PropTypes.bool,
+  height: PropTypes.number,
 };
 
 export default SurveyTableSelectorCell;

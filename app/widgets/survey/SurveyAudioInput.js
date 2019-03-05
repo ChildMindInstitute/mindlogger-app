@@ -10,7 +10,7 @@ export default class SurveyAudioInput extends Component {
   }
 
   reset() {
-    this.audioRef._delete();
+    this.audioRef._delete(); // eslint-disable-line
   }
 
   render() {

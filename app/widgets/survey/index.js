@@ -61,6 +61,7 @@ export default class SurveySection extends Component {
 
 SurveySection.defaultProps = {
   onNextChange: undefined,
+  answer: undefined,
 };
 
 SurveySection.propTypes = {
@@ -68,7 +69,7 @@ SurveySection.propTypes = {
   config: PropTypes.shape({
     mode: PropTypes.string,
   }).isRequired,
-  answer: PropTypes.any.isRequired,
+  answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
   onNextChange: PropTypes.func,
 };

@@ -6,11 +6,10 @@ import SurveyTableSelectorCell from './SurveyTableSelectorCell';
 export default class SurveyTableSelector extends Component {
   constructor(props) {
     super(props);
-    const { config, answer, onChange } = props;
-    const { rows, cols } = config;
-    // Initialize answer to zeros or empty strings if nothing set
+    const { config: { rows, cols, mode }, answer, onChange } = props;
+    // Initialize answer to empty 2D array or 2D array of false
     if (typeof answer === 'undefined') {
-      const zeroesAr = config.mode === 'select'
+      const zeroesAr = mode === 'select'
         ? rows.map(() => [])
         : rows.map(() => cols.map(() => false));
       onChange(zeroesAr);
@@ -52,14 +51,14 @@ export default class SurveyTableSelector extends Component {
       height,
     };
     return (
-      <View onLayout={this.onLayout}>
+      <View>
         {config.rows.map((cols, rowIdx) => (
           <Row style={rowStyle} key={rowIdx}>
             {cols.map((cell, colIdx) => (
               <Col key={colIdx} style={cellStyle}>
                 <SurveyTableSelectorCell
-                  cell={config.rows[rowIdx][colIdx]}
-                  isSelected={answer[rowIdx].includes(colIdx)}
+                  cell={cell}
+                  isSelected={answer && answer[rowIdx].includes(colIdx)}
                   onPress={() => {
                     this.onChoiceSelect(rowIdx, colIdx);
                   }}
@@ -74,13 +73,16 @@ export default class SurveyTableSelector extends Component {
   }
 }
 
+SurveyTableSelector.defaultProps = {
+  answer: undefined,
+};
+
 SurveyTableSelector.propTypes = {
   config: PropTypes.shape({
-    rows: PropTypes.arrayOf(PropTypes.string),
-    cols: PropTypes.arrayOf(PropTypes.string),
+    rows: PropTypes.arrayOf(PropTypes.array),
     optionsMin: PropTypes.number,
     optionsMax: PropTypes.number,
   }).isRequired,
-  answer: PropTypes.arrayOf(PropTypes.array).isRequired,
+  answer: PropTypes.arrayOf(PropTypes.array),
   onChange: PropTypes.func.isRequired,
 };

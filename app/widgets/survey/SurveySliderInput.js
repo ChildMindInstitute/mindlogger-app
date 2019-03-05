@@ -37,13 +37,17 @@ export default class SurveySliderInput extends Component {
   }
 }
 
+SurveySliderInput.defaultProps = {
+  answer: undefined,
+};
+
 SurveySliderInput.propTypes = {
   config: PropTypes.shape({
-    options: PropTypes.object,
+    options: PropTypes.array,
     optionsCount: PropTypes.number,
-    increments: PropTypes.number,
+    increments: PropTypes.string,
   }).isRequired,
-  answer: PropTypes.number.isRequired,
+  answer: PropTypes.number,
   onChange: PropTypes.func.isRequired,
   onNextChange: PropTypes.func.isRequired,
 };
