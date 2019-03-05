@@ -29,7 +29,7 @@ export default class SurveySliderInput extends Component {
           labels={options}
           strict={increments === 'Discrete'}
           barHeight={300}
-          selected={answer != undefined}
+          selected={typeof answer !== 'undefined'}
           onChange={this.onAnswer}
         />
       </View>

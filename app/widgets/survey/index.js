@@ -9,26 +9,25 @@ import SurveyTimeInput from './SurveyTimeInput';
 import SurveyAudioInput from './SurveyAudioInput';
 
 const getSurveyElement = (type, mode) => {
-  if (type == 'list' && mode == 'single') {
+  if (type === 'list' && mode === 'single') {
     return SurveyMultiSelector;
   }
-  else if (type == 'table' && mode != 'select') {
+  if (type === 'table' && mode !== 'select') {
     return SurveyTableInput;
   }
-  else if (type == 'table') {
+  if (type === 'table') {
     return SurveyTableSelector;
   }
-  else if (type == 'slider') {
+  if (type === 'slider') {
     return SurveySliderInput;
   }
-  else if (type == 'time') {
+  if (type === 'time') {
     return SurveyTimeInput;
   }
-  else if (type == 'audio') {
+  if (type === 'audio') {
     return SurveyAudioInput;
   }
-  else
-    return View;
+  return View;
 };
 
 export default class SurveySection extends Component {
@@ -54,7 +53,7 @@ export default class SurveySection extends Component {
         answer={answer}
         onChange={onChange}
         onNextChange={onNextChange}
-        ref={(ref) => this.surveyEl = ref}
+        ref={(ref) => { this.surveyEl = ref; }}
       />
     );
   }
@@ -69,7 +68,7 @@ SurveySection.propTypes = {
   config: PropTypes.shape({
     mode: PropTypes.string,
   }).isRequired,
-  answer: PropTypes.object.isRequired,
+  answer: PropTypes.any.isRequired,
   onChange: PropTypes.func.isRequired,
   onNextChange: PropTypes.func,
 };

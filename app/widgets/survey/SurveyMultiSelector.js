@@ -13,21 +13,25 @@ export default class SurveyMultiSelector extends Component {
   checkValue = (value) => {
     const { config: {optionsMax, optionsMin}, onChange, answer: oldAnswer} = this.props;
     let answer = oldAnswer ? [...oldAnswer] : [];
-    
     let next = false;
-    if (optionsMax==1 && optionsMin==1) {
+
+    // If the multi select only handles 1 option, then change the answer. Otherwise
+    // if it's a true multi select, push the option onto the answer array (if
+    // it was not selected) or splice it (if it was selected already)
+    if (optionsMax === 1 && optionsMin === 1) {
       answer = [value];
       next = true;
-    } else {
+    }
+    else {
       const index = answer.indexOf(value);
-      if (index<0) {
-        if (answer.length<optionsMax) {
+      if (index < 0) {
+        if (answer.length < optionsMax) {
           answer.push(value);
         } else {
           Toast.show({text: `You can not select more than ${optionsMax} options`, type: 'info', duration: 1000});
         }
       } else {
-        if (answer.length>optionsMin) {
+        if (answer.length > optionsMin) {
           answer.splice(index, 1);
         } else if (answer.length==optionsMin) {
           Toast.show({text: `You can not select less than ${optionsMin} options`, type: 'info', duration: 1000});
@@ -35,12 +39,12 @@ export default class SurveyMultiSelector extends Component {
       }
     }
     this.onAnswer(answer);
-    let validated = (answer.length<=optionsMax) && (answer.length>=optionsMin);
+    let validated = (answer.length <= optionsMax) && (answer.length >= optionsMin);
     onChange(answer, validated, next);
   }
 
-  onAnswer(answer) {
-    const { config: {optionsMax, optionsMin, options}, onNextChange} = this.props;
+  onAnswer = (answer) => {
+    const { config: { optionsMax, optionsMin, options }, onNextChange} = this.props;
     if (optionsMax === 1 && optionsMin === 1) {
       if (answer.length > 0) {
         onNextChange(options[answer[0]].screen);
@@ -55,7 +59,7 @@ export default class SurveyMultiSelector extends Component {
     const { config: {options, optionsMax, optionsMin}, answer } = this.props;
     const isRadio = (optionsMax === 1) && (optionsMin === 1);
     return (
-      <View style={{alignItems:'stretch'}}>
+      <View style={{ alignItems: 'stretch' }}>
         {
           options.map((row, idx) => (
             <SurveyMultiOption
@@ -74,7 +78,7 @@ export default class SurveyMultiSelector extends Component {
 
 SurveyMultiSelector.propTypes = {
   config: PropTypes.shape({
-    options: PropTypes.object,
+    options: PropTypes.array,
     optionsMax: PropTypes.number,
     optionsMin: PropTypes.number,
   }).isRequired,

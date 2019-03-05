@@ -3,10 +3,9 @@ import {StyleSheet, TouchableOpacity, ImageBackground, Image} from 'react-native
 import { Content, List, ListItem, Text, Button, Right, Body, Item, Input, Row, Col, Radio, CheckBox, H2, View, Grid, Thumbnail } from 'native-base';
 import { connect } from 'react-redux';
 
-import baseTheme from '../../../../theme';
-import SurveyInputComponent from './SurveyInputComponent';
+import baseTheme from '../../theme';
 import styles from './styles';
-import GImage from '../../../../components/image/Image';
+import GImage from '../../components/image/Image';
 
 class SurveyTableSelector extends Component {
     constructor(props) {

@@ -1,13 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, Text, Right, Body, CheckBox, Radio } from 'native-base';
+import {
+  ListItem,
+  Text,
+  Right,
+  Body,
+  CheckBox,
+  Radio,
+} from 'native-base';
 import GImage from '../../components/image/Image';
 
 const Option = ({ row, onPress, isRadio = false, isSelected = false }) => (
   <ListItem onPress={onPress}>
     <Body>
-      {row.type == 'text' && <Text>{row.text}</Text>}
-      {row.type == 'file' && <GImage file={row.file} style={{ width: '60%', height: 100, resizeMode: 'cover' }} />}
+      {row.type === 'text' && <Text>{row.text}</Text>}
+      {row.type === 'file' && <GImage file={row.file} style={{ width: '60%', height: 100, resizeMode: 'cover' }} />}
     </Body>
     <Right>
       {isRadio
@@ -16,6 +23,11 @@ const Option = ({ row, onPress, isRadio = false, isSelected = false }) => (
     </Right>
   </ListItem>
 );
+
+Option.defaultProps = {
+  isSelected: false,
+  isRadio: false,
+};
 
 Option.propTypes = {
   row: PropTypes.shape({
