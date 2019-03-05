@@ -1,0 +1,49 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import { TouchableOpacity } from 'react-native';
+import { Text, Button, GImage } from 'native-base';
+import styles from './styles';
+
+const SurveyTableSelectorCell = ({ cell, isSelected, onPress, height = 60 }) => {
+  const imageStyle = {
+    width: (height - 3),
+    height: (height - 3),
+    padding: 3,
+  };
+  switch (cell.type) {
+    case 'text':
+      return (
+        <Button
+          style={styles.buttonStyle}
+          transparent={!isSelected}
+          onPress={onPress}
+        >
+          <Text>{cell.text}</Text>
+        </Button>
+      );
+    case 'file':
+      return (
+        <TouchableOpacity onPress={onPress}>
+          <GImage
+            style={imageStyle}
+            file={cell.file}
+          />
+        </TouchableOpacity>
+      );
+    default:
+      return (<Text />);
+  }
+};
+
+SurveyTableSelectorCell.propTypes = {
+  cell: PropTypes.shape({
+    file: PropTypes.number,
+    text: PropTypes.string,
+    type: PropTypes.string,
+  }).isRequired,
+  onPress: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  height: PropTypes.number.isRequired,
+};
+
+export default SurveyTableSelectorCell;
