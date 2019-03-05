@@ -5158,12 +5158,11 @@ react-native-button@^2.0.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-camera@^1.1.2:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.1.2.tgz#a93c389c522c8909c564f04c4a86072909259d07"
+react-native-camera@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-1.12.0.tgz#64cfb95fe4ad00f4fc4d94281bb3c913025964ca"
   dependencies:
-    lodash "^4.17.4"
-    prop-types "^15.5.10"
+    prop-types "^15.6.2"
 
 react-native-cli@2.0.1:
   version "2.0.1"

@@ -106,6 +106,7 @@ export default class CameraInput extends Component {
               type={type}
               flashMode={RNCamera.Constants.FlashMode.off}
               pauseAfterCapture={true}
+              mirrorImage={type == RNCamera.Constants.Type.front}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             />

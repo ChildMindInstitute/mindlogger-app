@@ -18,7 +18,6 @@ export default class DrawingSection extends Component {
   }
   render() {
     const {type, config={}, answer, onChange, onNextChange} = this.props;
-    console.log(config);
     switch(type) {
       case 'draw':
         return (
@@ -42,7 +41,5 @@ export default class DrawingSection extends Component {
       default:
         return (<View></View>);
     }
-      
-    
   }
 }

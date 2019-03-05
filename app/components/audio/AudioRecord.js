@@ -71,6 +71,7 @@ class AudioRecord extends React.Component {
     this.player = null;
     this.recorder = null;
     this.lastSeek = 0;
+    this.playerTime = 0;
     if(this.props.path) {
       this.hasFile = true
       this.filename = Platform.OS == 'android' ? `file://${this.props.path}` : this.props.path.replace(/^.*[\\\/]/, '');
@@ -133,18 +134,29 @@ class AudioRecord extends React.Component {
       playButtonDisabled:   !this.player   || !this.player.canPlay || this.recorder.isRecording,
       recordButtonDisabled: !this.recorder || (this.player         && !this.player.isStopped),
     });
-    console.log(this.player && this.player.canPlay);
   }
 
   _playPause() {
-    this.player.playPause((err, playing) => {
-      if (err) {
-        this.setState({
-          error: err.message
+    if(this.player.isPlaying) {
+      this.playerTime = this.player.currentTime;
+      this._stop();
+    } else {
+      this.player.seek(this.playerTime, () => {
+        this._updateState();
+        this.player.play(() => {
+          this._updateState();
         });
-      }
-      this._updateState();
-    });
+      });
+    }
+
+    // this.player.playPause((err, playing) => {
+    //   if (err) {
+    //     this.setState({
+    //       error: err.message
+    //     });
+    //   }
+    //   this._updateState();
+    // });
   }
 
   _stop() {
