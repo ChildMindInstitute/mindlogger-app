@@ -28,7 +28,13 @@ export default class SurveyAudioInput extends Component {
   }
 }
 
+SurveyAudioInput.defaultProps = {
+  answer: undefined,
+}
+
 SurveyAudioInput.propTypes = {
-  answer: PropTypes.object.isRequired,
+  answer: PropTypes.shape({
+    uri: PropTypes.string,
+  }),
   onChange: PropTypes.func.isRequired,
 };
