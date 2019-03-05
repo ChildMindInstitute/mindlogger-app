@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Image, Platform, TouchableOpacity, Text} from 'react-native';
 import { Button, View, Icon } from 'native-base';
-
+import Video from 'react-native-video';
 import ImagePicker from 'react-native-image-picker';
 
 const styles=StyleSheet.create({
@@ -113,7 +113,8 @@ export default class CameraInput extends Component {
     return (
       <View style={styles.body}>
         <View style={styles.camera}>
-          {pic && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+          {pic && this.props.video && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+          {pic && !this.props.video && <Video source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
           {!pic && <View>
             <TouchableOpacity onPress={this.take}
                               style={styles.takeButton}>
