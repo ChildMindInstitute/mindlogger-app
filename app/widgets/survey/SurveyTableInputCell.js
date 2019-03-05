@@ -7,7 +7,7 @@ const onNumberAdd = (toAdd, oldVal = 0, onChange) => {
   onChange(oldVal + toAdd);
 };
 
-const SurveyTableInputCell = ({ mode, value, onChange }) => {
+const SurveyTableInputCell = ({ mode = 'text', value = '', onChange }) => {
   if (mode === 'number') {
     return (
       <Button
@@ -32,11 +32,15 @@ const SurveyTableInputCell = ({ mode, value, onChange }) => {
   );
 };
 
+SurveyTableInputCell.defaultProps = {
+  value: '',
+};
+
 SurveyTableInputCell.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
-  ]).isRequired,
+  ]),
   onChange: PropTypes.func.isRequired,
   mode: PropTypes.string.isRequired,
 };

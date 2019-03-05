@@ -39,7 +39,7 @@ export default class SurveyMultiSelector extends Component {
       }
     }
     this.onAnswer(answer);
-    let validated = (answer.length <= optionsMax) && (answer.length >= optionsMin);
+    const validated = (answer.length <= optionsMax) && (answer.length >= optionsMin);
     onChange(answer, validated, next);
   }
 
@@ -76,13 +76,17 @@ export default class SurveyMultiSelector extends Component {
   }
 }
 
+SurveyMultiSelector.defaultProps = {
+  answer: undefined,
+};
+
 SurveyMultiSelector.propTypes = {
   config: PropTypes.shape({
     options: PropTypes.array,
     optionsMax: PropTypes.number,
     optionsMin: PropTypes.number,
   }).isRequired,
-  answer: PropTypes.array.isRequired,
+  answer: PropTypes.array,
   onChange: PropTypes.func.isRequired,
   onNextChange: PropTypes.func.isRequired,
 };

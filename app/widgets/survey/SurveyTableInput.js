@@ -87,11 +87,15 @@ export default class SurveyTableInput extends Component {
   }
 }
 
+SurveyTableInput.defaultProps = {
+  answer: undefined,
+};
+
 SurveyTableInput.propTypes = {
   config: PropTypes.shape({
     rows: PropTypes.arrayOf(PropTypes.string),
     cols: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
-  answer: PropTypes.arrayOf(PropTypes.array).isRequired,
+  answer: PropTypes.arrayOf(PropTypes.array),
   onChange: PropTypes.func.isRequired,
 };
