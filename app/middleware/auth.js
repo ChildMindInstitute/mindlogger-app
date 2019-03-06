@@ -1,4 +1,4 @@
-import * as types from '../actions/actionTypes';
+import * as types from '../state/api/api.constants';
 
 
 export default store => next => action => {

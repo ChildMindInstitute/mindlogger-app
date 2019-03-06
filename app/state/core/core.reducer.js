@@ -27,15 +27,15 @@ export default function coreReducer(state = initialState, action = {}) {
           self: action.response,
         };
       case types.ADD_ACT:
-        acts = [...state.acts]
-        acts.unshift(action.response.act)
+        acts = [...state.acts];
+        acts.unshift(action.response.act);
         return {
           ...state,
           acts,
         };
       case types.UPDATE_ACT:
         acts = [...state.acts]
-        acts[action.index] = {...acts[action.index], ...action.body}
+        acts[action.index] = { ...acts[action.index], ...action.body }
         return {
           ...state,
           acts,
@@ -46,8 +46,8 @@ export default function coreReducer(state = initialState, action = {}) {
           answer: undefined,
         };
       case types.DELETE_ACT:
-        acts = [...state.acts]
-        acts.splice(action.index,1)
+        acts = [...state.acts];
+        acts.splice(action.index, 1);
         return {
           ...state,
           acts,
@@ -59,6 +59,7 @@ export default function coreReducer(state = initialState, action = {}) {
           acts,
         };
       case types.GET_COLLECTION:
+      {
         const collection = state.collection || {};
         const { name, response } = action;
         collection[name.toLowerCase()] = response[0];
@@ -66,17 +67,19 @@ export default function coreReducer(state = initialState, action = {}) {
           ...state,
           collection,
         };
+      }
       case types.LIST_OBJECTS:
+      {
         const newState = state;
         if (action.name) {
-          let data = state[action.objectType] || {};
+          const data = state[action.objectType] || {};
           data[action.name] = action.response;
           newState[action.objectType] = data;
         }
         let data = state.data || {};
         let tree = state.tree || {};
         let ids = [];
-        action.response.forEach(obj => {
+        action.response.forEach((obj) => {
           let id = `${action.objectType}/${obj._id}`;
           data[id] = obj;
           ids.push(id);
@@ -87,18 +90,22 @@ export default function coreReducer(state = initialState, action = {}) {
           data,
           tree,
         };
+      }
       case types.GET_OBJECT:
-        let data = state.data || {};
+      {
+        const data = state.data || {};
         data[action.response._id] = action.response;
         return {
           ...state,
           data,
         }
+      }
       case types.GET_NAMES_HASH:
-        let objects = state.objects || {};
-        let key = `${action.parentType}/${action.parentId}`;
-        let dict = objects[key] || {};
-        let arr = action.response;
+      {
+        const objects = state.objects || {};
+        const key = `${action.parentType}/${action.parentId}`;
+        const dict = objects[key] || {};
+        const arr = action.response;
         arr.forEach((obj) => {
           dict[`${action.objectType}/${obj.name}`] = obj;
         });
@@ -107,15 +114,19 @@ export default function coreReducer(state = initialState, action = {}) {
           ...state,
           objects,
         }
+      }
       case types.FETCH_OBJECT:
-        let data = state.data || {};
+      {
+        const data = state.data || {};
         data[action.objectPath] = action.response;
         return {
           ...state,
           data,
         };
+      }
       case types.GET_ACT:
-        let actData = state.actData || {};
+      {
+        const actData = state.actData || {};
         let info;
         let variant;
         action.response.forEach((v) => {
@@ -134,7 +145,9 @@ export default function coreReducer(state = initialState, action = {}) {
           ...state,
           actData,
         };
+      }
       case types.GET_USER_COLLECTION:
+      {
         const userData = state.userData || {};
         let curUserData = userData[action.userId] || {};
         const collections = {};
@@ -149,7 +162,8 @@ export default function coreReducer(state = initialState, action = {}) {
         return {
           ...state,
           userData,
-        }
+        };
+      }
       default:
         return {
           ...state,
@@ -158,11 +172,10 @@ export default function coreReducer(state = initialState, action = {}) {
   } else {
     switch (action.type) {
       case REHYDRATE:
-        const core = action.payload.core;
-        if (core) {
+        if (action.payload.core) {
           return {
             ...state,
-            ...core,
+            ...action.payload.core,
           };
         }
         return state;
@@ -185,20 +198,24 @@ export default function coreReducer(state = initialState, action = {}) {
           user,
         };
       case types.UPDATE_ACTIVITY:
+      {
         acts = state.acts;
-        const act = acts[action.index];
+        const act = state.acts[action.index];
         acts[action.index] = { ...act, ...action.data }
         return {
           ...state,
-          acts
+          acts,
         };
+      }
       case types.SET_ANSWER:
+      {
         const answerData = { ...state.answerData } || {};
         answerData[state.act._id] = action.data;
         return {
           ...state,
           answerData,
         };
+      }
       case types.SET_ACTIVITY:
         if (state.act && action.data.id !== state.act.id) {
           return {
@@ -219,14 +236,16 @@ export default function coreReducer(state = initialState, action = {}) {
         return {
           ...state,
           ...action.data,
-        }
+        };
       case types.ADD_QUEUE:
+      {
         const answerCache = state.answerCache || [];
-        answerCache.push({...action.data, synced: false});
+        answerCache.push({ ...action.data, synced: false });
         return {
           ...state,
           answerCache,
         };
+      }
       default:
         return state;
     }

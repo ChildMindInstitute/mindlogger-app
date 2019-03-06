@@ -20,7 +20,7 @@ import {
     Toast,
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
-import { forgotPassword } from 'state/api/api.actions';
+import { forgotPassword } from '../../state/api/api.actions';
 import styles from './styles';
 
 class ForgotPassword extends Component { // eslint-disable-line
