@@ -4,7 +4,7 @@ import { submit } from 'redux-form'
 import { Image } from 'react-native'
 import {Row, Col, Content, Button, Text,List, ListItem, Thumbnail, Left, Right, Icon, Body, Item} from 'native-base'
 import config from '../../config';
-import { getFiles } from '../../actions/api';
+import { getFiles } from '../../state/api/api.actions';
 
 
 class ImageBrowser extends Component {

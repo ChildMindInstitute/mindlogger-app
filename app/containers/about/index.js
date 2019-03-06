@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast} from 'native-base';
 import {Actions} from 'react-native-router-flux';
 
-import { openDrawer } from '../../actions/drawer';
+import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 
 const logoImage = require('../../../img/color_logo.png');

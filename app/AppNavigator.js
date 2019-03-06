@@ -8,7 +8,7 @@ import { Router, Scene, Actions } from 'react-native-router-flux';
 
 import getTheme from '../native-base-theme/components';
 import material from '../native-base-theme/variables/material';
-import { closeDrawer } from './actions/drawer';
+import { closeDrawer } from './state/drawer/drawer.actions';
 
 // Main Screens
 import Home from './components/home/';

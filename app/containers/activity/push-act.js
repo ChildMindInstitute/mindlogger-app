@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Toast, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import { openDrawer, closeDrawer } from '../../actions/drawer';
+import { openDrawer, closeDrawer } from '../../state/drawer/drawer.actions';
 import {
     setActivity,
     setVolume,
     setAnswer,
-} from '../../actions/coreActions';
+} from '../../state/core/core.actions';
 
 import {Platform} from 'react-native';
 
