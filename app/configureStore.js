@@ -1,6 +1,5 @@
 
 import { AsyncStorage } from 'react-native';
-import devTools from 'remote-redux-devtools';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { persistStore } from 'redux-persist';
@@ -11,7 +10,10 @@ import auth from './middleware/auth';
 
 export default function configureStore(onCompletion:()=>void):any {
 
-  const store = createStore(reducer, {}, applyMiddleware(thunk, api, auth));
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const store = createStore(reducer, {}, composeEnhancers(
+    applyMiddleware(thunk, api, auth),
+  ));
   const persist = persistStore(store, { storage: AsyncStorage }, onCompletion);
 
   // const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);

@@ -1,21 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, StatusBar, Image} from 'react-native';
-import { Container, Content, Text, Button, View, Icon, Header, Left, Right, Title, Body, Thumbnail, Item } from 'native-base';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { Actions } from 'react-native-router-flux';
+import { StyleSheet } from 'react-native';
+import { Text, Button, View, Icon } from 'native-base';
 import * as Progress from 'react-native-progress';
-
-import randomString from 'random-string';
-import { RNCamera } from 'react-native-camera';
-
-import SurveyTextInput from '../../components/SurveyTextInput';
-import SurveyBoolSelector from '../../components/SurveyBoolSelector';
-import SurveySingleSelector from '../../components/SurveySingleSelector';
-import SurveyMultiSelector from '../../components/SurveyMultiSelector';
-import SurveyImageSelector from '../../components/SurveyImageSelector';
-import DrawingBoard from '../../../drawing/components/DrawingBoard';
-import { zeroFill } from '../../../../helper';
+import DrawingBoard from '../../components/drawing/DrawingBoard';
+import { zeroFill } from '../../helper';
 
 const styles=StyleSheet.create({
   body: {
