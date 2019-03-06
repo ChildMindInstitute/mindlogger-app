@@ -1,21 +1,22 @@
 import config from '../config';
 import RNFetchBlob from 'react-native-fetch-blob';
 import objectToFormData from 'object-to-formdata';
-import { Object } from 'core-js';
+//import { Object } from 'core-js';
 
 export default store => next => action => {
-    if ((!action.method && !action.path) || action.status) return next(action)
-
+    if ((!action.method && !action.path) || action.status)
+    {
+      return next(action);
+    }
     let { path } = action;
     const { method, type, body } = action;
     const state = store.getState();
     let accessToken;
-    
     if (state.core && state.core.auth) {
         var auth = state.core.auth;
         accessToken = auth.token;
     }
-    
+
 
     if (!path || !method || !type) {
         throw new Error('Specify a path, method and type.')
@@ -46,11 +47,11 @@ export default store => next => action => {
 export const makeRequest = (method, path, data, accessToken, {isMultipartUpload, isUpload, isJson, extraHeaders}) => {
     let headers = extraHeaders || {};
     if (headers['Girder-Authorization']) {
-        
+
     } else if (accessToken) {
         headers["Girder-Token"] = accessToken;
     }
-    
+
     let body = data;
     if (!isUpload) {
         if (!isMultipartUpload && isJson) {
