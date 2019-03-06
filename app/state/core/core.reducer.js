@@ -157,7 +157,6 @@ export default function coreReducer(state = initialState, action = {}) {
         curUserData = {
           ...curUserData,
           collections,
-        };
         userData[action.userId] = curUserData;
         return {
           ...state,
