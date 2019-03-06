@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity } from 'react-native';
-import { Text, Button, GImage } from 'native-base';
+import { Text, Button } from 'native-base';
 import styles from './styles';
+import GImage from '../../components/image/Image';
 
 const SurveyTableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
   const imageStyle = {
