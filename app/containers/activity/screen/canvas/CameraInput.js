@@ -2,119 +2,30 @@ import React, {Component} from 'react';
 import {StyleSheet, Image, Platform, TouchableOpacity, Text} from 'react-native';
 import { Button, View, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
-
-const styles=StyleSheet.create({
-  body: {
-    flex: 1,
-  },
-  camera: {
-    width: '100%',
-    height: 360,
-    position: 'relative',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 15,
-  },
-  footerText: {
-    fontSize: 20,
-    fontWeight: '300',
-  }, buttonText: {
-    fontSize: 24,
-    fontWeight: '300'
-  },
-  takeButton: {
-    borderRadius: 12,
-    width: '100%',
-    height: 360,
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#d10000',
-    backgroundColor: '#ffdddd'
-  },
-  videoConfirmed: {
-    borderRadius: 12,
-    width: '100%',
-    height: 360,
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#00a30a',
-    backgroundColor: '#99ff9f'
-  },
-  chooseButton: {
-    borderRadius: 12,
-    width: '100%',
-    height: 116,
-    alignContent: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#000000',
-    backgroundColor: '#dbdbdb',
-    marginTop: 8,
-  },
-  redIcon: {
-    color: '#d10000',
-    fontSize: 60,
-  },
-  greenIcon: {
-    color: '#00a30a',
-    fontSize: 60,
-  }
-});
+import styles from '../../../../themes/activityTheme';
 
 export default class CameraInput extends Component {
 
   //props: video- indicates whether to allow user to upload videos. when videos is false, only photos can be uploaded
   //take a new picture/video with native camera
   take = () => {
-    let options = { mediaType: ((this.props.video) ? 'video' : 'photo'),
+    const options = { mediaType: ((this.props.video) ? 'video' : 'photo'),
                     storageOptions: {
                         cameraRoll: true,
                         waitUntilSaved: true,
                     }
-                  }
+                  };
     ImagePicker.launchCamera(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled video picker');
       } else if (response.error) {
-        console.log('Video Picker error: ', response.error);
       } else {
         let picSource = {uri: (Platform.OS == 'ios') ? response.uri.replace('file://','') : response.uri, filename: response.uri.split("/").pop()};
-        console.log("uri --- " + response.uri);
         this.props.onChange(picSource);
       }
     })
   }
 
 
-  //choose existing photo/video from device
-  //doesnt seem to be working yet
-/*  choose = () => {
-    let options = { mediaType: ((this.props.video) ? 'video' : 'photo'),
-                    storageOptions: {
-                        cameraRoll: true,
-                        waitUntilSaved: true,
-                    }
-                  }
-    ImagePicker.launchImageLibrary({}, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled video picker');
-      } else if (response.error) {
-        console.log('Video Picker error: ', response.error);
-      } else {
-        let picSource = {uri: (Platform.OS == 'ios') ? response.uri.replace('file://','') : response.uri, filename: response.uri.split("/").pop()};
-        console.log("uri --- " + response.uri);
-        this.props.onChange(picSource);
-      }
-    })
-  }
-*/
   render() {
     //icon depend on video/picture mode
     let iconName = ((this.props.video) ? "video-camera" : "camera");
