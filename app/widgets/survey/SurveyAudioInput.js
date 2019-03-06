@@ -30,7 +30,7 @@ export default class SurveyAudioInput extends Component {
 
 SurveyAudioInput.defaultProps = {
   answer: undefined,
-}
+};
 
 SurveyAudioInput.propTypes = {
   answer: PropTypes.shape({

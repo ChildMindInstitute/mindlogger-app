@@ -1,17 +1,17 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import SurveyMultiOption from './SurveyMultiOption';
 import { Toast } from 'native-base';
+import SurveyMultiOption from './SurveyMultiOption';
 
 export default class SurveyMultiSelector extends Component {
   componentDidMount() {
-    let answer = this.props.answer || [];
+    const answer = this.props.answer || [];
     this.onAnswer(answer);
   }
 
   checkValue = (value) => {
-    const { config: {optionsMax, optionsMin}, onChange, answer: oldAnswer} = this.props;
+    const { config: { optionsMax, optionsMin }, onChange, answer: oldAnswer } = this.props;
     let answer = oldAnswer ? [...oldAnswer] : [];
     let next = false;
 
@@ -21,21 +21,18 @@ export default class SurveyMultiSelector extends Component {
     if (optionsMax === 1 && optionsMin === 1) {
       answer = [value];
       next = true;
-    }
-    else {
+    } else {
       const index = answer.indexOf(value);
       if (index < 0) {
         if (answer.length < optionsMax) {
           answer.push(value);
         } else {
-          Toast.show({text: `You can not select more than ${optionsMax} options`, type: 'info', duration: 1000});
+          Toast.show({ text: `You can not select more than ${optionsMax} options`, type: 'info', duration: 1000 });
         }
-      } else {
-        if (answer.length > optionsMin) {
-          answer.splice(index, 1);
-        } else if (answer.length==optionsMin) {
-          Toast.show({text: `You can not select less than ${optionsMin} options`, type: 'info', duration: 1000});
-        }
+      } else if (answer.length > optionsMin) {
+        answer.splice(index, 1);
+      } else if (answer.length === optionsMin) {
+        Toast.show({ text: `You can not select less than ${optionsMin} options`, type: 'info', duration: 1000 });
       }
     }
     this.onAnswer(answer);
@@ -44,19 +41,18 @@ export default class SurveyMultiSelector extends Component {
   }
 
   onAnswer = (answer) => {
-    const { config: { optionsMax, optionsMin, options }, onNextChange} = this.props;
+    const { config: { optionsMax, optionsMin, options }, onNextChange } = this.props;
     if (optionsMax === 1 && optionsMin === 1) {
       if (answer.length > 0) {
         onNextChange(options[answer[0]].screen);
-      }
-      else {
+      } else {
         onNextChange(undefined);
       }
     }
   }
 
   render() {
-    const { config: {options, optionsMax, optionsMin}, answer } = this.props;
+    const { config: { options, optionsMax, optionsMin }, answer } = this.props;
     const isRadio = (optionsMax === 1) && (optionsMin === 1);
     return (
       <View style={{ alignItems: 'stretch' }}>
