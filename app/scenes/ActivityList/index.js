@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import PushNotification from 'react-native-push-notification';
 
-import { openDrawer, closeDrawer } from '../../actions/drawer';
+import { openDrawer, closeDrawer } from '../../state/drawer/drawer.actions';
 import {
     setActivity,
     setNotificationStatus,
@@ -13,7 +13,7 @@ import {
     setVolume,
     setActs,
     updateQueue,
-} from '../../actions/coreActions';
+} from '../../state/core/core.actions';
 
 import { 
     addFolder,
@@ -24,7 +24,7 @@ import {
     getActVariant,
     getUserCollection,
     uploadFile,
-} from '../../actions/api';
+} from '../../state/api/api.actions';
 
 
 import { getFileInfoAsync } from '../../helper';
