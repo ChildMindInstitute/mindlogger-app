@@ -23,6 +23,7 @@
   "native-base": "^2.6.0",
   "node-pre-gyp": "^0.10.0",
   "object-to-formdata": "^1.5.2",
+  "prop-types": "^15.7.2",
   "random-string": "^0.2.0",
   "rc-input-number": "^3.6.8",
   "re-base": "^3.0.5",
