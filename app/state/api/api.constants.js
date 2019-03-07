@@ -40,5 +40,5 @@ export const GET_USER_COLLECTION = 'GET_USER_COLLECTION';
 
 // CORE ACTIONS
 
-export const SET_DATA ='SET_DATA'
-export const ADD_QUEUE = 'ADD_QUEUE'
+export const SET_DATA = 'SET_DATA';
+export const ADD_QUEUE = 'ADD_QUEUE';

@@ -8,8 +8,8 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../../package.json'
 
 import baseTheme from '../../themes/baseTheme';
-import { getItems, getObject, addFolder, addItem } from '../../actions/api';
-import { setAnswer, addQueue } from '../../actions/coreActions';
+import { getItems, getObject, addFolder, addItem } from '../../state/api/api.actions';
+import { setAnswer, addQueue } from '../../state/core/core.actions';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import Screen from './screen';

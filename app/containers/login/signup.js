@@ -20,7 +20,7 @@ import {
 } from 'native-base';
 import {Actions} from 'react-native-router-flux';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
-import {signUp, updateUserProfile} from '../../actions/api';
+import { signUp, updateUserProfile } from '../../state/api/api.actions';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
 

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {Header, Left, Right, Body, Button, Title, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import { openDrawer } from '../../actions/drawer';
+import { openDrawer } from '../../state/drawer/drawer.actions';
 
 class ActHeader extends Component {
 

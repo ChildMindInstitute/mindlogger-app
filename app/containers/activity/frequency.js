@@ -7,7 +7,7 @@ import PushNotification from 'react-native-push-notification';
 import { Actions } from 'react-native-router-flux';
 
 import { FormInputDatePicker } from '../../components/form/FormItem';
-import { updateActivity } from '../../actions/coreActions';
+import { updateActivity } from '../../state/core/core.actions';
 
 class FrequencyForm extends Component {
 

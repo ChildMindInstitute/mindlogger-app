@@ -7,9 +7,9 @@ import { Content, Text, List, ListItem, Container, Left, Right, Badge, View } fr
 import { Actions } from 'react-native-router-flux';
 import PushNotification from 'react-native-push-notification';
 
-import { changePlatform, changeMaterial, closeDrawer } from '../../actions/drawer';
+import { changePlatform, changeMaterial, closeDrawer } from '../../state/drawer/drawer.actions';
 import styles from './style';
-import {signOut} from '../../actions/api';
+import { signOut } from '../../state/api/api.actions';
 
 
 const datas = [

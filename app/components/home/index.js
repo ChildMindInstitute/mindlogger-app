@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Container, Button, H3, Text } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import { openDrawer } from '../../actions/drawer';
+import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 
 const launchscreenBg = require('../../../img/launchscreen-bg.png');

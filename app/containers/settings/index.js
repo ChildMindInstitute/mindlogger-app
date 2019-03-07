@@ -9,9 +9,9 @@ import { Actions } from 'react-native-router-flux';
 import {reduxForm, Field, SubmissionError} from 'redux-form';
 
 import {FormInputItem, FormSwitchItem, FormRadioButtonGroup} from '../../components/form/FormItem'
-import {updateUser, changePassword} from '../../actions/api';
-import {updateUserLocal} from '../../actions/coreActions';
-import { openDrawer, closeDrawer } from '../../actions/drawer';
+import {updateUser, changePassword} from '../../state/api/api.actions';
+import {updateUserLocal} from '../../state/core/core.actions';
+import { openDrawer, closeDrawer } from '../../state/drawer/drawer.actions';
 
 import styles from './styles';
 
