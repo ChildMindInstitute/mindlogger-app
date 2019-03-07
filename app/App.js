@@ -6,7 +6,7 @@ import { Container, Content, Text, View } from 'native-base';
 import Modal from 'react-native-modalbox';
 import {Root} from 'native-base';
 
-import AppNavigator from './AppNavigator';
+import AppNavigator from './scenes/AppNavigator';
 import ProgressBar from './components/loaders/ProgressBar';
 
 import theme from './themes/base-theme';

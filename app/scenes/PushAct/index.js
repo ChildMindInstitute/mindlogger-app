@@ -1,5 +1,6 @@
 
 import React, { Component } from 'react';
+import { Platform } from 'react-native';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Toast, Spinner } from 'native-base';
@@ -11,8 +12,6 @@ import {
     setVolume,
     setAnswer,
 } from '../../actions/coreActions';
-
-import {Platform} from 'react-native';
 
 import styles from './styles';
 
