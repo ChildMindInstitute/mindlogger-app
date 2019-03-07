@@ -73,7 +73,7 @@ export default class CanvasDrawingInput extends Component {
     } else if (this.cameraRef) {
 
     }
-    
+
   };
 
   onPicChange = (picSource) => {
@@ -91,12 +91,13 @@ export default class CanvasDrawingInput extends Component {
 
   render() {
     const { started } = this.state;
-    const { onChange, config, answer } = this.props;
+    const { onChange, video, config, answer } = this.props;
     //let timeStr = zeroFill(Math.floor(duration/60), 2) + ':' + zeroFill(Math.floor(duration%60), 2);
     if (config.mode == "camera") {
       if (!answer || !answer.uri) {
         return (
           <CameraInput
+            video={video}
             config={config}
             answer={answer}
             onChange={this.onPicChange}

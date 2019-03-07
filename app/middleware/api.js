@@ -17,7 +17,6 @@ export default store => next => action => {
         accessToken = auth.token;
     }
 
-
     if (!path || !method || !type) {
         throw new Error('Specify a path, method and type.')
     }

@@ -17,7 +17,8 @@ export default class DrawingSection extends Component {
       this.drawingRef.take();
   }
   render() {
-    const {type, config={}, answer, onChange, onNextChange} = this.props;
+    const {type, video, config={}, answer, onChange, onNextChange} = this.props;
+    console.log(config);
     switch(type) {
       case 'draw':
         return (
@@ -31,6 +32,7 @@ export default class DrawingSection extends Component {
       case 'camera':
         return (
           <CameraInput
+            video={video}
             config={config}
             answer={answer}
             onChange={onChange}
@@ -41,5 +43,7 @@ export default class DrawingSection extends Component {
       default:
         return (<View></View>);
     }
+
+
   }
 }

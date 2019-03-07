@@ -10,10 +10,11 @@ import {
 import PushNotification from 'react-native-push-notification';
 import TimerMixin from 'react-timer-mixin';
 import moment from 'moment';
-import Instabug from 'instabug-reactnative';
-import Image from '../../components/image/Image';
-import styles from './styles';
-import { timeArrayFrom } from './NotificationSchedule';
+
+import Image from '../../../components/image/Image';
+
+import styles from '../styles';
+import { timeArrayFrom } from '../NotificationSchedule';
 
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];

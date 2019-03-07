@@ -45,8 +45,13 @@ class Screen extends Component {
   componentWillMount() {
     this.setState({
       answer: this.props.answer && this.props.answer.data,
-      validated: true
+      validated: true,
     });
+
+    //temporary - sets whether camera surveys can be answered with a video.
+    //when false, only phots can be uploaded.
+    //should be connected to admin panel eventually.
+    this.video = false;
   }
   componentDidMount() {
     let {screen: {meta: data}, auth} = this.props;
@@ -196,7 +201,7 @@ class Screen extends Component {
         if (validated) nextButtonText = isFinal ? "Done" : "Next";
       } else {
         if(canvasType == 'camera') {
-          actionButtonText = "Take";
+          actionButtonText = null;
         } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
           actionButtonText = "Take";
         }
@@ -234,6 +239,7 @@ class Screen extends Component {
 
   renderCanvas(data) {
     return data.canvasType && <CanvasSection
+            video={this.video}
             type={data.canvasType}
             config={data.canvas}
             answer={this.answer('canvas')}
