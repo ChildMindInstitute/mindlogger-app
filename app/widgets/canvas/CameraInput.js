@@ -65,8 +65,7 @@ export default class CameraInput extends Component {
     if (this.camera) {
       const options = { quality: 0.5, fixOrientation: true, forceUpOrientation: true, pauseAfterCapture: true };
       this.camera.takePictureAsync(options).then(data => {
-        console.log(data.uri);
-        let picSource = {uri: data.uri, filename: `image_${randomString()}.jpg`};
+        let picSource = {uri: data.uri, filename: `image_${randomString()}.jpg`, type: this.state.type};
         this.props.onChange(picSource);
       }).catch( err => {
         Toast.show({text: err.message, position: 'bottom', type: 'danger', buttonText: 'ok'})
@@ -96,7 +95,7 @@ export default class CameraInput extends Component {
     return (
       <View style={styles.body}>
         <View style={styles.camera}>
-          {pic && <Image source={pic} style={{width: null, height: 200, flex: 1, margin: 20}}/> }
+          {pic && <Image source={pic} style={styles.camera} transform={pic.type == RNCamera.Constants.Type.front ? [{scaleX: -1}] : undefined}/> }
           {!pic && <View>
             <RNCamera
               ref={ref => {
@@ -106,7 +105,6 @@ export default class CameraInput extends Component {
               type={type}
               flashMode={RNCamera.Constants.FlashMode.off}
               pauseAfterCapture={true}
-              mirrorImage={type == RNCamera.Constants.Type.front}
               permissionDialogTitle={'Permission to use camera'}
               permissionDialogMessage={'We need your permission to use your camera phone'}
             />
