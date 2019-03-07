@@ -2,6 +2,7 @@ import { REHYDRATE } from 'redux-persist/constants';
 import * as types from '../api/api.constants';
 
 const initialState = {
+  user: {},
 };
 
 export default function coreReducer(state = initialState, action = {}) {
@@ -157,6 +158,7 @@ export default function coreReducer(state = initialState, action = {}) {
         curUserData = {
           ...curUserData,
           collections,
+        };
         userData[action.userId] = curUserData;
         return {
           ...state,

@@ -24,6 +24,7 @@
   "node-pre-gyp": "^0.10.0",
   "object-to-formdata": "^1.5.2",
   "prop-types": "^15.7.2",
+  "ramda": "^0.26.1",
   "random-string": "^0.2.0",
   "rc-input-number": "^3.6.8",
   "re-base": "^3.0.5",
@@ -64,6 +65,7 @@
   "redux-persist": "^3.2.2",
   "redux-thunk": "^2.2.0",
   "remote-redux-devtools": "^0.3.3",
+  "reselect": "^4.0.0",
   "styled-components": "^4.1.1"
  },
  "devDependencies": {

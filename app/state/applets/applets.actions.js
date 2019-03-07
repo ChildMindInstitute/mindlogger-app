@@ -1,5 +1,6 @@
-import { downloadAllApplets } from '../../services/network';
-import APPLET_CONSTANTS from './applets.contants';
+import { downloadAllApplets } from '../../services/api';
+import { downloadResponses } from '../responses/responses.actions';
+import APPLET_CONSTANTS from './applets.constants';
 
 export const replaceApplets = applets => ({
   type: APPLET_CONSTANTS.REPLACE_APPLETS,
@@ -27,6 +28,7 @@ export const downloadApplets = () => (dispatch, getState) => {
     dispatch(setAppletDownloadProgress(downloaded, total));
   }).then((applets) => {
     dispatch(replaceApplets(applets));
+    dispatch(downloadResponses(applets));
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
   });

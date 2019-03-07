@@ -1,4 +1,4 @@
-import APPLET_CONSTANTS from './applets.contants';
+import APPLET_CONSTANTS from './applets.constants';
 
 export const initialState = {
   applets: [],
