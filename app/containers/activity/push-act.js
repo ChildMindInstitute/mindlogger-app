@@ -45,6 +45,8 @@ class PushActivityScreen extends Component {
     }
 
     startActivityFromNotification(actId){
+        
+        setTimeout(() => {
         const {acts, actData, volumes} = this.props;
         const act = acts.find( a => a._id == actId )
         const volume = volumes.find(v => v._id == act.volumeId);
@@ -54,7 +56,8 @@ class PushActivityScreen extends Component {
             });
         } else {
             Actions.pop();
-        }
+        }      
+        },500);
     }
 
     navigateToAct(volume, data, options) {
