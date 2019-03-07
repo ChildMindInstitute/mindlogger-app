@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import { StatusBar} from 'react-native';
-import { Container} from 'native-base';
+import { StatusBar } from 'react-native';
+import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import baseTheme from '../../themes/baseTheme';
-
-import InfoHeader from '../../components/header/info';
-import ActProgress from '../../components/progress';
+import InfoHeader from './header/info';
+import ActProgress from './progress';
 import Screen from './screen';
 
 export default class InfoAct extends Component {

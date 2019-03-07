@@ -12,7 +12,7 @@ import { getItems, getObject, addFolder, addItem } from '../../state/api/api.act
 import { setAnswer, addQueue } from '../../state/core/core.actions';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
-import Screen from './screen';
+import Screen from '../../components/screen';
 
 
 class Act extends Component {

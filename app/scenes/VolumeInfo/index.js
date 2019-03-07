@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import InfoAct from './InfoAct';
+import InfoAct from '../../components/InfoAct';
 
 class VolumeInfo extends Component {
   constructor(props) {
