@@ -11,10 +11,10 @@ import PushNotification from 'react-native-push-notification';
 import TimerMixin from 'react-timer-mixin';
 import moment from 'moment';
 
-import Image from '../../../components/image/Image';
+import Image from '../../components/image/Image';
 
-import styles from '../styles';
-import { timeArrayFrom } from '../NotificationSchedule';
+import styles from './styles';
+import { timeArrayFrom } from './NotificationSchedule';
 
 
 var BUTTONS = ["Basic Survey", "Table Survey", "Voice", "Drawing", "Cancel"];
@@ -82,7 +82,6 @@ export default class ActivityScreen extends Component {
             console.warn("undefined user")
             return
         }
-        Instabug.identifyUserWithEmail(user.email, user.login);
         console.log(volumes);
         if (volumes.length == 0) {
           this.resetActs();
