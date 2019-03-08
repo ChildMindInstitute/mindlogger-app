@@ -47,11 +47,6 @@ class Screen extends Component {
       answer: this.props.answer && this.props.answer.data,
       validated: true,
     });
-
-    //temporary - sets whether camera surveys can be answered with a video.
-    //when false, only phots can be uploaded.
-    //should be connected to admin panel eventually.
-    this.video = false;
   }
   componentDidMount() {
     let {screen: {meta: data}, auth} = this.props;
@@ -239,8 +234,8 @@ class Screen extends Component {
 
   renderCanvas(data) {
     return data.canvasType && <CanvasSection
-            video={this.video}
-            type={data.canvasType}
+            video={(data.canvasType == 'video')}
+            type={((data.canvasType == 'video') ? 'camera' : data.canvasType)}
             config={data.canvas}
             answer={this.answer('canvas')}
             onChange={this.onCanvas}
