@@ -58,12 +58,12 @@ export default class DrawingSection extends Component {
 }
 
 DrawingSection.propTypes = {
-  answer: PropTypes.object.isRequired,
+  answer: PropTypes.object,
   config: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   onNextChange: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
-  video: PropTypes.object.isRequired,
+  video: PropTypes.bool.isRequired,
 };
 
 DrawingSection.defaultProps = {
