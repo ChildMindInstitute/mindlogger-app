@@ -24,14 +24,6 @@ export const setCurrentActivity = activityId => ({
   payload: activityId,
 });
 
-export const updateResponseInProgress = (activityId, response) => ({
-  type: RESPONSES_CONSTANTS.UPDATE_RESPONSE_IN_PROGRESS,
-  payload: {
-    activityId,
-    response,
-  },
-});
-
 export const removeResponseInProgress = activityId => ({
   type: RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS,
   payload: activityId,
@@ -40,6 +32,23 @@ export const removeResponseInProgress = activityId => ({
 export const createResponseInProgress = activity => ({
   type: RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS,
   payload: activity,
+});
+
+export const setAnswer = (activityId, screenIndex, answer) => ({
+  type: RESPONSES_CONSTANTS.SET_ANSWER,
+  payload: {
+    activityId,
+    screenIndex,
+    answer,
+  },
+});
+
+export const setAnswers = (activityId, response) => ({
+  type: RESPONSES_CONSTANTS.SET_ANSWERS,
+  payload: {
+    activityId,
+    response,
+  },
 });
 
 export const startResponse = activity => (dispatch, getState) => {
@@ -65,3 +74,11 @@ export const downloadResponses = () => (dispatch, getState) => {
     dispatch(setDownloadingResponses(false));
   });
 };
+
+// export const uploadResponse = (activity, response) => (dispatch, getState) => {
+//   // To do: replace these
+//   const { resCollection, volume, addQueue } = getState();
+
+//   const preppedResponse = prepareResponseForUpload(activity, response);
+//   addQueue(answerName, payload, volume.name, resCollection._id);
+// };

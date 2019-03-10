@@ -11,6 +11,7 @@ import {
   isDownloadingAppletsSelector,
 } from '../../state/applets/applets.selectors';
 import ActivityListComponent from './ActivityListComponent';
+import { inProgressSelector } from '../../state/responses/responses.selectors';
 
 class ActivityList extends Component {
   componentDidMount() {
@@ -39,6 +40,7 @@ class ActivityList extends Component {
       appletsDownloadProgress,
       isDownloadingApplets,
       openDrawer,
+      inProgress,
     } = this.props;
     return (
       <ActivityListComponent
@@ -46,6 +48,7 @@ class ActivityList extends Component {
         activities={activities}
         appletsDownloadProgress={appletsDownloadProgress}
         isDownloadingApplets={isDownloadingApplets}
+        inProgress={inProgress}
         onPressDrawer={openDrawer}
         onPressAddActivity={this.handleAddActivity}
         onPressRefresh={this.refresh}
@@ -60,6 +63,7 @@ const mapStateToProps = state => ({
   isAdmin: R.path(['core', 'self', 'admin'], state),
   appletsDownloadProgress: downloadProgressSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
+  inProgress: inProgressSelector(state),
 });
 
 const mapDispatchToProps = {

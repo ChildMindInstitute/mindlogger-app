@@ -4,11 +4,6 @@ import { View } from 'react-native';
 import Slider from '../../components/slider';
 
 export default class SurveySliderInput extends Component {
-  componentDidMount() {
-    const { answer } = this.props;
-    this.onAnswer(answer);
-  }
-
   onAnswer = (answer) => {
     const { config: { options }, onNextChange, onChange } = this.props;
     if (answer) {

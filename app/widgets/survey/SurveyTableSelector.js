@@ -4,15 +4,14 @@ import { Row, Col, View } from 'native-base';
 import SurveyTableSelectorCell from './SurveyTableSelectorCell';
 
 export default class SurveyTableSelector extends Component {
-  constructor(props) {
-    super(props);
-    const { config: { rows, cols, mode }, answer, onChange } = props;
+  componentDidMount() {
+    const { config: { rows, cols, mode }, answer, onChange } = this.props;
     // Initialize answer to empty 2D array or 2D array of false
-    if (typeof answer === 'undefined') {
-      const zeroesAr = mode === 'select'
+    if (!answer) {
+      const initialState = mode === 'select'
         ? rows.map(() => [])
         : rows.map(() => cols.map(() => false));
-      onChange(zeroesAr);
+      onChange(initialState);
     }
   }
 

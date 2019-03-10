@@ -6,8 +6,11 @@ import SurveyMultiOption from './SurveyMultiOption';
 
 export default class SurveyMultiSelector extends Component {
   componentDidMount() {
-    const answer = this.props.answer || [];
-    this.onAnswer(answer);
+    if (!this.props.answer) {
+      const initialState = [];
+      const answer = this.props.answer || initialState;
+      this.onAnswer(answer);
+    }
   }
 
   checkValue = (value) => {

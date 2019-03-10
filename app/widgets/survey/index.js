@@ -46,7 +46,7 @@ export default class SurveySection extends Component {
       onChange,
       onNextChange,
     } = this.props;
-    const SurveyElement = getSurveyElement(type, config.mode);
+    const SurveyElement = getSurveyElement(type, config ? config.mode : null);
     return (
       <SurveyElement
         config={config}

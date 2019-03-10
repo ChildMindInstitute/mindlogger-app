@@ -43,8 +43,9 @@ const ActivityListComponent = ({
   onPressAddActivity,
   onPressRefresh,
   onPressRow,
+  inProgress,
 }) => {
-  const dataArray = sortActivities(activities);
+  const dataArray = sortActivities(activities, inProgress);
   return (
     <Container style={styles.container}>
       <Header>
@@ -108,6 +109,7 @@ ActivityListComponent.propTypes = {
     downloaded: PropTypes.number,
     total: PropTypes.number,
   }).isRequired,
+  inProgress: PropTypes.object.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
   onPressAddActivity: PropTypes.func.isRequired,

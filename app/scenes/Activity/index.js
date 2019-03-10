@@ -1,130 +1,196 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StatusBar} from 'react-native';
+import { StatusBar } from 'react-native';
 import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import moment from 'moment';
-import DeviceInfo from 'react-native-device-info';
-import packageJson from '../../../package.json'
-
-import baseTheme from '../../themes/baseTheme';
-import { getItems, getObject, addFolder, addItem } from '../../state/api/api.actions';
-import { setAnswer, addQueue } from '../../state/core/core.actions';
+import * as R from 'ramda';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
+import ActivityButtons from '../../components/ActivityButtons';
 import Screen from '../../components/screen';
+import { setAnswer, uploadResponse } from '../../state/responses/responses.actions';
+import { currentActivitySelector, currentResponsesSelector } from '../../state/responses/responses.selectors';
 
-
-class Act extends Component {
-  constructor(props) {
-    super(props)
+const getNextLabel = (isLast, isValid, isSkippable) => {
+  if (isLast && isValid) {
+    return 'Done';
   }
+  if (isValid) {
+    return 'Next';
+  }
+  if (isSkippable) {
+    return 'Skip';
+  }
+  return null;
+};
 
-  componentWillMount() {
-    const {answers, setAnswer} = this.props;
-    this.setState({index: 0});
-    if(answers.length == 0) {
-      setAnswer([]);
-    }
+const getPrevLabel = (isFirst, hasPrevPermission) => {
+  if (isFirst) {
+    return 'Return';
+  }
+  if (hasPrevPermission) {
+    return 'Back';
+  }
+  return null;
+};
+
+class Activity extends Component {
+  constructor() {
+    super();
+    this.state = { index: 0 };
   }
 
   showInfoScreen = () => {
-    Actions.push("about_act");
+    Actions.push('about_act');
+  }
+
+  handleAnswer = (answer, index, isDoneAnswer = false) => {
+    const { setAnswer, activity } = this.props;
+    setAnswer(activity._id, index, answer);
+
+    // Advance to the next screen if the answer is done
+    // if (isDoneAnswer && index < activity.screens.length - 1) {
+    //   this.next();
+    // }
+  }
+
+  prev = () => {
+    const { index } = this.state;
+    if (index === 0) {
+      Actions.pop();
+    } else {
+      this.setState({
+        index: index - 1,
+      });
+    }
+  }
+
+  next = () => {
+    const { activity, uploadResponse, answers } = this.props;
+    const { index } = this.state;
+    if (index < activity.screens.length - 1) {
+      this.setState({
+        index: index + 1,
+      });
+    } else {
+      // uploadResponse(activity, answers);
+      Actions.pop();
+    }
+  }
+
+  undo = () => {
+    const { index } = this.state;
+    this.screenRef.reset();
+    this.handleAnswer(undefined, index);
   }
 
   render() {
-    const {act, info, answers} = this.props;
-    const {meta: data} = act;
-    const {index} = this.state;
+    const { activity, answers, auth } = this.props;
+    const { index } = this.state;
+    const displayProgress = R.path(['meta', 'display', 'progress'], activity);
+
+    // Calculate some stuff about the current answer state
+    const isLast = index === activity.screens.length - 1;
+    const isSkippable = R.pathOr(false, ['screens', index, 'meta', 'skippable'], activity);
+    const isValid = typeof answers[index] !== 'undefined';
+    const hasPrevPermission = R.pathOr(false, ['meta', 'permission', 'prev'], activity);
+
     return (
       <Container>
-        <StatusBar barStyle='light-content'/>
-        <ActHeader title={act.name} onInfo={info && this.showInfoScreen}/>
-        { data.display && data.display.progress && <ActProgress index={index} length={data.screens.length} /> }
+        <StatusBar barStyle="light-content" />
+        <ActHeader title={activity.name} onInfo={activity.info && this.showInfoScreen} />
+        {displayProgress && <ActProgress index={index} length={activity.screens.length} />}
         <Screen
-          key={index}
-          index={index}
-          path={act._id}
-          name={data.screens[index] && data.screens[index]['name']}
+          key={`${activity._id}-screen-${index}`}
+          screen={activity.screens[index]}
           answer={answers[index]}
-          onPrev={this.prev}
-          onNext={this.next}
-          globalConfig={data}
-          length={data.screens.length}
-          />
+          onChange={(answer, isDoneAnswer) => { this.handleAnswer(answer, index, isDoneAnswer); }}
+          auth={auth}
+          ref={(ref) => { this.screenRef = ref; }}
+        />
+        <ActivityButtons
+          nextLabel={getNextLabel(isLast, isValid, isSkippable)}
+          onPressNext={isValid || isSkippable ? this.next : undefined}
+          prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
+          onPressPrev={this.prev}
+          actionLabel="Undo"
+          onPressAction={this.undo}
+        />
       </Container>
-      );
-  }
-
-  prev = (answer) => {
-    const {setAnswer, answers} = this.props;
-    let {index} = this.state;
-    answers[index] = answer;
-    setAnswer(answers);
-    let prevIndex = index - 1;
-    while(prevIndex>=0) {
-      if(answers[prevIndex]['@id']) {
-        this.setState({index: prevIndex});
-        return;
-      }
-      prevIndex = prevIndex - 1;
-    }
-    if (prevIndex<0) {
-      Actions.pop();
-    }
-  }
-
-  next = (answer, index) => {
-    const {answers, setAnswer, act: {meta: data}} = this.props;
-    const oldIndex = this.state.index;
-    answers[oldIndex] = answer;
-    const newIndex = index || oldIndex+1;
-    if (newIndex<data.screens.length) {
-      for (let i = oldIndex + 1; i < newIndex; i++) {
-        answers[i] = {}
-      }
-      setAnswer(answers);
-      this.setState({index: newIndex});
-    } else {
-      this.postAnswer(answers);
-      setAnswer(undefined);
-      Actions.pop();
-    }
-  }
-
-  postAnswer(answers) {
-    const {act, addFolder, actOptions, resCollection, volume, addItem, addQueue} = this.props;
-    const payload = {
-      ...actOptions,
-      activity: {
-        "@id": `folder/${act._id}`,
-        name: act.name
-      },
-      "devices:os":`devices:${DeviceInfo.getSystemName()}`,
-      "devices:osversion":DeviceInfo.getSystemVersion(),
-      "deviceModel":DeviceInfo.getModel(),
-      "appVersion": packageJson.name + packageJson.version,
-      responses: answers,
-      responseTime: Date.now()
-    }
-    let answerName = moment().format('YYYY-M-D') + ' ' + act.name;
-    addQueue(answerName, payload, volume.name, resCollection._id);
-    // return addFolder(volume.name,{},resCollection._id, 'folder', true).then(folder => {
-
-    //   return addItem(answerName, payload, folder._id);
-    // })
+    );
   }
 }
 
-export default connect(({core: {self, userData, act, actInfo, answerData, volume, actOptions,...core}}) => ({
-    act,
-    info: actInfo,
-    actOptions: actOptions,
-    volume: volume,
-    resCollection: userData && self && userData[self._id].collections && userData[self._id].collections.Responses,
-    answers: (answerData && answerData[act._id]) || [],
-  }),
-  {
-    getObject, getItems, setAnswer, addFolder, addItem, addQueue
+Activity.propTypes = {
+  activity: PropTypes.object.isRequired,
+  answers: PropTypes.array.isRequired,
+  setAnswer: PropTypes.func.isRequired,
+  uploadResponse: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  activity: currentActivitySelector(state),
+  answers: currentResponsesSelector(state),
+  auth: R.path(['core', 'auth'], state),
+});
+
+const mapDispatchToProps = {
+  setAnswer,
+  uploadResponse,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Activity);
+
+
+/*
+getButtonState() {
+    const { screen, length, activityConfig } = this.props;
+    const data = screen.meta || {};
+    const { answer, nextScreen, validated } = this.state;
+    const { surveyType, canvasType, textEntry } = data;
+
+    const isFinal = (nextScreen || (this.props.index + 1)) >= length;
+    let prevButtonText;
+    let actionButtonText;
+    let nextButtonText;
+    const permission = activityConfig.permission || {};
+    const skippable = data.skippable === undefined ? permission.skip : data.skippable;
+    const prevable = permission.prev;
+
+    if (!surveyType && !canvasType && !textEntry) {
+      prevButtonText = 'Back';
+      nextButtonText = isFinal ? 'Done' : 'Next';
+    } else {
+      if (prevable) prevButtonText = 'Back';
+      if (answer) {
+        actionButtonText = 'Undo';
+        if (validated) nextButtonText = isFinal ? 'Done' : 'Next';
+      } else {
+        if (canvasType === 'camera') {
+          actionButtonText = null;
+        } else if (canvasType === 'draw' && data.canvas.mode === 'camera') {
+          actionButtonText = 'Take';
+        }
+        if (skippable) nextButtonText = isFinal ? 'Done' : 'Skip';
+      }
+    }
+    return { prevButtonText, actionButtonText, nextButtonText };
   }
-)(Act);
+
+  handleNext = () => {
+    const { nextScreen } = this.state;
+    this.props.onNext(nextScreen);
+  }
+
+  handlePrev = () => {
+    this.props.onPrev();
+  }
+
+  handleSkip = () => {
+    const { screen: { meta: data }, onNext, activityId } = this.props;
+    const payload = { '@id': activityId, data: undefined };
+    onNext(payload, data.skipToScreen);
+  }
+  */

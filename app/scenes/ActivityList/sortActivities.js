@@ -37,13 +37,17 @@ const addSectionHeader = (array, headerText) => (array.length > 0
   ? [{ isHeader: true, text: headerText }, ...array]
   : []);
 
-export default (activityList) => {
-  const overdue = getOverdue(activityList).sort(sortBy('lastScheduledTimestamp')).reverse();
-  const scheduled = getScheduled(activityList).sort(sortBy('nextScheduledTimestamp'));
-  const unscheduled = getUnscheduled(activityList).sort(sortActivitiesAlpha);
-  const completed = getCompleted(activityList).reverse();
+export default (activityList, inProgress) => {
+  const inProgressKeys = Object.keys(inProgress);
+  const inProgressActivities = inProgressKeys.map(key => inProgress[key].activity);
+  const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity._id));
+  const overdue = getOverdue(notInProgress).sort(sortBy('lastScheduledTimestamp')).reverse();
+  const scheduled = getScheduled(notInProgress).sort(sortBy('nextScheduledTimestamp'));
+  const unscheduled = getUnscheduled(notInProgress).sort(sortActivitiesAlpha);
+  const completed = getCompleted(notInProgress).reverse();
 
   return [
+    ...addSectionHeader(inProgressActivities, 'In Progress'),
     ...addSectionHeader(overdue, 'Overdue'),
     ...addSectionHeader(scheduled, 'Scheduled'),
     ...addSectionHeader(unscheduled, 'Unscheduled'),

@@ -5,23 +5,16 @@ import styles from './styles';
 import SurveyTableInputCell from './SurveyTableInputCell';
 
 export default class SurveyTableInput extends Component {
-  constructor(props) {
-    super(props);
-    const { config, answer, onChange } = props;
+  componentDidMount() {
+    const { config, answer, onChange } = this.props;
     const { rows, cols } = config;
 
     // Initialize answer to zeros or empty strings if nothing set
-    if (typeof answer === 'undefined') {
-      let zeroesAr;
-      switch (config.mode) {
-        case 'text':
-          zeroesAr = rows.map(() => cols.map(() => ''));
-          break;
-        default:
-          zeroesAr = rows.map(() => cols.map(() => 0));
-          break;
-      }
-      onChange(zeroesAr);
+    if (!answer) {
+      const initialState = config.mode === 'text'
+        ? rows.map(() => cols.map(() => ''))
+        : rows.map(() => cols.map(() => 0));
+      onChange(initialState);
     }
   }
 
@@ -67,12 +60,11 @@ export default class SurveyTableInput extends Component {
               <Text>{row}</Text>
             </Col>
             {config.cols.map((col, colIdx) => {
-              const safeAnswer = typeof answer === 'undefined' ? answer : answer[rowIdx][colIdx];
               return (
                 <Col key={colIdx} style={cellStyle}>
                   <SurveyTableInputCell
                     mode={config.mode}
-                    value={safeAnswer}
+                    value={answer ? answer[rowIdx][colIdx] : undefined}
                     onChange={(newVal) => {
                       this.updateCell(newVal, rowIdx, colIdx);
                     }}

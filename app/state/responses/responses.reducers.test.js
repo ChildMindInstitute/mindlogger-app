@@ -4,9 +4,10 @@ import {
   setDownloadingResponses,
   setResponsesDownloadProgress,
   setCurrentActivity,
-  updateResponseInProgress,
   removeResponseInProgress,
   createResponseInProgress,
+  setAnswer,
+  setAnswers,
 } from './responses.actions';
 
 test('it has an initial state', () => {
@@ -75,15 +76,29 @@ test('it removes response in progress', () => {
   });
 });
 
-test('it updates response in progress', () => {
+test('it can set all answers at once', () => {
   const activity = { _id: 'myActivity', foo: 'bar' };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
-  expect(responsesReducer(oneResponseState, updateResponseInProgress('myActivity', { hey: 'yo' }))).toEqual({
+  expect(responsesReducer(oneResponseState, setAnswers('myActivity', 'new answers'))).toEqual({
     ...initialState,
     inProgress: {
       myActivity: {
         activity,
-        responses: { hey: 'yo' },
+        responses: 'new answers',
+      },
+    },
+  });
+});
+
+test('it sets an answer', () => {
+  const activity = { _id: 'myActivity', foo: 'bar' };
+  const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
+  expect(responsesReducer(oneResponseState, setAnswer('myActivity', 0, 'foobar'))).toEqual({
+    ...initialState,
+    inProgress: {
+      myActivity: {
+        activity,
+        responses: ['foobar'],
       },
     },
   });

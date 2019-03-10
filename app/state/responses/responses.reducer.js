@@ -29,17 +29,6 @@ export default (state = initialState, action = {}) => {
         ...state,
         currentActivity: action.payload,
       };
-    case RESPONSES_CONSTANTS.UPDATE_RESPONSE_IN_PROGRESS:
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          [action.payload.activityId]: {
-            ...state.inProgress[action.payload.activityId],
-            responses: action.payload.response,
-          },
-        },
-      };
     case RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS:
       return {
         ...state,
@@ -52,7 +41,33 @@ export default (state = initialState, action = {}) => {
           ...state.inProgress,
           [action.payload._id]: {
             activity: R.clone(action.payload),
-            responses: {},
+            responses: new Array(action.payload.screens.length),
+          },
+        },
+      };
+    case RESPONSES_CONSTANTS.SET_ANSWERS:
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [action.payload.activityId]: {
+            ...state.inProgress[action.payload.activityId],
+            responses: action.payload.response,
+          },
+        },
+      };
+    case RESPONSES_CONSTANTS.SET_ANSWER:
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [action.payload.activityId]: {
+            ...state.inProgress[action.payload.activityId],
+            responses: R.update(
+              action.payload.screenIndex,
+              action.payload.answer,
+              state.inProgress[action.payload.activityId].responses,
+            ),
           },
         },
       };

@@ -1,4 +1,3 @@
-import { REHYDRATE } from 'redux-persist/constants';
 import * as types from '../api/api.constants';
 
 const initialState = {
@@ -172,7 +171,7 @@ export default function coreReducer(state = initialState, action = {}) {
     }
   } else {
     switch (action.type) {
-      case REHYDRATE:
+      case types.REHYDRATE:
         if (action.payload.core) {
           return {
             ...state,

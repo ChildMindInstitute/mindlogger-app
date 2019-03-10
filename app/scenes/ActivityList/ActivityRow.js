@@ -15,28 +15,16 @@ const buttonStyle = {
   paddingTop: 6,
 };
 
-const ActivityRow = ({ activity, secId, rowId, onPress }) => {
+const ActivityRow = ({ activity, onPress }) => {
   if (activity.isHeader === true) {
     return (
       <ListItem itemHeader>
-        <Text style={styles.letter}>{activity.text}</Text>
+        <Text>{activity.text}</Text>
       </ListItem>
     );
   }
 
   const backgroundColor = BUTTON_COLORS[parseInt(activity.appletId.substr(-1), 16) % 4];
-
-  const index = parseInt(secId, 10);
-  let dateStr = '';
-  if (activity.nextTime) {
-    const actDate = moment(activity.nextTime);
-    const currentDate = moment();
-    if (actDate.dayOfYear() === currentDate.dayOfYear()) {
-      dateStr = actDate.format('LT');
-    } else {
-      dateStr = actDate.format('MMM D');
-    }
-  }
 
   return (
     <ListItem avatar onPress={() => onPress(activity)}>
@@ -50,12 +38,8 @@ const ActivityRow = ({ activity, secId, rowId, onPress }) => {
           )}
       </Left>
       <Body>
-        <Text style={index === 0 ? { color: '#11c' } : {}}>{activity.name}</Text>
-        <Text note />
+        <Text>{activity.name}</Text>
       </Body>
-      <Right>
-        <Text note>{dateStr}</Text>
-      </Right>
     </ListItem>
   );
 };
