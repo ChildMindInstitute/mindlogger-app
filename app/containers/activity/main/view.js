@@ -163,21 +163,25 @@ export default class ActivityScreen extends Component {
             let userInfo = { actId: act._id };
             let time;
             if(times.length > 0) {
-                time = times[0];
-                
-                if (lastTime == undefined || time.getTime()>lastTime) {
-                    PushNotification.localNotificationSchedule({
-                        //... You can use all the options from localNotifications
-                        message , // (required)
-                        tag: `${idx}`,
-                        data: userInfo,
-                        userInfo,
-                        date: time
-                    });
-                    lastTime = time.getTime();
-                    console.log("Notification: ", message, Date(lastTime));
-                }
-                
+
+                times.forEach((time, index) => {
+                    time = times[index];
+                    //console.log("-------- "+act.name+" ----------> ", time);
+
+                    if (lastTime == undefined || time.getTime()>lastTime) {
+                        PushNotification.localNotificationSchedule({
+                            //... You can use all the options from localNotifications
+                            message , // (required)
+                            tag: `${idx}`,
+                            data: userInfo,
+                            userInfo,
+                            date: time
+                        });
+                        lastTime = time.getTime();
+                        //console.log("Notification: ", message, Date(lastTime));
+                    }
+                });
+
             }
             notifications[act._id] = { modifiedAt: Date.now(), name: act.name , lastTime, times};
         });
