@@ -102,12 +102,6 @@ Use [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200). Al
 
 To increment a major or minor version, complete the relevant project board. Currently we're working on [v0.1](https://github.com/orgs/ChildMindInstitute/projects/6). [v0.2](https://github.com/orgs/ChildMindInstitute/projects/9) is on deck.
 
-*Note: the following major.minor versions will start with the listed patch versions (due to previous versioning schemes):
-  - v0.7.1
-  - v0.8.2
-  - v0.9.2
-  - v1.0.1
-
 For this repository, the version exists in 4 places:
 1. [This README](#)
 2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json#L3)
