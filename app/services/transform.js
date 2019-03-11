@@ -1,4 +1,5 @@
 import moment from 'moment';
+import * as R from 'ramda';
 import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 
@@ -24,26 +25,40 @@ export const transformResponses = (responsesAr) => {
   return flattened;
 };
 
-export const prepareResponseForUpload = (activity, response) => {
-  // To do: replace these
-  const { act, actOptions} = this.props;
+export const prepareAnswerForUpload = (screen, answer) => ({
+  '@id': screen._id,
+  data: answer,
+  text: screen.meta.text,
+});
 
-  const answerName = moment().format('YYYY-M-D') + ' ' + act.name;
+export const prepareResponseForUpload = (activity, answers, responseCollectionId) => {
+  const dateString = moment().format('YYYY-M-D');
+  const answerName = `${dateString} ${activity.name}`;
+
+  // Each answer needs some additional metadata attached to it
+  const preparedAnswers = answers.map(
+    (answer, index) => prepareAnswerForUpload(activity.screens[index], answer),
+  );
+
+  const activityOptions = R.pathOr({}, ['meta', 'options'], activity);
+
   const payload = {
-    ...actOptions,
+    ...activityOptions,
     activity: {
-      "@id": `folder/${act._id}`,
-      name: act.name
+      '@id': `folder/${activity._id}`,
+      name: activity.name,
     },
-    "devices:os": `devices:${DeviceInfo.getSystemName()}`,
-    "devices:osversion": DeviceInfo.getSystemVersion(),
-    "deviceModel": DeviceInfo.getModel(),
-    "appVersion": packageJson.name + packageJson.version,
-    responses: answers,
-    responseTime: Date.now()
+    'devices:os': `devices:${DeviceInfo.getSystemName()}`,
+    'devices:osversion': DeviceInfo.getSystemVersion(),
+    deviceModel: DeviceInfo.getModel(),
+    appVersion: packageJson.name + packageJson.version,
+    responses: preparedAnswers,
+    responseTime: Date.now(),
   };
   return {
     answerName,
+    responseCollectionId,
+    appletName: activity.appletName,
     payload,
   };
 };

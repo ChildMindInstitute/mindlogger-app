@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
+import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../state/drawer/drawer.actions';
 import { downloadApplets } from '../../state/applets/applets.actions';
-import { startResponse } from '../../state/responses/responses.actions';
+import { startResponse, startUploadQueue } from '../../state/responses/responses.actions';
 import {
   activitiesSelector,
   downloadProgressSelector,
@@ -29,8 +30,9 @@ class ActivityList extends Component {
   }
 
   refresh = () => {
-    const { downloadApplets } = this.props;
+    const { downloadApplets, startUploadQueue } = this.props;
     downloadApplets();
+    startUploadQueue();
   }
 
   render() {
@@ -58,9 +60,21 @@ class ActivityList extends Component {
   }
 }
 
+ActivityList.propTypes = {
+  isAdmin: PropTypes.bool.isRequired,
+  activities: PropTypes.array.isRequired,
+  appletsDownloadProgress: PropTypes.object.isRequired,
+  isDownloadingApplets: PropTypes.bool.isRequired,
+  openDrawer: PropTypes.bool.isRequired,
+  inProgress: PropTypes.object.isRequired,
+  downloadApplets: PropTypes.func.isRequired,
+  startUploadQueue: PropTypes.func.isRequired,
+  startResponse: PropTypes.func.isRequired,
+};
+
 const mapStateToProps = state => ({
   activities: activitiesSelector(state),
-  isAdmin: R.path(['core', 'self', 'admin'], state),
+  isAdmin: R.pathOr(false, ['core', 'self', 'admin'], state),
   appletsDownloadProgress: downloadProgressSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
   inProgress: inProgressSelector(state),
@@ -69,6 +83,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   openDrawer,
   downloadApplets,
+  startUploadQueue,
   startResponse,
 };
 

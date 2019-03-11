@@ -19,6 +19,11 @@ export const responsesGroupedByActivitySelector = createSelector(
     Object.keys(appletResponses).forEach((appletId) => {
       const responseAr = appletResponses[appletId];
       responseAr.forEach((response) => {
+        // If meta is not set, ignore the response
+        if (typeof response.meta === 'undefined') {
+          return;
+        }
+
         const activityIdWithType = response.meta.activity['@id'];
         const activityId = activityIdWithType.split('/')[1];
         if (typeof acc[activityId] === 'undefined') {

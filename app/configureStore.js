@@ -10,6 +10,7 @@ export default function configureStore(onCompletion) {
   const persistConfig = {
     key: 'root',
     storage,
+    whitelist: [],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

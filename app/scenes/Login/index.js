@@ -16,6 +16,7 @@ import { reduxForm, Field, SubmissionError } from 'redux-form';
 import { signIn } from '../../state/api/api.actions';
 import {FormInputItem} from '../../components/form/FormItem'
 import styles from './styles';
+import { fetchResponseCollectionId } from '../../state/user/user.actions';
 
 const logoImage = require('../../../img/CMI_white_logo.png');
 
@@ -107,6 +108,7 @@ const mapDispatchToProps = (dispatch) => ({
             return true
         }).then(res => {
             Actions.reset('activity', {isLogin: true})
+            dispatch(fetchResponseCollectionId());
         }).catch(err => {
             console.log(err)
             let errors = {}

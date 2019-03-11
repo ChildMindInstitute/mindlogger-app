@@ -20,6 +20,7 @@ export const activitiesSelector = createSelector(
       ...act,
       appletId: applet._id,
       appletShortName: applet.meta.shortName,
+      appletName: applet.name,
       lastScheduledTimestamp: getLastScheduledTime(act),
       lastResponseTimestamp: getLastResponseTime(act, responses),
       nextScheduledTimestamp: getNextScheduledTime(act),

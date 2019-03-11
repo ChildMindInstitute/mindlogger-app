@@ -1,5 +1,8 @@
 import moment from 'moment';
 
+// TO DO: Add support for activities becoming due at specific times during the day.
+// The Implementation below assumes all dates start at midnight
+
 export const sortMomentAr = momentAr => momentAr.sort((a, b) => {
   if (a.isBefore(b)) {
     return -1;
@@ -24,10 +27,11 @@ export const getLastScheduledMonthDays = (now, monthDayAr) => {
   const current = now.date();
   return monthDayAr.map((monthDay) => {
     const dayDifference = current - monthDay;
+    const nowStart = now.clone().startOf('day');
     if (monthDay <= current) {
-      return now.clone().subtract(dayDifference, 'days');
+      return nowStart.subtract(dayDifference, 'days');
     }
-    return now.clone().subtract(1, 'month').subtract(dayDifference, 'days');
+    return nowStart.subtract(1, 'month').subtract(dayDifference, 'days');
   });
 };
 
@@ -35,10 +39,11 @@ export const getUpcomingScheduledMonthDays = (now, monthDayAr) => {
   const current = now.date();
   return monthDayAr.map((monthDay) => {
     const dayDifference = monthDay - current;
+    const nowStart = now.clone().startOf('day');
     if (monthDay > current) {
-      return now.clone().add(dayDifference, 'days');
+      return nowStart.add(dayDifference, 'days');
     }
-    return now.clone().add(1, 'month').add(dayDifference, 'days');
+    return nowStart.add(1, 'month').add(dayDifference, 'days');
   });
 };
 
@@ -46,10 +51,11 @@ export const getLastScheduledWeekdays = (now, weekdayAr) => {
   const current = now.day();
   return weekdayAr.map((weekday) => {
     const dayDifference = current - weekday;
+    const nowStart = now.clone().startOf('day');
     if (weekday <= current) {
-      return now.clone().subtract(dayDifference, 'days');
+      return nowStart.subtract(dayDifference, 'days');
     }
-    return now.clone().subtract(1, 'week').subtract(dayDifference, 'days');
+    return nowStart.subtract(1, 'week').subtract(dayDifference, 'days');
   });
 };
 
@@ -57,10 +63,11 @@ export const getUpcomingScheduledWeekdays = (now, weekdayAr) => {
   const current = now.day();
   return weekdayAr.map((weekday) => {
     const dayDifference = weekday - current;
+    const nowStart = now.clone().startOf('day');
     if (weekday > current) {
-      return now.clone().add(dayDifference, 'days');
+      return nowStart.add(dayDifference, 'days');
     }
-    return now.clone().add(1, 'week').add(dayDifference, 'days');
+    return nowStart.add(1, 'week').add(dayDifference, 'days');
   });
 };
 

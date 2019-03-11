@@ -1,6 +1,8 @@
 import appletReducer, { initialState } from './applets.reducer';
 import { replaceApplets, setDownloadingApplets, setAppletDownloadProgress } from './applets.actions';
 
+jest.mock('react-native-device-info', () => { });
+
 test('it has an initial state', () => {
   expect(appletReducer(undefined, { type: 'foo' })).toEqual(initialState);
 });

@@ -9,7 +9,7 @@ import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import ActivityButtons from '../../components/ActivityButtons';
 import Screen from '../../components/screen';
-import { setAnswer, uploadResponse } from '../../state/responses/responses.actions';
+import { setAnswer, completeResponse } from '../../state/responses/responses.actions';
 import { currentActivitySelector, currentResponsesSelector } from '../../state/responses/responses.selectors';
 
 const getNextLabel = (isLast, isValid, isSkippable) => {
@@ -31,6 +31,18 @@ const getPrevLabel = (isFirst, hasPrevPermission) => {
   }
   if (hasPrevPermission) {
     return 'Back';
+  }
+  return null;
+};
+
+const getActionLabel = (answer, screen) => {
+  const canvasType = R.path(['meta', 'canvasType'], screen);
+  const canvasMode = R.path(['meta', 'canvas', 'mode'], screen);
+  if (answer) {
+    return 'Undo';
+  }
+  if (canvasType === 'draw' && canvasMode === 'camera') {
+    return 'Take';
   }
   return null;
 };
@@ -67,14 +79,14 @@ class Activity extends Component {
   }
 
   next = () => {
-    const { activity, uploadResponse, answers } = this.props;
+    const { activity, completeResponse, answers } = this.props;
     const { index } = this.state;
     if (index < activity.screens.length - 1) {
       this.setState({
         index: index + 1,
       });
     } else {
-      // uploadResponse(activity, answers);
+      completeResponse(activity, answers);
       Actions.pop();
     }
   }
@@ -89,6 +101,11 @@ class Activity extends Component {
     const { activity, answers, auth } = this.props;
     const { index } = this.state;
     const displayProgress = R.path(['meta', 'display', 'progress'], activity);
+
+    // Return early if there is no activity, e.g. if it has been removed
+    if (!activity) {
+      return null;
+    }
 
     // Calculate some stuff about the current answer state
     const isLast = index === activity.screens.length - 1;
@@ -114,7 +131,7 @@ class Activity extends Component {
           onPressNext={isValid || isSkippable ? this.next : undefined}
           prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
           onPressPrev={this.prev}
-          actionLabel="Undo"
+          actionLabel={getActionLabel(answers[index], activity.screens[index])}
           onPressAction={this.undo}
         />
       </Container>
@@ -122,11 +139,15 @@ class Activity extends Component {
   }
 }
 
+Activity.defaultProps = {
+  activity: undefined,
+};
+
 Activity.propTypes = {
-  activity: PropTypes.object.isRequired,
+  activity: PropTypes.object,
   answers: PropTypes.array.isRequired,
   setAnswer: PropTypes.func.isRequired,
-  uploadResponse: PropTypes.func.isRequired,
+  completeResponse: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
 };
 
@@ -138,7 +159,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setAnswer,
-  uploadResponse,
+  completeResponse,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Activity);

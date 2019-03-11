@@ -10,6 +10,7 @@ export const initialState = {
     total: 0,
     downloaded: 0,
   },
+  uploadQueue: [],
 };
 
 export default (state = initialState, action = {}) => {
@@ -78,6 +79,16 @@ export default (state = initialState, action = {}) => {
           downloaded: action.payload.downloaded,
           total: action.payload.total,
         },
+      };
+    case RESPONSES_CONSTANTS.ADD_TO_UPLOAD_QUEUE:
+      return {
+        ...state,
+        uploadQueue: [...state.uploadQueue, action.payload],
+      };
+    case RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE:
+      return {
+        ...state,
+        uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
     default:
       return state;

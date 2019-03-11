@@ -8,7 +8,12 @@ import {
   createResponseInProgress,
   setAnswer,
   setAnswers,
+  addToUploadQueue,
+  shiftUploadQueue,
 } from './responses.actions';
+
+// jest.mock('../../services/api', () => {});
+jest.mock('react-native-device-info', () => { });
 
 test('it has an initial state', () => {
   expect(responsesReducer(undefined, { type: 'foo' })).toEqual(initialState);
@@ -52,23 +57,20 @@ test('it sets current activity', () => {
 });
 
 test('it creates a response in progress', () => {
-  const activity = { _id: 'myActivity', foo: 'bar' };
+  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
   expect(responsesReducer(initialState, createResponseInProgress(activity))).toEqual({
     ...initialState,
     inProgress: {
       myActivity: {
-        activity: {
-          _id: 'myActivity',
-          foo: 'bar',
-        },
-        responses: {},
+        activity,
+        responses: [undefined],
       },
     },
   });
 });
 
 test('it removes response in progress', () => {
-  const activity = { _id: 'myActivity', foo: 'bar' };
+  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, removeResponseInProgress('myActivity'))).toEqual({
     ...initialState,
@@ -77,7 +79,7 @@ test('it removes response in progress', () => {
 });
 
 test('it can set all answers at once', () => {
-  const activity = { _id: 'myActivity', foo: 'bar' };
+  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, setAnswers('myActivity', 'new answers'))).toEqual({
     ...initialState,
@@ -91,7 +93,7 @@ test('it can set all answers at once', () => {
 });
 
 test('it sets an answer', () => {
-  const activity = { _id: 'myActivity', foo: 'bar' };
+  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, setAnswer('myActivity', 0, 'foobar'))).toEqual({
     ...initialState,
@@ -101,5 +103,21 @@ test('it sets an answer', () => {
         responses: ['foobar'],
       },
     },
+  });
+});
+
+test('it adds to the upload queue', () => {
+  expect(responsesReducer(initialState, addToUploadQueue('newItem'))).toEqual({
+    ...initialState,
+    uploadQueue: ['newItem'],
+  });
+});
+
+test('it adds to the upload queue', () => {
+  const oneItem = responsesReducer(initialState, addToUploadQueue('itemA'));
+  const twoItems = responsesReducer(oneItem, addToUploadQueue('itemB'));
+  expect(responsesReducer(twoItems, shiftUploadQueue())).toEqual({
+    ...initialState,
+    uploadQueue: ['itemB'],
   });
 });

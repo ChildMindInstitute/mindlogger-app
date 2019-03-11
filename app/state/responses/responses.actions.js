@@ -1,4 +1,5 @@
-import { downloadAllResponses } from '../../services/api';
+import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
+import { prepareResponseForUpload } from '../../services/transform';
 import RESPONSES_CONSTANTS from './responses.constants';
 
 export const replaceResponses = responses => ({
@@ -51,6 +52,15 @@ export const setAnswers = (activityId, response) => ({
   },
 });
 
+export const addToUploadQueue = response => ({
+  type: RESPONSES_CONSTANTS.ADD_TO_UPLOAD_QUEUE,
+  payload: response,
+});
+
+export const shiftUploadQueue = () => ({
+  type: RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE,
+});
+
 export const startResponse = activity => (dispatch, getState) => {
   const { responses } = getState();
 
@@ -75,10 +85,23 @@ export const downloadResponses = () => (dispatch, getState) => {
   });
 };
 
-// export const uploadResponse = (activity, response) => (dispatch, getState) => {
-//   // To do: replace these
-//   const { resCollection, volume, addQueue } = getState();
+export const startUploadQueue = () => (dispatch, getState) => {
+  const { responses, core } = getState();
+  uploadResponseQueue(core.auth.token, responses.uploadQueue, () => {
+    // Progress - a response was uploaded
+    dispatch(shiftUploadQueue());
+  }).finally(() => {
+    dispatch(downloadResponses());
+  });
+};
 
-//   const preppedResponse = prepareResponseForUpload(activity, response);
-//   addQueue(answerName, payload, volume.name, resCollection._id);
-// };
+export const completeResponse = (activity, answers) => (dispatch, getState) => {
+  const { user } = getState();
+  const preparedResponse = prepareResponseForUpload(activity, answers, user.responseCollectionId);
+  dispatch(addToUploadQueue(preparedResponse));
+  setTimeout(() => {
+    // Allow some time to navigate back to ActivityList
+    dispatch(removeResponseInProgress(activity._id));
+  }, 300);
+  dispatch(startUploadQueue());
+};
