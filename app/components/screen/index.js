@@ -30,6 +30,13 @@ const styles = StyleSheet.create({
 });
 
 class Screen extends Component {
+  static isValid(answer, screen) {
+    if (screen.meta && screen.meta.surveyType) {
+      return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
+    }
+    return typeof answer !== 'undefined';
+  }
+
   componentWillMount() {
     // temporary - sets whether camera surveys can be answered with a video.
     // when false, only photos can be uploaded.

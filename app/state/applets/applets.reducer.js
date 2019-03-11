@@ -7,6 +7,7 @@ export const initialState = {
     total: 0,
     downloaded: 0,
   },
+  notifications: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -28,6 +29,11 @@ export default (state = initialState, action = {}) => {
           downloaded: action.payload.downloaded,
           total: action.payload.total,
         },
+      };
+    case APPLET_CONSTANTS.SET_NOTIFICATIONS:
+      return {
+        ...state,
+        notifications: action.payload,
       };
     default:
       return state;

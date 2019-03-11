@@ -1,7 +1,15 @@
 import appletReducer, { initialState } from './applets.reducer';
-import { replaceApplets, setDownloadingApplets, setAppletDownloadProgress } from './applets.actions';
+import {
+  replaceApplets,
+  setDownloadingApplets,
+  setAppletDownloadProgress,
+  setNotifications,
+} from './applets.actions';
 
 jest.mock('react-native-device-info', () => { });
+jest.mock('react-native-fetch-blob', () => { });
+jest.mock('react-native-push-notification', () => { });
+jest.mock('react-native-router-flux', () => { });
 
 test('it has an initial state', () => {
   expect(appletReducer(undefined, { type: 'foo' })).toEqual(initialState);
@@ -34,5 +42,13 @@ test('it sets applet download progress', () => {
       downloaded: 1,
       total: 3,
     },
+  });
+});
+
+
+test('it sets notifications', () => {
+  expect(appletReducer(initialState, setNotifications('test'))).toEqual({
+    ...initialState,
+    notifications: 'test',
   });
 });

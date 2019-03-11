@@ -1,70 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StatusBar } from 'react-native';
-import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
-import ActHeader from '../../components/header';
-import ActProgress from '../../components/progress';
-import ActivityButtons from '../../components/ActivityButtons';
-import Screen from '../../components/screen';
 import { setAnswer, completeResponse } from '../../state/responses/responses.actions';
 import { currentActivitySelector, currentResponsesSelector } from '../../state/responses/responses.selectors';
-
-const getNextLabel = (isLast, isValid, isSkippable) => {
-  if (isLast && isValid) {
-    return 'Done';
-  }
-  if (isValid) {
-    return 'Next';
-  }
-  if (isSkippable) {
-    return 'Skip';
-  }
-  return null;
-};
-
-const getPrevLabel = (isFirst, hasPrevPermission) => {
-  if (isFirst) {
-    return 'Return';
-  }
-  if (hasPrevPermission) {
-    return 'Back';
-  }
-  return null;
-};
-
-const getActionLabel = (answer, screen) => {
-  const canvasType = R.path(['meta', 'canvasType'], screen);
-  const canvasMode = R.path(['meta', 'canvas', 'mode'], screen);
-  if (answer) {
-    return 'Undo';
-  }
-  if (canvasType === 'draw' && canvasMode === 'camera') {
-    return 'Take';
-  }
-  return null;
-};
+import Screen from '../../components/screen';
+import ActivityComponent from './ActivityComponent';
 
 class Activity extends Component {
   constructor() {
     super();
+    this.screenRef = React.createRef();
     this.state = { index: 0 };
   }
 
   showInfoScreen = () => {
-    Actions.push('about_act');
+    const { activity } = this.props;
+    Actions.push('about_act', { activity: activity.info });
   }
 
-  handleAnswer = (answer, index, isDoneAnswer = false) => {
+  handleAnswer = (answer, index) => {
     const { setAnswer, activity } = this.props;
     setAnswer(activity._id, index, answer);
-
-    // Advance to the next screen if the answer is done
-    // if (isDoneAnswer && index < activity.screens.length - 1) {
-    //   this.next();
-    // }
   }
 
   prev = () => {
@@ -81,11 +39,21 @@ class Activity extends Component {
   next = () => {
     const { activity, completeResponse, answers } = this.props;
     const { index } = this.state;
+    const screen = activity.screens[index];
+    const isValid = Screen.isValid(answers[index], screen);
+
     if (index < activity.screens.length - 1) {
-      this.setState({
-        index: index + 1,
-      });
+      // Not finished activity
+      if (!isValid && screen.meta.skipToScreen) {
+        // Skip to screen
+        const skipToScreen = Math.min(activity.screens.length - 1, screen.meta.skipToScreen - 1);
+        this.setState({ index: skipToScreen });
+      } else {
+        // Next or Skip
+        this.setState({ index: index + 1 });
+      }
     } else {
+      // Finished activity
       completeResponse(activity, answers);
       Actions.pop();
     }
@@ -93,48 +61,26 @@ class Activity extends Component {
 
   undo = () => {
     const { index } = this.state;
-    this.screenRef.reset();
+    this.screenRef.current.reset();
     this.handleAnswer(undefined, index);
   }
 
   render() {
     const { activity, answers, auth } = this.props;
     const { index } = this.state;
-    const displayProgress = R.path(['meta', 'display', 'progress'], activity);
-
-    // Return early if there is no activity, e.g. if it has been removed
-    if (!activity) {
-      return null;
-    }
-
-    // Calculate some stuff about the current answer state
-    const isLast = index === activity.screens.length - 1;
-    const isSkippable = R.pathOr(false, ['screens', index, 'meta', 'skippable'], activity);
-    const isValid = typeof answers[index] !== 'undefined';
-    const hasPrevPermission = R.pathOr(false, ['meta', 'permission', 'prev'], activity);
-
     return (
-      <Container>
-        <StatusBar barStyle="light-content" />
-        <ActHeader title={activity.name} onInfo={activity.info && this.showInfoScreen} />
-        {displayProgress && <ActProgress index={index} length={activity.screens.length} />}
-        <Screen
-          key={`${activity._id}-screen-${index}`}
-          screen={activity.screens[index]}
-          answer={answers[index]}
-          onChange={(answer, isDoneAnswer) => { this.handleAnswer(answer, index, isDoneAnswer); }}
-          auth={auth}
-          ref={(ref) => { this.screenRef = ref; }}
-        />
-        <ActivityButtons
-          nextLabel={getNextLabel(isLast, isValid, isSkippable)}
-          onPressNext={isValid || isSkippable ? this.next : undefined}
-          prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
-          onPressPrev={this.prev}
-          actionLabel={getActionLabel(answers[index], activity.screens[index])}
-          onPressAction={this.undo}
-        />
-      </Container>
+      <ActivityComponent
+        activity={activity}
+        answers={answers}
+        auth={auth}
+        index={index}
+        screenRef={this.screenRef}
+        onInfo={this.showInfoScreen}
+        onNext={this.next}
+        onPrev={this.prev}
+        onUndo={this.undo}
+        onAnswer={this.handleAnswer}
+      />
     );
   }
 }
@@ -163,55 +109,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Activity);
-
-
-/*
-getButtonState() {
-    const { screen, length, activityConfig } = this.props;
-    const data = screen.meta || {};
-    const { answer, nextScreen, validated } = this.state;
-    const { surveyType, canvasType, textEntry } = data;
-
-    const isFinal = (nextScreen || (this.props.index + 1)) >= length;
-    let prevButtonText;
-    let actionButtonText;
-    let nextButtonText;
-    const permission = activityConfig.permission || {};
-    const skippable = data.skippable === undefined ? permission.skip : data.skippable;
-    const prevable = permission.prev;
-
-    if (!surveyType && !canvasType && !textEntry) {
-      prevButtonText = 'Back';
-      nextButtonText = isFinal ? 'Done' : 'Next';
-    } else {
-      if (prevable) prevButtonText = 'Back';
-      if (answer) {
-        actionButtonText = 'Undo';
-        if (validated) nextButtonText = isFinal ? 'Done' : 'Next';
-      } else {
-        if (canvasType === 'camera') {
-          actionButtonText = null;
-        } else if (canvasType === 'draw' && data.canvas.mode === 'camera') {
-          actionButtonText = 'Take';
-        }
-        if (skippable) nextButtonText = isFinal ? 'Done' : 'Skip';
-      }
-    }
-    return { prevButtonText, actionButtonText, nextButtonText };
-  }
-
-  handleNext = () => {
-    const { nextScreen } = this.state;
-    this.props.onNext(nextScreen);
-  }
-
-  handlePrev = () => {
-    this.props.onPrev();
-  }
-
-  handleSkip = () => {
-    const { screen: { meta: data }, onNext, activityId } = this.props;
-    const payload = { '@id': activityId, data: undefined };
-    onNext(payload, data.skipToScreen);
-  }
-  */

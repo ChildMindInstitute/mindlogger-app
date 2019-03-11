@@ -1,6 +1,7 @@
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { prepareResponseForUpload } from '../../services/transform';
 import RESPONSES_CONSTANTS from './responses.constants';
+import { scheduleAndSetNotifications } from '../applets/applets.actions';
 
 export const replaceResponses = responses => ({
   type: RESPONSES_CONSTANTS.REPLACE_RESPONSES,
@@ -80,6 +81,7 @@ export const downloadResponses = () => (dispatch, getState) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((applets) => {
     dispatch(replaceResponses(applets));
+    dispatch(scheduleAndSetNotifications());
   }).finally(() => {
     dispatch(setDownloadingResponses(false));
   });

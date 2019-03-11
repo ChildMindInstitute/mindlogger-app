@@ -2,6 +2,7 @@ import userReducer, { initialState } from './user.reducer';
 import { setResponseCollectionId } from './user.actions';
 
 jest.mock('react-native-device-info', () => { });
+jest.mock('react-native-fetch-blob', () => { });
 
 test('it has an initial state', () => {
   expect(userReducer(undefined, { type: 'foo' })).toEqual(initialState);

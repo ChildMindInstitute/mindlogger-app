@@ -1,6 +1,8 @@
 import { downloadAllApplets } from '../../services/api';
+import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.actions';
 import APPLET_CONSTANTS from './applets.constants';
+import { activitiesSelector, notificationsSelector } from './applets.selectors';
 
 export const replaceApplets = applets => ({
   type: APPLET_CONSTANTS.REPLACE_APPLETS,
@@ -19,6 +21,19 @@ export const setAppletDownloadProgress = (downloaded, total) => ({
     total,
   },
 });
+
+export const setNotifications = notifications => ({
+  type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
+  payload: notifications,
+});
+
+export const scheduleAndSetNotifications = () => (dispatch, getState) => {
+  const state = getState();
+  const activities = activitiesSelector(state);
+  const notifications = notificationsSelector(state);
+  const updatedNotifications = scheduleNotifications(activities, notifications, true);
+  dispatch(setNotifications(updatedNotifications));
+};
 
 export const downloadApplets = () => (dispatch, getState) => {
   const { core } = getState();

@@ -4,24 +4,23 @@ import { Text, Row, Col, View } from 'native-base';
 import styles from './styles';
 import SurveyTableInputCell from './SurveyTableInputCell';
 
-export default class SurveyTableInput extends Component {
-  componentDidMount() {
-    const { config, answer, onChange } = this.props;
-    const { rows, cols } = config;
-
-    // Initialize answer to zeros or empty strings if nothing set
-    if (!answer) {
-      const initialState = config.mode === 'text'
-        ? rows.map(() => cols.map(() => ''))
-        : rows.map(() => cols.map(() => 0));
-      onChange(initialState);
-    }
+const safeAnswer = (answer, rowIdx, colIdx, mode) => {
+  if (answer && answer[rowIdx] && answer[rowIdx][colIdx]) {
+    return answer[rowIdx][colIdx];
   }
+  return mode === 'text' ? '' : 0;
+};
 
-  updateCell = (newVal, row, col) => {
-    const { answer, onChange } = this.props;
-    answer[row][col] = newVal;
-    onChange(answer);
+export default class SurveyTableInput extends Component {
+  updateCells = (newVal, row, col) => {
+    const { answer, onChange, config } = this.props;
+
+    const newAnswer = config.rows.map((row, i) => config.cols.map(
+      (col, j) => safeAnswer(answer, i, j, config.mode),
+    ));
+    newAnswer[row][col] = newVal;
+
+    onChange(newAnswer);
   }
 
   render() {
@@ -59,19 +58,17 @@ export default class SurveyTableInput extends Component {
             <Col style={cellStyle}>
               <Text>{row}</Text>
             </Col>
-            {config.cols.map((col, colIdx) => {
-              return (
-                <Col key={colIdx} style={cellStyle}>
-                  <SurveyTableInputCell
-                    mode={config.mode}
-                    value={answer ? answer[rowIdx][colIdx] : undefined}
-                    onChange={(newVal) => {
-                      this.updateCell(newVal, rowIdx, colIdx);
-                    }}
-                  />
-                </Col>
-              );
-            })}
+            {config.cols.map((col, colIdx) => (
+              <Col key={colIdx} style={cellStyle}>
+                <SurveyTableInputCell
+                  mode={config.mode}
+                  value={safeAnswer(answer, rowIdx, colIdx, config.mode)}
+                  onChange={(newVal) => {
+                    this.updateCells(newVal, rowIdx, colIdx);
+                  }}
+                />
+              </Col>
+            ))}
           </Row>
         ))}
       </View>

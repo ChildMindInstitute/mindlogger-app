@@ -17,10 +17,17 @@ const downloadActivity = async (authToken, activityId) => {
   const activityFolders = await getFolders(authToken, activityId, 'folder');
   const activityData = activityFolders.filter(folder => folder.meta.info !== true);
   const activityScreens = await getItems(authToken, activityData[0]._id);
+
+  // Activities can also have info screens and we need to download the screens
+  const info = activityFolders.filter(folder => folder.meta.info === true)[0] || undefined;
+  if (info) {
+    info.screens = await getItems(authToken, info._id);
+  }
+
   return {
     ...activityData[0],
     screens: activityScreens,
-    info: activityFolders.filter(folder => folder.meta.info === true)[0] || {},
+    info,
   };
 };
 
@@ -50,7 +57,7 @@ const downloadApplet = async (authToken, appletId) => {
   ]);
 
   return {
-    info: activityData[0],
+    info: activityData[0].length > 0 ? activityData[0][0] : undefined,
     activities: activityData[1],
   };
 };

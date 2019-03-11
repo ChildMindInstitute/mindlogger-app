@@ -10,7 +10,7 @@ export default function configureStore(onCompletion) {
   const persistConfig = {
     key: 'root',
     storage,
-    whitelist: [],
+    whitelist: ['core', 'user'],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -22,7 +22,5 @@ export default function configureStore(onCompletion) {
 
   persistStore(store, null, onCompletion);
 
-  // const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
-  // const store = createStoreWithMiddleware(reducer);
   return store;
 }

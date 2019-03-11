@@ -4,32 +4,36 @@ import { Row, Col, View } from 'native-base';
 import SurveyTableSelectorCell from './SurveyTableSelectorCell';
 
 export default class SurveyTableSelector extends Component {
-  componentDidMount() {
-    const { config: { rows, cols, mode }, answer, onChange } = this.props;
-    // Initialize answer to empty 2D array or 2D array of false
-    if (!answer) {
-      const initialState = mode === 'select'
-        ? rows.map(() => [])
-        : rows.map(() => cols.map(() => false));
-      onChange(initialState);
+  static isValid(answer, { optionsMin = 0, optionsMax = Infinity }) {
+    if (typeof answer === 'undefined') {
+      return false;
     }
+    for (let i = 0; i < answer.length; i += 1) {
+      if (answer[i].length < optionsMin || answer[i].length > optionsMax) {
+        return false;
+      }
+    }
+    return true;
   }
 
   onChoiceSelect = (rowIdx, colIdx) => {
-    const { answer, config: { optionsMin, optionsMax }, onChange } = this.props;
-    const index = answer[rowIdx].indexOf(colIdx);
+    const { answer, config, onChange } = this.props;
+
+    // Make an empty answer array if answer is undefined
+    const newAnswer = answer
+      ? [...answer]
+      : config.rows.map(() => []);
+
+    // Update with the new response
+    const index = newAnswer[rowIdx].indexOf(colIdx);
     if (index < 0) {
-      answer[rowIdx].push(colIdx);
+      newAnswer[rowIdx].push(colIdx);
     } else {
-      answer[rowIdx].splice(index, 1);
+      newAnswer[rowIdx].splice(index, 1);
     }
-    let validate = true;
-    answer.forEach((e) => {
-      if (e.length < optionsMin || e.length > optionsMax) {
-        validate = false;
-      }
-    });
-    onChange(answer, validate);
+
+    // Check if the user has selected enough items in each row
+    onChange(newAnswer);
   }
 
   render() {

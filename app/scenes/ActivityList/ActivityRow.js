@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, Text, Left, Body, Right, View } from 'native-base';
-import moment from 'moment';
+import { ListItem, Text, Left, Body, View } from 'native-base';
 import Image from '../../components/image/Image';
 import styles from './styles';
 
@@ -33,7 +32,9 @@ const ActivityRow = ({ activity, onPress }) => {
           ? <Image thumb square file={activity.meta.logoImage} />
           : (
             <View style={{ ...buttonStyle, backgroundColor }}>
-              <Text style={styles.letter}>{activity.appletShortName.substr(0, 1).toUpperCase()}</Text>
+              <Text style={styles.letter}>
+                {activity.appletShortName.substr(0, 1).toUpperCase()}
+              </Text>
             </View>
           )}
       </Left>
@@ -46,8 +47,6 @@ const ActivityRow = ({ activity, onPress }) => {
 
 ActivityRow.propTypes = {
   activity: PropTypes.object.isRequired,
-  secId: PropTypes.string.isRequired,
-  rowId: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
 };
 

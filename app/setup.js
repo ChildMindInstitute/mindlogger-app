@@ -1,32 +1,20 @@
-
-import React, { Component } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import App from './App';
 import configureStore from './configureStore';
+import { initializePushNotifications } from './services/pushNotifications';
 
-function setup():React.Component {
-  class Root extends Component {
+const setup = () => {
+  // Set up
+  const store = configureStore();
+  initializePushNotifications();
 
-    constructor() {
-      super();
-      this.state = {
-        isLoading: false,
-        store: configureStore(() => true),
-      };
-    }
-
-    render() {
-      return (
-        
-        <Provider store={this.state.store}>
-          <App />
-        </Provider>
-        
-      );
-    }
-  }
-
-  return Root;
-}
+  // Root component
+  return () => (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+};
 
 export default setup;

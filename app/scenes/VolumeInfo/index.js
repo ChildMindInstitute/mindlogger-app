@@ -1,25 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
+import React from 'react';
+import PropTypes from 'prop-types';
 import InfoAct from '../../components/InfoAct';
 
-class VolumeInfo extends Component {
-  constructor(props) {
-    super(props)
-  }
+const VolumeInfoScene = ({ activity }) => {
+  return <InfoAct activity={activity} />;
+};
 
-  render() {
-    const {act} = this.props;
-    return (
-      <InfoAct act={act} />
-      );
-  }
-}
+VolumeInfoScene.propTypes = {
+  activity: PropTypes.object.isRequired,
+};
 
-export default connect(state => ({
-    
-  }),
-  {
-    
-  }
-)(VolumeInfo);
+export default VolumeInfoScene;
