@@ -46,7 +46,7 @@ const getActionLabel = (answer, screen) => {
 const ActivityComponent = ({
   activity,
   answers,
-  auth,
+  authToken,
   index,
   screenRef,
   onInfo,
@@ -77,7 +77,7 @@ const ActivityComponent = ({
         screen={activity.screens[index]}
         answer={answers[index]}
         onChange={(answer) => { onAnswer(answer, index); }}
-        auth={auth}
+        authToken={authToken}
         ref={screenRef}
       />
       <ActivityButtons
@@ -99,7 +99,7 @@ ActivityComponent.defaultProps = {
 ActivityComponent.propTypes = {
   activity: PropTypes.object,
   answers: PropTypes.array.isRequired,
-  auth: PropTypes.string.isRequired,
+  authToken: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   screenRef: PropTypes.object.isRequired,
   onInfo: PropTypes.func.isRequired,

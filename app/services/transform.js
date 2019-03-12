@@ -6,10 +6,13 @@ import packageJson from '../../package.json';
 export const transformResponses = (responsesAr) => {
   const flattened = responsesAr.reduce(
     (acc, item) => {
-      const key = Object.keys(item)[0];
+      const keys = Object.keys(item);
+      if (keys.length === 0) {
+        return acc;
+      }
       return {
         ...acc,
-        [key]: item[key],
+        [keys[0]]: item[keys[0]],
       };
     },
     {},

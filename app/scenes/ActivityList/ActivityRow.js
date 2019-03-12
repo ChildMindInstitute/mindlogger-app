@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ListItem, Text, Left, Body, View } from 'native-base';
 import Image from '../../components/image/Image';
 import styles from './styles';
+import ActivityDueDate from './ActivityDueDate';
 
 const BUTTON_COLORS = ['#0067a0', '#919d9d', '#00c1d5', '#b5bd00'];
 
@@ -28,8 +29,8 @@ const ActivityRow = ({ activity, onPress }) => {
   return (
     <ListItem avatar onPress={() => onPress(activity)}>
       <Left>
-        {activity.meta && activity.meta.logoImage
-          ? <Image thumb square file={activity.meta.logoImage} />
+        {activity.logoImage
+          ? <Image thumb square file={activity.logoImage} />
           : (
             <View style={{ ...buttonStyle, backgroundColor }}>
               <Text style={styles.letter}>
@@ -39,7 +40,8 @@ const ActivityRow = ({ activity, onPress }) => {
           )}
       </Left>
       <Body>
-        <Text>{activity.name}</Text>
+        <Text style={{ color: activity.status === 'in-progress' ? '#11c' : null }}>{activity.name}</Text>
+        <ActivityDueDate activity={activity} />
       </Body>
     </ListItem>
   );

@@ -66,13 +66,13 @@ class Activity extends Component {
   }
 
   render() {
-    const { activity, answers, auth } = this.props;
+    const { activity, answers, authToken } = this.props;
     const { index } = this.state;
     return (
       <ActivityComponent
         activity={activity}
         answers={answers}
-        auth={auth}
+        authToken={authToken}
         index={index}
         screenRef={this.screenRef}
         onInfo={this.showInfoScreen}
@@ -94,13 +94,13 @@ Activity.propTypes = {
   answers: PropTypes.array.isRequired,
   setAnswer: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
+  authToken: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
   activity: currentActivitySelector(state),
   answers: currentResponsesSelector(state),
-  auth: R.path(['core', 'auth'], state),
+  authToken: R.path(['core', 'auth', 'token'], state),
 });
 
 const mapDispatchToProps = {

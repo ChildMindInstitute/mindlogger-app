@@ -45,10 +45,10 @@ class Screen extends Component {
   }
 
   componentDidMount() {
-    const { screen, auth } = this.props;
+    const { screen, authToken } = this.props;
     const { audio } = screen.meta;
     if (audio && audio.display && audio.files.length > 0) {
-      this.audioLink = randomLink(audio.files, auth.token);
+      this.audioLink = randomLink(audio.files, authToken);
       if (audio.autoPlay) {
         this.playAudio();
       }
@@ -225,7 +225,7 @@ Screen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
+  authToken: PropTypes.string.isRequired,
 };
 
 export default Screen;

@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import * as R from 'ramda';
-import { getLastResponseTime, getLastScheduledTime, getNextScheduledTime } from '../../services/time';
+import { getLastResponseTime, getNextAndLastTimes } from '../../services/time';
 import { responsesGroupedByActivitySelector } from '../responses/responses.selectors';
 
 export const appletsSelector = R.path(['applets', 'applets']);
@@ -18,15 +18,21 @@ export const activitiesSelector = createSelector(
   responsesGroupedByActivitySelector,
   (applets, responses) => applets.reduce((acc, applet) => {
     // Add applet id and applet shortname to each activity
-    const extraInfoActivities = applet.activities.map(act => ({
-      ...act,
-      appletId: applet._id,
-      appletShortName: applet.meta.shortName,
-      appletName: applet.name,
-      lastScheduledTimestamp: getLastScheduledTime(act),
-      lastResponseTimestamp: getLastResponseTime(act, responses),
-      nextScheduledTimestamp: getNextScheduledTime(act),
-    }));
+    const now = Date.now();
+    
+    const extraInfoActivities = applet.activities.map((act) => {
+      const { last, next } = getNextAndLastTimes(act, now);
+      return {
+        ...act,
+        appletId: applet._id,
+        appletShortName: applet.meta.shortName,
+        appletName: applet.name,
+        lastScheduledTimestamp: last,
+        lastResponseTimestamp: getLastResponseTime(act, responses),
+        nextScheduledTimestamp: next,
+        logoImage: R.clone(R.path(['meta', 'logoImage'], applet)),
+      };
+    });
 
     return [
       ...acc,

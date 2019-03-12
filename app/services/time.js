@@ -1,4 +1,5 @@
 import moment from 'moment';
+import * as R from 'ramda';
 
 // TO DO: Add support for activities becoming due at specific times during the day.
 // The Implementation below assumes all dates start at midnight
@@ -13,112 +14,93 @@ export const sortMomentAr = momentAr => momentAr.sort((a, b) => {
   return 0;
 });
 
-export const getLastScheduledCalendarDates = (now, calendarDayAr) => {
-  const calendarDays = calendarDayAr.map(day => moment(day));
-  return calendarDays.filter(day => day.isSameOrBefore(now));
+export const getScheduledCalendarDates = (activity) => {
+  if (R.path(['meta', 'notification', 'modeDate'], activity)) {
+    const calendarDayAr = activity.meta.notification.calendarDay;
+    return calendarDayAr.map(day => moment(day));
+  }
+  return [];
 };
 
-export const getUpcomingScheduledCalendarDates = (now, calendarDayAr) => {
-  const calendarDays = calendarDayAr.map(day => moment(day));
-  return calendarDays.filter(day => day.isAfter(now));
-};
-
-export const getLastScheduledMonthDays = (now, monthDayAr) => {
-  const current = now.date();
-  return monthDayAr.map((monthDay) => {
-    const dayDifference = current - monthDay;
-    const nowStart = now.clone().startOf('day');
-    if (monthDay <= current) {
-      return nowStart.subtract(dayDifference, 'days');
+export const getScheduledMonthDays = (activity, start, end) => {
+  if (R.path(['meta', 'notification', 'modeMonth'], activity)) {
+    const monthDayAr = activity.meta.notification.monthDay;
+    const index = start.clone();
+    const accumulator = [];
+    // Step through the search period
+    while (index.isBefore(end)) {
+      if (monthDayAr.includes(index.date())) {
+        accumulator.push(index.clone());
+      }
+      index.add(1, 'day');
     }
-    return nowStart.subtract(1, 'month').subtract(dayDifference, 'days');
-  });
+    return accumulator;
+  }
+  return [];
 };
 
-export const getUpcomingScheduledMonthDays = (now, monthDayAr) => {
-  const current = now.date();
-  return monthDayAr.map((monthDay) => {
-    const dayDifference = monthDay - current;
-    const nowStart = now.clone().startOf('day');
-    if (monthDay > current) {
-      return nowStart.add(dayDifference, 'days');
+export const getScheduledWeekDays = (activity, start, end) => {
+  if (R.path(['meta', 'notification', 'modeWeek'], activity)) {
+    const weekDayAr = activity.meta.notification.weekDay;
+    const index = start.clone();
+    const accumulator = [];
+    // Step through the search period
+    while (index.isBefore(end)) {
+      if (weekDayAr.includes(index.day())) {
+        accumulator.push(index.clone());
+      }
+      index.add(1, 'day');
     }
-    return nowStart.add(1, 'month').add(dayDifference, 'days');
-  });
+    return accumulator;
+  }
+  return [];
 };
 
-export const getLastScheduledWeekdays = (now, weekdayAr) => {
-  const current = now.day();
-  return weekdayAr.map((weekday) => {
-    const dayDifference = current - weekday;
-    const nowStart = now.clone().startOf('day');
-    if (weekday <= current) {
-      return nowStart.subtract(dayDifference, 'days');
-    }
-    return nowStart.subtract(1, 'week').subtract(dayDifference, 'days');
-  });
+export const getScheduledDates = (activity, start, end) => sortMomentAr([
+  ...getScheduledCalendarDates(activity),
+  ...getScheduledMonthDays(activity, start, end),
+  ...getScheduledWeekDays(activity, start, end),
+]);
+
+export const getDateTimes = (dates, timeAr) => {
+  // If no times been set, default to 9:00 AM
+  const defaultTime = { time: '09:00', timeMode: 'scheduled' };
+  const safeTimeAr = timeAr.length === 0 ? [defaultTime] : timeAr;
+
+  const dateTimes = safeTimeAr.reduce((acc, time) => {
+    const parsedTime = moment(time.time, 'HH:mm');
+    const currentDateTimes = dates.map(
+      date => date.clone()
+        .set('hour', parsedTime.get('hour'))
+        .set('minute', parsedTime.get('minute'))
+        .set('second', 0),
+    );
+    return [...acc, ...currentDateTimes];
+  }, []);
+
+  return sortMomentAr(dateTimes);
 };
 
-export const getUpcomingScheduledWeekdays = (now, weekdayAr) => {
-  const current = now.day();
-  return weekdayAr.map((weekday) => {
-    const dayDifference = weekday - current;
-    const nowStart = now.clone().startOf('day');
-    if (weekday > current) {
-      return nowStart.add(dayDifference, 'days');
-    }
-    return nowStart.add(1, 'week').add(dayDifference, 'days');
-  });
-};
+export const getNextAndLastTimes = (activity, nowTimestamp) => {
+  // Get all the scheduled dates
+  const start = moment(nowTimestamp).subtract(1, 'month');
+  const end = moment(nowTimestamp).add(1, 'month');
+  const dates = getScheduledDates(activity, start, end);
 
-export const getLastScheduledTime = (activity) => {
-  const latestDates = [];
-  const now = moment();
+  // Attach times to the scheduled dates (will multiply the total number of
+  // scheduled times by the number of scheduled times)
+  const times = R.pathOr([], ['meta', 'notification', 'times'], activity)
+    .filter(time => time.timeMode === 'scheduled');
+  const dateTimes = getDateTimes(dates, times);
 
-  if (activity.meta.notification.modeWeek) {
-    const last = getLastScheduledWeekdays(now, activity.meta.notification.weekDay);
-    latestDates.push(...last);
-  }
-
-  if (activity.meta.notification.modeMonth) {
-    const last = getLastScheduledMonthDays(now, activity.meta.notification.monthDay);
-    latestDates.push(...last);
-  }
-
-  if (activity.meta.notification.modeDate) {
-    const last = getLastScheduledCalendarDates(now, activity.meta.notification.calendarDay);
-    latestDates.push(...last);
-  }
-
-  if (latestDates.length > 0) {
-    return sortMomentAr(latestDates).pop().valueOf();
-  }
-  return null;
-};
-
-export const getNextScheduledTime = (activity) => {
-  const upcomingDates = [];
-  const now = moment();
-
-  if (activity.meta.notification.modeWeek) {
-    const upcoming = getUpcomingScheduledWeekdays(now, activity.meta.notification.weekDay);
-    upcomingDates.push(...upcoming);
-  }
-
-  if (activity.meta.notification.modeMonth) {
-    const upcoming = getUpcomingScheduledMonthDays(now, activity.meta.notification.monthDay);
-    upcomingDates.push(...upcoming);
-  }
-
-  if (activity.meta.notification.modeDate) {
-    const upcoming = getUpcomingScheduledCalendarDates(now, activity.meta.notification.calendarDay);
-    upcomingDates.push(...upcoming);
-  }
-
-  if (upcomingDates.length > 0) {
-    return sortMomentAr(upcomingDates)[0].valueOf();
-  }
-  return null;
+  // Split up the times based on before and after current time
+  const now = moment(nowTimestamp);
+  const beforeNow = dateTimes.filter(dateTime => dateTime.isBetween(start, now, null, '[]'));
+  const afterNow = dateTimes.filter(dateTime => dateTime.isBetween(now, end, null, '(]'));
+  return {
+    last: beforeNow.length > 0 ? beforeNow.pop().valueOf() : null,
+    next: afterNow.length > 0 ? afterNow[0].valueOf() : null,
+  };
 };
 
 export const getLastResponseTime = (activity, responses) => {

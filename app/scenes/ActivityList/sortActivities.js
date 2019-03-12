@@ -1,3 +1,5 @@
+import * as R from 'ramda';
+
 const sortActivitiesAlpha = (a, b) => {
   const nameA = a.name.toUpperCase(); // ignore upper and lowercase
   const nameB = b.name.toUpperCase(); // ignore upper and lowercase
@@ -37,6 +39,8 @@ const addSectionHeader = (array, headerText) => (array.length > 0
   ? [{ isHeader: true, text: headerText }, ...array]
   : []);
 
+const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
+
 export default (activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = inProgressKeys.map(key => inProgress[key].activity);
@@ -47,10 +51,10 @@ export default (activityList, inProgress) => {
   const completed = getCompleted(notInProgress).reverse();
 
   return [
-    ...addSectionHeader(inProgressActivities, 'In Progress'),
-    ...addSectionHeader(overdue, 'Overdue'),
-    ...addSectionHeader(scheduled, 'Scheduled'),
-    ...addSectionHeader(unscheduled, 'Unscheduled'),
-    ...addSectionHeader(completed, 'Completed'),
+    ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
+    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Overdue'),
+    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
+    ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),
+    ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
   ];
 };
