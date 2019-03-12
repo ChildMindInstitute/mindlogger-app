@@ -3,9 +3,7 @@ package lab.childmindinstitute.data;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import org.reactnative.camera.RNCameraPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import org.reactnative.camera.RNCameraPackage;
 import com.sensors.RNSensorsPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
@@ -39,7 +37,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNCameraPackage(),
           new RNDeviceInfo(),
-          new RNCameraPackage(),
           new RNSensorsPackage(),
           new ImagePickerPackage(),
           new ReactNativePushNotificationPackage(),
