@@ -1,6 +1,7 @@
 import { downloadAllApplets } from '../../services/api';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.actions';
+import { showToast } from '../app/app.actions';
 import APPLET_CONSTANTS from './applets.constants';
 import { activitiesSelector, notificationsSelector } from './applets.selectors';
 
@@ -46,5 +47,10 @@ export const downloadApplets = () => (dispatch, getState) => {
     dispatch(downloadResponses(applets));
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
+    dispatch(showToast({
+      text: 'Download complete',
+      position: 'bottom',
+      duration: 2000,
+    }));
   });
 };

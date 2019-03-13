@@ -5,35 +5,6 @@ import styles from './styles';
 import ActivityRow from './ActivityRow';
 import sortActivities from './sortActivities';
 
-// const renderRightHiddenRow = (data, secId, rowId, rowMap) => (
-//   <View style={{ flexDirection: 'row', height: 63 }}>
-//     <Button
-//       full
-//       info
-//       style={{ height: 63, width: 60 }}
-//       onPress={() => this._editFrequency(rowId)}
-//     >
-//       <Icon active name="brush" />
-//     </Button>
-//     <Button
-//       full
-//       info
-//       style={{ height: 63, width: 60 }}
-//       onPress={() => this._editRow(data, secId, rowId, rowMap)}
-//     >
-//       <Icon active name="build" />
-//     </Button>
-//     <Button
-//       full
-//       danger
-//       style={{ height: 63, width: 60 }}
-//       onPress={() => this._deleteRow(data, secId, rowId, rowMap)}
-//     >
-//       <Icon active name="trash" />
-//     </Button>
-//   </View>
-// );
-
 const ActivityListComponent = ({
   showAdmin,
   activities,
@@ -57,16 +28,13 @@ const ActivityListComponent = ({
         <Body>
           <Title>Activities</Title>
         </Body>
-        <Right>
-          {showAdmin
-            ? (
-              <Button transparent onPress={onPressAddActivity}>
-                <Icon name="add" />
-              </Button>
-            )
-            : (
-              <Button transparent onPress={onPressRefresh}><Icon name="refresh" /></Button>
-            )}
+        <Right style={{ flexDirection: 'row' }}>
+          {showAdmin && (
+            <Button transparent onPress={onPressAddActivity}>
+              <Icon name="add" />
+            </Button>
+          )}
+          <Button transparent onPress={onPressRefresh}><Icon name="refresh" /></Button>
         </Right>
       </Header>
       <Content>
@@ -83,18 +51,13 @@ const ActivityListComponent = ({
           </View>
         )}
         <List
-          // dataSource={ds.cloneWithRowsAndSections(activities)}
-          renderRow={(activity, secId, rowId) => (
+          renderRow={activity => (
             <ActivityRow
               onPress={onPressRow}
               activity={activity}
-              secId={secId}
-              rowId={rowId}
+              key={activity.isHeader ? activity.headerText : activity._id}
             />
           )}
-          // // renderRightHiddenRow={renderRightHiddenRow}
-          // rightOpenValue={showAdmin ? -120 : 0}
-          // enableEmptySections
           dataArray={dataArray}
         />
       </Content>
