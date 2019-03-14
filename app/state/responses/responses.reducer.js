@@ -15,6 +15,8 @@ export const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
+    case RESPONSES_CONSTANTS.CLEAR:
+      return initialState;
     case RESPONSES_CONSTANTS.REPLACE_RESPONSES:
       return {
         ...state,

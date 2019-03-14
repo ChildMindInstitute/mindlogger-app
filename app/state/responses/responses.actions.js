@@ -2,6 +2,13 @@ import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { prepareResponseForUpload } from '../../services/transform';
 import RESPONSES_CONSTANTS from './responses.constants';
 import { scheduleAndSetNotifications } from '../applets/applets.actions';
+import { appletsSelector } from '../applets/applets.selectors';
+import { userInfoSelector, authTokenSelector, responseCollectionIdSelector } from '../user/user.selectors';
+import { uploadQueueSelector } from './responses.selectors';
+
+export const clearResponses = () => ({
+  type: RESPONSES_CONSTANTS.CLEAR,
+});
 
 export const replaceResponses = responses => ({
   type: RESPONSES_CONSTANTS.REPLACE_RESPONSES,
@@ -74,10 +81,12 @@ export const startResponse = activity => (dispatch, getState) => {
 };
 
 export const downloadResponses = () => (dispatch, getState) => {
-  const { core, applets } = getState();
-  const { auth, self } = core;
+  const state = getState();
+  const authToken = authTokenSelector(state);
+  const userInfo = userInfoSelector(state);
+  const applets = appletsSelector(state);
   dispatch(setDownloadingResponses(true));
-  downloadAllResponses(auth.token, self._id, applets.applets, (downloaded, total) => {
+  downloadAllResponses(authToken, userInfo._id, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((applets) => {
     dispatch(replaceResponses(applets));
@@ -88,8 +97,10 @@ export const downloadResponses = () => (dispatch, getState) => {
 };
 
 export const startUploadQueue = () => (dispatch, getState) => {
-  const { responses, core } = getState();
-  uploadResponseQueue(core.auth.token, responses.uploadQueue, () => {
+  const state = getState();
+  const uploadQueue = uploadQueueSelector(state);
+  const authToken = authTokenSelector(state);
+  uploadResponseQueue(authToken, uploadQueue, () => {
     // Progress - a response was uploaded
     dispatch(shiftUploadQueue());
   }).finally(() => {
@@ -98,8 +109,9 @@ export const startUploadQueue = () => (dispatch, getState) => {
 };
 
 export const completeResponse = (activity, answers) => (dispatch, getState) => {
-  const { user } = getState();
-  const preparedResponse = prepareResponseForUpload(activity, answers, user.responseCollectionId);
+  const state = getState();
+  const responseCollectionId = responseCollectionIdSelector(state);
+  const preparedResponse = prepareResponseForUpload(activity, answers, responseCollectionId);
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList

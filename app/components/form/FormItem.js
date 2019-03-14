@@ -4,17 +4,30 @@ import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, Che
 import InputNumber from 'rc-input-number';
 import DatePicker from 'react-native-datepicker';
 
-export const FormInputItem = ({ input: {...input}, label, stackedLabel, floatingLabel, itemStyle, name, meta: { touched, error, warning }, ...props}) => {
-    var hasError= false;
-    if(error !== undefined){
-      hasError= true;
-    }
-    return( <Item stackedLabel={stackedLabel} floatingLabel={floatingLabel} style={itemStyle} error= {hasError} last>
-                <Label style={props.style}>{label}</Label>
-                <Input {...props} onChangeText={input.onChange} {...input}/>
-                {/* {hasError ? <Text style={{color:'#aaa'}}>{error}</Text> : <Text />} */}
-            </Item> )
-}
+export const FormInputItem = (
+  { input: {...input},
+  label,
+  stackedLabel,
+  floatingLabel,
+  itemStyle,
+  name,
+  meta: { touched, error, warning },
+  ...props,
+}) => (
+  <View>
+    <Item
+      stackedLabel={stackedLabel}
+      floatingLabel={floatingLabel}
+      style={itemStyle}
+      error={touched && typeof error !== 'undefined'}
+      last
+    >
+      <Label style={props.style}>{label}</Label>
+      <Input {...props} onChangeText={input.onChange} {...input} />
+    </Item>
+  </View>
+);
+
 export const FormSwitchItem = ({ input, label, name, meta: { touched, error, warning }, ...inputProps}) => {
   var hasError= false;
   if(error !== undefined){

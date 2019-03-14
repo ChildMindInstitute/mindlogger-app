@@ -1,13 +1,15 @@
-
-const React = require('react-native');
-
-const { StyleSheet, Dimensions, Platform } = React;
-
-const deviceHeight = Dimensions.get('window').height;
+import { colors } from '../../theme';
 
 export default {
   text: {
-    color: '#D8D8D8',
+    color: colors.tertiary,
     bottom: 6,
+  },
+  errorText: {
+    color: colors.tertiary,
+    fontWeight: 'bold',
+    marginTop: 16,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 };

@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
-import * as R from 'ramda';
 import { setAnswer, completeResponse } from '../../state/responses/responses.actions';
 import { currentActivitySelector, currentResponsesSelector } from '../../state/responses/responses.selectors';
 import Screen from '../../components/screen';
 import ActivityComponent from './ActivityComponent';
+import { authTokenSelector } from '../../state/user/user.selectors';
 
 class Activity extends Component {
   constructor() {
@@ -100,7 +100,7 @@ Activity.propTypes = {
 const mapStateToProps = state => ({
   activity: currentActivitySelector(state),
   answers: currentResponsesSelector(state),
-  authToken: R.path(['core', 'auth', 'token'], state),
+  authToken: authTokenSelector(state),
 });
 
 const mapDispatchToProps = {

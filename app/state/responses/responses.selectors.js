@@ -3,6 +3,8 @@ import * as R from 'ramda';
 
 export const responsesSelector = R.path(['responses', 'responseHistory']);
 
+export const uploadQueueSelector = R.path(['responses', 'uploadQueue']);
+
 export const isDownloadingResponsesSelector = R.path(['responses', 'isDownloadingResponses']);
 
 export const downloadProgressSelector = R.path(['responses', 'downloadProgress']);

@@ -1,5 +1,4 @@
-
-import { StyleSheet } from 'react-native'
+import { colors } from '../../theme';
 
 export default {
   container: {
@@ -30,5 +29,12 @@ export default {
     marginTop: 20,
     width: 'auto',
     alignSelf: 'center',
-  }
+  },
+  errorText: {
+    color: colors.tertiary,
+    fontWeight: 'bold',
+    marginTop: 16,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
 };
