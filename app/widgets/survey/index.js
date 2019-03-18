@@ -31,6 +31,14 @@ const getSurveyElement = (type, mode) => {
 };
 
 export default class SurveySection extends Component {
+  static isValid(answer, config, type) {
+    const SurveyElement = getSurveyElement(type, config ? config.mode : null);
+    if (typeof SurveyElement.isValid !== 'undefined') {
+      return SurveyElement.isValid(answer, config);
+    }
+    return typeof answer !== 'undefined';
+  }
+
   resetData = () => {
     const { type } = this.props;
     if (this.surveyEl && type === 'audio') {
@@ -46,7 +54,7 @@ export default class SurveySection extends Component {
       onChange,
       onNextChange,
     } = this.props;
-    const SurveyElement = getSurveyElement(type, config.mode);
+    const SurveyElement = getSurveyElement(type, config ? config.mode : null);
     return (
       <SurveyElement
         config={config}

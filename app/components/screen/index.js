@@ -1,23 +1,18 @@
-import React, { Component } from 'react'
-import { View, StyleSheet } from 'react-native'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import { View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import { Content, Text, Button, Icon } from 'native-base';
-import {
-  Player,
-  MediaStates
-} from 'react-native-audio-toolkit';
+import { Player, MediaStates } from 'react-native-audio-toolkit';
 
-import {randomLink} from '../../helper';
-import TextEntry from './TextEntry';
-import ScreenButton from './ScreenButton';
+import { randomLink } from '../../helper';
 import SurveySection from '../../widgets/survey';
 import CanvasSection from '../../widgets/canvas';
+import TextEntry from '../../widgets/TextEntry';
 import GImage from '../image/Image';
 
 const styles = StyleSheet.create({
   content: {
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   padding: {
     padding: 20,
@@ -32,288 +27,205 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 15,
-  },
-})
+});
+
 class Screen extends Component {
-  static propTypes = {
-    path: PropTypes.string
+  static isValid(answer, screen) {
+    if (screen.meta && screen.meta.surveyType) {
+      return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
+    }
+    return typeof answer !== 'undefined';
   }
+
   componentWillMount() {
-    this.setState({
-      answer: this.props.answer && this.props.answer.data,
-      validated: true,
-    });
+    // temporary - sets whether camera surveys can be answered with a video.
+    // when false, only photos can be uploaded.
+    // should be connected to admin panel eventually.
+    this.video = false;
   }
+
   componentDidMount() {
-    let {screen: {meta: data}, auth} = this.props;
-    data = data || {};
-    if(data.audio && data.audio.display && data.audio.files.length > 0) {
-      this.audioLink = randomLink(data.audio.files, auth.token);
-      if (data.audio.autoPlay)
+    const { screen, authToken } = this.props;
+    const { audio } = screen.meta;
+    if (audio && audio.display && audio.files.length > 0) {
+      this.audioLink = randomLink(audio.files, authToken);
+      if (audio.autoPlay) {
         this.playAudio();
+      }
     }
   }
 
+  componentWillUnmount() {
+    if (this.player && this.player.state !== MediaStates.DESTROYED) {
+      this.player.destroy();
+    }
+  }
+
+  onAnswer = (answer, validated, next) => {
+    const { onChange } = this.props;
+    onChange(answer, validated, next);
+  }
+
+  // getPayload() {
+  //   const { screen, answer } = this.props;
+  //   const payload = { '@id': screen._id, data: answer };
+  //   if (screen.meta.text) {
+  //     payload.text = screen.meta.text;
+  //   }
+  //   return payload;
+  // }
+
+  // handleAction = () => {
+  //   if (this.canvasRef) {
+  //     this.canvasRef.takeAction();
+  //   }
+  // }
+
   playAudio = () => {
-    if(this.player && this.player.state != MediaStates.DESTROYED) {
+    if (this.player && this.player.state !== MediaStates.DESTROYED) {
       this.player.stop();
       this.player = null;
     } else {
       console.log(this.audioLink);
       this.player = new Player(this.audioLink, {
-        autoDestroy: true
+        autoDestroy: true,
       }).prepare((err) => {
-          if (err) {
-              console.log('error at _reloadPlayer():');
-              console.log(err);
-          } else {
-              this.player.playPause((err, audioPlaying) => {
-              })
-          }
+        if (err) {
+          console.log('error at _reloadPlayer():');
+          console.log(err);
+        } else {
+          this.player.playPause();
+        }
       });
     }
   }
 
-  componentWillUnmount() {
-    let {screen: {meta: data}} = this.props;
-    data = data || {};
-    if(data.audio && this.player && this.player.state != MediaStates.DESTROYED) {
-      this.player.destroy();
-    }
-  }
-
-  setAnswer(newAnswer, validated, callback) {
-    let {answer} = this.state;
-    const {screen: {meta: data = {}}} = this.props;
-    answer = {...answer, ...newAnswer, type: data.surveyType};
-    if (validated == undefined) {
-      this.setState({answer}, callback);
-    } else {
-      this.setState({answer, validated}, callback);
-    }
-  }
-
-  answer(key) {
-    return this.state.answer && this.state.answer[key];
-  }
-
-  onNextChange = (nextScreen) => {
-    this.setState({nextScreen})
-  }
-
-  handleReset = () => {
-    this.setState({answer:undefined});
-    if(this.canvasRef) {
+  reset() {
+    if (this.canvasRef) {
       this.canvasRef.resetData();
     }
-    if(this.surveyRef) {
+    if (this.surveyRef) {
       this.surveyRef.resetData();
     }
   }
-  handleAction = () => {
-    if(this.canvasRef) {
-      this.canvasRef.takeAction();
-    }
-  }
 
-  getPayload(){
-    const {path, screen} = this.props;
-    const {meta: data={}} = screen;
-    const {answer} = this.state;
-    let payload = {'@id': screen._id, data: answer};
-    if(data.text)
-      payload.text = data.text;
-    return payload;
-  }
-
-  handlePrev = () => {
-    this.props.onPrev(this.getPayload());
-  }
-
-  handleSkip = () => {
-    const {screen: {meta: data}, onNext, path} = this.props;
-    let payload = {'@id': path,  data: undefined};
-    onNext(payload, data.skipToScreen);
-  }
-
-  handleNext = () => {
-    const {nextScreen} = this.state;
-    this.props.onNext(this.getPayload(), nextScreen);
-  }
-
-  onAnswer(data, validated, next) {
-    let { length, index } = this.props;
-    const {nextScreen} = this.state;
-
-    const isFinal = (nextScreen || (index + 1)) >= length;
-    if(next && !isFinal) {
-      this.setAnswer(data, validated, () => {
-        this.handleNext();
-      });
-    } else {
-      this.setAnswer(data, validated);
-    }
-  }
-
-  onSurvey = (survey, validated, next) => {
-    this.onAnswer({survey}, validated, next);
-  }
-
-  onCanvas = (canvas, validated, next) => {
-    this.onAnswer({canvas}, validated, next);
-  }
-
-  getButtonState() {
-    let {
-      screen: {meta: data},
-      globalConfig,
-      info,
-      length,
-    } = this.props;
-    data = data || {};
-    const {answer, nextScreen, validated} = this.state;
-    const {surveyType, canvasType, textEntry} = data;
-
-    const isFinal = (nextScreen || (this.props.index + 1)) >= length;
-    let prevButtonText;
-    let actionButtonText;
-    let nextButtonText;
-    const permission = globalConfig.permission || {};
-    const skippable = data.skippable == undefined ? permission.skip : data.skippable;
-    const prevable = permission.prev;
-
-    if ((!surveyType && !canvasType && !textEntry) || info) {
-      prevButtonText = "Back";
-      nextButtonText = isFinal ? "Done" : "Next";
-    } else {
-      if (prevable) prevButtonText = "Back";
-      if (answer) {
-        actionButtonText = "Undo";
-        if (validated) nextButtonText = isFinal ? "Done" : "Next";
-      } else {
-        if(canvasType == 'camera') {
-          actionButtonText = null;
-        } else if (canvasType == 'draw' && data.canvas.mode == "camera") {
-          actionButtonText = "Take";
-        }
-        if (skippable) nextButtonText = isFinal ? "Done" : "Skip";
-      }
-    }
-    return { prevButtonText, actionButtonText, nextButtonText };
-  }
-
-  renderButtons() {
-    const {answer} = this.state;
-    const {prevButtonText, actionButtonText, nextButtonText} = this.getButtonState();
-    return (<View style={styles.footer}>
-      {prevButtonText ? <ScreenButton transparent onPress={this.handlePrev} text={prevButtonText}/> : <ScreenButton transparent/> }
-      {actionButtonText ? <ScreenButton onPress={answer ? this.handleReset : this.handleAction} text={actionButtonText}/> : <ScreenButton transparent/> }
-      {nextButtonText ? <ScreenButton transparent onPress={answer ? this.handleNext : this.handleSkip} text={nextButtonText}/> : <ScreenButton transparent/> }
-    </View>)
-  }
-
-  renderPicture(data) {
-    return data.pictureVideo && data.pictureVideo.display && data.pictureVideo.files.length > 0 &&
-      <GImage file={data.pictureVideo.files} style={{width: '100%', height: 200, resizeMode: 'cover'}} />
-  }
+  renderPicture = data => data.pictureVideo
+    && data.pictureVideo.display
+    && data.pictureVideo.files.length > 0
+    && (
+      <GImage
+        file={data.pictureVideo.files}
+        style={{ width: '100%', height: 200, resizeMode: 'cover' }}
+      />
+    );
 
   renderSurvey(data) {
-    return data.surveyType && <SurveySection
-            type={data.surveyType}
-            config={data.survey}
-            answer={this.answer('survey')}
-            onChange={this.onSurvey}
-            onNextChange={this.onNextChange}
-            ref={ref => {this.surveyRef = ref}}
-            />
+    const { answer } = this.props;
+    return data.surveyType && (
+      <SurveySection
+        type={data.surveyType}
+        config={data.survey}
+        answer={answer}
+        onChange={this.onAnswer}
+        ref={(ref) => { this.surveyRef = ref; }}
+        onNextChange={() => {}}
+      />
+    );
   }
 
   renderCanvas(data) {
-    return data.canvasType && <CanvasSection
-            video={(data.canvasType == 'video')}
-            type={((data.canvasType == 'video') ? 'camera' : data.canvasType)}
-            config={data.canvas}
-            answer={this.answer('canvas')}
-            onChange={this.onCanvas}
-            ref={ref => {this.canvasRef = ref}}
-            onNextChange={this.onNextChange}
-            />
+    const { answer } = this.props;
+    return data.canvasType && (
+      <CanvasSection
+        video={this.video}
+        type={data.canvasType}
+        config={data.canvas}
+        answer={answer}
+        onChange={this.onAnswer}
+        ref={(ref) => { this.canvasRef = ref; }}
+        onNextChange={() => {}}
+      />
+    );
   }
+
   renderScrollContent() {
-    let {screen: {meta: data}} = this.props;
-    data = data || {};
-    let hasAudio = data.audio && data.audio.display && data.audio.files.length>0;
-    return (<Content style={{ flex: 1}}>
-      {this.renderPicture(data)}
-      <View style={styles.paddingContent}>
-        {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
-        { data.surveyType != 'audio' && <Text style={styles.text}>{data.text}</Text> }
-        { this.renderSurvey(data) }
-        { this.renderCanvas(data) }
-        {
-          data.textEntry && data.textEntry.display &&
-          <TextEntry
-            style={styles.text}
-            config={data.textEntry}
-            answer={this.answer('text')}
-            onChange={text => this.setAnswer({text})}/>
-        }
-        { data.surveyType == 'audio' && <Text style={styles.text}>{data.text}</Text> }
-      </View>
-    </Content>)
+    const { screen, answer, onChange } = this.props;
+    const data = screen.meta || {};
+    const hasAudio = data.audio && data.audio.display && data.audio.files.length > 0;
+    return (
+      <Content style={{ flex: 1 }}>
+        {this.renderPicture(data)}
+        <View style={styles.paddingContent}>
+          {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
+          { data.surveyType !== 'audio' && <Text style={styles.text}>{data.text}</Text> }
+          { this.renderSurvey(data) }
+          { this.renderCanvas(data) }
+          {
+            data.textEntry && data.textEntry.display && (
+              <TextEntry
+                style={styles.text}
+                config={data.textEntry}
+                answer={answer}
+                onChange={text => onChange({ text })}
+              />
+            )
+          }
+          { data.surveyType === 'audio' && <Text style={styles.text}>{data.text}</Text> }
+        </View>
+      </Content>
+    );
   }
 
   renderContent() {
-    let {screen: {meta: data}} = this.props;
-    data = data || {};
-    let hasAudio = data.audio && data.audio.display && data.audio.files.length>0;
-    return (<View style={styles.paddingContent}>
-      {this.renderPicture(data)}
+    const { screen, onChange, answer } = this.props;
+    const data = screen.meta || {};
+    const hasAudio = data.audio && data.audio.display && data.audio.files.length > 0;
+    return (
+      <View style={styles.paddingContent}>
+        {this.renderPicture(data)}
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
         {/* todo: animate this text below */}
         <Text style={styles.text}>{data.text}</Text>
         { this.renderSurvey(data) }
         { this.renderCanvas(data) }
         {
-          data.textEntry && data.textEntry.display &&
-          <TextEntry
-            style={styles.text}
-            config={data.textEntry}
-            answer={this.answer('text')}
-            onChange={text => this.setAnswer({text})}/>
+          data.textEntry && data.textEntry.display && (
+            <TextEntry
+              style={styles.text}
+              config={data.textEntry}
+              answer={answer}
+              onChange={text => onChange({ text })}
+            />
+          )
         }
-    </View>)
+      </View>
+    );
   }
 
   render() {
-    let {screen: {meta: data}} = this.props;
-    console.log("Screen:", data);
+    const { screen } = this.props;
     return (
-      <View style={{flex: 1, flexDirection: 'column'}}>
+      <View style={{ flex: 1, flexDirection: 'column' }}>
         {
-          data && (
-          (data.surveyType == 'slider' || data.canvasType == 'draw') ?
-          this.renderContent() :
-             this.renderScrollContent())
+          screen.meta && (
+            (screen.meta.surveyType === 'slider' || screen.meta.canvasType === 'draw')
+              ? this.renderContent()
+              : this.renderScrollContent())
         }
-        { this.renderButtons() }
       </View>
-    )
+    );
   }
 }
 
-const mapStateToProps = ({core: {objects, answerData, auth}}, ownProps) => ({
-  screen: (objects && objects[`folder/${ownProps.path}`][`item/${ownProps.name}`]) || {meta:{}},
-  answers: answerData && answerData[ownProps.path],
-  auth,
-})
+Screen.defaultProps = {
+  answer: undefined,
+};
 
-const mapDispatchToProps = {
+Screen.propTypes = {
+  screen: PropTypes.object.isRequired,
+  answer: PropTypes.any,
+  onChange: PropTypes.func.isRequired,
+  authToken: PropTypes.string.isRequired,
+};
 
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+export default Screen;

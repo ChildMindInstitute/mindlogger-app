@@ -1,29 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import PropTypes from 'prop-types';
 import InfoAct from '../../components/InfoAct';
 
-class InfoActScreen extends Component {
-  constructor(props) {
-    super(props)
-  }
+const InfoActScene = ({ activity }) => {
+  return <InfoAct activity={activity} />;
+};
 
-  componentWillMount() {
-    this.setState({index: 0, answers:[]});
-  }
+InfoActScene.propTypes = {
+  activity: PropTypes.object.isRequired,
+};
 
-  render() {
-    const {act} = this.props;
-    return (
-      <InfoAct act={act}/>
-      );
-  }
-
-}
-
-export default connect(state => ({
-    act: state.core.actInfo,
-  }),
-  {
-    
-  }
-)(InfoActScreen);
+export default InfoActScene;
