@@ -6,7 +6,6 @@ react-native bundle --platform android \
   zip ./android-sourcemap.zip ./android-sourcemap.json
 
 curl -X POST \
-  https://api.instabug.com/api/sdk/v3/symbols_files \
   -H 'Postman-Token: 00a58bc1-cbb8-4444-b722-8a5299f9c8b3' \
   -H 'cache-control: no-cache' \
   -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
