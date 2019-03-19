@@ -14,10 +14,11 @@ export const sortMomentAr = momentAr => momentAr.sort((a, b) => {
   return 0;
 });
 
-export const getScheduledCalendarDates = (activity) => {
+export const getScheduledCalendarDates = (activity, start) => {
   if (R.path(['meta', 'notification', 'modeDate'], activity)) {
     const calendarDayAr = activity.meta.notification.calendarDay;
-    return calendarDayAr.map(day => moment(day));
+    return calendarDayAr.map(day => moment(day))
+      .filter(day => day.isSameOrAfter(start));
   }
   return [];
 };
@@ -57,7 +58,7 @@ export const getScheduledWeekDays = (activity, start, end) => {
 };
 
 export const getScheduledDates = (activity, start, end) => sortMomentAr([
-  ...getScheduledCalendarDates(activity),
+  ...getScheduledCalendarDates(activity, start),
   ...getScheduledMonthDays(activity, start, end),
   ...getScheduledWeekDays(activity, start, end),
 ]);
@@ -73,7 +74,8 @@ export const getDateTimes = (dates, timeAr) => {
       date => date.clone()
         .set('hour', parsedTime.get('hour'))
         .set('minute', parsedTime.get('minute'))
-        .set('second', 0),
+        .set('second', 0)
+        .set('millisecond', 0),
     );
     return [...acc, ...currentDateTimes];
   }, []);
@@ -81,17 +83,22 @@ export const getDateTimes = (dates, timeAr) => {
   return sortMomentAr(dateTimes);
 };
 
-export const getNextAndLastTimes = (activity, nowTimestamp) => {
+export const getScheduledDateTimes = (activity, start, end) => {
   // Get all the scheduled dates
-  const start = moment(nowTimestamp).subtract(1, 'month');
-  const end = moment(nowTimestamp).add(1, 'month');
   const dates = getScheduledDates(activity, start, end);
 
   // Attach times to the scheduled dates (will multiply the total number of
   // scheduled times by the number of scheduled times)
   const times = R.pathOr([], ['meta', 'notification', 'times'], activity)
     .filter(time => time.timeMode === 'scheduled');
-  const dateTimes = getDateTimes(dates, times);
+  return getDateTimes(dates, times).filter(dateTime => dateTime.isBetween(start, end));
+};
+
+export const getNextAndLastTimes = (activity, nowTimestamp) => {
+  // Get all the scheduled date/times
+  const start = moment(nowTimestamp).subtract(1, 'month');
+  const end = moment(nowTimestamp).add(1, 'month');
+  const dateTimes = getScheduledDateTimes(activity, start, end);
 
   // Split up the times based on before and after current time
   const now = moment(nowTimestamp);

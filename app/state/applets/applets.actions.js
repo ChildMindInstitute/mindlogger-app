@@ -36,8 +36,8 @@ export const setNotifications = notifications => ({
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
   const state = getState();
   const activities = activitiesSelector(state);
-  const notifications = notificationsSelector(state);
-  const updatedNotifications = scheduleNotifications(activities, notifications, true);
+  // This call schedules the notifications and returns a list of scheduled notifications
+  const updatedNotifications = scheduleNotifications(activities);
   dispatch(setNotifications(updatedNotifications));
 };
 
