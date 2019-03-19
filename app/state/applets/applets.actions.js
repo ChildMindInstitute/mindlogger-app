@@ -4,7 +4,7 @@ import { downloadResponses } from '../responses/responses.actions';
 import { showToast } from '../app/app.actions';
 import APPLET_CONSTANTS from './applets.constants';
 import { activitiesSelector, notificationsSelector } from './applets.selectors';
-import { authSelector, userInfoSelector } from '../user/user.selectors';
+import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 
 export const clearApplets = () => ({
   type: APPLET_CONSTANTS.CLEAR,
@@ -50,14 +50,16 @@ export const downloadApplets = () => (dispatch, getState) => {
   downloadAllApplets(auth.token, userInfo._id, (downloaded, total) => {
     dispatch(setAppletDownloadProgress(downloaded, total));
   }).then((applets) => {
-    dispatch(replaceApplets(applets));
-    dispatch(downloadResponses(applets));
+    if (loggedInSelector(getState())) {
+      dispatch(replaceApplets(applets));
+      dispatch(downloadResponses(applets));
+      dispatch(showToast({
+        text: 'Download complete',
+        position: 'bottom',
+        duration: 2000,
+      }));
+    }
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
-    dispatch(showToast({
-      text: 'Download complete',
-      position: 'bottom',
-      duration: 2000,
-    }));
   });
 };

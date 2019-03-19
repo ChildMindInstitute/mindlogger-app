@@ -3,7 +3,12 @@ import { prepareResponseForUpload } from '../../services/transform';
 import RESPONSES_CONSTANTS from './responses.constants';
 import { scheduleAndSetNotifications } from '../applets/applets.actions';
 import { appletsSelector } from '../applets/applets.selectors';
-import { userInfoSelector, authTokenSelector, responseCollectionIdSelector } from '../user/user.selectors';
+import {
+  userInfoSelector,
+  authTokenSelector,
+  responseCollectionIdSelector,
+  loggedInSelector,
+} from '../user/user.selectors';
 import { uploadQueueSelector } from './responses.selectors';
 
 export const clearResponses = () => ({
@@ -89,8 +94,10 @@ export const downloadResponses = () => (dispatch, getState) => {
   downloadAllResponses(authToken, userInfo._id, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((applets) => {
-    dispatch(replaceResponses(applets));
-    dispatch(scheduleAndSetNotifications());
+    if (loggedInSelector(getState())) {
+      dispatch(replaceResponses(applets));
+      dispatch(scheduleAndSetNotifications());
+    }
   }).finally(() => {
     dispatch(setDownloadingResponses(false));
   });
