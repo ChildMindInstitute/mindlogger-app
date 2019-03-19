@@ -24,11 +24,11 @@ const ActivityButtons = ({
       ? <ScreenButton transparent onPress={onPressPrev} text={prevLabel} />
       : <ScreenButton transparent />}
     {actionLabel
-      ? <ScreenButton onPress={onPressAction} text={actionLabel} />
+      ? <ScreenButton transparent onPress={onPressAction} text={actionLabel} />
       : <ScreenButton transparent />}
-    {nextLabel
-      ? <ScreenButton transparent onPress={onPressNext} text={nextLabel} />
-      : <ScreenButton transparent />}
+    {nextLabel !== 'Skip'
+      ? <ScreenButton onPress={onPressNext} text={nextLabel} />
+      : <ScreenButton transparent onPress={onPressNext} text={nextLabel} />}
   </View>
 );
 
@@ -46,7 +46,7 @@ ActivityButtons.propTypes = {
   prevLabel: PropTypes.string,
   actionLabel: PropTypes.string,
   onPressPrev: PropTypes.func,
-  onPressNext: PropTypes.func, 
+  onPressNext: PropTypes.func,
   onPressAction: PropTypes.func,
 };
 
