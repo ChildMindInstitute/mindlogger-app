@@ -53,7 +53,7 @@ class Login extends Component {
             <TouchableOpacity onPress={this.onRegister}>
               <Text style={styles.whiteText}>New user</Text>
             </TouchableOpacity>
-            <Text style={styles.whiteText}> or  </Text>
+            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>or</Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>forgot password</Text>
             </TouchableOpacity>
