@@ -1,18 +1,26 @@
 import objectToFormData from 'object-to-formdata';
 import RNFetchBlob from 'react-native-fetch-blob';
 import config from '../config';
+import { btoa } from './helper';
 
-const objectToQueryParams = obj => Object.keys(obj).reduce(
-  (qs, key) => `${qs}&${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`,
-  '',
-);
+const objectToQueryParams = obj => Object.keys(obj).map(
+  key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`,
+).join('&');
 
-export const get = (route, authToken, queryObj = {}) => {
-  const queryParams = objectToQueryParams(queryObj);
-  const url = `${config.apiHost}/${route}?${queryParams}`;
+export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
+  const queryParams = queryObj
+    ? `?${objectToQueryParams(queryObj)}`
+    : '';
+
+  const url = `${config.apiHost}/${route}${queryParams}`;
+
   const headers = {
-    'Girder-Token': authToken,
+    ...extraHeaders,
   };
+  if (authToken) {
+    headers['Girder-Token'] = authToken;
+  }
+
   return fetch(url, {
     mode: 'cors',
     headers,
@@ -106,3 +114,73 @@ export const postItem = ({ authToken, folderId, name, metadata = {} }) => postFo
     metadata: JSON.stringify(metadata),
   },
 );
+
+export const signIn = ({ user, password }) => get(
+  'user/authentication',
+  null,
+  null,
+  { 'Girder-Authorization': `Basic ${btoa(`${user}:${password}`)}` },
+);
+
+export const signOut = (authToken) => {
+  const url = `${config.apiHost}/user/authentication`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const forgotPassword = (email) => {
+  const queryParams = objectToQueryParams({ email });
+  const url = `${config.apiHost}/user/password/temporary?${queryParams}`;
+  return fetch(url, {
+    method: 'put',
+    mode: 'cors',
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const signUp = (userData) => {
+  const url = `${config.apiHost}/user`;
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    body: objectToFormData(userData),
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const updateUserDetails = (authToken, { id, firstName, lastName, email }) => {
+  const url = `${config.apiHost}/user/${id}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'put',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      firstName,
+      lastName,
+      email,
+    }),
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const updatePassword = (authToken, oldPassword, newPassword) => {
+  const url = `${config.apiHost}/user/password`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'put',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      old: oldPassword,
+      new: newPassword,
+    }),
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

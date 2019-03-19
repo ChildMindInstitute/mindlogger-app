@@ -4,13 +4,12 @@ import PropTypes from 'prop-types';
 import { BackHandler, StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { StyleProvider, Drawer } from 'native-base';
-import { Router, Scene, Actions } from 'react-native-router-flux';
+import { Router, Scene, Lightbox, Actions, Stack } from 'react-native-router-flux';
 
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
 import { closeDrawer } from '../state/drawer/drawer.actions';
-import statusBarColor from '../themes/variables';
-import DrawerCheck from '../DrawerCheck';
+import { colors } from '../theme';
 
 // Scenes
 import SideBar from './Sidebar';
@@ -22,13 +21,36 @@ import Signup from './Signup';
 import Settings from './Settings';
 import About from './About';
 import AboutApp from './AboutApp';
-import FrequencyScreen from './Frequency';
+// import FrequencyScreen from './Frequency';
 import Activity from './Activity';
-import PushAct from './PushAct';
+// import PushAct from './PushAct';
 import InfoAct from './InfoAct';
 import VolumeInfo from './VolumeInfo';
+import Splash from './Splash';
+import LogoutWarning from './LogoutWarning';
 
-const RouterWithRedux = connect()(Router);
+const Navigator = Actions.create(
+  <Lightbox>
+    <Stack key="root" hideNavBar>
+      <Scene key="splash" component={Splash} initial />
+      <Scene key="login" component={Login} />
+      <Scene key="about" component={About} />
+      <Scene key="consent" component={Consent} />
+      <Scene key="sign_up" component={Signup} />
+      <Scene key="forgot_password" component={ForgotPassword} />
+      <Scene key="settings" component={Settings} />
+      <Scene key="activity" component={ActivityList} />
+      {/* <Scene key="frequency" component={FrequencyScreen} /> */}
+      {/* <Scene key="push_act" component={PushAct} /> */}
+      <Scene key="take_act" component={Activity} />
+      <Scene key="about_act" component={InfoAct} />
+      <Scene key="about_volume" component={VolumeInfo} />
+      <Scene key="about_app" component={AboutApp} />
+    </Stack>
+    <Scene key="logout_warning" component={LogoutWarning} />
+  </Lightbox>
+  ,
+);
 
 class AppNavigator extends Component {
   componentDidMount() {
@@ -38,20 +60,14 @@ class AppNavigator extends Component {
     });
   }
 
-  openDrawer = () => {
-    this._drawer._root.open();
-  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.drawerState === 'closed' && this.props.drawerState === 'opened') {
+      this._drawer._root.open();
+    }
 
-  closeDrawer = () => {
-    this._drawer._root.close();
-  }
-
-  onCloseDrawer = () => {
-    this.props.closeDrawer();
-  }
-
-  popRoute = () => {
-    Actions.pop();
+    if (prevProps.drawerState === 'opened' && this.props.drawerState === 'closed') {
+      this._drawer._root.close();
+    }
   }
 
   render() {
@@ -59,31 +75,15 @@ class AppNavigator extends Component {
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
         <Drawer
           ref={(ref) => { this._drawer = ref; }}
-          content={<SideBar navigator={this._navigator}/>}
-          onClose={() => this.onCloseDrawer()}
+          content={<SideBar />}
+          onClose={() => this.props.closeDrawer()}
         >
           <StatusBar
-            hidden={(this.props.drawerState === 'opened' && Platform.OS === 'ios') ? true : false}
-            backgroundColor={statusBarColor.statusBarColor}
+            hidden={this.props.drawerState === 'opened' && Platform.OS === 'ios'}
+            backgroundColor={colors.primary}
+            barStyle="light-content"
           />
-          <DrawerCheck onOpenDrawer={this.openDrawer} onCloseDrawer={this.closeDrawer}/>
-          <RouterWithRedux>
-            <Scene key="root" hideNavBar>
-              <Scene key="login" component={Login} initial />
-              <Scene key="about" component={About} />
-              <Scene key="consent" component={Consent} />
-              <Scene key="sign_up" component={Signup} />
-              <Scene key="forgot_password" component={ForgotPassword} />
-              <Scene key="settings" component={Settings} />
-              <Scene key="activity" component={ActivityList} />
-              <Scene key="frequency" component={FrequencyScreen} />
-              <Scene key="push_act" component={PushAct} />
-              <Scene key="take_act" component={Activity} />
-              <Scene key="about_act" component={InfoAct} />
-              <Scene key="about_volume" component={VolumeInfo} />
-              <Scene key="about_app" component={AboutApp} />
-            </Scene>
-          </RouterWithRedux>
+          <Router navigator={Navigator} />
         </Drawer>
       </StyleProvider>
     );
@@ -98,12 +98,11 @@ AppNavigator.propTypes = {
 
 const bindAction = dispatch => ({
   closeDrawer: () => dispatch(closeDrawer()),
-  popRoute: key => dispatch(popRoute(key)),
 });
 
 const mapStateToProps = state => ({
-  
   themeState: state.drawer.themeState,
+  drawerState: state.drawer.drawerState,
 });
 
 export default connect(mapStateToProps, bindAction)(AppNavigator);

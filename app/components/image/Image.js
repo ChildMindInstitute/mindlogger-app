@@ -3,8 +3,9 @@ import { View, Text } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { CachedImage } from 'react-native-img-cache';
-import { randomLink, fileLink } from '../../helper';
+import { randomLink, fileLink } from '../../services/helper';
 import { Thumbnail } from 'native-base';
+import { authSelector } from '../../state/user/user.selectors';
 
 class GImage extends Component {
   static propTypes = {
@@ -31,7 +32,7 @@ class GImage extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  auth: state.core.auth
+  auth: authSelector(state)
 })
 
 const mapDispatchToProps = {

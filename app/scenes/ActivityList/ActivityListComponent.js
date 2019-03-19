@@ -6,12 +6,10 @@ import ActivityRow from './ActivityRow';
 import sortActivities from './sortActivities';
 
 const ActivityListComponent = ({
-  showAdmin,
   activities,
   appletsDownloadProgress,
   isDownloadingApplets,
   onPressDrawer,
-  onPressAddActivity,
   onPressRefresh,
   onPressRow,
   inProgress,
@@ -29,11 +27,6 @@ const ActivityListComponent = ({
           <Title>Activities</Title>
         </Body>
         <Right style={{ flexDirection: 'row' }}>
-          {showAdmin && (
-            <Button transparent onPress={onPressAddActivity}>
-              <Icon name="add" />
-            </Button>
-          )}
           <Button transparent onPress={onPressRefresh}><Icon name="refresh" /></Button>
         </Right>
       </Header>
@@ -42,11 +35,13 @@ const ActivityListComponent = ({
           <View>
             <Spinner />
             {
-              appletsDownloadProgress.total > 0 && (
-                <Text style={styles.text}>
-                  Downloaded {appletsDownloadProgress.downloaded} of {appletsDownloadProgress.total} activity sets
-                </Text>
-              )
+              appletsDownloadProgress.total > 0
+                ? (
+                  <Text style={styles.text}>
+                    Downloaded {appletsDownloadProgress.downloaded} of {appletsDownloadProgress.total} applets...
+                  </Text>
+                )
+                : <Text style={styles.text}>Downloading applets...</Text>
             }
           </View>
         )}
@@ -66,7 +61,6 @@ const ActivityListComponent = ({
 };
 
 ActivityListComponent.propTypes = {
-  showAdmin: PropTypes.bool.isRequired,
   activities: PropTypes.array.isRequired,
   appletsDownloadProgress: PropTypes.shape({
     downloaded: PropTypes.number,
@@ -75,7 +69,6 @@ ActivityListComponent.propTypes = {
   inProgress: PropTypes.object.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
-  onPressAddActivity: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onPressRow: PropTypes.func.isRequired,
 };

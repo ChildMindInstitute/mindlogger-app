@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Content, Text, Button, Icon } from 'native-base';
 import { Player, MediaStates } from 'react-native-audio-toolkit';
 
-import { randomLink } from '../../helper';
+import { randomLink } from '../../services/helper';
 import SurveySection from '../../widgets/survey';
 import CanvasSection from '../../widgets/canvas';
 import TextEntry from '../../widgets/TextEntry';

@@ -49,8 +49,4 @@ function bindActions(dispatch) {
   };
 }
 
-const mapStateToProps = state => ({
-  routes: state.drawer.routes,
-});
-
-export default connect(mapStateToProps, bindActions)(Home);
+export default connect(null, bindActions)(Home);

@@ -81,7 +81,6 @@ function bindActions(dispatch) {
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
   themeState: state.drawer.themeState,
-  routes: state.drawer.routes,
 });
 
 export default connect(mapStateToProps, bindActions)(AboutScreen);

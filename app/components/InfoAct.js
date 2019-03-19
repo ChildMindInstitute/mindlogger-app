@@ -9,6 +9,7 @@ import InfoHeader from './header/info';
 import ActProgress from './progress';
 import ActivityButtons from './ActivityButtons';
 import Screen from './screen';
+import { authTokenSelector } from '../state/user/user.selectors';
 
 class InfoAct extends Component {
   constructor(props) {
@@ -49,7 +50,7 @@ class InfoAct extends Component {
   }
 
   render() {
-    const { activity, auth } = this.props;
+    const { activity, authToken } = this.props;
     const { meta: data } = activity;
     const { index, answers } = this.state;
     return (
@@ -64,7 +65,7 @@ class InfoAct extends Component {
             screen={activity.screens[index]}
             answer={answers[index]}
             onChange={(answer) => { this.handleAnswer(answer, index); }}
-            auth={auth}
+            authToken={authToken}
           />
         )}
         <ActivityButtons
@@ -79,12 +80,12 @@ class InfoAct extends Component {
 }
 
 InfoAct.propTypes = {
-  auth: PropTypes.string.isRequired,
+  authToken: PropTypes.string.isRequired,
   activity: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
-  auth: R.path(['core', 'auth'], state),
+  authToken: authTokenSelector(state),
 });
 
 export default connect(mapStateToProps)(InfoAct);
