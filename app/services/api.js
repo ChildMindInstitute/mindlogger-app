@@ -35,30 +35,32 @@ const downloadActivities = async (authToken, activityList) => Promise.all(
   activityList.map(activity => downloadActivity(authToken, activity._id)),
 );
 
+const downloadActivityFolder = (authToken, folderData) => {
+  if (typeof folderData === 'undefined') {
+    Promise.resolve([]);
+  }
+  return getFolders(authToken, folderData._id, 'folder')
+    .then(folder => downloadActivities(authToken, folder));
+};
+
 const downloadApplet = async (authToken, appletId) => {
   // Each applet should have an "Info" and "Activities" folder, each containing activities
   const appletFolders = await getFolders(authToken, appletId, 'folder');
   if (appletFolders.length === 0) {
     throw new Error(`Applet ${appletId} has no folders`);
   }
-  const infoFolder = appletFolders.filter(folder => folder.name === 'Info');
-  const activitiesFolder = appletFolders.filter(folder => folder.name === 'Activities');
 
-  // Then we have to drill into each folder to get a listing of activities
-  const downloadFolders = await Promise.all([
-    getFolders(authToken, infoFolder[0]._id, 'folder'),
-    getFolders(authToken, activitiesFolder[0]._id, 'folder'),
-  ]);
-
-  // Finally we need to download all of those activities
-  const activityData = await Promise.all([
-    downloadActivities(authToken, downloadFolders[0]),
-    downloadActivities(authToken, downloadFolders[1]),
+  // Drill into the Info and Activities folders and download the contents
+  const infoFolder = appletFolders.filter(folder => folder.name === 'Info')[0];
+  const activitiesFolder = appletFolders.filter(folder => folder.name === 'Activities')[0];
+  const [info, activities] = await Promise.all([
+    downloadActivityFolder(authToken, infoFolder),
+    downloadActivityFolder(authToken, activitiesFolder),
   ]);
 
   return {
-    info: activityData[0].length > 0 ? activityData[0][0] : undefined,
-    activities: activityData[1],
+    info: info.length > 0 ? info[0] : undefined,
+    activities,
   };
 };
 

@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Content, Text, Button, Icon } from 'native-base';
 import { Player, MediaStates } from 'react-native-audio-toolkit';
+import * as R from 'ramda';
 
 import { randomLink } from '../../helper';
 import SurveySection from '../../widgets/survey';
@@ -31,7 +32,8 @@ const styles = StyleSheet.create({
 
 class Screen extends Component {
   static isValid(answer, screen) {
-    if (screen.meta && screen.meta.surveyType) {
+    const surveyType = R.path(['meta', 'surveyType'], screen);
+    if (typeof surveyType !== 'undefined') {
       return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
     }
     return typeof answer !== 'undefined';
@@ -65,21 +67,6 @@ class Screen extends Component {
     const { onChange } = this.props;
     onChange(answer, validated, next);
   }
-
-  // getPayload() {
-  //   const { screen, answer } = this.props;
-  //   const payload = { '@id': screen._id, data: answer };
-  //   if (screen.meta.text) {
-  //     payload.text = screen.meta.text;
-  //   }
-  //   return payload;
-  // }
-
-  // handleAction = () => {
-  //   if (this.canvasRef) {
-  //     this.canvasRef.takeAction();
-  //   }
-  // }
 
   playAudio = () => {
     if (this.player && this.player.state !== MediaStates.DESTROYED) {
