@@ -5,7 +5,7 @@ import SurveyTableSelectorCell from './SurveyTableSelectorCell';
 
 export default class SurveyTableSelector extends Component {
   static isValid(answer, { optionsMin = 0, optionsMax = Infinity }) {
-    if (typeof answer === 'undefined') {
+    if (!answer) {
       return false;
     }
     for (let i = 0; i < answer.length; i += 1) {

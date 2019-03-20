@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Content } from 'native-base';
+import * as R from 'ramda';
 import SurveySection from '../../widgets/survey';
 import CanvasSection from '../../widgets/canvas';
 import TextEntry from '../../widgets/TextEntry';
@@ -30,7 +31,7 @@ class Screen extends Component {
     if (typeof surveyType !== 'undefined') {
       return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
     }
-    return typeof answer !== 'undefined';
+    return !!answer;
   }
 
   reset() {

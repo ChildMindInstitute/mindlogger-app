@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Player, MediaStates } from 'react-native-audio-toolkit';
-import { Text, Button, Icon } from 'native-base';
-import { randomLink } from '../../helper';
+import { Button, Icon } from 'native-base';
+import Markdown from 'react-native-easy-markdown';
+import { randomLink } from '../../services/helper';
 import GImage from '../image/Image';
-
-const styles = StyleSheet.create({
-  text: {
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-});
+import { markdownStyle } from '../../themes/activityTheme';
+import { authTokenSelector } from '../../state/user/user.selectors';
 
 class ScreenDisplay extends Component {
   componentDidMount() {
@@ -66,7 +62,7 @@ class ScreenDisplay extends Component {
 
     return (
       <View>
-        {data.text && <Text style={styles.text}>{data.text}</Text>}
+        {data.text && <Markdown style={markdownStyle}>{data.text}</Markdown>}
         {hasPicture && (
           <GImage
             file={data.pictureVideo.files}
@@ -89,7 +85,7 @@ ScreenDisplay.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  authToken: state.core.auth.token,
+  authToken: authTokenSelector(state),
 });
 
 export default connect(mapStateToProps)(ScreenDisplay);

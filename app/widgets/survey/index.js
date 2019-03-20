@@ -36,7 +36,7 @@ export default class SurveySection extends Component {
     if (typeof SurveyElement.isValid !== 'undefined') {
       return SurveyElement.isValid(answer, config);
     }
-    return typeof answer !== 'undefined';
+    return !!answer;
   }
 
   resetData = () => {

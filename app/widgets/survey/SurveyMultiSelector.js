@@ -6,7 +6,7 @@ import SurveyMultiOption from './SurveyMultiOption';
 
 export default class SurveyMultiSelector extends Component {
   static isValid(answer, { optionsMin = 1, optionsMax = Infinity }) {
-    if (typeof answer === 'undefined'
+    if (!answer
       || answer.length < optionsMin
       || answer.length > optionsMax) {
       return false;
