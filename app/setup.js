@@ -54,7 +54,10 @@ const setup = () => {
     // If user is logged in when they get a push notification, go to the activity
     if (state.user.auth && notification.foreground === false) {
       store.dispatch(setCurrentActivity(notification.data.activityId));
-      Actions.push('take_act');
+      Actions.replace('activity');
+      setTimeout(() => {
+        Actions.push('take_act');
+      }, 100);
     }
   });
 
