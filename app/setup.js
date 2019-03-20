@@ -48,7 +48,13 @@ const setup = () => {
     }
   });
 
-  initializePushNotifications();
+  initializePushNotifications((notification) => {
+    const state = store.getState();
+    // If user is logged in when they get a push notification, go to the activity
+    if (state.user.auth && notification.foreground === false) {
+      Actions.replace('activity');
+    }
+  });
 
   // Root component
   return () => (
