@@ -8,6 +8,10 @@ This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is int
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system, or visit https://matter.childmind.org/Mindlogger/demo#mobile-app for instructions to download the demo mobile app.
 
+### Widget development
+
+[See the widget development guide](https://github.com/ChildMindInstitute/mindlogger-app/widget-development.md)
+
 ### Prerequisites
 
 You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/056bda0c36e624bf909b9f4cb744b2c5e93ad789/app/config.js#L3-L5).

@@ -76,7 +76,7 @@ class Screen extends Component {
         <TextEntry
           style={styles.text}
           config={data.textEntry}
-          answer={onChange}
+          answer={answer ? answer.text : ''}
           onChange={text => onChange({ text })}
         />
       );
