@@ -12,6 +12,8 @@ export const initialState = {
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
+    case APPLET_CONSTANTS.CLEAR:
+      return initialState;
     case APPLET_CONSTANTS.REPLACE_APPLETS:
       return {
         ...state,

@@ -126,7 +126,7 @@ const uploadFiles = (authToken, response, item) => {
 
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
-  const uploadRequests = answers.reduce((acc, answer) => {
+  const uploadRequests = answers.reduce((accumulator, answer) => {
     const { data } = answer;
 
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
@@ -138,8 +138,9 @@ const uploadFiles = (authToken, response, item) => {
     } else if (data && data.uri && data.filename) {
       file = { uri: data.uri, filename: data.filename, type: 'application/octet' };
     } else {
-      return acc; // Break early
+      return accumulator; // Break early
     }
+
 
     const request = RNFetchBlob.fs.stat(file.uri)
       .then(fileInfo => postFile({
@@ -150,9 +151,10 @@ const uploadFiles = (authToken, response, item) => {
         },
         parentType: item._modelType,
         parentId: item._id,
-      }));
+      }))
+      .then(() => RNFetchBlob.fs.unlink(file.uri.replace('file://', ''))); // Delete file after upload
 
-    return [...acc, request];
+    return [...accumulator, request];
   }, []);
 
   return Promise.all(uploadRequests);
@@ -184,3 +186,22 @@ export const uploadResponseQueue = (authToken, responseQueue, progressCallback) 
       return uploadResponseQueue(authToken, R.remove(0, 1, responseQueue), progressCallback);
     });
 };
+
+export const getResponseCollection = (authToken, userId) => getFolders(authToken, userId, 'user')
+  .then((folders) => {
+    if (folders.length > 0) {
+      return folders[0];
+    }
+    console.log(authToken, userId);
+    return postFolder({
+      authToken,
+      folderName: 'Responses',
+      parentId: userId,
+      parentType: 'user',
+      reuseExisting: true,
+    }).then((folder) => {
+      console.log(folder);
+      return folder;
+    });
+  })
+  .then(folder => folder._id);

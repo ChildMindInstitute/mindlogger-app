@@ -17,7 +17,7 @@ import {
   Recorder,
   MediaStates
 } from 'react-native-audio-toolkit';
-import { zeroFill } from '../../helper';
+import { zeroFill } from '../../services/helper';
 
 class AudioRecord extends React.Component {
   constructor() {

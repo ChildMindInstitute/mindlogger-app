@@ -10,6 +10,7 @@ jest.mock('react-native-device-info', () => { });
 jest.mock('react-native-fetch-blob', () => { });
 jest.mock('react-native-push-notification', () => { });
 jest.mock('react-native-router-flux', () => { });
+jest.mock('native-base', () => { });
 
 test('it has an initial state', () => {
   expect(appletReducer(undefined, { type: 'foo' })).toEqual(initialState);
