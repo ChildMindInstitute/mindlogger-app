@@ -1,13 +1,14 @@
 import { combineReducers } from 'redux';
-import { reducer as formReducer } from 'redux-form';
-
-import core from './core/core.reducer';
+import { reducer as form } from 'redux-form';
+import applets from './applets/applets.reducer';
 import drawer from './drawer/drawer.reducer';
-import routes from './routes/routes.reducer';
+import responses from './responses/responses.reducer';
+import user from './user/user.reducer';
 
 export default combineReducers({
-  form: formReducer,
+  applets,
   drawer,
-  routes,
-  core,
+  form,
+  responses,
+  user,
 });

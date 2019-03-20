@@ -1,20 +1,24 @@
-
-import { AsyncStorage } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { persistStore } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 import rootReducer from './state/root.reducer';
-import api from './middleware/api';
-import auth from './middleware/auth';
 
 export default function configureStore(onCompletion) {
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line
-  const store = createStore(rootReducer, {}, composeEnhancers(
-    applyMiddleware(thunk, api, auth),
-  ));
-  persistStore(store, { storage: AsyncStorage }, onCompletion);
+  const persistConfig = {
+    key: 'root',
+    storage,
+    // whitelist: [],
+  };
 
-  // const createStoreWithMiddleware = applyMiddleware(thunk)(createStore);
-  // const store = createStoreWithMiddleware(reducer);
+  const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line
+  const store = createStore(persistedReducer, {}, composeEnhancers(
+    applyMiddleware(thunk),
+  ));
+
+  persistStore(store, null, onCompletion);
+
   return store;
 }

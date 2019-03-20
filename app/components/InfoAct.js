@@ -1,75 +1,91 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { StatusBar } from 'react-native';
+import { connect } from 'react-redux';
 import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import * as R from 'ramda';
 import InfoHeader from './header/info';
 import ActProgress from './progress';
+import ActivityButtons from './ActivityButtons';
 import Screen from './screen';
+import { authTokenSelector } from '../state/user/user.selectors';
 
-export default class InfoAct extends Component {
+class InfoAct extends Component {
   constructor(props) {
-    super(props)
+    super(props);
+    const screenLength = R.pathOr(0, ['activity', 'screens', 'length'], props);
+    this.state = {
+      index: 0,
+      answers: new Array(screenLength),
+    };
   }
 
-  componentWillMount() {
-    this.setState({index: 0, answers:[]});
-  }
-
-  render() {
-    const {act} = this.props;
-    const {meta: data} = act;
-    const {index, answers} = this.state;
-    return (
-      <Container>
-        <StatusBar barStyle='light-content'/>
-        <InfoHeader title={act.name}/>
-        { data.display && data.display.progress && <ActProgress index={index+1} length={data.screens.length} /> }
-        { data.screens && 
-        <Screen
-          key={index}
-          index={index}
-          path={act._id}
-          name={data.screens[index]['name']}
-          answer={answers[index]}
-          onPrev={this.prev}
-          onNext={this.next}
-          globalConfig={data}
-          info={true}
-          length={data.screens.length}
-          />}
-      </Container>
-      );
-  }
-
-  prev = (answer) => {
-    let {index, answers} = this.state;
-    answers[index] = answer;
-    let prevIndex = index - 1;
-    while(prevIndex>=0) {
-      if(answers[prevIndex]['@id']) {
-        this.setState({index: prevIndex, answers});
-        return;
-      }
-      prevIndex = prevIndex - 1;
-    }
-    if (prevIndex<0) {
+  prev = () => {
+    const { index } = this.state;
+    if (index === 0) {
       Actions.pop();
+    } else {
+      this.setState({
+        index: index - 1,
+      });
     }
   }
 
-  next = (answer, index) => {
-    const {act: {meta: data}} = this.props;
-    const {answers} = this.state;
-    const oldIndex = this.state.index;
-    answers[oldIndex] = answer;
-    const newIndex = index || oldIndex+1;
-    if (newIndex<data.screens.length) {
-      for (let i = oldIndex + 1; i < newIndex; i++) {
-        answers[i] = {}
-      }
-      this.setState({index: newIndex, answers});
+  next = () => {
+    const { index } = this.state;
+    const { activity: { meta: data } } = this.props;
+    if (index < data.screens.length - 1) {
+      this.setState({ index: index + 1 });
     } else {
       Actions.pop();
     }
   }
+
+  handleAnswer = (answer, index) => {
+    const { answers } = this.state;
+    this.setState({
+      answers: R.update(index, answer, answers),
+    });
+  }
+
+  render() {
+    const { activity, authToken } = this.props;
+    const { meta: data } = activity;
+    const { index, answers } = this.state;
+    return (
+      <Container>
+        <StatusBar barStyle="light-content" />
+        <InfoHeader title={activity.name} />
+        { data.display && data.display.progress && (
+          <ActProgress index={index + 1} length={data.screens.length} />
+        )}
+        { activity.screens && (
+          <Screen
+            screen={activity.screens[index]}
+            answer={answers[index]}
+            onChange={(answer) => { this.handleAnswer(answer, index); }}
+            authToken={authToken}
+          />
+        )}
+        <ActivityButtons
+          nextLabel={index === activity.screens.length - 1 ? 'Done' : 'Next'}
+          onPressNext={this.next}
+          prevLabel="Back"
+          onPressPrev={this.prev}
+        />
+      </Container>
+    );
+  }
 }
+
+InfoAct.propTypes = {
+  authToken: PropTypes.string.isRequired,
+  activity: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = state => ({
+  authToken: authTokenSelector(state),
+});
+
+export default connect(mapStateToProps)(InfoAct);

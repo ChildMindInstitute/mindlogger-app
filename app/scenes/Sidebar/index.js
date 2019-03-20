@@ -5,11 +5,10 @@ import { Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Content, Text, List, ListItem, Container, Left, Right, Badge, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import PushNotification from 'react-native-push-notification';
 
 import { changePlatform, changeMaterial, closeDrawer } from '../../state/drawer/drawer.actions';
 import styles from './style';
-import { signOut } from '../../state/api/api.actions';
+import { logout } from '../../state/app/app.actions';
 
 
 const datas = [
@@ -65,13 +64,11 @@ class SideBar extends Component {
   }
 
   onMenu(route) {
-    const {closeDrawer, signOut} = this.props;
-    if(route == 'logout') {
-      PushNotification.cancelAllLocalNotifications();
-      signOut();
-      Actions.reset('login');
+    const { closeDrawer, signOut, logout } = this.props;
+    if (route === 'logout') {
+      logout();
     } else {
-      Actions.reset(route);
+      Actions.replace(route);
     }
     closeDrawer();
   }
@@ -118,14 +115,12 @@ class SideBar extends Component {
   }
 }
 
-function bindAction(dispatch) {
-  return {
-    closeDrawer: () => dispatch(closeDrawer()),
-    changePlatform: () => dispatch(changePlatform()),
-    changeMaterial: () => dispatch(changeMaterial()),
-    signOut: () => dispatch(signOut()),
-  };
-}
+const bindAction = {
+  closeDrawer,
+  changePlatform,
+  changeMaterial,
+  logout,
+};
 
 const mapStateToProps = state => ({
   themeState: state.drawer.themeState,

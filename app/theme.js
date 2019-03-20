@@ -1,13 +1,12 @@
-import * as themes from './themes'
-import baseTheme from './themes/baseTheme'
-import {StyleSheet} from 'react-native';
-console.log(themes.default['lightTheme'])
-console.log({
-  ...baseTheme,
-  ...themes['lightTheme']
-})
+import { StyleSheet } from 'react-native';
+import * as themes from './themes';
+import baseTheme from './themes/baseTheme';
+
+export * from './themes/colors';
+
 const styles = StyleSheet.create({
   ...baseTheme,
-  ...themes.default['lightTheme']
+  ...themes.default.lightTheme,
 });
-export default styles
+
+export default styles;

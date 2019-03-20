@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Text, Button, View, Icon } from 'native-base';
 import * as Progress from 'react-native-progress';
 import DrawingBoard from '../../components/drawing/DrawingBoard';
-import { zeroFill } from '../../helper';
+import { zeroFill } from '../../services/helper';
 
 const styles=StyleSheet.create({
   body: {
