@@ -33,11 +33,6 @@ class Screen extends Component {
     return typeof answer !== 'undefined';
   }
 
-  onAnswer = (answer, validated, next) => {
-    const { onChange } = this.props;
-    onChange(answer, validated, next);
-  }
-
   reset() {
     if (this.canvasRef) {
       this.canvasRef.resetData();
