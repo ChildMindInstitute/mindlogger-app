@@ -16,7 +16,7 @@ export default class SurveySliderInput extends Component {
   render() {
     const { config: { options, optionsCount, increments }, answer } = this.props;
     return (
-      <View style={{ alignItems: 'stretch', flex: 3 }}>
+      <View style={{ alignItems: 'stretch', flex: 1 }}>
         <Slider
           value={answer || 0}
           min={1}
@@ -24,7 +24,7 @@ export default class SurveySliderInput extends Component {
           labels={options}
           strict={increments === 'Discrete'}
           barHeight={300}
-          selected={typeof answer !== 'undefined'}
+          selected={!!answer}
           onChange={this.onAnswer}
         />
       </View>

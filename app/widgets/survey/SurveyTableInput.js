@@ -34,7 +34,7 @@ export default class SurveyTableInput extends Component {
       justifyContent: 'center',
     };
     const rowStyle = {
-      cellHeight,
+      height: cellHeight,
     };
     this.imageStyle = {
       width: (cellHeight - 3),
