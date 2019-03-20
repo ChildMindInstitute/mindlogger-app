@@ -1,7 +1,7 @@
 import React from 'react';
 import * as R from 'ramda';
 import PropTypes from 'prop-types';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import { Container } from 'native-base';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
@@ -72,14 +72,19 @@ const ActivityComponent = ({
       <StatusBar barStyle="light-content" />
       <ActHeader title={activity.name} onInfo={activity.info && onInfo} />
       {displayProgress && <ActProgress index={index} length={activity.screens.length} />}
-      <Screen
-        key={`${activity._id}-screen-${index}`}
-        screen={activity.screens[index]}
-        answer={answers[index]}
-        onChange={(answer) => { onAnswer(answer, index); }}
-        authToken={authToken}
-        ref={screenRef}
-      />
+      {activity.screens.length > 0
+        ? (
+          <Screen
+            key={`${activity._id}-screen-${index}`}
+            screen={activity.screens[index]}
+            answer={answers[index]}
+            onChange={(answer) => { onAnswer(answer, index); }}
+            authToken={authToken}
+            ref={screenRef}
+          />
+        )
+        : <View style={{ flex: 1 }} />
+      }
       <ActivityButtons
         nextLabel={getNextLabel(isLast, isValid, isSkippable)}
         onPressNext={isValid || isSkippable ? onNext : undefined}
