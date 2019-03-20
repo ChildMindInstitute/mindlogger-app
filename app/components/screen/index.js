@@ -11,6 +11,9 @@ import CanvasSection from '../../widgets/canvas';
 import TextEntry from '../../widgets/TextEntry';
 import GImage from '../image/Image';
 
+import Markdown from 'react-native-easy-markdown';
+import {markdownStyle} from '../../themes/activityTheme';
+
 const styles = StyleSheet.create({
   content: {
     flexDirection: 'column',
@@ -144,7 +147,12 @@ class Screen extends Component {
         {this.renderPicture(data)}
         <View style={styles.paddingContent}>
           {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
-          { data.surveyType !== 'audio' && <Text style={styles.text}>{data.text}</Text> }
+          { data.surveyType !== 'audio' && <View>
+              <Markdown style={styles.text} markdownStyles = {markdownStyle}>
+                { data.text }
+              </Markdown>
+            </View>
+          }
           { this.renderSurvey(data) }
           { this.renderCanvas(data) }
           {
@@ -157,7 +165,9 @@ class Screen extends Component {
               />
             )
           }
-          { data.surveyType === 'audio' && <Text style={styles.text}>{data.text}</Text> }
+          { data.surveyType === 'audio' && <Markdown style={styles.text} markdownStyles = {markdownStyle}>
+            { data.text }
+          </Markdown> }
         </View>
       </Content>
     );
@@ -172,7 +182,9 @@ class Screen extends Component {
         {this.renderPicture(data)}
         {hasAudio && data.audio.playbackIcon && <Button transparent onPress={this.playAudio}><Icon name="volume-up" /></Button> }
         {/* todo: animate this text below */}
-        <Text style={styles.text}>{data.text}</Text>
+        <Markdown style={styles.text} markdownStyles = {markdownStyle}>
+        { data.text }
+        </Markdown>
         { this.renderSurvey(data) }
         { this.renderCanvas(data) }
         {

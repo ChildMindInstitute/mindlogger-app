@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-const styles=StyleSheet.create({
+export default styles=StyleSheet.create({
   body: {
     flex: 1,
   },
@@ -17,7 +17,8 @@ const styles=StyleSheet.create({
   footerText: {
     fontSize: 20,
     fontWeight: '300',
-  }, buttonText: {
+  },
+  buttonText: {
     fontSize: 24,
     fontWeight: '300'
   },
@@ -65,4 +66,17 @@ const styles=StyleSheet.create({
   }
 });
 
-export default styles
+export const markdownStyle = {
+    text: {
+        alignSelf: 'flex-start',
+        fontSize: 18,
+        color: '#000000',
+    },
+    linkWrapper: {
+        alignSelf: 'flex-start',
+    },
+    link: {
+        alignSelf: 'flex-start',
+        textDecorationLine: 'underline',
+    },
+};
