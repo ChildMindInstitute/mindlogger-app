@@ -1,9 +1,6 @@
 import moment from 'moment';
 import * as R from 'ramda';
 
-// TO DO: Add support for activities becoming due at specific times during the day.
-// The Implementation below assumes all dates start at midnight
-
 export const sortMomentAr = momentAr => momentAr.sort((a, b) => {
   if (a.isBefore(b)) {
     return -1;

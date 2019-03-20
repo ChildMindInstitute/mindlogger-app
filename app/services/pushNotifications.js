@@ -3,9 +3,12 @@ import PushNotification from 'react-native-push-notification';
 import moment from 'moment';
 import { getScheduledDateTimes } from './time';
 
-export const initializePushNotifications = () => {
+export const initializePushNotifications = (onNotification) => {
   PushNotification.configure({
     onNotification: (notification) => {
+      if (typeof onNotification !== 'undefined') {
+        onNotification(notification); // Callback
+      }
       notification.finish(PushNotificationIOS.FetchResult.NoData);
     },
     permissions: {

@@ -8,6 +8,7 @@ import configureStore from './configureStore';
 import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.actions';
 import { clearUser, fetchResponseCollectionId } from './state/user/user.actions';
+import { setCurrentActivity } from './state/responses/responses.actions';
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -48,7 +49,14 @@ const setup = () => {
     }
   });
 
-  initializePushNotifications();
+  initializePushNotifications((notification) => {
+    const state = store.getState();
+    // If user is logged in when they get a push notification, go to the activity
+    if (state.user.auth && notification.foreground === false) {
+      store.dispatch(setCurrentActivity(notification.data.activityId));
+      Actions.push('take_act');
+    }
+  });
 
   // Root component
   return () => (
