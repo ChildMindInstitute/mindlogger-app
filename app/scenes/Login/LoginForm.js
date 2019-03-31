@@ -10,17 +10,6 @@ import { colors } from '../../theme';
 import { FormInputItem } from '../../components/form/FormItem';
 import styles from './styles';
 
-const validate = (body) => {
-  const errors = {};
-  if (!body.user || body.user.length === 0) {
-    errors.user = 'Please enter a username';
-  }
-  if (!body.password || body.password.length === 0) {
-    errors.password = 'Please enter a password';
-  }
-  return errors;
-};
-
 const LoginForm = ({ handleSubmit, submitting, error }) => (
   <Form>
     <Field
@@ -40,7 +29,6 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
       style={styles.text}
       secureTextEntry
     />
-    {error && <Text style={styles.errorText}>{error}</Text>}
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
         ? <ActivityIndicator color={colors.primary} />
@@ -55,7 +43,6 @@ LoginForm.propTypes = {
 
 const LoginFormConnected = reduxForm({
   form: 'login-form',
-  validate,
   enableReinitialize: true,
 })(LoginForm);
 

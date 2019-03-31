@@ -7,31 +7,21 @@ import {
 } from 'native-base';
 import { reduxForm, Field, propTypes } from 'redux-form';
 import { colors } from '../../theme';
-import { FormInputItem } from '../../components/form/FormItem';
+import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
-const validate = (body) => {
-  const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
-  const errors = {};
-  if (!body.login || body.login.length === 0) {
-    errors.login = 'Please enter a username';
-  }
-  if (!body.firstName || body.firstName.length === 0) {
-    errors.firstName = 'Please enter a first name';
-  }
-  if (!body.lastName || body.lastName.length === 0) {
-    errors.lastName = 'Please enter a last name';
-  }
-  if (!body.email || body.email.length === 0) {
-    errors.email = 'Please enter an email address';
-  } else if (!emailRegex.test(body.email)) {
-    errors.email = 'Please enter an email address';
-  }
-  if (!body.password || body.password.length === 0) {
-    errors.password = 'Please enter a password';
-  }
-  return errors;
-};
+const login = value =>
+  value && !RegExp('^[a-z][\\da-z\\-\\.]{3,}$').test(value) ?
+  'Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.' : undefined
+
+const email = value =>
+  value && !RegExp('^[\\w\\.\\-\\+]*@[\\w\\.\\-]*\\.\\w+$').test(value) ?
+  'Invalid email address' : undefined
+
+const password = value =>
+  value && !RegExp('.{6}.*').test(value) ?
+  'Password must be at least 6 characters' : undefined
+
 
 const SignUpForm = ({ handleSubmit, submitting, error }) => (
   <Form>
@@ -44,6 +34,7 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
+      validate = {[required, login]}
     />
     <Field
       component={FormInputItem}
@@ -53,6 +44,7 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
       placeholderTextColor="#aaa"
       autoComplete="off"
       autoCorrect={false}
+      validate = {required}
     />
     <Field
       component={FormInputItem}
@@ -62,6 +54,7 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
       placeholderTextColor="#aaa"
       autoComplete="off"
       autoCorrect={false}
+      validate = {required}
     />
     <Field
       component={FormInputItem}
@@ -73,6 +66,7 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
       autoCorrect={false}
       autoCapitalize="none"
       keyboardType="email-address"
+      validate = {[required, email]}
     />
     <Field
       component={FormInputItem}
@@ -84,6 +78,7 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
+      validate = {[required, password]}
     />
     <Button
       warning
@@ -96,7 +91,6 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
         ? <ActivityIndicator color={colors.primary} />
         : <Text style={styles.buttonText}>Sign Up</Text>}
     </Button>
-    {error && <Text style={styles.errorText}>{error}</Text>}
   </Form>
 );
 
@@ -106,7 +100,6 @@ SignUpForm.propTypes = {
 
 const SignUpFormConnected = reduxForm({
   form: 'signup-form',
-  validate,
   enableReinitialize: true,
 })(SignUpForm);
 

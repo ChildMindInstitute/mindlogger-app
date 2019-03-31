@@ -31,12 +31,6 @@ export default {
     fontSize: 20,
     // textAlign: 'center',
   },
-  errorText: {
-    color: colors.secondary,
-    fontSize: 16,
-    marginTop: 16,
-    fontWeight: 'bold',
-  },
   whiteText: {
     color: colors.secondary,
     fontSize: 16,
