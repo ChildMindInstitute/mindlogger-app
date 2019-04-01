@@ -3,6 +3,59 @@ import {StyleSheet} from 'react-native';
 import { View, Item, Input, Label, Text, Switch, Radio, Body, Right, Picker, CheckBox, Button, Row, ListItem } from 'native-base';
 import InputNumber from 'rc-input-number';
 import DatePicker from 'react-native-datepicker';
+import { colors } from '../../theme';
+
+const styles = StyleSheet.create(
+  {
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  input: {
+    flex: 1,
+    textAlign: 'center',
+    paddingHorizontal: 8,
+    fontSize: 16,
+    color: '#222'
+  },
+  errorText: {
+    color: colors.tertiary,
+    fontSize: 12,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  stepWrap: {
+    width: 28,
+    height: 28,
+    borderWidth: 1,
+    borderColor: '#d9d9d9',
+    borderRadius: 6,
+    backgroundColor: 'white'
+  },
+  stepText: {
+    textAlign: 'center',
+    fontSize: 20,
+    color: '#999',
+    backgroundColor: 'transparent'
+  },
+  stepDisabled: {
+    borderColor: '#d9d9d9',
+    backgroundColor: 'rgba(239, 239, 239, 0.72)'
+  },
+  disabledStepTextColor: {
+    color: '#ccc'
+  },
+  highlightStepTextColor: {
+    color: '#2DB7F5'
+  },
+  highlightStepBorderColor: {
+    borderColor: '#2DB7F5'
+  }
+});
 
 export const FormInputItem = (
   { input: {...input},
@@ -25,6 +78,7 @@ export const FormInputItem = (
       <Label style={props.style}>{label}</Label>
       <Input {...props} onChangeText={input.onChange} {...input} />
     </Item>
+    {touched && ((error && <Text style={styles.errorText}>{error}</Text>) || (warning && <Text style={styles.errorText}>{warning}</Text>))}
   </View>
 );
 
@@ -39,7 +93,7 @@ export const FormSwitchItem = ({ input, label, name, meta: { touched, error, war
               <Switch style={{ margin: 20 }} {...inputProps} onValueChange={input.onChange} onBlur={input.onBlur} onFocus={input.onFocus} value={input.value ? true : false}/>
               </Right>
               {hasError ? <Text>{error}</Text> : <Text />}
-              
+
           </Item> )
 }
 
@@ -75,49 +129,7 @@ export const FormRadioButtonGroup = ({ type,input, name, options, stackedLabel }
     </Button>
       ))}</Item>)
 }
-const styles = StyleSheet.create(
-  {
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  input: {
-    flex: 1,
-    textAlign: 'center',
-    paddingHorizontal: 8,
-    fontSize: 16,
-    color: '#222'
-  },
-  stepWrap: {
-    width: 28,
-    height: 28,
-    borderWidth: 1,
-    borderColor: '#d9d9d9',
-    borderRadius: 6,
-    backgroundColor: 'white'
-  },
-  stepText: {
-    textAlign: 'center',
-    fontSize: 20,
-    color: '#999',
-    backgroundColor: 'transparent'
-  },
-  stepDisabled: {
-    borderColor: '#d9d9d9',
-    backgroundColor: 'rgba(239, 239, 239, 0.72)'
-  },
-  disabledStepTextColor: {
-    color: '#ccc'
-  },
-  highlightStepTextColor: {
-    color: '#2DB7F5'
-  },
-  highlightStepBorderColor: {
-    borderColor: '#2DB7F5'
-  }
-})
+
 export const FormInputNumberItem = ({ input, label, stackedLabel, floatingLabel,style, name, meta: { touched, error, warning }, ...inputProps}) => {
   var hasError= false;
   if(error !== undefined){
@@ -145,7 +157,7 @@ export const FormInputCheckItem = ({ input, label, style, name, itemStyle, meta:
 
 export const FormInputDatePicker = ({input, style, ...props}) => {
   return (
-    <DatePicker style={style} date={input.value} mode="datetime" 
+    <DatePicker style={style} date={input.value} mode="datetime"
     confirmBtnText="Confirm"
     cancelBtnText="Cancel"
     minuteInterval={10}
