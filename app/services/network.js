@@ -12,7 +12,7 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
     ? `?${objectToQueryParams(queryObj)}`
     : '';
 
-  const url = `${config.apiHost}/${route}${queryParams}`;
+  const url = `${global.apiHost}/${route}${queryParams}`;
 
   const headers = {
     ...extraHeaders,
@@ -28,7 +28,7 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
 };
 
 export const postFormData = (route, authToken, body, extraHeaders = {}) => {
-  const url = `${config.apiHost}/${route}`;
+  const url = `${global.apiHost}/${route}`;
   const headers = {
     'Girder-Token': authToken,
     ...extraHeaders,
@@ -48,7 +48,7 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
     name: file.filename,
     size: file.size,
   });
-  const url = `${config.apiHost}/file?${queryParams}`;
+  const url = `${global.apiHost}/file?${queryParams}`;
   const headers = {
     'Girder-Token': authToken,
     'Content-Type': file.type,
@@ -123,7 +123,7 @@ export const signIn = ({ user, password }) => get(
 );
 
 export const signOut = (authToken) => {
-  const url = `${config.apiHost}/user/authentication`;
+  const url = `${global.apiHost}/user/authentication`;
   const headers = {
     'Girder-Token': authToken,
   };
@@ -136,7 +136,7 @@ export const signOut = (authToken) => {
 
 export const forgotPassword = (email) => {
   const queryParams = objectToQueryParams({ email });
-  const url = `${config.apiHost}/user/password/temporary?${queryParams}`;
+  const url = `${global.apiHost}/user/password/temporary?${queryParams}`;
   return fetch(url, {
     method: 'put',
     mode: 'cors',
@@ -144,7 +144,7 @@ export const forgotPassword = (email) => {
 };
 
 export const signUp = (userData) => {
-  const url = `${config.apiHost}/user`;
+  const url = `${global.apiHost}/user`;
   return fetch(url, {
     method: 'post',
     mode: 'cors',
@@ -153,7 +153,7 @@ export const signUp = (userData) => {
 };
 
 export const updateUserDetails = (authToken, { id, firstName, lastName, email }) => {
-  const url = `${config.apiHost}/user/${id}`;
+  const url = `${global.apiHost}/user/${id}`;
   const headers = {
     'Girder-Token': authToken,
   };
@@ -170,7 +170,7 @@ export const updateUserDetails = (authToken, { id, firstName, lastName, email })
 };
 
 export const updatePassword = (authToken, oldPassword, newPassword) => {
-  const url = `${config.apiHost}/user/password`;
+  const url = `${global.apiHost}/user/password`;
   const headers = {
     'Girder-Token': authToken,
   };
