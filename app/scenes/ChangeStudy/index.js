@@ -21,8 +21,18 @@ import ChangeStudyForm from './ChangeStudyForm';
 import config from '../../config';
 
 class ChangeStudy extends Component {
+
+  storeApiHost = async (newApiHost) => {
+    try {
+      await AsyncStorage.setItem('apiHost', newApiHost);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   onSubmit = (body) => {
     global.apiHost = body.apiHost;
+    this.storeApiHost(body.apiHost);
     const { showToast } = this.props;
     showToast({
       text: 'Study has been changed.',
@@ -35,6 +45,7 @@ class ChangeStudy extends Component {
 
   onReset = () => {
     global.apiHost = config.defaultApiHost;
+    this.storeApiHost(config.defaultApiHost)
     const { showToast } = this.props;
     showToast({
       text: 'Study has been reset.',
