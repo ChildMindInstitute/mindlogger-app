@@ -9,5 +9,6 @@ import {
   AppRegistry,
 } from 'react-native';
 import setup from './app/setup';
+import './global.js'
 
 AppRegistry.registerComponent('MDCApp', setup);

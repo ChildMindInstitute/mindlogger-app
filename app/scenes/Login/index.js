@@ -26,6 +26,10 @@ class Login extends Component {
     Actions.forgot_password();
   }
 
+  onChangeStudy = () => {
+    Actions.change_study();
+  }
+
   onAbout = () => {
     Actions.about_app();
   }
@@ -51,13 +55,16 @@ class Login extends Component {
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
-              <Text style={styles.whiteText}>New user</Text>
+            <Text style={styles.whiteText}>New User</Text>
             </TouchableOpacity>
-            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>or</Text>
+            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
-              <Text style={styles.whiteText}>forgot password</Text>
+              <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
-            <Text style={styles.whiteText}>?</Text>
+            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
+            <TouchableOpacity onPress={this.onChangeStudy}>
+              <Text style={styles.whiteText}>Change Study</Text>
+            </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>

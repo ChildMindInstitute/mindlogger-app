@@ -51,7 +51,7 @@ export const atob = (input = '') => {
 };
 
 export const fileLink = (file, token) => {
-  return file ? `${config.apiHost}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
+  return file ? `${global.apiHost}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
 }
 
 export const randomLink = (files, token) => {
