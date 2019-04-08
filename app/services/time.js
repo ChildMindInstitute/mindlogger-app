@@ -27,7 +27,7 @@ export const getScheduledMonthDays = (activity, start, end) => {
     const accumulator = [];
     // Step through the search period
     while (index.isBefore(end)) {
-      if (monthDayAr.includes(index.date())) {
+      if (typeof monthDayAr !== "undefined" && monthDayAr.includes(index.date())) {
         accumulator.push(index.clone());
       }
       index.add(1, 'day');
@@ -44,7 +44,7 @@ export const getScheduledWeekDays = (activity, start, end) => {
     const accumulator = [];
     // Step through the search period
     while (index.isBefore(end)) {
-      if (weekDayAr.includes(index.day())) {
+      if (typeof weekDayAr !== "undefined" && weekDayAr.includes(index.day())) {
         accumulator.push(index.clone());
       }
       index.add(1, 'day');
