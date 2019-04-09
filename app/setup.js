@@ -10,6 +10,7 @@ import { sync } from './state/app/app.actions';
 import { clearUser, fetchResponseCollectionId } from './state/user/user.actions';
 import config from './config';
 import {AsyncStorage} from 'react-native';
+import './global.js'
 
 const checkAuthToken = (store) => {
   const state = store.getState();
