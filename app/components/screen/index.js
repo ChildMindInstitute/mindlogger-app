@@ -49,8 +49,8 @@ class Screen extends Component {
     if (data.canvasType) {
       return (
         <CanvasSection
-          video={this.video}
-          type={data.canvasType}
+          video={(data.canvasType == 'video')}
+          type={((data.canvasType == 'video') ? 'camera' : data.canvasType)}
           config={data.canvas}
           answer={answer}
           onChange={onChange}
