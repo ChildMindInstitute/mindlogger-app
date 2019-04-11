@@ -3,14 +3,13 @@ import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import { AsyncStorage } from 'react-native';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './configureStore';
 import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.actions';
 import { clearUser, fetchResponseCollectionId } from './state/user/user.actions';
 import config from './config';
-import {AsyncStorage} from 'react-native';
-import './global.js'
 
 const checkAuthToken = (store) => {
   const state = store.getState();
