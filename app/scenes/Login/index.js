@@ -7,6 +7,8 @@ import {
   Content,
   Text,
   View,
+  Icon,
+  Footer,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
@@ -61,10 +63,6 @@ class Login extends Component {
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
-            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
-            <TouchableOpacity onPress={this.onChangeStudy}>
-              <Text style={styles.whiteText}>Change Study</Text>
-            </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
@@ -77,8 +75,15 @@ class Login extends Component {
               style={styles.logo}
               source={logoImage}
             />
-          </View>
+        </View>
         </Content>
+        <Footer style={styles.footer}>
+          <View style={{flex: 1}}>
+            <TouchableOpacity onPress={this.onChangeStudy}>
+              <Icon type="FontAwesome" name="database" style={styles.whiteIcon}/>
+            </TouchableOpacity>
+          </View>
+        </Footer>
       </Container>
     );
   }
