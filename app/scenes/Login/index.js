@@ -51,22 +51,20 @@ class Login extends Component {
     return (
       <Container>
         <Content style={styles.container}>
-          <Text style={styles.header}>
-            Mindlogger
-          </Text>
+          <Text style={styles.header}>MindLogger</Text>
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
             <Text style={styles.whiteText}>New User</Text>
             </TouchableOpacity>
-            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
+            <Text style={ styles.whiteText }>{" or "}</Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>What is Mindlogger?</Text>
+              <Text style={styles.whiteText}>What is MindLogger?</Text>
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 26 }}>

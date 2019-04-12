@@ -10,15 +10,6 @@ export default {
     paddingLeft: 50,
     paddingRight: 50,
   },
-  container2: {
-    flex: 1,
-    width: null,
-    height: null,
-    backgroundColor: colors.primary,
-    paddingTop: 40,
-    paddingLeft: 50,
-    paddingRight: 50,
-  },
   header: {
     marginTop: 60,
     height: 100,
@@ -38,19 +29,10 @@ export default {
     padding: 0,
     textAlign: 'center',
   },
-  consentRow: {
-    height: 'auto',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  consentRowText: {
-    color: '#D8D8D8',
-    marginLeft: 20,
-  },
-  boldText: {
-    color: '#D8D8D8',
-    fontWeight: 'bold',
-    alignItems: 'center',
+  whiteIcon: {
+    color: colors.secondary,
+    fontSize: 22,
+    alignSelf: 'flex-end',
   },
   button: {
     alignSelf: 'center',
@@ -69,9 +51,12 @@ export default {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  aboutButton: {
-    marginTop: 20,
-    justifyContent: 'center',
+  footer: {
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    alignContent: 'flex-end',
+    backgroundColor: colors.primary,
   },
   logo: {
     height: 63,
