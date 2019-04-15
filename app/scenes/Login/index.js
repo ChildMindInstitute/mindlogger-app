@@ -7,6 +7,8 @@ import {
   Content,
   Text,
   View,
+  Icon,
+  Footer,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
@@ -49,26 +51,20 @@ class Login extends Component {
     return (
       <Container>
         <Content style={styles.container}>
-          <Text style={styles.header}>
-            Mindlogger
-          </Text>
+          <Text style={styles.header}>MindLogger</Text>
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
             <Text style={styles.whiteText}>New User</Text>
             </TouchableOpacity>
-            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
+            <Text style={ styles.whiteText }>{" or "}</Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>Forgot Password</Text>
-            </TouchableOpacity>
-            <Text style={{ ...styles.whiteText, marginLeft: 3, marginRight: 3 }}>|</Text>
-            <TouchableOpacity onPress={this.onChangeStudy}>
-              <Text style={styles.whiteText}>Change Study</Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>What is Mindlogger?</Text>
+              <Text style={styles.whiteText}>What is MindLogger?</Text>
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 26 }}>
@@ -77,8 +73,15 @@ class Login extends Component {
               style={styles.logo}
               source={logoImage}
             />
-          </View>
+        </View>
         </Content>
+        <Footer style={styles.footer}>
+          <View style={{flex: 1}}>
+            <TouchableOpacity onPress={this.onChangeStudy}>
+              <Icon type="FontAwesome" name="database" style={styles.whiteIcon}/>
+            </TouchableOpacity>
+          </View>
+        </Footer>
       </Container>
     );
   }
