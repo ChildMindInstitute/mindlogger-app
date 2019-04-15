@@ -7,6 +7,16 @@ import { clearUser } from '../user/user.actions';
 import { signOut } from '../../services/network';
 import { uploadQueueSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
+import APP_ACTIONS from './app.constants';
+
+export const setApiHost = hostUrl => ({
+  type: APP_ACTIONS.SET_API_HOST,
+  payload: hostUrl,
+});
+
+export const resetApiHost = () => ({
+  type: APP_ACTIONS.RESET_API_HOST,
+});
 
 export const showToast = toast => () => {
   Toast.show(toast);

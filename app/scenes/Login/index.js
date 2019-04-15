@@ -55,9 +55,9 @@ class Login extends Component {
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
-            <Text style={styles.whiteText}>New User</Text>
+              <Text style={styles.whiteText}>New User</Text>
             </TouchableOpacity>
-            <Text style={ styles.whiteText }>{" or "}</Text>
+            <Text style={styles.whiteText}>{' or '}</Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
@@ -73,7 +73,7 @@ class Login extends Component {
               style={styles.logo}
               source={logoImage}
             />
-        </View>
+          </View>
         </Content>
         <Footer style={styles.footer}>
           <View style={{flex: 1}}>

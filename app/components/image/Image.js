@@ -3,7 +3,8 @@ import { View, Text } from 'react-native'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { CachedImage } from 'react-native-img-cache';
-import { randomLink, fileLink } from '../../services/helper';
+import { randomLink } from '../../services/helper';
+import { fileLink } from '../../services/network';
 import { Thumbnail } from 'native-base';
 import { authSelector } from '../../state/user/user.selectors';
 

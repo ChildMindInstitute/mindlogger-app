@@ -9,13 +9,12 @@ import { reduxForm, Field, propTypes } from 'redux-form';
 import styles from './styles';
 import { FormInputItem } from '../../components/form/FormItem';
 import { colors } from '../../theme';
-import config from '../../config';
 
-const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting }) => (
+const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValues }) => (
   <Form>
     <Field
       component={FormInputItem}
-      placeholder={global.apiHost}
+      placeholder={initialValues.apiHost}
       placeholderTextColor={colors.secondary_50}
       name="apiHost"
       autoCapitalize="none"

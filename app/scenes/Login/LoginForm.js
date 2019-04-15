@@ -7,7 +7,7 @@ import {
 } from 'native-base';
 import { reduxForm, Field, propTypes } from 'redux-form';
 import { colors } from '../../theme';
-import { FormInputItem } from '../../components/form/FormItem';
+import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
 const LoginForm = ({ handleSubmit, submitting, error }) => (
@@ -19,6 +19,7 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
       name="user"
       autoCapitalize="none"
       style={styles.text}
+      validate={required}
     />
     <Field
       component={FormInputItem}
@@ -28,6 +29,7 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
       autoCapitalize="none"
       style={styles.text}
       secureTextEntry
+      validate={required}
     />
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting

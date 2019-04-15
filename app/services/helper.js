@@ -1,5 +1,5 @@
 import RNFetchBlob from 'react-native-fetch-blob';
-import config from '../config';
+import { fileLink } from './network';
 
 export const getFileInfoAsync = (path) => {
   return RNFetchBlob.fs.stat(path);
@@ -49,10 +49,6 @@ export const atob = (input = '') => {
 
   return output;
 };
-
-export const fileLink = (file, token) => {
-  return file ? `${global.apiHost}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
-}
 
 export const randomLink = (files, token) => {
   var rand = files[Math.floor(Math.random() * files.length)];

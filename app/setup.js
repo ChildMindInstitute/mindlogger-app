@@ -4,13 +4,10 @@ import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import AppNavigator from './scenes/AppNavigator';
-import configureStore from './configureStore';
+import configureStore from './store';
 import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.actions';
 import { clearUser, fetchResponseCollectionId } from './state/user/user.actions';
-import config from './config';
-import {AsyncStorage} from 'react-native';
-import './global.js'
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -41,26 +38,7 @@ const setInitialScreen = (authOk) => {
   }
 };
 
-setApiHost = async () => {
-  if (global.apiHost == null) {
-    try {
-      const storedApi = await AsyncStorage.getItem('apiHost');
-      if (storedApi !== null) {
-        global.apiHost = storedApi;
-      } else {
-        global.apiHost = config.defaultApiHost;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  console.log(global.apiHost);
-};
-
 const setup = () => {
-  // Set up
-  setApiHost();
-
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk);

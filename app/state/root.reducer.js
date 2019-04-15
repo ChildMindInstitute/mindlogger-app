@@ -4,6 +4,7 @@ import applets from './applets/applets.reducer';
 import drawer from './drawer/drawer.reducer';
 import responses from './responses/responses.reducer';
 import user from './user/user.reducer';
+import app from './app/app.reducer';
 
 export default combineReducers({
   applets,
@@ -11,4 +12,5 @@ export default combineReducers({
   form,
   responses,
   user,
+  app,
 });
