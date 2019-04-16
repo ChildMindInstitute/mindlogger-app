@@ -14,26 +14,15 @@ import {
   Body,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { SubmissionError } from 'redux-form';
 import styles from './styles';
-import { showToast } from '../../state/app/app.actions';
+import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
 import ChangeStudyForm from './ChangeStudyForm';
-import config from '../../config';
+import { apiHostSelector } from '../../state/app/app.selectors';
 
 class ChangeStudy extends Component {
-
-  storeApiHost = async (newApiHost) => {
-    try {
-      await AsyncStorage.setItem('apiHost', newApiHost);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   onSubmit = (body) => {
-    global.apiHost = body.apiHost;
-    this.storeApiHost(body.apiHost);
-    const { showToast } = this.props;
+    const { showToast, setApiHost } = this.props;
+    setApiHost(body.apiHost);
     showToast({
       text: 'Study has been changed.',
       position: 'top',
@@ -44,9 +33,8 @@ class ChangeStudy extends Component {
   }
 
   onReset = () => {
-    global.apiHost = config.defaultApiHost;
-    this.storeApiHost(config.defaultApiHost)
-    const { showToast } = this.props;
+    const { showToast, resetApiHost } = this.props;
+    resetApiHost();
     showToast({
       text: 'Study has been reset.',
       position: 'top',
@@ -57,6 +45,7 @@ class ChangeStudy extends Component {
   }
 
   render() {
+    const { apiHost } = this.props;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
@@ -72,7 +61,11 @@ class ChangeStudy extends Component {
           <Right />
         </Header>
         <View style={styles.container2}>
-          <ChangeStudyForm onSubmit={this.onSubmit} onReset={this.onReset} />
+          <ChangeStudyForm
+            onSubmit={this.onSubmit}
+            onReset={this.onReset}
+            initialValues={{ apiHost }}
+          />
         </View>
       </Container>
     );
@@ -81,10 +74,18 @@ class ChangeStudy extends Component {
 
 ChangeStudy.propTypes = {
   showToast: PropTypes.func.isRequired,
+  resetApiHost: PropTypes.func.isRequired,
+  setApiHost: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => ({
+  apiHost: apiHostSelector(state),
+});
 
 const mapDispatchToProps = {
   showToast,
+  setApiHost,
+  resetApiHost,
 };
 
-export default connect(null, mapDispatchToProps)(ChangeStudy);
+export default connect(mapStateToProps, mapDispatchToProps)(ChangeStudy);

@@ -1,7 +1,13 @@
 import objectToFormData from 'object-to-formdata';
 import RNFetchBlob from 'react-native-fetch-blob';
-import config from '../config';
+import { getStore } from '../store';
 import { btoa } from './helper';
+import { apiHostSelector } from '../state/app/app.selectors';
+
+const apiHost = () => {
+  const state = getStore().getState(); // Get redux state
+  return apiHostSelector(state);
+};
 
 const objectToQueryParams = obj => Object.keys(obj).map(
   key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`,
@@ -12,7 +18,7 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
     ? `?${objectToQueryParams(queryObj)}`
     : '';
 
-  const url = `${global.apiHost}/${route}${queryParams}`;
+  const url = `${apiHost()}/${route}${queryParams}`;
 
   const headers = {
     ...extraHeaders,
@@ -28,7 +34,7 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
 };
 
 export const postFormData = (route, authToken, body, extraHeaders = {}) => {
-  const url = `${global.apiHost}/${route}`;
+  const url = `${apiHost()}/${route}`;
   const headers = {
     'Girder-Token': authToken,
     ...extraHeaders,
@@ -48,7 +54,7 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
     name: file.filename,
     size: file.size,
   });
-  const url = `${global.apiHost}/file?${queryParams}`;
+  const url = `${apiHost()}/file?${queryParams}`;
   const headers = {
     'Girder-Token': authToken,
     'Content-Type': file.type,
@@ -123,7 +129,7 @@ export const signIn = ({ user, password }) => get(
 );
 
 export const signOut = (authToken) => {
-  const url = `${global.apiHost}/user/authentication`;
+  const url = `${apiHost()}/user/authentication`;
   const headers = {
     'Girder-Token': authToken,
   };
@@ -136,7 +142,7 @@ export const signOut = (authToken) => {
 
 export const forgotPassword = (email) => {
   const queryParams = objectToQueryParams({ email });
-  const url = `${global.apiHost}/user/password/temporary?${queryParams}`;
+  const url = `${apiHost()}/user/password/temporary?${queryParams}`;
   return fetch(url, {
     method: 'put',
     mode: 'cors',
@@ -144,7 +150,7 @@ export const forgotPassword = (email) => {
 };
 
 export const signUp = (userData) => {
-  const url = `${global.apiHost}/user`;
+  const url = `${apiHost()}/user`;
   return fetch(url, {
     method: 'post',
     mode: 'cors',
@@ -153,7 +159,7 @@ export const signUp = (userData) => {
 };
 
 export const updateUserDetails = (authToken, { id, firstName, lastName, email }) => {
-  const url = `${global.apiHost}/user/${id}`;
+  const url = `${apiHost()}/user/${id}`;
   const headers = {
     'Girder-Token': authToken,
   };
@@ -170,7 +176,7 @@ export const updateUserDetails = (authToken, { id, firstName, lastName, email })
 };
 
 export const updatePassword = (authToken, oldPassword, newPassword) => {
-  const url = `${global.apiHost}/user/password`;
+  const url = `${apiHost()}/user/password`;
   const headers = {
     'Girder-Token': authToken,
   };
@@ -184,3 +190,7 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
     }),
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
+
+export const fileLink = (file, token) => {
+  return file ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
+}
