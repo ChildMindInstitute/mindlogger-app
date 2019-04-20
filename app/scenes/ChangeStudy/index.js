@@ -52,6 +52,18 @@ class ChangeStudy extends Component {
     resetApiHost();
   }
 
+  onScan = (body) => {
+    const { showToast, setApiHost } = this.props;
+    Actions.replace('login');
+    showToast({
+      text: 'Study has been set by QR.',
+      position: 'top',
+      type: 'success',
+      duration: 4000,
+    });
+    setApiHost(body.data);
+  }
+
   toggleQrScanner = () => {
     this.setState({scanOpen: !this.state.scanOpen})
   }
