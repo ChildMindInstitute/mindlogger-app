@@ -1,23 +1,14 @@
 import { colors } from '../../theme';
 
 export default {
+  formContainer: {
+    paddingTop: 40,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
   container: {
     flex: 1,
-    width: null,
-    height: null,
     backgroundColor: colors.primary,
-    paddingTop: 20,
-    paddingLeft: 50,
-    paddingRight: 50,
-  },
-  container2: {
-    flex: 1,
-    width: null,
-    height: null,
-    backgroundColor: colors.primary,
-    paddingTop: 40,
-    paddingLeft: 50,
-    paddingRight: 50,
   },
   text: {
     color: colors.secondary,
@@ -32,14 +23,17 @@ export default {
   },
   whiteText: {
     color: colors.secondary,
-    fontSize: 16,
-    marginBottom: 30,
-    padding: 0,
-    textAlign: 'center',
+    fontSize: 20,
   },
   button: {
     alignSelf: 'center',
     marginTop: 36,
+    height: 40,
+    width: 180,
+    backgroundColor: colors.secondary,
+  },
+  headerButton: {
+    alignSelf: 'center',
     height: 40,
     width: 180,
     backgroundColor: colors.secondary,

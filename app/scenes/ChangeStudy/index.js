@@ -12,63 +12,96 @@ import {
   Icon,
   Title,
   Body,
+  Text,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
 import ChangeStudyForm from './ChangeStudyForm';
 import { apiHostSelector } from '../../state/app/app.selectors';
+import QRCodeScanner from 'react-native-qrcode-scanner';
+
 
 class ChangeStudy extends Component {
+  constructor (props) {
+     super(props);
+     this.state = {
+       scanOpen: false,
+     }
+  }
+
   onSubmit = (body) => {
     const { showToast, setApiHost } = this.props;
     setApiHost(body.apiHost);
+    Actions.replace('login');
     showToast({
-      text: 'Study has been changed.',
+      text: 'Study successfully changed.',
       position: 'top',
       type: 'success',
       duration: 2000,
     });
-    Actions.replace('login');
   }
 
   onReset = () => {
     const { showToast, resetApiHost } = this.props;
     resetApiHost();
+    Actions.replace('login');
     showToast({
       text: 'Study has been reset.',
       position: 'top',
       type: 'success',
       duration: 2000,
     });
-    Actions.replace('login');
+  }
+
+  toggleQr =() => {
+    this.setState({scanOpen: !this.state.scanOpen})
   }
 
   render() {
     const { apiHost } = this.props;
-    return (
-      <Container>
-        <StatusBar barStyle="light-content" />
-        <Header>
-          <Left>
-            <Button transparent onPress={() => Actions.pop()}>
-              <Icon name="close" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Change Study</Title>
-          </Body>
-          <Right />
-        </Header>
-        <View style={styles.container2}>
-          <ChangeStudyForm
-            onSubmit={this.onSubmit}
-            onReset={this.onReset}
-            initialValues={{ apiHost }}
-          />
-        </View>
-      </Container>
+
+    const header = (
+      <Header>
+        <Left>
+          <Button transparent onPress={() => Actions.pop()}>
+            <Icon name="close" />
+          </Button>
+        </Left>
+        <Right>
+          <Button transparent block onPress={this.toggleQr}>
+            <Text style={styles.whiteText}>{this.state.scanOpen ? "Enter Manually" : "Scan QR" }</Text>
+          </Button>
+        </Right>
+      </Header>
     );
+
+
+    if (this.state.scanOpen) {
+      return  (
+        <Container style={styles.container}>
+          { header }
+          <QRCodeScanner
+            fadeIn={true}
+            onRead={this.onScan}
+            showMarker={true}
+          />
+        </Container>
+      );
+    } else {
+      return (
+        <Container style={styles.container}>
+          { header }
+          <View style={styles.formContainer}>
+            <ChangeStudyForm
+              onSubmit={this.onSubmit}
+              onReset={this.onReset}
+              initialValues={{ apiHost }}
+            />
+          </View>
+        </Container>
+      );
+    }
   }
 }
 
