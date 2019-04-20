@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -10,16 +9,15 @@ import {
   Left,
   Right,
   Icon,
-  Title,
   Body,
   Text,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import styles from './styles';
-import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
-import ChangeStudyForm from './ChangeStudyForm';
-import { apiHostSelector } from '../../state/app/app.selectors';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import ChangeStudyForm from './ChangeStudyForm';
+import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
+import { apiHostSelector } from '../../state/app/app.selectors';
+import styles from './styles';
 
 
 class ChangeStudy extends Component {
@@ -32,7 +30,6 @@ class ChangeStudy extends Component {
 
   onSubmit = (body) => {
     const { showToast, setApiHost } = this.props;
-    setApiHost(body.apiHost);
     Actions.replace('login');
     showToast({
       text: 'Study successfully changed.',
@@ -40,21 +37,22 @@ class ChangeStudy extends Component {
       type: 'success',
       duration: 2000,
     });
+    setApiHost(body.apiHost);
   }
 
   onReset = () => {
     const { showToast, resetApiHost } = this.props;
-    resetApiHost();
     Actions.replace('login');
     showToast({
-      text: 'Study has been reset.',
+      text: 'Study successfully reset.',
       position: 'top',
       type: 'success',
       duration: 2000,
     });
+    resetApiHost();
   }
 
-  toggleQr =() => {
+  toggleQrScanner = () => {
     this.setState({scanOpen: !this.state.scanOpen})
   }
 
@@ -69,8 +67,8 @@ class ChangeStudy extends Component {
           </Button>
         </Left>
         <Right>
-          <Button transparent block onPress={this.toggleQr}>
-            <Text style={styles.whiteText}>{this.state.scanOpen ? "Enter Manually" : "Scan QR" }</Text>
+          <Button transparent block onPress={this.toggleQrScanner}>
+            <Text style={styles.text}>{this.state.scanOpen ? "Enter URL Manually" : "Scan QR" }</Text>
           </Button>
         </Right>
       </Header>
