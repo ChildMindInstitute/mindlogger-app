@@ -1,5 +1,5 @@
-import * as emaHbn from './ema-hbn.json';
-import * as ndaPhq from './nda-phq.json';
+import * as emaHbn from '../mock-data/ema-hbn.json';
+import * as ndaPhq from '../mock-data/nda-phq.json';
 import {
   activityTransformJson,
   appletTransformJson,
@@ -118,6 +118,7 @@ test('appletTransformJson: ema-hbn', () => {
     altLabel: {
       en: 'ema-hbn',
     },
+    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema',
   };
 
   expect(appletTransformJson(appletJson)).toEqual(expectedResult);

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../state/drawer/drawer.actions';
-import { startResponse } from '../../state/responses/responses.actions';
+import { startResponse } from '../../state/responses/responses.thunks';
 import {
   activitiesSelector,
   downloadProgressSelector,
@@ -11,7 +11,7 @@ import {
 } from '../../state/applets/applets.selectors';
 import ActivityListComponent from './ActivityListComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
-import { sync } from '../../state/app/app.actions';
+import { sync } from '../../state/app/app.thunks';
 
 class ActivityList extends Component {
   handlePressRow = (activity) => {

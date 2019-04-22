@@ -19,18 +19,18 @@ export const activitiesSelector = createSelector(
   (applets, responses) => applets.reduce((acc, applet) => {
     // Add applet id and applet shortname to each activity
     const now = Date.now();
+    const dayMS = 24 * 60 * 60 * 1000;
     
     const extraInfoActivities = applet.activities.map((act) => {
-      const { last, next } = getNextAndLastTimes(act, now);
+      // const { last, next } = getNextAndLastTimes(act, now);
       return {
         ...act,
-        appletId: applet._id,
-        appletShortName: applet.meta.shortName,
+        appletId: applet.schema,
+        appletShortName: applet.name,
         appletName: applet.name,
-        lastScheduledTimestamp: last,
-        lastResponseTimestamp: getLastResponseTime(act, responses),
-        nextScheduledTimestamp: next,
-        logoImage: R.clone(R.path(['meta', 'logoImage'], applet)),
+        lastScheduledTimestamp: now - dayMS,
+        lastResponseTimestamp: now - dayMS + (dayMS / 2),
+        nextScheduledTimestamp: now + dayMS,
       };
     });
 

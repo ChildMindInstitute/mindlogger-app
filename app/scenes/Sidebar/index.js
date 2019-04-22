@@ -8,7 +8,7 @@ import { Actions } from 'react-native-router-flux';
 
 import { changePlatform, changeMaterial, closeDrawer } from '../../state/drawer/drawer.actions';
 import styles from './style';
-import { logout } from '../../state/app/app.actions';
+import { logout } from '../../state/app/app.thunks';
 
 
 const datas = [
