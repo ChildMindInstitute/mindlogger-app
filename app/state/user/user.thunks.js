@@ -2,8 +2,7 @@ import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
 import { getResponseCollection } from '../../services/api';
 import { userInfoSelector, authTokenSelector } from './user.selectors';
-import { showToast } from '../app/app.actions';
-import { sync } from '../app/app.thunks';
+import { sync, showToast } from '../app/app.thunks';
 import {
   setResponseCollectionId,
   setInfo,
