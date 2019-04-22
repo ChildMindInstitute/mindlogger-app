@@ -25,12 +25,12 @@ const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValu
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
         ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Change Study</Text>}
+        : <Text style={styles.buttonText}>Submit</Text>}
     </Button>
     <Button style={styles.button} block onPress={onReset} disabled={submitting}>
       {submitting
         ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Reset Study</Text>}
+        : <Text style={styles.buttonText}>Reset</Text>}
     </Button>
   </Form>
 );

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, AsyncStorage } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -10,65 +9,109 @@ import {
   Left,
   Right,
   Icon,
-  Title,
   Body,
+  Text,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import styles from './styles';
-import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import ChangeStudyForm from './ChangeStudyForm';
+import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
 import { apiHostSelector } from '../../state/app/app.selectors';
+import styles from './styles';
+
 
 class ChangeStudy extends Component {
+  constructor (props) {
+     super(props);
+     this.state = {
+       scanOpen: false,
+     }
+  }
+
   onSubmit = (body) => {
     const { showToast, setApiHost } = this.props;
-    setApiHost(body.apiHost);
+    Actions.replace('login');
     showToast({
-      text: 'Study has been changed.',
+      text: 'Study successfully changed.',
       position: 'top',
       type: 'success',
       duration: 2000,
     });
-    Actions.replace('login');
+    setApiHost(body.apiHost);
   }
 
   onReset = () => {
     const { showToast, resetApiHost } = this.props;
-    resetApiHost();
+    Actions.replace('login');
     showToast({
-      text: 'Study has been reset.',
+      text: 'Study successfully reset.',
       position: 'top',
       type: 'success',
       duration: 2000,
     });
+    resetApiHost();
+  }
+
+  onScan = (body) => {
+    const { showToast, setApiHost } = this.props;
     Actions.replace('login');
+    showToast({
+      text: 'Study has been set by QR.',
+      position: 'top',
+      type: 'success',
+      duration: 4000,
+    });
+    setApiHost(body.data);
+  }
+
+  toggleQrScanner = () => {
+    this.setState({scanOpen: !this.state.scanOpen})
   }
 
   render() {
     const { apiHost } = this.props;
-    return (
-      <Container>
-        <StatusBar barStyle="light-content" />
-        <Header>
-          <Left>
-            <Button transparent onPress={() => Actions.pop()}>
-              <Icon name="close" />
-            </Button>
-          </Left>
-          <Body>
-            <Title>Change Study</Title>
-          </Body>
-          <Right />
-        </Header>
-        <View style={styles.container2}>
-          <ChangeStudyForm
-            onSubmit={this.onSubmit}
-            onReset={this.onReset}
-            initialValues={{ apiHost }}
-          />
-        </View>
-      </Container>
+
+    const header = (
+      <Header>
+        <Left>
+          <Button transparent onPress={() => Actions.pop()}>
+            <Icon name="close" />
+          </Button>
+        </Left>
+        <Right>
+          <Button transparent block onPress={this.toggleQrScanner}>
+            <Text style={styles.text}>{this.state.scanOpen ? "Enter URL Manually" : "Scan QR" }</Text>
+          </Button>
+        </Right>
+      </Header>
     );
+
+
+    if (this.state.scanOpen) {
+      return  (
+        <Container style={styles.container}>
+          { header }
+          <QRCodeScanner
+            fadeIn={true}
+            onRead={this.onScan}
+            showMarker={true}
+          />
+        </Container>
+      );
+    } else {
+      return (
+        <Container style={styles.container}>
+          { header }
+          <View style={styles.formContainer}>
+            <ChangeStudyForm
+              onSubmit={this.onSubmit}
+              onReset={this.onReset}
+              initialValues={{ apiHost }}
+            />
+          </View>
+        </Container>
+      );
+    }
   }
 }
 

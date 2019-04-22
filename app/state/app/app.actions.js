@@ -11,7 +11,7 @@ import APP_ACTIONS from './app.constants';
 
 export const setApiHost = hostUrl => ({
   type: APP_ACTIONS.SET_API_HOST,
-  payload: hostUrl,
+  payload: hostUrl.trim(),
 });
 
 export const resetApiHost = () => ({
