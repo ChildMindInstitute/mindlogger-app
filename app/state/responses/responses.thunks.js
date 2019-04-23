@@ -23,12 +23,12 @@ import { uploadQueueSelector } from './responses.selectors';
 export const startResponse = activity => (dispatch, getState) => {
   const { responses } = getState();
 
-  if (typeof responses.inProgress[activity._id] === 'undefined') {
+  if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
     dispatch(createResponseInProgress(activity));
   }
 
-  dispatch(setCurrentActivity(activity._id));
+  dispatch(setCurrentActivity(activity.id));
 };
 
 export const downloadResponses = () => (dispatch, getState) => {

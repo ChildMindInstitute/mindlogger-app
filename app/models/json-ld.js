@@ -75,6 +75,7 @@ export const flattenValueConstraints = vcObj => Object.keys(vcObj).reduce((accum
 }, {});
 
 export const appletTransformJson = appletJson => ({
+  id: appletJson._id,
   schema: appletJson['@id'],
   name: languageListToObject(appletJson[PREF_LABEL]),
   description: languageListToObject(appletJson[DESCRIPTION]),
@@ -96,6 +97,7 @@ export const activityTransformJson = (activityJson) => {
   const info = languageListToObject(activityJson.info); // TO DO
 
   return {
+    id: activityJson._id,
     name: languageListToObject(activityJson[PREF_LABEL]),
     description: languageListToObject(activityJson[DESCRIPTION]),
     schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),

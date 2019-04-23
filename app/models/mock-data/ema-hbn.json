@@ -2,6 +2,7 @@
   "activities": {
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld": [
       {
+        "_id": "ema-hbn-morning-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -82,6 +83,7 @@
     ],
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld": [
       {
+        "_id": "ema-hbn-evening-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -1513,6 +1515,7 @@
   },
   "applet": [
     {
+      "_id": "ema-hbn-applet-girder-id",
       "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema",
       "@type": [
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/ActivitySet.jsonld"

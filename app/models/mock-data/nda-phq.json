@@ -2,6 +2,7 @@
   "activities": {
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid.jsonld": [
       {
+        "_id": "nda-guid-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -126,6 +127,7 @@
     ],
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/phq9_schema.jsonld": [
       {
+        "_id": "phq-9-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/phq9_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -411,6 +413,7 @@
     ],
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/phq9a_schema.jsonld": [
       {
+        "_id": "phq-9a-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/phq9a_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -511,6 +514,7 @@
     ],
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/phq8_schema.jsonld": [
       {
+        "_id": "phq-8-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/phq8_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -605,6 +609,7 @@
     ],
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/voice_task_schema.jsonld": [
       {
+        "_id": "voice-task-girder-id",
         "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/voice_task_schema",
         "@type": [
           "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
@@ -3531,6 +3536,7 @@
   },
   "applet": [
     {
+      "_id": "nda-phq-applet-girder-id",
       "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/example/nda_phq_schema",
       "@type": [
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/ActivitySet.jsonld"
