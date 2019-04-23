@@ -4,10 +4,9 @@ import PropTypes from 'prop-types';
 import { Content } from 'native-base';
 import * as R from 'ramda';
 import SurveySection from '../../widgets/survey';
-import CanvasSection from '../../widgets/canvas';
-import TextEntry from '../../widgets/TextEntry';
 import Radio from '../../widgets/Radio';
 import MultiSelect from '../../widgets/MultiSelect';
+import Slider from '../../widgets/Slider';
 import ScreenDisplay from './ScreenDisplay';
 
 const styles = StyleSheet.create({
@@ -98,6 +97,15 @@ class Screen extends Component {
     if (screen.inputType === 'radio') {
       return (
         <Radio
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'slider') {
+      return (
+        <Slider
           config={screen.valueConstraints}
           onChange={onChange}
           value={answer}
