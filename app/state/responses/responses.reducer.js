@@ -44,7 +44,7 @@ export default (state = initialState, action = {}) => {
           ...state.inProgress,
           [action.payload.id]: {
             activity: R.clone(action.payload),
-            responses: [],
+            responses: new Array(action.payload.items.length),
           },
         },
       };

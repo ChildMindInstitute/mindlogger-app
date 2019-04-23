@@ -92,6 +92,7 @@ export const itemTransformJson = (itemJson) => {
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
   return {
+    schema: itemJson['@id'],
     name: languageListToObject(itemJson[PREF_LABEL]),
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),

@@ -6,6 +6,8 @@ import * as R from 'ramda';
 import SurveySection from '../../widgets/survey';
 import CanvasSection from '../../widgets/canvas';
 import TextEntry from '../../widgets/TextEntry';
+import Radio from '../../widgets/Radio';
+import MultiSelect from '../../widgets/MultiSelect';
 import ScreenDisplay from './ScreenDisplay';
 
 const styles = StyleSheet.create({
@@ -45,6 +47,7 @@ class Screen extends Component {
 
   renderWidget() {
     const { screen, answer, onChange } = this.props;
+    /*
     const data = screen.meta || {};
     if (data.canvasType) {
       return (
@@ -78,6 +81,26 @@ class Screen extends Component {
           config={data.textEntry}
           answer={answer ? answer.text : ''}
           onChange={text => onChange({ text })}
+        />
+      );
+    }
+    */
+    if (screen.inputType === 'radio'
+      && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
+      return (
+        <MultiSelect
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'radio') {
+      return (
+        <Radio
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
         />
       );
     }

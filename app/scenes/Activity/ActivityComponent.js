@@ -61,22 +61,24 @@ const ActivityComponent = ({
   }
 
   // Calculate some stuff about the current answer state
-  const displayProgress = R.path(['meta', 'display', 'progress'], activity);
-  const isLast = index === activity.screens.length - 1;
-  const isSkippable = R.pathOr(false, ['screens', index, 'meta', 'skippable'], activity);
-  const isValid = Screen.isValid(answers[index], activity.screens[index]);
-  const hasPrevPermission = R.pathOr(false, ['meta', 'permission', 'prev'], activity);
+  const isLast = index === activity.items.length - 1;
+  // const isSkippable = R.pathOr(false, ['screens', index, 'meta', 'skippable'], activity);
+  // const isValid = Screen.isValid(answers[index], activity.items[index]);
+  // const hasPrevPermission = R.pathOr(false, ['meta', 'permission', 'prev'], activity);
+  const isSkippable = true;
+  const isValid = true;
+  const hasPrevPermission = true;
 
   return (
     <Container>
       <StatusBar barStyle="light-content" />
-      <ActHeader title={activity.name} onInfo={activity.info && onInfo} />
-      {displayProgress && <ActProgress index={index} length={activity.screens.length} />}
-      {activity.screens.length > 0
+      <ActHeader title={activity.name.en} onInfo={activity.info && onInfo} />
+      {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
+      {activity.items.length > 0
         ? (
           <Screen
-            key={`${activity._id}-screen-${index}`}
-            screen={activity.screens[index]}
+            key={`${activity.id}-screen-${index}`}
+            screen={activity.items[index]}
             answer={answers[index]}
             onChange={(answer) => { onAnswer(answer, index); }}
             authToken={authToken}
@@ -90,7 +92,7 @@ const ActivityComponent = ({
         onPressNext={isValid || isSkippable ? onNext : undefined}
         prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
         onPressPrev={onPrev}
-        actionLabel={getActionLabel(answers[index], activity.screens[index])}
+        actionLabel={getActionLabel(answers[index], activity.items[index])}
         onPressAction={onUndo}
       />
     </Container>
