@@ -87,35 +87,6 @@ export const appletTransformJson = appletJson => ({
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 
-export const activityTransformJson = (activityJson) => {
-  const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
-  const allowRefuseToAnswer = allowList.includes(REFUSE_TO_ANSWER);
-  const allowDoNotKnow = allowList.includes(DO_NOT_KNOW);
-
-  const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
-  const notification = {}; // TO DO
-  const info = languageListToObject(activityJson.info); // TO DO
-
-  return {
-    id: activityJson._id,
-    name: languageListToObject(activityJson[PREF_LABEL]),
-    description: languageListToObject(activityJson[DESCRIPTION]),
-    schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
-    version: languageListToObject(activityJson[VERSION]),
-    preamble: languageListToObject(activityJson[PREAMBLE]),
-    altLabel: languageListToObject(activityJson[ALT_LABEL]),
-    visibility: listToObject(activityJson[VISIBILITY]),
-    order: flattenIdList(activityJson[ORDER][0]['@list']),
-    shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
-    image: languageListToObject(activityJson[IMAGE]),
-    allowRefuseToAnswer,
-    allowDoNotKnow,
-    scoringLogic,
-    notification,
-    info,
-  };
-};
-
 export const itemTransformJson = (itemJson) => {
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
@@ -133,12 +104,42 @@ export const itemTransformJson = (itemJson) => {
   };
 };
 
+export const activityTransformJson = (activityJson, itemsJson) => {
+  const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
+  const allowRefuseToAnswer = allowList.includes(REFUSE_TO_ANSWER);
+  const allowDoNotKnow = allowList.includes(DO_NOT_KNOW);
+
+  const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
+  const notification = {}; // TO DO
+  const info = languageListToObject(activityJson.info); // TO DO
+
+  const order = flattenIdList(activityJson[ORDER][0]['@list']);
+  const items = order.map(itemKey => itemTransformJson(itemsJson[itemKey][0]));
+
+  return {
+    id: activityJson._id,
+    name: languageListToObject(activityJson[PREF_LABEL]),
+    description: languageListToObject(activityJson[DESCRIPTION]),
+    schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
+    version: languageListToObject(activityJson[VERSION]),
+    preamble: languageListToObject(activityJson[PREAMBLE]),
+    altLabel: languageListToObject(activityJson[ALT_LABEL]),
+    visibility: listToObject(activityJson[VISIBILITY]),
+    shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
+    image: languageListToObject(activityJson[IMAGE]),
+    allowRefuseToAnswer,
+    allowDoNotKnow,
+    scoringLogic,
+    notification,
+    info,
+    items,
+  };
+};
+
 export const transformApplet = (payload) => {
-  const items = Object.keys(payload.items)
-    .map(key => itemTransformJson(payload.items[key][0]));
   const activities = Object.keys(payload.activities)
     .map((key) => {
-      const activity = activityTransformJson(payload.activities[key][0]);
+      const activity = activityTransformJson(payload.activities[key][0], payload.items);
       activity.schema = key;
       return activity;
     });
@@ -146,7 +147,6 @@ export const transformApplet = (payload) => {
 
   // Add the items and activities to the applet object
   applet.activities = activities;
-  applet.items = items;
 
   return applet;
 };
