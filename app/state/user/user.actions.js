@@ -10,11 +10,6 @@ export const setAuth = auth => ({
   payload: auth,
 });
 
-export const setResponseCollectionId = id => ({
-  type: USER_CONSTANTS.SET_RESPONSE_COLLECTION_ID,
-  payload: id,
-});
-
 export const clearUser = () => ({
   type: USER_CONSTANTS.CLEAR,
 });

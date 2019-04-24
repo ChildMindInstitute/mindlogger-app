@@ -8,7 +8,6 @@ import configureStore from './store';
 import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.thunks';
 import { clearUser } from './state/user/user.actions';
-import { fetchResponseCollectionId } from './state/user/user.thunks';
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -21,11 +20,6 @@ const checkAuthToken = (store) => {
   if (moment().isAfter(authExpiration)) {
     store.dispatch(clearUser()); // Auth token expired
     return false;
-  }
-
-  // Response collection id is the folder we will upload responses to
-  if (!state.user.responseCollectionId === null) {
-    store.dispatch(fetchResponseCollectionId());
   }
 
   return true;

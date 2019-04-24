@@ -1,5 +1,5 @@
 import objectToFormData from 'object-to-formdata';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 import { getStore } from '../store';
 import { btoa } from './helper';
 import { apiHostSelector } from '../state/app/app.selectors';
