@@ -6,8 +6,9 @@ import moment from 'moment';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
 import { initializePushNotifications } from './services/pushNotifications';
-import { sync } from './state/app/app.actions';
-import { clearUser, fetchResponseCollectionId } from './state/user/user.actions';
+import { sync } from './state/app/app.thunks';
+import { clearUser } from './state/user/user.actions';
+import { fetchResponseCollectionId } from './state/user/user.thunks';
 
 const checkAuthToken = (store) => {
   const state = store.getState();
