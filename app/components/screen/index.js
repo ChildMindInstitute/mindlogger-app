@@ -3,11 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Content } from 'native-base';
 import * as R from 'ramda';
+import ScreenDisplay from './ScreenDisplay';
 import SurveySection from '../../widgets/survey';
 import Radio from '../../widgets/Radio';
 import MultiSelect from '../../widgets/MultiSelect';
 import Slider from '../../widgets/Slider';
-import ScreenDisplay from './ScreenDisplay';
+import TimeRange from '../../widgets/TimeRange';
 
 const styles = StyleSheet.create({
   content: {
@@ -107,6 +108,14 @@ class Screen extends Component {
       return (
         <Slider
           config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'timeRange') {
+      return (
+        <TimeRange
           onChange={onChange}
           value={answer}
         />
