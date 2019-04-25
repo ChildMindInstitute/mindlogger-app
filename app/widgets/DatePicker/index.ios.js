@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class TimePicker extends React.Component {
+export class DatePicker extends React.Component {
   state = {
     modalVisible: false,
   };
@@ -30,20 +30,17 @@ class TimePicker extends React.Component {
   }
 
   render() {
-    const { onChange, value = {}, label } = this.props;
-    const date = new Date();
-    date.setHours(value.hour || 0);
-    date.setMinutes(value.minute || 0);
+    const { onChange, value } = this.props;
+    const date = value ? new Date(value.year, value.month, value.day) : new Date();
     return (
       <View style={{ marginBottom: 20 }}>
-        <Text style={styles.label}>{label}</Text>
         <ListItem
           onPress={() => {
             this.setModalVisible(true);
           }}
         >
           <Left>
-            <Text>{moment(date).format('h:mm a')}</Text>
+            <Text>{moment(date).format('LL')}</Text>
           </Left>
           <Right>
             <Icon name="arrow-forward" />
@@ -60,11 +57,12 @@ class TimePicker extends React.Component {
                 date={date}
                 onDateChange={(date) => {
                   onChange({
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
+                    year: date.getFullYear(),
+                    month: date.getMonth(),
+                    day: date.getDate(),
                   });
                 }}
-                mode="time"
+                mode="date"
               />
             </Container>
             <Button
@@ -83,18 +81,15 @@ class TimePicker extends React.Component {
   }
 }
 
-TimePicker.defaultProps = {
+DatePicker.defaultProps = {
   value: undefined,
-  label: undefined,
 };
 
-TimePicker.propTypes = {
+DatePicker.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.shape({
-    hour: PropTypes.number,
-    minute: PropTypes.number,
+    year: PropTypes.number,
+    month: PropTypes.number,
+    day: PropTypes.number,
   }),
-  label: PropTypes.string,
 };
-
-export default TimePicker;

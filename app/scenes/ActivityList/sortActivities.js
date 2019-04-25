@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 
 const sortActivitiesAlpha = (a, b) => {
-  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+  const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
+  const nameB = b.name.en.toUpperCase(); // ignore upper and lowercase
   if (nameA < nameB) {
     return -1;
   }

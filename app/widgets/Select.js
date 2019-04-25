@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Text, Container, ListItem, Left, Right, Icon } from 'native-base';
-import { DatePickerIOS, Modal, StyleSheet, View } from 'react-native';
-import moment from 'moment';
-import { colors } from '../../theme';
+import { Picker, Modal, StyleSheet, View } from 'react-native';
+import { colors } from '../theme';
 
 const styles = StyleSheet.create({
   paddingContent: {
@@ -20,7 +19,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class TimePicker extends React.Component {
+export class Select extends React.Component {
   state = {
     modalVisible: false,
   };
@@ -30,20 +29,26 @@ class TimePicker extends React.Component {
   }
 
   render() {
-    const { onChange, value = {}, label } = this.props;
-    const date = new Date();
-    date.setHours(value.hour || 0);
-    date.setMinutes(value.minute || 0);
+    const { onChange, value, config } = this.props;
+
+    if (typeof config.itemList === 'undefined') {
+      return (
+        <View>
+          <Text>No items</Text>
+        </View>
+      );
+    }
+
+    const selectedItem = config.itemList.find(item => item.value === value);
     return (
       <View style={{ marginBottom: 20 }}>
-        <Text style={styles.label}>{label}</Text>
         <ListItem
           onPress={() => {
             this.setModalVisible(true);
           }}
         >
           <Left>
-            <Text>{moment(date).format('h:mm a')}</Text>
+            <Text>{selectedItem ? selectedItem.name.en : 'Select one'}</Text>
           </Left>
           <Right>
             <Icon name="arrow-forward" />
@@ -56,16 +61,20 @@ class TimePicker extends React.Component {
         >
           <Container style={styles.paddingContent}>
             <Container style={styles.datePickerContainer}>
-              <DatePickerIOS
-                date={date}
-                onDateChange={(date) => {
-                  onChange({
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                  });
-                }}
-                mode="time"
-              />
+              <Picker
+                selectedValue={value}
+                onValueChange={onChange}
+              >
+                {
+                  config.itemList.map((item, index) => (
+                    <Picker.Item
+                      label={item.name.en}
+                      value={item.value}
+                      key={index}
+                    />
+                  ))
+                }
+              </Picker>
             </Container>
             <Button
               full
@@ -83,18 +92,12 @@ class TimePicker extends React.Component {
   }
 }
 
-TimePicker.defaultProps = {
+Select.defaultProps = {
   value: undefined,
-  label: undefined,
 };
 
-TimePicker.propTypes = {
+Select.propTypes = {
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.shape({
-    hour: PropTypes.number,
-    minute: PropTypes.number,
-  }),
-  label: PropTypes.string,
+  value: PropTypes.any,
+  config: PropTypes.object.isRequired,
 };
-
-export default TimePicker;

@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import {
-  Text,
-} from 'native-base';
 import TimePicker from './TimePicker';
 
 const defaultTime = { hour: 0, minute: 0 };
 
-class TimeRange extends React.Component {
+export class TimeRange extends React.Component {
   onChangeFrom = (newFromVal) => {
     const { onChange, value } = this.props;
     onChange({
@@ -33,10 +30,8 @@ class TimeRange extends React.Component {
     };
     return (
       <View style={{ alignItems: 'stretch' }}>
-        <Text>From:</Text>
-        <TimePicker value={safeValue.from} onChange={this.onChangeFrom} />
-        <Text>To:</Text>
-        <TimePicker value={safeValue.to} onChange={this.onChangeTo} />
+        <TimePicker value={safeValue.from} onChange={this.onChangeFrom} label="From" />
+        <TimePicker value={safeValue.to} onChange={this.onChangeTo} label="To" />
       </View>
     );
   }
@@ -48,10 +43,8 @@ TimeRange.defaultProps = {
 
 TimeRange.propTypes = {
   value: PropTypes.shape({
-    from: PropTypes.number,
-    to: PropTypes.number,
+    from: PropTypes.object,
+    to: PropTypes.object,
   }),
   onChange: PropTypes.func.isRequired,
 };
-
-export default TimeRange;

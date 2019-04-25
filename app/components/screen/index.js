@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Content } from 'native-base';
 import * as R from 'ramda';
 import ScreenDisplay from './ScreenDisplay';
-import SurveySection from '../../widgets/survey';
-import Radio from '../../widgets/Radio';
-import MultiSelect from '../../widgets/MultiSelect';
-import Slider from '../../widgets/Slider';
-import TimeRange from '../../widgets/TimeRange';
+import WidgetError from './WidgetError';
+import {
+  SurveySection,
+  Radio,
+  MultiSelect,
+  Slider,
+  TimeRange,
+  DatePicker,
+  TextEntry,
+  Select,
+  AudioRecord,
+} from '../../widgets';
 
 const styles = StyleSheet.create({
   content: {
@@ -62,28 +69,6 @@ class Screen extends Component {
         />
       );
     }
-    if (data.surveyType) {
-      return (
-        <SurveySection
-          type={data.surveyType}
-          config={data.survey}
-          answer={answer}
-          onChange={onChange}
-          ref={(ref) => { this.surveyRef = ref; }}
-          onNextChange={() => { }}
-        />
-      );
-    }
-    if (data.textEntry && data.textEntry.display) {
-      return (
-        <TextEntry
-          style={styles.text}
-          config={data.textEntry}
-          answer={answer ? answer.text : ''}
-          onChange={text => onChange({ text })}
-        />
-      );
-    }
     */
     if (screen.inputType === 'radio'
       && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
@@ -95,7 +80,8 @@ class Screen extends Component {
         />
       );
     }
-    if (screen.inputType === 'radio') {
+    if (screen.inputType === 'radio'
+      && R.path(['valueConstraints', 'itemList'], screen)) {
       return (
         <Radio
           config={screen.valueConstraints}
@@ -121,7 +107,41 @@ class Screen extends Component {
         />
       );
     }
-    return <View />;
+    if (screen.inputType === 'date') {
+      return (
+        <DatePicker
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'select'
+      && R.path(['valueConstraints', 'itemList'], screen)) {
+      return (
+        <Select
+          onChange={onChange}
+          value={answer}
+          config={screen.valueConstraints}
+        />
+      );
+    }
+    if (screen.inputType === 'text') {
+      return (
+        <TextEntry
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'audioRecord') {
+      return (
+        <AudioRecord
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    return <WidgetError />;
   }
 
   render() {

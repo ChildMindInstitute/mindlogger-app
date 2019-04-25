@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import {
   ListItem,
-  Radio,
+  Radio as RadioNB,
   Right,
   Body,
   Text,
 } from 'native-base';
 
-const RadioWidget = ({ value, config, onChange }) => (
+export const Radio = ({ value, config, onChange }) => (
   <View style={{ alignItems: 'stretch' }}>
     {
       config.itemList.map((item, index) => (
@@ -18,7 +18,7 @@ const RadioWidget = ({ value, config, onChange }) => (
             <Text>{item.name.en}</Text>
           </Body>
           <Right>
-            <Radio selected={value === item.value} />
+            <RadioNB selected={value === item.value} onPress={() => onChange(item.value)} />
           </Right>
         </ListItem>
       ))
@@ -26,11 +26,11 @@ const RadioWidget = ({ value, config, onChange }) => (
   </View>
 );
 
-RadioWidget.defaultProps = {
+Radio.defaultProps = {
   value: undefined,
 };
 
-RadioWidget.propTypes = {
+Radio.propTypes = {
   value: PropTypes.any,
   config: PropTypes.shape({
     itemList: PropTypes.arrayOf(PropTypes.shape({
@@ -41,5 +41,3 @@ RadioWidget.propTypes = {
   }).isRequired,
   onChange: PropTypes.func.isRequired,
 };
-
-export default RadioWidget;

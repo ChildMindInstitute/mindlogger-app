@@ -17,20 +17,17 @@ export const activitiesSelector = createSelector(
   appletsSelector,
   responsesGroupedByActivitySelector,
   (applets, responses) => applets.reduce((acc, applet) => {
-    // Add applet id and applet shortname to each activity
-    const now = Date.now();
-    const dayMS = 24 * 60 * 60 * 1000;
-    
     const extraInfoActivities = applet.activities.map((act) => {
-      // const { last, next } = getNextAndLastTimes(act, now);
+      const now = Date.now();
+      const { last, next } = getNextAndLastTimes(act, now);
       return {
         ...act,
         appletId: applet.schema,
         appletShortName: applet.name,
         appletName: applet.name,
-        lastScheduledTimestamp: now - dayMS,
-        lastResponseTimestamp: now - dayMS + (dayMS / 2),
-        nextScheduledTimestamp: now + dayMS,
+        lastScheduledTimestamp: last,
+        lastResponseTimestamp: getLastResponseTime(act, responses),
+        nextScheduledTimestamp: next,
       };
     });
 

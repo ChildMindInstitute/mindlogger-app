@@ -10,7 +10,7 @@ import {
   CheckBox,
 } from 'native-base';
 
-export default class MultiSelect extends Component {
+export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
     if (!value
       || value.length < minValue
@@ -43,7 +43,10 @@ export default class MultiSelect extends Component {
                 <Text>{item.name.en}</Text>
               </Body>
               <Right>
-                <CheckBox checked={value && value.includes(item.value)} />
+                <CheckBox
+                  checked={value && value.includes(item.value)}
+                  onPress={() => this.onAnswer(item.value)}
+                />
               </Right>
             </ListItem>
           ))
