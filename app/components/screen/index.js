@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
-import { Content } from 'native-base';
 import * as R from 'ramda';
 import ScreenDisplay from './ScreenDisplay';
 import WidgetError from './WidgetError';
@@ -15,6 +14,7 @@ import {
   TextEntry,
   Select,
   AudioRecord,
+  AudioImageRecord,
 } from '../../widgets';
 
 const styles = StyleSheet.create({
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   paddingContent: {
     padding: 20,
-    flexGrow: 1,
+    flex: 1,
   },
   text: {
     paddingTop: 20,
@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
 
 class Screen extends Component {
   static isValid(answer, screen) {
-    const surveyType = R.path(['meta', 'surveyType'], screen);
-    if (typeof surveyType !== 'undefined') {
-      return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
-    }
-    return !!answer;
+    // const surveyType = R.path(['meta', 'surveyType'], screen);
+    // if (typeof surveyType !== 'undefined') {
+    //   return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
+    // }
+    return (answer !== null && typeof answer !== 'undefined');
   }
 
   reset() {
@@ -133,10 +133,21 @@ class Screen extends Component {
         />
       );
     }
-    if (screen.inputType === 'audioRecord') {
+    if (screen.inputType === 'audioRecord' || screen.inputType === 'audioPassageRecord') {
       return (
         <AudioRecord
           onChange={onChange}
+          config={screen.valueConstraints}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'audioImageRecord'
+      && R.path(['valueConstraints', 'image'], screen)) {
+      return (
+        <AudioImageRecord
+          onChange={onChange}
+          config={screen.valueConstraints}
           value={answer}
         />
       );
@@ -147,14 +158,14 @@ class Screen extends Component {
   render() {
     const { screen } = this.props;
     return (
-      <Content
+      <ScrollView
         alwaysBounceVertical={false}
         style={styles.paddingContent}
-        contentContainerStyle={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       >
         <ScreenDisplay screen={screen} />
         {this.renderWidget()}
-      </Content>
+      </ScrollView>
     );
   }
 }

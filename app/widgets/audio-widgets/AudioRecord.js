@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import Audio from './AudioRecord';
+import Audio from './Audio';
 
 export class AudioRecord extends Component {
   onRecord = (filePath) => {

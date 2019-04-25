@@ -67,7 +67,8 @@ class ScreenDisplay extends Component {
 
     return (
       <View>
-        {screen.question && <Markdown style={markdownStyle}>{screen.question.en}</Markdown>}
+        {screen.preamble && <Markdown markdownStyles={markdownStyle}>{screen.preamble.en}</Markdown>}
+        {screen.question && <Markdown markdownStyles={markdownStyle}>{screen.question.en}</Markdown>}
         {hasPicture && (
           <GImage
             file={data.pictureVideo.files}

@@ -5,7 +5,7 @@ import { Text } from 'native-base';
 import SliderComponent from './slider';
 
 export const Slider = ({ config: { maxValue, minValue, itemList }, value, onChange }) => (
-  <View style={{ alignItems: 'stretch', flex: 1 }}>
+  <View style={{ alignItems: 'stretch', minHeight: 400 }}>
     <Text style={{ textAlign: 'center' }}>{maxValue}</Text>
     <SliderComponent
       value={value || 0}

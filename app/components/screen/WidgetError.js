@@ -28,7 +28,7 @@ const WidgetError = () => (
     </Text>
     <Text style={styles.body}>
       Please ensure you have the latest version of MindLogger installed, then
-      contact your activity administrator.
+      contact your activity administrator if the problem still occurs.
     </Text>
   </View>
 );
