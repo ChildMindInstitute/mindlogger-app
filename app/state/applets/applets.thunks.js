@@ -29,7 +29,6 @@ export const downloadApplets = () => (dispatch, getState) => {
   getApplets(auth.token, userInfo._id).then((applets) => {
     if (loggedInSelector(getState())) {
       const transformedApplets = applets.map(applet => transformApplet(applet));
-      console.log('stubug', transformedApplets);
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
       dispatch(showToast({
