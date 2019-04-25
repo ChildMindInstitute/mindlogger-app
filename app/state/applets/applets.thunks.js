@@ -1,8 +1,7 @@
-// import { downloadAllApplets } from '../../services/api';
-import { downloadAllApplets } from '../../services/mock-api';
+import { getApplets } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
-import { showToast } from '../app/app.actions';
+import { showToast } from '../app/app.thunks';
 import { activitiesSelector } from './applets.selectors';
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import {
@@ -11,6 +10,7 @@ import {
   setDownloadingApplets,
   replaceApplets,
 } from './applets.actions';
+import { transformApplet } from '../../models/json-ld';
 
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
   const state = getState();
@@ -26,12 +26,12 @@ export const downloadApplets = () => (dispatch, getState) => {
   const userInfo = userInfoSelector(state);
   dispatch(setAppletDownloadProgress(0, 0));
   dispatch(setDownloadingApplets(true));
-  downloadAllApplets(auth.token, userInfo._id, (downloaded, total) => {
-    dispatch(setAppletDownloadProgress(downloaded, total));
-  }).then((applets) => {
+  getApplets(auth.token, userInfo._id).then((applets) => {
     if (loggedInSelector(getState())) {
-      dispatch(replaceApplets(applets));
-      dispatch(downloadResponses(applets));
+      const transformedApplets = applets.map(applet => transformApplet(applet));
+      console.log('stubug', transformedApplets);
+      dispatch(replaceApplets(transformedApplets));
+      dispatch(downloadResponses(transformedApplets));
       dispatch(showToast({
         text: 'Download complete',
         position: 'bottom',
