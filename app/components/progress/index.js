@@ -1,10 +1,9 @@
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import React, { Component } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 import * as Progress from 'react-native-progress';
-import {StyleSheet} from 'react-native';
 import PropTypes from 'prop-types';
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
   progressValue: {
     textAlign:'center',
     marginRight: 20,
@@ -29,7 +28,7 @@ export class ActProgress extends Component {
     return (
       <View padder style={styles.progress}>
         <Text style={styles.progressValue}>{`${index+1}/${length}`}</Text>
-        <Progress.Bar style={{flexGrow: 1}} progress={index/length} width={null} height={12}/>
+        <Progress.Bar style={{flexGrow: 1}} progress={(index + 1) / length} width={null} height={12}/>
       </View>
     )
   }

@@ -119,6 +119,7 @@ test('appletTransformJson: ema-hbn', () => {
       en: 'ema-hbn',
     },
     schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema',
+    id: 'ema-hbn-applet-girder-id',
   };
 
   expect(appletTransformJson(appletJson)).toEqual(expectedResult);
@@ -126,16 +127,20 @@ test('appletTransformJson: ema-hbn', () => {
 
 test('activityTransformJson: ema-hbn', () => {
   const activityJson = emaHbn.activities['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld'][0];
+  const itemsJson = emaHbn.items;
+
+  const transformedItems = [
+    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld'][0]),
+    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'][0]),
+    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld'][0]),
+  ];
 
   const expectedResult = {
+    id: 'ema-hbn-morning-girder-id',
     preamble: { en: '' },
     description: { en: 'Morning Questions' },
     name: { en: 'EMA: Morning' },
-    order: [
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld',
-    ],
+    items: transformedItems,
     schemaVersion: { en: '0.0.1' },
     image: undefined,
     version: { en: '0.0.1' },
@@ -153,11 +158,24 @@ test('activityTransformJson: ema-hbn', () => {
     notification: {},
   };
 
-  expect(activityTransformJson(activityJson)).toEqual(expectedResult);
+  expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
 });
 
 test('activityTransformJson: nda-phq', () => {
   const activityJson = ndaPhq.activities['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid.jsonld'][0];
+  const itemsJson = ndaPhq.items;
+
+  const transformedItems = [
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld'][0]),
+    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld'][0]),
+  ];
 
   const expectedResult = {
     allowDoNotKnow: false,
@@ -169,17 +187,7 @@ test('activityTransformJson: nda-phq', () => {
     name: {
       en: 'NDA guid',
     },
-    order: [
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld',
-    ],
+    items: transformedItems,
     preamble: undefined,
     image: undefined,
     schemaVersion: { en: '0.0.1' },
@@ -199,9 +207,10 @@ test('activityTransformJson: nda-phq', () => {
     },
     info: undefined,
     notification: {},
+    id: 'nda-guid-girder-id',
   };
 
-  expect(activityTransformJson(activityJson)).toEqual(expectedResult);
+  expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
 });
 
 test('itemTransformJson', () => {

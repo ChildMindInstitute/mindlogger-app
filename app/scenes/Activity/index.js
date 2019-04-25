@@ -23,7 +23,7 @@ class Activity extends Component {
 
   handleAnswer = (answer, index) => {
     const { setAnswer, activity } = this.props;
-    setAnswer(activity._id, index, answer);
+    setAnswer(activity.id, index, answer);
   }
 
   prev = () => {
@@ -40,14 +40,15 @@ class Activity extends Component {
   next = () => {
     const { activity, completeResponse, answers } = this.props;
     const { index } = this.state;
-    const screen = activity.screens[index];
-    const isValid = Screen.isValid(answers[index], screen);
+    const item = activity.items[index];
+    // const isValid = Screen.isValid(answers[index], screen);
+    const isValid = true;
 
-    if (index < activity.screens.length - 1) {
+    if (index < activity.items.length - 1) {
       // Not finished activity
-      if (!isValid && screen.meta.skipToScreen) {
+      if (!isValid && item.meta.skipToScreen) {
         // Skip to screen
-        const skipToScreen = Math.min(activity.screens.length - 1, screen.meta.skipToScreen - 1);
+        const skipToScreen = Math.min(activity.screens.length - 1, item.meta.skipToScreen - 1);
         this.setState({ index: skipToScreen });
       } else {
         // Next or Skip

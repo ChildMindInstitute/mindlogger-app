@@ -54,7 +54,7 @@ test('it sets current activity', () => {
 });
 
 test('it creates a response in progress', () => {
-  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
+  const activity = { id: 'myActivity', foo: 'bar', screens: [{}] };
   expect(responsesReducer(initialState, createResponseInProgress(activity))).toEqual({
     ...initialState,
     inProgress: {
@@ -67,7 +67,7 @@ test('it creates a response in progress', () => {
 });
 
 test('it removes response in progress', () => {
-  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
+  const activity = { id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, removeResponseInProgress('myActivity'))).toEqual({
     ...initialState,
@@ -76,7 +76,7 @@ test('it removes response in progress', () => {
 });
 
 test('it can set all answers at once', () => {
-  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
+  const activity = { id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, setAnswers('myActivity', 'new answers'))).toEqual({
     ...initialState,
@@ -90,7 +90,7 @@ test('it can set all answers at once', () => {
 });
 
 test('it sets an answer', () => {
-  const activity = { _id: 'myActivity', foo: 'bar', screens: [{}] };
+  const activity = { id: 'myActivity', foo: 'bar', screens: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
   expect(responsesReducer(oneResponseState, setAnswer('myActivity', 0, 'foobar'))).toEqual({
     ...initialState,

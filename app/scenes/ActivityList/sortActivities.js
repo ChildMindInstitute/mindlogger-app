@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 
 const sortActivitiesAlpha = (a, b) => {
-  const nameA = a.name.toUpperCase(); // ignore upper and lowercase
-  const nameB = b.name.toUpperCase(); // ignore upper and lowercase
+  const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
+  const nameB = b.name.en.toUpperCase(); // ignore upper and lowercase
   if (nameA < nameB) {
     return -1;
   }
@@ -43,15 +43,15 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 export default (activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
-  // const inProgressActivities = inProgressKeys.map(key => inProgress[key].activity);
-  const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity._id));
+  const inProgressActivities = inProgressKeys.map(key => inProgress[key].activity);
+  const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
   const overdue = getOverdue(notInProgress).sort(sortBy('lastScheduledTimestamp')).reverse();
   const scheduled = getScheduled(notInProgress).sort(sortBy('nextScheduledTimestamp'));
   const unscheduled = getUnscheduled(notInProgress).sort(sortActivitiesAlpha);
   const completed = getCompleted(notInProgress).reverse();
 
   return [
-    // ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
+    ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
     ...addSectionHeader(addProp('status', 'overdue', overdue), 'Overdue'),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
     ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import Slider from '../../components/slider';
+import Slider from '../Slider/slider';
 
 export default class SurveySliderInput extends Component {
   onAnswer = (answer) => {
