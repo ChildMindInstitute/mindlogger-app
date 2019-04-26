@@ -7,9 +7,7 @@ import {
   postItem,
   postFile,
 } from './network';
-import {
-  transformResponses,
-} from './transform';
+import { transformResponses } from '../models/response';
 
 export const downloadAllResponses = (authToken, userId, applets, onProgress) => {
   let numDownloaded = 0;
@@ -45,7 +43,6 @@ const uploadFiles = (authToken, response, item) => {
       return accumulator; // Break early
     }
 
-
     const request = RNFetchBlob.fs.stat(file.uri)
       .then(fileInfo => postFile({
         authToken,
@@ -64,17 +61,10 @@ const uploadFiles = (authToken, response, item) => {
   return Promise.all(uploadRequests);
 };
 
-const uploadResponse = (authToken, response) => postFolder({
+const uploadResponse = (authToken, response) => postResponse({
   authToken,
-  folderName: response.appletName,
-  parentId: response.responseCollectionId,
-  reuseExisting: true,
-}).then(folder => postItem({
-  authToken,
-  name: response.answerName,
-  metadata: response.payload,
-  folderId: folder._id,
-})).then(item => uploadFiles(authToken, response, item));
+  response,
+}).then(item => uploadFiles(authToken, response, item));
 
 // Recursive function that tries to upload the first item in the queue and
 // calls itself again on success

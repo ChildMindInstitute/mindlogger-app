@@ -1,11 +1,11 @@
+import * as R from 'ramda';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
-import { prepareResponseForUpload } from '../../services/transform';
+import { prepareResponseForUpload } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
 import {
   userInfoSelector,
   authTokenSelector,
-  responseCollectionIdSelector,
   loggedInSelector,
 } from '../user/user.selectors';
 import {
@@ -21,11 +21,13 @@ import {
 import { uploadQueueSelector } from './responses.selectors';
 
 export const startResponse = activity => (dispatch, getState) => {
-  const { responses } = getState();
+  const { responses, user } = getState();
+  const subjectId = R.path(['info', '_id'], user);
+  const timeStarted = Date.now();
 
   if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
-    dispatch(createResponseInProgress(activity));
+    dispatch(createResponseInProgress(activity, subjectId, timeStarted));
   }
 
   dispatch(setCurrentActivity(activity.id));
@@ -61,14 +63,13 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const completeResponse = (activity, answers) => (dispatch, getState) => {
-  const state = getState();
-  const responseCollectionId = responseCollectionIdSelector(state);
-  const preparedResponse = prepareResponseForUpload(activity, answers, responseCollectionId);
-  dispatch(addToUploadQueue(preparedResponse));
-  setTimeout(() => {
-    // Allow some time to navigate back to ActivityList
-    dispatch(removeResponseInProgress(activity._id));
-  }, 300);
-  dispatch(startUploadQueue());
+export const completeResponse = inProgressResponse => (dispatch) => {
+  const preparedResponse = prepareResponseForUpload(inProgressResponse);
+  console.log('preparedResponse', preparedResponse);
+  // dispatch(addToUploadQueue(preparedResponse));
+  // setTimeout(() => {
+  //   // Allow some time to navigate back to ActivityList
+  //   dispatch(removeResponseInProgress(inProgressResponse.activity.id));
+  // }, 300);
+  // dispatch(startUploadQueue());
 };

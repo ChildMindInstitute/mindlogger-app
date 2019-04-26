@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { setAnswer } from '../../state/responses/responses.actions';
 import { completeResponse } from '../../state/responses/responses.thunks';
-import { currentActivitySelector, currentResponsesSelector } from '../../state/responses/responses.selectors';
-import Screen from '../../components/screen';
+import { currentResponsesSelector } from '../../state/responses/responses.selectors';
 import ActivityComponent from './ActivityComponent';
 import { authTokenSelector } from '../../state/user/user.selectors';
 
@@ -17,13 +16,13 @@ class Activity extends Component {
   }
 
   showInfoScreen = () => {
-    const { activity } = this.props;
-    Actions.push('about_act', { activity: activity.info });
+    const { currentResponse } = this.props;
+    Actions.push('about_act', { activity: currentResponse.activity.info });
   }
 
   handleAnswer = (answer, index) => {
-    const { setAnswer, activity } = this.props;
-    setAnswer(activity.id, index, answer);
+    const { setAnswer, currentResponse } = this.props;
+    setAnswer(currentResponse.activity.id, index, answer);
   }
 
   prev = () => {
@@ -38,8 +37,9 @@ class Activity extends Component {
   }
 
   next = () => {
-    const { activity, completeResponse, answers } = this.props;
+    const { currentResponse, completeResponse } = this.props;
     const { index } = this.state;
+    const { activity } = currentResponse;
     const item = activity.items[index];
     // const isValid = Screen.isValid(answers[index], screen);
     const isValid = true;
@@ -56,7 +56,7 @@ class Activity extends Component {
       }
     } else {
       // Finished activity
-      completeResponse(activity, answers);
+      completeResponse(currentResponse);
       Actions.pop();
     }
   }
@@ -68,12 +68,13 @@ class Activity extends Component {
   }
 
   render() {
-    const { activity, answers, authToken } = this.props;
+    const { currentResponse, authToken } = this.props;
+    const { activity, responses } = currentResponse;
     const { index } = this.state;
     return (
       <ActivityComponent
         activity={activity}
-        answers={answers}
+        answers={responses}
         authToken={authToken}
         index={index}
         screenRef={this.screenRef}
@@ -88,20 +89,18 @@ class Activity extends Component {
 }
 
 Activity.defaultProps = {
-  activity: undefined,
+  currentResponse: undefined,
 };
 
 Activity.propTypes = {
-  activity: PropTypes.object,
-  answers: PropTypes.array.isRequired,
+  currentResponse: PropTypes.object,
   setAnswer: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
-  activity: currentActivitySelector(state),
-  answers: currentResponsesSelector(state),
+  currentResponse: currentResponsesSelector(state),
   authToken: authTokenSelector(state),
 });
 

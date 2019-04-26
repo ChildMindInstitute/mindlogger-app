@@ -22,9 +22,11 @@ export const activitiesSelector = createSelector(
       const { last, next } = getNextAndLastTimes(act, now);
       return {
         ...act,
-        appletId: applet.schema,
+        appletId: applet.id,
         appletShortName: applet.name,
         appletName: applet.name,
+        appletSchema: applet.schema,
+        appletSchemaVersion: applet.schemaVersion,
         lastScheduledTimestamp: last,
         lastResponseTimestamp: getLastResponseTime(act, responses),
         nextScheduledTimestamp: next,

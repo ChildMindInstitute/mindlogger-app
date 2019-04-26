@@ -38,14 +38,8 @@ export const responsesGroupedByActivitySelector = createSelector(
   },
 );
 
-export const currentActivitySelector = createSelector(
-  currentActivityIdSelector,
-  inProgressSelector,
-  (activityId, inProgress) => R.path([activityId, 'activity'], inProgress),
-);
-
 export const currentResponsesSelector = createSelector(
   currentActivityIdSelector,
   inProgressSelector,
-  (activityId, inProgress) => R.pathOr([], [activityId, 'responses'], inProgress),
+  (activityId, inProgress) => inProgress[activityId],
 );

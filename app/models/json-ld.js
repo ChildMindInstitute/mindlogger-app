@@ -20,6 +20,7 @@ const REQUIRED_VALUE = 'http://schema.repronim.org/requiredValue';
 const SCHEMA_VERSION = 'http://schema.org/schemaVersion';
 const SCORING_LOGIC = 'https://schema.repronim.org/scoringLogic';
 const SHUFFLE = 'https://schema.repronim.org/shuffle';
+const URL = 'http://schema.org/url';
 const VALUE = 'http://schema.org/value';
 const VALUE_CONSTRAINTS = 'https://schema.repronim.org/valueconstraints';
 const VERSION = 'http://schema.org/version';
@@ -76,7 +77,7 @@ export const flattenValueConstraints = vcObj => Object.keys(vcObj).reduce((accum
 
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
-  schema: appletJson['@id'],
+  schema: languageListToObject(appletJson[URL]).en,
   name: languageListToObject(appletJson[PREF_LABEL]),
   description: languageListToObject(appletJson[DESCRIPTION]),
   schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
@@ -87,12 +88,12 @@ export const appletTransformJson = appletJson => ({
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 
-export const itemTransformJson = (itemJson) => {
+export const itemTransformJson = (itemKey, itemJson) => {
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
   return {
-    schema: itemJson['@id'],
+    schema: itemKey,
     name: languageListToObject(itemJson[PREF_LABEL]),
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
@@ -115,7 +116,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const info = languageListToObject(activityJson.info); // TO DO
 
   const order = flattenIdList(activityJson[ORDER][0]['@list']);
-  const items = order.map(itemKey => itemTransformJson(itemsJson[itemKey]));
+  const items = order.map(itemKey => itemTransformJson(itemKey, itemsJson[itemKey]));
 
   return {
     id: activityJson._id,
@@ -138,6 +139,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const transformApplet = (payload) => {
+  console.log(payload);
   const activities = Object.keys(payload.activities)
     .map((key) => {
       const activity = activityTransformJson(payload.activities[key], payload.items);
