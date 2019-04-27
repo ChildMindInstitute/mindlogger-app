@@ -39,14 +39,26 @@ class Login extends Component {
   onSubmit = (body) => {
     const { signInSuccessful } = this.props;
     return signIn(body)
-      .then(signInSuccessful)
-      .catch(() => {
-        throw new SubmissionError({
-          _error: 'The username or password you entered is incorrect.',
-        });
-      });
+      .then((response) => {
+        if (typeof response.exception !== "undefined") {
+          throw response.exception
+        } else {
+          signInSuccessful(response);
+        }
+      })
+      .catch((e) => {
+        if (typeof e.status !== "undefined") {
+          throw new SubmissionError({
+            password: 'Login failed.'
+          })
+        } else {
+          throw new SubmissionError({
+            user: e
+          })
+        }
+      })
   }
-
+  
   render() {
     return (
       <Container>
