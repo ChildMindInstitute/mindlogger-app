@@ -118,7 +118,7 @@ test('appletTransformJson: ema-hbn', () => {
     altLabel: {
       en: 'ema-hbn',
     },
-    schema: '/ema-hbn_schema',
+    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
     id: 'applet/5ca5314fd27b4e0459cee21f',
   };
 
@@ -128,12 +128,12 @@ test('appletTransformJson: ema-hbn', () => {
 test('activityTransformJson: ema-hbn', () => {
   const activityJson = emaHbn.activities['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld'];
   const itemsJson = emaHbn.items;
-
-  const transformedItems = [
-    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld']),
-    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld']),
-    itemTransformJson(emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld']),
+  const itemKeys = [
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld',
   ];
+  const transformedItems = itemKeys.map(key => itemTransformJson(key, emaHbn.items[key]));
 
   const expectedResult = {
     id: 'activity/5cba070386fafd5df796d908',
@@ -164,18 +164,18 @@ test('activityTransformJson: ema-hbn', () => {
 test('activityTransformJson: nda-phq', () => {
   const activityJson = ndaPhq.activities['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid.jsonld'];
   const itemsJson = ndaPhq.items;
-
-  const transformedItems = [
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld']),
-    itemTransformJson(ndaPhq.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld']),
+  const itemKeys = [
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld',
   ];
+  const transformedItems = itemKeys.map(key => itemTransformJson(key, ndaPhq.items[key]));
 
   const expectedResult = {
     allowDoNotKnow: false,
@@ -214,12 +214,13 @@ test('activityTransformJson: nda-phq', () => {
 });
 
 test('itemTransformJson', () => {
-  const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
-  expect(itemTransformJson(item)).toEqual({
+  const itemKey = 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld';
+  const itemJson = emaHbn.items[itemKey];
+  expect(itemTransformJson(itemKey, itemJson)).toEqual({
     name: { en: 'Nightmares' },
     description: { en: 'whether or not your child experience nightmares or night terrors' },
     schemaVersion: { en: '0.0.1' },
-    schema: '/nightmares',
+    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
     version: { en: '0.0.1' },
     altLabel: { en: 'nightmares' },
     inputType: 'radio',

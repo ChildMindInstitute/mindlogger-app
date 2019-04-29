@@ -6,7 +6,6 @@ import { openDrawer } from '../../state/drawer/drawer.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 import {
   activitiesSelector,
-  downloadProgressSelector,
   isDownloadingAppletsSelector,
 } from '../../state/applets/applets.selectors';
 import ActivityListComponent from './ActivityListComponent';
@@ -28,7 +27,6 @@ class ActivityList extends Component {
   render() {
     const {
       activities,
-      appletsDownloadProgress,
       isDownloadingApplets,
       openDrawer,
       inProgress,
@@ -36,7 +34,6 @@ class ActivityList extends Component {
     return (
       <ActivityListComponent
         activities={activities}
-        appletsDownloadProgress={appletsDownloadProgress}
         isDownloadingApplets={isDownloadingApplets}
         inProgress={inProgress}
         onPressDrawer={openDrawer}
@@ -49,7 +46,6 @@ class ActivityList extends Component {
 
 ActivityList.propTypes = {
   activities: PropTypes.array.isRequired,
-  appletsDownloadProgress: PropTypes.object.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   openDrawer: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
@@ -59,7 +55,6 @@ ActivityList.propTypes = {
 
 const mapStateToProps = state => ({
   activities: activitiesSelector(state),
-  appletsDownloadProgress: downloadProgressSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
   inProgress: inProgressSelector(state),
 });

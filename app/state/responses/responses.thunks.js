@@ -1,11 +1,10 @@
+import * as R from 'ramda';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
-import { prepareResponseForUpload } from '../../services/transform';
+import { prepareResponseForUpload } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
 import {
-  userInfoSelector,
   authTokenSelector,
-  responseCollectionIdSelector,
   loggedInSelector,
 } from '../user/user.selectors';
 import {
@@ -21,11 +20,13 @@ import {
 import { uploadQueueSelector } from './responses.selectors';
 
 export const startResponse = activity => (dispatch, getState) => {
-  const { responses } = getState();
+  const { responses, user } = getState();
+  const subjectId = R.path(['info', '_id'], user);
+  const timeStarted = Date.now();
 
   if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
-    dispatch(createResponseInProgress(activity));
+    dispatch(createResponseInProgress(activity, subjectId, timeStarted));
   }
 
   dispatch(setCurrentActivity(activity.id));
@@ -34,14 +35,13 @@ export const startResponse = activity => (dispatch, getState) => {
 export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
-  const userInfo = userInfoSelector(state);
   const applets = appletsSelector(state);
   dispatch(setDownloadingResponses(true));
-  downloadAllResponses(authToken, userInfo._id, applets, (downloaded, total) => {
+  downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
-  }).then((applets) => {
+  }).then((responses) => {
     if (loggedInSelector(getState())) {
-      dispatch(replaceResponses(applets));
+      dispatch(replaceResponses(responses));
       dispatch(scheduleAndSetNotifications());
     }
   }).finally(() => {
@@ -61,14 +61,12 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const completeResponse = (activity, answers) => (dispatch, getState) => {
-  const state = getState();
-  const responseCollectionId = responseCollectionIdSelector(state);
-  const preparedResponse = prepareResponseForUpload(activity, answers, responseCollectionId);
+export const completeResponse = inProgressResponse => (dispatch) => {
+  const preparedResponse = prepareResponseForUpload(inProgressResponse);
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList
-    dispatch(removeResponseInProgress(activity._id));
+    dispatch(removeResponseInProgress(inProgressResponse.activity.id));
   }, 300);
   dispatch(startUploadQueue());
 };

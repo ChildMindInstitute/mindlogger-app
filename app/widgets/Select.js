@@ -80,6 +80,9 @@ export class Select extends React.Component {
               full
               style={styles.okButton}
               onPress={() => {
+                if (!value) {
+                  onChange(config.itemList[0].value);
+                }
                 this.setModalVisible(false);
               }}
             >

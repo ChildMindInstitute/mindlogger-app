@@ -32,9 +32,13 @@ export const removeResponseInProgress = activityId => ({
   payload: activityId,
 });
 
-export const createResponseInProgress = activity => ({
+export const createResponseInProgress = (activity, subjectId, timeStarted) => ({
   type: RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS,
-  payload: activity,
+  payload: {
+    activity,
+    subjectId,
+    timeStarted,
+  },
 });
 
 export const setAnswer = (activityId, screenIndex, answer) => ({

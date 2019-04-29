@@ -6,7 +6,6 @@ import { activitiesSelector } from './applets.selectors';
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import {
   setNotifications,
-  setAppletDownloadProgress,
   setDownloadingApplets,
   replaceApplets,
 } from './applets.actions';
@@ -24,7 +23,6 @@ export const downloadApplets = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const userInfo = userInfoSelector(state);
-  dispatch(setAppletDownloadProgress(0, 0));
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id).then((applets) => {
     if (loggedInSelector(getState())) {

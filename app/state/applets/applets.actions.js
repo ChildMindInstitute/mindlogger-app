@@ -14,14 +14,6 @@ export const setDownloadingApplets = isDownloading => ({
   payload: isDownloading,
 });
 
-export const setAppletDownloadProgress = (downloaded, total) => ({
-  type: APPLET_CONSTANTS.SET_APPLET_DOWNLOAD_PROGRESS,
-  payload: {
-    downloaded,
-    total,
-  },
-});
-
 export const setNotifications = notifications => ({
   type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
   payload: notifications,

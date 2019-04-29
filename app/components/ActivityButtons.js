@@ -6,7 +6,7 @@ import ScreenButton from './screen/ScreenButton';
 const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     padding: 15,
   },
 });
