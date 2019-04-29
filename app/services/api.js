@@ -23,7 +23,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
 };
 
 const uploadFiles = (authToken, response, item) => {
-  const answers = R.pathOr([], ['payload', 'responses'], response);
+  const answers = R.pathOr([], ['responses'], response);
 
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
@@ -49,7 +49,7 @@ const uploadFiles = (authToken, response, item) => {
           ...file,
           size: fileInfo.size,
         },
-        parentType: item._modelType,
+        parentType: 'item',
         parentId: item._id,
       }))
       .then(() => RNFetchBlob.fs.unlink(file.uri.replace('file://', ''))); // Delete file after upload
@@ -75,5 +75,6 @@ export const uploadResponseQueue = (authToken, responseQueue, progressCallback) 
     .then(() => {
       progressCallback();
       return uploadResponseQueue(authToken, R.remove(0, 1, responseQueue), progressCallback);
-    });
+    })
+    .catch(e => console.warn(e));
 };
