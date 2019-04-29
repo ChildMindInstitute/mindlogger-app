@@ -4,7 +4,7 @@ import {
   getFolders,
   getResponses,
   postFolder,
-  postItem,
+  postResponse,
   postFile,
 } from './network';
 import { transformResponses } from '../models/response';
@@ -28,17 +28,17 @@ const uploadFiles = (authToken, response, item) => {
 
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
-  const uploadRequests = answers.reduce((accumulator, answer) => {
-    const { data } = answer;
+  const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
+    const answer = answers[key];
 
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
-    if (data && data.survey && data.survey.uri) {
-      file = { uri: data.survey.uri, filename: data.survey.filename, type: 'application/octet' };
-    } else if (data && data.canvas && data.canvas.uri) {
-      file = { uri: data.canvas.uri, filename: data.canvas.filename, type: 'application/jpg' };
-    } else if (data && data.uri && data.filename) {
-      file = { uri: data.uri, filename: data.filename, type: 'application/octet' };
+    if (R.path(['survey', 'uri'], answer)) {
+      file = { uri: answer.survey.uri, filename: answer.survey.filename, type: 'application/octet' };
+    } else if (R.path(['canvas', 'uri'], answer)) {
+      file = { uri: answer.canvas.uri, filename: answer.canvas.filename, type: 'application/jpg' };
+    } else if (answer && answer.uri && answer.filename) {
+      file = { uri: answer.uri, filename: answer.filename, type: 'application/octet' };
     } else {
       return accumulator; // Break early
     }

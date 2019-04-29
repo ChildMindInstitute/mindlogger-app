@@ -127,6 +127,14 @@ export const postItem = ({ authToken, folderId, name, metadata = {} }) => postFo
   },
 );
 
+export const postResponse = ({ authToken, response }) => postFormData(
+  `response/${response.applet.id}/${response.activity.id}`,
+  authToken,
+  {
+    metadata: JSON.stringify(response),
+  },
+);
+
 export const signIn = ({ user, password }) => get(
   'user/authentication',
   null,

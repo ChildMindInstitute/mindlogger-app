@@ -2,6 +2,9 @@ import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 
+// Convert ids like "applet/some-id" to just "some-id"
+const trimId = typedId => typedId.split('/').pop();
+
 export const transformResponses = (responsesAr) => {
   const flattened = responsesAr.reduce(
     (acc, item) => {
@@ -40,10 +43,12 @@ export const prepareResponseForUpload = (inProgressResponse) => {
 
   return {
     activity: {
+      id: trimId(activity.id),
       schema: activity.schema,
       schemaVersion: activity.schemaVersion[languageKey],
     },
     applet: {
+      id: trimId(activity.appletId),
       schema: activity.appletSchema,
       schemaVersion: activity.appletSchemaVersion[languageKey],
     },

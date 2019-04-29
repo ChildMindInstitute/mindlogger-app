@@ -65,11 +65,11 @@ export const startUploadQueue = () => (dispatch, getState) => {
 
 export const completeResponse = inProgressResponse => (dispatch) => {
   const preparedResponse = prepareResponseForUpload(inProgressResponse);
-  console.log('preparedResponse', preparedResponse);
-  // dispatch(addToUploadQueue(preparedResponse));
-  // setTimeout(() => {
-  //   // Allow some time to navigate back to ActivityList
-  //   dispatch(removeResponseInProgress(inProgressResponse.activity.id));
-  // }, 300);
-  // dispatch(startUploadQueue());
+  console.log('stubug', preparedResponse);
+  dispatch(addToUploadQueue(preparedResponse));
+  setTimeout(() => {
+    // Allow some time to navigate back to ActivityList
+    dispatch(removeResponseInProgress(inProgressResponse.activity.id));
+  }, 300);
+  dispatch(startUploadQueue());
 };
