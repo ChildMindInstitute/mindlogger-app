@@ -69,6 +69,11 @@ export class DatePicker extends React.Component {
               full
               style={styles.okButton}
               onPress={() => {
+                onChange({
+                  year: date.getFullYear(),
+                  month: date.getMonth(),
+                  day: date.getDate(),
+                });
                 this.setModalVisible(false);
               }}
             >
