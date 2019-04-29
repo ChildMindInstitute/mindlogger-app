@@ -5,5 +5,7 @@ export * from './MultiSelect';
 export * from './Radio';
 export * from './Select';
 export * from './Slider';
+export * from './TableInput';
+export * from './TableSelector';
 export * from './TextEntry';
 export * from './TimeRange';
