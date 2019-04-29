@@ -139,7 +139,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const transformApplet = (payload) => {
-  console.log(payload);
   const activities = Object.keys(payload.activities)
     .map((key) => {
       const activity = activityTransformJson(payload.activities[key], payload.items);

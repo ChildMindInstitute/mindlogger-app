@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
@@ -69,6 +70,10 @@ class Activity extends Component {
 
   render() {
     const { currentResponse, authToken } = this.props;
+    if (!currentResponse) {
+      return <View />;
+    }
+
     const { activity, responses } = currentResponse;
     const { index } = this.state;
     return (

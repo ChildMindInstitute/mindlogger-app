@@ -86,10 +86,10 @@ export const getItems = (authToken, folderId) => get(
   { folderId },
 );
 
-export const getResponses = (authToken, userId, appletId) => get(
+export const getResponses = (authToken, applet) => get(
   'response',
   authToken,
-  { userId, appletId },
+  { applet },
 );
 
 export const getApplets = (authToken, userId) => get(

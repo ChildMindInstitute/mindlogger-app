@@ -4,7 +4,6 @@ import { prepareResponseForUpload } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
 import {
-  userInfoSelector,
   authTokenSelector,
   loggedInSelector,
 } from '../user/user.selectors';
@@ -36,14 +35,13 @@ export const startResponse = activity => (dispatch, getState) => {
 export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
-  const userInfo = userInfoSelector(state);
   const applets = appletsSelector(state);
   dispatch(setDownloadingResponses(true));
-  downloadAllResponses(authToken, userInfo._id, applets, (downloaded, total) => {
+  downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
-  }).then((applets) => {
+  }).then((responses) => {
     if (loggedInSelector(getState())) {
-      dispatch(replaceResponses(applets));
+      dispatch(replaceResponses(responses));
       dispatch(scheduleAndSetNotifications());
     }
   }).finally(() => {
@@ -65,7 +63,6 @@ export const startUploadQueue = () => (dispatch, getState) => {
 
 export const completeResponse = inProgressResponse => (dispatch) => {
   const preparedResponse = prepareResponseForUpload(inProgressResponse);
-  console.log('stubug', preparedResponse);
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList

@@ -27,7 +27,7 @@ export const getScheduledMonthDays = (activity, start, end) => {
     const accumulator = [];
     // Step through the search period
     while (index.isBefore(end)) {
-      if (typeof monthDayAr !== "undefined" && monthDayAr.includes(index.date())) {
+      if (typeof monthDayAr !== 'undefined' && monthDayAr.includes(index.date())) {
         accumulator.push(index.clone());
       }
       index.add(1, 'day');
@@ -108,17 +108,20 @@ export const getNextAndLastTimes = (activity, nowTimestamp) => {
 };
 
 export const getLastResponseTime = (activity, responses) => {
-  const activityResponses = responses[activity._id];
+  const activityResponses = responses[activity.id];
 
   if (typeof activityResponses === 'undefined') {
     return null; // No responses for that activity
   }
 
+  const createdTimestamp = R.path(['meta', 'responseCompleted']);
+
   const lastResponse = activityResponses.reduce(
-    (champion, challenger) => (challenger.createdTimestamp > champion.createdTimestamp
+    (champion, challenger) => (createdTimestamp(challenger) > createdTimestamp(champion)
       ? challenger
       : champion),
     activityResponses[0],
   );
-  return lastResponse.createdTimestamp;
+
+  return createdTimestamp(lastResponse);
 };

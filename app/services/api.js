@@ -9,16 +9,17 @@ import {
 } from './network';
 import { transformResponses } from '../models/response';
 
-export const downloadAllResponses = (authToken, userId, applets, onProgress) => {
+export const downloadAllResponses = (authToken, applets, onProgress) => {
   let numDownloaded = 0;
   onProgress(numDownloaded, applets.length);
-  const requests = applets.map(
-    applet => getResponses(authToken, userId, applet._id).then((responses) => {
+  const requests = applets.map((applet) => {
+    const appletId = applet.id.split('/').pop();
+    return getResponses(authToken, appletId).then((responses) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       return responses;
-    }),
-  );
+    });
+  });
   return Promise.all(requests)
     .then(transformResponses);
 };
