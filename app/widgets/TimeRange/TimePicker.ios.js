@@ -71,6 +71,10 @@ class TimePicker extends React.Component {
               full
               style={styles.okButton}
               onPress={() => {
+                onChange({
+                  hour: date.getHours(),
+                  minute: date.getMinutes(),
+                });
                 this.setModalVisible(false);
               }}
             >
