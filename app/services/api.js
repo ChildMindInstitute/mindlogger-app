@@ -1,9 +1,7 @@
 import * as R from 'ramda';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
-  getFolders,
   getResponses,
-  postFolder,
   postResponse,
   postFile,
 } from './network';
@@ -79,22 +77,3 @@ export const uploadResponseQueue = (authToken, responseQueue, progressCallback) 
       return uploadResponseQueue(authToken, R.remove(0, 1, responseQueue), progressCallback);
     });
 };
-
-export const getResponseCollection = (authToken, userId) => getFolders(authToken, userId, 'user')
-  .then((folders) => {
-    if (folders.length > 0) {
-      return folders[0];
-    }
-    console.log(authToken, userId);
-    return postFolder({
-      authToken,
-      folderName: 'Responses',
-      parentId: userId,
-      parentType: 'user',
-      reuseExisting: true,
-    }).then((folder) => {
-      console.log(folder);
-      return folder;
-    });
-  })
-  .then(folder => folder._id);

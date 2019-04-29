@@ -68,24 +68,6 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
   ).then(res => (res.info().status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const getCollection = (authToken, collectionName) => get(
-  'collection',
-  authToken,
-  { text: collectionName },
-);
-
-export const getFolders = (authToken, parentId, parentType = 'collection') => get(
-  'folder',
-  authToken,
-  { parentId, parentType },
-);
-
-export const getItems = (authToken, folderId) => get(
-  'item',
-  authToken,
-  { folderId },
-);
-
 export const getResponses = (authToken, applet) => get(
   'response',
   authToken,
@@ -96,35 +78,6 @@ export const getApplets = (authToken, userId) => get(
   `user/${userId}/applets`,
   authToken,
   { role: 'user' },
-);
-
-export const postFolder = ({
-  authToken,
-  folderName,
-  parentId,
-  metadata = {},
-  parentType = 'folder',
-  reuseExisting = true,
-}) => postFormData(
-  'folder',
-  authToken,
-  {
-    parentId,
-    name: folderName,
-    metadata: JSON.stringify(metadata),
-    parentType,
-    reuseExisting,
-  },
-);
-
-export const postItem = ({ authToken, folderId, name, metadata = {} }) => postFormData(
-  'item',
-  authToken,
-  {
-    folderId,
-    name,
-    metadata: JSON.stringify(metadata),
-  },
 );
 
 export const postResponse = ({ authToken, response }) => postFormData(
