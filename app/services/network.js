@@ -92,6 +92,12 @@ export const getResponses = (authToken, userId, appletId) => get(
   { userId, appletId },
 );
 
+export const getApplets = (authToken, userId) => get(
+  `user/${userId}/applets`,
+  authToken,
+  { role: 'user' },
+);
+
 export const postFolder = ({
   authToken,
   folderName,
@@ -191,6 +197,6 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const fileLink = (file, token) => {
-  return file ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
-}
+export const fileLink = (file, token) => (file
+  ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}`
+  : '');

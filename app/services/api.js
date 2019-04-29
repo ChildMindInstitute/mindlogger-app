@@ -2,8 +2,6 @@ import * as R from 'ramda';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {
   getFolders,
-  getItems,
-  getCollection,
   getResponses,
   postFolder,
   postItem,
@@ -12,100 +10,6 @@ import {
 import {
   transformResponses,
 } from './transform';
-
-const downloadActivity = async (authToken, activityId) => {
-  const activityFolders = await getFolders(authToken, activityId, 'folder');
-  const activityData = activityFolders.filter(folder => folder.meta.info !== true);
-  const activityScreens = await getItems(authToken, activityData[0]._id);
-
-  // Activities can also have info screens and we need to download the screens
-  const info = activityFolders.filter(folder => folder.meta.info === true)[0] || undefined;
-  if (info) {
-    info.screens = await getItems(authToken, info._id);
-  }
-
-  return {
-    ...activityData[0],
-    screens: activityScreens,
-    info,
-  };
-};
-
-const downloadActivities = async (authToken, activityList) => Promise.all(
-  activityList.map(activity => downloadActivity(authToken, activity._id)),
-);
-
-const downloadActivityFolder = (authToken, folderData) => {
-  if (typeof folderData === 'undefined') {
-    Promise.resolve([]);
-  }
-  return getFolders(authToken, folderData._id, 'folder')
-    .then(folder => downloadActivities(authToken, folder));
-};
-
-const downloadApplet = async (authToken, appletId) => {
-  // Each applet should have an "Info" and "Activities" folder, each containing activities
-  const appletFolders = await getFolders(authToken, appletId, 'folder');
-  if (appletFolders.length === 0) {
-    throw new Error(`Applet ${appletId} has no folders`);
-  }
-
-  // Drill into the Info and Activities folders and download the contents
-  const infoFolder = appletFolders.filter(folder => folder.name === 'Info')[0];
-  const activitiesFolder = appletFolders.filter(folder => folder.name === 'Activities')[0];
-  const [info, activities] = await Promise.all([
-    downloadActivityFolder(authToken, infoFolder),
-    downloadActivityFolder(authToken, activitiesFolder),
-  ]);
-
-  return {
-    info: info.length > 0 ? info[0] : undefined,
-    activities,
-  };
-};
-
-export const downloadAllApplets = async (authToken, userId, onProgress) => {
-  // Get all collections named "Volumes"
-  const collections = await getCollection(authToken, 'Volumes');
-  if (collections.length === 0) {
-    throw new Error('No collection called Volumes');
-  }
-
-  // Get all folders under the Volumes collection (applets)
-  const applets = await getFolders(authToken, collections[0]._id);
-  if (applets.length === 0) {
-    throw new Error('No applets found');
-  }
-
-  // Filter the volumes where the logged in user has "user" role
-  const userApplets = applets.filter(
-    v => v.meta && v.meta.members && v.meta.members.users.includes(userId),
-  );
-  if (userApplets.length === 0) {
-    throw new Error('No user applets found');
-  }
-
-  // Download the user applets in secondary calls
-  let numDownloaded = 0;
-  onProgress(numDownloaded, userApplets.length);
-  const promiseArr = userApplets.map(
-    applet => downloadApplet(authToken, applet._id).then((downloaded) => {
-      numDownloaded += 1;
-      onProgress(numDownloaded, userApplets.length);
-      return {
-        ...applet,
-        ...downloaded,
-      };
-    }),
-  );
-
-  try {
-    const downloadedApplets = await Promise.all(promiseArr);
-    return downloadedApplets;
-  } catch (err) {
-    throw err;
-  }
-};
 
 export const downloadAllResponses = (authToken, userId, applets, onProgress) => {
   let numDownloaded = 0;
@@ -160,19 +64,17 @@ const uploadFiles = (authToken, response, item) => {
   return Promise.all(uploadRequests);
 };
 
-const uploadResponse = (authToken, response) => {
-  return postFolder({
-    authToken,
-    folderName: response.appletName,
-    parentId: response.responseCollectionId,
-    reuseExisting: true,
-  }).then(folder => postItem({
-    authToken,
-    name: response.answerName,
-    metadata: response.payload,
-    folderId: folder._id,
-  })).then(item => uploadFiles(authToken, response, item));
-};
+const uploadResponse = (authToken, response) => postFolder({
+  authToken,
+  folderName: response.appletName,
+  parentId: response.responseCollectionId,
+  reuseExisting: true,
+}).then(folder => postItem({
+  authToken,
+  name: response.answerName,
+  metadata: response.payload,
+  folderId: folder._id,
+})).then(item => uploadFiles(authToken, response, item));
 
 // Recursive function that tries to upload the first item in the queue and
 // calls itself again on success

@@ -115,7 +115,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const info = languageListToObject(activityJson.info); // TO DO
 
   const order = flattenIdList(activityJson[ORDER][0]['@list']);
-  const items = order.map(itemKey => itemTransformJson(itemsJson[itemKey][0]));
+  const items = order.map(itemKey => itemTransformJson(itemsJson[itemKey]));
 
   return {
     id: activityJson._id,
@@ -140,11 +140,11 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 export const transformApplet = (payload) => {
   const activities = Object.keys(payload.activities)
     .map((key) => {
-      const activity = activityTransformJson(payload.activities[key][0], payload.items);
+      const activity = activityTransformJson(payload.activities[key], payload.items);
       activity.schema = key;
       return activity;
     });
-  const applet = appletTransformJson(payload.applet[0]);
+  const applet = appletTransformJson(payload.applet);
 
   // Add the items and activities to the applet object
   applet.activities = activities;
