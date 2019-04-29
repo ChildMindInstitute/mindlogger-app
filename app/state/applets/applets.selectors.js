@@ -7,8 +7,6 @@ export const appletsSelector = R.path(['applets', 'applets']);
 
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 
-export const downloadProgressSelector = R.path(['applets', 'downloadProgress']);
-
 export const notificationsSelector = R.path(['applets', 'notifications']);
 
 // Flatten the applet activities into a single list, attaching some extra info

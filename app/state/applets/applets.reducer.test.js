@@ -2,7 +2,6 @@ import appletReducer, { initialState } from './applets.reducer';
 import {
   replaceApplets,
   setDownloadingApplets,
-  setAppletDownloadProgress,
   setNotifications,
 } from './applets.actions';
 
@@ -29,17 +28,6 @@ test('it sets downloading assets flag', () => {
     isDownloadingApplets: true,
   });
 });
-
-test('it sets applet download progress', () => {
-  expect(appletReducer(initialState, setAppletDownloadProgress(1, 3))).toEqual({
-    ...initialState,
-    downloadProgress: {
-      downloaded: 1,
-      total: 3,
-    },
-  });
-});
-
 
 test('it sets notifications', () => {
   expect(appletReducer(initialState, setNotifications('test'))).toEqual({

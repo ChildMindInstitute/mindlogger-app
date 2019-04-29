@@ -24,14 +24,6 @@ export default (state = initialState, action = {}) => {
         ...state,
         isDownloadingApplets: action.payload,
       };
-    case APPLET_CONSTANTS.SET_APPLET_DOWNLOAD_PROGRESS:
-      return {
-        ...state,
-        downloadProgress: {
-          downloaded: action.payload.downloaded,
-          total: action.payload.total,
-        },
-      };
     case APPLET_CONSTANTS.SET_NOTIFICATIONS:
       return {
         ...state,

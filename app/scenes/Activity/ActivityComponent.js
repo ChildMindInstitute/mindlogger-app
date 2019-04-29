@@ -34,7 +34,7 @@ const getPrevLabel = (isFirst, hasPrevPermission) => {
 const getActionLabel = (answer, screen) => {
   const canvasType = R.path(['meta', 'canvasType'], screen);
   const canvasMode = R.path(['meta', 'canvas', 'mode'], screen);
-  if (answer) {
+  if (answer !== null && typeof answer !== 'undefined') {
     return 'Undo';
   }
   if (canvasType === 'draw' && canvasMode === 'camera') {
@@ -62,12 +62,9 @@ const ActivityComponent = ({
 
   // Calculate some stuff about the current answer state
   const isLast = index === activity.items.length - 1;
-  // const isSkippable = R.pathOr(false, ['screens', index, 'meta', 'skippable'], activity);
-  // const isValid = Screen.isValid(answers[index], activity.items[index]);
-  // const hasPrevPermission = R.pathOr(false, ['meta', 'permission', 'prev'], activity);
-  const isSkippable = true;
-  const isValid = true;
-  const hasPrevPermission = true;
+  const isSkippable = activity.allowRefuseToAnswer === true || activity.allowDoNotKnow === true;
+  const isValid = Screen.isValid(answers[index], activity.items[index]);
+  const hasPrevPermission = true; // TO DO
 
   return (
     <Container>

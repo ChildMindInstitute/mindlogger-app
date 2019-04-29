@@ -7,7 +7,6 @@ import sortActivities from './sortActivities';
 
 const ActivityListComponent = ({
   activities,
-  appletsDownloadProgress,
   isDownloadingApplets,
   onPressDrawer,
   onPressRefresh,
@@ -34,15 +33,7 @@ const ActivityListComponent = ({
         {isDownloadingApplets && (
           <View>
             <Spinner />
-            {
-              appletsDownloadProgress.total > 0
-                ? (
-                  <Text style={styles.text}>
-                    Downloaded {appletsDownloadProgress.downloaded} of {appletsDownloadProgress.total} applets...
-                  </Text>
-                )
-                : <Text style={styles.text}>Downloading applets...</Text>
-            }
+            <Text style={styles.text}>Downloading applets...</Text>
           </View>
         )}
         <List
@@ -62,10 +53,6 @@ const ActivityListComponent = ({
 
 ActivityListComponent.propTypes = {
   activities: PropTypes.array.isRequired,
-  appletsDownloadProgress: PropTypes.shape({
-    downloaded: PropTypes.number,
-    total: PropTypes.number,
-  }).isRequired,
   inProgress: PropTypes.object.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
