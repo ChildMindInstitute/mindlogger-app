@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const deleteFile = path => RNFetchBlob.fs.unlink(path.replace('file://', ''));
 

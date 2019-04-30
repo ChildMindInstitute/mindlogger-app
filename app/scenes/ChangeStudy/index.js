@@ -16,6 +16,7 @@ import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
 import { setApiHost, resetApiHost } from '../../state/app/app.actions';
+import { apiHostSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
 
@@ -115,6 +116,7 @@ class ChangeStudy extends Component {
 }
 
 ChangeStudy.propTypes = {
+  apiHost: PropTypes.string.isRequired,
   showToast: PropTypes.func.isRequired,
   resetApiHost: PropTypes.func.isRequired,
   setApiHost: PropTypes.func.isRequired,
