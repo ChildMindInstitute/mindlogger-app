@@ -12,14 +12,14 @@ import { authTokenSelector } from '../../state/user/user.selectors';
 
 class ScreenDisplay extends Component {
   componentDidMount() {
-    const { screen, authToken } = this.props;
-    const { audio } = screen.meta;
-    if (audio && audio.display && audio.files.length > 0) {
-      this.audioLink = randomLink(audio.files, authToken);
-      if (audio.autoPlay) {
-        this.playAudio();
-      }
-    }
+    // const { screen, authToken } = this.props;
+    // const { audio } = screen.meta;
+    // if (audio && audio.display && audio.files.length > 0) {
+    //   this.audioLink = randomLink(audio.files, authToken);
+    //   if (audio.autoPlay) {
+    //     this.playAudio();
+    //   }
+    // }
   }
 
   componentWillUnmount() {
@@ -49,6 +49,8 @@ class ScreenDisplay extends Component {
 
   render() {
     const { screen } = this.props;
+
+    /*
     const data = screen.meta || {};
 
     const hasPicture = data.pictureVideo
@@ -59,10 +61,14 @@ class ScreenDisplay extends Component {
       && data.audio.display
       && data.audio.files.length > 0
       && data.audio.playbackIcon;
+    */
+    const hasPicture = false;
+    const hasAudio = false;
 
     return (
       <View>
-        {data.text && <Markdown style={markdownStyle}>{data.text}</Markdown>}
+        {screen.preamble && <Markdown markdownStyles={markdownStyle}>{screen.preamble.en}</Markdown>}
+        {screen.question && <Markdown markdownStyles={markdownStyle}>{screen.question.en}</Markdown>}
         {hasPicture && (
           <GImage
             file={data.pictureVideo.files}

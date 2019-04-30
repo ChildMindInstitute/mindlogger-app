@@ -13,7 +13,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
 import styles from './styles';
-import { signInSuccessful } from '../../state/user/user.actions';
+import { signInSuccessful } from '../../state/user/user.thunks';
 import { signIn } from '../../services/network';
 import LoginForm from './LoginForm';
 

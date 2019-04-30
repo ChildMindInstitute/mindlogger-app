@@ -19,7 +19,7 @@ import {
 } from 'react-native-audio-toolkit';
 import { zeroFill } from '../../services/helper';
 
-class AudioRecord extends React.Component {
+class Audio extends React.Component {
   constructor() {
     super();
     //let audioPath = AudioUtils.DocumentDirectoryPath + `/${randomString({length:16})}.aac`;
@@ -388,4 +388,4 @@ var styles = StyleSheet.create({
   }
 });
 
-export default AudioRecord;
+export default Audio;

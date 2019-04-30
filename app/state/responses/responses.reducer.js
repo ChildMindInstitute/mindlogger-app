@@ -42,9 +42,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload._id]: {
-            activity: R.clone(action.payload),
-            responses: new Array(action.payload.screens.length),
+          [action.payload.activity.id]: {
+            activity: R.clone(action.payload.activity),
+            responses: new Array(action.payload.activity.items.length),
+            subjectId: action.payload.subjectId,
+            timeStarted: action.payload.timeStarted,
           },
         },
       };

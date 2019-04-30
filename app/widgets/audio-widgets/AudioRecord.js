@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import AudioRecord from '../../components/audio/AudioRecord';
+import Audio from './Audio';
 
-export default class SurveyAudioInput extends Component {
+export class AudioRecord extends Component {
   onRecord = (filePath) => {
     const filename = (filePath && filePath.length > 0) && filePath.split('/').pop();
     this.props.onChange({ uri: filePath, filename });
@@ -14,13 +14,13 @@ export default class SurveyAudioInput extends Component {
   }
 
   render() {
-    const { answer } = this.props;
+    const { value } = this.props;
     return (
       <View style={{ alignItems: 'stretch', flex: 3 }}>
-        <AudioRecord
+        <Audio
           mode="single"
           onRecordFile={this.onRecord}
-          path={answer && answer.uri}
+          path={value && value.uri}
           ref={(ref) => { this.audioRef = ref; }}
         />
       </View>
@@ -28,12 +28,12 @@ export default class SurveyAudioInput extends Component {
   }
 }
 
-SurveyAudioInput.defaultProps = {
-  answer: undefined,
+AudioRecord.defaultProps = {
+  value: undefined,
 };
 
-SurveyAudioInput.propTypes = {
-  answer: PropTypes.shape({
+AudioRecord.propTypes = {
+  value: PropTypes.shape({
     uri: PropTypes.string,
   }),
   onChange: PropTypes.func.isRequired,

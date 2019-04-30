@@ -34,13 +34,13 @@ const ActivityRow = ({ activity, onPress }) => {
           : (
             <View style={{ ...buttonStyle, backgroundColor }}>
               <Text style={styles.letter}>
-                {activity.appletShortName.substr(0, 1).toUpperCase()}
+                {activity.appletShortName.en.substr(0, 1).toUpperCase()}
               </Text>
             </View>
           )}
       </Left>
       <Body>
-        <Text style={{ color: activity.status === 'in-progress' ? '#11c' : null }}>{activity.name}</Text>
+        <Text style={{ color: activity.status === 'in-progress' ? '#11c' : null }}>{activity.name.en}</Text>
         <ActivityDueDate activity={activity} />
       </Body>
     </ListItem>

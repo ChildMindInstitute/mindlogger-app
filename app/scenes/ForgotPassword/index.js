@@ -17,7 +17,7 @@ import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
 import styles from './styles';
 import { forgotPassword } from '../../services/network';
-import { showToast } from '../../state/app/app.actions';
+import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
 class ForgotPassword extends Component {

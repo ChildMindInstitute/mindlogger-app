@@ -7,7 +7,7 @@ const onNumberAdd = (toAdd, oldVal = 0, onChange) => {
   onChange(oldVal + toAdd);
 };
 
-const SurveyTableInputCell = ({ mode = 'text', value = '', onChange }) => {
+const TableInputCell = ({ mode = 'text', value = '', onChange }) => {
   if (mode === 'number') {
     return (
       <Button
@@ -32,11 +32,11 @@ const SurveyTableInputCell = ({ mode = 'text', value = '', onChange }) => {
   );
 };
 
-SurveyTableInputCell.defaultProps = {
+TableInputCell.defaultProps = {
   value: '',
 };
 
-SurveyTableInputCell.propTypes = {
+TableInputCell.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
@@ -45,4 +45,4 @@ SurveyTableInputCell.propTypes = {
   mode: PropTypes.string.isRequired,
 };
 
-export default SurveyTableInputCell;
+export default TableInputCell;

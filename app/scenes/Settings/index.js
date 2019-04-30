@@ -8,7 +8,7 @@ import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 import { userInfoSelector, authTokenSelector } from '../../state/user/user.selectors';
 import { updateUserDetails, updatePassword } from '../../services/network';
-import { updateUserDetailsSuccessful } from '../../state/user/user.actions';
+import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
 import SettingsForm from './SettingsForm';
 
 class SettingScreen extends Component {

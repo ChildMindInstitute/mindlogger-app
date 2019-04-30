@@ -2,29 +2,29 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Text, Row, Col, View } from 'native-base';
 import styles from './styles';
-import SurveyTableInputCell from './SurveyTableInputCell';
+import TableInputCell from './TableInputCell';
 
-const safeAnswer = (answer, rowIdx, colIdx, mode) => {
-  if (answer && answer[rowIdx] && answer[rowIdx][colIdx]) {
-    return answer[rowIdx][colIdx];
+const safeValue = (value, rowIdx, colIdx, mode) => {
+  if (value && value[rowIdx] && value[rowIdx][colIdx]) {
+    return value[rowIdx][colIdx];
   }
   return mode === 'text' ? '' : 0;
 };
 
-export default class SurveyTableInput extends Component {
+export class TableInput extends Component {
   updateCells = (newVal, row, col) => {
-    const { answer, onChange, config } = this.props;
+    const { value, onChange, config } = this.props;
 
-    const newAnswer = config.rows.map((row, i) => config.cols.map(
-      (col, j) => safeAnswer(answer, i, j, config.mode),
+    const newValue = config.rows.map((row, i) => config.cols.map(
+      (col, j) => safeValue(value, i, j, config.mode),
     ));
-    newAnswer[row][col] = newVal;
+    newValue[row][col] = newVal;
 
-    onChange(newAnswer);
+    onChange(newValue);
   }
 
   render() {
-    const { config, answer } = this.props;
+    const { config, value } = this.props;
     const cellHeight = 60;
     const cellStyle = {
       cellHeight,
@@ -60,9 +60,9 @@ export default class SurveyTableInput extends Component {
             </Col>
             {config.cols.map((col, colIdx) => (
               <Col key={colIdx} style={cellStyle}>
-                <SurveyTableInputCell
+                <TableInputCell
                   mode={config.mode}
-                  value={safeAnswer(answer, rowIdx, colIdx, config.mode)}
+                  value={safeValue(value, rowIdx, colIdx, config.mode)}
                   onChange={(newVal) => {
                     this.updateCells(newVal, rowIdx, colIdx);
                   }}
@@ -76,15 +76,15 @@ export default class SurveyTableInput extends Component {
   }
 }
 
-SurveyTableInput.defaultProps = {
-  answer: undefined,
+TableInput.defaultProps = {
+  value: undefined,
 };
 
-SurveyTableInput.propTypes = {
+TableInput.propTypes = {
   config: PropTypes.shape({
     rows: PropTypes.arrayOf(PropTypes.string),
     cols: PropTypes.arrayOf(PropTypes.string),
   }).isRequired,
-  answer: PropTypes.arrayOf(PropTypes.array),
+  value: PropTypes.arrayOf(PropTypes.array),
   onChange: PropTypes.func.isRequired,
 };

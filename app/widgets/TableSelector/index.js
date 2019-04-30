@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, View } from 'native-base';
-import SurveyTableSelectorCell from './SurveyTableSelectorCell';
+import TableSelectorCell from './TableSelectorCell';
 
-export default class SurveyTableSelector extends Component {
-  static isValid(answer, { optionsMin = 0, optionsMax = Infinity }) {
-    if (!answer) {
+export class TableSelector extends Component {
+  static isValid(value, { optionsMin = 0, optionsMax = Infinity }) {
+    if (!value) {
       return false;
     }
-    for (let i = 0; i < answer.length; i += 1) {
-      if (answer[i].length < optionsMin || answer[i].length > optionsMax) {
+    for (let i = 0; i < value.length; i += 1) {
+      if (value[i].length < optionsMin || value[i].length > optionsMax) {
         return false;
       }
     }
@@ -17,27 +17,27 @@ export default class SurveyTableSelector extends Component {
   }
 
   onChoiceSelect = (rowIdx, colIdx) => {
-    const { answer, config, onChange } = this.props;
+    const { value, config, onChange } = this.props;
 
     // Make an empty answer array if answer is undefined
-    const newAnswer = answer
-      ? [...answer]
+    const newValue = value
+      ? [...value]
       : config.rows.map(() => []);
 
     // Update with the new response
-    const index = newAnswer[rowIdx].indexOf(colIdx);
+    const index = newValue[rowIdx].indexOf(colIdx);
     if (index < 0) {
-      newAnswer[rowIdx].push(colIdx);
+      newValue[rowIdx].push(colIdx);
     } else {
-      newAnswer[rowIdx].splice(index, 1);
+      newValue[rowIdx].splice(index, 1);
     }
 
     // Check if the user has selected enough items in each row
-    onChange(newAnswer);
+    onChange(newValue);
   }
 
   render() {
-    const { answer, config } = this.props;
+    const { value, config } = this.props;
     const height = 60;
     // if(this.state.dimensions && config.mode == 'select') {
     //   height = this.state.dimensions.width/(config.colsCount + 1)
@@ -59,9 +59,9 @@ export default class SurveyTableSelector extends Component {
           <Row style={rowStyle} key={rowIdx}>
             {cols.map((cell, colIdx) => (
               <Col key={colIdx} style={cellStyle}>
-                <SurveyTableSelectorCell
+                <TableSelectorCell
                   cell={cell}
-                  isSelected={answer && answer[rowIdx].includes(colIdx)}
+                  isSelected={value && value[rowIdx].includes(colIdx)}
                   onPress={() => {
                     this.onChoiceSelect(rowIdx, colIdx);
                   }}
@@ -76,16 +76,16 @@ export default class SurveyTableSelector extends Component {
   }
 }
 
-SurveyTableSelector.defaultProps = {
-  answer: undefined,
+TableSelector.defaultProps = {
+  value: undefined,
 };
 
-SurveyTableSelector.propTypes = {
+TableSelector.propTypes = {
   config: PropTypes.shape({
     rows: PropTypes.arrayOf(PropTypes.array),
     optionsMin: PropTypes.number,
     optionsMax: PropTypes.number,
   }).isRequired,
-  answer: PropTypes.arrayOf(PropTypes.array),
+  value: PropTypes.arrayOf(PropTypes.array),
   onChange: PropTypes.func.isRequired,
 };

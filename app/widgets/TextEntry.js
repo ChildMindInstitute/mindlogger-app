@@ -1,31 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { Text, Item, Input } from 'native-base';
+import { Item, Input } from 'native-base';
 
-const TextEntry = ({ answer, config = {}, onChange, ...props }) => (
+export const TextEntry = ({ value = '', onChange, ...props }) => (
   <View {...props}>
-    {config.display && (
-      <Text>{config.label}</Text>
-    )}
     <Item>
       <Input
         placeholder="Please type text"
         onChangeText={onChange}
-        value={answer}
+        value={value}
       />
     </Item>
   </View>
 );
 
 TextEntry.defaultProps = {
-  answer: '',
+  value: '',
 };
 
 TextEntry.propTypes = {
-  answer: PropTypes.string,
-  config: PropTypes.object.isRequired,
+  value: PropTypes.string,
   onChange: PropTypes.func.isRequired,
 };
-
-export default TextEntry;

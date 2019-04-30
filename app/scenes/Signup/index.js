@@ -15,7 +15,7 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
-import { signUpSuccessful } from '../../state/user/user.actions';
+import { signUpSuccessful } from '../../state/user/user.thunks';
 import { signUp } from '../../services/network';
 import styles from './styles';
 import SignupForm from './SignupForm';

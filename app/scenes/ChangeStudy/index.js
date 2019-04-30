@@ -14,11 +14,10 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import ChangeStudyForm from './ChangeStudyForm';
-import { showToast, setApiHost, resetApiHost } from '../../state/app/app.actions';
-import { apiHostSelector } from '../../state/app/app.selectors';
 import styles from './styles';
-
+import { setApiHost, resetApiHost } from '../../state/app/app.actions';
+import { showToast } from '../../state/app/app.thunks';
+import ChangeStudyForm from './ChangeStudyForm';
 
 class ChangeStudy extends Component {
   constructor (props) {

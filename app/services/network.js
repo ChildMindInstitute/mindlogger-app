@@ -68,56 +68,23 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
   ).then(res => (res.info().status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const getCollection = (authToken, collectionName) => get(
-  'collection',
-  authToken,
-  { text: collectionName },
-);
-
-export const getFolders = (authToken, parentId, parentType = 'collection') => get(
-  'folder',
-  authToken,
-  { parentId, parentType },
-);
-
-export const getItems = (authToken, folderId) => get(
-  'item',
-  authToken,
-  { folderId },
-);
-
-export const getResponses = (authToken, userId, appletId) => get(
+export const getResponses = (authToken, applet) => get(
   'response',
   authToken,
-  { userId, appletId },
+  { applet },
 );
 
-export const postFolder = ({
+export const getApplets = (authToken, userId) => get(
+  `user/${userId}/applets`,
   authToken,
-  folderName,
-  parentId,
-  metadata = {},
-  parentType = 'folder',
-  reuseExisting = true,
-}) => postFormData(
-  'folder',
-  authToken,
-  {
-    parentId,
-    name: folderName,
-    metadata: JSON.stringify(metadata),
-    parentType,
-    reuseExisting,
-  },
+  { role: 'user' },
 );
 
-export const postItem = ({ authToken, folderId, name, metadata = {} }) => postFormData(
-  'item',
+export const postResponse = ({ authToken, response }) => postFormData(
+  `response/${response.applet.id}/${response.activity.id}`,
   authToken,
   {
-    folderId,
-    name,
-    metadata: JSON.stringify(metadata),
+    metadata: JSON.stringify(response),
   },
 );
 
@@ -191,6 +158,6 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const fileLink = (file, token) => {
-  return file ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}` : '';
-}
+export const fileLink = (file, token) => (file
+  ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}`
+  : '');

@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
-import { Content } from 'native-base';
 import * as R from 'ramda';
-import SurveySection from '../../widgets/survey';
-import CanvasSection from '../../widgets/canvas';
-import TextEntry from '../../widgets/TextEntry';
 import ScreenDisplay from './ScreenDisplay';
+import WidgetError from './WidgetError';
+import {
+  SurveySection,
+  Radio,
+  MultiSelect,
+  Slider,
+  TimeRange,
+  DatePicker,
+  TextEntry,
+  Select,
+  AudioRecord,
+  AudioImageRecord,
+} from '../../widgets';
 
 const styles = StyleSheet.create({
   content: {
@@ -17,7 +26,7 @@ const styles = StyleSheet.create({
   },
   paddingContent: {
     padding: 20,
-    flexGrow: 1,
+    flex: 1,
   },
   text: {
     paddingTop: 20,
@@ -27,11 +36,11 @@ const styles = StyleSheet.create({
 
 class Screen extends Component {
   static isValid(answer, screen) {
-    const surveyType = R.path(['meta', 'surveyType'], screen);
-    if (typeof surveyType !== 'undefined') {
-      return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
-    }
-    return !!answer;
+    // const surveyType = R.path(['meta', 'surveyType'], screen);
+    // if (typeof surveyType !== 'undefined') {
+    //   return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
+    // }
+    return (answer !== null && typeof answer !== 'undefined');
   }
 
   reset() {
@@ -45,6 +54,7 @@ class Screen extends Component {
 
   renderWidget() {
     const { screen, answer, onChange } = this.props;
+    /*
     const data = screen.meta || {};
     if (data.canvasType) {
       return (
@@ -59,42 +69,103 @@ class Screen extends Component {
         />
       );
     }
-    if (data.surveyType) {
+    */
+    if (screen.inputType === 'radio'
+      && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
       return (
-        <SurveySection
-          type={data.surveyType}
-          config={data.survey}
-          answer={answer}
+        <MultiSelect
+          config={screen.valueConstraints}
           onChange={onChange}
-          ref={(ref) => { this.surveyRef = ref; }}
-          onNextChange={() => { }}
+          value={answer}
         />
       );
     }
-    if (data.textEntry && data.textEntry.display) {
+    if (screen.inputType === 'radio'
+      && R.path(['valueConstraints', 'itemList'], screen)) {
+      return (
+        <Radio
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'slider') {
+      return (
+        <Slider
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'timeRange') {
+      return (
+        <TimeRange
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'date') {
+      return (
+        <DatePicker
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'select'
+      && R.path(['valueConstraints', 'itemList'], screen)) {
+      return (
+        <Select
+          onChange={onChange}
+          value={answer}
+          config={screen.valueConstraints}
+        />
+      );
+    }
+    if (screen.inputType === 'text') {
       return (
         <TextEntry
-          style={styles.text}
-          config={data.textEntry}
-          answer={answer ? answer.text : ''}
-          onChange={text => onChange({ text })}
+          onChange={onChange}
+          value={answer}
         />
       );
     }
-    return <View />;
+    if (screen.inputType === 'audioRecord' || screen.inputType === 'audioPassageRecord') {
+      return (
+        <AudioRecord
+          onChange={onChange}
+          config={screen.valueConstraints}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'audioImageRecord'
+      && R.path(['valueConstraints', 'image'], screen)) {
+      return (
+        <AudioImageRecord
+          onChange={onChange}
+          config={screen.valueConstraints}
+          value={answer}
+        />
+      );
+    }
+    return <WidgetError />;
   }
 
   render() {
     const { screen } = this.props;
     return (
-      <Content
+      <ScrollView
         alwaysBounceVertical={false}
         style={styles.paddingContent}
-        contentContainerStyle={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       >
         <ScreenDisplay screen={screen} />
         {this.renderWidget()}
-      </Content>
+      </ScrollView>
     );
   }
 }

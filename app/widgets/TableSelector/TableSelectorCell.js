@@ -5,7 +5,7 @@ import { Text, Button } from 'native-base';
 import styles from './styles';
 import GImage from '../../components/image/Image';
 
-const SurveyTableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
+const TableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
   const imageStyle = {
     width: (height - 3),
     height: (height - 3),
@@ -36,12 +36,12 @@ const SurveyTableSelectorCell = ({ cell, isSelected = false, onPress, height = 6
   }
 };
 
-SurveyTableSelectorCell.defaultProps = {
+TableSelectorCell.defaultProps = {
   isSelected: false,
   height: 60,
 };
 
-SurveyTableSelectorCell.propTypes = {
+TableSelectorCell.propTypes = {
   cell: PropTypes.shape({
     file: PropTypes.number,
     text: PropTypes.string,
@@ -52,4 +52,4 @@ SurveyTableSelectorCell.propTypes = {
   height: PropTypes.number,
 };
 
-export default SurveyTableSelectorCell;
+export default TableSelectorCell;

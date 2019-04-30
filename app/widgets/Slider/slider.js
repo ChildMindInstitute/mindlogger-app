@@ -23,15 +23,15 @@ export default class Slider extends React.Component {
   };
 
   componentWillMount() {
-    this.setState({value: this.props.value});
-    
+    this.setState({ value: this.props.value });
+
   }
 
   panResponder = PanResponder.create({
     onMoveShouldSetPanResponderCapture: () => true,
     onPanResponderMove: (_, gestureState) => this.onMove(gestureState),
     onPanResponderRelease: () => this.onEndMove(),
-    onPanResponderTerminate: () => {}
+    onPanResponderTerminate: () => { }
   });
 
   onMove(gestureState) {
@@ -114,27 +114,27 @@ export default class Slider extends React.Component {
     );
     return (
       <PageContainer {...this.panResponder.panHandlers}>
-        
+
         <Container>
-          {labels && 
+          {labels &&
             <LabelContainer>
               {
-                labels.map((label, idx) => 
+                labels.map((label, idx) =>
                   <Text key={idx}>{label.text}</Text>
                 )
               }
             </LabelContainer>
           }
-          
+
           <BarContainer>
             <Bar onLayout={this.onBarLayout} />
             <RoundRect
               bottomOffset={bottomOffset}
               isFilled={selected || this.state.selected}
             />
-            
+
           </BarContainer>
-          
+
         </Container>
       </PageContainer>
     );
@@ -190,7 +190,7 @@ const Circle = styled.View`
 
 const RoundRect = styled.View`
   border-radius: 8;
-  width: ${CIRCLE_DIAMETER*2};
+  width: ${CIRCLE_DIAMETER * 2};
   height: ${CIRCLE_DIAMETER};
   background-color: ${props => props.isFilled ? sliderFillColor : 'white'};
   border-color: ${sliderFillColor};
