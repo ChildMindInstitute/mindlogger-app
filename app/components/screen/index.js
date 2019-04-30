@@ -5,12 +5,10 @@ import * as R from 'ramda';
 import ScreenDisplay from './ScreenDisplay';
 import WidgetError from './WidgetError';
 import {
-  SurveySection,
   Radio,
   MultiSelect,
   Slider,
   TimeRange,
-  DatePicker,
   TextEntry,
   Select,
   AudioRecord,
@@ -41,15 +39,6 @@ class Screen extends Component {
     //   return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
     // }
     return (answer !== null && typeof answer !== 'undefined');
-  }
-
-  reset() {
-    if (this.canvasRef) {
-      this.canvasRef.resetData();
-    }
-    if (this.surveyRef) {
-      this.surveyRef.resetData();
-    }
   }
 
   renderWidget() {

@@ -12,7 +12,6 @@ import { authTokenSelector } from '../../state/user/user.selectors';
 class Activity extends Component {
   constructor() {
     super();
-    this.screenRef = React.createRef();
     this.state = { index: 0 };
   }
 
@@ -64,7 +63,6 @@ class Activity extends Component {
 
   undo = () => {
     const { index } = this.state;
-    this.screenRef.current.reset();
     this.handleAnswer(undefined, index);
   }
 
@@ -82,7 +80,6 @@ class Activity extends Component {
         answers={responses}
         authToken={authToken}
         index={index}
-        screenRef={this.screenRef}
         onInfo={this.showInfoScreen}
         onNext={this.next}
         onPrev={this.prev}
