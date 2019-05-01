@@ -7,6 +7,7 @@ import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import ActivityButtons from '../../components/ActivityButtons';
 import Screen from '../../components/screen';
+import ActivityScreens from '../../components/ActivityScreens';
 
 const getNextLabel = (isLast, isValid, isSkippable) => {
   if ((isLast && isValid) || (isLast && isSkippable)) {
@@ -48,7 +49,6 @@ const ActivityComponent = ({
   answers,
   authToken,
   index,
-  screenRef,
   onInfo,
   onNext,
   onPrev,
@@ -73,13 +73,12 @@ const ActivityComponent = ({
       {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
       {activity.items.length > 0
         ? (
-          <Screen
-            key={`${activity.id}-screen-${index}`}
-            screen={activity.items[index]}
-            answer={answers[index]}
+          <ActivityScreens
+            activity={activity}
+            answers={answers}
+            currentScreen={index}
             onChange={(answer) => { onAnswer(answer, index); }}
             authToken={authToken}
-            ref={screenRef}
           />
         )
         : <View style={{ flex: 1 }} />
@@ -105,7 +104,6 @@ ActivityComponent.propTypes = {
   answers: PropTypes.array.isRequired,
   authToken: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  screenRef: PropTypes.object.isRequired,
   onInfo: PropTypes.func.isRequired,
   onNext: PropTypes.func.isRequired,
   onPrev: PropTypes.func.isRequired,
