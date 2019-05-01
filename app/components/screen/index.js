@@ -9,6 +9,7 @@ import {
   MultiSelect,
   Slider,
   TimeRange,
+  DatePicker,
   TextEntry,
   Select,
   AudioRecord,
