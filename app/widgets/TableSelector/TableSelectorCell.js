@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TouchableOpacity } from 'react-native';
 import { Text, Button } from 'native-base';
 import styles from './styles';
-import GImage from '../../components/image/Image';
+import { GImage } from '../../components/core';
 
 const TableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
   const imageStyle = {

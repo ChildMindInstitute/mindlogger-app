@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { ListItem, Text, Left, Body, View } from 'native-base';
-import Image from '../../components/image/Image';
+import Image from '../../components/core';
 import styles from './styles';
 import ActivityDueDate from './ActivityDueDate';
 
