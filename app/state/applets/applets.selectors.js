@@ -11,6 +11,7 @@ export const appletsSelector = createSelector(
     const extraInfoActivities = applet.activities.map((act) => {
       const now = Date.now();
       const { last, next } = getNextAndLastTimes(act, now);
+      const lastResponse = getLastResponseTime(act, responses);
       return {
         ...act,
         appletId: applet.id,
@@ -19,8 +20,9 @@ export const appletsSelector = createSelector(
         appletSchema: applet.schema,
         appletSchemaVersion: applet.schemaVersion,
         lastScheduledTimestamp: last,
-        lastResponseTimestamp: getLastResponseTime(act, responses),
+        lastResponseTimestamp: lastResponse,
         nextScheduledTimestamp: next,
+        isOverdue: last && lastResponse < last,
       };
     });
     return {

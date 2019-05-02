@@ -25,6 +25,10 @@ class AppletDetails extends Component {
       openDrawer,
       inProgress,
     } = this.props;
+    if (!currentApplet) {
+      return null;
+    }
+
     return (
       <AppletDetailsComponent
         applet={currentApplet}

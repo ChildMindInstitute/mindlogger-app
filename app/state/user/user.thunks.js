@@ -1,6 +1,5 @@
 import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
-import { userInfoSelector, authTokenSelector } from './user.selectors';
 import { sync, showToast } from '../app/app.thunks';
 import {
   setInfo,
@@ -11,14 +10,14 @@ export const signInSuccessful = response => (dispatch) => {
   dispatch(setInfo(response.user));
   dispatch(setAuth(response.authToken));
   dispatch(sync());
-  Actions.replace('activity');
+  Actions.replace('applet_list');
 };
 
 export const signUpSuccessful = response => (dispatch) => {
   dispatch(setInfo(R.omit(['authToken'], response)));
   dispatch(setAuth(R.prop('authToken', response)));
   dispatch(sync());
-  Actions.replace('activity');
+  Actions.replace('applet_list');
 };
 
 export const updateUserDetailsSuccessful = response => (dispatch) => {
@@ -28,5 +27,5 @@ export const updateUserDetailsSuccessful = response => (dispatch) => {
     position: 'bottom',
     duration: 2000,
   }));
-  Actions.replace('activity');
+  Actions.replace('applet_list');
 };

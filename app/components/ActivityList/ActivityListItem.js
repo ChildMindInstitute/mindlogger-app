@@ -40,7 +40,7 @@ const ActivityRow = ({ activity, onPress }) => {
   if (activity.isHeader === true) {
     return (
       <View style={styles.sectionHeading}>
-        <LittleHeading>{activity.text}</LittleHeading>
+        <LittleHeading style={{ color: colors.grey }}>{activity.text}</LittleHeading>
       </View>
     );
   }

@@ -1,31 +1,21 @@
 import React from 'react';
-import { StyleSheet, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
+import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
+import NoAppletsMessage from '../../components/NoAppletsMessage';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFF',
-  },
-  text: {
-    alignSelf: 'center',
-    marginBottom: 7,
-    fontSize: 10,
-    color: '#aaa',
-  },
-  mb: {
-    marginBottom: 15,
-  },
-  letter: {
-    fontSize: 14,
+    backgroundColor: colors.secondary,
   },
   activityList: {
     flex: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: colors.lightGrey,
   },
   activityListContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.secondary,
     flex: 1,
   },
 });
@@ -49,22 +39,23 @@ const AppletListComponent = ({
         </Button>
       </Right>
     </Header>
-    <FlatList
+    <ScrollView
       style={styles.activityList}
-      contentContainerStyle={styles.activityListContainer}
       refreshControl={(
         <RefreshControl
           refreshing={isDownloadingApplets}
           onRefresh={onPressRefresh}
-          title="Syncing..."
         />
       )}
-      renderItem={({ item }) => (
-        <AppletListItem applet={item} onPress={onPressApplet} />
+      contentContainerStyle={styles.activityListContainer}
+    >
+      {applets.map(applet => (
+        <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
+      ))}
+      {applets.length === 0 && (
+        <NoAppletsMessage isDownloadingApplets={isDownloadingApplets} />
       )}
-      data={applets}
-      keyExtractor={item => item.id}
-    />
+    </ScrollView>
   </Container>
 );
 

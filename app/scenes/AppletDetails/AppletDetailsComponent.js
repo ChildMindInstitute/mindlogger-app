@@ -5,7 +5,6 @@ import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } fr
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 import AppletSummary from '../../components/AppletSummary';
-import { Heading } from '../../components/core';
 
 const styles = StyleSheet.create({
   container: {

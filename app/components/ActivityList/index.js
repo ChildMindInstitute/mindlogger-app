@@ -14,7 +14,7 @@ const ActivityList = ({ applet, inProgress, onPressActivity }) => {
         <ActivityListItem
           onPress={() => onPressActivity(activity)}
           activity={activity}
-          key={activity.id}
+          key={activity.id || activity.text}
         />
       ))}
     </View>
