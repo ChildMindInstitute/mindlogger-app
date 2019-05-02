@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StyleSheet } from 'react-native';
 import { Text } from 'native-base';
 import moment from 'moment';
+import { colors } from '../../theme';
+import { LittleText } from '../core';
 
 const formatTime = (timestamp) => {
   const time = moment(timestamp);
@@ -9,33 +12,41 @@ const formatTime = (timestamp) => {
     return moment(timestamp).format('[Today at] h:mm A');
   }
   return moment(timestamp).format('MMMM D');
-}
-
-const textStyles = {
-  fontSize: 12,
-  marginTop: 3,
-  color: 'grey',
 };
+
+const styles = StyleSheet.create({
+  textStyles: {
+    marginTop: 6,
+  },
+});
 
 const ActivityDueDate = ({ activity }) => {
   if (activity.lastResponseTimestamp < activity.lastScheduledTimestamp) {
     return (
-      <Text style={{ ...textStyles, color: '#CC2211' }}>
+      <LittleText style={{ ...styles.textStyles, color: colors.alert }}>
         {formatTime(activity.lastScheduledTimestamp)}
-      </Text>
+      </LittleText>
     );
   }
   if (activity.status === 'scheduled') {
-    return <Text style={textStyles}>{formatTime(activity.nextScheduledTimestamp)}</Text>;
+    return (
+      <LittleText style={styles.textStyles}>
+        {formatTime(activity.nextScheduledTimestamp)}
+      </LittleText>
+    );
   }
   if (activity.status === 'completed') {
-    return <Text style={textStyles}>Last completed: {formatTime(activity.lastResponseTimestamp)}</Text>;
+    return (
+      <LittleText style={styles.textStyles}>
+        Last completed: {formatTime(activity.lastResponseTimestamp)}
+      </LittleText>
+    );
   }
-  return <Text style={textStyles} />;
+  return null;
 };
 
 ActivityDueDate.propTypes = {
   activity: PropTypes.object.isRequired,
-}
+};
 
 export default ActivityDueDate;

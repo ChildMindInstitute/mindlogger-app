@@ -43,7 +43,9 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 export default (activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
-  const inProgressActivities = inProgressKeys.map(key => inProgress[key].activity);
+  const inProgressActivities = activityList.filter(
+    activity => inProgressKeys.includes(activity.id),
+  );
   const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
   const overdue = getOverdue(notInProgress).sort(sortBy('lastScheduledTimestamp')).reverse();
   const scheduled = getScheduled(notInProgress).sort(sortBy('nextScheduledTimestamp'));

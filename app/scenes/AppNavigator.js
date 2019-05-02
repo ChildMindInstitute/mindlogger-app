@@ -12,42 +12,40 @@ import { closeDrawer } from '../state/drawer/drawer.actions';
 import { colors } from '../theme';
 
 // Scenes
-import SideBar from './Sidebar';
-import ActivityList from './ActivityList';
-import Login from './Login';
-import ChangeStudy from './ChangeStudy';
-import ForgotPassword from './ForgotPassword';
-import Consent from './Consent';
-import Signup from './Signup';
-import Settings from './Settings';
 import About from './About';
 import AboutApp from './AboutApp';
-// import FrequencyScreen from './Frequency';
 import Activity from './Activity';
-// import PushAct from './PushAct';
+import AppletDetails from './AppletDetails';
+import AppletList from './AppletList';
+import ChangeStudy from './ChangeStudy';
+import Consent from './Consent';
+import ForgotPassword from './ForgotPassword';
 import InfoAct from './InfoAct';
-import VolumeInfo from './VolumeInfo';
-import Splash from './Splash';
+import Login from './Login';
 import LogoutWarning from './LogoutWarning';
+import Settings from './Settings';
+import SideBar from './Sidebar';
+import Signup from './Signup';
+import Splash from './Splash';
+import VolumeInfo from './VolumeInfo';
 
 const Navigator = Actions.create(
   <Lightbox>
     <Stack key="root" hideNavBar>
       <Scene key="splash" component={Splash} initial />
-      <Scene key="login" component={Login} />
-      <Scene key="about" component={About} />
-      <Scene key="consent" component={Consent} />
-      <Scene key="sign_up" component={Signup} />
-      <Scene key="change_study" component={ChangeStudy} />
-      <Scene key="forgot_password" component={ForgotPassword} />
-      <Scene key="settings" component={Settings} />
-      <Scene key="activity" component={ActivityList} />
-      {/* <Scene key="frequency" component={FrequencyScreen} /> */}
-      {/* <Scene key="push_act" component={PushAct} /> */}
-      <Scene key="take_act" component={Activity} />
       <Scene key="about_act" component={InfoAct} />
-      <Scene key="about_volume" component={VolumeInfo} />
       <Scene key="about_app" component={AboutApp} />
+      <Scene key="about_volume" component={VolumeInfo} />
+      <Scene key="about" component={About} />
+      <Scene key="applet_details" component={AppletDetails} />
+      <Scene key="applet_list" component={AppletList} />
+      <Scene key="change_study" component={ChangeStudy} />
+      <Scene key="consent" component={Consent} />
+      <Scene key="forgot_password" component={ForgotPassword} />
+      <Scene key="login" component={Login} />
+      <Scene key="settings" component={Settings} />
+      <Scene key="sign_up" component={Signup} />
+      <Scene key="take_act" component={Activity} />
     </Stack>
     <Scene key="logout_warning" component={LogoutWarning} />
   </Lightbox>

@@ -29,7 +29,7 @@ const setInitialScreen = (authOk) => {
   if (!authOk) {
     Actions.replace('login');
   } else {
-    Actions.replace('activity');
+    Actions.replace('applet_list');
   }
 };
 
@@ -46,7 +46,7 @@ const setup = () => {
     const state = store.getState();
     // If user is logged in when they get a push notification, go to the activity
     if (state.user.auth && notification.foreground === false) {
-      Actions.replace('activity');
+      Actions.replace('applet_list');
     }
   });
 

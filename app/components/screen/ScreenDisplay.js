@@ -6,7 +6,7 @@ import { Player, MediaStates } from 'react-native-audio-toolkit';
 import { Button, Icon } from 'native-base';
 import Markdown from 'react-native-easy-markdown';
 import { randomLink } from '../../services/helper';
-import GImage from '../image/Image';
+import { GImage } from '../core';
 import { markdownStyle } from '../../themes/activityTheme';
 import { authTokenSelector } from '../../state/user/user.selectors';
 

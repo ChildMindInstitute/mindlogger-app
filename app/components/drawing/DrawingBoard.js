@@ -6,7 +6,7 @@ import Svg,{
     Polyline,
 } from 'react-native-svg';
 
-import GImage from '../image/Image';
+import { GImage } from '../core';
 
 const styles = StyleSheet.create({
     picture: {width: '100%', height:'100%', resizeMode: 'cover'},

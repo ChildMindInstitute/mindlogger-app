@@ -8,3 +8,8 @@ export const setApiHost = hostUrl => ({
 export const resetApiHost = () => ({
   type: APP_ACTIONS.RESET_API_HOST,
 });
+
+export const setCurrentApplet = appletId => ({
+  type: APP_ACTIONS.SET_CURRENT_APPLET,
+  payload: appletId,
+});

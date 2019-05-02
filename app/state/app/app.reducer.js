@@ -3,6 +3,7 @@ import config from '../../config';
 
 export const initialState = {
   apiHost: config.defaultApiHost,
+  currentApplet: null,
 };
 
 export default (state = initialState, action = {}) => {
@@ -16,6 +17,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         apiHost: initialState.apiHost,
+      };
+    case APP_CONSTANTS.SET_CURRENT_APPLET:
+      return {
+        ...state,
+        currentApplet: action.payload,
       };
     default:
       return state;

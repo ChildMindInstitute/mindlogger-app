@@ -40,25 +40,25 @@ class Login extends Component {
     const { signInSuccessful } = this.props;
     return signIn(body)
       .then((response) => {
-        if (typeof response.exception !== "undefined") {
-          throw response.exception
+        if (typeof response.exception !== 'undefined') {
+          throw response.exception;
         } else {
           signInSuccessful(response);
         }
       })
       .catch((e) => {
-        if (typeof e.status !== "undefined") {
+        if (typeof e.status !== 'undefined') {
           throw new SubmissionError({
-            password: 'Login failed.'
-          })
+            password: 'Login failed.',
+          });
         } else {
           throw new SubmissionError({
-            user: e
-          })
+            user: e,
+          });
         }
-      })
+      });
   }
-  
+
   render() {
     return (
       <Container>
@@ -88,9 +88,9 @@ class Login extends Component {
           </View>
         </Content>
         <Footer style={styles.footer}>
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <TouchableOpacity onPress={this.onChangeStudy}>
-              <Icon type="FontAwesome" name="database" style={styles.whiteIcon}/>
+              <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />
             </TouchableOpacity>
           </View>
         </Footer>
