@@ -6,7 +6,7 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   body: {
     fontWeight: 'normal',
-    fontSize: 15,
+    fontSize: 16,
     color: colors.tertiary,
   },
 });

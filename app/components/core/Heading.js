@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 export const Heading = ({ children }) => (
-  <Text style={styles}>
+  <Text style={styles.heading}>
     {children}
   </Text>
 );

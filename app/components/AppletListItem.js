@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { TouchBox, SubHeading, BodyText } from './core';
+import {
+  TouchBox,
+  SubHeading,
+  BodyText,
+  NotificationText,
+} from './core';
 import AppletImage from './AppletImage';
 
 const styles = StyleSheet.create({
@@ -9,6 +14,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     paddingTop: 20,
+    position: 'relative',
   },
   inner: {
     flexDirection: 'row',
@@ -17,6 +23,11 @@ const styles = StyleSheet.create({
   textBlock: {
     flex: 1,
     marginLeft: 16,
+  },
+  notification: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
 });
 
@@ -35,6 +46,11 @@ const AppletListItem = ({ applet }) => (
         </View>
       </View>
     </TouchBox>
+    <View style={styles.notification}>
+      <NotificationText>
+        1
+      </NotificationText>
+    </View>
   </View>
 );
 
