@@ -1,7 +1,6 @@
 import { getApplets } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
-import { showToast } from '../app/app.thunks';
 import { activitiesSelector } from './applets.selectors';
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import {
@@ -29,11 +28,6 @@ export const downloadApplets = () => (dispatch, getState) => {
       const transformedApplets = applets.map(applet => transformApplet(applet));
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
-      dispatch(showToast({
-        text: 'Download complete',
-        position: 'bottom',
-        duration: 2000,
-      }));
     }
   }).finally(() => {
     dispatch(setDownloadingApplets(false));

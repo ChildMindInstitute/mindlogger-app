@@ -36,38 +36,37 @@ const AppletListComponent = ({
   onPressDrawer,
   onPressRefresh,
   onPressApplet,
-}) => {
-  return (
-    <Container style={styles.container}>
-      <Header>
-        <Left />
-        <Body>
-          <Title>MindLogger</Title>
-        </Body>
-        <Right style={{ flexDirection: 'row' }}>
-          <Button transparent onPress={onPressDrawer}>
-            <Icon name="menu" />
-          </Button>
-        </Right>
-      </Header>
-      <FlatList
-        style={styles.activityList}
-        contentContainerStyle={styles.activityListContainer}
-        refreshControl={(
-          <RefreshControl
-            refreshing={isDownloadingApplets}
-            onRefresh={onPressRefresh}
-            title="Downloading applets..."
-          />
-        )}
-        renderItem={({ item }) => (
-          <AppletListItem applet={item} onPress={onPressApplet} />
-        )}
-        data={applets}
-      />
-    </Container>
-  );
-};
+}) => (
+  <Container style={styles.container}>
+    <Header>
+      <Left />
+      <Body>
+        <Title>MindLogger</Title>
+      </Body>
+      <Right style={{ flexDirection: 'row' }}>
+        <Button transparent onPress={onPressDrawer}>
+          <Icon name="menu" />
+        </Button>
+      </Right>
+    </Header>
+    <FlatList
+      style={styles.activityList}
+      contentContainerStyle={styles.activityListContainer}
+      refreshControl={(
+        <RefreshControl
+          refreshing={isDownloadingApplets}
+          onRefresh={onPressRefresh}
+          title="Syncing..."
+        />
+      )}
+      renderItem={({ item }) => (
+        <AppletListItem applet={item} onPress={onPressApplet} />
+      )}
+      data={applets}
+      keyExtractor={item => item.id}
+    />
+  </Container>
+);
 
 AppletListComponent.propTypes = {
   applets: PropTypes.array.isRequired,

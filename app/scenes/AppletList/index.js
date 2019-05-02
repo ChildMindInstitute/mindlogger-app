@@ -9,7 +9,7 @@ import {
 } from '../../state/applets/applets.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
-import { setCurrentActivity } from '../../state/app/app.actions';
+import { setCurrentApplet } from '../../state/app/app.actions';
 
 class AppletList extends Component {
   refresh = () => {
@@ -17,10 +17,10 @@ class AppletList extends Component {
     sync();
   }
 
-  handlePressApplet = (activity) => {
-    const { setCurrentActivity } = this.props;
-    setCurrentActivity(activity.id);
-    Actions.push('activity_details');
+  handlePressApplet = (applet) => {
+    const { setCurrentApplet } = this.props;
+    setCurrentApplet(applet.id);
+    Actions.push('applet_details');
   }
 
   render() {
@@ -46,7 +46,7 @@ AppletList.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   openDrawer: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
-  setCurrentActivity: PropTypes.func.isRequired,
+  setCurrentApplet: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -57,7 +57,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   openDrawer,
   sync,
-  setCurrentActivity,
+  setCurrentApplet,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletList);

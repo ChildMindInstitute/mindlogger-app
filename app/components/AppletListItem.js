@@ -31,31 +31,41 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppletListItem = ({ applet }) => (
-  <View style={styles.box}>
-    <TouchBox>
-      <View style={styles.inner}>
-        <AppletImage applet={applet} />
-        <View style={styles.textBlock}>
-          <SubHeading>
-            {applet.name.en}
-          </SubHeading>
-          <BodyText>
-            {applet.description.en}
-          </BodyText>
+const AppletListItem = ({ applet, onPress }) => {
+  const numberOverdue = applet.activities.reduce(
+    (accumulator, activity) => (activity.isOverdue ? accumulator + 1 : accumulator),
+    0,
+  );
+
+  return (
+    <View style={styles.box}>
+      <TouchBox onPress={() => onPress(applet)}>
+        <View style={styles.inner}>
+          <AppletImage applet={applet} />
+          <View style={styles.textBlock}>
+            <SubHeading>
+              {applet.name.en}
+            </SubHeading>
+            <BodyText>
+              {applet.description.en}
+            </BodyText>
+          </View>
         </View>
-      </View>
-    </TouchBox>
-    <View style={styles.notification}>
-      <NotificationText>
-        1
-      </NotificationText>
+      </TouchBox>
+      { numberOverdue > 0 && (
+        <View style={styles.notification}>
+          <NotificationText>
+            {numberOverdue}
+          </NotificationText>
+        </View>
+      )}
     </View>
-  </View>
-);
+  );
+};
 
 AppletListItem.propTypes = {
   applet: PropTypes.object.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
 
 export default AppletListItem;

@@ -4,25 +4,24 @@ import { Text, StyleSheet } from 'react-native';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
-  subHeading: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 8,
-    color: colors.tertiary,
+  body: {
+    fontWeight: 'normal',
+    fontSize: 13,
+    color: colors.grey,
   },
 });
 
-export const SubHeading = ({ children, style }) => (
-  <Text style={{ ...styles.subHeading, ...style }}>
+export const LittleText = ({ children, style }) => (
+  <Text style={{ ...styles.body, ...style }}>
     {children}
   </Text>
 );
 
-SubHeading.defaultProps = {
+LittleText.defaultProps = {
   style: {},
 };
 
-SubHeading.propTypes = {
+LittleText.propTypes = {
   children: PropTypes.node.isRequired,
   style: PropTypes.object,
 };

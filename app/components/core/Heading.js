@@ -11,12 +11,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Heading = ({ children }) => (
-  <Text style={styles.heading}>
+export const Heading = ({ children, style = {} }) => (
+  <Text style={{ ...styles.heading, ...style }}>
     {children}
   </Text>
 );
 
+Heading.defaultProps = {
+  style: {},
+};
+
 Heading.propTypes = {
   children: PropTypes.node.isRequired,
+  style: PropTypes.object,
 };

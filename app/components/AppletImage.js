@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
 
-const AppletImage = ({ applet, size = 50 }) => {
+const AppletImage = ({ applet, size = 64 }) => {
   // Display the image if there is one
   if (typeof applet.image !== 'undefined') {
     return (
@@ -40,7 +40,7 @@ const AppletImage = ({ applet, size = 50 }) => {
 };
 
 AppletImage.defaultProps = {
-  size: 50,
+  size: 64,
 };
 
 AppletImage.propTypes = {

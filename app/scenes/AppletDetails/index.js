@@ -4,65 +4,54 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { openDrawer } from '../../state/drawer/drawer.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
-import {
-  activitiesSelector,
-  isDownloadingAppletsSelector,
-} from '../../state/applets/applets.selectors';
-import ActivityListComponent from './ActivityListComponent';
+import { currentAppletSelector } from '../../state/app/app.selectors';
+import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
-import { sync } from '../../state/app/app.thunks';
 
-class ActivityList extends Component {
-  handlePressRow = (activity) => {
+class AppletDetails extends Component {
+  handlePressActivity = (activity) => {
     const { startResponse } = this.props;
     startResponse(activity);
     Actions.push('take_act');
   }
 
-  refresh = () => {
-    const { sync } = this.props;
-    sync();
+  handleBack = () => {
+    Actions.pop();
   }
 
   render() {
     const {
-      activities,
-      isDownloadingApplets,
+      currentApplet,
       openDrawer,
       inProgress,
     } = this.props;
     return (
-      <ActivityListComponent
-        activities={activities}
-        isDownloadingApplets={isDownloadingApplets}
+      <AppletDetailsComponent
+        applet={currentApplet}
         inProgress={inProgress}
         onPressDrawer={openDrawer}
-        onPressRefresh={this.refresh}
-        onPressRow={this.handlePressRow}
+        onPressActivity={this.handlePressActivity}
+        onPressBack={this.handleBack}
       />
     );
   }
 }
 
-ActivityList.propTypes = {
-  activities: PropTypes.array.isRequired,
-  isDownloadingApplets: PropTypes.bool.isRequired,
+AppletDetails.propTypes = {
+  currentApplet: PropTypes.object.isRequired,
   openDrawer: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
-  sync: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  activities: activitiesSelector(state),
-  isDownloadingApplets: isDownloadingAppletsSelector(state),
+  currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
 });
 
 const mapDispatchToProps = {
   openDrawer,
-  sync,
   startResponse,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityList);
+export default connect(mapStateToProps, mapDispatchToProps)(AppletDetails);

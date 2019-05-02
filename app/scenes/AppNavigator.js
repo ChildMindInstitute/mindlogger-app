@@ -15,7 +15,8 @@ import { colors } from '../theme';
 import About from './About';
 import AboutApp from './AboutApp';
 import Activity from './Activity';
-import ActivityList from './ActivityList';
+import AppletDetails from './AppletDetails';
+import AppletList from './AppletList';
 import ChangeStudy from './ChangeStudy';
 import Consent from './Consent';
 import ForgotPassword from './ForgotPassword';
@@ -27,7 +28,6 @@ import SideBar from './Sidebar';
 import Signup from './Signup';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
-import AppletList from './AppletList';
 
 const Navigator = Actions.create(
   <Lightbox>
@@ -37,7 +37,7 @@ const Navigator = Actions.create(
       <Scene key="about_app" component={AboutApp} />
       <Scene key="about_volume" component={VolumeInfo} />
       <Scene key="about" component={About} />
-      <Scene key="activity" component={ActivityList} />
+      <Scene key="applet_details" component={AppletDetails} />
       <Scene key="applet_list" component={AppletList} />
       <Scene key="change_study" component={ChangeStudy} />
       <Scene key="consent" component={Consent} />

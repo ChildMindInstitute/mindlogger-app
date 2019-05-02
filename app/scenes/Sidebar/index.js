@@ -13,9 +13,9 @@ import { logout } from '../../state/app/app.thunks';
 
 const datas = [
   {
-    name: 'Activities',
-    route: 'activity',
-    image: require('../../../img/menu/biking.png'),
+    name: 'Home',
+    route: 'applet_list',
+    image: require('../../../img/menu/diagram.png'),
     bg: '#C5F442',
   },
   {

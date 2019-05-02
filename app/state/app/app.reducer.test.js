@@ -2,6 +2,7 @@ import appReducer, { initialState } from './app.reducer';
 import {
   setApiHost,
   resetApiHost,
+  setCurrentApplet,
 } from './app.actions';
 
 test('it has an initial state', () => {
@@ -19,5 +20,12 @@ test('it resets api host', () => {
   const state = appReducer(initialState, setApiHost('foobar'));
   expect(appReducer(state, resetApiHost())).toEqual({
     ...initialState,
+  });
+});
+
+test('it sets current applet', () => {
+  expect(appReducer(initialState, setCurrentApplet('barfoo'))).toEqual({
+    ...initialState,
+    currentApplet: 'barfoo',
   });
 });

@@ -6,17 +6,22 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   body: {
     fontWeight: 'normal',
-    fontSize: 16,
+    fontSize: 18,
     color: colors.tertiary,
   },
 });
 
-export const BodyText = ({ children }) => (
-  <Text style={styles.body}>
+export const BodyText = ({ children, style }) => (
+  <Text style={{ ...styles.body, ...style }}>
     {children}
   </Text>
 );
 
+BodyText.defaultProps = {
+  style: {},
+};
+
 BodyText.propTypes = {
   children: PropTypes.node.isRequired,
+  style: PropTypes.object,
 };
