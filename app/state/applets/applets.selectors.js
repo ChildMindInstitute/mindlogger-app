@@ -32,7 +32,6 @@ export const appletsSelector = createSelector(
   }),
 );
 
-
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 
 export const notificationsSelector = R.path(['applets', 'notifications']);

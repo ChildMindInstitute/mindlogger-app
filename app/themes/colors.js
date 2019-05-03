@@ -5,5 +5,5 @@ export const colors = {
   tertiary: '#404040',
   grey: '#808080',
   lightGrey: '#F0F0F0',
-  alert: 'rgb(255, 100, 100)',
+  alert: 'rgb(230, 50, 50)',
 };

@@ -22,11 +22,6 @@ export const setResponsesDownloadProgress = (downloaded, total) => ({
   },
 });
 
-export const setCurrentActivity = activityId => ({
-  type: RESPONSES_CONSTANTS.SET_CURRENT_ACTIVITY,
-  payload: activityId,
-});
-
 export const removeResponseInProgress = activityId => ({
   type: RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS,
   payload: activityId,

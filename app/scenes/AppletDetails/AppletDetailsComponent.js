@@ -25,7 +25,7 @@ const AppletDetailsComponent = ({
         <Button transparent onPress={onPressBack}>
           <Icon
             ios="ios-arrow-back"
-            android="ma-arrow-back"
+            android="md-arrow-back"
           />
         </Button>
       </Left>

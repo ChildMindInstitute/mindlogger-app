@@ -5,20 +5,14 @@ import { Actions } from 'react-native-router-flux';
 
 const ActHeader = ({ title, onInfo }) => (
   <Header>
-    <Left>
-      <Button transparent onPress={Actions.drawerOpen}>
-        <Icon name="menu" />
-      </Button>
-    </Left>
+    <Left />
     <Body style={{ flex: 2 }}>
       <Title>{title}</Title>
     </Body>
     <Right>
-      {onInfo && (
-        <Button transparent onPress={onInfo}>
-          <Icon name="information-circle" />
-        </Button>
-      )}
+      <Button transparent onPress={Actions.pop}>
+        <Icon name="close" />
+      </Button>
     </Right>
   </Header>
 );

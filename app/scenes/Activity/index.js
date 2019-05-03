@@ -57,7 +57,7 @@ class Activity extends Component {
     } else {
       // Finished activity
       completeResponse(currentResponse);
-      Actions.pop();
+      Actions.popTo('applet_details');
     }
   }
 

@@ -5,13 +5,16 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native';
 const styles = StyleSheet.create({
   box: {
     borderRadius: 3,
-    elevation: 1,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     backgroundColor: '#F0F0F0',
     padding: 16,
+    margin: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 

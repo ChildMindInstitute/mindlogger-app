@@ -7,9 +7,6 @@ import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
   box: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 12,
     position: 'relative',
   },
   inner: {

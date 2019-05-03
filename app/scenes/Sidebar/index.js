@@ -77,9 +77,6 @@ class SideBar extends Component {
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
-          <View style={styles.drawerCover}>
-            <Text style={styles.drawerCoverText}>Mindlogger</Text>
-          </View>
           <List style={styles.drawerList}
             dataArray={datas} renderRow={data =>
             <ListItem button noBorder onPress={() => this.onMenu(data.route)} >

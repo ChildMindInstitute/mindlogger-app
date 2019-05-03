@@ -3,7 +3,6 @@ import {
   replaceResponses,
   setDownloadingResponses,
   setResponsesDownloadProgress,
-  setCurrentActivity,
   removeResponseInProgress,
   createResponseInProgress,
   setAnswer,
@@ -43,13 +42,6 @@ test('it sets responses download progress', () => {
       downloaded: 1,
       total: 3,
     },
-  });
-});
-
-test('it sets current activity', () => {
-  expect(responsesReducer(initialState, setCurrentActivity('abcde'))).toEqual({
-    ...initialState,
-    currentActivity: 'abcde',
   });
 });
 
