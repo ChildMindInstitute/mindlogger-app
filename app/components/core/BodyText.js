@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 export const BodyText = ({ children, style }) => (
-  <Text style={{ ...styles.body, ...style }}>
+  <Text style={[ styles.body, style ]}>
     {children}
   </Text>
 );
