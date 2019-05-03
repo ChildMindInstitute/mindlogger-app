@@ -28,7 +28,7 @@ const Navigator = Actions.create(
   <Lightbox>
     <Stack key="root" hideNavBar>
       <Drawer key="side_menu" contentComponent={SideBar}>
-        <Scene hideNavBar panHandlers={null}>
+        <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
           <Scene key="splash" component={Splash} hideNavBar initial />
           <Scene key="about_act" component={InfoAct} />
           <Scene key="about_app" component={AboutApp} />
@@ -36,12 +36,12 @@ const Navigator = Actions.create(
           <Scene key="about" component={About} />
           <Scene key="applet_details" component={AppletDetails} />
           <Scene key="applet_list" component={AppletList} />
-          <Scene key="change_study" drawerLockMode="locked-closed" component={ChangeStudy} />
+          <Scene key="change_study" component={ChangeStudy} />
           <Scene key="consent" component={Consent} />
-          <Scene key="forgot_password" drawerLockMode="locked-closed" component={ForgotPassword} />
-          <Scene key="login" drawerLockMode="locked-closed" component={Login} />
+          <Scene key="forgot_password" component={ForgotPassword} />
+          <Scene key="login" component={Login} />
           <Scene key="settings" component={Settings} />
-          <Scene key="sign_up" drawerLockMode="locked-closed" component={Signup} />
+          <Scene key="sign_up" component={Signup} />
           <Scene key="take_act" component={Activity} />
         </Scene>
       </Drawer>
