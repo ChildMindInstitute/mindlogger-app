@@ -29,11 +29,11 @@ export default {
   },
   drawerList: {
     marginLeft: 20,
-    marginTop: 60,
+    marginTop: 20,
   },
   menuImage: {
-    width: 30,
-    height: 30,
+    width: 36,
+    height: 36,
     resizeMode: 'contain',
   },
   drawerLogo: {
@@ -66,7 +66,7 @@ export default {
   },
   text: {
     fontWeight: (Platform.OS === 'ios') ? '500' : '400',
-    fontSize: 18,
+    fontSize: 20,
     marginLeft: 20,
   },
   badgeText: {

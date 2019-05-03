@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Content, Text, List, ListItem, Container, Left, Right, Badge, View } from 'native-base';
+import { Content, Text, List, ListItem, Container, Left, Right, Badge, View, Header, Body, Title } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './style';
 import { logout } from '../../state/app/app.thunks';
@@ -77,6 +77,11 @@ class SideBar extends Component {
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
+          <Header>
+            <Body>
+              <Title>MindLogger</Title>
+            </Body>
+          </Header>
           <List style={styles.drawerList}
             dataArray={datas} renderRow={data =>
             <ListItem button noBorder onPress={() => this.onMenu(data.route)} >

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image } from 'react-native';
+import { TouchableOpacity, Image, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -62,6 +62,7 @@ class Login extends Component {
   render() {
     return (
       <Container>
+        <StatusBar barStyle="light-content" />
         <Content style={styles.container}>
           <Text style={styles.header}>MindLogger</Text>
           <LoginForm onSubmit={this.onSubmit} />
