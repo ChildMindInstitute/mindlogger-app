@@ -25,7 +25,7 @@ const ActHeader = ({ title, onInfo }) => (
 
 ActHeader.propTypes = {
   title: PropTypes.string.isRequired,
-  onInfo: PropTypes.func.isRequired,
+  onInfo: PropTypes.func,
 };
 
 export default ActHeader;

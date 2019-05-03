@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
 import { Router, Scene, Lightbox, Actions, Stack, Drawer } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
+import platform from '../../native-base-theme/variables/platform';
 
 // Scenes
 import About from './About';
@@ -27,10 +27,7 @@ import VolumeInfo from './VolumeInfo';
 const Navigator = Actions.create(
   <Lightbox>
     <Stack key="root" hideNavBar>
-      <Drawer
-        key="side_menu"
-        contentComponent={SideBar}
-      >
+      <Drawer key="side_menu" contentComponent={SideBar}>
         <Scene hideNavBar panHandlers={null}>
           <Scene key="splash" component={Splash} hideNavBar initial />
           <Scene key="about_act" component={InfoAct} />
@@ -39,12 +36,12 @@ const Navigator = Actions.create(
           <Scene key="about" component={About} />
           <Scene key="applet_details" component={AppletDetails} />
           <Scene key="applet_list" component={AppletList} />
-          <Scene key="change_study" component={ChangeStudy} />
+          <Scene key="change_study" drawerLockMode="locked-closed" component={ChangeStudy} />
           <Scene key="consent" component={Consent} />
-          <Scene key="forgot_password" component={ForgotPassword} />
-          <Scene key="login" component={Login} />
+          <Scene key="forgot_password" drawerLockMode="locked-closed" component={ForgotPassword} />
+          <Scene key="login" drawerLockMode="locked-closed" component={Login} />
           <Scene key="settings" component={Settings} />
-          <Scene key="sign_up" component={Signup} />
+          <Scene key="sign_up" drawerLockMode="locked-closed" component={Signup} />
           <Scene key="take_act" component={Activity} />
         </Scene>
       </Drawer>
@@ -64,7 +61,7 @@ export default class AppNavigator extends Component {
 
   render() {
     return (
-      <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
+      <StyleProvider style={getTheme(platform)}>
         <Router navigator={Navigator} />
       </StyleProvider>
     );

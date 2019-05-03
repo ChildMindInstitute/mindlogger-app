@@ -47,15 +47,15 @@ class SettingScreen extends Component {
     return (
       <Container style={styles.container}>
         <Header>
-          <Left>
-            <Button transparent onPress={Actions.drawerOpen}>
-              <Icon name="menu" />
-            </Button>
-          </Left>
+          <Left />
           <Body>
             <Title>Settings</Title>
           </Body>
-          <Right />
+          <Right>
+            <Button transparent onPress={Actions.drawerOpen}>
+              <Icon name="menu" />
+            </Button>
+          </Right>
         </Header>
         <Content>
           <Text style={styles.subHeader}>Profile</Text>

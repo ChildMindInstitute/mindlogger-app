@@ -48,7 +48,6 @@ const logoImage = require('../../../img/color_logo.png');
 class SideBar extends Component {
 
   static propTypes = {
-    themeState: PropTypes.string,
     changePlatform: PropTypes.func,
     changeMaterial: PropTypes.func,
   }

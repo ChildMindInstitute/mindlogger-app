@@ -74,7 +74,6 @@ class AboutScreen extends Component { // eslint-disable-line
 
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
-  themeState: state.drawer.themeState,
 });
 
 export default connect(mapStateToProps)(AboutScreen);
