@@ -4,25 +4,17 @@ import { ImageBackground, Image, View, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Button, H3, Text } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 
 const launchscreenBg = require('../../../img/launchscreen-bg.png');
 const launchscreenLogo = require('../../../img/CMI_white_h_logo.png');
 
-class Home extends Component { // eslint-disable-line
-
-  static propTypes = {
-    openDrawer: PropTypes.func,
-  }
-
-  componentWillMount()
-  {
+export default class Home extends Component { // eslint-disable-line
+  componentWillMount() {
     let t = setTimeout(() => {
-      Actions.login()
-      clearTimeout(t)
-    }, 1000)
+      Actions.login();
+      clearTimeout(t);
+    }, 1000);
   }
 
   render() {
@@ -42,11 +34,3 @@ class Home extends Component { // eslint-disable-line
     );
   }
 }
-
-function bindActions(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-  };
-}
-
-export default connect(null, bindActions)(Home);

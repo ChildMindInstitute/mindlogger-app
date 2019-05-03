@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {StatusBar, Image, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast} from 'native-base';
 import {Actions} from 'react-native-router-flux';
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 import { appletsSelector } from '../../state/applets/applets.selectors';
 
@@ -42,15 +40,15 @@ class AboutScreen extends Component { // eslint-disable-line
         <Container style={styles.container}>
           <StatusBar barStyle='light-content'/>
           <Header>
-            <Left>
-                <Button transparent onPress={this.props.openDrawer}>
-                <Icon name="close" />
-                </Button>
-            </Left>
+            <Left />
             <Body>
                 <Title>About</Title>
             </Body>
-            <Right></Right>
+            <Right>
+              <Button transparent onPress={Actions.drawerOpen}>
+                <Icon name="menu" />
+              </Button>
+            </Right>
           </Header>
           <Content style={styles.content}>
             <View>
@@ -74,13 +72,9 @@ class AboutScreen extends Component { // eslint-disable-line
     }
 }
 
-function bindActions(dispatch) {
-    return bindActionCreators({openDrawer}, dispatch)
-}
-
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
   themeState: state.drawer.themeState,
 });
 
-export default connect(mapStateToProps, bindActions)(AboutScreen);
+export default connect(mapStateToProps)(AboutScreen);

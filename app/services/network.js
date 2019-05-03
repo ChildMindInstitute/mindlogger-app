@@ -161,3 +161,16 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
 export const fileLink = (file, token) => (file
   ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}`
   : '');
+
+export const registerOpenApplet = (authToken, schemaURI) => {
+  const url = `${apiHost()}/applet/invite`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({ url: schemaURI }),
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

@@ -5,8 +5,6 @@ import { Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Content, Text, List, ListItem, Container, Left, Right, Badge, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import { changePlatform, changeMaterial, closeDrawer } from '../../state/drawer/drawer.actions';
 import styles from './style';
 import { logout } from '../../state/app/app.thunks';
 
@@ -64,13 +62,13 @@ class SideBar extends Component {
   }
 
   onMenu(route) {
-    const { closeDrawer, signOut, logout } = this.props;
+    const { closeDrawer, logout } = this.props;
     if (route === 'logout') {
       logout();
     } else {
       Actions.replace(route);
     }
-    closeDrawer();
+    Actions.drawerClose();
   }
 
   render() {
@@ -85,21 +83,21 @@ class SideBar extends Component {
           </View>
           <List style={styles.drawerList}
             dataArray={datas} renderRow={data =>
-              <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
-                <Left>
-                  <Image active source={data.image} style={styles.menuImage} />
-                  <Text style={styles.text}>{data.name}</Text>
-                </Left>
-                {(data.types) &&
-                <Right style={{ flex: 1 }}>
-                  <Badge
-                    style={{ borderRadius: 3, height: 25, width: 72, backgroundColor: data.bg }}
-                  >
-                    <Text style={styles.badgeText}>{`${data.types} Types`}</Text>
-                  </Badge>
-                </Right>
-                }
-              </ListItem>}
+            <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
+              <Left>
+                <Image active source={data.image} style={styles.menuImage} />
+                <Text style={styles.text}>{data.name}</Text>
+              </Left>
+              {(data.types) &&
+              <Right style={{ flex: 1 }}>
+                <Badge
+                  style={{ borderRadius: 3, height: 25, width: 72, backgroundColor: data.bg }}
+                >
+                  <Text style={styles.badgeText}>{`${data.types} Types`}</Text>
+                </Badge>
+              </Right>
+              }
+            </ListItem>}
           />
           <View>
             <Image
@@ -116,14 +114,7 @@ class SideBar extends Component {
 }
 
 const bindAction = {
-  closeDrawer,
-  changePlatform,
-  changeMaterial,
   logout,
 };
 
-const mapStateToProps = state => ({
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindAction)(SideBar);
+export default connect(null, bindAction)(SideBar);

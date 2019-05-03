@@ -1,6 +1,7 @@
 export * from './BodyText';
 export * from './GImage';
 export * from './Heading';
+export * from './Hyperlink';
 export * from './LittleHeading';
 export * from './LittleText';
 export * from './NotificationDot';

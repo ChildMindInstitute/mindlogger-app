@@ -1,15 +1,10 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { BackHandler, StatusBar, Platform } from 'react-native';
-import { connect } from 'react-redux';
-import { StyleProvider, Drawer } from 'native-base';
-import { Router, Scene, Lightbox, Actions, Stack } from 'react-native-router-flux';
-
+import { BackHandler } from 'react-native';
+import { StyleProvider } from 'native-base';
+import { Router, Scene, Lightbox, Actions, Stack, Drawer } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
-import { closeDrawer } from '../state/drawer/drawer.actions';
-import { colors } from '../theme';
 
 // Scenes
 import About from './About';
@@ -32,27 +27,34 @@ import VolumeInfo from './VolumeInfo';
 const Navigator = Actions.create(
   <Lightbox>
     <Stack key="root" hideNavBar>
-      <Scene key="splash" component={Splash} initial />
-      <Scene key="about_act" component={InfoAct} />
-      <Scene key="about_app" component={AboutApp} />
-      <Scene key="about_volume" component={VolumeInfo} />
-      <Scene key="about" component={About} />
-      <Scene key="applet_details" component={AppletDetails} />
-      <Scene key="applet_list" component={AppletList} />
-      <Scene key="change_study" component={ChangeStudy} />
-      <Scene key="consent" component={Consent} />
-      <Scene key="forgot_password" component={ForgotPassword} />
-      <Scene key="login" component={Login} />
-      <Scene key="settings" component={Settings} />
-      <Scene key="sign_up" component={Signup} />
-      <Scene key="take_act" component={Activity} />
+      <Drawer
+        key="side_menu"
+        contentComponent={SideBar}
+      >
+        <Scene hideNavBar panHandlers={null}>
+          <Scene key="splash" component={Splash} hideNavBar initial />
+          <Scene key="about_act" component={InfoAct} />
+          <Scene key="about_app" component={AboutApp} />
+          <Scene key="about_volume" component={VolumeInfo} />
+          <Scene key="about" component={About} />
+          <Scene key="applet_details" component={AppletDetails} />
+          <Scene key="applet_list" component={AppletList} />
+          <Scene key="change_study" component={ChangeStudy} />
+          <Scene key="consent" component={Consent} />
+          <Scene key="forgot_password" component={ForgotPassword} />
+          <Scene key="login" component={Login} />
+          <Scene key="settings" component={Settings} />
+          <Scene key="sign_up" component={Signup} />
+          <Scene key="take_act" component={Activity} />
+        </Scene>
+      </Drawer>
     </Stack>
     <Scene key="logout_warning" component={LogoutWarning} />
   </Lightbox>
   ,
 );
 
-class AppNavigator extends Component {
+export default class AppNavigator extends Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', () => {
       Actions.pop();
@@ -60,49 +62,11 @@ class AppNavigator extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.drawerState === 'closed' && this.props.drawerState === 'opened') {
-      this._drawer._root.open();
-    }
-
-    if (prevProps.drawerState === 'opened' && this.props.drawerState === 'closed') {
-      this._drawer._root.close();
-    }
-  }
-
   render() {
     return (
       <StyleProvider style={getTheme((this.props.themeState === 'material') ? material : undefined)}>
-        <Drawer
-          ref={(ref) => { this._drawer = ref; }}
-          content={<SideBar />}
-          onClose={() => this.props.closeDrawer()}
-        >
-          <StatusBar
-            hidden={this.props.drawerState === 'opened' && Platform.OS === 'ios'}
-            backgroundColor={colors.primary}
-            barStyle="light-content"
-          />
-          <Router navigator={Navigator} />
-        </Drawer>
+        <Router navigator={Navigator} />
       </StyleProvider>
     );
   }
 }
-
-AppNavigator.propTypes = {
-  drawerState: PropTypes.string.isRequired,
-  closeDrawer: PropTypes.func.isRequired,
-  themeState: PropTypes.string.isRequired,
-};
-
-const bindAction = dispatch => ({
-  closeDrawer: () => dispatch(closeDrawer()),
-});
-
-const mapStateToProps = state => ({
-  themeState: state.drawer.themeState,
-  drawerState: state.drawer.drawerState,
-});
-
-export default connect(mapStateToProps, bindAction)(AppNavigator);

@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {StatusBar} from 'react-native';
-import {connect} from 'react-redux';
 import {Container, Button, H3, Text, Item, Label, Input, Form, View, Header, Right, Row, Body, ListItem, CheckBox} from 'native-base';
 import {Actions} from 'react-native-router-flux';
 
 import styles from './styles';
 
-class Consent extends Component { // eslint-disable-line
+export default class Consent extends Component { // eslint-disable-line
     componentWillMount() {
         this.setState({
             content: false,
@@ -59,13 +57,3 @@ class Consent extends Component { // eslint-disable-line
         );
     }
 }
-
-function bindActions(dispatch) {
-    return {};
-}
-
-const mapStateToProps = state => ({
-    themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindActions)(Consent);

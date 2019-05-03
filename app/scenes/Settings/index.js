@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, Text, Left, Body, Right, View } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 import { userInfoSelector, authTokenSelector } from '../../state/user/user.selectors';
 import { updateUserDetails, updatePassword } from '../../services/network';
@@ -49,7 +48,7 @@ class SettingScreen extends Component {
       <Container style={styles.container}>
         <Header>
           <Left>
-            <Button transparent onPress={this.props.openDrawer}>
+            <Button transparent onPress={Actions.drawerOpen}>
               <Icon name="menu" />
             </Button>
           </Left>
@@ -72,12 +71,10 @@ class SettingScreen extends Component {
 SettingScreen.propTypes = {
   user: PropTypes.object.isRequired,
   authToken: PropTypes.string.isRequired,
-  openDrawer: PropTypes.func.isRequired,
   updateUserDetailsSuccessful: PropTypes.func.isRequired,
 };
 
 const bindAction = {
-  openDrawer,
   updateUserDetailsSuccessful,
 };
 

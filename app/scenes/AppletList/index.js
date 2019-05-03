@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import {
   appletsSelector,
   isDownloadingAppletsSelector,
@@ -27,13 +26,12 @@ class AppletList extends Component {
     const {
       applets,
       isDownloadingApplets,
-      openDrawer,
     } = this.props;
     return (
       <AppletListComponent
         applets={applets}
         isDownloadingApplets={isDownloadingApplets}
-        onPressDrawer={openDrawer}
+        onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
         onPressApplet={this.handlePressApplet}
       />
@@ -44,7 +42,6 @@ class AppletList extends Component {
 AppletList.propTypes = {
   applets: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
-  openDrawer: PropTypes.func.isRequired,
   sync: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
 };
@@ -55,7 +52,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  openDrawer,
   sync,
   setCurrentApplet,
 };

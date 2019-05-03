@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 import { currentAppletSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
@@ -22,7 +21,6 @@ class AppletDetails extends Component {
   render() {
     const {
       currentApplet,
-      openDrawer,
       inProgress,
     } = this.props;
     if (!currentApplet) {
@@ -33,7 +31,7 @@ class AppletDetails extends Component {
       <AppletDetailsComponent
         applet={currentApplet}
         inProgress={inProgress}
-        onPressDrawer={openDrawer}
+        onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
         onPressBack={this.handleBack}
       />
@@ -43,7 +41,6 @@ class AppletDetails extends Component {
 
 AppletDetails.propTypes = {
   currentApplet: PropTypes.object.isRequired,
-  openDrawer: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
 };
@@ -54,7 +51,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  openDrawer,
   startResponse,
 };
 
