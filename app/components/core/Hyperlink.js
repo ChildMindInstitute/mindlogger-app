@@ -26,5 +26,5 @@ Hyperlink.defaultProps = {
 Hyperlink.propTypes = {
   children: PropTypes.node.isRequired,
   onPress: PropTypes.func.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };

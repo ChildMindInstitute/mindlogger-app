@@ -23,5 +23,5 @@ LittleText.defaultProps = {
 
 LittleText.propTypes = {
   children: PropTypes.node.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };
