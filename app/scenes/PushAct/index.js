@@ -70,7 +70,7 @@ class PushActivityScreen extends Component {
             <Header>
             <Left>
                 <Button transparent onPress={Actions.drawerOpen}>
-                <Icon name="menu" />
+                <Icon type="FontAwesome" name="bars" />
                 </Button>
             </Left>
             <Body>

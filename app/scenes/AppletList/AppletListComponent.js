@@ -36,7 +36,7 @@ const AppletListComponent = ({
       </Body>
       <Right style={{ flexDirection: 'row' }}>
         <Button transparent onPress={onPressDrawer}>
-          <Icon name="menu" />
+          <Icon type="FontAwesome" name="bars" />
         </Button>
       </Right>
     </Header>

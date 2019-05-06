@@ -11,7 +11,7 @@ const ActHeader = ({ title, onInfo }) => (
     </Body>
     <Right>
       <Button transparent onPress={Actions.pop}>
-        <Icon name="close" />
+        <Icon type="FontAwesome" name="close" />
       </Button>
     </Right>
   </Header>
