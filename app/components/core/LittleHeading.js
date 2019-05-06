@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 });
 
 export const LittleHeading = ({ children, style }) => (
-  <Text style={{ ...styles.subHeading, ...style }}>
+  <Text style={[ styles.subHeading, style ]}>
     {children}
   </Text>
 );
@@ -24,5 +24,5 @@ LittleHeading.defaultProps = {
 
 LittleHeading.propTypes = {
   children: PropTypes.node.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };

@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 export const LittleText = ({ children, style }) => (
-  <Text style={{ ...styles.body, ...style }}>
+  <Text style={[ styles.body, style ]}>
     {children}
   </Text>
 );
@@ -23,5 +23,5 @@ LittleText.defaultProps = {
 
 LittleText.propTypes = {
   children: PropTypes.node.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };

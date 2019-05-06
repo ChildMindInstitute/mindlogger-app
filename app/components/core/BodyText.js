@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 export const BodyText = ({ children, style }) => (
-  <Text style={{ ...styles.body, ...style }}>
+  <Text style={[ styles.body, style ]}>
     {children}
   </Text>
 );
@@ -23,5 +23,5 @@ BodyText.defaultProps = {
 
 BodyText.propTypes = {
   children: PropTypes.node.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };

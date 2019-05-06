@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 
 export const Hyperlink = ({ children, onPress, style }) => (
   <TouchableOpacity onPress={onPress}>
-    <Text style={{ ...styles.text, ...style }}>
+    <Text style={[ styles.text, style ]}>
       {children}
     </Text>
   </TouchableOpacity>
@@ -26,5 +26,5 @@ Hyperlink.defaultProps = {
 Hyperlink.propTypes = {
   children: PropTypes.node.isRequired,
   onPress: PropTypes.func.isRequired,
-  style: PropTypes.object,
+  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
 };
