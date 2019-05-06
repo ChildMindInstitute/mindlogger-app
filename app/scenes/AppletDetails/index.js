@@ -15,7 +15,7 @@ class AppletDetails extends Component {
   }
 
   handleBack = () => {
-    Actions.pop();
+    Actions.popTo('applet_list'); // pop();
   }
 
   render() {
@@ -26,7 +26,6 @@ class AppletDetails extends Component {
     if (!currentApplet) {
       return null;
     }
-    console.log('applet is', currentApplet);
 
     return (
       <AppletDetailsComponent

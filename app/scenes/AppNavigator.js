@@ -10,6 +10,7 @@ import About from './About';
 import AboutApp from './AboutApp';
 import Activity from './Activity';
 import ActivityDetails from './ActivityDetails';
+import ActivityThanks from './ActivityThanks';
 import AppletDetails from './AppletDetails';
 import AppletList from './AppletList';
 import ChangeStudy from './ChangeStudy';
@@ -44,6 +45,7 @@ const Navigator = Actions.create(
           <Scene key="settings" component={Settings} />
           <Scene key="sign_up" component={Signup} />
           <Scene key="take_act" component={Activity} />
+          <Scene key="activity_thanks" component={ActivityThanks} />
         </Scene>
       </Drawer>
     </Stack>
