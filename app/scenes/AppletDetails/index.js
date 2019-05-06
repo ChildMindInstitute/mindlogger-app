@@ -26,6 +26,7 @@ class AppletDetails extends Component {
     if (!currentApplet) {
       return null;
     }
+    console.log('applet is', currentApplet);
 
     return (
       <AppletDetailsComponent
