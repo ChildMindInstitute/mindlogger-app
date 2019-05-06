@@ -8,6 +8,7 @@ import {
   Body,
   Text,
 } from 'native-base';
+import { colors } from '../themes/colors';
 
 export const Radio = ({ value, config, onChange }) => (
   <View style={{ alignItems: 'stretch' }}>
@@ -18,7 +19,7 @@ export const Radio = ({ value, config, onChange }) => (
             <Text>{item.name.en}</Text>
           </Body>
           <Right>
-            <RadioNB selected={value === item.value} onPress={() => onChange(item.value)} />
+            <RadioNB selectedColor={colors.primary} selected={value === item.value} onPress={() => onChange(item.value)} />
           </Right>
         </ListItem>
       ))
