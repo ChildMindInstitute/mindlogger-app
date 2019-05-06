@@ -1,56 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { ImageBackground, Image, Platform } from 'react-native';
-import { connect } from 'react-redux';
 import {Header, Left, Right, Body, Button, Title, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
-import { openDrawer } from '../../state/drawer/drawer.actions';
+const ActHeader = ({ title, onInfo }) => (
+  <Header>
+    <Left />
+    <Body style={{ flex: 2 }}>
+      <Title>{title}</Title>
+    </Body>
+    <Right>
+      <Button transparent onPress={Actions.pop}>
+        <Icon name="close" />
+      </Button>
+    </Right>
+  </Header>
+);
 
-class ActHeader extends Component {
+ActHeader.propTypes = {
+  title: PropTypes.string.isRequired,
+  onInfo: PropTypes.func,
+};
 
-  static propTypes = {
-    title: PropTypes.string,
-    onInfo: PropTypes.func,
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      shadowOffsetWidth: 1,
-      shadowRadius: 4,
-    };
-  }
-
-  render() {
-    const { title, openDrawer, onInfo } = this.props;
-    return (<Header>
-      <Left>
-        <Button transparent onPress={openDrawer}>
-          <Icon name="menu" />
-        </Button>
-      </Left>
-      <Body style={{flex:2}}>
-          <Title>{title}</Title>
-      </Body>
-      <Right>
-        {onInfo && 
-        <Button transparent onPress={onInfo}>
-          <Icon name="information-circle" />
-        </Button>
-        }
-      </Right>
-    </Header>);
-  }
-}
-
-function bindAction(dispatch) {
-  return {
-    openDrawer: () => dispatch(openDrawer()),
-  };
-}
-
-const mapStateToProps = state => ({
-});
-
-export default connect(mapStateToProps, bindAction)(ActHeader);
+export default ActHeader;

@@ -9,8 +9,6 @@ export const isDownloadingResponsesSelector = R.path(['responses', 'isDownloadin
 
 export const downloadProgressSelector = R.path(['responses', 'downloadProgress']);
 
-export const currentActivityIdSelector = R.path(['responses', 'currentActivity']);
-
 export const inProgressSelector = R.path(['responses', 'inProgress']);
 
 // Flatten the response history so that keys are activity ids
@@ -23,7 +21,7 @@ export const responsesGroupedByActivitySelector = createSelector(
 );
 
 export const currentResponsesSelector = createSelector(
-  currentActivityIdSelector,
+  R.path(['app', 'currentActivity']),
   inProgressSelector,
   (activityId, inProgress) => inProgress[activityId],
 );

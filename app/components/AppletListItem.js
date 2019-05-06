@@ -11,9 +11,6 @@ import AppletImage from './AppletImage';
 
 const styles = StyleSheet.create({
   box: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 20,
     position: 'relative',
   },
   inner: {
@@ -26,7 +23,7 @@ const styles = StyleSheet.create({
   },
   notification: {
     position: 'absolute',
-    top: 10,
+    top: 0,
     right: 10,
   },
 });

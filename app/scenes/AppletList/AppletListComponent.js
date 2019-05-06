@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
   activityListContainer: {
     backgroundColor: colors.secondary,
     flex: 1,
+    paddingTop: 10,
   },
 });
 

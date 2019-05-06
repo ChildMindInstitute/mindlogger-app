@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
-import { openDrawer } from '../../state/drawer/drawer.actions';
-import { startResponse } from '../../state/responses/responses.thunks';
 import { currentAppletSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
+import { setCurrentActivity } from '../../state/app/app.actions';
 
 class AppletDetails extends Component {
   handlePressActivity = (activity) => {
-    const { startResponse } = this.props;
-    startResponse(activity);
-    Actions.push('take_act');
+    const { setCurrentActivity } = this.props;
+    setCurrentActivity(activity.id);
+    Actions.push('activity_details');
   }
 
   handleBack = () => {
@@ -22,7 +21,6 @@ class AppletDetails extends Component {
   render() {
     const {
       currentApplet,
-      openDrawer,
       inProgress,
     } = this.props;
     if (!currentApplet) {
@@ -33,7 +31,7 @@ class AppletDetails extends Component {
       <AppletDetailsComponent
         applet={currentApplet}
         inProgress={inProgress}
-        onPressDrawer={openDrawer}
+        onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
         onPressBack={this.handleBack}
       />
@@ -43,9 +41,8 @@ class AppletDetails extends Component {
 
 AppletDetails.propTypes = {
   currentApplet: PropTypes.object.isRequired,
-  openDrawer: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
-  startResponse: PropTypes.func.isRequired,
+  setCurrentActivity: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -54,8 +51,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  openDrawer,
-  startResponse,
+  setCurrentActivity,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletDetails);

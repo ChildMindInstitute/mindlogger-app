@@ -6,7 +6,7 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   subHeading: {
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     marginBottom: 8,
     color: colors.tertiary,
   },

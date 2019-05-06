@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import { Text } from 'native-base';
 import moment from 'moment';
 import { colors } from '../../theme';
 import { LittleText } from '../core';

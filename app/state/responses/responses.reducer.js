@@ -4,7 +4,6 @@ import RESPONSES_CONSTANTS from './responses.constants';
 export const initialState = {
   responseHistory: [],
   inProgress: {},
-  currentActivity: null,
   isDownloadingResponses: false,
   downloadProgress: {
     total: 0,

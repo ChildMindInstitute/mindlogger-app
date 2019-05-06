@@ -1,12 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {StatusBar, Image} from 'react-native';
-import {connect} from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left} from 'native-base';
 import {Actions} from 'react-native-router-flux';
-
-import { openDrawer } from '../../state/drawer/drawer.actions';
 import styles from './styles';
 import packageJson from '../../../package.json';
 
@@ -29,9 +25,9 @@ class AboutApp extends Component { // eslint-disable-line
             <StatusBar barStyle='light-content'/>
             <Header>
               <Left>
-                  <Button transparent onPress={this.onClose}>
+                <Button transparent onPress={this.onClose}>
                   <Icon name="close" />
-                  </Button>
+                </Button>
               </Left>
               <Body>
                   <Title>About Mindlogger {packageJson.version}</Title>
@@ -90,12 +86,4 @@ class AboutApp extends Component { // eslint-disable-line
     }
 }
 
-function bindActions(dispatch) {
-    return bindActionCreators({openDrawer}, dispatch)
-}
-
-const mapStateToProps = state => ({
-  themeState: state.drawer.themeState,
-});
-
-export default connect(mapStateToProps, bindActions)(AboutApp);
+export default AboutApp;

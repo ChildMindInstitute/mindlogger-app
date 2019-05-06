@@ -1,4 +1,4 @@
-import { getApplets } from '../../services/network';
+import { getApplets, registerOpenApplet } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
 import { activitiesSelector } from './applets.selectors';
@@ -32,4 +32,23 @@ export const downloadApplets = () => (dispatch, getState) => {
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
   });
+};
+
+export const joinExampleApplet = () => (dispatch, getState) => {
+  dispatch(setDownloadingApplets(true));
+  const state = getState();
+  const auth = authSelector(state);
+  registerOpenApplet(
+    auth.token,
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/example/nda-phq.jsonld',
+  )
+    .then(() => {
+      downloadApplets()(dispatch, getState);
+    })
+    .catch((e) => {
+      console.warn(e);
+    })
+    .finally(() => {
+      dispatch(setDownloadingApplets(false));
+    });
 };

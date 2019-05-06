@@ -29,3 +29,10 @@ test('it sets current applet', () => {
     currentApplet: 'barfoo',
   });
 });
+
+test('it sets current activity', () => {
+  expect(appReducer(initialState, setCurrentApplet('activity-123'))).toEqual({
+    ...initialState,
+    currentApplet: 'activity-123',
+  });
+});

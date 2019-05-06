@@ -3,10 +3,8 @@ import React, { Component } from 'react';
 import { Platform } from 'react-native';
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Toast, Spinner } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Spinner } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-
-import { openDrawer, closeDrawer } from '../../state/drawer/drawer.actions';
 import {
     setActivity,
     setVolume,
@@ -71,7 +69,7 @@ class PushActivityScreen extends Component {
         <Container style={styles.container}>
             <Header>
             <Left>
-                <Button transparent onPress={this.props.openDrawer}>
+                <Button transparent onPress={Actions.drawerOpen}>
                 <Icon name="menu" />
                 </Button>
             </Left>
@@ -93,8 +91,6 @@ class PushActivityScreen extends Component {
 
 function bindAction(dispatch) {
   return {
-    openDrawer: () => dispatch(openDrawer()),
-    closeDrawer: () => dispatch(closeDrawer()),
     pushRoute: (route, key) => dispatch(pushRoute(route, key)),
     ...bindActionCreators({
             setActivity,

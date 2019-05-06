@@ -9,7 +9,6 @@ import {
 } from '../user/user.selectors';
 import {
   createResponseInProgress,
-  setCurrentActivity,
   setDownloadingResponses,
   replaceResponses,
   setResponsesDownloadProgress,
@@ -17,6 +16,9 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
 } from './responses.actions';
+import {
+  setCurrentActivity,
+} from '../app/app.actions';
 import { uploadQueueSelector } from './responses.selectors';
 
 export const startResponse = activity => (dispatch, getState) => {

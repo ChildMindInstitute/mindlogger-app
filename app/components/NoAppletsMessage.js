@@ -1,36 +1,44 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { colors } from '../theme';
-import { BodyText } from './core';
+import { BodyText, Hyperlink } from './core';
+import { joinExampleApplet } from '../state/applets/applets.thunks';
 
 const styles = StyleSheet.create({
   noAppletsContainer: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 50,
   },
   noAppletsMessage: {
     textAlign: 'center',
     color: colors.grey,
-    margin: 50,
+    fontSize: 18,
+  },
+  link: {
+    textAlign: 'center',
+    marginTop: 12,
+    fontSize: 18,
   },
 });
 
-const NoAppletsMessage = ({ isDownloadingApplets }) => (
+const NoAppletsMessage = ({ isDownloadingApplets, joinExampleApplet }) => (
   <View style={styles.noAppletsContainer}>
     {isDownloadingApplets
       ? (
         <BodyText style={styles.noAppletsMessage}>
-          Checking for studies...
+          Sychronizing...
         </BodyText>
       )
       : (
-        <BodyText style={styles.noAppletsMessage}>
-          You aren't enrolled in any studies.
-        </BodyText>
+        <View>
+          <BodyText style={styles.noAppletsMessage}>
+            You aren't enrolled in any studies.
+          </BodyText>
+          <Hyperlink style={styles.link} onPress={() => joinExampleApplet()}>
+            Join example study
+          </Hyperlink>
+        </View>
       )
     }
   </View>
@@ -38,6 +46,11 @@ const NoAppletsMessage = ({ isDownloadingApplets }) => (
 
 NoAppletsMessage.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
+  joinExampleApplet: PropTypes.func.isRequired,
 };
 
-export default NoAppletsMessage;
+const mapDispatchToProps = {
+  joinExampleApplet,
+};
+
+export default connect(null, mapDispatchToProps)(NoAppletsMessage);

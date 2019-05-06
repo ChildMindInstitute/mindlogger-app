@@ -14,7 +14,6 @@ export default {
   drawerCover: {
     alignSelf: 'stretch',
     // resizeMode: 'cover',
-    height: deviceHeight / 5,
     width: null,
     backgroundColor: '#0067A0',
     position: 'relative',
@@ -24,16 +23,17 @@ export default {
   drawerCoverText: {
     color: '#FFFFFF',
     width: '100%',
-    fontSize: 36,
+    fontSize: 24,
     alignSelf: 'center',
     textAlign: 'center',
   },
   drawerList: {
     marginLeft: 20,
+    marginTop: 20,
   },
   menuImage: {
-    width: 35,
-    height: 35,
+    width: 36,
+    height: 36,
     resizeMode: 'contain',
   },
   drawerLogo: {
@@ -58,7 +58,7 @@ export default {
     paddingTop: (Platform.OS === 'android') ? 7 : 5,
   },
   sidebarIcon: {
-    fontSize: 21,
+    fontSize: 18,
     color: '#fff',
     lineHeight: (Platform.OS === 'android') ? 21 : 25,
     backgroundColor: 'transparent',
