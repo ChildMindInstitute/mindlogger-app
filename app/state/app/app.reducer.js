@@ -1,8 +1,10 @@
 import APP_CONSTANTS from './app.constants';
 import config from '../../config';
+import skins from '../../skins';
 
 export const initialState = {
   apiHost: config.defaultApiHost,
+  skin: skins.defaultSkin,
   currentApplet: null,
   currentActivity: null,
 };
@@ -18,6 +20,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         apiHost: initialState.apiHost,
+      };
+    case APP_CONSTANTS.SET_SKIN:
+      return {
+        ...state,
+        skin: action.payload,
       };
     case APP_CONSTANTS.SET_CURRENT_APPLET:
       return {
