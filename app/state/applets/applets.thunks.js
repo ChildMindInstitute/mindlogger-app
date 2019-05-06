@@ -40,7 +40,7 @@ export const joinExampleApplet = () => (dispatch, getState) => {
   const auth = authSelector(state);
   registerOpenApplet(
     auth.token,
-    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/example/nda-phq.jsonld',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
   )
     .then(() => {
       downloadApplets()(dispatch, getState);
