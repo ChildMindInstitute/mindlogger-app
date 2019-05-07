@@ -13,7 +13,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     padding: 10,
-  }
+    color: '#00c8dd',
+  },
 });
 
 export class ActProgress extends Component {
@@ -28,7 +29,7 @@ export class ActProgress extends Component {
     return (
       <View padder style={styles.progress}>
         <Text style={styles.progressValue}>{`${index+1}/${length}`}</Text>
-        <Progress.Bar style={{flexGrow: 1}} progress={(index + 1) / length} width={null} height={12}/>
+        <Progress.Bar color={styles.progress.color} style={{flexGrow: 1}} progress={(index + 1) / length} width={null} height={12}/>
       </View>
     )
   }

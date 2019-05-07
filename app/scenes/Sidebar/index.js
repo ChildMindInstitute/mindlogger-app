@@ -22,12 +22,6 @@ const datas = [
     image: require('../../../img/menu/settings.png'),
     bg: '#DA4437',
   },
-  // {
-  //   name: 'Dashboard',
-  //   route: 'dashboard',
-  //   image: require('../../../img/menu/diagram.png'),
-  //   bg: '#477EEA',
-  // },
   {
     name: 'About',
     route: 'about',

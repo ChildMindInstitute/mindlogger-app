@@ -51,7 +51,7 @@ const TimePicker = ({ onChange, value = {}, label }) => {
           <Text>{moment(date).format('h:mm a')}</Text>
         </Left>
         <Right>
-          <Icon name="arrow-forward" />
+          {label === 'From' ? <Icon type="FontAwesome" name="bed" /> : <Icon type="Ionicons" name="md-alarm" />}
         </Right>
       </ListItem>
     </View>

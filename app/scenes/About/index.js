@@ -46,7 +46,7 @@ class AboutScreen extends Component { // eslint-disable-line
             </Body>
             <Right>
               <Button transparent onPress={Actions.drawerOpen}>
-                <Icon name="menu" />
+                <Icon type="FontAwesome" name="bars" />
               </Button>
             </Right>
           </Header>

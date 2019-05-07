@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import {
   BodyText,
+  SubHeading,
 } from './core';
 import AppletImage from './AppletImage';
 
@@ -26,6 +27,7 @@ const AppletSummary = ({ applet }) => (
     <View style={styles.inner}>
       <AppletImage applet={applet} />
       <View style={styles.textBlock}>
+        <SubHeading>{applet.name.en}</SubHeading>
         <BodyText>
           {applet.description.en}
         </BodyText>

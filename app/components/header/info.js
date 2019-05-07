@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { ImageBackground, Image, Platform } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-import {Header, Left, Right, Body, Button, Title, Icon } from 'native-base';
+import {Header, Left, Right, Body, Button, Title, Icon, Container } from 'native-base';
 
 class InfoHeader extends Component {
   static propTypes = {
@@ -25,19 +25,23 @@ class InfoHeader extends Component {
 
   render() {
     const { title } = this.props;
-    return (<Header>
-      <Left>
-        <Button transparent onPress={this.onClose}>
-          <Icon name="close" />
-        </Button>
-      </Left>
-      <Body style={{flex:2}}>
-          <Title>{title}</Title>
-      </Body>
-      <Right>
-        
-      </Right>
-    </Header>);
+    return (
+      <Container>
+        <Header>
+          <Left>
+            <Button transparent onPress={this.onClose}>
+              <Icon type="FontAwesome" name="close" />
+            </Button>
+          </Left>
+          <Body style={{flex:2}}>
+              <Title>{title}</Title>
+          </Body>
+          <Right>
+            
+          </Right>
+        </Header>
+      </Container>
+    );
   }
 }
 

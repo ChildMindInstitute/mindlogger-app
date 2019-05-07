@@ -53,7 +53,7 @@ class SettingScreen extends Component {
           </Body>
           <Right>
             <Button transparent onPress={Actions.drawerOpen}>
-              <Icon name="menu" />
+              <Icon type="FontAwesome" name="bars" />
             </Button>
           </Right>
         </Header>

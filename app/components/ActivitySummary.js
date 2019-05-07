@@ -5,6 +5,7 @@ import { View, StyleSheet } from 'react-native';
 import { Button, Text, Icon } from 'native-base';
 import {
   BodyText,
+  SubHeading,
 } from './core';
 import { colors } from '../themes/colors';
 
@@ -57,6 +58,7 @@ const nextScheduledString = (activity) => {
 
 const ActivitySummary = ({ activity, onPressStart }) => (
   <View style={styles.box}>
+    <SubHeading>{activity.name.en}</SubHeading>
     <BodyText style={styles.description}>
       {activity.description.en}
     </BodyText>
