@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Content, Text, List, ListItem, Container, Left, Right, Badge, View, Header, Body, Title } from 'native-base';
+import { Content, Text, List, ListItem, Container, Left, Right, Badge, View, Header, Body, Title, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './style';
 import { logout } from '../../state/app/app.thunks';
@@ -13,26 +13,32 @@ const datas = [
   {
     name: 'Home',
     route: 'applet_list',
+    icon: 'home',
+    type: 'FontAwesome',
     image: require('../../../img/menu/diagram.png'),
     bg: '#C5F442',
   },
   {
     name: 'Settings',
     route: 'settings',
+    icon: 'gear',
+    type: 'FontAwesome',
     image: require('../../../img/menu/settings.png'),
     bg: '#DA4437',
   },
   {
     name: 'About',
     route: 'about',
-    icon: 'help-buoy',
+    icon: 'question',
+    type: 'FontAwesome',
     image: require('../../../img/menu/info.png'),
     bg: '#4DCAE0',
   },
   {
     name: 'Logout',
     route: 'logout',
-    icon: 'log-out',
+    icon: 'sign-out',
+    type: 'FontAwesome',
     image: require('../../../img/menu/logout.png'),
     bg: '#1EBC7C',
   },
@@ -80,7 +86,8 @@ class SideBar extends Component {
             dataArray={datas} renderRow={data =>
             <ListItem button noBorder onPress={() => this.onMenu(data.route)} >
               <Left>
-                <Image active source={data.image} style={styles.menuImage} />
+                {/* <Image active source={data.image} style={styles.menuImage} /> */}
+                <Icon type={data.type} name={data.icon} />
                 <Text style={styles.text}>{data.name}</Text>
               </Left>
               {(data.types) &&

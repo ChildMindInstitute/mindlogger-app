@@ -65,7 +65,7 @@ export default {
     alignSelf: 'center',
   },
   text: {
-    fontWeight: (Platform.OS === 'ios') ? '500' : '400',
+    fontWeight: (Platform.OS === 'ios') ? '300' : '300',
     fontSize: 20,
     marginLeft: 20,
   },
