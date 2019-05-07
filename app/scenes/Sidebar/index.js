@@ -1,4 +1,3 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image } from 'react-native';
@@ -7,6 +6,7 @@ import { Content, Text, List, ListItem, Container, Left, Right, Badge, View, Hea
 import { Actions } from 'react-native-router-flux';
 import styles from './style';
 import { logout } from '../../state/app/app.thunks';
+import { skinSelector } from '../../state/app/app.selectors';
 
 
 const datas = [
@@ -71,6 +71,8 @@ class SideBar extends Component {
   }
 
   render() {
+    const { skin } = this.props;
+    const title = skin.name;
     return (
       <Container>
         <Content
@@ -79,7 +81,7 @@ class SideBar extends Component {
         >
           <Header>
             <Body>
-              <Title>MindLogger</Title>
+              <Title>{title}</Title>
             </Body>
           </Header>
           <List style={styles.drawerList}
@@ -118,4 +120,8 @@ const bindAction = {
   logout,
 };
 
-export default connect(null, bindAction)(SideBar);
+const mapStateToProps = state => ({
+  skin: skinSelector(state)
+});
+
+export default connect(mapStateToProps, bindAction)(SideBar);

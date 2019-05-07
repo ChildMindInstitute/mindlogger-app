@@ -80,7 +80,7 @@ class Login extends Component {
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>What is MindLogger?</Text>
+              <Text style={styles.whiteText}>{'What is ' + title + '?'}</Text>
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 26 }}>

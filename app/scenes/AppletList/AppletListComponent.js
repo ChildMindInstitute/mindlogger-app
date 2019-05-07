@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
 const AppletListComponent = ({
   applets,
   isDownloadingApplets,
+  title,
   onPressDrawer,
   onPressRefresh,
   onPressApplet,
@@ -32,7 +33,7 @@ const AppletListComponent = ({
     <Header>
       <Left />
       <Body>
-        <Title>MindLogger</Title>
+        <Title>{title}</Title>
       </Body>
       <Right style={{ flexDirection: 'row' }}>
         <Button transparent onPress={onPressDrawer}>
