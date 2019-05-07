@@ -16,7 +16,7 @@ import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
 import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
-import { apiHostSelector, skinSelector } from '../../state/app/app.selectors';
+import { apiHostSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
 import skins from '../../skins';
@@ -110,9 +110,6 @@ class ChangeStudy extends Component {
               onReset={this.onReset}
               initialValues={{ apiHost }}
             />
-            <Button style={styles.button} block onPress={this.toggleSkin} >
-              <Text style={styles.buttonText}>Skin</Text>
-            </Button>
           </View>
         </Container>
       );
