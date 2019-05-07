@@ -1,10 +1,9 @@
 import APP_CONSTANTS from './app.constants';
 import config from '../../config';
-import skins from '../../skins';
 
 export const initialState = {
   apiHost: config.defaultApiHost,
-  skin: skins.defaultSkin,
+  skin: config.defaultSkin,
   currentApplet: null,
   currentActivity: null,
 };

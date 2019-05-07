@@ -19,7 +19,7 @@ import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
 import { apiHostSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
-import skins from '../../skins';
+import config from '../../config';
 
 class ChangeStudy extends Component {
   constructor (props) {
@@ -51,7 +51,7 @@ class ChangeStudy extends Component {
       duration: 2000,
     });
     resetApiHost();
-    setSkin(skins.defaultSkin);
+    setSkin(config.defaultSkin);
   }
 
   onScan = (body) => {

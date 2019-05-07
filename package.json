@@ -26,7 +26,7 @@
   "random-string": "^0.2.0",
   "rc-input-number": "^3.6.8",
   "react": "16.4.1",
-  "react-native": "0.55.4",
+  "react-native": "0.56.0",
   "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/futurice/react-native-audio-toolkit.git",
   "react-native-audiowaveform": "https://github.com/erik-ilyin/react-native-audiowaveform.git",
