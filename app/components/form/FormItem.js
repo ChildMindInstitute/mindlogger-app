@@ -57,15 +57,16 @@ const styles = StyleSheet.create(
   }
 });
 
-export const FormInputItem = (
-  { input: {...input},
+export const FormInputItem = ({
+  input: { ...input },
+  errorStyle = {},
   label,
   stackedLabel,
   floatingLabel,
   itemStyle,
   name,
   meta: { touched, error, warning },
-  ...props,
+  ...props
 }) => (
   <View>
     <Item
@@ -78,7 +79,8 @@ export const FormInputItem = (
       <Label style={props.style}>{label}</Label>
       <Input {...props} onChangeText={input.onChange} {...input} />
     </Item>
-    {touched && ((error && <Text style={styles.errorText}>{error}</Text>) || (warning && <Text style={styles.errorText}>{warning}</Text>))}
+    {touched && error && <Text style={[styles.errorText, errorStyle]}>{error}</Text>}
+    {touched && warning && <Text style={[styles.errorText, errorStyle]}>{warning}</Text>}
   </View>
 );
 
