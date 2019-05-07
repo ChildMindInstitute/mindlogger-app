@@ -15,10 +15,11 @@ import {
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
-import { setApiHost, resetApiHost } from '../../state/app/app.actions';
-import { apiHostSelector } from '../../state/app/app.selectors';
+import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
+import { apiHostSelector, skinSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
+import skins from '../../skins';
 
 class ChangeStudy extends Component {
   constructor (props) {
@@ -68,6 +69,17 @@ class ChangeStudy extends Component {
     this.setState({scanOpen: !this.state.scanOpen})
   }
 
+  toggleSkin = () => {
+    const { setSkin, skin } = this.props;
+    if ( skin.name == "MindLogger") {
+      setSkin(skins.wcwh);
+    }
+    else {
+      setSkin(skins.defaultSkin);
+    }
+    Actions.replace('login');
+  }
+
   render() {
     const { apiHost } = this.props;
 
@@ -108,6 +120,9 @@ class ChangeStudy extends Component {
               onReset={this.onReset}
               initialValues={{ apiHost }}
             />
+            <Button style={styles.button} block onPress={this.toggleSkin} >
+              <Text style={styles.buttonText}>Skin</Text>
+            </Button>
           </View>
         </Container>
       );
@@ -124,12 +139,14 @@ ChangeStudy.propTypes = {
 
 const mapStateToProps = state => ({
   apiHost: apiHostSelector(state),
+  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {
   showToast,
   setApiHost,
   resetApiHost,
+  setSkin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeStudy);

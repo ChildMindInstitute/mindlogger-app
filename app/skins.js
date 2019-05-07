@@ -5,7 +5,8 @@ export default {
                       "secondary" : '#FFFFFF',
                     },
                 },
-  wcwh : { "name" : "UT WCWH",
+  wcwh : {  "name" : "UT WCWH",
+            "about" : "WCWH stands for Whole Community Whole Health.",
             "colors" : {
                 "primary" : "#CC5500",
                 "secondary" : "#000000",
