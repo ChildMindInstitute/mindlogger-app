@@ -52,4 +52,5 @@ const mapDispatchToProps = {
   // completeResponse,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityThanks);
+// export default connect(mapStateToProps, mapDispatchToProps)(ActivityThanks);
+export default ActivityThanks;
