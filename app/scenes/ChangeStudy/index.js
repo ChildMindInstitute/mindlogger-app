@@ -51,6 +51,7 @@ class ChangeStudy extends Component {
       duration: 2000,
     });
     resetApiHost();
+    setSkin(skins.defaultSkin);
   }
 
   onScan = (body) => {
@@ -67,17 +68,6 @@ class ChangeStudy extends Component {
 
   toggleQrScanner = () => {
     this.setState({scanOpen: !this.state.scanOpen})
-  }
-
-  toggleSkin = () => {
-    const { setSkin, skin } = this.props;
-    if ( skin.name == "MindLogger") {
-      setSkin(skins.wcwh);
-    }
-    else {
-      setSkin(skins.defaultSkin);
-    }
-    Actions.replace('login');
   }
 
   render() {
@@ -135,11 +125,11 @@ ChangeStudy.propTypes = {
   showToast: PropTypes.func.isRequired,
   resetApiHost: PropTypes.func.isRequired,
   setApiHost: PropTypes.func.isRequired,
+  setSkin: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   apiHost: apiHostSelector(state),
-  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {

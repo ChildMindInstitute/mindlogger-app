@@ -27,11 +27,6 @@ const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValu
         ? <ActivityIndicator color={colors.primary} />
         : <Text style={styles.buttonText}>Submit</Text>}
     </Button>
-    <Button style={styles.button} block onPress={onReset} disabled={submitting}>
-      {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Reset</Text>}
-    </Button>
   </Form>
 );
 
