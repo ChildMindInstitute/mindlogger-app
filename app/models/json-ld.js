@@ -6,6 +6,7 @@ const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
 const IMAGE = 'http://schema.org/image';
 const INPUT_TYPE = 'https://schema.repronim.org/inputType';
+const INPUTS = 'https://schema.repronim.org/inputs';
 const ITEM_LIST_ELEMENT = 'http://schema.org/itemListElement';
 const MAX_VALUE = 'http://schema.org/maxValue';
 const MIN_VALUE = 'http://schema.org/minValue';
@@ -73,6 +74,16 @@ export const flattenValueConstraints = vcObj => Object.keys(vcObj).reduce((accum
   if (key === IMAGE) {
     return { ...accumulator, image: languageListToObject(vcObj[key]) };
   }
+  return accumulator;
+}, {});
+
+export const transformInputs = inputs => inputs.reduce((accumulator, inputObj) => {
+  const key = R.path([NAME, 0, '@value'], inputObj);
+  const val = R.path([VALUE, 0, '@value'], inputObj);
+  return {
+    ...accumulator,
+    [key]: val,
+  };
 }, {});
 
 export const appletTransformJson = appletJson => ({
@@ -92,6 +103,9 @@ export const itemTransformJson = (itemKey, itemJson) => {
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
+  const inputs = R.pathOr([], [INPUTS], itemJson);
+  const inputsObj = transformInputs(inputs);
+
   return {
     schema: itemKey,
     name: languageListToObject(itemJson[PREF_LABEL]),
@@ -103,6 +117,7 @@ export const itemTransformJson = (itemKey, itemJson) => {
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
     valueConstraints,
+    inputs: inputsObj,
   };
 };
 

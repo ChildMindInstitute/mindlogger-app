@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flanker Task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./jspsych.js"></script>
+    <script src="./plugins/jspsych-html-button-response.js"></script>
+    <script src="./plugins/jspsych-image-button-response.js"></script>
+    <script src="./plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="./experiment.js"></script>
+    <link rel="stylesheet" href="./css/jspsych.css">
+    <link rel="stylesheet" href="./css/overrides.css">
+</head>
+
+<body>
+</body>
+<script>
+/*start experiment*/
+function start() {
+    jsPsych.init({
+        timeline: buildTimeline(),
+        preload_images: [
+            window.CONFIG.leftImage,
+            window.CONFIG.leftImageButton,
+            window.CONFIG.rightImage,
+            window.CONFIG.rightImageButton,
+        ],
+        on_finish: function (data) {
+            const onlyTrials = data.filter({ tag: 'flanker_test' });
+            if (window.postMessage) {
+                const serialized = JSON.stringify(onlyTrials.values());
+                window.postMessage(serialized);
+            }
+        }
+    });
+}
+
+// window.CONFIG = {
+//     leftImage: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/black/png/48/arrow-left.png',
+//     leftImageButton: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/white/png/48/arrow-left.png',
+//     rightImage: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/black/png/48/arrow-right.png',
+//     rightImageButton: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/white/png/48/arrow-right.png',
+//     experimentLength: 4,
+// };
+
+// start();
+</script>
+
+</html>

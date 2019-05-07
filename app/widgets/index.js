@@ -1,6 +1,7 @@
 export * from './audio-widgets/AudioRecord';
 export * from './audio-widgets/AudioImageRecord';
 export * from './DatePicker';
+export * from './Flanker';
 export * from './MultiSelect';
 export * from './Radio';
 export * from './Select';

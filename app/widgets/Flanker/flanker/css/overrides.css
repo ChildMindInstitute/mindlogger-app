@@ -1,0 +1,69 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
+  color: #404040;
+}
+
+.jspsych-btn {
+  margin: 1rem 0;
+  padding: 0.75rem 0;
+  font-size: 1.2rem;
+  width: 100%;
+  background: #0067A0;
+  border: none;
+  color: white;
+  outline: none;
+  transition: opacity 0s;
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
+}
+
+.mindlogger-flanker-image-button{
+  padding: 0.25rem 0;
+}
+
+.jspsych-btn:hover .jspsych-btn:active {
+  background: #0067A0;
+  border: none;
+}
+
+.jspsych-btn:disabled {
+  opacity: 0.5;
+  background: #505050;
+  border: #505050;
+}
+
+.mindlogger-message {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.mindlogger-message.correct {
+  color: rgb(105, 161, 82);
+}
+
+.mindlogger-message.incorrect {
+  color: rgb(207, 55, 55);
+}
+
+.mindlogger-fixation {
+  font-size: 6rem;
+}
+
+#jspsych-html-button-response-btngroup {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: stretch;
+  box-sizing: border-box;
+}
+
+.jspsych-html-button-response-button {
+  flex: 1 1 auto;
+}
+
+.mindlogger-flanker-image, .mindlogger-flanker-image-button {
+  height: 48px;
+}

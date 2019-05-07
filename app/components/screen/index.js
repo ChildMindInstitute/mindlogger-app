@@ -10,6 +10,7 @@ import {
   Slider,
   TimeRange,
   DatePicker,
+  Flanker,
   TextEntry,
   Select,
   AudioRecord,
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
   paddingContent: {
     padding: 20,
     flex: 1,
+    position: 'relative',
   },
   text: {
     paddingTop: 20,
@@ -35,15 +37,14 @@ const styles = StyleSheet.create({
 
 class Screen extends Component {
   static isValid(answer, screen) {
-    // const surveyType = R.path(['meta', 'surveyType'], screen);
-    // if (typeof surveyType !== 'undefined') {
-    //   return SurveySection.isValid(answer, screen.meta.survey, screen.meta.surveyType);
-    // }
+    if (screen.inputType === 'markdown-message') {
+      return true;
+    }
     return (answer !== null && typeof answer !== 'undefined');
   }
 
   renderWidget() {
-    const { screen, answer, onChange, autoIncrement } = this.props;
+    const { screen, answer, onChange, autoIncrement, isCurrent } = this.props;
     /*
     const data = screen.meta || {};
     if (data.canvasType) {
@@ -142,6 +143,18 @@ class Screen extends Component {
         />
       );
     }
+    if (screen.inputType === 'flanker-task') {
+      return (
+        <Flanker
+          onChange={(a) => { onChange(a); autoIncrement(); }}
+          config={screen.inputs}
+          isCurrent={isCurrent}
+        />
+      );
+    }
+    if (screen.inputType === 'markdown-message') {
+      return null;
+    }
     return <WidgetError />;
   }
 
@@ -151,7 +164,7 @@ class Screen extends Component {
       <ScrollView
         alwaysBounceVertical={false}
         style={styles.paddingContent}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20, minHeight: '100%' }}
       >
         <ScreenDisplay screen={screen} />
         {this.renderWidget()}
@@ -162,12 +175,15 @@ class Screen extends Component {
 
 Screen.defaultProps = {
   answer: undefined,
+  autoIncrement: undefined,
 };
 
 Screen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
+  isCurrent: PropTypes.bool.isRequired,
+  autoIncrement: PropTypes.func,
 };
 
 export default Screen;
