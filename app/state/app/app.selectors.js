@@ -4,6 +4,8 @@ import { appletsSelector, activitiesSelector } from '../applets/applets.selector
 
 export const apiHostSelector = R.path(['app', 'apiHost']);
 
+export const skinSelector = R.path(['app', 'skin']);
+
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 
 export const currentAppletSelector = createSelector(
