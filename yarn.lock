@@ -5651,10 +5651,10 @@ react-native-vector-icons@6.4.2:
     prop-types "^15.6.2"
     yargs "^13.2.2"
 
-react-native@^0.56.0:
-  version "0.56.1"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.56.1.tgz#8d60e2a989b0a620486a68f5f7e1b451557a0e54"
-  integrity sha512-PLeXNFf7yYTiR+KNmRk90xV41nh5CN54G+X26G1usOriU8WQyj52fYzoUv4VZMpA6i8I99zmOHFWHpwkeWQSxA==
+react-native@0.56.0:
+  version "0.56.0"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.56.0.tgz#66686f781ec39a44376aadd4bbc55c8573ab61e5"
+  integrity sha512-JGKPG77HwrgMdiCkmZmjuczJrwCnq7E28+My+OS3OnmN78uphmtaMqYnv3lJjfb5hKS4kCqYCfFYFMUnmpmxMw==
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
@@ -7195,8 +7195,3 @@ yargs@^9.0.0:
     which-module "^2.0.0"
     y18n "^3.2.1"
     yargs-parser "^7.0.0"
-
-yarn@^1.15.2:
-  version "1.15.2"
-  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.15.2.tgz#7a064ca81ca34235f16376ad2f796ed432f9e285"
-  integrity sha512-DhqaGe2FcYKduO42d2hByXk7y8k2k42H3uzYdWBMTvcNcgWKx7xCkJWsVAQikXvaEQN2GyJNrz8CboqUmaBRrw==
