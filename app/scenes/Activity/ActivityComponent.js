@@ -70,7 +70,6 @@ const ActivityComponent = ({
     <Container>
       <StatusBar barStyle="light-content" />
       <ActHeader title={activity.name.en} onInfo={activity.info && onInfo} />
-      {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
       {activity.items.length > 0
         ? (
           <ActivityScreens
@@ -83,14 +82,23 @@ const ActivityComponent = ({
         )
         : <View style={{ flex: 1 }} />
       }
-      <ActivityButtons
-        nextLabel={getNextLabel(isLast, isValid, isSkippable)}
-        onPressNext={isValid || isSkippable ? onNext : undefined}
-        prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
-        onPressPrev={onPrev}
-        actionLabel={getActionLabel(answers[index], activity.items[index])}
-        onPressAction={onUndo}
-      />
+      <View style={{
+        backgroundColor: 'white',
+        shadowOpacity: 0.75,
+        shadowRadius: 5,
+        shadowColor: 'lightgray',
+        shadowOffset: { height: 0, width: 0 },
+      }}>
+        {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
+        <ActivityButtons
+          nextLabel={getNextLabel(isLast, isValid, isSkippable)}
+          onPressNext={isValid || isSkippable ? onNext : undefined}
+          prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
+          onPressPrev={onPrev}
+          actionLabel={getActionLabel(answers[index], activity.items[index])}
+          onPressAction={onUndo}
+        />
+      </View>
     </Container>
   );
 };

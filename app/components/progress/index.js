@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
   progress: {
     alignItems: 'center',
     flexDirection: 'row',
-    padding: 10,
-    color: '#00c8dd',
+    // padding: 10,
+    color: '#005fa3',
   },
 });
 
@@ -28,8 +28,8 @@ export class ActProgress extends Component {
     const {index, length} = this.props;
     return (
       <View padder style={styles.progress}>
-        <Text style={styles.progressValue}>{`${index+1}/${length}`}</Text>
-        <Progress.Bar color={styles.progress.color} style={{flexGrow: 1}} progress={(index + 1) / length} width={null} height={12}/>
+        {/* <Text style={styles.progressValue}>{`${index+1}/${length}`}</Text> */}
+        <Progress.Bar color={styles.progress.color} borderColor="white" style={{flexGrow: 1}} progress={(index + 1) / length} width={null} height={3} borderRadius={0} borderWidth={0}/>
       </View>
     )
   }
