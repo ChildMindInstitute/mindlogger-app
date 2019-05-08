@@ -29,10 +29,10 @@ const onPressStart = () => {
 class ActivityThanks extends Component {
   render() {
     return (
-      <View style={{...styles.box}}>
+      <View style={styles.box}>
         <Heading>Thanks!</Heading>
         <BodyText>
-          We've saved your answers
+          We've saved your answers!
         </BodyText>
         <Button onPress={onPressStart} full rounded style={{marginTop: 20}}>
           <Text style={{color: 'white'}}>Close</Text>
