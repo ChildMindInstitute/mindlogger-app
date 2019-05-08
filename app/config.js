@@ -8,6 +8,6 @@ export default {
     },
   },
   s3_image: {
-    bucket: 'mindloggerimages',
-  },
-};
+    bucket: 'mindloggerimages'
+  }
+}
