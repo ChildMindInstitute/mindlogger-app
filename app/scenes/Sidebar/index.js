@@ -72,7 +72,7 @@ class SideBar extends Component {
 
   render() {
     const { skin } = this.props;
-    const title = skin.name;
+    const title = skin ? skin.name : 'MindLogger';
     return (
       <Container>
         <Content

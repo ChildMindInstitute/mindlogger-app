@@ -33,7 +33,7 @@ class AppletList extends Component {
       <AppletListComponent
         applets={applets}
         isDownloadingApplets={isDownloadingApplets}
-        title={skin.name}
+        title={skin ? skin.name : 'MindLogger'}
         onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
         onPressApplet={this.handlePressApplet}

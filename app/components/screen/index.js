@@ -43,7 +43,7 @@ class Screen extends Component {
   }
 
   renderWidget() {
-    const { screen, answer, onChange } = this.props;
+    const { screen, answer, onChange, autoIncrement } = this.props;
     /*
     const data = screen.meta || {};
     if (data.canvasType) {
@@ -75,7 +75,7 @@ class Screen extends Component {
       return (
         <Radio
           config={screen.valueConstraints}
-          onChange={onChange}
+          onChange={(a) => { onChange(a); autoIncrement(); }}
           value={answer}
         />
       );
@@ -84,7 +84,7 @@ class Screen extends Component {
       return (
         <Slider
           config={screen.valueConstraints}
-          onChange={onChange}
+          onChange={(a) => { onChange(a); autoIncrement(); }}
           value={answer}
         />
       );
