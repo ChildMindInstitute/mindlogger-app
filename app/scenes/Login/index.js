@@ -16,6 +16,7 @@ import styles from './styles';
 import { signInSuccessful } from '../../state/user/user.thunks';
 import { signIn } from '../../services/network';
 import LoginForm from './LoginForm';
+import { skinSelector } from '../../state/app/app.selectors';
 
 const logoImage = require('../../../img/CMI_white_logo.png');
 
@@ -60,11 +61,13 @@ class Login extends Component {
   }
 
   render() {
+    const { skin } = this.props;
+    const title = skin.name;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
         <Content style={styles.container}>
-          <Text style={styles.header}>MindLogger</Text>
+          <Text style={styles.header}>{title}</Text>
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
@@ -77,7 +80,7 @@ class Login extends Component {
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>What is MindLogger?</Text>
+              <Text style={styles.whiteText}>{'What is ' + title + '?'}</Text>
             </TouchableOpacity>
           </View>
           <View style={{ marginTop: 26 }}>
@@ -103,9 +106,12 @@ class Login extends Component {
 Login.propTypes = {
   signInSuccessful: PropTypes.func.isRequired,
 };
+const mapStateToProps = state => ({
+  skin: skinSelector(state)
+});
 
 const mapDispatchToProps = {
   signInSuccessful,
 };
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -2,6 +2,7 @@ import appReducer, { initialState } from './app.reducer';
 import {
   setApiHost,
   resetApiHost,
+  setSkin,
   setCurrentApplet,
 } from './app.actions';
 
@@ -20,6 +21,14 @@ test('it resets api host', () => {
   const state = appReducer(initialState, setApiHost('foobar'));
   expect(appReducer(state, resetApiHost())).toEqual({
     ...initialState,
+  });
+});
+
+test('it changes skin', () => {
+  const state = appReducer(initialState, setSkin({ name: 'foobar' }));
+  expect(appReducer(state, setSkin())).toEqual({
+    ...initialState,
+    skin: { name: 'foobar' },
   });
 });
 

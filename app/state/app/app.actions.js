@@ -9,6 +9,11 @@ export const resetApiHost = () => ({
   type: APP_ACTIONS.RESET_API_HOST,
 });
 
+export const setSkin = newSkin => ({
+  type: APP_ACTIONS.SET_SKIN,
+  payload: newSkin,
+});
+
 export const setCurrentApplet = appletId => ({
   type: APP_ACTIONS.SET_CURRENT_APPLET,
   payload: appletId,
