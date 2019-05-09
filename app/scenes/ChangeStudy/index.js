@@ -15,10 +15,11 @@ import {
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
-import { setApiHost, resetApiHost } from '../../state/app/app.actions';
+import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
 import { apiHostSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
+import config from '../../config';
 
 class ChangeStudy extends Component {
   constructor (props) {
@@ -50,6 +51,7 @@ class ChangeStudy extends Component {
       duration: 2000,
     });
     resetApiHost();
+    setSkin(config.defaultSkin);
   }
 
   onScan = (body) => {
@@ -120,6 +122,7 @@ ChangeStudy.propTypes = {
   showToast: PropTypes.func.isRequired,
   resetApiHost: PropTypes.func.isRequired,
   setApiHost: PropTypes.func.isRequired,
+  setSkin: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -130,6 +133,7 @@ const mapDispatchToProps = {
   showToast,
   setApiHost,
   resetApiHost,
+  setSkin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeStudy);
