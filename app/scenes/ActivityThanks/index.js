@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
 
 
 const onPressStart = () => {
-  Actions.applet_details();
+  Actions.popTo('activity_details'); //.applet_details();
 }
 
 class ActivityThanks extends Component {
@@ -32,7 +32,7 @@ class ActivityThanks extends Component {
       <View style={styles.box}>
         <Heading>Thanks!</Heading>
         <BodyText>
-          We've saved your answers!
+          We've saved your answers
         </BodyText>
         <Button onPress={onPressStart} full rounded style={{marginTop: 20}}>
           <Text style={{color: 'white'}}>Close</Text>

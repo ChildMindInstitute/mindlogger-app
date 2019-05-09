@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
-import { Router, Scene, Lightbox, Actions, Stack, Drawer } from 'react-native-router-flux';
+import { Router, Scene, Lightbox, Actions, Stack, Drawer, ActionConst, Modal } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 
@@ -26,7 +26,8 @@ import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
 
 const Navigator = Actions.create(
-  <Lightbox>
+  // <Lightbox>
+  <Modal hideNavBar>
     <Stack key="root" hideNavBar>
       <Drawer key="side_menu" contentComponent={SideBar}>
         <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
@@ -44,13 +45,12 @@ const Navigator = Actions.create(
           <Scene key="login" component={Login} />
           <Scene key="settings" component={Settings} />
           <Scene key="sign_up" component={Signup} />
-          <Scene key="take_act" component={Activity} />
-          <Scene key="activity_thanks" component={ActivityThanks} />
         </Scene>
       </Drawer>
     </Stack>
-    <Scene key="logout_warning" component={LogoutWarning} />
-  </Lightbox>
+    <Scene key="take_act" component={Activity} />
+    <Scene key="activity_thanks" component={ActivityThanks} />
+    </Modal>
   ,
 );
 
