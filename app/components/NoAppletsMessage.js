@@ -27,7 +27,7 @@ const NoAppletsMessage = ({ isDownloadingApplets, joinExampleApplet }) => (
     {isDownloadingApplets
       ? (
         <BodyText style={styles.noAppletsMessage}>
-          Sychronizing...
+          Synchronizing...
         </BodyText>
       )
       : (
