@@ -77,6 +77,7 @@ const ActivityComponent = ({
             answers={answers}
             currentScreen={index}
             onChange={(answer) => { onAnswer(answer, index); }}
+            autoIncrement={onNext}
             authToken={authToken}
           />
         )
