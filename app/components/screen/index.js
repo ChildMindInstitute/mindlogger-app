@@ -5,16 +5,16 @@ import * as R from 'ramda';
 import ScreenDisplay from './ScreenDisplay';
 import WidgetError from './WidgetError';
 import {
-  Radio,
-  MultiSelect,
-  Slider,
-  TimeRange,
-  DatePicker,
-  Flanker,
-  TextEntry,
-  Select,
-  AudioRecord,
   AudioImageRecord,
+  AudioRecord,
+  DatePicker,
+  MultiSelect,
+  Radio,
+  Select,
+  Slider,
+  TextEntry,
+  TimeRange,
+  VisualStimulusResponse,
 } from '../../widgets';
 
 const styles = StyleSheet.create({
@@ -143,9 +143,9 @@ class Screen extends Component {
         />
       );
     }
-    if (screen.inputType === 'flanker-task') {
+    if (screen.inputType === 'visual-stimulus-response') {
       return (
-        <Flanker
+        <VisualStimulusResponse
           onChange={(a) => { onChange(a); autoIncrement(); }}
           config={screen.inputs}
           isCurrent={isCurrent}

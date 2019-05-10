@@ -66,9 +66,9 @@ const ActivityComponent = ({
   const isValid = Screen.isValid(answers[index], activity.items[index]);
   const hasPrevPermission = true; // TO DO
 
-  // Hide the header and footer if it's a flanker task
+  // Hide the header and footer if it's a certain type of widget
   const inputType = R.path(['items', index, 'inputType'], activity);
-  const fullScreen = inputType === 'flanker-task';
+  const fullScreen = inputType === 'visual-stimulus-response';
 
   return (
     <Container>

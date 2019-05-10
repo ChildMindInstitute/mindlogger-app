@@ -52,6 +52,9 @@ export const flattenItemList = (list = []) => list.map(item => ({
   name: languageListToObject(item[NAME]),
   value: R.path([VALUE, 0, '@value'], item),
   image: languageListToObject(item[IMAGE]),
+  valueConstraints: item[VALUE_CONSTRAINTS]
+    ? flattenValueConstraints(R.path([VALUE_CONSTRAINTS, 0], item))
+    : undefined,
 }));
 
 export const flattenValueConstraints = vcObj => Object.keys(vcObj).reduce((accumulator, key) => {
@@ -79,7 +82,13 @@ export const flattenValueConstraints = vcObj => Object.keys(vcObj).reduce((accum
 
 export const transformInputs = inputs => inputs.reduce((accumulator, inputObj) => {
   const key = R.path([NAME, 0, '@value'], inputObj);
-  const val = R.path([VALUE, 0, '@value'], inputObj);
+  let val = R.path([VALUE, 0, '@value'], inputObj);
+
+  if (typeof val === 'undefined' && inputObj[ITEM_LIST_ELEMENT]) {
+    const itemList = R.path([ITEM_LIST_ELEMENT], inputObj);
+    val = flattenItemList(itemList);
+  }
+
   return {
     ...accumulator,
     [key]: val,
@@ -95,6 +104,7 @@ export const appletTransformJson = appletJson => ({
   version: languageListToObject(appletJson[VERSION]),
   altLabel: languageListToObject(appletJson[ALT_LABEL]),
   visibility: listToObject(appletJson[VISIBILITY]),
+  image: languageListToObject(appletJson[IMAGE]),
   order: flattenIdList(appletJson[ORDER][0]['@list']),
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });

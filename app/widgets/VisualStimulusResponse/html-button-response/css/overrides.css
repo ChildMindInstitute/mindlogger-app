@@ -16,6 +16,10 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
 }
 
+.jspsych-btn img {
+  max-height: 2rem;
+}
+
 .mindlogger-flanker-image-button{
   padding: 0.25rem 0;
 }
@@ -60,10 +64,14 @@ body {
   box-sizing: border-box;
 }
 
-.jspsych-html-button-response-button {
+#jspsych-html-button-response-stimulus img{
+  max-width: 95%;
+}
+
+.jspsych-image-button-response-button, .jspsych-html-button-response-button {
   flex: 1 1 auto;
 }
 
-.mindlogger-flanker-image, .mindlogger-flanker-image-button {
+.mindlogger-button-image {
   height: 48px;
 }
