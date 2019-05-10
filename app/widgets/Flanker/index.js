@@ -55,8 +55,7 @@ export class Flanker extends React.Component {
         images: base64Images,
       });
     }).catch(() => {
-      // this.setState({ loadingState: 'downloadError' });
-      this.setState({ loadingState: 'ready' });
+      this.setState({ loadingState: 'downloadError' });
     });
   }
 
@@ -64,27 +63,17 @@ export class Flanker extends React.Component {
     const { onChange, config, isCurrent } = this.props;
     const { loadingState, images } = this.state;
     if (loadingState === 'ready' && isCurrent) {
-      // const injectConfig = `
-      //   window.CONFIG = {
-      //     leftImage: 'data:image/png;base64, ${images[0]}',
-      //     leftImageButton: 'data:image/png;base64, ${images[1]}',
-      //     rightImage: 'data:image/png;base64, ${images[2]}',
-      //     rightImageButton: 'data:image/png;base64, ${images[3]}',
-      //     experimentLength: ${config.experimentLength},
-      //   };
-      //   start();
-      // `;
       const injectConfig = `
         window.CONFIG = {
-          leftImage: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/black/png/48/arrow-left.png',
-          leftImageButton: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/white/png/48/arrow-left.png',
-          rightImage: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/black/png/48/arrow-right.png',
-          rightImageButton: 'https://raw.githubusercontent.com/encharm/Font-Awesome-SVG-PNG/master/white/png/48/arrow-right.png',
-          experimentLength: 4,
-          showFixation: true,
-          showFeedback: true,
-          showResults: true,
-          trialDuration: 1500,
+          leftImage: 'data:image/png;base64, ${images[0]}',
+          leftImageButton: 'data:image/png;base64, ${images[1]}',
+          rightImage: 'data:image/png;base64, ${images[2]}',
+          rightImageButton: 'data:image/png;base64, ${images[3]}',
+          experimentLength: ${config.experimentLength || 12},
+          showFixation: ${config.showFixation !== false ? 'true' : 'false'},
+          showFeedback: ${config.showFeedback !== false ? 'true' : 'false'},
+          showResults: ${config.showResults !== false ? 'true' : 'false'},
+          trialDuration: ${config.trialDuration || 1500},
         };
         start();
       `;
@@ -125,6 +114,10 @@ Flanker.propTypes = {
     leftImageButton: PropTypes.string,
     rightImage: PropTypes.string,
     rightImageButton: PropTypes.string,
+    showFixation: PropTypes.bool,
+    showFeedback: PropTypes.bool,
+    showResults: PropTypes.bool,
+    trialDuration: PropTypes.number,
   }).isRequired,
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
