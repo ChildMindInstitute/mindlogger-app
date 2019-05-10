@@ -146,17 +146,31 @@ function buildTimeline() {
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
       var congruent_rt = Math.round(jsPsych.data.get().filter({ correct: true, stim_type: 'congruent' }).select('rt').mean());
       var incongruent_rt = Math.round(jsPsych.data.get().filter({ correct: true, stim_type: 'incongruent' }).select('rt').mean());
-      return "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p> " +
-        "<p>Your average response time for congruent trials was <strong>" + congruent_rt + "ms</strong>.</p>" +
-        "<p>Your average response time for incongruent trials was <strong>" + incongruent_rt + "ms</strong>.</p>" +
-        "<p>Press the button below complete the experiment. Thank you!</p>";
+
+      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p> ";
+
+      if (!isNaN(congruent_rt)) {
+        msg += "<p>Your average response time for congruent trials was <strong>" + congruent_rt + "ms</strong>.</p>";
+      } else {
+        msg += "<p>You did not answer any congruent trials correctly.</p>";
+      }
+
+      if (!isNaN(incongruent_rt)) {
+        msg += "<p>Your average response time for incongruent trials was <strong>" + incongruent_rt + "ms</strong>.</p>";
+      } else {
+        msg += "<p>You did not answer any incongruent trials correctly.</p>";
+      }
+
+      msg += "<p>Press the button below complete the experiment. Thank you!</p>";
+
+      return msg;
     },
     choices: ['Finish']
   };
 
-  var thank_you = {
+  var end_block = {
     type: "html-button-response",
-    stimulus: "<p>Thank you! The experiment is complete.</p><p>Press the button below to continue.</p>",
+    stimulus: "<p>The experiment is complete.</p><p>Press the button below to continue.</p>",
     choices: ['Finish']
   };
 
@@ -166,6 +180,6 @@ function buildTimeline() {
   timeline.push(test_procedure);
   showResults
     ? timeline.push(debrief)
-    : timeline.push(thank_you)
+    : timeline.push(end_block)
   return timeline;
 }
