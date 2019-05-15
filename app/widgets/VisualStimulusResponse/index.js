@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { WebView, View } from 'react-native';
+import { View } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
   if (isCurrent) {
@@ -29,9 +30,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
 
     return (
       <WebView
-        source={require('./html-button-response/index.html')}
+        source={require('./html-button-response/compressed.html')}
+        originWhitelist={['*']}
         style={{ flex: 1, height: '100%' }}
-        scalesPageToFit={false}
         scrollEnabled={false}
         injectedJavaScript={injectConfig}
         onMessage={(e) => {
