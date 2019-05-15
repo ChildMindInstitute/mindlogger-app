@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Flanker Task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./jspsych.js"></script>
+    <script src="./plugins/jspsych-html-button-response-modified.js"></script>
+    <script src="./plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="./experiment.js"></script>
+    <link rel="stylesheet" href="./css/jspsych.css">
+    <link rel="stylesheet" href="./css/overrides.css">
+</head>
+
+<body>
+</body>
+<script>
+/*start experiment*/
+function start() {
+    jsPsych.init({
+        timeline: buildTimeline(),
+        on_finish: function (data) {
+            const onlyTests = data.filter({ tag: 'test' });
+            if (window.postMessage) {
+                const serialized = JSON.stringify(onlyTests.values());
+                window.postMessage(serialized);
+            }
+        }
+    });
+}
+
+// window.CONFIG = {
+//     "trials": [{
+//         "stimulus": {
+//             "en": "<img src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/congruent-left.png' />"
+//         },
+//         "choices": [{
+//             "name": {
+//                 "en": "<img alt='left' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-left-white.png' />"
+//             },
+//             "value": 0
+//         }, {
+//             "name": {
+//                 "en": "<img alt='right' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-right-white.png' />"
+//             },
+//             "value": 1
+//         }],
+//         "correctChoice": 0,
+//         "weight": 1
+//     }, {
+//         "stimulus": {
+//             "en": "<img src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/incongruent-left.png' />"
+//         },
+//         "choices": [{
+//             "name": {
+//                 "en": "<img alt='left' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-left-white.png' />"
+//             },
+//             "value": 0
+//         }, {
+//             "name": {
+//                 "en": "<img alt='right' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-right-white.png' />"
+//             },
+//             "value": 1
+//         }],
+//         "correctChoice": 0,
+//         "weight": 1
+//     }, {
+//         "stimulus": {
+//             "en": "<img src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/congruent-right.png' />"
+//         },
+//         "choices": [{
+//             "name": {
+//                 "en": "<img alt='left' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-left-white.png' />"
+//             },
+//             "value": 0
+//         }, {
+//             "name": {
+//                 "en": "<img alt='right' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-right-white.png' />"
+//             },
+//             "value": 1
+//         }],
+//         "correctChoice": 1,
+//         "weight": 1
+//     }, {
+//         "stimulus": {
+//             "en": "<img src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/incongruent-right.png' />"
+//         },
+//         "choices": [{
+//             "name": {
+//                 "en": "<img alt='left' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-left-white.png' />"
+//             },
+//             "value": 0
+//         }, {
+//             "name": {
+//                 "en": "<img alt='right' src='https://raw.githubusercontent.com/stufreen/schema-standardization/master/activities/FlankerExample/items/arrow-right-white.png' />"
+//             },
+//             "value": 1
+//         }],
+//         "correctChoice": 1,
+//         "weight": 1
+//     }],
+//     "showFixation": "true",
+//     "showFeedback": "true",
+//     "showResults": "true",
+//     "trialDuration": 1500,
+//     "samplingMethod": "fixed-repetitions"
+// };
+// start();
+</script>
+
+</html>

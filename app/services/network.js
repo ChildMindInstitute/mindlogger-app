@@ -68,6 +68,12 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
   ).then(res => (res.info().status === 200 ? res.json() : Promise.reject(res)));
 };
 
+export const getSkin = () => get(
+  'system/skin',
+  null,
+  null,
+);
+
 export const getResponses = (authToken, applet) => get(
   'response',
   authToken,

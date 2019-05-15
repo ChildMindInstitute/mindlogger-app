@@ -26,7 +26,7 @@ test('it resets api host', () => {
 
 test('it changes skin', () => {
   const state = appReducer(initialState, setSkin({ name: 'foobar' }));
-  expect(appReducer(state, setSkin())).toEqual({
+  expect(state).toEqual({
     ...initialState,
     skin: { name: 'foobar' },
   });

@@ -20,6 +20,7 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
       autoCapitalize="none"
       style={styles.text}
       validate={required}
+      errorStyle={{ color: colors.secondary }}
     />
     <Field
       component={FormInputItem}
@@ -30,6 +31,7 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
       style={styles.text}
       secureTextEntry
       validate={required}
+      errorStyle={{ color: colors.secondary }}
     />
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
