@@ -88,6 +88,7 @@ const ActivityComponent = ({
         shadowRadius: 5,
         shadowColor: 'lightgray',
         shadowOffset: { height: 0, width: 0 },
+        elevation: 2,
       }}>
         {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
         <ActivityButtons
