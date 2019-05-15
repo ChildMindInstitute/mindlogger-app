@@ -40,6 +40,7 @@ const ActivityScreens = ({
             onChange={(answer) => { onChange(answer, index); }}
             autoIncrement={autoIncrement}
             authToken={authToken}
+            isCurrent={index === currentScreen}
           />
         </SlideInView>
       ))

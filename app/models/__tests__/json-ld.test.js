@@ -226,6 +226,7 @@ test('itemTransformJson', () => {
     inputType: 'radio',
     question: { en: 'Did your child have any nightmares or night terrors last night?' },
     preamble: undefined,
+    inputs: {},
     valueConstraints: {
       multipleChoice: false,
       maxValue: 1,
@@ -239,6 +240,7 @@ test('itemTransformJson', () => {
             en: 'No',
           },
           value: 0,
+          valueConstraints: undefined,
         },
         {
           image: {
@@ -248,6 +250,7 @@ test('itemTransformJson', () => {
             en: 'Yes',
           },
           value: 1,
+          valueConstraints: undefined,
         },
       ],
     },

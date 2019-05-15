@@ -54,7 +54,7 @@ class Login extends Component {
           });
         } else {
           throw new SubmissionError({
-            user: e,
+            password: 'Login failed.',
           });
         }
       });

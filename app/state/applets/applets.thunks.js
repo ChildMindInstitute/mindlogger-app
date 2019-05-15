@@ -24,7 +24,7 @@ export const downloadApplets = () => (dispatch, getState) => {
   const userInfo = userInfoSelector(state);
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id).then((applets) => {
-    if (loggedInSelector(getState())) {
+    if (loggedInSelector(getState())) { // Check that we are still logged in when fetch finishes
       const transformedApplets = applets.map(applet => transformApplet(applet));
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));

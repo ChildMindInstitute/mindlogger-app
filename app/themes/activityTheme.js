@@ -1,6 +1,6 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
-export default styles=StyleSheet.create({
+export default styles = StyleSheet.create({
   body: {
     flex: 1,
   },
@@ -67,16 +67,22 @@ export default styles=StyleSheet.create({
 });
 
 export const markdownStyle = {
-    text: {
-        alignSelf: 'flex-start',
-        fontSize: 18,
-        color: '#000000',
-    },
-    linkWrapper: {
-        alignSelf: 'flex-start',
-    },
-    link: {
-        alignSelf: 'flex-start',
-        textDecorationLine: 'underline',
-    },
+  text: {
+    alignSelf: 'flex-start',
+    fontSize: 18,
+    color: '#000000',
+  },
+  linkWrapper: {
+    alignSelf: 'flex-start',
+  },
+  link: {
+    alignSelf: 'flex-start',
+    textDecorationLine: 'underline',
+  },
+  image: {
+    flex: 1,
+    minWidth: 200,
+    height: 45,
+    resizeMode: 'contain',
+  },
 };
