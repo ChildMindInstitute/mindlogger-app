@@ -25,12 +25,12 @@
   "ramda": "^0.26.1",
   "random-string": "^0.2.0",
   "rc-input-number": "^3.6.8",
-  "react": "16.4.1",
-  "react-native": "0.56.0",
+  "react": "16.8.6",
+  "react-native": "0.59.8",
   "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/futurice/react-native-audio-toolkit.git",
   "react-native-audiowaveform": "https://github.com/erik-ilyin/react-native-audiowaveform.git",
-  "react-native-camera": "^1.1.2",
+  "react-native-camera": "^2.9.0",
   "react-native-cli": "2.0.1",
   "react-native-datepicker": "^1.6.0",
   "react-native-device-info": "^0.22.6",
@@ -55,6 +55,7 @@
   "styled-components": "^4.1.1"
  },
  "devDependencies": {
+  "@babel/plugin-external-helpers": "^7.2.0",
   "babel-eslint": "^10.0.1",
   "babel-jest": "23.6.0",
   "eslint": "5.3.0",
@@ -63,8 +64,9 @@
   "eslint-plugin-jsx-a11y": "^6.1.1",
   "eslint-plugin-react": "^7.11.0",
   "jest": "23.6.0",
-  "metro-react-native-babel-preset": "0.45.3",
-  "react-test-renderer": "16.5.0"
+  "metro-react-native-babel-preset": "^0.54.1",
+  "react-test-renderer": "16.5.0",
+  "schedule": "0.4.0"
  },
  "jest": {
   "preset": "react-native",
