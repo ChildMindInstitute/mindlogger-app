@@ -9,27 +9,32 @@ import {
   Left,
   Right,
   Icon,
-  Body,
   Text,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
-import { setApiHost, resetApiHost } from '../../state/app/app.actions';
+import { getSkin } from '../../services/network';
+import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
 import { apiHostSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
+import config from '../../config';
 
 class ChangeStudy extends Component {
-  constructor (props) {
-     super(props);
-     this.state = {
-       scanOpen: false,
-     }
+  constructor(props) {
+    super(props);
+    this.state = {
+      scanOpen: false,
+    };
   }
 
   onSubmit = (body) => {
-    const { showToast, setApiHost } = this.props;
+    const { showToast, setApiHost, setSkin } = this.props;
+    setApiHost(body.apiHost);
+    getSkin().then((response) => {
+      setSkin(response);
+    });
     Actions.replace('login');
     showToast({
       text: 'Study successfully changed.',
@@ -37,11 +42,11 @@ class ChangeStudy extends Component {
       type: 'success',
       duration: 2000,
     });
-    setApiHost(body.apiHost);
   }
 
   onReset = () => {
-    const { showToast, resetApiHost } = this.props;
+    const { showToast, resetApiHost, setSkin } = this.props;
+    setSkin(config.defaultSkin);
     Actions.replace('login');
     showToast({
       text: 'Study successfully reset.',
@@ -53,7 +58,11 @@ class ChangeStudy extends Component {
   }
 
   onScan = (body) => {
-    const { showToast, setApiHost } = this.props;
+    const { showToast, setApiHost, setSkin } = this.props;
+    setApiHost(body.data);
+    getSkin().then((response) => {
+      setSkin(response);
+    });
     Actions.replace('login');
     showToast({
       text: 'Study has been set by QR.',
@@ -61,11 +70,10 @@ class ChangeStudy extends Component {
       type: 'success',
       duration: 4000,
     });
-    setApiHost(body.data);
   }
 
   toggleQrScanner = () => {
-    this.setState({scanOpen: !this.state.scanOpen})
+    this.setState({ scanOpen: !this.state.scanOpen });
   }
 
   render() {
@@ -80,7 +88,7 @@ class ChangeStudy extends Component {
         </Left>
         <Right>
           <Button transparent block onPress={this.toggleQrScanner}>
-            <Text style={styles.text}>{this.state.scanOpen ? "Enter URL Manually" : "Scan QR" }</Text>
+            <Text style={styles.text}>{ this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR' }</Text>
           </Button>
         </Right>
       </Header>
@@ -88,30 +96,28 @@ class ChangeStudy extends Component {
 
 
     if (this.state.scanOpen) {
-      return  (
-        <Container style={styles.container}>
-          { header }
-          <QRCodeScanner
-            fadeIn={true}
-            onRead={this.onScan}
-            showMarker={true}
-          />
-        </Container>
-      );
-    } else {
       return (
         <Container style={styles.container}>
           { header }
-          <View style={styles.formContainer}>
-            <ChangeStudyForm
-              onSubmit={this.onSubmit}
-              onReset={this.onReset}
-              initialValues={{ apiHost }}
-            />
-          </View>
+          <QRCodeScanner
+            fadeIn
+            showMarker
+            onRead={this.onScan}
+          />
         </Container>
       );
-    }
+    } return (
+      <Container style={styles.container}>
+        { header }
+        <View style={styles.formContainer}>
+          <ChangeStudyForm
+            onSubmit={this.onSubmit}
+            onReset={this.onReset}
+            initialValues={{ apiHost }}
+          />
+        </View>
+      </Container>
+    );
   }
 }
 
@@ -120,6 +126,7 @@ ChangeStudy.propTypes = {
   showToast: PropTypes.func.isRequired,
   resetApiHost: PropTypes.func.isRequired,
   setApiHost: PropTypes.func.isRequired,
+  setSkin: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -130,6 +137,7 @@ const mapDispatchToProps = {
   showToast,
   setApiHost,
   resetApiHost,
+  setSkin,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangeStudy);

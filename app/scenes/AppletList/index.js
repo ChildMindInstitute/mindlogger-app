@@ -9,6 +9,7 @@ import {
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet } from '../../state/app/app.actions';
+import { skinSelector } from '../../state/app/app.selectors';
 
 class AppletList extends Component {
   refresh = () => {
@@ -26,11 +27,13 @@ class AppletList extends Component {
     const {
       applets,
       isDownloadingApplets,
+      skin,
     } = this.props;
     return (
       <AppletListComponent
         applets={applets}
         isDownloadingApplets={isDownloadingApplets}
+        title={skin ? skin.name : 'MindLogger'}
         onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
         onPressApplet={this.handlePressApplet}
@@ -49,6 +52,7 @@ AppletList.propTypes = {
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
+  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {
