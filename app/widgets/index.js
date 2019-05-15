@@ -9,3 +9,4 @@ export * from './TableInput';
 export * from './TableSelector';
 export * from './TextEntry';
 export * from './TimeRange';
+export * from './VisualStimulusResponse';

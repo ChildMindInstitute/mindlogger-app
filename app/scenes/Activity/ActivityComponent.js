@@ -66,10 +66,14 @@ const ActivityComponent = ({
   const isValid = Screen.isValid(answers[index], activity.items[index]);
   const hasPrevPermission = true; // TO DO
 
+  // Hide the header and footer if it's a certain type of widget
+  const inputType = R.path(['items', index, 'inputType'], activity);
+  const fullScreen = inputType === 'visual-stimulus-response';
+
   return (
     <Container>
       <StatusBar barStyle="light-content" />
-      <ActHeader title={activity.name.en} onInfo={activity.info && onInfo} />
+      {!fullScreen && <ActHeader title={activity.name.en} onInfo={activity.info && onInfo} />}
       {activity.items.length > 0
         ? (
           <ActivityScreens
@@ -83,24 +87,26 @@ const ActivityComponent = ({
         )
         : <View style={{ flex: 1 }} />
       }
-      <View style={{
-        backgroundColor: 'white',
-        shadowOpacity: 0.75,
-        shadowRadius: 5,
-        shadowColor: 'lightgray',
-        shadowOffset: { height: 0, width: 0 },
-        elevation: 2,
-      }}>
-        {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
-        <ActivityButtons
-          nextLabel={getNextLabel(isLast, isValid, isSkippable)}
-          onPressNext={isValid || isSkippable ? onNext : undefined}
-          prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
-          onPressPrev={onPrev}
-          actionLabel={getActionLabel(answers[index], activity.items[index])}
-          onPressAction={onUndo}
-        />
-      </View>
+      {!fullScreen && (
+        <View style={{
+          backgroundColor: 'white',
+          shadowOpacity: 0.75,
+          shadowRadius: 5,
+          shadowColor: 'lightgray',
+          shadowOffset: { height: 0, width: 0 },
+          elevation: 2,
+        }}>
+          {activity.items.length > 1 && <ActProgress index={index} length={activity.items.length} />}
+          <ActivityButtons
+            nextLabel={getNextLabel(isLast, isValid, isSkippable)}
+            onPressNext={isValid || isSkippable ? onNext : undefined}
+            prevLabel={getPrevLabel(index === 0, hasPrevPermission)}
+            onPressPrev={onPrev}
+            actionLabel={getActionLabel(answers[index], activity.items[index])}
+            onPressAction={onUndo}
+          />
+        </View>
+      )}
     </Container>
   );
 };
