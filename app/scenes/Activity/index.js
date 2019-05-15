@@ -57,7 +57,7 @@ class Activity extends Component {
     } else {
       // Finished activity
       completeResponse(currentResponse);
-      Actions.activity_thanks();
+      Actions.push('activity_thanks');
     }
   }
 

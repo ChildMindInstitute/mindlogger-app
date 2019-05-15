@@ -4,14 +4,14 @@ import {Header, Left, Right, Body, Button, Title, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 const ActHeader = ({ title, onInfo }) => (
-  <Header>
+  <Header transparent style={{ backgroundColor: 'white', color: 'black', borderBottomWidth: 0, }}>
     <Left />
     <Body style={{ flex: 2 }}>
-      <Title>{title}</Title>
+      {/* <Title style={{color:'lightgray'}}>{title}</Title> */}
     </Body>
     <Right>
-      <Button transparent onPress={Actions.pop}>
-        <Icon type="FontAwesome" name="close" />
+      <Button transparent onPress={() => {Actions.pop()}}>
+        <Icon type="FontAwesome" name="close" style={{color:'lightgray'}}/>
       </Button>
     </Right>
   </Header>
