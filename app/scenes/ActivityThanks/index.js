@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 });
 
 const onPressStart = () => {
-  Actions.applet_details();
+  Actions.popTo('applet_details');
 };
 
 const ActivityThanks = () => (
