@@ -1749,6 +1749,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",

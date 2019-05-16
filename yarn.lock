@@ -5342,9 +5342,9 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-"react-native-audio-toolkit@https://github.com/futurice/react-native-audio-toolkit.git":
+react-native-audio-toolkit@^1.0.6:
   version "1.0.6"
-  resolved "https://github.com/futurice/react-native-audio-toolkit.git#3dd0751f55c2b9709c1ec7dc3f972f4426c400fb"
+  resolved "https://registry.yarnpkg.com/react-native-audio-toolkit/-/react-native-audio-toolkit-1.0.6.tgz#4eff06667c0d00ddad23f88facfcecf26cdd083b"
   dependencies:
     async "^2.0.0"
     eventemitter3 "^1.2.0"

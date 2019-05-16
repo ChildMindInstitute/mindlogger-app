@@ -26,7 +26,10 @@ class AboutApp extends Component { // eslint-disable-line
               <Header>
                 <Left>
                   <Button transparent onPress={this.onClose}>
-                    <Icon name="close" />
+                    <Icon
+                      ios="ios-arrow-back"
+                      android="md-arrow-back"
+                    />
                   </Button>
                 </Left>
                 <Body>

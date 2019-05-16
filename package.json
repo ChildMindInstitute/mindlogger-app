@@ -28,7 +28,7 @@
   "react": "16.8.6",
   "react-native": "0.59.8",
   "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
-  "react-native-audio-toolkit": "https://github.com/futurice/react-native-audio-toolkit.git",
+  "react-native-audio-toolkit": "^1.0.6",
   "react-native-audiowaveform": "https://github.com/erik-ilyin/react-native-audiowaveform.git",
   "react-native-camera": "^1.1.2",
   "react-native-cli": "2.0.1",
