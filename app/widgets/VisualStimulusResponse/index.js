@@ -30,7 +30,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
 
     return (
       <WebView
-        source={require('./html-button-response/compressed.html')}
+        source={require('./compressed.html')}
         originWhitelist={['*']}
         style={{ flex: 1, height: '100%' }}
         scrollEnabled={false}
