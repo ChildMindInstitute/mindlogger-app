@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, Text, Left, Body, Right, View } from 'native-base';
@@ -46,6 +47,7 @@ class SettingScreen extends Component {
     const { user } = this.props;
     return (
       <Container style={styles.container}>
+        <StatusBar barStyle="light-content" />
         <Header>
           <Left />
           <Body>
