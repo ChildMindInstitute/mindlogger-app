@@ -3,13 +3,21 @@ import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
 
+const getURL = (url) => {
+  console.log('url is', url, url.endsWith('.svg'));
+  if (url.endsWith('.svg')) {
+    return url.replace('.svg', '.jpg');
+  }
+  return url;
+};
+
 const AppletImage = ({ applet, size = 64 }) => {
   // Display the image if there is one
   if (typeof applet.image !== 'undefined') {
     return (
       <CachedImage
         style={{ width: size, height: size, resizeMode: 'cover' }}
-        source={{ uri: applet.image.en }}
+        source={{ uri: getURL(applet.image.en) }}
       />
     );
   }
