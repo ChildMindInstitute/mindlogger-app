@@ -4,18 +4,8 @@ import { View } from 'react-native';
 import { Text } from 'native-base';
 import { CachedImage } from 'react-native-img-cache';
 import SliderComponent from './slider';
+import { getURL } from '../../services/helper';
 
-/**
- * getURL will replace an SVG image with a JPG image because
- * react-native can't handle SVGs, but web prefers them.
- * @param {String} url 
- */
-const getURL = (url) => {
-  if (url.endsWith('.svg')) {
-    return url.replace('.svg', '.jpg');
-  }
-  return url;
-};
 
 export const Slider = ({ config: { maxValue, minValue, itemList }, value, onChange }) => (
   <View style={{ alignItems: 'stretch', minHeight: 450 }}>

@@ -54,3 +54,15 @@ export const randomLink = (files, token) => {
   var rand = files[Math.floor(Math.random() * files.length)];
   return fileLink(rand, token);
 }
+
+/**
+ * getURL will replace an SVG image with a JPG image because
+ * react-native can't handle SVGs, but web prefers them.
+ * @param {String} url 
+ */
+export const getURL = (url) => {
+  if (url.endsWith('.svg')) {
+    return url.replace('.svg', '.jpg');
+  }
+  return url;
+};

@@ -10,18 +10,7 @@ import {
   Right,
   CheckBox,
 } from 'native-base';
-
-/**
- * getURL will replace an SVG image with a JPG image because
- * react-native can't handle SVGs, but web prefers them.
- * @param {String} url 
- */
-const getURL = (url) => {
-  if (url.endsWith('.svg')) {
-    return url.replace('.svg', '.jpg');
-  }
-  return url;
-};
+import { getURL } from '../services/helper';
 
 export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
