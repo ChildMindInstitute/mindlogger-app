@@ -3,12 +3,12 @@ import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BodyText, Hyperlink } from './core';
-import { joinExampleApplet } from '../state/applets/applets.thunks';
+import { joinOpenApplet } from '../state/applets/applets.thunks';
 import { appletsSelector } from '../state/applets/applets.selectors';
 
 const styles = StyleSheet.create({
   container: {
-    padding: 50,
+    padding: 20,
   },
   message: {
     fontSize: 18,
@@ -19,6 +19,17 @@ const styles = StyleSheet.create({
   },
 });
 
+const DEMO_APPLETS = [
+  {
+    label: 'Healthy Brain Network: EMA',
+    uri: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
+  },
+  {
+    label: 'Cognitive Tasks',
+    uri: 'https://raw.githubusercontent.com/stufreen/schema-standardization/master/activity-sets/cognitive-tasks/cognitive-tasks_schema.jsonld',
+  },
+];
+
 const appletsInclude = (applets, appletSchemaURI) => {
   const appletIndex = applets.find(applet => applet.schema === appletSchemaURI);
   return typeof appletIndex !== 'undefined';
@@ -26,16 +37,12 @@ const appletsInclude = (applets, appletSchemaURI) => {
 
 const JoinDemoApplets = ({ applets, joinOpenApplet }) => {
   const [joinInProgress, setJoinInProgress] = useState({});
-  const appletSchemaURIs = [
-    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
-    'https://github.com/ReproNim/schema-standardization/blob/master/activity-sets/cognitive-tasks/cognitive-tasks_schema.jsonld',
-  ];
-  const unjoined = appletSchemaURIs.filter(
-    appletSchemaURI => !appletsInclude(applets, appletSchemaURI),
+  const unjoined = DEMO_APPLETS.filter(
+    demoApplet => !appletsInclude(applets, demoApplet.uri),
   );
 
   if (unjoined.length === 0) {
-    return undefined;
+    return null;
   }
 
   return (
@@ -43,14 +50,18 @@ const JoinDemoApplets = ({ applets, joinOpenApplet }) => {
       <BodyText style={styles.message}>
         Join open studies:
       </BodyText>
-      {unjoined.map(appletSchemaURI => (
+      {unjoined.map(demoApplet => (
         <Hyperlink
+          key={demoApplet.uri}
+          style={styles.link}
           onPress={() => {
-            joinOpenApplet(appletSchemaURI);
-            setJoinInProgress({ ...joinInProgress, [appletSchemaURI]: true });
+            joinOpenApplet(demoApplet.uri);
+            setJoinInProgress({ ...joinInProgress, [demoApplet.uri]: true });
           }}
-          disabled={joinInProgress[appletSchemaURI] === true}
-        />
+          disabled={joinInProgress[demoApplet.uri] === true}
+        >
+          {demoApplet.label}
+        </Hyperlink>
       ))}
     </View>
   );
@@ -68,7 +79,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  joinExampleApplet,
+  joinOpenApplet,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(JoinDemoApplets);

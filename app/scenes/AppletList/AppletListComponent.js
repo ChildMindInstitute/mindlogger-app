@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { colors } from '../../theme';
@@ -20,6 +20,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
   },
+  sync: {
+    padding: 50,
+    textAlign: 'center',
+    fontSize: 18,
+  },
 });
 
 const AppletListComponent = ({
@@ -31,6 +36,7 @@ const AppletListComponent = ({
   onPressApplet,
 }) => (
   <Container style={styles.container}>
+    <StatusBar barStyle="light-content" />
     <Header>
       <Left />
       <Body>
@@ -56,7 +62,7 @@ const AppletListComponent = ({
         <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
       ))}
       {applets.length === 0 && isDownloadingApplets && (
-        <BodyText style={styles.noAppletsMessage}>
+        <BodyText style={styles.sync}>
           Synchronizing...
         </BodyText>
       )}

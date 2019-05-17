@@ -72,7 +72,7 @@ const ActivityComponent = ({
 
   return (
     <Container>
-      <StatusBar barStyle="light-content" />
+      <StatusBar hidden />
       {!fullScreen && <ActHeader title={activity.name.en} onInfo={activity.info && onInfo} />}
       {activity.items.length > 0
         ? (

@@ -34,13 +34,13 @@ export const downloadApplets = () => (dispatch, getState) => {
   });
 };
 
-export const joinExampleApplet = () => (dispatch, getState) => {
+export const joinOpenApplet = appletURI => (dispatch, getState) => {
   dispatch(setDownloadingApplets(true));
   const state = getState();
   const auth = authSelector(state);
   registerOpenApplet(
     auth.token,
-    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
+    appletURI,
   )
     .then(() => {
       downloadApplets()(dispatch, getState);
