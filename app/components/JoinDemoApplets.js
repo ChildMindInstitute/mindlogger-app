@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { colors } from '../theme';
 import { BodyText, Hyperlink } from './core';
 import { joinExampleApplet } from '../state/applets/applets.thunks';
 import { appletsSelector } from '../state/applets/applets.selectors';
@@ -12,10 +11,9 @@ const styles = StyleSheet.create({
     padding: 50,
   },
   message: {
-    
+    fontSize: 18,
   },
   link: {
-    textAlign: 'center',
     marginTop: 12,
     fontSize: 18,
   },
@@ -26,7 +24,7 @@ const appletsInclude = (applets, appletSchemaURI) => {
   return typeof appletIndex !== 'undefined';
 };
 
-const JoinDemoApplets = ({ applets, joinExampleApplet }) => {
+const JoinDemoApplets = ({ applets, joinOpenApplet }) => {
   const [joinInProgress, setJoinInProgress] = useState({});
   const appletSchemaURIs = [
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
@@ -43,11 +41,12 @@ const JoinDemoApplets = ({ applets, joinExampleApplet }) => {
   return (
     <View style={styles.container}>
       <BodyText style={styles.message}>
-        Join open demo studies:
+        Join open studies:
       </BodyText>
       {unjoined.map(appletSchemaURI => (
         <Hyperlink
           onPress={() => {
+            joinOpenApplet(appletSchemaURI);
             setJoinInProgress({ ...joinInProgress, [appletSchemaURI]: true });
           }}
           disabled={joinInProgress[appletSchemaURI] === true}
@@ -58,7 +57,10 @@ const JoinDemoApplets = ({ applets, joinExampleApplet }) => {
 };
 
 JoinDemoApplets.propTypes = {
-  joinExampleApplet: PropTypes.func.isRequired,
+  applets: PropTypes.arrayOf(PropTypes.shape({
+    schema: PropTypes.string,
+  })).isRequired,
+  joinOpenApplet: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
