@@ -21,9 +21,9 @@ function start() {
         timeline: buildTimeline(),
         on_finish: function (data) {
             const onlyTests = data.filter({ tag: 'test' });
-            if (window.postMessage) {
+            if (window.ReactNativeWebView) {
                 const serialized = JSON.stringify(onlyTests.values());
-                window.postMessage(serialized);
+                window.ReactNativeWebView.postMessage(serialized);
             }
         }
     });

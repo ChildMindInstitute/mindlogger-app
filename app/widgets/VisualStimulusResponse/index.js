@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { WebView, View } from 'react-native';
+import { View, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
+
+const htmlSource = require('./visual-stimulus-response.html');
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
   if (isCurrent) {
@@ -14,9 +17,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
 
     const configObj = {
       trials,
-      showFixation: config.showFixation !== false ? 'true' : 'false',
-      showFeedback: config.showFeedback !== false ? 'true' : 'false',
-      showResults: config.showResults !== false ? 'true' : 'false',
+      showFixation: config.showFixation !== false,
+      showFeedback: config.showFeedback !== false,
+      showResults: config.showResults !== false,
       trialDuration: config.trialDuration || 1500,
       samplingMethod: config.samplingMethod,
       samplingSize: config.samplingSize,
@@ -27,11 +30,16 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       start();
     `;
 
+    const source = Platform.select({
+      ios: htmlSource,
+      android: { uri: 'file:///android_asset/html/visual-stimulus-response.html' },
+    });
+
     return (
       <WebView
-        source={require('./html-button-response/index.html')}
+        source={source}
+        originWhitelist={['*']}
         style={{ flex: 1, height: '100%' }}
-        scalesPageToFit={false}
         scrollEnabled={false}
         injectedJavaScript={injectConfig}
         onMessage={(e) => {
@@ -59,7 +67,6 @@ VisualStimulusResponse.propTypes = {
     showFeedback: PropTypes.bool,
     showResults: PropTypes.bool,
     trialDuration: PropTypes.number,
-    repetitions: PropTypes.number,
     samplingMethod: PropTypes.string,
     samplingSize: PropTypes.number,
   }).isRequired,
