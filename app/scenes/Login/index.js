@@ -62,7 +62,7 @@ class Login extends Component {
 
   render() {
     const { skin } = this.props;
-    const title = skin.name;
+    const title = skin ? skin.name : 'MindLogger';
     return (
       <Container>
         <StatusBar barStyle="light-content" />
