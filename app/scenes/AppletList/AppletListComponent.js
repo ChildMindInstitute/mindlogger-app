@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
-import NoAppletsMessage from '../../components/NoAppletsMessage';
+import { BodyText } from '../../components/core';
+import JoinDemoApplets from '../../components/JoinDemoApplets';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,9 +55,12 @@ const AppletListComponent = ({
       {applets.map(applet => (
         <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
       ))}
-      {applets.length === 0 && (
-        <NoAppletsMessage isDownloadingApplets={isDownloadingApplets} />
+      {applets.length === 0 && isDownloadingApplets && (
+        <BodyText style={styles.noAppletsMessage}>
+          Synchronizing...
+        </BodyText>
       )}
+      <JoinDemoApplets />
     </ScrollView>
   </Container>
 );
@@ -67,6 +71,7 @@ AppletListComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default AppletListComponent;
