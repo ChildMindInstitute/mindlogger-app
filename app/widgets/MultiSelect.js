@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
+import { CachedImage } from 'react-native-img-cache';
 import {
   ListItem,
   Text,
@@ -9,6 +10,18 @@ import {
   Right,
   CheckBox,
 } from 'native-base';
+
+/**
+ * getURL will replace an SVG image with a JPG image because
+ * react-native can't handle SVGs, but web prefers them.
+ * @param {String} url 
+ */
+const getURL = (url) => {
+  if (url.endsWith('.svg')) {
+    return url.replace('.svg', '.jpg');
+  }
+  return url;
+};
 
 export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
@@ -40,7 +53,12 @@ export class MultiSelect extends Component {
           itemList.map((item, index) => (
             <ListItem onPress={() => this.onAnswer(item.value)} key={index}>
               <Body>
-                <Text>{item.name.en}</Text>
+                <View style={{flexDirection: 'row'}}>
+                  { item.image ? <CachedImage style={{ width: 64, height: 64, resizeMode: 'cover' }} source={{ uri: getURL(item.image.en) }} /> : <View></View>}
+                  <View style={{justifyContent: 'center'}}>
+                    <Text>{item.name.en}</Text>
+                  </View>
+                </View>
               </Body>
               <Right>
                 <CheckBox
