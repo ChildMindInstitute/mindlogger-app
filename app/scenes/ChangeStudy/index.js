@@ -83,7 +83,10 @@ class ChangeStudy extends Component {
       <Header>
         <Left>
           <Button transparent onPress={() => Actions.pop()}>
-            <Icon name="close" />
+            <Icon
+              ios="ios-arrow-back"
+              android="md-arrow-back"
+            />
           </Button>
         </Left>
         <Right>
