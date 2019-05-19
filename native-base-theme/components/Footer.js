@@ -88,7 +88,7 @@ export default (variables = variable) => {
       borderTopWidth: ((platform === 'ios') && (platformStyle!=='material')) ? variables.borderWidth : undefined,
       borderColor: ((platform === 'ios') && (platformStyle!=='material')) ? '#cbcbcb' : undefined,
       height: variables.footerHeight,
-      elevation: 3,
+      elevation: 0,
       left: 0,
       right: 0,
   };
