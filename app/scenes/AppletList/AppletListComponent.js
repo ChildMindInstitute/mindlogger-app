@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
-import NoAppletsMessage from '../../components/NoAppletsMessage';
+import { BodyText } from '../../components/core';
+import JoinDemoApplets from '../../components/JoinDemoApplets';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,6 +20,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
   },
+  sync: {
+    padding: 50,
+    textAlign: 'center',
+    fontSize: 18,
+  },
 });
 
 const AppletListComponent = ({
@@ -30,6 +36,7 @@ const AppletListComponent = ({
   onPressApplet,
 }) => (
   <Container style={styles.container}>
+    <StatusBar barStyle="light-content" />
     <Header>
       <Left />
       <Body>
@@ -54,9 +61,12 @@ const AppletListComponent = ({
       {applets.map(applet => (
         <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
       ))}
-      {applets.length === 0 && (
-        <NoAppletsMessage isDownloadingApplets={isDownloadingApplets} />
+      {applets.length === 0 && isDownloadingApplets && (
+        <BodyText style={styles.sync}>
+          Synchronizing...
+        </BodyText>
       )}
+      <JoinDemoApplets />
     </ScrollView>
   </Container>
 );
@@ -67,6 +77,7 @@ AppletListComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default AppletListComponent;

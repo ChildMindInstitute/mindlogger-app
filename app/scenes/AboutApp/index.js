@@ -22,7 +22,7 @@ class AboutApp extends Component { // eslint-disable-line
         if (typeof skin.about !== 'undefined') {
           return (
             <Container style={styles.container}>
-              <StatusBar barStyle='light-content'/>
+              <StatusBar barStyle="light-content" />
               <Header>
                 <Left>
                   <Button transparent onPress={this.onClose}>

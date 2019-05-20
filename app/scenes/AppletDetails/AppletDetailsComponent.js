@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
@@ -20,6 +20,7 @@ const AppletDetailsComponent = ({
   inProgress,
 }) => (
   <Container style={styles.container}>
+    <StatusBar barStyle="light-content" />
     <Header>
       <Left>
         <Button transparent onPress={onPressBack}>

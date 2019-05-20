@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, StatusBar } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import { colors } from '../../theme';
 import ActivitySummary from '../../components/ActivitySummary';
@@ -27,6 +27,7 @@ const ActivityDetailsComponent = ({
   });
   return (
     <Container style={styles.container}>
+      <StatusBar barStyle="light-content" />
       <Header>
         <Left>
           <Button transparent onPress={onPressBack}>
