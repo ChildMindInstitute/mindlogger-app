@@ -1,10 +1,8 @@
+import { colors } from '../../theme';
 
 const React = require('react-native');
 
-const { StyleSheet, Platform, Dimensions } = React;
-
-const deviceHeight = Dimensions.get('window').height;
-const deviceWidth = Dimensions.get('window').width;
+const { Platform } = React;
 
 export default {
   sidebar: {
@@ -15,7 +13,7 @@ export default {
     alignSelf: 'stretch',
     // resizeMode: 'cover',
     width: null,
-    backgroundColor: '#0067A0',
+    backgroundColor: colors.primary,
     position: 'relative',
     marginBottom: 10,
     flexDirection: 'row',

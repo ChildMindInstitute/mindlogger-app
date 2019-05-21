@@ -1,6 +1,6 @@
 import color from 'color';
-
 import { Platform, Dimensions, PixelRatio } from 'react-native';
+import { colors } from '../../app/theme';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -112,7 +112,7 @@ export default {
 
 
       // Color
-  brandPrimary: '#0067A0',
+  brandPrimary: colors.primary,
   brandInfo: '#62B1F6',
   brandSuccess: '#5cb85c',
   brandDanger: '#d9534f',
@@ -159,7 +159,7 @@ export default {
 
     // Header
   toolbarBtnColor: (platform === 'ios') ? '#fff' : '#fff',
-  toolbarDefaultBg: '#0067A0',
+  toolbarDefaultBg: colors.primary,
   toolbarHeight: (platform === 'ios') ? 64 : 56,
   toolbarIconSize: (platform === 'ios') ? 20 : 22,
   toolbarSearchIconSize: (platform === 'ios') ? 20 : 23,

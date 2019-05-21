@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 
 import variable from './../variables/platform';
+import { colors } from '../../app/theme';
 
 export default (variables = variable) => {
   const platformStyle = variables.platformStyle;
@@ -27,7 +28,7 @@ export default (variables = variable) => {
         },
         '.light': {
           'NativeBase.Text': {
-            color: '#0067A0',
+            color: colors.primary,
           },
           'NativeBase.Icon': {
             color: '#f4f4f4',
@@ -36,7 +37,7 @@ export default (variables = variable) => {
             color: '#f4f4f4',
           },
           backgroundColor: 'transparent',
-          borderColor: '#0067A0',
+          borderColor: colors.primary,
           borderWidth: variables.borderWidth * 2,
         },
         '.primary': {

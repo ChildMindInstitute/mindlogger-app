@@ -1,13 +1,8 @@
-
-const React = require('react-native');
-
-const { StyleSheet, Dimensions, Platform } = React;
-
-const deviceHeight = Dimensions.get('window').height;
+import { colors } from '../../theme';
 
 export default {
   container: {
-    
+
   },
   content: {
     padding: 36,
@@ -28,23 +23,23 @@ export default {
   buttons: {
     alignItems: 'flex-start',
   },
-  
+
   button:{
     marginTop: 10,
     paddingLeft: 0,
   },
   aboutLink: {
     flexDirection: 'row',
-    color: '#0067A0',
+    color: colors.primary,
     alignItems: 'center',
     marginBottom: 10,
   },
   aboutIcon: {
-    color: '#0067A0',
+    color: colors.primary,
     marginRight: 10,
   },
   buttonText: {
-    color: '#0067A0',
+    color: colors.primary,
     fontSize: 16,
   },
   logo: {
