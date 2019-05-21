@@ -1,12 +1,22 @@
 import React, { Component } from 'react';
-import { View, Platform, Text, TouchableOpacity } from 'react-native';
+import { View, Platform, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Recorder } from 'react-native-audio-toolkit';
 import randomString from 'random-string';
 import Permissions from 'react-native-permissions';
+import RecordButton from './RecordButton';
+import { colors } from '../../theme';
 
 let intervalId = null;
 let recorder = null;
+
+
+const styles = StyleSheet.create({
+  infoText: {
+    color: colors.tertiary,
+    fontSize: 16,
+  },
+});
 
 export class AudioRecorder extends Component {
   constructor() {
@@ -104,26 +114,26 @@ export class AudioRecorder extends Component {
   }
 
   render() {
-    const { recorderState, elapsed, path } = this.state;
+    const { recorderState, elapsed, permission, path } = this.state;
+    const { allowRetry } = this.props;
+
+    if (permission !== 'authorized' && permission !== 'undetermined') {
+      return (
+        <Text style={styles.infoText}>
+          You must grant permission to use your microphone to
+          complete this task.
+        </Text>
+      );
+    }
+
     return (
       <View>
-        <Text>{recorderState}</Text>
-        {(recorderState === 'ready' || recorderState === 'stopped') && (
-          <TouchableOpacity onPress={this.startRecording}>
-            <Text>Record</Text>
-          </TouchableOpacity>
-        )}
-        {recorderState === 'recording' && (
-          <TouchableOpacity onPress={this.stopRecording}>
-            <Text>Stop</Text>
-          </TouchableOpacity>
-        )}
-        {(recorderState === 'recording' || recorderState === 'stopped') && (
-          <View>
-            <Text>{Math.round(elapsed / 1000)} seconds</Text>
-            <Text>{path}</Text>
-          </View>
-        )}
+        <RecordButton
+          onPress={recorderState === 'recording' ? this.stopRecording : this.startRecording}
+          elapsed={elapsed}
+          disabled={recorderState !== 'recording' && allowRetry === false && path !== null}
+          recording={recorderState === 'recording'}
+        />
       </View>
     );
   }
@@ -132,9 +142,11 @@ export class AudioRecorder extends Component {
 AudioRecorder.defaultProps = {
   maxLength: Infinity,
   onStop: () => {},
+  allowRetry: true,
 };
 
 AudioRecorder.propTypes = {
   maxLength: PropTypes.number,
   onStop: PropTypes.func,
+  allowRetry: PropTypes.bool,
 };
