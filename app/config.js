@@ -7,7 +7,4 @@ export default {
       secondary: '#FFFFFF',
     },
   },
-  s3_image: {
-    bucket: 'mindloggerimages'
-  }
-}
+};
