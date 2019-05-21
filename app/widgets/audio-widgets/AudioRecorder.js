@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { View, Platform, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { Recorder } from 'react-native-audio-toolkit';
-import Permissions from 'react-native-permissions';
 import randomString from 'random-string';
+import Permissions from 'react-native-permissions';
 
 let intervalId = null;
 let recorder = null;
@@ -15,6 +15,7 @@ export class AudioRecorder extends Component {
       recorderState: 'ready',
       elapsed: null,
       path: null,
+      permission: 'undetermined',
     };
   }
 
@@ -30,7 +31,7 @@ export class AudioRecorder extends Component {
     this.state.recorder.destroy();
   }
 
-  startRecording = () => {
+  record = () => {
     const filename = Platform.OS === 'android'
       ? `${randomString({ length: 20 })}.mp4`
       : `${randomString({ length: 20 })}.aac`;
@@ -68,7 +69,25 @@ export class AudioRecorder extends Component {
     });
   }
 
+  startRecording = () => {
+    Permissions.check('microphone').then((response) => {
+      if (response !== 'authorized') {
+        Permissions.request('microphone').then((response) => {
+          this.setState({ permission: response });
+          if (response === 'authorized') {
+            this.record();
+          }
+        });
+      } else {
+        this.setState({ permission: response });
+        this.record();
+      }
+    });
+  }
+
   stopRecording = () => {
+    const { onStop } = this.props;
+    const { path } = this.state;
     if (recorder.isRecording) {
       recorder.stop((e) => {
         if (e) {
@@ -79,6 +98,7 @@ export class AudioRecorder extends Component {
         this.setState({
           recorderState: 'stopped',
         });
+        onStop(path);
       });
     }
   }
@@ -111,8 +131,10 @@ export class AudioRecorder extends Component {
 
 AudioRecorder.defaultProps = {
   maxLength: Infinity,
+  onStop: () => {},
 };
 
 AudioRecorder.propTypes = {
   maxLength: PropTypes.number,
+  onStop: PropTypes.func,
 };
