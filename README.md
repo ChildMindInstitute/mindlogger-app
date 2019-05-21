@@ -14,7 +14,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2). Likewise, you'll either need to set up your own filestore or leave `s3_image` set to store in our AWS S3 `"mindloggerimages"` bucket in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/056bda0c36e624bf909b9f4cb744b2c5e93ad789/app/config.js#L3-L5).
+You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2).
 
 You need [Node ≤10.11.0, npm ≥4.3.0 & ≤6.4.1](https://github.com/creationix/nvm#user-content-usage), [yarn ≥1.3.2](https://yarnpkg.com) and [React Native ≥0.49.3](https://facebook.github.io/react-native/) to be installed.
 For example
