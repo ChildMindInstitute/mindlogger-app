@@ -42,7 +42,7 @@ export default {
     backgroundColor: colors.secondary,
   },
   buttonText: {
-    color: '#0067A0',
+    color: colors.primary,
     fontSize: 20,
   },
   bottomRow: {

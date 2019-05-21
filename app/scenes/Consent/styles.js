@@ -1,16 +1,11 @@
-
-const React = require('react-native');
-
-const { StyleSheet, Dimensions, Platform } = React;
-
-const deviceHeight = Dimensions.get('window').height;
+import { colors } from '../../theme';
 
 export default {
   container: {
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: '#0067A0',
+    backgroundColor: colors.primary,
     paddingTop: 20,
     paddingLeft: 50,
     paddingRight: 50,
@@ -19,7 +14,7 @@ export default {
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: '#0067A0',
+    backgroundColor: colors.primary,
     paddingTop: 40,
     paddingLeft: 50,
     paddingRight: 50,
@@ -65,7 +60,7 @@ export default {
     backgroundColor: '#FFFFFF',
   },
   buttonText: {
-    color: '#0067A0',
+    color: colors.primary,
     fontSize: 20,
   },
   bottomRow:{
