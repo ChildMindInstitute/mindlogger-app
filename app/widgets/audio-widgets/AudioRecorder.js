@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Recorder } from 'react-native-audio-toolkit';
 import randomString from 'random-string';
 import Permissions from 'react-native-permissions';
+import RNFetchBlob from 'rn-fetch-blob';
 import RecordButton from './RecordButton';
 import { colors } from '../../theme';
 
@@ -46,6 +47,11 @@ export class AudioRecorder extends Component {
       ? `${randomString({ length: 20 })}.mp4`
       : `${randomString({ length: 20 })}.aac`;
     recorder = new Recorder(filename);
+
+    // Delete old recording if there is one
+    if (this.state.path !== null) {
+      RNFetchBlob.fs.unlink(this.state.path.replace('file://', ''));
+    }
 
     recorder.prepare((prepareErr, fsPath) => {
       // Check if there was an error preparing
@@ -120,8 +126,7 @@ export class AudioRecorder extends Component {
     if (permission !== 'authorized' && permission !== 'undetermined') {
       return (
         <Text style={styles.infoText}>
-          You must grant permission to use your microphone to
-          complete this task.
+          You must grant permission to use your microphone to complete this task.
         </Text>
       );
     }
