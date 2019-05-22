@@ -76,33 +76,44 @@ const renderButton = (recording, onPress, disabled) => {
   );
 };
 
-const renderInfo = (recording, elapsed) => {
-  if (elapsed !== null) {
+const renderInfo = (recording, elapsed, fileSaved) => {
+  if (recording) {
     return (
       <View>
-        <Text style={styles.infoText}>{recording ? 'Recording...' : 'File saved.'}</Text>
+        <Text style={styles.infoText}>Recording...</Text>
         <Text style={styles.infoText}>{Math.round(elapsed / 1000)} seconds</Text>
+      </View>
+    );
+  }
+  if (fileSaved) {
+    return (
+      <View>
+        <Text style={styles.infoText}>File saved.</Text>
       </View>
     );
   }
   return null;
 };
 
-const RecordButton = ({ elapsed, onPress, recording, disabled }) => (
+const RecordButton = ({ elapsed, onPress, recording, disabled, fileSaved }) => (
   <View style={styles.container}>
     {renderButton(recording, onPress, disabled)}
-    {renderInfo(recording, elapsed)}
+    {renderInfo(recording, elapsed, fileSaved)}
   </View>
 );
 
 RecordButton.defaultProps = {
   elapsed: null,
+  fileSaved: false,
+  disabled: false,
 };
 
 RecordButton.propTypes = {
   recording: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired,
   elapsed: PropTypes.number,
+  fileSaved: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default RecordButton;

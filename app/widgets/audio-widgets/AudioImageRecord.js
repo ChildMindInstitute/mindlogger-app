@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Image } from 'react-native';
 import PropTypes from 'prop-types';
-import Audio from './Audio';
+import AudioRecorder from './AudioRecorder';
 
 export class AudioImageRecord extends Component {
   onRecord = (filePath) => {
@@ -10,7 +10,7 @@ export class AudioImageRecord extends Component {
   }
 
   reset() {
-    this.audioRef._delete(); // eslint-disable-line
+    this.audioRef.reset();
   }
 
   render() {
@@ -22,9 +22,8 @@ export class AudioImageRecord extends Component {
           source={{ uri: config.image.en }}
           loadingIndicatorSource
         />
-        <Audio
-          mode="single"
-          onRecordFile={this.onRecord}
+        <AudioRecorder
+          onStop={this.onRecord}
           path={value && value.uri}
           ref={(ref) => { this.audioRef = ref; }}
         />
