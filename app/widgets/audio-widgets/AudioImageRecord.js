@@ -9,23 +9,18 @@ export class AudioImageRecord extends Component {
     this.props.onChange({ uri: filePath, filename });
   }
 
-  reset() {
-    this.audioRef.reset();
-  }
-
   render() {
     const { value, config } = this.props;
     return (
       <View>
         <Image
-          style={{ width: '100%', height: 260, resizeMode: 'contain' }}
+          style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
           source={{ uri: config.image.en }}
           loadingIndicatorSource
         />
         <AudioRecorder
           onStop={this.onRecord}
           path={value && value.uri}
-          ref={(ref) => { this.audioRef = ref; }}
         />
       </View>
     );

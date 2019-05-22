@@ -11,7 +11,6 @@ import { colors } from '../../theme';
 let intervalId = null;
 let recorder = null;
 
-
 const styles = StyleSheet.create({
   infoText: {
     color: colors.tertiary,
@@ -19,7 +18,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export class AudioRecorder extends Component {
+export default class AudioRecorder extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,12 +36,14 @@ export class AudioRecorder extends Component {
       this.stopRecording();
     }
     if (prevProps.path !== path) {
-      this.stopRecording();
+      this.reset();
     }
   }
 
   componentWillUnmount() {
-    this.state.recorder.destroy();
+    if (recorder) {
+      recorder.destroy();
+    }
   }
 
   record = () => {
@@ -130,15 +131,14 @@ export class AudioRecorder extends Component {
           const { err, message } = e;
           console.warn(err, message);
         }
-        clearInterval(intervalId);
-        this.setState({
-          recorderState: 'ready',
-          elapsed: null,
-          path,
-          permission: 'undetermined',
-        });
       });
     }
+    clearInterval(intervalId);
+    this.setState({
+      recorderState: 'ready',
+      elapsed: null,
+      path,
+    });
   }
 
   render() {
