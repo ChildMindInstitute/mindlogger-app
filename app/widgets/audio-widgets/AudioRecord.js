@@ -9,18 +9,13 @@ export class AudioRecord extends Component {
     this.props.onChange({ uri: filePath, filename });
   }
 
-  reset() {
-    this.audioRef.reset();
-  }
-
   render() {
     const { value } = this.props;
     return (
-      <View style={{ alignItems: 'stretch', flex: 3 }}>
+      <View style={{ paddingTop: 16, paddingBottom: 16 }}>
         <AudioRecorder
           onStop={this.onRecord}
           path={value && value.uri}
-          ref={(ref) => { this.audioRef = ref; }}
         />
       </View>
     );
