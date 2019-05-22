@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import Audio from './Audio';
+import AudioRecorder from './AudioRecorder';
 
 export class AudioRecord extends Component {
   onRecord = (filePath) => {
@@ -10,16 +10,15 @@ export class AudioRecord extends Component {
   }
 
   reset() {
-    this.audioRef._delete(); // eslint-disable-line
+    this.audioRef.reset();
   }
 
   render() {
     const { value } = this.props;
     return (
       <View style={{ alignItems: 'stretch', flex: 3 }}>
-        <Audio
-          mode="single"
-          onRecordFile={this.onRecord}
+        <AudioRecorder
+          onStop={this.onRecord}
           path={value && value.uri}
           ref={(ref) => { this.audioRef = ref; }}
         />
