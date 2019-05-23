@@ -25,7 +25,7 @@ class AboutApp extends Component { // eslint-disable-line
           return (
             <Container style={styles.container}>
               <StatusBar barStyle="light-content" />
-              <Header>
+              <Header style={{ backgroundColor: skin.colors.primary }}>
                 <Left>
                   <Button transparent onPress={this.onClose}>
                     <Icon
@@ -51,7 +51,7 @@ class AboutApp extends Component { // eslint-disable-line
       return (
         <Container style={styles.container}>
           <StatusBar barStyle='light-content'/>
-          <Header>
+          <Header style={{ backgroundColor: skin.colors.primary }}>
             <Left>
               <Button transparent onPress={this.onClose}>
                 <Icon name="close" />
@@ -114,12 +114,8 @@ class AboutApp extends Component { // eslint-disable-line
     }
 }
 
-AboutApp.defaultProps = {
-  skin: undefined,
-};
-
 AboutApp.propTypes = {
-  skin: PropTypes.object,
+  skin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({

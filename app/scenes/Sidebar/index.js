@@ -79,7 +79,7 @@ class SideBar extends Component {
           bounces={false}
           style={{ flex: 1, backgroundColor: '#fff', top: -1 }}
         >
-          <Header>
+          <Header style={{ backgroundColor: skin.colors.primary }}>
             <Body>
               <Title>{title}</Title>
             </Body>

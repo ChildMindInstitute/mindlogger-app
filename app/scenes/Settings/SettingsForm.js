@@ -5,7 +5,6 @@ import { Button, Form, Text } from 'native-base';
 import { reduxForm, Field } from 'redux-form';
 import { FormInputItem } from '../../components/form/FormItem';
 import styles from './styles';
-import { colors } from '../../theme';
 
 const validate = ({ firstName, lastName, oldPassword, password }) => {
   const errors = {};
@@ -26,7 +25,7 @@ const validate = ({ firstName, lastName, oldPassword, password }) => {
   return errors;
 };
 
-const UserForm = ({ handleSubmit, submitting, error }) => (
+const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -66,13 +65,13 @@ const UserForm = ({ handleSubmit, submitting, error }) => (
     />
     <Button
       warning
-      style={{ marginTop: 40 }}
+      style={{ marginTop: 40, backgroundColor: primaryColor }}
       block
       onPress={handleSubmit}
       disabled={submitting}
     >
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
+        ? <ActivityIndicator color={primaryColor} />
         : <Text style={styles.buttonText}>Update</Text>}
     </Button>
     {error && <Text style={styles.errorText}>{error}</Text>}

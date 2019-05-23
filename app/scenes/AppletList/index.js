@@ -33,7 +33,8 @@ class AppletList extends Component {
       <AppletListComponent
         applets={applets}
         isDownloadingApplets={isDownloadingApplets}
-        title={skin ? skin.name : 'MindLogger'}
+        title={skin.name}
+        primaryColor={skin.colors.primary}
         onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
         onPressApplet={this.handlePressApplet}
@@ -47,6 +48,7 @@ AppletList.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   sync: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
