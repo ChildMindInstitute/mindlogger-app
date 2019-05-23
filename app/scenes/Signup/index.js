@@ -15,6 +15,7 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
+import { skinSelector } from '../../state/app/app.selectors';
 import { signUpSuccessful } from '../../state/user/user.thunks';
 import { signUp } from '../../services/network';
 import styles from './styles';
@@ -33,10 +34,11 @@ class SignUp extends Component { // eslint-disable-line
   }
 
   render() {
+    const { skin } = this.props;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header>
+        <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
@@ -57,10 +59,15 @@ class SignUp extends Component { // eslint-disable-line
 
 SignUp.propTypes = {
   signUpSuccessful: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
+
+const mapStateToProps = state => ({
+  skin: skinSelector(state),
+});
 
 const mapDispatchToProps = {
   signUpSuccessful,
 };
 
-export default connect(null, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
