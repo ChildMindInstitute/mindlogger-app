@@ -10,7 +10,7 @@ import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
-const LoginForm = ({ handleSubmit, submitting, error }) => (
+const LoginForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -35,8 +35,8 @@ const LoginForm = ({ handleSubmit, submitting, error }) => (
     />
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>LOGIN</Text>}
+        ? <ActivityIndicator color={primaryColor} />
+        : <Text style={[styles.buttonText, { color: primaryColor }]}>LOGIN</Text>}
     </Button>
   </Form>
 );

@@ -10,7 +10,7 @@ import styles from './styles';
 import { FormInputItem } from '../../components/form/FormItem';
 import { colors } from '../../theme';
 
-const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValues }) => (
+const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValues, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -24,13 +24,13 @@ const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValu
     {error && <Text style={styles.errorText}>{error}</Text>}
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Submit</Text>}
+        ? <ActivityIndicator color={primaryColor} />
+        : <Text style={[styles.buttonText, { color: primaryColor }]}>Submit</Text>}
     </Button>
     <Button style={styles.button} block onPress={onReset} disabled={submitting}>
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Reset</Text>}
+        ? <ActivityIndicator color={primaryColor} />
+        : <Text style={[styles.buttonText, { color: primaryColor }]}>Reset</Text>}
     </Button>
   </Form>
 );
