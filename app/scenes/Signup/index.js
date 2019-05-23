@@ -50,7 +50,7 @@ class SignUp extends Component { // eslint-disable-line
           <Right />
         </Header>
         <Content style={styles.container2}>
-          <SignupForm onSubmit={this.onSubmit} />
+          <SignupForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
         </Content>
       </Container>
     );
