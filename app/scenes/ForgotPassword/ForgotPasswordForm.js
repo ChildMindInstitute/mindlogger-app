@@ -21,7 +21,7 @@ const validateEmail = (value) => {
   return undefined;
 };
 
-const ForgotPasswordForm = ({ error, handleSubmit, submitting }) => (
+const ForgotPasswordForm = ({ error, handleSubmit, submitting, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -37,7 +37,7 @@ const ForgotPasswordForm = ({ error, handleSubmit, submitting }) => (
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
         ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Reset Password</Text>}
+        : <Text style={[styles.buttonText, { color: primaryColor }]}>Reset Password</Text>}
     </Button>
   </Form>
 );

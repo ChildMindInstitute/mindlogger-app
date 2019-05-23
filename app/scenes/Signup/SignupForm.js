@@ -23,7 +23,7 @@ const password = value =>
   'Password must be at least 6 characters' : undefined
 
 
-const SignUpForm = ({ handleSubmit, submitting, error }) => (
+const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -82,13 +82,13 @@ const SignUpForm = ({ handleSubmit, submitting, error }) => (
     />
     <Button
       warning
-      style={{ marginTop: 40 }}
+      style={{ marginTop: 40, backgroundColor: primaryColor }}
       block
       onPress={handleSubmit}
       disabled={submitting}
     >
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
+        ? <ActivityIndicator color={primaryColor} />
         : <Text style={styles.buttonText}>Sign Up</Text>}
     </Button>
   </Form>

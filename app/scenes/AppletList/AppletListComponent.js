@@ -31,13 +31,14 @@ const AppletListComponent = ({
   applets,
   isDownloadingApplets,
   title,
+  primaryColor,
   onPressDrawer,
   onPressRefresh,
   onPressApplet,
 }) => (
   <Container style={styles.container}>
     <StatusBar barStyle="light-content" />
-    <Header>
+    <Header style={{ backgroundColor: primaryColor }}>
       <Left />
       <Body>
         <Title>{title}</Title>
@@ -78,6 +79,7 @@ AppletListComponent.propTypes = {
   onPressRefresh: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
+  primaryColor: PropTypes.string.isRequired,
 };
 
 export default AppletListComponent;

@@ -41,7 +41,7 @@ class AboutScreen extends Component { // eslint-disable-line
       return (
         <Container style={styles.container}>
           <StatusBar barStyle='light-content'/>
-          <Header>
+          <Header style={{ backgroundColor: skin.colors.primary }}>
             <Left />
             <Body>
                 <Title>About</Title>
@@ -63,7 +63,7 @@ class AboutScreen extends Component { // eslint-disable-line
               <View style={styles.buttons}>
                 {appletsWithInfo.map(this.renderVolumeInfo)}
                 <TouchableOpacity style={styles.aboutLink} onPress={this.openAboutApp}>
-                  <Icon name="information-circle" style={[styles.aboutIcon, { color: skin.colors.primary }]}/>
+                  <Icon name="information-circle" style={[styles.aboutIcon, { color: skin.colors.primary }]} />
                   <Text style={[styles.buttonText, { color: skin.colors.primary }]}>About MindLogger</Text>
                 </TouchableOpacity>
               </View>

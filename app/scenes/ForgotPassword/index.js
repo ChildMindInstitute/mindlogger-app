@@ -17,6 +17,7 @@ import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
 import styles from './styles';
 import { forgotPassword } from '../../services/network';
+import { skinSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
@@ -40,10 +41,11 @@ class ForgotPassword extends Component {
   }
 
   render() {
+    const { skin } = this.props;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header>
+        <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
@@ -54,8 +56,8 @@ class ForgotPassword extends Component {
           </Body>
           <Right />
         </Header>
-        <View style={styles.container2}>
-          <ForgotPasswordForm onSubmit={this.onSubmit} />
+        <View style={[styles.container2, { backgroundColor: skin.colors.primary }]}>
+          <ForgotPasswordForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
         </View>
       </Container>
     );
@@ -64,10 +66,15 @@ class ForgotPassword extends Component {
 
 ForgotPassword.propTypes = {
   showToast: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
+
+const mapStateToProps = state => ({
+  skin: skinSelector(state),
+});
 
 const mapDispatchToProps = {
   showToast,
 };
 
-export default connect(null, mapDispatchToProps)(ForgotPassword);
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);

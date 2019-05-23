@@ -8,6 +8,7 @@ import { SubmissionError } from 'redux-form';
 import styles from './styles';
 import { userInfoSelector, authTokenSelector } from '../../state/user/user.selectors';
 import { updateUserDetails, updatePassword } from '../../services/network';
+import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
 import SettingsForm from './SettingsForm';
 
@@ -44,11 +45,11 @@ class SettingScreen extends Component {
   };
 
   render() {
-    const { user } = this.props;
+    const { user, skin } = this.props;
     return (
       <Container style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <Header>
+        <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left />
           <Body>
             <Title>Settings</Title>
@@ -62,7 +63,11 @@ class SettingScreen extends Component {
         <Content>
           <Text style={styles.subHeader}>Profile</Text>
           <View style={styles.subSection}>
-            <SettingsForm onSubmit={this.onSubmit} initialValues={user} />
+            <SettingsForm
+              onSubmit={this.onSubmit}
+              initialValues={user}
+              primaryColor={skin.colors.primary}
+            />
           </View>
         </Content>
       </Container>
@@ -74,6 +79,7 @@ SettingScreen.propTypes = {
   user: PropTypes.object.isRequired,
   authToken: PropTypes.string.isRequired,
   updateUserDetailsSuccessful: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
 
 const bindAction = {
@@ -83,6 +89,7 @@ const bindAction = {
 const mapStateToProps = state => ({
   user: userInfoSelector(state),
   authToken: authTokenSelector(state),
+  skin: skinSelector(state),
 });
 
 export default connect(mapStateToProps, bindAction)(SettingScreen);
