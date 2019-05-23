@@ -69,7 +69,7 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
 };
 
 export const getSkin = () => get(
-  'system/skin',
+  'context/skin',
   null,
   null,
 );
