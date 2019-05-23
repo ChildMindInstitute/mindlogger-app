@@ -16,7 +16,7 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import styles from './styles';
 import { getSkin } from '../../services/network';
 import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
-import { apiHostSelector } from '../../state/app/app.selectors';
+import { apiHostSelector, skinSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
 import config from '../../config';
@@ -78,6 +78,7 @@ class ChangeStudy extends Component {
 
   render() {
     const { apiHost } = this.props;
+    const { skin } = this.props;
 
     const header = (
       <Header>
@@ -100,7 +101,7 @@ class ChangeStudy extends Component {
 
     if (this.state.scanOpen) {
       return (
-        <Container style={styles.container}>
+        <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
           { header }
           <QRCodeScanner
             fadeIn
@@ -110,7 +111,7 @@ class ChangeStudy extends Component {
         </Container>
       );
     } return (
-      <Container style={styles.container}>
+      <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
         { header }
         <View style={styles.formContainer}>
           <ChangeStudyForm
@@ -126,6 +127,7 @@ class ChangeStudy extends Component {
 
 ChangeStudy.propTypes = {
   apiHost: PropTypes.string.isRequired,
+  skin: PropTypes.object.isRequired,
   showToast: PropTypes.func.isRequired,
   resetApiHost: PropTypes.func.isRequired,
   setApiHost: PropTypes.func.isRequired,
@@ -134,6 +136,7 @@ ChangeStudy.propTypes = {
 
 const mapStateToProps = state => ({
   apiHost: apiHostSelector(state),
+  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {

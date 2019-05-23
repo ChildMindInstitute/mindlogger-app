@@ -42,7 +42,6 @@ export default {
     backgroundColor: colors.secondary,
   },
   buttonText: {
-    color: colors.primary,
     fontSize: 20,
   },
   bottomRow: {

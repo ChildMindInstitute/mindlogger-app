@@ -8,14 +8,14 @@ import {
 import { reduxForm, Field, propTypes } from 'redux-form';
 import styles from './styles';
 import { FormInputItem } from '../../components/form/FormItem';
-import { colors } from '../../theme';
+import { colors } from '../../themes/skinColors';
 
 const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValues }) => (
   <Form>
     <Field
       component={FormInputItem}
       placeholder={initialValues.apiHost}
-      placeholderTextColor={colors.secondary_50}
+      placeholderTextColor={colors().secondary_50}
       name="apiHost"
       autoCapitalize="none"
       style={styles.text}
@@ -24,13 +24,13 @@ const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValu
     {error && <Text style={styles.errorText}>{error}</Text>}
     <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Submit</Text>}
+        ? <ActivityIndicator color={colors().primary} />
+        : <Text style={[styles.buttonText, { color: colors().primary }]}>Submit</Text>}
     </Button>
     <Button style={styles.button} block onPress={onReset} disabled={submitting}>
       {submitting
-        ? <ActivityIndicator color={colors.primary} />
-        : <Text style={styles.buttonText}>Reset</Text>}
+        ? <ActivityIndicator color={colors().primary} />
+        : <Text style={[styles.buttonText, { color: colors().primary }]}>Reset</Text>}
     </Button>
   </Form>
 );

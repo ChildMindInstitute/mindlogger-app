@@ -66,7 +66,7 @@ class Login extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Content style={styles.container}>
+        <Content style={[styles.container, { backgroundColor: skin.colors.primary }]}>
           <Text style={styles.header}>{title}</Text>
           <LoginForm onSubmit={this.onSubmit} />
           <View style={styles.bottomRow}>
@@ -91,7 +91,7 @@ class Login extends Component {
             />
           </View>
         </Content>
-        <Footer style={styles.footer}>
+        <Footer style={[styles.footer, { backgroundColor: skin.colors.primary}]}>
           <View style={{ flex: 1 }}>
             <TouchableOpacity onPress={this.onChangeStudy}>
               <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />
@@ -105,9 +105,11 @@ class Login extends Component {
 
 Login.propTypes = {
   signInSuccessful: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
+
 const mapStateToProps = state => ({
-  skin: skinSelector(state)
+  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {

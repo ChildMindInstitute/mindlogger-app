@@ -6,6 +6,8 @@ import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, T
 import {Actions} from 'react-native-router-flux';
 import styles from './styles';
 import { appletsSelector } from '../../state/applets/applets.selectors';
+import { skinSelector } from '../../state/app/app.selectors';
+
 
 const logoImage = require('../../../img/color_logo.png');
 
@@ -34,7 +36,7 @@ class AboutScreen extends Component { // eslint-disable-line
     }
 
     render() {
-      const { applets } = this.props;
+      const { applets, skin } = this.props;
       const appletsWithInfo = applets.filter(applet => typeof applet.info !== 'undefined');
       return (
         <Container style={styles.container}>
@@ -61,8 +63,8 @@ class AboutScreen extends Component { // eslint-disable-line
               <View style={styles.buttons}>
                 {appletsWithInfo.map(this.renderVolumeInfo)}
                 <TouchableOpacity style={styles.aboutLink} onPress={this.openAboutApp}>
-                  <Icon name="information-circle" style={styles.aboutIcon}/>
-                  <Text style={styles.buttonText}>About MindLogger</Text>
+                  <Icon name="information-circle" style={[styles.aboutIcon, { color: skin.colors.primary }]}/>
+                  <Text style={[styles.buttonText, { color: skin.colors.primary }]}>About MindLogger</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -72,8 +74,14 @@ class AboutScreen extends Component { // eslint-disable-line
     }
 }
 
+AboutScreen.propTypes = {
+  applets: PropTypes.array.isRequired,
+  skin: PropTypes.object.isRequired,
+};
+
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
+  skin: skinSelector(state),
 });
 
 export default connect(mapStateToProps)(AboutScreen);
