@@ -2,7 +2,6 @@ import { Platform, PixelRatio } from 'react-native';
 import _ from 'lodash';
 
 import variable from '../variables/platform';
-import { colors } from '../../app/themes/skinColors';
 
 export default (variables = variable) => {
   const platformStyle = variables.platformStyle;
@@ -295,7 +294,7 @@ export default (variables = variable) => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
     },
-    backgroundColor: colors().primary,
+    backgroundColor: variables.toolbarDefaultBg,
     flexDirection: 'row',
     paddingHorizontal: 10,
     justifyContent: 'center',

@@ -81,7 +81,7 @@ class ChangeStudy extends Component {
     const { skin } = this.props;
 
     const header = (
-      <Header>
+      <Header style={{ backgroundColor: skin.colors.primary }}>
         <Left>
           <Button transparent onPress={() => Actions.pop()}>
             <Icon
@@ -118,6 +118,7 @@ class ChangeStudy extends Component {
             onSubmit={this.onSubmit}
             onReset={this.onReset}
             initialValues={{ apiHost }}
+            primaryColor={skin.colors.primary}
           />
         </View>
       </Container>

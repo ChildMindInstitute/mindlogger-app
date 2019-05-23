@@ -68,7 +68,10 @@ class Login extends Component {
         <StatusBar barStyle="light-content" />
         <Content style={[styles.container, { backgroundColor: skin.colors.primary }]}>
           <Text style={styles.header}>{title}</Text>
-          <LoginForm onSubmit={this.onSubmit} />
+          <LoginForm
+            onSubmit={this.onSubmit}
+            primaryColor={skin.colors.primary}
+          />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
               <Text style={styles.whiteText}>New User</Text>
