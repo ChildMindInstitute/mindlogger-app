@@ -23,6 +23,12 @@ export default class SlideInView extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { position } = this.props;
+    if (prevProps.position === 'left' && position === 'right') {
+      return;
+    }
+    if (prevProps.position === 'right' && position === 'left') {
+      return;
+    }
     if (prevProps.position !== position) {
       Animated.spring(
         this.state.xPos,
