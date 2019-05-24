@@ -18,10 +18,11 @@ const AppletDetailsComponent = ({
   onPressActivity,
   onPressBack,
   inProgress,
+  primaryColor,
 }) => (
   <Container style={styles.container}>
     <StatusBar barStyle="light-content" />
-    <Header>
+    <Header style={{ backgroundColor: primaryColor }}>
       <Left>
         <Button transparent onPress={onPressBack}>
           <Icon
@@ -52,6 +53,7 @@ AppletDetailsComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
+  primaryColor: PropTypes.string.isRequired,
 };
 
 export default AppletDetailsComponent;

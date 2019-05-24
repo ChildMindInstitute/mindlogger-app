@@ -19,6 +19,7 @@ const ActivityDetailsComponent = ({
   onPressStart,
   onPressBack,
   responseHistory,
+  primaryColor,
 }) => {
   const responses = responseHistory.filter((response) => {
     const responseActivityId = R.path(['meta', 'activity', '@id'], response);
@@ -28,7 +29,7 @@ const ActivityDetailsComponent = ({
   return (
     <Container style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <Header>
+      <Header style={{ backgroundColor: primaryColor }}>
         <Left>
           <Button transparent onPress={onPressBack}>
             <Icon
@@ -47,7 +48,11 @@ const ActivityDetailsComponent = ({
         </Right>
       </Header>
       <Content>
-        <ActivitySummary activity={activity} onPressStart={onPressStart} />
+        <ActivitySummary
+          activity={activity}
+          onPressStart={onPressStart}
+          primaryColor={primaryColor}
+        />
         {responses.length > 0 && <ActivityResponseList responses={responses} />}
       </Content>
     </Container>
@@ -60,6 +65,7 @@ ActivityDetailsComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressStart: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
+  primaryColor: PropTypes.string.isRequired,
 };
 
 export default ActivityDetailsComponent;
