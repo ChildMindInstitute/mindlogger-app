@@ -62,12 +62,11 @@ const AppletListComponent = ({
       {applets.map(applet => (
         <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
       ))}
-      {applets.length === 0 && isDownloadingApplets && (
-        <BodyText style={styles.sync}>
-          Synchronizing...
-        </BodyText>
-      )}
-      <JoinDemoApplets />
+      {
+        applets.length === 0 && isDownloadingApplets
+          ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
+          : <JoinDemoApplets />
+      }
     </ScrollView>
   </Container>
 );

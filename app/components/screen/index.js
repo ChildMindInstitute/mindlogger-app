@@ -44,7 +44,7 @@ class Screen extends Component {
   }
 
   renderWidget() {
-    const { screen, answer, onChange, autoIncrement, isCurrent } = this.props;
+    const { screen, answer, onChange, isCurrent } = this.props;
     /*
     const data = screen.meta || {};
     if (data.canvasType) {
@@ -76,7 +76,7 @@ class Screen extends Component {
       return (
         <Radio
           config={screen.valueConstraints}
-          onChange={(a) => { onChange(a); autoIncrement(); }}
+          onChange={onChange}
           value={answer}
         />
       );
@@ -85,7 +85,7 @@ class Screen extends Component {
       return (
         <Slider
           config={screen.valueConstraints}
-          onChange={(a) => { onChange(a); autoIncrement(); }}
+          onChange={onChange}
           value={answer}
         />
       );
@@ -146,7 +146,7 @@ class Screen extends Component {
     if (screen.inputType === 'visual-stimulus-response') {
       return (
         <VisualStimulusResponse
-          onChange={(a) => { onChange(a); autoIncrement(); }}
+          onChange={onChange}
           config={screen.inputs}
           isCurrent={isCurrent}
         />
