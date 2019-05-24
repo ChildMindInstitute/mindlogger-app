@@ -44,6 +44,7 @@ export const startResponse = activity => (dispatch, getState) => {
     dispatch(createResponseInProgress(activity, subjectId, timeStarted));
   }
 
+  dispatch(setCurrentScreen(activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
 };
 
