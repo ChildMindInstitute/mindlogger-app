@@ -7,6 +7,7 @@ const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
 const IMAGE = 'http://schema.org/image';
 const INPUT_TYPE = 'https://schema.repronim.org/inputType';
 const INPUTS = 'https://schema.repronim.org/inputs';
+const IS_ABOUT = 'https://schema.repronim.org/isAbout';
 const ITEM_LIST_ELEMENT = 'http://schema.org/itemListElement';
 const MAX_VALUE = 'http://schema.org/maxValue';
 const MIN_VALUE = 'http://schema.org/minValue';
@@ -24,6 +25,8 @@ const SHUFFLE = 'https://schema.repronim.org/shuffle';
 const URL = 'http://schema.org/url';
 const VALUE = 'http://schema.org/value';
 const VALUE_CONSTRAINTS = 'https://schema.repronim.org/valueconstraints';
+const VARIABLE_MAP = 'https://schema.repronim.org/variableMap';
+const VARIABLE_NAME = 'https://schema.repronim.org/variableName';
 const VERSION = 'http://schema.org/version';
 const VISIBILITY = 'https://schema.repronim.org/visibility';
 
@@ -95,6 +98,15 @@ export const transformInputs = inputs => inputs.reduce((accumulator, inputObj) =
   };
 }, {});
 
+export const transformVariableMap = variableAr => variableAr.reduce((accumulator, item) => {
+  const val = R.path([VARIABLE_NAME, 0, '@value'], item);
+  const key = R.path([IS_ABOUT, 0, '@id'], item);
+  return {
+    ...accumulator,
+    [key]: val,
+  };
+}, {});
+
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
   schema: languageListToObject(appletJson[URL]).en,
@@ -109,7 +121,7 @@ export const appletTransformJson = appletJson => ({
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 
-export const itemTransformJson = (itemKey, itemJson) => {
+export const itemTransformJson = (itemJson) => {
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
@@ -117,7 +129,6 @@ export const itemTransformJson = (itemKey, itemJson) => {
   const inputsObj = transformInputs(inputs);
 
   return {
-    schema: itemKey,
     name: languageListToObject(itemJson[PREF_LABEL]),
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
@@ -131,6 +142,18 @@ export const itemTransformJson = (itemKey, itemJson) => {
   };
 };
 
+export const itemAttachExtras = (
+  transformedItem,
+  schemaUri,
+  variableMap = {},
+  visibilityObj = {},
+) => ({
+  ...transformedItem,
+  schema: schemaUri,
+  variableName: variableMap[schemaUri],
+  visibility: visibilityObj[variableMap[schemaUri]]
+});
+
 export const activityTransformJson = (activityJson, itemsJson) => {
   const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
   const allowRefuseToAnswer = allowList.includes(REFUSE_TO_ANSWER);
@@ -140,8 +163,15 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
 
+  const variableMapAr = R.pathOr([], [VARIABLE_MAP, 0, '@list'], activityJson);
+  const variableMap = transformVariableMap(variableMapAr);
+  const visibility = listToObject(activityJson[VISIBILITY]);
+
   const order = flattenIdList(activityJson[ORDER][0]['@list']);
-  const items = order.map(itemKey => itemTransformJson(itemKey, itemsJson[itemKey]));
+  const items = order.map((itemKey) => {
+    const item = itemTransformJson(itemsJson[itemKey]);
+    return itemAttachExtras(item, itemKey, variableMap, visibility);
+  });
 
   return {
     id: activityJson._id,
@@ -151,7 +181,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     version: languageListToObject(activityJson[VERSION]),
     preamble: languageListToObject(activityJson[PREAMBLE]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
-    visibility: listToObject(activityJson[VISIBILITY]),
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
     image: languageListToObject(activityJson[IMAGE]),
     allowRefuseToAnswer,

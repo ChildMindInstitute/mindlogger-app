@@ -1,5 +1,6 @@
 import * as emaHbn from './ema-hbn.json';
 import * as ndaPhq from './nda-phq.json';
+import * as variableMap from './variable_map.json';
 import {
   activityTransformJson,
   appletTransformJson,
@@ -9,6 +10,8 @@ import {
   flattenItemList,
   flattenValueConstraints,
   itemTransformJson,
+  itemAttachExtras,
+  transformVariableMap,
 } from '../json-ld';
 
 test('languageListToObject', () => {
@@ -133,7 +136,10 @@ test('activityTransformJson: ema-hbn', () => {
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld',
   ];
-  const transformedItems = itemKeys.map(key => itemTransformJson(key, emaHbn.items[key]));
+  const transformedItems = itemKeys.map((key) => {
+    const item = itemTransformJson(emaHbn.items[key]);
+    return itemAttachExtras(item, key, {}, {});
+  });
 
   const expectedResult = {
     id: 'activity/5cba070386fafd5df796d908',
@@ -145,11 +151,6 @@ test('activityTransformJson: ema-hbn', () => {
     image: undefined,
     version: { en: '0.0.1' },
     shuffle: false,
-    visibility: {
-      nightmares: true,
-      sleeping_aids: true,
-      time_in_bed: true,
-    },
     scoringLogic: [],
     altLabel: { en: 'ema_morning_schema' },
     allowDoNotKnow: false,
@@ -175,7 +176,10 @@ test('activityTransformJson: nda-phq', () => {
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld',
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld',
   ];
-  const transformedItems = itemKeys.map(key => itemTransformJson(key, ndaPhq.items[key]));
+  const transformedItems = itemKeys.map((key) => {
+    const item = itemTransformJson(ndaPhq.items[key]);
+    return itemAttachExtras(item, key, {}, {});
+  });
 
   const expectedResult = {
     allowDoNotKnow: false,
@@ -194,17 +198,6 @@ test('activityTransformJson: nda-phq', () => {
     scoringLogic: undefined,
     shuffle: false,
     version: { en: '0.0.1' },
-    visibility: {
-      countryOfBirth: true,
-      gender: true,
-      healthCondition: true,
-      medication: true,
-      mentalHealth: true,
-      nativeLanguage: true,
-      raceEthnicity: true,
-      state: true,
-      yearOfBirth: true,
-    },
     info: undefined,
     notification: {},
     id: 'activity/5cba3c1f86fafd5df796d913',
@@ -216,11 +209,10 @@ test('activityTransformJson: nda-phq', () => {
 test('itemTransformJson', () => {
   const itemKey = 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld';
   const itemJson = emaHbn.items[itemKey];
-  expect(itemTransformJson(itemKey, itemJson)).toEqual({
+  expect(itemTransformJson(itemJson)).toEqual({
     name: { en: 'Nightmares' },
     description: { en: 'whether or not your child experience nightmares or night terrors' },
     schemaVersion: { en: '0.0.1' },
-    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
     version: { en: '0.0.1' },
     altLabel: { en: 'nightmares' },
     inputType: 'radio',
@@ -254,5 +246,16 @@ test('itemTransformJson', () => {
         },
       ],
     },
+  });
+});
+
+test('transformVariableMap', () => {
+  expect(transformVariableMap(variableMap.variableMap)).toEqual({
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld': 'energy',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld': 'enjoyed_day',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld': 'good_bad_day',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld': 'health',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld': 'sources_of_stress',
+    'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld': 'stressful_day',
   });
 });

@@ -46,6 +46,7 @@ export default (state = initialState, action = {}) => {
             responses: new Array(action.payload.activity.items.length),
             subjectId: action.payload.subjectId,
             timeStarted: action.payload.timeStarted,
+            screenIndex: 0,
           },
         },
       };
@@ -57,6 +58,17 @@ export default (state = initialState, action = {}) => {
           [action.payload.activityId]: {
             ...state.inProgress[action.payload.activityId],
             responses: action.payload.response,
+          },
+        },
+      };
+    case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [action.payload.activityId]: {
+            ...state.inProgress[action.payload.activityId],
+            screenIndex: action.payload.screenIndex,
           },
         },
       };

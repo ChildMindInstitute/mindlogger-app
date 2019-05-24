@@ -2291,6 +2291,10 @@ expect@^23.6.0:
     jest-message-util "^23.4.0"
     jest-regex-util "^23.3.0"
 
+expr-eval@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/expr-eval/-/expr-eval-1.2.2.tgz#8b1a160b814e67da7652007e2693714895221ea0"
+
 extend-shallow@^1.1.2:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/extend-shallow/-/extend-shallow-1.1.4.tgz#19d6bf94dfc09d76ba711f39b872d21ff4dd9071"
