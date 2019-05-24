@@ -56,7 +56,7 @@ const nextScheduledString = (activity) => {
   return `Scheduled for ${formatTime(activity.nextScheduledTimestamp)}`;
 };
 
-const ActivitySummary = ({ activity, onPressStart }) => (
+const ActivitySummary = ({ activity, onPressStart, primaryColor }) => (
   <View style={styles.box}>
     <SubHeading>{activity.name.en}</SubHeading>
     <BodyText style={styles.description}>
@@ -70,7 +70,7 @@ const ActivitySummary = ({ activity, onPressStart }) => (
       <Icon type="FontAwesome" name="history" style={styles.icon} />
       <BodyText>{lastCompletedString(activity.lastResponseTimestamp)}</BodyText>
     </View>
-    <Button onPress={onPressStart} full rounded>
+    <Button onPress={onPressStart} full rounded style={{ backgroundColor: primaryColor }}>
       <Text>Start</Text>
     </Button>
   </View>
@@ -79,6 +79,7 @@ const ActivitySummary = ({ activity, onPressStart }) => (
 ActivitySummary.propTypes = {
   activity: PropTypes.object.isRequired,
   onPressStart: PropTypes.func.isRequired,
+  primaryColor: PropTypes.string.isRequired,
 };
 
 export default ActivitySummary;

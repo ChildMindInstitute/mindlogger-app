@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
-import { currentAppletSelector } from '../../state/app/app.selectors';
+import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
 import { setCurrentActivity } from '../../state/app/app.actions';
@@ -22,6 +22,7 @@ class AppletDetails extends Component {
     const {
       currentApplet,
       inProgress,
+      skin,
     } = this.props;
     if (!currentApplet) {
       return null;
@@ -34,6 +35,7 @@ class AppletDetails extends Component {
         onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
         onPressBack={this.handleBack}
+        primaryColor={skin.colors.primary}
       />
     );
   }
@@ -43,11 +45,14 @@ AppletDetails.propTypes = {
   currentApplet: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
+  skin: skinSelector(state),
+
 });
 
 const mapDispatchToProps = {

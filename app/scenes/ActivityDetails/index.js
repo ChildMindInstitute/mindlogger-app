@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import { startResponse } from '../../state/responses/responses.thunks';
-import { currentActivitySelector } from '../../state/app/app.selectors';
+import { currentActivitySelector, skinSelector } from '../../state/app/app.selectors';
 import ActivityDetailsComponent from './ActivityDetailsComponent';
 import { responsesSelector } from '../../state/responses/responses.selectors';
 
@@ -22,6 +22,7 @@ class ActivityDetails extends Component {
     const {
       currentActivity,
       responseHistory,
+      skin,
     } = this.props;
     if (!currentActivity) {
       return null;
@@ -34,6 +35,7 @@ class ActivityDetails extends Component {
         onPressDrawer={Actions.drawerOpen}
         onPressStart={() => this.handleStartActivity(currentActivity)}
         onPressBack={this.handleBack}
+        primaryColor={skin.colors.primary}
       />
     );
   }
@@ -43,11 +45,13 @@ ActivityDetails.propTypes = {
   currentActivity: PropTypes.object.isRequired,
   responseHistory: PropTypes.array.isRequired,
   startResponse: PropTypes.func.isRequired,
+  skin: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentActivity: currentActivitySelector(state),
   responseHistory: responsesSelector(state),
+  skin: skinSelector(state),
 });
 
 const mapDispatchToProps = {
