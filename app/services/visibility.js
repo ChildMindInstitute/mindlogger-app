@@ -14,6 +14,8 @@ export const testVisibility = (testExpression = true, items = [], responses = []
 
   let testExpressionFixed = testExpression.replace('&&', ' and ');
   testExpressionFixed = testExpressionFixed.replace('||', ' or ');
+  testExpressionFixed = testExpressionFixed.replace('===', '==');
+  testExpressionFixed = testExpressionFixed.replace('!==', '!=');
 
   const expr = parser.parse(testExpressionFixed);
 
