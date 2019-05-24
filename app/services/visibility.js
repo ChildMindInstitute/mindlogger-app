@@ -17,17 +17,21 @@ export const testVisibility = (testExpression = true, items = [], responses = []
   testExpressionFixed = testExpressionFixed.replace('===', '==');
   testExpressionFixed = testExpressionFixed.replace('!==', '!=');
 
-  const expr = parser.parse(testExpressionFixed);
+  try {
+    const expr = parser.parse(testExpressionFixed);
 
-  // Build an object where the keys are item variableNames, and values are
-  // item responses
-  const inputs = items.reduce((acc, item, index) => ({
-    ...acc,
-    [item.variableName]: responses[index] || null, // cast undefined to null
-  }), {});
+    // Build an object where the keys are item variableNames, and values are
+    // item responses
+    const inputs = items.reduce((acc, item, index) => ({
+      ...acc,
+      [item.variableName]: responses[index] || null, // cast undefined to null
+    }), {});
 
-  // Run the expression
-  const result = expr.evaluate(inputs);
+    // Run the expression
+    const result = expr.evaluate(inputs);
 
-  return !!result; // Cast the result to true or false
+    return !!result; // Cast the result to true or false
+  } catch (error) {
+    return true; // Default to true if we can't parse the expression
+  }
 };
