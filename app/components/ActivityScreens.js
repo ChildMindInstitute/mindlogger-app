@@ -19,7 +19,6 @@ const ActivityScreens = ({
   answers,
   currentScreen,
   onChange,
-  autoIncrement,
   authToken,
 }) => (
   <View style={{ flex: 1, width: '100%', position: 'relative' }}>
@@ -38,7 +37,6 @@ const ActivityScreens = ({
             screen={item}
             answer={answers[index]}
             onChange={(answer) => { onChange(answer, index); }}
-            autoIncrement={autoIncrement}
             authToken={authToken}
             isCurrent={index === currentScreen}
           />

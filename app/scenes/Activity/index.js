@@ -1,114 +1,128 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import { StatusBar, View, StyleSheet } from 'react-native';
+import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Actions } from 'react-native-router-flux';
+import * as R from 'ramda';
+import {
+  nextScreen,
+  prevScreen,
+} from '../../state/responses/responses.thunks';
+import {
+  currentResponsesSelector,
+  itemVisiblitySelector,
+  currentScreenSelector,
+} from '../../state/responses/responses.selectors';
 import { setAnswer } from '../../state/responses/responses.actions';
-import { completeResponse } from '../../state/responses/responses.thunks';
-import { currentResponsesSelector } from '../../state/responses/responses.selectors';
-import ActivityComponent from './ActivityComponent';
 import { authTokenSelector } from '../../state/user/user.selectors';
+import ActivityScreens from '../../components/ActivityScreens';
+import ActHeader from '../../components/header';
+import ActProgress from '../../components/progress';
+import ActivityButtons from '../../components/ActivityButtons';
+import {
+  getNextLabel,
+  getPrevLabel,
+  getActionLabel,
+  isNextEnabled,
+} from '../../services/activityNavigation';
 
-class Activity extends Component {
-  constructor() {
-    super();
-    this.state = { index: 0 };
+const styles = StyleSheet.create({
+  buttonArea: {
+    backgroundColor: 'white',
+    shadowOpacity: 0.75,
+    shadowRadius: 5,
+    shadowColor: 'lightgray',
+    shadowOffset: { height: 0, width: 0 },
+    elevation: 2,
+  },
+});
+
+const Activity = ({
+  setAnswer,
+  currentResponse,
+  authToken,
+  currentScreen,
+  nextScreen,
+  prevScreen,
+  itemVisibility,
+}) => {
+  if (!currentResponse) {
+    return <View />;
   }
 
-  showInfoScreen = () => {
-    const { currentResponse } = this.props;
-    Actions.push('about_act', { activity: currentResponse.activity.info });
-  }
+  const { activity, responses } = currentResponse;
 
-  handleAnswer = (answer, index) => {
-    const { setAnswer, currentResponse } = this.props;
-    setAnswer(currentResponse.activity.id, index, answer);
-  }
+  // Hide the header and footer if it's a certain type of widget
+  const inputType = R.path(['items', currentScreen, 'inputType'], activity);
+  const fullScreen = inputType === 'visual-stimulus-response';
 
-  prev = () => {
-    const { index } = this.state;
-    if (index === 0) {
-      Actions.pop();
-    } else {
-      this.setState({
-        index: index - 1,
-      });
-    }
-  }
-
-  next = () => {
-    const { currentResponse, completeResponse } = this.props;
-    const { index } = this.state;
-    const { activity } = currentResponse;
-    const item = activity.items[index];
-    // const isValid = Screen.isValid(answers[index], screen);
-    const isValid = true;
-
-    if (index < activity.items.length - 1) {
-      // Not finished activity
-      if (!isValid && item.meta.skipToScreen) {
-        // Skip to screen
-        const skipToScreen = Math.min(activity.screens.length - 1, item.meta.skipToScreen - 1);
-        this.setState({ index: skipToScreen });
-      } else {
-        // Next or Skip
-        this.setState({ index: index + 1 });
-      }
-    } else {
-      // Finished activity
-      completeResponse(currentResponse);
-      Actions.push('activity_thanks');
-    }
-  }
-
-  undo = () => {
-    const { index } = this.state;
-    this.handleAnswer(undefined, index);
-  }
-
-  render() {
-    const { currentResponse, authToken } = this.props;
-    if (!currentResponse) {
-      return <View />;
-    }
-
-    const { activity, responses } = currentResponse;
-    const { index } = this.state;
-    return (
-      <ActivityComponent
+  return (
+    <Container>
+      <StatusBar hidden />
+      {!fullScreen && <ActHeader title={activity.name.en} />}
+      <ActivityScreens
         activity={activity}
         answers={responses}
+        currentScreen={currentScreen}
+        onChange={(answer) => {
+          setAnswer(activity.id, currentScreen, answer);
+          if (inputType === 'visual-stimulus-response' || inputType === 'slider') {
+            nextScreen();
+          }
+          if (inputType === 'radio'
+            && R.path(['items', currentScreen, 'valueConstraints', 'multipleChoice'], activity) !== true) {
+            nextScreen();
+          }
+        }}
         authToken={authToken}
-        index={index}
-        onInfo={this.showInfoScreen}
-        onNext={this.next}
-        onPrev={this.prev}
-        onUndo={this.undo}
-        onAnswer={this.handleAnswer}
       />
-    );
-  }
-}
+      {!fullScreen && (
+        <View style={styles.buttonArea}>
+          {activity.items.length > 1 && (
+            <ActProgress index={currentScreen} length={activity.items.length} />
+          )}
+          <ActivityButtons
+            nextLabel={getNextLabel(currentScreen, itemVisibility, activity, responses)}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+            onPressNext={nextScreen}
+            prevLabel={getPrevLabel(currentScreen, itemVisibility)}
+            prevEnabled
+            onPressPrev={prevScreen}
+            actionLabel={getActionLabel(currentScreen, responses)}
+            onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}
+          />
+        </View>
+      )}
+    </Container>
+  );
+};
 
 Activity.defaultProps = {
   currentResponse: undefined,
+  currentScreen: null,
 };
 
 Activity.propTypes = {
   currentResponse: PropTypes.object,
   setAnswer: PropTypes.func.isRequired,
-  completeResponse: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
+  currentScreen: PropTypes.number,
+  nextScreen: PropTypes.func.isRequired,
+  prevScreen: PropTypes.func.isRequired,
+  itemVisibility: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentResponse: currentResponsesSelector(state),
   authToken: authTokenSelector(state),
+  currentScreen: currentScreenSelector(state),
+  itemVisibility: itemVisiblitySelector(state),
 });
 
 const mapDispatchToProps = {
   setAnswer,
-  completeResponse,
+  nextScreen,
+  prevScreen,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Activity);

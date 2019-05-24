@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import * as R from 'ramda';
+import { testVisibility } from '../../services/visibility';
 
 export const responsesSelector = R.path(['responses', 'responseHistory']);
 
@@ -24,4 +25,20 @@ export const currentResponsesSelector = createSelector(
   R.path(['app', 'currentActivity']),
   inProgressSelector,
   (activityId, inProgress) => inProgress[activityId],
+);
+
+export const currentScreenSelector = createSelector(
+  currentResponsesSelector,
+  R.path(['screenIndex']),
+);
+
+export const itemVisiblitySelector = createSelector(
+  currentResponsesSelector,
+  (current) => {
+    if (!current) {
+      return [];
+    }
+    const { responses, activity } = current;
+    return activity.items.map(item => testVisibility(item.visibility, activity.items, responses));
+  },
 );
