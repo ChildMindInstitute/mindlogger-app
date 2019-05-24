@@ -6,6 +6,7 @@ const SKIP = 'Skip';
 const DONE = 'Done';
 const BACK = 'Back';
 const RETURN = 'Return';
+const UNDO = 'Undo';
 
 export const checkValidity = (item, response) => {
   if (item.inputType === 'markdown-message') {
@@ -103,4 +104,11 @@ export const getPrevLabel = (index, visibility) => {
 
   // If this is the first visible item, then label is Done
   return RETURN;
+};
+
+export const getActionLabel = (index, responses) => {
+  const response = responses[index];
+  return response === null || typeof response === 'undefined'
+    ? undefined
+    : UNDO;
 };

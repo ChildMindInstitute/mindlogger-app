@@ -22,6 +22,7 @@ import ActivityButtons from '../../components/ActivityButtons';
 import {
   getNextLabel,
   getPrevLabel,
+  getActionLabel,
   isNextEnabled,
 } from '../../services/activityNavigation';
 
@@ -87,7 +88,7 @@ const Activity = ({
             prevLabel={getPrevLabel(currentScreen, itemVisibility)}
             prevEnabled
             onPressPrev={prevScreen}
-            actionLabel="Undo"
+            actionLabel={getActionLabel(currentScreen, responses)}
             onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}
           />
         </View>
@@ -98,7 +99,7 @@ const Activity = ({
 
 Activity.defaultProps = {
   currentResponse: undefined,
-  currentScreen: 0,
+  currentScreen: null,
 };
 
 Activity.propTypes = {
