@@ -65,7 +65,11 @@ const Activity = ({
         currentScreen={currentScreen}
         onChange={(answer) => {
           setAnswer(activity.id, currentScreen, answer);
-          if (inputType === 'visual-stimulus-response' || inputType === 'radio' || inputType === 'slider') {
+          if (inputType === 'visual-stimulus-response' || inputType === 'slider') {
+            nextScreen();
+          }
+          if (inputType === 'radio'
+            && R.path(['items', currentScreen, 'valueConstraints', 'multipleChoice'], activity) !== true) {
             nextScreen();
           }
         }}
@@ -84,7 +88,7 @@ const Activity = ({
             prevEnabled
             onPressPrev={prevScreen}
             actionLabel="Undo"
-            onPressAction={() => { setAnswer(undefined, currentScreen); }}
+            onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}
           />
         </View>
       )}
