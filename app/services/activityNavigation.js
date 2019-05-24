@@ -1,5 +1,4 @@
-import { Parser } from 'expr-eval';
-// import Screen from '../components/screen';
+import Screen from '../components/screen';
 
 const NEXT = 'Next';
 const SKIP = 'Skip';
@@ -8,45 +7,10 @@ const BACK = 'Back';
 const RETURN = 'Return';
 const UNDO = 'Undo';
 
-export const checkValidity = (item, response) => {
-  if (item.inputType === 'markdown-message') {
-    return true;
-  }
-  return (response !== null && typeof response !== 'undefined');
-}
+export const checkValidity = (item, response) => Screen.isValid(response, item);
 
 export const checkSkippable = activity => activity.allowRefuseToAnswer === true
   || activity.allowDoNotKnow === true;
-
-// Returns true if item is visible
-export const testVisibility = (testExpression = true, items = [], responses = []) => {
-  // Short circuit for common testExpression
-  if (testExpression === true || testExpression === 'true') {
-    return true;
-  }
-
-  const parser = new Parser({
-    logical: true,
-    comparison: true,
-  });
-
-  let testExpressionFixed = testExpression.replace('&&', ' and ');
-  testExpressionFixed = testExpressionFixed.replace('||', ' or ');
-
-  const expr = parser.parse(testExpressionFixed);
-
-  // Build an object where the keys are item variableNames, and values are
-  // item responses
-  const inputs = items.reduce((acc, item, index) => ({
-    ...acc,
-    [item.variableName]: responses[index] || null, // cast undefined to null
-  }), {});
-
-  // Run the expression
-  const result = expr.evaluate(inputs);
-
-  return !!result; // Cast the result to true or false
-};
 
 // Gets the next position of array after index that is true, or -1
 export const getNextPos = (index, ar) => {

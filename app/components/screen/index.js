@@ -175,7 +175,6 @@ class Screen extends Component {
 
 Screen.defaultProps = {
   answer: undefined,
-  autoIncrement: undefined,
 };
 
 Screen.propTypes = {
@@ -183,7 +182,6 @@ Screen.propTypes = {
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
-  autoIncrement: PropTypes.func,
 };
 
 export default Screen;
