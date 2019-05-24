@@ -53,6 +53,7 @@ test('it creates a response in progress', () => {
       myActivity: {
         activity,
         responses: [undefined],
+        screenIndex: 0,
       },
     },
   });
@@ -76,6 +77,7 @@ test('it can set all answers at once', () => {
       myActivity: {
         activity,
         responses: 'new answers',
+        screenIndex: 0,
       },
     },
   });
@@ -90,6 +92,7 @@ test('it sets an answer', () => {
       myActivity: {
         activity,
         responses: ['foobar'],
+        screenIndex: 0,
       },
     },
   });

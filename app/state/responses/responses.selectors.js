@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import * as R from 'ramda';
-import { testVisibility } from '../../services/activityNavigation';
+import { testVisibility } from '../../services/visibility';
 
 export const responsesSelector = R.path(['responses', 'responseHistory']);
 

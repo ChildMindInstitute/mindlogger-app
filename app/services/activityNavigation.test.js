@@ -1,65 +1,75 @@
-import { testVisibility } from './activityNavigation';
+import {
+  checkSkippable,
+  getNextPos,
+  getLastPos,
+  getPrevLabel,
+} from './activityNavigation';
 
-const TEST_ITEMS = [
-  { variableName: 'foo' },
-  { variableName: 'bar' },
-  { variableName: 'bam' },
-  { variableName: 'boom' },
-];
+jest.mock('../components/screen', () => {});
 
-const TEST_RESPONSES = [
-  1,
-  false,
-  { uri: 'some-uri', filename: 'some-filename.jpg' },
-  undefined,
-];
-
-test('it evaluates true to truthy', () => {
-  const testExpression = 'true';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('checkSkippable considers allowRefuseToAnswer to be skippable', () => {
+  const activity = {
+    allowRefuseToAnswer: true,
+  };
+  expect(checkSkippable(activity)).toBe(true);
 });
 
-test('it handles logical comparitors', () => {
-  const testExpression = '1 < 2';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('checkSkippable considers allowDoNotKnow to be skippable', () => {
+  const activity = {
+    allowDoNotKnow: true,
+  };
+  expect(checkSkippable(activity)).toBe(true);
 });
 
-test('it handles equality', () => {
-  const testExpression = '3 == 3';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('checkSkippable returns false if neither are present', () => {
+  const activity = {};
+  expect(checkSkippable(activity)).toBe(false);
 });
 
-test('it evaluates 1 to truthy', () => {
-  const testExpression = 'foo';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('getNextPos returns the next index', () => {
+  const i = 1;
+  const ar = [false, true, false, false, true];
+  expect(getNextPos(i, ar)).toBe(4);
 });
 
-test('it evaluates false to falsy', () => {
-  const testExpression = 'bar';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(false);
+test('getNextPos returns -1 if there is no next index', () => {
+  const i = 1;
+  const ar = [false, true, false, false, false];
+  expect(getNextPos(i, ar)).toBe(-1);
 });
 
-test('it evaluates an object to truthy', () => {
-  const testExpression = 'bam';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('getNextPos returns -1 if it is the last index', () => {
+  const i = 4;
+  const ar = [false, true, true, true, true];
+  expect(getNextPos(i, ar)).toBe(-1);
 });
 
-test('it evaluates undefined to falsy', () => {
-  const testExpression = 'boom';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(false);
+test('getLastPos returns the last index', () => {
+  const i = 4;
+  const ar = [false, true, false, false, true];
+  expect(getLastPos(i, ar)).toBe(1);
 });
 
-test('it can handle logical OR', () => {
-  const testExpression = 'foo || bar';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('getLastPos returns -1 if there is no last index', () => {
+  const i = 1;
+  const ar = [false, true, false, false, false];
+  expect(getLastPos(i, ar)).toBe(-1);
 });
 
-test('it can handle logical AND', () => {
-  const testExpression = 'foo && bar';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(false);
+test('getLastPos returns -1 if it is the first index', () => {
+  const i = 0;
+  const ar = [true, true, true, true, true];
+  expect(getLastPos(i, ar)).toBe(-1);
 });
 
-test('it can handle object properties', () => {
-  const testExpression = 'bam.uri == "some-uri"';
-  expect(testVisibility(testExpression, TEST_ITEMS, TEST_RESPONSES)).toBe(true);
+test('getPrevLabel returns Return if it is on the first page', () => {
+  const i = 0;
+  const ar = [true, true, true, true, true];
+  expect(getPrevLabel(i, ar)).toBe('Return');
+});
+
+test('getPrevLabel returns Back if it is not on the first page', () => {
+  const i = 1;
+  const ar = [true, true, true, true, true];
+  expect(getPrevLabel(i, ar)).toBe('Back');
 });
