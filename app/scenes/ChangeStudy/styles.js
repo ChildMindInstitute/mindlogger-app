@@ -3,7 +3,6 @@ import { colors } from '../../theme';
 export default {
   container: {
     flex: 1,
-    backgroundColor: colors.primary,
   },
   formContainer: {
     paddingTop: 40,
@@ -28,7 +27,6 @@ export default {
     backgroundColor: colors.secondary,
   },
   buttonText: {
-    color: colors.primary,
     fontSize: 20,
   },
 };

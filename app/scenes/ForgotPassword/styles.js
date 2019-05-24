@@ -1,20 +1,10 @@
 import { colors } from '../../theme';
 
 export default {
-  container: {
-    flex: 1,
-    width: null,
-    height: null,
-    backgroundColor: colors.primary,
-    paddingTop: 20,
-    paddingLeft: 50,
-    paddingRight: 50,
-  },
   container2: {
     flex: 1,
     width: null,
     height: null,
-    backgroundColor: colors.primary,
     paddingTop: 40,
     paddingLeft: 50,
     paddingRight: 50,
@@ -66,7 +56,6 @@ export default {
     backgroundColor: colors.secondary,
   },
   buttonText: {
-    color: colors.primary,
     fontSize: 20,
   },
   bottomRow: {

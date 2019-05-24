@@ -35,11 +35,9 @@ export default {
     marginBottom: 10,
   },
   aboutIcon: {
-    color: colors.primary,
     marginRight: 10,
   },
   buttonText: {
-    color: colors.primary,
     fontSize: 16,
   },
   logo: {
