@@ -8,6 +8,8 @@ export const skinSelector = R.path(['app', 'skin']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 
+export const mobileDataAllowedSelector = R.path(['app', 'mobileDataAllowed']);
+
 export const currentAppletSelector = createSelector(
   R.path(['app', 'currentApplet']),
   appletsSelector,

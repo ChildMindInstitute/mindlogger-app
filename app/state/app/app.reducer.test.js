@@ -4,6 +4,7 @@ import {
   resetApiHost,
   setSkin,
   setCurrentApplet,
+  toggleMobileDataAllowed,
 } from './app.actions';
 
 test('it has an initial state', () => {
@@ -45,3 +46,10 @@ test('it sets current activity', () => {
     currentApplet: 'activity-123',
   });
 });
+
+test('it turns mobile data on and off', () => {
+  expect(appReducer(initialState, toggleMobileDataAllowed().toEqual({
+    ...initialState,
+    mobileDataAllowed: !initialState.mobileDataAllowed,
+  })))
+})
