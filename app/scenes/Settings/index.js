@@ -33,7 +33,7 @@ const SettingsScreen = ({ skin, mobileDataAllowed, toggleMobileDataAllowed }) =>
         </ListItem>
         <ListItem bordered>
           <Left>
-            <Text>Use Mobile Data</Text>
+            <Text>Use Cellular Data</Text>
           </Left>
           <Right>
             <Switch
