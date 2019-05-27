@@ -11,7 +11,6 @@ class ActivityDetails extends Component {
   handleStartActivity = (activity) => {
     const { startResponse } = this.props;
     startResponse(activity);
-    Actions.push('take_act');
   }
 
   handleBack = () => {

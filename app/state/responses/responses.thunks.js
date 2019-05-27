@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { prepareResponseForUpload } from '../../models/response';
@@ -42,10 +43,32 @@ export const startResponse = activity => (dispatch, getState) => {
   if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
     dispatch(createResponseInProgress(activity, subjectId, timeStarted));
+  } else {
+    Alert.alert(
+      'Resume activity',
+      'Would you like to resume this activity in progress or restart?',
+      [
+        {
+          text: 'Restart',
+          onPress: () => {
+            dispatch(createResponseInProgress(activity, subjectId, timeStarted));
+            dispatch(setCurrentScreen(activity.id, 0));
+            dispatch(setCurrentActivity(activity.id));
+            Actions.push('take_act');
+          },
+        },
+        {
+          text: 'Resume',
+          onPress: () => {
+            dispatch(setCurrentScreen(activity.id, 0));
+            dispatch(setCurrentActivity(activity.id));
+            Actions.push('take_act');
+          },
+        },
+      ],
+      { cancelable: false },
+    );
   }
-
-  dispatch(setCurrentScreen(activity.id, 0));
-  dispatch(setCurrentActivity(activity.id));
 };
 
 export const downloadResponses = () => (dispatch, getState) => {

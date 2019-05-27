@@ -53,7 +53,8 @@ const Activity = ({
   const { activity, responses } = currentResponse;
 
   // Hide the header and footer if it's a certain type of widget
-  const inputType = R.path(['items', currentScreen, 'inputType'], activity);
+  const currentItem = R.path(['items', currentScreen], activity);
+  const inputType = R.path(['inputType'], currentItem);
   const fullScreen = inputType === 'visual-stimulus-response';
 
   return (
@@ -66,11 +67,15 @@ const Activity = ({
         currentScreen={currentScreen}
         onChange={(answer) => {
           setAnswer(activity.id, currentScreen, answer);
-          if (inputType === 'visual-stimulus-response' || inputType === 'slider') {
+          if (inputType === 'visual-stimulus-response'
+            || inputType === 'slider') {
             nextScreen();
           }
           if (inputType === 'radio'
-            && R.path(['items', currentScreen, 'valueConstraints', 'multipleChoice'], activity) !== true) {
+            && R.path(['valueConstraints', 'multipleChoice'], currentItem) !== true) {
+            nextScreen();
+          }
+          if (inputType === 'audioStimulus' && R.path(['inputs', 'autoAdvance'], currentItem)) {
             nextScreen();
           }
         }}

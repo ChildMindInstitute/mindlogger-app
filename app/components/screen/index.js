@@ -7,6 +7,7 @@ import WidgetError from './WidgetError';
 import {
   AudioImageRecord,
   AudioRecord,
+  AudioStimulus,
   DatePicker,
   MultiSelect,
   Radio,
@@ -140,6 +141,15 @@ class Screen extends Component {
           onChange={onChange}
           config={screen.valueConstraints}
           value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'audioStimulus') {
+      return (
+        <AudioStimulus
+          onChange={onChange}
+          config={screen.inputs}
+          isCurrent={isCurrent}
         />
       );
     }
