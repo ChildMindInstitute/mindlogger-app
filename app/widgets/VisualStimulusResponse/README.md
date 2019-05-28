@@ -2,7 +2,17 @@
 
 ## About
 
-This widget allows you to preset a series of timed trials. In each trial the 
+This widget allows you to preset a series of timed trials. In each trial the user is presented with a visual stimulus and has to press a button in response.
+
+## Building HTML for WebView
+
+React Native WebView does not handle local web sites well. As a workaround we can inline the CSS and JS files using the [inliner](https://github.com/remy/inliner) Node utility which is included as a dev dependency. A Bash script has been made to run `inliner` and copy the results to the Android assets directory. You can run the script as follows on Linux and OSX:
+
+```
+./build-html.sh
+```
+
+You must run the script every time you make a change in `web-src`.
 
 ## Config
 
@@ -78,13 +88,3 @@ Options are `randomize-order`, `sample-with-replacement`, `sample-without-replac
 #### samplingSize
 
 If `samplingMethod` is `sample-with-replacement`, `sample-without-replacement` or `randomize-order` then this determines the total number of trials shown. Otherwise, this controls the number of times that **each** trial will be shown, i.e. the number of times the trials are looped.
-
-## Building HTML for WebView
-
-React Native WebView does not handle local web sites well. As a workaround we can inline the CSS and JS files using the [inliner](https://github.com/remy/inliner) Node utility which is included as a dev dependency. A script has been made to run `inliner` and copy the results to the Android assets directory. You can run the script as follows:
-
-```
-./build-html.sh
-```
-
-You must run the script every time you make a change in `web-src`.
