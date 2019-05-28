@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, StatusBar } from 'react-native';
+import { TouchableOpacity, Image, StatusBar, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -60,6 +60,19 @@ class Login extends Component {
       });
   }
 
+  connectionAlert = () => {
+    Alert.alert(
+      'No Internet Connection',
+      'Please connect to the internet',
+      [
+        {
+          text: 'Dismiss',
+          style: 'cancel',
+        },
+      ],
+    );
+  }
+
   render() {
     const { skin } = this.props;
     const title = skin ? skin.name : 'MindLogger';
@@ -71,6 +84,7 @@ class Login extends Component {
           <LoginForm
             onSubmit={this.onSubmit}
             primaryColor={skin.colors.primary}
+            connectionAlert={this.connectionAlert}
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
@@ -113,6 +127,7 @@ Login.propTypes = {
 
 const mapStateToProps = state => ({
   skin: skinSelector(state),
+
 });
 
 const mapDispatchToProps = {
