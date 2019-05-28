@@ -6,6 +6,7 @@ export const initialState = {
   skin: config.defaultSkin,
   currentApplet: null,
   currentActivity: null,
+  mobileDataAllowed: true,
 };
 
 export default (state = initialState, action = {}) => {
@@ -35,6 +36,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         currentActivity: action.payload,
       };
+    case APP_CONSTANTS.TOGGLE_MOBILE_DATA_ALLOWED:
+      return {
+        ...state,
+        mobileDataAllowed: !state.mobileDataAllowed,
+      }
     default:
       return state;
   }

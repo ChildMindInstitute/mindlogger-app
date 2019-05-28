@@ -20,6 +20,7 @@ import InfoAct from './InfoAct';
 import Login from './Login';
 import LogoutWarning from './LogoutWarning';
 import Settings from './Settings';
+import ChangePassword from './ChangePassword';
 import SideBar from './Sidebar';
 import Signup from './Signup';
 import Splash from './Splash';
@@ -44,6 +45,7 @@ const Navigator = Actions.create(
             <Scene key="forgot_password" component={ForgotPassword} />
             <Scene key="login" component={Login} />
             <Scene key="settings" component={Settings} />
+            <Scene key="change_password" component={ChangePassword} />
             <Scene key="sign_up" component={Signup} />
           </Scene>
         </Drawer>
