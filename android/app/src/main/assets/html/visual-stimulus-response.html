@@ -117,7 +117,7 @@
       var total_trials = jsPsych.data.get().filter({ tag: 'test' }).count();
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
       const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
-      const msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p><p>Press the button below complete the experiment. Thank you!</p>";
+      const msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p><p>Press the button below to continue.</p>";
       return msg;
     },
     choices: ['Finish']

@@ -42,7 +42,10 @@ const LogoutWarning = ({ onCancel, onLogout }) => (
   <View style={styles.container}>
     <View style={styles.modal}>
       <H3 style={styles.header}>Uploads in progress</H3>
-      <Text style={styles.bodyCopy}>You have responses that are currently uploading. If you log out now your responses will be lost.</Text>
+      <Text style={styles.bodyCopy}>
+        You have responses that are currently uploading. If you log out now your
+        responses will be lost.
+      </Text>
       <Text style={styles.bodyCopy}>Are you sure that you want to log out?</Text>
       <View style={styles.buttonArea}>
         <Button bordered style={styles.button} onPress={onCancel}><Text>Cancel</Text></Button>
