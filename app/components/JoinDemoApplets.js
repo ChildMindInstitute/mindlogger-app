@@ -26,7 +26,7 @@ const DEMO_APPLETS = [
   },
   {
     label: 'Cognitive Tasks',
-    uri: 'https://raw.githubusercontent.com/stufreen/schema-standardization/master/activity-sets/cognitive-tasks/cognitive-tasks_schema.jsonld',
+    uri: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/cognitive-tasks/cognitive-tasks_schema.jsonld',
   },
 ];
 
