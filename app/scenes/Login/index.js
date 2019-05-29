@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, StatusBar, Alert } from 'react-native';
+import { TouchableOpacity, Image, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -16,7 +16,8 @@ import styles from './styles';
 import { signInSuccessful } from '../../state/user/user.thunks';
 import { signIn } from '../../services/network';
 import LoginForm from './LoginForm';
-import { skinSelector } from '../../state/app/app.selectors';
+import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
+import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
 const logoImage = require('../../../img/CMI_white_logo.png');
 
@@ -60,21 +61,8 @@ class Login extends Component {
       });
   }
 
-  connectionAlert = () => {
-    Alert.alert(
-      'No Internet Connection',
-      'Please connect to the internet',
-      [
-        {
-          text: 'Dismiss',
-          style: 'cancel',
-        },
-      ],
-    );
-  }
-
   render() {
-    const { skin } = this.props;
+    const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin ? skin.name : 'MindLogger';
     return (
       <Container>
@@ -84,7 +72,8 @@ class Login extends Component {
           <LoginForm
             onSubmit={this.onSubmit}
             primaryColor={skin.colors.primary}
-            connectionAlert={this.connectionAlert}
+            mobileDataAllowed={mobileDataAllowed}
+            toggleMobileDataAllowed={toggleMobileDataAllowed}
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
@@ -122,16 +111,19 @@ class Login extends Component {
 
 Login.propTypes = {
   signInSuccessful: PropTypes.func.isRequired,
+  toggleMobileDataAllowed: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  mobileDataAllowed: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   skin: skinSelector(state),
-
+  mobileDataAllowed: mobileDataAllowedSelector(state),
 });
 
 const mapDispatchToProps = {
   signInSuccessful,
+  toggleMobileDataAllowed,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

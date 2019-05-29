@@ -2,10 +2,12 @@ import React from 'react';
 import { StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import { BodyText } from '../../components/core';
 import JoinDemoApplets from '../../components/JoinDemoApplets';
+import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,41 +37,54 @@ const AppletListComponent = ({
   onPressDrawer,
   onPressRefresh,
   onPressApplet,
-}) => (
-  <Container style={styles.container}>
-    <StatusBar barStyle="light-content" />
-    <Header style={{ backgroundColor: primaryColor }}>
-      <Left />
-      <Body>
-        <Title>{title}</Title>
-      </Body>
-      <Right style={{ flexDirection: 'row' }}>
-        <Button transparent onPress={onPressDrawer}>
-          <Icon type="FontAwesome" name="bars" />
-        </Button>
-      </Right>
-    </Header>
-    <ScrollView
-      style={styles.activityList}
-      refreshControl={(
-        <RefreshControl
-          refreshing={isDownloadingApplets}
-          onRefresh={onPressRefresh}
-        />
-      )}
-      contentContainerStyle={styles.activityListContainer}
-    >
-      {applets.map(applet => (
-        <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
-      ))}
-      {
-        applets.length === 0 && isDownloadingApplets
-          ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
-          : <JoinDemoApplets />
-      }
-    </ScrollView>
-  </Container>
-);
+  mobileDataAllowed,
+  toggleMobileDataAllowed,
+}) => {
+  const netInfo = useNetInfo();
+  return (
+    <Container style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      <Header style={{ backgroundColor: primaryColor }}>
+        <Left />
+        <Body>
+          <Title>{title}</Title>
+        </Body>
+        <Right style={{ flexDirection: 'row' }}>
+          <Button transparent onPress={onPressDrawer}>
+            <Icon type="FontAwesome" name="bars" />
+          </Button>
+        </Right>
+      </Header>
+      <ScrollView
+        style={styles.activityList}
+        refreshControl={(
+          <RefreshControl
+            refreshing={isDownloadingApplets}
+            onRefresh={() => {
+              if (!netInfo.isConnected) {
+                connectionAlert();
+              } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
+                mobileDataAlert(toggleMobileDataAllowed);
+              } else {
+                onPressRefresh();
+              }
+            }}
+          />
+        )}
+        contentContainerStyle={styles.activityListContainer}
+      >
+        {applets.map(applet => (
+          <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
+        ))}
+        {
+          applets.length === 0 && isDownloadingApplets
+            ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
+            : <JoinDemoApplets />
+        }
+      </ScrollView>
+    </Container>
+  );
+};
 
 AppletListComponent.propTypes = {
   applets: PropTypes.array.isRequired,
@@ -79,6 +94,8 @@ AppletListComponent.propTypes = {
   onPressApplet: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   primaryColor: PropTypes.string.isRequired,
+  mobileDataAllowed: PropTypes.bool.isRequired,
+  toggleMobileDataAllowed: PropTypes.func.isRequired,
 };
 
 export default AppletListComponent;
