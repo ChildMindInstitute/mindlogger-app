@@ -16,7 +16,8 @@ import styles from './styles';
 import { signInSuccessful } from '../../state/user/user.thunks';
 import { signIn } from '../../services/network';
 import LoginForm from './LoginForm';
-import { skinSelector } from '../../state/app/app.selectors';
+import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
+import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
 const logoImage = require('../../../img/CMI_white_logo.png');
 
@@ -73,8 +74,27 @@ class Login extends Component {
     );
   }
 
+  mobileDataAlert = () => {
+    const { toggleMobileDataAllowed } = this.props;
+    Alert.alert(
+      'No Wi-fi Connection',
+      'Please connect to wi-fi or allow cellular data',
+      [
+        {
+          text: 'Dismiss',
+          style: 'cancel',
+        },
+        {
+          text: 'Use Cellular Data',
+          onPress: toggleMobileDataAllowed,
+          style: 'default',
+        },
+      ],
+    );
+  }
+
   render() {
-    const { skin } = this.props;
+    const { skin, mobileDataAllowed } = this.props;
     const title = skin ? skin.name : 'MindLogger';
     return (
       <Container>
@@ -84,7 +104,9 @@ class Login extends Component {
           <LoginForm
             onSubmit={this.onSubmit}
             primaryColor={skin.colors.primary}
+            mobileDataAllowed={mobileDataAllowed}
             connectionAlert={this.connectionAlert}
+            mobileDataAlert={this.mobileDataAlert}
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
@@ -122,16 +144,19 @@ class Login extends Component {
 
 Login.propTypes = {
   signInSuccessful: PropTypes.func.isRequired,
+  toggleMobileDataAllowed: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  mobileDataAllowed: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
   skin: skinSelector(state),
-
+  mobileDataAllowed: mobileDataAllowedSelector(state),
 });
 
 const mapDispatchToProps = {
   signInSuccessful,
+  toggleMobileDataAllowed,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

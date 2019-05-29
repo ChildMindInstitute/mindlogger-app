@@ -11,7 +11,7 @@ import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
-const LoginForm = ({ handleSubmit, submitting, primaryColor, connectionAlert }) => {
+const LoginForm = ({ handleSubmit, submitting, primaryColor, mobileDataAllowed, connectionAlert, mobileDataAlert }) => {
   const netInfo = useNetInfo();
   return (
     <Form>
@@ -39,7 +39,15 @@ const LoginForm = ({ handleSubmit, submitting, primaryColor, connectionAlert }) 
       <Button
         style={styles.button}
         block
-        onPress={(netInfo.isConnected) ? handleSubmit : connectionAlert}
+        onPress={(body) => {
+          if (!netInfo.isConnected) {
+            connectionAlert();
+          } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
+            mobileDataAlert();
+          } else {
+            handleSubmit(body);
+          }
+        }}
         disabled={submitting}
       >
         {submitting
