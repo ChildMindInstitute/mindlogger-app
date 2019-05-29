@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import { Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
+import { cleanFiles } from '../../services/file';
 import { prepareResponseForUpload } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
@@ -18,7 +19,6 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setAnswer,
 } from './responses.actions';
 import {
   setCurrentActivity,
@@ -43,6 +43,9 @@ export const startResponse = activity => (dispatch, getState) => {
   if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
     dispatch(createResponseInProgress(activity, subjectId, timeStarted));
+    dispatch(setCurrentScreen(activity.id, 0));
+    dispatch(setCurrentActivity(activity.id));
+    Actions.push('take_act');
   } else {
     Alert.alert(
       'Resume activity',
@@ -51,6 +54,8 @@ export const startResponse = activity => (dispatch, getState) => {
         {
           text: 'Restart',
           onPress: () => {
+            const itemResponses = R.pathOr([], ['inProgress', activity.id, 'responses'], responses);
+            cleanFiles(itemResponses);
             dispatch(createResponseInProgress(activity, subjectId, timeStarted));
             dispatch(setCurrentScreen(activity.id, 0));
             dispatch(setCurrentActivity(activity.id));
