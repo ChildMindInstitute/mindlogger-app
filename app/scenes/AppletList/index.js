@@ -8,8 +8,8 @@ import {
 } from '../../state/applets/applets.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
-import { setCurrentApplet } from '../../state/app/app.actions';
-import { skinSelector } from '../../state/app/app.selectors';
+import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
+import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 
 class AppletList extends Component {
   refresh = () => {
@@ -28,6 +28,8 @@ class AppletList extends Component {
       applets,
       isDownloadingApplets,
       skin,
+      mobileDataAllowed,
+      toggleMobileDataAllowed,
     } = this.props;
     return (
       <AppletListComponent
@@ -38,6 +40,8 @@ class AppletList extends Component {
         onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
         onPressApplet={this.handlePressApplet}
+        mobileDataAllowed={mobileDataAllowed}
+        toggleMobileDataAllowed={toggleMobileDataAllowed}
       />
     );
   }
@@ -49,17 +53,21 @@ AppletList.propTypes = {
   sync: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  mobileDataAllowed: PropTypes.bool.isRequired,
+  toggleMobileDataAllowed: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
   skin: skinSelector(state),
+  mobileDataAllowed: mobileDataAllowedSelector(state),
 });
 
 const mapDispatchToProps = {
   sync,
   setCurrentApplet,
+  toggleMobileDataAllowed,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletList);

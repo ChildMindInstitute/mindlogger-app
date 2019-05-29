@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, StatusBar, Alert } from 'react-native';
+import { TouchableOpacity, Image, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -61,40 +61,8 @@ class Login extends Component {
       });
   }
 
-  connectionAlert = () => {
-    Alert.alert(
-      'No Internet Connection',
-      'Please connect to the internet',
-      [
-        {
-          text: 'Dismiss',
-          style: 'cancel',
-        },
-      ],
-    );
-  }
-
-  mobileDataAlert = () => {
-    const { toggleMobileDataAllowed } = this.props;
-    Alert.alert(
-      'No Wi-fi Connection',
-      'Please connect to wi-fi or allow cellular data',
-      [
-        {
-          text: 'Dismiss',
-          style: 'cancel',
-        },
-        {
-          text: 'Use Cellular Data',
-          onPress: toggleMobileDataAllowed,
-          style: 'default',
-        },
-      ],
-    );
-  }
-
   render() {
-    const { skin, mobileDataAllowed } = this.props;
+    const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin ? skin.name : 'MindLogger';
     return (
       <Container>
@@ -105,8 +73,7 @@ class Login extends Component {
             onSubmit={this.onSubmit}
             primaryColor={skin.colors.primary}
             mobileDataAllowed={mobileDataAllowed}
-            connectionAlert={this.connectionAlert}
-            mobileDataAlert={this.mobileDataAlert}
+            toggleMobileDataAllowed={toggleMobileDataAllowed}
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>

@@ -9,9 +9,16 @@ import { reduxForm, Field, propTypes } from 'redux-form';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
+import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import styles from './styles';
 
-const LoginForm = ({ handleSubmit, submitting, primaryColor, mobileDataAllowed, connectionAlert, mobileDataAlert }) => {
+const LoginForm = ({
+  handleSubmit,
+  submitting,
+  primaryColor,
+  mobileDataAllowed,
+  toggleMobileDataAllowed
+}) => {
   const netInfo = useNetInfo();
   return (
     <Form>
@@ -43,7 +50,7 @@ const LoginForm = ({ handleSubmit, submitting, primaryColor, mobileDataAllowed, 
           if (!netInfo.isConnected) {
             connectionAlert();
           } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
-            mobileDataAlert();
+            mobileDataAlert(toggleMobileDataAllowed);
           } else {
             handleSubmit(body);
           }
