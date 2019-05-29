@@ -13,7 +13,7 @@ export const connectionAlert = () => Alert.alert(
 
 export const mobileDataAlert = (toggleMobileDataAllowed) => {
   Alert.alert(
-    'No Wi-fi Connection',
+    'Cellular Data is Disabled',
     'Please connect to wi-fi or allow cellular data',
     [
       {
