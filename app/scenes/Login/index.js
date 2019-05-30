@@ -19,7 +19,7 @@ import LoginForm from './LoginForm';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
-const logoImage = require('../../../img/CMI_white_logo.png');
+const defaultLogo = require('../../../img/CMI_white_logo.png');
 
 class Login extends Component {
   onRegister = () => {
@@ -63,7 +63,9 @@ class Login extends Component {
 
   render() {
     const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
-    const title = skin ? skin.name : 'MindLogger';
+    const title = skin.name;
+    const logo = (typeof skin.logo !== 'undefined') ? { uri: skin.logo } : defaultLogo;
+    console.log(logo);
     return (
       <Container>
         <StatusBar barStyle="light-content" />
@@ -93,7 +95,7 @@ class Login extends Component {
             <Image
               square
               style={styles.logo}
-              source={logoImage}
+              source={logo}
             />
           </View>
         </Content>

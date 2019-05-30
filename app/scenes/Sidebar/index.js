@@ -44,7 +44,8 @@ const datas = [
   },
 ];
 
-const logoImage = require('../../../img/color_logo.png');
+const defaultLogo = require('../../../img/color_logo.png');
+
 class SideBar extends Component {
 
   static propTypes = {
@@ -73,6 +74,7 @@ class SideBar extends Component {
   render() {
     const { skin } = this.props;
     const title = skin ? skin.name : 'MindLogger';
+    const logo = (typeof skin.logo !== 'undefined') ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
         <Content
@@ -107,7 +109,7 @@ class SideBar extends Component {
             <Image
                 square
                 style={styles.drawerLogo}
-                source={logoImage}
+                source={logo}
                 />
           </View>
 
