@@ -50,7 +50,11 @@ export default class AudioRecorder extends Component {
     const filename = Platform.OS === 'android'
       ? `${randomString({ length: 20 })}.mp4`
       : `${randomString({ length: 20 })}.aac`;
-    recorder = new Recorder(filename);
+    recorder = new Recorder(filename, {
+      bitrate: 128000,
+      channels: 1,
+      sampleRate: 44100,
+    });
 
     // Delete old recording if there is one
     if (this.state.path !== null) {

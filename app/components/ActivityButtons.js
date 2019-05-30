@@ -11,30 +11,35 @@ const styles = StyleSheet.create({
   },
 });
 
+const renderButton = (label, enabled, onPress) => {
+  if (!enabled || !label) {
+    return (<ScreenButton transparent />);
+  }
+  return (<ScreenButton transparent onPress={onPress} text={label} />);
+};
+
 const ActivityButtons = ({
   nextLabel,
+  nextEnabled,
   prevLabel,
+  prevEnabled,
   actionLabel,
   onPressPrev,
   onPressNext,
   onPressAction,
 }) => (
   <View style={styles.footer}>
-    {prevLabel
-      ? <ScreenButton transparent onPress={onPressPrev} text={prevLabel} />
-      : <ScreenButton transparent />}
-    {actionLabel
-      ? <ScreenButton transparent onPress={onPressAction} text={actionLabel} />
-      : <ScreenButton transparent />}
-    {nextLabel !== 'Skip'
-      ? <ScreenButton onPress={onPressNext} text={nextLabel} />
-      : <ScreenButton transparent onPress={onPressNext} text={nextLabel} />}
+    {renderButton(prevLabel, prevEnabled, onPressPrev)}
+    {renderButton(actionLabel, true, onPressAction)}
+    {renderButton(nextLabel, nextEnabled, onPressNext)}
   </View>
 );
 
 ActivityButtons.defaultProps = {
   nextLabel: undefined,
+  nextEnabled: true,
   prevLabel: undefined,
+  prevEnabled: true,
   actionLabel: undefined,
   onPressPrev: undefined,
   onPressNext: undefined,
@@ -43,7 +48,9 @@ ActivityButtons.defaultProps = {
 
 ActivityButtons.propTypes = {
   nextLabel: PropTypes.string,
+  nextEnabled: PropTypes.bool,
   prevLabel: PropTypes.string,
+  prevEnabled: PropTypes.bool,
   actionLabel: PropTypes.string,
   onPressPrev: PropTypes.func,
   onPressNext: PropTypes.func,

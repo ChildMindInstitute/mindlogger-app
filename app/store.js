@@ -11,6 +11,7 @@ export default function configureStore(onCompletion) {
     key: 'root-v2',
     storage,
     // whitelist: [],
+    blacklist: ['form'],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

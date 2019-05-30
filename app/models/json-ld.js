@@ -2,6 +2,8 @@ import * as R from 'ramda';
 
 const ALLOW = 'https://schema.repronim.org/allow';
 const ALT_LABEL = 'http://www.w3.org/2004/02/skos/core#altLabel';
+const AUDIO_OBJECT = 'http://schema.org/AudioObject';
+const CONTENT_URL = 'http://schema.org/contentUrl';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
 const IMAGE = 'http://schema.org/image';
@@ -22,6 +24,7 @@ const REQUIRED_VALUE = 'http://schema.repronim.org/requiredValue';
 const SCHEMA_VERSION = 'http://schema.org/schemaVersion';
 const SCORING_LOGIC = 'https://schema.repronim.org/scoringLogic';
 const SHUFFLE = 'https://schema.repronim.org/shuffle';
+const TRANSCRIPT = 'http://schema.org/transcript';
 const URL = 'http://schema.org/url';
 const VALUE = 'http://schema.org/value';
 const VALUE_CONSTRAINTS = 'https://schema.repronim.org/valueconstraints';
@@ -90,6 +93,13 @@ export const transformInputs = inputs => inputs.reduce((accumulator, inputObj) =
   if (typeof val === 'undefined' && inputObj[ITEM_LIST_ELEMENT]) {
     const itemList = R.path([ITEM_LIST_ELEMENT], inputObj);
     val = flattenItemList(itemList);
+  }
+
+  if (inputObj['@type'].includes(AUDIO_OBJECT)) {
+    val = {
+      contentUrl: languageListToObject(inputObj[CONTENT_URL]),
+      transcript: languageListToObject(inputObj[TRANSCRIPT]),
+    };
   }
 
   return {

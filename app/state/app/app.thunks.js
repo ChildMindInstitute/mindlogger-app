@@ -1,4 +1,5 @@
 import { Actions } from 'react-native-router-flux';
+import * as R from 'ramda';
 import PushNotification from 'react-native-push-notification';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
@@ -7,7 +8,7 @@ import { clearResponses } from '../responses/responses.actions';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearUser } from '../user/user.actions';
 import { signOut } from '../../services/network';
-import { uploadQueueSelector } from '../responses/responses.selectors';
+import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 
 export const showToast = toast => () => {
@@ -26,8 +27,18 @@ const doLogout = (dispatch, getState) => {
   Actions.replace('login'); // Set screen back to login
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
+  const inProgress = inProgressSelector(state);
+
+  // Delete files waiting to be uploaded
   uploadQueue.forEach((queuedUpload) => {
-    cleanFiles(queuedUpload);
+    const responses = R.pathOr([], ['payload', 'responses'], queuedUpload);
+    cleanFiles(responses);
+  });
+
+  // Delete files for activities in progress
+  Object.keys(inProgress).forEach((key) => {
+    const responses = R.pathOr([], ['responses'], inProgress[key]);
+    cleanFiles(responses);
   });
 
   if (state.user.auth !== null) {
