@@ -5,7 +5,7 @@ import { AudioPlayer } from './AudioPlayer';
 
 export class AudioStimulus extends Component {
   componentDidUpdate(oldProps) {
-    const { isCurrent, config } = this.props;
+    const { isCurrent, config, value } = this.props;
     if (isCurrent && oldProps.isCurrent !== isCurrent) {
       if (config.autoStart) {
         // auto start the audio player
@@ -13,7 +13,11 @@ export class AudioStimulus extends Component {
       }
     } else if (!isCurrent && oldProps.isCurrent !== isCurrent) {
       // Stop the audio player if it isn't the current screen
-      this.player.reset();
+      if (value === false) {
+        this.player.reset();
+      } else {
+        this.player.stop();
+      }
     }
   }
 
@@ -33,6 +37,7 @@ export class AudioStimulus extends Component {
 }
 
 AudioStimulus.defaultProps = {
+  value: false,
   config: {
     stimulus: {},
     autoStart: false,
@@ -40,6 +45,7 @@ AudioStimulus.defaultProps = {
 };
 
 AudioStimulus.propTypes = {
+  value: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
   config: PropTypes.shape({

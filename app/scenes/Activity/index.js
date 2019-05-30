@@ -93,7 +93,7 @@ const Activity = ({
             prevLabel={getPrevLabel(currentScreen, itemVisibility)}
             prevEnabled
             onPressPrev={prevScreen}
-            actionLabel={getActionLabel(currentScreen, responses)}
+            actionLabel={getActionLabel(currentScreen, responses, activity.items)}
             onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}
           />
         </View>

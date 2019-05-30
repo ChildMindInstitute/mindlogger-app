@@ -70,9 +70,13 @@ export const getPrevLabel = (index, visibility) => {
   return RETURN;
 };
 
-export const getActionLabel = (index, responses) => {
+export const getActionLabel = (index, responses, items) => {
   const response = responses[index];
-  return response === null || typeof response === 'undefined'
-    ? undefined
-    : UNDO;
+  if (response === null || typeof response === 'undefined') {
+    return undefined;
+  }
+  if (items[index].inputType === 'audioStimulus') {
+    return undefined;
+  }
+  return UNDO;
 };

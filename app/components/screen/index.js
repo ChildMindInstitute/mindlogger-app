@@ -147,6 +147,7 @@ class Screen extends Component {
     if (screen.inputType === 'audioStimulus') {
       return (
         <AudioStimulus
+          value={answer}
           onChange={onChange}
           config={screen.inputs}
           isCurrent={isCurrent}
