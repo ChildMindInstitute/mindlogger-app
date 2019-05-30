@@ -65,7 +65,6 @@ class Login extends Component {
     const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin.name;
     const logo = (typeof skin.logo !== 'undefined') ? { uri: skin.logo } : defaultLogo;
-    console.log(logo);
     return (
       <Container>
         <StatusBar barStyle="light-content" />
