@@ -167,6 +167,7 @@ class Screen extends Component {
     if (screen.inputType === 'drawing') {
       return (
         <Drawing
+          config={screen.inputs}
           onChange={onChange}
           value={answer}
         />

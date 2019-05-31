@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
-import { GImage } from '../../components/core';
+import { CachedImage } from 'react-native-img-cache';
 
-const SENSITIVITY = 5;
+const SENSITIVITY = 30; // Milliseconds between line points (lower is more sensitive)
 
 const styles = StyleSheet.create({
   picture: {
@@ -96,7 +96,7 @@ export default class DrawingBoard extends Component {
     const { moveX, moveY, x0, y0 } = gestureState;
     const x = moveX - x0 + this.startX;
     const y = moveY - y0 + this.startY;
-    if (timeDelta > 30) {
+    if (timeDelta >= SENSITIVITY) {
       this.lastX = x;
       this.lastY = y;
       this.lastPressTimestamp = nowTimestamp;
@@ -177,9 +177,9 @@ export default class DrawingBoard extends Component {
         {...this._panResponder.panHandlers}
       >
         {this.props.imageSource && (
-          <GImage
+          <CachedImage
             style={styles.picture}
-            file={this.props.imageSource}
+            source={{ uri: this.props.imageSource }}
           />
         )}
         <View style={styles.blank}>

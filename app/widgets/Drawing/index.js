@@ -23,7 +23,7 @@ export class Drawing extends React.Component {
     return (
       <View>
         <DrawingBoard
-          imageSource={config.imageSource.en}
+          imageSource={config.backgroundImage ? config.backgroundImage.contentUrl.en : null}
           lines={value && value.lines}
           onResult={onChange}
           ref={(ref) => { this.board = ref; }}
@@ -37,9 +37,7 @@ export class Drawing extends React.Component {
 }
 
 Drawing.defaultProps = {
-  config: {
-    imageSource: {},
-  },
+  config: {},
   value: {},
 };
 
