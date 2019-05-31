@@ -5,67 +5,35 @@ const React = require('react-native');
 const { Platform } = React;
 
 export default {
-  sidebar: {
+  content: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  drawerCover: {
-    alignSelf: 'stretch',
-    // resizeMode: 'cover',
-    width: null,
-    backgroundColor: colors.primary,
-    position: 'relative',
-    marginBottom: 10,
-    flexDirection: 'row',
-  },
-  drawerCoverText: {
-    color: '#FFFFFF',
-    width: '100%',
-    fontSize: 24,
-    alignSelf: 'center',
-    textAlign: 'center',
+    backgroundColor:
+    '#fff',
+    top: -1
   },
   drawerList: {
     marginLeft: 20,
     marginTop: 20,
   },
-  menuImage: {
-    width: 36,
-    height: 36,
-    resizeMode: 'contain',
+  drawerItem: {
+    alignItems: 'center',
   },
   drawerLogo: {
-    // left: (Platform.OS === 'android') ? 30 : 40,
-    //top: (Platform.OS === 'android') ? deviceHeight / 13 : deviceHeight / 12,
     marginTop: 40,
     alignSelf: 'center',
     width: 94,
     height: 79,
     resizeMode: 'contain',
   },
-  listItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 37,
-    height: 37,
-    borderRadius: 18,
-    marginRight: 12,
-    paddingTop: (Platform.OS === 'android') ? 7 : 5,
-  },
-  sidebarIcon: {
-    fontSize: 18,
-    color: '#fff',
-    lineHeight: (Platform.OS === 'android') ? 21 : 25,
-    backgroundColor: 'transparent',
-    alignSelf: 'center',
-  },
   text: {
-    fontWeight: (Platform.OS === 'ios') ? '300' : '300',
+    fontWeight: '300',
     fontSize: 20,
     marginLeft: 20,
+  },
+  badge: {
+    borderRadius: 3,
+    height: 25,
+    width: 72,
   },
   badgeText: {
     fontSize: (Platform.OS === 'ios') ? 13 : 11,
