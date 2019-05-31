@@ -7,6 +7,7 @@ const CONTENT_URL = 'http://schema.org/contentUrl';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
 const IMAGE = 'http://schema.org/image';
+const IMAGE_OBJECT = 'http://schema.org/ImageObject';
 const INPUT_TYPE = 'https://schema.repronim.org/inputType';
 const INPUTS = 'https://schema.repronim.org/inputs';
 const IS_ABOUT = 'https://schema.repronim.org/isAbout';
@@ -102,6 +103,12 @@ export const transformInputs = inputs => inputs.reduce((accumulator, inputObj) =
     };
   }
 
+  if (inputObj['@type'].includes(IMAGE_OBJECT)) {
+    val = {
+      contentUrl: languageListToObject(inputObj[CONTENT_URL]),
+    };
+  }
+
   return {
     ...accumulator,
     [key]: val,
@@ -161,7 +168,7 @@ export const itemAttachExtras = (
   ...transformedItem,
   schema: schemaUri,
   variableName: variableMap[schemaUri],
-  visibility: visibilityObj[variableMap[schemaUri]]
+  visibility: visibilityObj[variableMap[schemaUri]],
 });
 
 export const activityTransformJson = (activityJson, itemsJson) => {

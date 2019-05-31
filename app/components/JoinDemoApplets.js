@@ -28,6 +28,10 @@ const DEMO_APPLETS = [
     label: 'Cognitive Tasks',
     uri: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/cognitive-tasks/cognitive-tasks_schema.jsonld',
   },
+  {
+    label: 'MindLogger Demos',
+    uri: 'https://raw.githubusercontent.com/stufreen/schema-standardization/widget-demo-activity/activity-sets/mindlogger-demo/mindlogger-demo_schema.jsonld',
+  },
 ];
 
 const appletsInclude = (applets, appletSchemaURI) => {

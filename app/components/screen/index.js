@@ -16,6 +16,7 @@ import {
   TextEntry,
   TimeRange,
   VisualStimulusResponse,
+  Drawing,
 } from '../../widgets';
 
 const styles = StyleSheet.create({
@@ -160,6 +161,15 @@ class Screen extends Component {
           onChange={onChange}
           config={screen.inputs}
           isCurrent={isCurrent}
+        />
+      );
+    }
+    if (screen.inputType === 'drawing') {
+      return (
+        <Drawing
+          config={screen.inputs}
+          onChange={onChange}
+          value={answer}
         />
       );
     }

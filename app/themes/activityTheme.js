@@ -67,6 +67,21 @@ export default styles = StyleSheet.create({
 });
 
 export const markdownStyle = {
+  h1: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    marginBottom: 18,
+  },
+  h2: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 18,
+  },
+  h3: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 18,
+  },
   text: {
     alignSelf: 'flex-start',
     fontSize: 18,

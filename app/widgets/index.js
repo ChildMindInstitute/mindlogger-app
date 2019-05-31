@@ -2,6 +2,7 @@ export * from './audio-widgets/AudioImageRecord';
 export * from './audio-widgets/AudioRecord';
 export * from './audio-widgets/AudioStimulus';
 export * from './DatePicker';
+export * from './Drawing';
 export * from './MultiSelect';
 export * from './Radio';
 export * from './Select';
