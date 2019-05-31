@@ -19,8 +19,7 @@ class AboutApp extends Component { // eslint-disable-line
     render() {
       const { skin } = this.props;
       const title = skin ? skin.name : 'MindLogger';
-
-      if (typeof skin.about !== 'undefined') {
+      if (typeof skin.about === 'string') {
         if (skin.about.replace(/\s/g, '').length) {
           return (
             <Container style={styles.container}>
