@@ -1,12 +1,8 @@
-import React, {Component} from 'react';
-import {View, PanResponder, Image, StyleSheet} from 'react-native';
-import {Icon} from 'native-base';
-
-import Svg,{
-    Polyline,
-} from 'react-native-svg';
-
-import { GImage } from '../core';
+import React, { Component } from 'react';
+import { View, PanResponder, Image, StyleSheet } from 'react-native';
+import { Icon } from 'native-base';
+import Svg, { Polyline } from 'react-native-svg';
+import { GImage } from '../../components/core';
 
 const styles = StyleSheet.create({
     picture: {width: '100%', height:'100%', resizeMode: 'cover'},
