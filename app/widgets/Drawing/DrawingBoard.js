@@ -4,6 +4,8 @@ import { View, PanResponder, StyleSheet } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
 import { GImage } from '../../components/core';
 
+const SENSITIVITY = 5;
+
 const styles = StyleSheet.create({
   picture: {
     width: '100%',
@@ -72,11 +74,12 @@ export default class DrawingBoard extends Component {
   addLine = (evt) => {
     const { lines, startTime } = this.state;
     if (!this.allowed) return;
-
+    const timestamp = Date.now();
     const { locationX, locationY } = evt.nativeEvent;
     if (!startTime) {
-      this.setState({ startTime: (new Date()).getTime() });
+      this.setState({ startTime: timestamp });
     }
+    this.lastPressTimestamp = timestamp;
     this.startX = locationX;
     this.startY = locationY;
     lines.push({ points: [{ x: locationX, y: locationY, time: 0 }] });
@@ -85,16 +88,19 @@ export default class DrawingBoard extends Component {
 
   addPoint = (evt, gestureState) => {
     const { lines, startTime } = this.state;
-    const time = Date.now() - startTime;
     if (!this.allowed) return;
+    const nowTimestamp = Date.now();
+    const timeElapsed = nowTimestamp - startTime;
+    const timeDelta = nowTimestamp - this.lastPressTimestamp;
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
     const x = moveX - x0 + this.startX;
     const y = moveY - y0 + this.startY;
-    if ((Math.abs(this.lastX - x) > 10) || (Math.abs(this.lastY - y) > 10)) {
+    if (timeDelta > 30) {
       this.lastX = x;
       this.lastY = y;
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time });
+      this.lastPressTimestamp = nowTimestamp;
+      lines[n].points.push({ x: this.lastX, y: this.lastY, timeElapsed });
       this.setState({ lines });
     }
   }

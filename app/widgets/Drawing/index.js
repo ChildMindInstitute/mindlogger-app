@@ -37,13 +37,15 @@ export class Drawing extends React.Component {
 }
 
 Drawing.defaultProps = {
-  config: {},
+  config: {
+    imageSource: {},
+  },
   value: {},
 };
 
 Drawing.propTypes = {
   config: PropTypes.shape({
-    imageSource: PropTypes.string,
+    imageSource: PropTypes.object,
   }),
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
