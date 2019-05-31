@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 20,
     paddingBottom: 20,
-  }
+  },
 });
 
 export class Drawing extends React.Component {
@@ -23,8 +23,7 @@ export class Drawing extends React.Component {
     return (
       <View>
         <DrawingBoard
-          sourceFiles={config.mode === 'picture' && config.pictureFiles}
-          autoStart
+          imageSource={config.imageSource.en}
           lines={value && value.lines}
           onResult={onChange}
           ref={(ref) => { this.board = ref; }}
@@ -38,15 +37,13 @@ export class Drawing extends React.Component {
 }
 
 Drawing.defaultProps = {
-  config: {
-    mode: 'FREE_DRAW',
-  },
+  config: {},
   value: {},
 };
 
 Drawing.propTypes = {
   config: PropTypes.shape({
-    mode: PropTypes.string,
+    imageSource: PropTypes.string,
   }),
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
