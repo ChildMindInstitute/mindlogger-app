@@ -45,6 +45,13 @@ class Screen extends Component {
     return (answer !== null && typeof answer !== 'undefined');
   }
 
+  constructor() {
+    super();
+    this.state = {
+      scrollEnabled: true,
+    };
+  }
+
   renderWidget() {
     const { screen, answer, onChange, isCurrent } = this.props;
     /*
@@ -88,6 +95,8 @@ class Screen extends Component {
         <Slider
           config={screen.valueConstraints}
           onChange={onChange}
+          onPress={() => this.setState({ scrollEnabled: false })}
+          onRelease={() => this.setState({ scrollEnabled: true })}
           value={answer}
         />
       );
@@ -169,6 +178,8 @@ class Screen extends Component {
         <Drawing
           config={screen.inputs}
           onChange={onChange}
+          onPress={() => this.setState({ scrollEnabled: false })}
+          onRelease={() => this.setState({ scrollEnabled: true })}
           value={answer}
         />
       );
@@ -181,11 +192,13 @@ class Screen extends Component {
 
   render() {
     const { screen } = this.props;
+    const { scrollEnabled } = this.state;
     return (
       <ScrollView
         alwaysBounceVertical={false}
         style={styles.paddingContent}
         contentContainerStyle={{ paddingBottom: 20, minHeight: '100%' }}
+        scrollEnabled={scrollEnabled}
       >
         <ScreenDisplay screen={screen} />
         {this.renderWidget()}
