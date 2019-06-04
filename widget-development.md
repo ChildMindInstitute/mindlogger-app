@@ -23,7 +23,7 @@ A widget should accept a `config` For example, a `Select` (i.e. Dropdown) widget
 
 ## Value
 
-The user's response/interaction to the widget will be saved as a JavaScript object into the redux store and uploaded to the server as JSON. Accordingly, the answer **must** be in a format that can be serialized. Accordingly, references to other objects or functions should not be used as answers.
+The user's response/interaction to the widget will be saved as a JavaScript object into the redux store and uploaded to the server as JSON. This means that the answer **must** be in a format that can be serialized. References to other objects or functions should not be used as answers.
 
 For our `Select` widget, the `value` prop could simply be an object that corresponds to the option the user has selected.
 
@@ -153,10 +153,10 @@ import Select from '../../widgets/Select.js';
   renderWidget() {
     const { screen, answer, onChange } = this.props;
     ...
-    if (screen.meta.isSelect) {
+    if (screen.inputType === 'select') {
       return (
         <Select
-          config={screen.meta.selectConfig}
+          config={screen.inputs}
           value={answer}
           onChange={onChange}
         />
@@ -171,4 +171,4 @@ The `onChange` function will update the redux store. `answer` is pulled in direc
 
 The `Screen` component gets a prop called `screen` which is supplied from the backend. An admin user configures the `screen` which is then downloaded when the user syncs up their app to the backend.
 
-You must ensure that `screen.meta` matches what your widget is expecting as a configuration object.
+You must ensure that `screen` matches what your widget is expecting as a configuration object.

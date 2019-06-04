@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Widget development
 
-[See the widget development guide](https://github.com/ChildMindInstitute/mindlogger-app/widget-development.md)
+[See the widget development guide](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/widget-development.md)
 
 ### Prerequisites
 
