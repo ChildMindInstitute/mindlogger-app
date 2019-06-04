@@ -52,9 +52,6 @@ export default {
   },
   footer: {
     padding: 12,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    alignContent: 'flex-end',
     backgroundColor: colors.primary,
   },
   logo: {

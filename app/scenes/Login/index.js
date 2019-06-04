@@ -9,6 +9,7 @@ import {
   View,
   Icon,
   Footer,
+  Right,
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
@@ -98,12 +99,12 @@ class Login extends Component {
             />
           </View>
         </Content>
-        <Footer style={[styles.footer, { backgroundColor: skin.colors.primary}]}>
-          <View style={{ flex: 1 }}>
+        <Footer style={[styles.footer, { backgroundColor: skin.colors.primary }]}>
+          <Right>
             <TouchableOpacity onPress={this.onChangeStudy}>
               <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />
             </TouchableOpacity>
-          </View>
+          </Right>
         </Footer>
       </Container>
     );
