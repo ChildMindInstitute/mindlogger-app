@@ -37,37 +37,27 @@ function chunkedPointStr(lines, chunkSize) {
 export default class DrawingBoard extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      lines: [],
+    };
     this.allowed = false;
     this.startX = 0;
     this.startY = 0;
     this.lastX = 0;
     this.lastY = 0;
-  }
-
-  componentWillMount() {
     this._panResponder = PanResponder.create({
-      // Ask to be the responder:
-      onStartShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
+      onStartShouldSetPanResponder: () => {
+        this.props.onPress();
+        return true;
+      },
       onPanResponderGrant: this.addLine,
       onPanResponderMove: this.addPoint,
-      onPanResponderTerminationRequest: () => true,
       onPanResponderRelease: () => {
-        // The user has released all touches while this view is the
-        // responder. This typically means a gesture has succeeded
-        this.props.onResult(this.save());
+        this.props.onRelease();
+        const result = this.save();
+        this.props.onResult(result);
       },
-      onPanResponderTerminate: () => {
-        // Another component has become the responder, so this gesture
-        // should be cancelled
-      },
-      // Returns whether this component should block native components from becoming the JS
-      // responder. Returns true by default. Is currently only supported on android.
-      onShouldBlockNativeResponder: () => true,
     });
-    this.setState({ lines: [] });
     this.allowed = true;
   }
 
@@ -82,13 +72,13 @@ export default class DrawingBoard extends Component {
     this.lastPressTimestamp = timestamp;
     this.startX = locationX;
     this.startY = locationY;
-    lines.push({ points: [{ x: locationX, y: locationY, time: 0 }] });
-    this.setState({ lines });
+    const newLine = { points: [{ x: locationX, y: locationY, time: 0 }] };
+    this.setState({ lines: [...lines, newLine] });
   }
 
   addPoint = (evt, gestureState) => {
     const { lines, startTime } = this.state;
-    if (!this.allowed) return;
+    if (!this.allowed || lines.length === 0) return;
     const nowTimestamp = Date.now();
     const timeElapsed = nowTimestamp - startTime;
     const timeDelta = nowTimestamp - this.lastPressTimestamp;
@@ -123,20 +113,20 @@ export default class DrawingBoard extends Component {
     }
   }
 
-  reset() {
+  reset = () => {
     this.setState({ lines: [], startTime: undefined });
   }
 
-  start() {
+  start = () => {
     this.reset();
     this.allowed = true;
   }
 
-  stop() {
+  stop = () => {
     this.allowed = false;
   }
 
-  save() {
+  save = () => {
     const { lines, startTime } = this.state;
     const { width } = this.state.dimensions;
     const results = lines.map(line => ({
@@ -201,10 +191,14 @@ DrawingBoard.defaultProps = {
   imageSource: null,
   lines: [],
   onResult: () => {},
+  onPress: () => {},
+  onRelease: () => {},
 };
 
 DrawingBoard.propTypes = {
   imageSource: PropTypes.string,
   lines: PropTypes.array,
   onResult: PropTypes.func,
+  onPress: PropTypes.func,
+  onRelease: PropTypes.func,
 };

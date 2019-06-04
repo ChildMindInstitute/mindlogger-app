@@ -7,7 +7,13 @@ import SliderComponent from './slider';
 import { getURL } from '../../services/helper';
 
 
-export const Slider = ({ config: { maxValue, minValue, itemList }, value, onChange }) => (
+export const Slider = ({
+  config: { maxValue, minValue, itemList },
+  value,
+  onChange,
+  onPress,
+  onRelease,
+}) => (
   <View style={{ alignItems: 'stretch', minHeight: 450 }}>
     <Text style={{ textAlign: 'center' }}>{maxValue}</Text>
     { itemList[itemList.length-1].image ? <View style={{justifyContent: 'center', alignItems: 'center'}}><CachedImage style={{ width: 45, height: 45, resizeMode: 'cover' }} source={{ uri: getURL(itemList[itemList.length-1].image.en) }} /></View> : <View></View>}
@@ -20,6 +26,8 @@ export const Slider = ({ config: { maxValue, minValue, itemList }, value, onChan
       barHeight={200}
       selected={!!value}
       onChange={onChange}
+      onPress={onPress}
+      onRelease={onRelease}
     />
     { itemList[0].image ? <View style={{justifyContent: 'center', alignItems: 'center'}}><CachedImage style={{ width: 45, height: 45, resizeMode: 'cover' }} source={{ uri: getURL(itemList[0].image.en) }} /></View> : <View></View>}
     <Text style={{ textAlign: 'center' }}>{minValue}</Text>
@@ -28,6 +36,8 @@ export const Slider = ({ config: { maxValue, minValue, itemList }, value, onChan
 
 Slider.defaultProps = {
   value: undefined,
+  onPress: () => {},
+  onRelease: () => { },
 };
 
 Slider.propTypes = {
@@ -38,4 +48,6 @@ Slider.propTypes = {
   }).isRequired,
   value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
+  onRelease: PropTypes.func,
 };

@@ -13,26 +13,31 @@ export default class Slider extends React.Component {
     min: PropTypes.number.isRequired,
     max: PropTypes.number.isRequired,
     labels: PropTypes.array,
-    strict: PropTypes.bool
+    strict: PropTypes.bool,
+    value: PropTypes.number.isRequired,
   }
 
-  state = {
-    barHeight: 200,
-    deltaValue: 0,
-    value: 0,
-  };
-
-  componentWillMount() {
-    this.setState({ value: this.props.value });
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      barHeight: 200,
+      deltaValue: 0,
+      value: this.props.value,
+    };
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => {
+        this.props.onPress();
+        return true;
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        return this.onMove(gestureState);
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        this.onEndMove();
+        this.props.onRelease();
+      },
+    });
   }
-
-  panResponder = PanResponder.create({
-    onMoveShouldSetPanResponderCapture: () => true,
-    onPanResponderMove: (_, gestureState) => this.onMove(gestureState),
-    onPanResponderRelease: () => this.onEndMove(),
-    onPanResponderTerminate: () => { }
-  });
 
   onMove(gestureState) {
     const { barHeight } = this.state;

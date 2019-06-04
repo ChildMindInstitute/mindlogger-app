@@ -11,15 +11,15 @@ const styles = StyleSheet.create({
 });
 
 export class Drawing extends React.Component {
-  componentDidUpdate() {
+  componentDidUpdate(oldProps) {
     const { value } = this.props;
-    if (!value.lines || value.lines.length === 0) {
+    if (value !== oldProps.value && !value.lines) {
       this.board.reset();
     }
   }
 
   render() {
-    const { config, value, onChange } = this.props;
+    const { config, value, onChange, onPress, onRelease } = this.props;
     return (
       <View>
         <DrawingBoard
@@ -27,6 +27,8 @@ export class Drawing extends React.Component {
           lines={value && value.lines}
           onResult={onChange}
           ref={(ref) => { this.board = ref; }}
+          onPress={onPress}
+          onRelease={onRelease}
         />
         {config.instruction && (
           <Text style={styles.text}>{config.instruction}</Text>
@@ -39,6 +41,8 @@ export class Drawing extends React.Component {
 Drawing.defaultProps = {
   config: {},
   value: {},
+  onPress: () => {},
+  onRelease: () => {},
 };
 
 Drawing.propTypes = {
@@ -47,4 +51,6 @@ Drawing.propTypes = {
   }),
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
+  onRelease: PropTypes.func,
 };
