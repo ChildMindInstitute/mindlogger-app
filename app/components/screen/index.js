@@ -17,6 +17,7 @@ import {
   TimeRange,
   VisualStimulusResponse,
   Drawing,
+  Camera,
 } from '../../widgets';
 
 const styles = StyleSheet.create({
@@ -54,22 +55,7 @@ class Screen extends Component {
 
   renderWidget() {
     const { screen, answer, onChange, isCurrent } = this.props;
-    /*
-    const data = screen.meta || {};
-    if (data.canvasType) {
-      return (
-        <CanvasSection
-          video={(data.canvasType == 'video')}
-          type={((data.canvasType == 'video') ? 'camera' : data.canvasType)}
-          config={data.canvas}
-          answer={answer}
-          onChange={onChange}
-          ref={(ref) => { this.canvasRef = ref; }}
-          onNextChange={() => { }}
-        />
-      );
-    }
-    */
+
     if (screen.inputType === 'radio'
       && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
       return (
@@ -161,6 +147,23 @@ class Screen extends Component {
           onChange={onChange}
           config={screen.inputs}
           isCurrent={isCurrent}
+        />
+      );
+    }
+    if (screen.inputType === 'photo') {
+      return (
+        <Camera
+          value={answer}
+          onChange={onChange}
+        />
+      );
+    }
+    if (screen.inputType === 'video') {
+      return (
+        <Camera
+          value={answer}
+          onChange={onChange}
+          video
         />
       );
     }
