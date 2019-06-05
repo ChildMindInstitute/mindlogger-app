@@ -87,6 +87,12 @@ export const markdownStyle = {
     fontSize: 18,
     color: '#000000',
   },
+  listItemUnorderedContent: {
+    fontSize: 18,
+  },
+  listItemOrderedContent: {
+    fontSize: 18,
+  },
   linkWrapper: {
     alignSelf: 'flex-start',
   },
