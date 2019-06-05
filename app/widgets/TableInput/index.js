@@ -4,19 +4,19 @@ import { Text, Row, Col, View } from 'native-base';
 import styles from './styles';
 import TableInputCell from './TableInputCell';
 
-const safeValue = (value, rowIdx, colIdx, mode) => {
+const safeValue = (value, rowIdx, colIdx, freeEntry) => {
   if (value && value[rowIdx] && value[rowIdx][colIdx]) {
     return value[rowIdx][colIdx];
   }
-  return mode === 'text' ? '' : 0;
+  return freeEntry ? '' : 0;
 };
 
 export class TableInput extends Component {
   updateCells = (newVal, row, col) => {
-    const { value, onChange, config } = this.props;
+    const { value, onChange, config, freeEntry } = this.props;
 
     const newValue = config.rows.map((row, i) => config.cols.map(
-      (col, j) => safeValue(value, i, j, config.mode),
+      (col, j) => safeValue(value, i, j, freeEntry),
     ));
     newValue[row][col] = newVal;
 
@@ -24,7 +24,7 @@ export class TableInput extends Component {
   }
 
   render() {
-    const { config, value } = this.props;
+    const { config, value, freeEntry } = this.props;
     const cellHeight = 60;
     const cellStyle = {
       cellHeight,
@@ -48,7 +48,7 @@ export class TableInput extends Component {
           {config.cols.map(
             (col, idx) => (
               <Col key={idx} style={styles.cellStyle}>
-                <Text style={styles.cellTextStyle}>{col}</Text>
+                <Text style={styles.cellTextStyle}>{col.value}</Text>
               </Col>
             ),
           )}
@@ -56,13 +56,13 @@ export class TableInput extends Component {
         {config.rows.map((row, rowIdx) => (
           <Row style={rowStyle} key={rowIdx}>
             <Col style={cellStyle}>
-              <Text>{row}</Text>
+              <Text>{row.value}</Text>
             </Col>
             {config.cols.map((col, colIdx) => (
               <Col key={colIdx} style={cellStyle}>
                 <TableInputCell
-                  mode={config.mode}
-                  value={safeValue(value, rowIdx, colIdx, config.mode)}
+                  freeEntry={freeEntry}
+                  value={safeValue(value, rowIdx, colIdx, freeEntry)}
                   onChange={(newVal) => {
                     this.updateCells(newVal, rowIdx, colIdx);
                   }}
@@ -78,13 +78,15 @@ export class TableInput extends Component {
 
 TableInput.defaultProps = {
   value: undefined,
+  freeEntry: false,
 };
 
 TableInput.propTypes = {
   config: PropTypes.shape({
-    rows: PropTypes.arrayOf(PropTypes.string),
-    cols: PropTypes.arrayOf(PropTypes.string),
+    rows: PropTypes.arrayOf(PropTypes.object),
+    cols: PropTypes.arrayOf(PropTypes.object),
   }).isRequired,
   value: PropTypes.arrayOf(PropTypes.array),
   onChange: PropTypes.func.isRequired,
+  freeEntry: PropTypes.bool,
 };

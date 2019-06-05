@@ -7,33 +7,34 @@ const onNumberAdd = (toAdd, oldVal = 0, onChange) => {
   onChange(oldVal + toAdd);
 };
 
-const TableInputCell = ({ mode = 'text', value = '', onChange }) => {
-  if (mode === 'number') {
+const TableInputCell = ({ freeEntry = false, value = '', onChange }) => {
+  if (freeEntry) {
     return (
-      <Button
-        bordered
-        style={{ width: '100%' }}
-        delayLongPress={600}
-        onPress={() => { onNumberAdd(1, value, onChange); }}
-        onLongPress={() => { onNumberAdd(-1, value, onChange); }}
-      >
-        <Text style={styles.cellTextStyle}>{value}</Text>
-      </Button>
+      <View style={styles.textViewStyle}>
+        <Input
+          placeholder=""
+          onChangeText={onChange}
+          value={value}
+        />
+      </View>
     );
   }
   return (
-    <View style={styles.textViewStyle}>
-      <Input
-        placeholder=""
-        onChangeText={onChange}
-        value={value}
-      />
-    </View>
+    <Button
+      bordered
+      style={{ width: '100%' }}
+      delayLongPress={600}
+      onPress={() => { onNumberAdd(1, value, onChange); }}
+      onLongPress={() => { onNumberAdd(-1, value, onChange); }}
+    >
+      <Text style={styles.cellTextStyle}>{value}</Text>
+    </Button>
   );
 };
 
 TableInputCell.defaultProps = {
   value: '',
+  freeEntry: false,
 };
 
 TableInputCell.propTypes = {
@@ -42,7 +43,7 @@ TableInputCell.propTypes = {
     PropTypes.number,
   ]),
   onChange: PropTypes.func.isRequired,
-  mode: PropTypes.string.isRequired,
+  freeEntry: PropTypes.bool,
 };
 
 export default TableInputCell;

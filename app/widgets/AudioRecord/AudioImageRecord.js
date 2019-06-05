@@ -12,7 +12,7 @@ export class AudioImageRecord extends Component {
   render() {
     const { value, config } = this.props;
     return (
-      <View>
+      <View style={{ paddingBottom: 16 }}>
         <Image
           style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
           source={{ uri: config.image.en }}
