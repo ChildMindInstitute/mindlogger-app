@@ -153,8 +153,7 @@ test('activityTransformJson: ema-hbn', () => {
     shuffle: false,
     scoringLogic: [],
     altLabel: { en: 'ema_morning_schema' },
-    allowDoNotKnow: false,
-    allowRefuseToAnswer: false,
+    skippable: false,
     info: undefined,
     notification: {},
   };
@@ -182,8 +181,7 @@ test('activityTransformJson: nda-phq', () => {
   });
 
   const expectedResult = {
-    allowDoNotKnow: false,
-    allowRefuseToAnswer: true,
+    skippable: true,
     altLabel: { en: 'nda_guid' },
     description: {
       en: 'schema describing terms needed to generate NDA guid',

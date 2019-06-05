@@ -48,8 +48,8 @@ test('it sets current activity', () => {
 });
 
 test('it turns mobile data on and off', () => {
-  expect(appReducer(initialState, toggleMobileDataAllowed().toEqual({
+  expect(appReducer(initialState, toggleMobileDataAllowed())).toEqual({
     ...initialState,
     mobileDataAllowed: !initialState.mobileDataAllowed,
-  })))
-})
+  });
+});

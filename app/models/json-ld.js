@@ -124,6 +124,16 @@ export const transformVariableMap = variableAr => variableAr.reduce((accumulator
   };
 }, {});
 
+export const isSkippable = (allowList) => {
+  if (allowList.includes(REFUSE_TO_ANSWER)) {
+    return true;
+  }
+  if (allowList.includes(DO_NOT_KNOW)) {
+    return true;
+  }
+  return false;
+};
+
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
   schema: languageListToObject(appletJson[URL]).en,
@@ -139,6 +149,12 @@ export const appletTransformJson = appletJson => ({
 });
 
 export const itemTransformJson = (itemJson) => {
+  // For items, 'skippable' is undefined if there's no ALLOW prop
+  const allowList = R.path([ALLOW, 0, '@list'], itemJson);
+  const skippable = typeof allowList === 'undefined'
+    ? undefined
+    : isSkippable(flattenIdList(allowList));
+
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
@@ -155,6 +171,7 @@ export const itemTransformJson = (itemJson) => {
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
     valueConstraints,
+    skippable,
     inputs: inputsObj,
   };
 };
@@ -173,8 +190,6 @@ export const itemAttachExtras = (
 
 export const activityTransformJson = (activityJson, itemsJson) => {
   const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
-  const allowRefuseToAnswer = allowList.includes(REFUSE_TO_ANSWER);
-  const allowDoNotKnow = allowList.includes(DO_NOT_KNOW);
 
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
   const notification = {}; // TO DO
@@ -200,8 +215,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
     image: languageListToObject(activityJson[IMAGE]),
-    allowRefuseToAnswer,
-    allowDoNotKnow,
+    skippable: isSkippable(allowList),
     scoringLogic,
     notification,
     info,
