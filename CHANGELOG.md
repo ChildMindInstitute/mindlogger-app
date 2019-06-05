@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - audio: split stimulus and record into separate widgets
+- Details page now requires a click to get to rather than to get through
 
 ## [0.2.6] - 2019-05-28
 ### Added
