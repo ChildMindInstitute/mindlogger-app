@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.7] - 2019-06-04
 ### Added
 - Camera widget (restored)
+- Table widget (restored)
+  - counter
+  - text entry
 
 ### Changed
 - audio: split stimulus and record into separate widgets
