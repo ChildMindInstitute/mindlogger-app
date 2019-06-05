@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 export const Hyperlink = ({ children, onPress, style, disabled }) => (
-  <TouchableOpacity onPress={onPress} disabled={disabled}>
+  <TouchableOpacity onPress={onPress} disabled={disabled} style={{ alignSelf: 'flex-start' }}>
     <Text style={[styles.text, disabled ? { opacity: 0.5 } : { opacity: 1 }, style]}>
       {children}
     </Text>

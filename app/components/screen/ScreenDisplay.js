@@ -6,8 +6,8 @@ import { markdownStyle } from '../../themes/activityTheme';
 
 const ScreenDisplay = ({ screen }) => (
   <View style={{ marginBottom: 18 }}>
-    {screen.preamble && <MarkdownView markdownStyles={markdownStyle}>{screen.preamble.en}</MarkdownView>}
-    {screen.question && <MarkdownView markdownStyles={markdownStyle}>{screen.question.en}</MarkdownView>}
+    {screen.preamble && <MarkdownView styles={markdownStyle}>{screen.preamble.en}</MarkdownView>}
+    {screen.question && <MarkdownView styles={markdownStyle}>{screen.question.en}</MarkdownView>}
   </View>
 );
 

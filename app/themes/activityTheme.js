@@ -67,22 +67,22 @@ export default styles = StyleSheet.create({
 });
 
 export const markdownStyle = {
-  h1: {
+  heading1: {
     fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 18,
   },
-  h2: {
+  heading2: {
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 18,
   },
-  h3: {
+  heading3: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 18,
   },
-  text: {
+  paragraph: {
     alignSelf: 'flex-start',
     fontSize: 18,
     color: '#000000',
@@ -95,9 +95,6 @@ export const markdownStyle = {
     textDecorationLine: 'underline',
   },
   image: {
-    flex: 1,
-    minWidth: 200,
-    height: 45,
     resizeMode: 'contain',
   },
 };
