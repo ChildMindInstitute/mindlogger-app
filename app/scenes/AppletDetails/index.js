@@ -6,12 +6,13 @@ import { currentAppletSelector, skinSelector } from '../../state/app/app.selecto
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
 import { setCurrentActivity } from '../../state/app/app.actions';
+import { startResponse } from '../../state/responses/responses.thunks';
 
 class AppletDetails extends Component {
   handlePressActivity = (activity) => {
-    const { setCurrentActivity } = this.props;
+    const { setCurrentActivity, startResponse } = this.props;
     setCurrentActivity(activity.id);
-    Actions.push('activity_details');
+    startResponse(activity);
   }
 
   handleBack = () => {
@@ -46,17 +47,18 @@ AppletDetails.propTypes = {
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  startResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
-
 });
 
 const mapDispatchToProps = {
   setCurrentActivity,
+  startResponse,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletDetails);

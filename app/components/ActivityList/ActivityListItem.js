@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading } from '../core';
+import { Actions } from 'react-native-router-flux';
+import { Icon } from 'native-base';
+import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading, Hyperlink } from '../core';
 import ActivityDueDate from './ActivityDueDate';
 import { colors } from '../../theme';
 
@@ -31,6 +33,26 @@ const styles = StyleSheet.create({
     borderColor: colors.grey,
     flex: 1,
   },
+  moreInfo: {
+    marginTop: 16,
+    width: 60,
+  },
+  layout: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  left: {
+    flex: 1,
+  },
+  right: {
+    flex: 0,
+    paddingLeft: 16,
+  },
+  icon: {
+    color: '#AAA',
+    fontSize: 18,
+  },
 });
 
 const ActivityRow = ({ activity, onPress }) => {
@@ -44,13 +66,26 @@ const ActivityRow = ({ activity, onPress }) => {
   return (
     <View style={styles.box}>
       <TouchBox onPress={() => onPress(activity)}>
-        <SubHeading>
-          {activity.name.en}
-        </SubHeading>
-        <BodyText>
-          {activity.description.en}
-        </BodyText>
-        <ActivityDueDate activity={activity} />
+        <View style={styles.layout}>
+          <View style={styles.left}>
+            <SubHeading>
+              {activity.name.en}
+            </SubHeading>
+            <BodyText>
+              {activity.description.en}
+            </BodyText>
+            <ActivityDueDate activity={activity} />
+            <Hyperlink
+              style={styles.moreInfo}
+              onPress={() => Actions.push('activity_details')}
+            >
+              Details
+            </Hyperlink>
+          </View>
+          <View style={styles.right}>
+            <Icon type="FontAwesome" name="chevron-right" style={styles.icon} />
+          </View>
+        </View>
       </TouchBox>
       {activity.isOverdue && (
         <View style={styles.notification}>
