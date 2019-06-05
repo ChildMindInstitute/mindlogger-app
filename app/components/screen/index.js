@@ -18,6 +18,7 @@ import {
   VisualStimulusResponse,
   Drawing,
   Camera,
+  TableInput,
 } from '../../widgets';
 
 const styles = StyleSheet.create({
@@ -184,6 +185,25 @@ class Screen extends Component {
           onPress={() => this.setState({ scrollEnabled: false })}
           onRelease={() => this.setState({ scrollEnabled: true })}
           value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'tableCounter') {
+      return (
+        <TableInput
+          config={screen.inputs}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
+    if (screen.inputType === 'tableText') {
+      return (
+        <TableInput
+          config={screen.inputs}
+          onChange={onChange}
+          value={answer}
+          freeEntry
         />
       );
     }
