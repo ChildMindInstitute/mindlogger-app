@@ -7,23 +7,34 @@ import {
 
 jest.mock('../components/screen', () => {});
 
-test('checkSkippable considers allowRefuseToAnswer to be skippable', () => {
+test('checkSkippable defaults to activity', () => {
   const activity = {
-    allowRefuseToAnswer: true,
+    skippable: true,
   };
-  expect(checkSkippable(activity)).toBe(true);
+  const item = {
+    skippable: undefined,
+  };
+  expect(checkSkippable(activity, item)).toBe(true);
 });
 
-test('checkSkippable considers allowDoNotKnow to be skippable', () => {
+test('checkSkippable prefers item skippable', () => {
   const activity = {
-    allowDoNotKnow: true,
+    skippable: false,
   };
-  expect(checkSkippable(activity)).toBe(true);
+  const item = {
+    skippable: true,
+  };
+  expect(checkSkippable(activity, item)).toBe(true);
 });
 
 test('checkSkippable returns false if neither are present', () => {
-  const activity = {};
-  expect(checkSkippable(activity)).toBe(false);
+  const activity = {
+    skippable: false,
+  };
+  const item = {
+    skippable: undefined,
+  };
+  expect(checkSkippable(activity, item)).toBe(false);
 });
 
 test('getNextPos returns the next index', () => {

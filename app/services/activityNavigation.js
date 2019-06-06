@@ -9,8 +9,15 @@ const UNDO = 'Undo';
 
 export const checkValidity = (item, response) => Screen.isValid(response, item);
 
-export const checkSkippable = activity => activity.allowRefuseToAnswer === true
-  || activity.allowDoNotKnow === true;
+export const checkSkippable = (activity, item) => {
+  if (typeof item.skippable !== 'undefined') {
+    return item.skippable;
+  }
+  if (activity.skippable === true) {
+    return true;
+  }
+  return false;
+};
 
 // Gets the next position of array after index that is true, or -1
 export const getNextPos = (index, ar) => {
@@ -55,8 +62,18 @@ export const getNextLabel = (index, visibility, activity, responses) => {
 // If item has a valid response, or is skippable, then next is enabled
 export const isNextEnabled = (index, activity, responses) => {
   const isValid = checkValidity(activity.items[index], responses[index]);
-  const isSkippable = checkSkippable(activity);
+  const isSkippable = checkSkippable(activity, activity.items[index]);
   return isValid || isSkippable;
+};
+
+export const isPrevEnabled = (index, activity) => {
+  if (activity.items[index].backDisabled === true) {
+    return false;
+  }
+  if (activity.backDisabled === true) {
+    return false;
+  }
+  return true;
 };
 
 export const getPrevLabel = (index, visibility) => {

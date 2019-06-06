@@ -24,6 +24,7 @@ import {
   getPrevLabel,
   getActionLabel,
   isNextEnabled,
+  isPrevEnabled,
 } from '../../services/activityNavigation';
 
 const styles = StyleSheet.create({
@@ -49,13 +50,10 @@ const Activity = ({
   if (!currentResponse) {
     return <View />;
   }
-
   const { activity, responses } = currentResponse;
-
-  // Hide the header and footer if it's a certain type of widget
   const currentItem = R.path(['items', currentScreen], activity);
-  const inputType = R.path(['inputType'], currentItem);
-  const fullScreen = inputType === 'visual-stimulus-response';
+  const fullScreen = currentItem.fullScreen || activity.fullScreen;
+  const autoAdvance = currentItem.autoAdvance || activity.autoAdvance;
 
   return (
     <Container>
@@ -67,15 +65,7 @@ const Activity = ({
         currentScreen={currentScreen}
         onChange={(answer) => {
           setAnswer(activity.id, currentScreen, answer);
-          if (inputType === 'visual-stimulus-response'
-            || inputType === 'slider') {
-            nextScreen();
-          }
-          if (inputType === 'radio'
-            && R.path(['valueConstraints', 'multipleChoice'], currentItem) !== true) {
-            nextScreen();
-          }
-          if (inputType === 'audioStimulus' && R.path(['inputs', 'autoAdvance'], currentItem)) {
+          if (autoAdvance || fullScreen) {
             nextScreen();
           }
         }}
@@ -91,7 +81,7 @@ const Activity = ({
             nextEnabled={isNextEnabled(currentScreen, activity, responses)}
             onPressNext={nextScreen}
             prevLabel={getPrevLabel(currentScreen, itemVisibility)}
-            prevEnabled
+            prevEnabled={isPrevEnabled(currentScreen, activity)}
             onPressPrev={prevScreen}
             actionLabel={getActionLabel(currentScreen, responses, activity.items)}
             onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}

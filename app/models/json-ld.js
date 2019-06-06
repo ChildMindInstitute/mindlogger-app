@@ -3,9 +3,12 @@ import * as R from 'ramda';
 const ALLOW = 'https://schema.repronim.org/allow';
 const ALT_LABEL = 'http://www.w3.org/2004/02/skos/core#altLabel';
 const AUDIO_OBJECT = 'http://schema.org/AudioObject';
+const AUTO_ADVANCE = 'https://schema.repronim.org/auto_advance';
+const BACK_DISABLED = 'https://schema.repronim.org/disable_back';
 const CONTENT_URL = 'http://schema.org/contentUrl';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
+const FULL_SCREEN = 'https://schema.repronim.org/full_screen';
 const IMAGE = 'http://schema.org/image';
 const IMAGE_OBJECT = 'http://schema.org/ImageObject';
 const INPUT_TYPE = 'https://schema.repronim.org/inputType';
@@ -172,6 +175,9 @@ export const itemTransformJson = (itemJson) => {
     preamble: languageListToObject(itemJson[PREAMBLE]),
     valueConstraints,
     skippable,
+    fullScreen: flattenIdList(allowList).includes(FULL_SCREEN),
+    backDisabled: flattenIdList(allowList).includes(BACK_DISABLED),
+    autoAdvance: flattenIdList(allowList).includes(AUTO_ADVANCE),
     inputs: inputsObj,
   };
 };
@@ -216,6 +222,9 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
     image: languageListToObject(activityJson[IMAGE]),
     skippable: isSkippable(allowList),
+    backDisabled: allowList.includes(BACK_DISABLED),
+    fullScreen: allowList.includes(FULL_SCREEN),
+    autoAdvance: allowList.includes(AUTO_ADVANCE),
     scoringLogic,
     notification,
     info,

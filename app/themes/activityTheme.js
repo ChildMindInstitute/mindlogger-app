@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   body: {
     flex: 1,
   },
@@ -20,7 +20,7 @@ export default styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 24,
-    fontWeight: '300'
+    fontWeight: '300',
   },
   takeButton: {
     borderRadius: 12,
@@ -31,7 +31,7 @@ export default styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 4,
     borderColor: '#d10000',
-    backgroundColor: '#ffdddd'
+    backgroundColor: '#ffdddd',
   },
   videoConfirmed: {
     borderRadius: 12,
@@ -42,7 +42,7 @@ export default styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 4,
     borderColor: '#00a30a',
-    backgroundColor: '#99ff9f'
+    backgroundColor: '#99ff9f',
   },
   chooseButton: {
     borderRadius: 12,
@@ -63,7 +63,7 @@ export default styles = StyleSheet.create({
   greenIcon: {
     color: '#00a30a',
     fontSize: 60,
-  }
+  },
 });
 
 export const markdownStyle = {
@@ -89,9 +89,11 @@ export const markdownStyle = {
   },
   listItemUnorderedContent: {
     fontSize: 18,
+    color: '#000000',
   },
   listItemOrderedContent: {
     fontSize: 18,
+    color: '#000000',
   },
   linkWrapper: {
     alignSelf: 'flex-start',
@@ -104,3 +106,5 @@ export const markdownStyle = {
     resizeMode: 'contain',
   },
 };
+
+export default styles;
