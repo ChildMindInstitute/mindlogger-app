@@ -153,8 +153,10 @@ test('activityTransformJson: ema-hbn', () => {
     shuffle: false,
     scoringLogic: [],
     altLabel: { en: 'ema_morning_schema' },
-    allowDoNotKnow: false,
-    allowRefuseToAnswer: false,
+    skippable: false,
+    autoAdvance: false,
+    backDisabled: false,
+    fullScreen: false,
     info: undefined,
     notification: {},
   };
@@ -182,8 +184,10 @@ test('activityTransformJson: nda-phq', () => {
   });
 
   const expectedResult = {
-    allowDoNotKnow: false,
-    allowRefuseToAnswer: true,
+    skippable: true,
+    autoAdvance: false,
+    backDisabled: false,
+    fullScreen: false,
     altLabel: { en: 'nda_guid' },
     description: {
       en: 'schema describing terms needed to generate NDA guid',
@@ -246,6 +250,10 @@ test('itemTransformJson', () => {
         },
       ],
     },
+    skippable: undefined,
+    autoAdvance: false,
+    backDisabled: false,
+    fullScreen: false,
   });
 });
 

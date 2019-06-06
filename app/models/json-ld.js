@@ -3,9 +3,12 @@ import * as R from 'ramda';
 const ALLOW = 'https://schema.repronim.org/allow';
 const ALT_LABEL = 'http://www.w3.org/2004/02/skos/core#altLabel';
 const AUDIO_OBJECT = 'http://schema.org/AudioObject';
+const AUTO_ADVANCE = 'https://schema.repronim.org/auto_advance';
+const BACK_DISABLED = 'https://schema.repronim.org/disable_back';
 const CONTENT_URL = 'http://schema.org/contentUrl';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
+const FULL_SCREEN = 'https://schema.repronim.org/full_screen';
 const IMAGE = 'http://schema.org/image';
 const IMAGE_OBJECT = 'http://schema.org/ImageObject';
 const INPUT_TYPE = 'https://schema.repronim.org/inputType';
@@ -124,6 +127,16 @@ export const transformVariableMap = variableAr => variableAr.reduce((accumulator
   };
 }, {});
 
+export const isSkippable = (allowList) => {
+  if (allowList.includes(REFUSE_TO_ANSWER)) {
+    return true;
+  }
+  if (allowList.includes(DO_NOT_KNOW)) {
+    return true;
+  }
+  return false;
+};
+
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
   schema: languageListToObject(appletJson[URL]).en,
@@ -139,6 +152,10 @@ export const appletTransformJson = appletJson => ({
 });
 
 export const itemTransformJson = (itemJson) => {
+  // For items, 'skippable' is undefined if there's no ALLOW prop
+  const allowList = flattenIdList(R.path([ALLOW, 0, '@list'], itemJson));
+  const skippable = isSkippable(allowList) ? true : undefined;
+
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
 
@@ -146,7 +163,6 @@ export const itemTransformJson = (itemJson) => {
   const inputsObj = transformInputs(inputs);
 
   return {
-    name: languageListToObject(itemJson[PREF_LABEL]),
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
@@ -155,6 +171,10 @@ export const itemTransformJson = (itemJson) => {
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
     valueConstraints,
+    skippable,
+    fullScreen: allowList.includes(FULL_SCREEN),
+    backDisabled: allowList.includes(BACK_DISABLED),
+    autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
   };
 };
@@ -173,8 +193,6 @@ export const itemAttachExtras = (
 
 export const activityTransformJson = (activityJson, itemsJson) => {
   const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
-  const allowRefuseToAnswer = allowList.includes(REFUSE_TO_ANSWER);
-  const allowDoNotKnow = allowList.includes(DO_NOT_KNOW);
 
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
   const notification = {}; // TO DO
@@ -200,8 +218,10 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
     image: languageListToObject(activityJson[IMAGE]),
-    allowRefuseToAnswer,
-    allowDoNotKnow,
+    skippable: isSkippable(allowList),
+    backDisabled: allowList.includes(BACK_DISABLED),
+    fullScreen: allowList.includes(FULL_SCREEN),
+    autoAdvance: allowList.includes(AUTO_ADVANCE),
     scoringLogic,
     notification,
     info,
