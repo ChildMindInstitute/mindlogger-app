@@ -17,10 +17,11 @@ export class Camera extends Component {
         waitUntilSaved: true,
       },
       quality: 0.5,
-      cameraType: 'front',
+      cameraType: 'back',
       videoQuality: 'low',
       maxWidth: 2048,
       maxHeight: 2048,
+      chooseFromLibraryButtonTitle: 'Library',
     };
     ImagePicker.launchCamera(options, (response) => {
       if (!response.didCancel && !response.error) {
