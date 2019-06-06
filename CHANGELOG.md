@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - full screen
   - auto advance
 
-## Changed
+### Changed
 - Default if no value is set for an item
 - Fixes some small issues with the Camera widget
 
