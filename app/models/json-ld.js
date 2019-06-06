@@ -153,10 +153,8 @@ export const appletTransformJson = appletJson => ({
 
 export const itemTransformJson = (itemJson) => {
   // For items, 'skippable' is undefined if there's no ALLOW prop
-  const allowList = R.path([ALLOW, 0, '@list'], itemJson);
-  const skippable = typeof allowList === 'undefined'
-    ? undefined
-    : isSkippable(flattenIdList(allowList));
+  const allowList = flattenIdList(R.path([ALLOW, 0, '@list'], itemJson));
+  const skippable = isSkippable(allowList) ? true : undefined;
 
   const valueConstraintsObj = R.pathOr({}, [VALUE_CONSTRAINTS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
@@ -165,7 +163,6 @@ export const itemTransformJson = (itemJson) => {
   const inputsObj = transformInputs(inputs);
 
   return {
-    name: languageListToObject(itemJson[PREF_LABEL]),
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
@@ -175,9 +172,9 @@ export const itemTransformJson = (itemJson) => {
     preamble: languageListToObject(itemJson[PREAMBLE]),
     valueConstraints,
     skippable,
-    fullScreen: flattenIdList(allowList).includes(FULL_SCREEN),
-    backDisabled: flattenIdList(allowList).includes(BACK_DISABLED),
-    autoAdvance: flattenIdList(allowList).includes(AUTO_ADVANCE),
+    fullScreen: allowList.includes(FULL_SCREEN),
+    backDisabled: allowList.includes(BACK_DISABLED),
+    autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
   };
 };

@@ -20,7 +20,11 @@ const ScreenButton = ({ transparent = false, onPress, text, children }) => {
         {children}
       </Button>
     )
-    : <View style={styles.button} />;
+    : (
+      <Button transparent style={styles.button}>
+        <Text style={styles.buttonText}> </Text>
+      </Button>
+    );
 };
 
 export default ScreenButton;
