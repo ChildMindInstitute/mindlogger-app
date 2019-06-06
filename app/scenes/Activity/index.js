@@ -63,9 +63,9 @@ const Activity = ({
         activity={activity}
         answers={responses}
         currentScreen={currentScreen}
-        onChange={(answer) => {
+        onChange={(answer, goToNext = false) => {
           setAnswer(activity.id, currentScreen, answer);
-          if (autoAdvance || fullScreen) {
+          if (goToNext || autoAdvance || fullScreen) {
             nextScreen();
           }
         }}

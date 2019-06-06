@@ -6,6 +6,7 @@ const AUDIO_OBJECT = 'http://schema.org/AudioObject';
 const AUTO_ADVANCE = 'https://schema.repronim.org/auto_advance';
 const BACK_DISABLED = 'https://schema.repronim.org/disable_back';
 const CONTENT_URL = 'http://schema.org/contentUrl';
+const DELAY = 'https://schema.repronim.org/delay';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
 const FULL_SCREEN = 'https://schema.repronim.org/full_screen';
@@ -28,6 +29,7 @@ const REQUIRED_VALUE = 'http://schema.repronim.org/requiredValue';
 const SCHEMA_VERSION = 'http://schema.org/schemaVersion';
 const SCORING_LOGIC = 'https://schema.repronim.org/scoringLogic';
 const SHUFFLE = 'https://schema.repronim.org/shuffle';
+const TIMER = 'https://schema.repronim.org/timer';
 const TRANSCRIPT = 'http://schema.org/transcript';
 const URL = 'http://schema.org/url';
 const VALUE = 'http://schema.org/value';
@@ -170,6 +172,8 @@ export const itemTransformJson = (itemJson) => {
     inputType: listToValue(itemJson[INPUT_TYPE]),
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
+    timer: R.path([TIMER, 0, '@value'], itemJson),
+    delay: R.path([DELAY, 0, '@value'], itemJson),
     valueConstraints,
     skippable,
     fullScreen: allowList.includes(FULL_SCREEN),

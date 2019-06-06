@@ -1,25 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
 import ScreenDisplay from './ScreenDisplay';
-import WidgetError from './WidgetError';
-import {
-  AudioImageRecord,
-  AudioRecord,
-  AudioStimulus,
-  DatePicker,
-  MultiSelect,
-  Radio,
-  Select,
-  Slider,
-  TextEntry,
-  TimeRange,
-  VisualStimulusResponse,
-  Drawing,
-  Camera,
-  TableInput,
-} from '../../widgets';
+import Widget from './Widget';
+import Timer from '../Timer';
+import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
   content: {
@@ -37,6 +22,23 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 20,
   },
+  delayView: {
+    position: 'relative',
+    minHeight: 100,
+  },
+  timerView: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  delayTimerView: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.5,
+  },
 });
 
 class Screen extends Component {
@@ -51,171 +53,81 @@ class Screen extends Component {
     super();
     this.state = {
       scrollEnabled: true,
+      inputDelayed: false,
+      timerActive: false,
     };
+    this.interval = null;
+    this.startTime = null;
   }
 
-  renderWidget() {
-    const { screen, answer, onChange, isCurrent } = this.props;
+  componentDidMount() {
+    const { isCurrent } = this.props;
+    if (isCurrent) {
+      this._startClock();
+    }
+  }
 
-    if (screen.inputType === 'radio'
-      && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
-      return (
-        <MultiSelect
-          config={screen.valueConstraints}
-          onChange={onChange}
-          value={answer}
-        />
-      );
+  componentDidUpdate(oldProps) {
+    const { isCurrent } = this.props;
+    if (isCurrent && oldProps.isCurrent === false) {
+      this._startClock();
+    } else if (oldProps.isCurrent && isCurrent === false) {
+      this._resetClock();
     }
-    if (screen.inputType === 'radio'
-      && R.path(['valueConstraints', 'itemList'], screen)) {
-      return (
-        <Radio
-          config={screen.valueConstraints}
-          onChange={onChange}
-          value={answer}
-        />
-      );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  _startClock = () => {
+    this.interval = setInterval(this._clockTick, 100);
+    this.startTime = Date.now();
+  }
+
+  _resetClock = () => {
+    if (this.interval) {
+      clearInterval(this.interval);
+      this.interval = null;
+      this.setState({
+        scrollEnabled: true,
+        inputDelayed: false,
+        timerActive: false,
+      });
     }
-    if (screen.inputType === 'slider') {
-      return (
-        <Slider
-          config={screen.valueConstraints}
-          onChange={onChange}
-          onPress={() => this.setState({ scrollEnabled: false })}
-          onRelease={() => this.setState({ scrollEnabled: true })}
-          value={answer}
-        />
-      );
+  }
+
+  _clockTick = () => {
+    const { onChange, screen, answer } = this.props;
+    const { delay, timer } = screen;
+    const { inputDelayed, timerActive } = this.state;
+    const timeElapsed = Date.now() - this.startTime;
+
+    // Set inputDelayed to true if we're in the delay period
+    if (delay) {
+      if (timeElapsed < delay && inputDelayed === false) {
+        this.setState({ inputDelayed: true });
+      } else if (timeElapsed >= delay && inputDelayed === true) {
+        this.setState({ inputDelayed: false });
+      }
     }
-    if (screen.inputType === 'timeRange') {
-      return (
-        <TimeRange
-          onChange={onChange}
-          value={answer}
-        />
-      );
+
+    // Advance to next if the timer has expired
+    if (timer) {
+      const safeDelay = delay || 0;
+      const timerEnd = safeDelay + timer;
+      if (timeElapsed > safeDelay && timeElapsed < timerEnd && timerActive === false) {
+        this.setState({ timerActive: true });
+      } else if (timeElapsed >= timerEnd) {
+        this.setState({ timerActive: false });
+        onChange(answer, true);
+      }
     }
-    if (screen.inputType === 'date') {
-      return (
-        <DatePicker
-          onChange={onChange}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'select'
-      && R.path(['valueConstraints', 'itemList'], screen)) {
-      return (
-        <Select
-          onChange={onChange}
-          value={answer}
-          config={screen.valueConstraints}
-        />
-      );
-    }
-    if (screen.inputType === 'text') {
-      return (
-        <TextEntry
-          onChange={onChange}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'audioRecord' || screen.inputType === 'audioPassageRecord') {
-      return (
-        <AudioRecord
-          onChange={onChange}
-          config={screen.valueConstraints}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'audioImageRecord'
-      && R.path(['valueConstraints', 'image'], screen)) {
-      return (
-        <AudioImageRecord
-          onChange={onChange}
-          config={screen.valueConstraints}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'audioStimulus') {
-      return (
-        <AudioStimulus
-          value={answer}
-          onChange={onChange}
-          config={screen.inputs}
-          isCurrent={isCurrent}
-        />
-      );
-    }
-    if (screen.inputType === 'photo') {
-      return (
-        <Camera
-          value={answer}
-          onChange={onChange}
-        />
-      );
-    }
-    if (screen.inputType === 'video') {
-      return (
-        <Camera
-          value={answer}
-          onChange={onChange}
-          video
-        />
-      );
-    }
-    if (screen.inputType === 'visual-stimulus-response') {
-      return (
-        <VisualStimulusResponse
-          onChange={onChange}
-          config={screen.inputs}
-          isCurrent={isCurrent}
-        />
-      );
-    }
-    if (screen.inputType === 'drawing') {
-      return (
-        <Drawing
-          config={screen.inputs}
-          onChange={onChange}
-          onPress={() => this.setState({ scrollEnabled: false })}
-          onRelease={() => this.setState({ scrollEnabled: true })}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'tableCounter') {
-      return (
-        <TableInput
-          config={screen.inputs}
-          onChange={onChange}
-          value={answer}
-        />
-      );
-    }
-    if (screen.inputType === 'tableText') {
-      return (
-        <TableInput
-          config={screen.inputs}
-          onChange={onChange}
-          value={answer}
-          freeEntry
-        />
-      );
-    }
-    if (screen.inputType === 'markdown-message') {
-      return null;
-    }
-    return <WidgetError />;
   }
 
   render() {
-    const { screen } = this.props;
-    const { scrollEnabled } = this.state;
+    const { screen, answer, onChange, isCurrent } = this.props;
+    const { scrollEnabled, inputDelayed, timerActive } = this.state;
     return (
       <ScrollView
         alwaysBounceVertical={false}
@@ -223,8 +135,46 @@ class Screen extends Component {
         contentContainerStyle={{ paddingBottom: 20, minHeight: '100%' }}
         scrollEnabled={scrollEnabled}
       >
+        {timerActive && (
+          <View style={styles.timerView}>
+            <Timer duration={screen.timer} color={colors.primary} size={40} />
+          </View>
+        )}
         <ScreenDisplay screen={screen} />
-        {this.renderWidget()}
+        {inputDelayed
+          ? (
+            <View pointerEvents="none" style={styles.delayView}>
+              <View style={styles.delayTimerView}>
+                <Timer
+                  duration={screen.delay}
+                  color={colors.tertiary}
+                  size={50}
+                  strokeWidth={5}
+                />
+              </View>
+              <View style={{ opacity: 0.25 }}>
+                <Widget
+                  answer={answer}
+                  onChange={onChange}
+                  isCurrent={isCurrent}
+                  screen={screen}
+                  onPress={() => { this.setState({ scrollEnabled: false }); }}
+                  onRelease={() => { this.setState({ scrollEnabled: true }); }}
+                />
+              </View>
+            </View>
+          )
+          : (
+            <Widget
+              answer={answer}
+              onChange={onChange}
+              isCurrent={isCurrent}
+              screen={screen}
+              onPress={() => { this.setState({ scrollEnabled: false }); }}
+              onRelease={() => { this.setState({ scrollEnabled: true }); }}
+            />
+          )
+        }
       </ScrollView>
     );
   }

@@ -36,7 +36,7 @@ const ActivityScreens = ({
           <Screen
             screen={item}
             answer={answers[index]}
-            onChange={(answer) => { onChange(answer, index); }}
+            onChange={onChange}
             authToken={authToken}
             isCurrent={index === currentScreen}
           />

@@ -16,7 +16,6 @@ export class AudioImageRecord extends Component {
         <Image
           style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
           source={{ uri: config.image.en }}
-          loadingIndicatorSource
         />
         <AudioRecorder
           onStop={this.onRecord}
