@@ -5,8 +5,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.2.7] - 2019-06-04
+### Added
+- Camera widget (restored)
+- Table widget (restored)
+  - counter
+  - text entry
+
+### Changed
+- audio: split stimulus and record into separate widgets
+- Details page now requires a click to get to rather than to get through
+
+## [0.2.6] - 2019-05-28
+### Added
+- Mobile data usage settings
+
+### Changed
+- Settings screen
+
+## [0.2.5] - 2019-05-24
+### Added
+- Conditional logic
+
+### Changed
+- Improved audio recording
+
 ## [0.2.4] - 2019-05-21
 ### Added
+- Skinning
 - Usage descriptions
 - Large icon
 
