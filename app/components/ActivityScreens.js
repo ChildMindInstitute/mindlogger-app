@@ -24,8 +24,10 @@ class ActivityScreens extends React.PureComponent {
 
   componentDidUpdate(oldProps) {
     if (oldProps.currentScreen !== this.props.currentScreen) {
+      // eslint-disable-next-line
       this.setState({
         activeScreens: [oldProps.currentScreen, this.props.currentScreen],
+        direction: calcPosition(oldProps.currentScreen, this.props.currentScreen),
       });
     }
   }
@@ -38,7 +40,7 @@ class ActivityScreens extends React.PureComponent {
       onChange,
       authToken,
     } = this.props;
-    const { activeScreens } = this.state;
+    const { activeScreens, direction } = this.state;
     return (
       <View style={{ flex: 1, width: '100%', position: 'relative' }}>
         {activeScreens.map(index => (
@@ -50,6 +52,7 @@ class ActivityScreens extends React.PureComponent {
               width: '100%',
             }}
             position={calcPosition(currentScreen, index)}
+            slideInFrom={direction}
           >
             <Screen
               screen={activity.items[index]}

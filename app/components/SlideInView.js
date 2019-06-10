@@ -15,10 +15,23 @@ const mapPositionToInt = (position) => {
 export default class SlideInView extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { position } = props;
+    const { slideInFrom } = props;
     this.state = {
-      xPos: new Animated.Value(mapPositionToInt(position)),
+      xPos: new Animated.Value(mapPositionToInt(slideInFrom)),
     };
+  }
+
+  componentDidMount() {
+    const { position } = this.props;
+    Animated.spring(
+      this.state.xPos,
+      {
+        toValue: mapPositionToInt(position),
+        friction: 7,
+        tension: 20,
+        useNativeDriver: true,
+      },
+    ).start();
   }
 
   componentDidUpdate(prevProps) {
@@ -73,10 +86,12 @@ export default class SlideInView extends React.PureComponent {
 
 SlideInView.defaultProps = {
   position: undefined,
+  slideInFrom: 'middle',
   style: {},
 };
 
 SlideInView.propTypes = {
+  slideInFrom: PropTypes.string,
   position: PropTypes.string,
   children: PropTypes.node.isRequired,
   style: PropTypes.object,
