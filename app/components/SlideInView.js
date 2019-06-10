@@ -12,7 +12,7 @@ const mapPositionToInt = (position) => {
   return 0;
 };
 
-export default class SlideInView extends React.Component {
+export default class SlideInView extends React.PureComponent {
   constructor(props) {
     super(props);
     const { position } = props;
@@ -36,6 +36,7 @@ export default class SlideInView extends React.Component {
           toValue: mapPositionToInt(position),
           friction: 7,
           tension: 20,
+          useNativeDriver: true,
         },
       ).start();
     }

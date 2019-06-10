@@ -58,7 +58,6 @@ const Activity = ({
   return (
     <Container>
       <StatusBar hidden />
-      {!fullScreen && <ActHeader title={activity.name.en} />}
       <ActivityScreens
         activity={activity}
         answers={responses}
@@ -88,6 +87,7 @@ const Activity = ({
           />
         </View>
       )}
+      {!fullScreen && <ActHeader title={activity.name.en} />}
     </Container>
   );
 };
