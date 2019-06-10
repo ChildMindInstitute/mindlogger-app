@@ -44,6 +44,10 @@ export default class AudioRecorder extends Component {
     if (recorder) {
       recorder.destroy();
     }
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
   }
 
   record = () => {
@@ -119,6 +123,7 @@ export default class AudioRecorder extends Component {
           console.warn(err, message);
         }
         clearInterval(intervalId);
+        intervalId = null;
         this.setState({
           recorderState: 'stopped',
         });
@@ -138,6 +143,7 @@ export default class AudioRecorder extends Component {
       });
     }
     clearInterval(intervalId);
+    intervalId = null;
     this.setState({
       recorderState: 'ready',
       elapsed: null,
