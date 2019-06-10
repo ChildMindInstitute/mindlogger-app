@@ -4,6 +4,7 @@ export * from './AudioStimulus';
 export * from './Camera';
 export * from './DatePicker';
 export * from './Drawing';
+export * from './Geolocation';
 export * from './MultiSelect';
 export * from './Radio';
 export * from './Select';
