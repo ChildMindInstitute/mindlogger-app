@@ -6,17 +6,18 @@ import {
   AudioImageRecord,
   AudioRecord,
   AudioStimulus,
+  Camera,
   DatePicker,
+  Drawing,
+  Geolocation,
   MultiSelect,
   Radio,
   Select,
   Slider,
+  TableInput,
   TextEntry,
   TimeRange,
   VisualStimulusResponse,
-  Drawing,
-  Camera,
-  TableInput,
 } from '../../widgets';
 
 const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => {
@@ -167,6 +168,14 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => 
         onChange={onChange}
         value={answer}
         freeEntry
+      />
+    );
+  }
+  if (screen.inputType === 'geolocation') {
+    return (
+      <Geolocation
+        value={answer}
+        onChange={onChange}
       />
     );
   }

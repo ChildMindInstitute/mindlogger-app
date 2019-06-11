@@ -14,37 +14,59 @@ const calcPosition = (currentScreen, index) => {
   return 'middle';
 };
 
-const ActivityScreens = ({
-  activity,
-  answers,
-  currentScreen,
-  onChange,
-  authToken,
-}) => (
-  <View style={{ flex: 1, width: '100%', position: 'relative' }}>
-    {
-      activity.items.map((item, index) => (
-        <SlideInView
-          key={`${activity.id}-screen-${index}`}
-          style={{
-            position: 'absolute',
-            height: '100%',
-            width: '100%',
-          }}
-          position={calcPosition(currentScreen, index)}
-        >
-          <Screen
-            screen={item}
-            answer={answers[index]}
-            onChange={onChange}
-            authToken={authToken}
-            isCurrent={index === currentScreen}
-          />
-        </SlideInView>
-      ))
+class ActivityScreens extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeScreens: [props.currentScreen],
+    };
+  }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.currentScreen !== this.props.currentScreen) {
+      // eslint-disable-next-line
+      this.setState({
+        activeScreens: [oldProps.currentScreen, this.props.currentScreen],
+        direction: calcPosition(oldProps.currentScreen, this.props.currentScreen),
+      });
     }
-  </View>
-);
+  }
+
+  render() {
+    const {
+      activity,
+      answers,
+      currentScreen,
+      onChange,
+      authToken,
+    } = this.props;
+    const { activeScreens, direction } = this.state;
+    return (
+      <View style={{ flex: 1, width: '100%', position: 'relative' }}>
+        {activeScreens.map(index => (
+          <SlideInView
+            key={`${activity.id}-screen-${index}`}
+            style={{
+              position: 'absolute',
+              height: '100%',
+              width: '100%',
+            }}
+            position={calcPosition(currentScreen, index)}
+            slideInFrom={direction}
+          >
+            <Screen
+              screen={activity.items[index]}
+              answer={answers[index]}
+              onChange={onChange}
+              authToken={authToken}
+              isCurrent={index === currentScreen}
+            />
+          </SlideInView>
+        ))}
+      </View>
+    );
+  }
+}
 
 ActivityScreens.propTypes = {
   activity: PropTypes.object.isRequired,

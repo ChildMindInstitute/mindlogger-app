@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   },
   paddingContent: {
     padding: 20,
+    paddingTop: 40,
     flex: 1,
     position: 'relative',
   },

@@ -118,7 +118,7 @@ export default class Slider extends React.Component {
       barHeight
     );
     return (
-      <PageContainer {...this.panResponder.panHandlers}>
+      <PageContainer>
 
         <Container>
           {labels &&
@@ -131,7 +131,7 @@ export default class Slider extends React.Component {
             </LabelContainer>
           }
 
-          <BarContainer>
+          <BarContainer {...this.panResponder.panHandlers}>
             <Bar onLayout={this.onBarLayout} />
             <RoundRect
               bottomOffset={bottomOffset}
