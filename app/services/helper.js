@@ -1,5 +1,8 @@
 import RNFetchBlob from 'rn-fetch-blob';
+import { Platform } from 'react-native';
+import { getStore } from '../store';
 import { fileLink } from './network';
+import { mediaMapSelector } from '../state/media/media.selectors';
 
 export const getFileInfoAsync = (path) => {
   return RNFetchBlob.fs.stat(path);
@@ -55,14 +58,27 @@ export const randomLink = (files, token) => {
   return fileLink(rand, token);
 }
 
-/**
- * getURL will replace an SVG image with a JPG image because
- * react-native can't handle SVGs, but web prefers them.
- * @param {String} url 
- */
+
 export const getURL = (url) => {
+  let transformedUrl = url;
+
+  // getURL will replace an SVG image with a JPG image because
+  // react-native can't handle SVGs, but web prefers them.
   if (url.endsWith('.svg')) {
-    return url.replace('.svg', '.jpg');
+    transformedUrl = url.replace('.svg', '.jpg');
   }
-  return url;
+
+  // Check if we've downloaded the asset already, and if so use local file URI
+  const state = getStore().getState();
+  const mediaMap = mediaMapSelector(state);
+  if (typeof mediaMap[url] === 'string') {
+    transformedUrl = mediaMap[url];
+
+    // Android needs a 'file://' prefix
+    if (Platform.OS === 'android') {
+      transformedUrl = `file://${transformedUrl}`;
+    }
+  }
+
+  return transformedUrl;
 };

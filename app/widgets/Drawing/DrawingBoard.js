@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, PanResponder, StyleSheet } from 'react-native';
+import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline } from 'react-native-svg';
-import { CachedImage } from 'react-native-img-cache';
 
 const SENSITIVITY = 30; // Milliseconds between line points (lower is more sensitive)
 
@@ -167,7 +166,7 @@ export default class DrawingBoard extends Component {
         {...this._panResponder.panHandlers}
       >
         {this.props.imageSource && (
-          <CachedImage
+          <Image
             style={styles.picture}
             source={{ uri: this.props.imageSource }}
           />

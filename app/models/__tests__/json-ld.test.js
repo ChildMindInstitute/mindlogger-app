@@ -214,7 +214,6 @@ test('itemTransformJson', () => {
   const itemKey = 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld';
   const itemJson = emaHbn.items[itemKey];
   expect(itemTransformJson(itemJson)).toEqual({
-    name: { en: 'Nightmares' },
     description: { en: 'whether or not your child experience nightmares or night terrors' },
     schemaVersion: { en: '0.0.1' },
     version: { en: '0.0.1' },
@@ -254,6 +253,9 @@ test('itemTransformJson', () => {
     autoAdvance: false,
     backDisabled: false,
     fullScreen: false,
+    timer: undefined,
+    delay: undefined,
+    media: undefined,
   });
 });
 

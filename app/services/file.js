@@ -18,7 +18,11 @@ export const cleanFiles = (responses) => {
 
 export const downloadFile = (uri) => {
   const fileName = stringHash(uri); // Not using this for cryptography
-  const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${fileName}`;
+
+  // Get the extension - assumes filename has extension and discards any query params
+  const extension = uri.split('.').pop().split('?').shift();
+
+  const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${fileName}.${extension}`;
 
   return RNFetchBlob.fs.exists(toPath)
     .then((exist) => {

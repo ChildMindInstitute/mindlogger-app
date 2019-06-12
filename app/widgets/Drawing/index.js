@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import DrawingBoard from './DrawingBoard';
+import { getURL } from '../../services/helper';
 
 const styles = StyleSheet.create({
   text: {
@@ -20,10 +21,13 @@ export class Drawing extends React.Component {
 
   render() {
     const { config, value, onChange, onPress, onRelease } = this.props;
+    const url = config.backgroundImage
+      ? getURL(config.backgroundImage)
+      : null;
     return (
       <View>
         <DrawingBoard
-          imageSource={config.backgroundImage ? config.backgroundImage.contentUrl.en : null}
+          imageSource={url}
           lines={value && value.lines}
           onResult={onChange}
           ref={(ref) => { this.board = ref; }}

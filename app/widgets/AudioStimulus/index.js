@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
+import { getURL } from '../../services/helper';
 import { AudioPlayer } from './AudioPlayer';
 
 export class AudioStimulus extends Component {
@@ -26,10 +27,14 @@ export class AudioStimulus extends Component {
     const url = config.stimulus.contentUrl
       ? config.stimulus.contentUrl.en
       : config.stimulus;
+
+    // There is an audio-toolkit bug which requires the file:// prefix even on iOS
+    const safeUrl = getURL(url).replace('file://', '');
+
     return (
       <View style={{ paddingTop: 16, paddingBottom: 16 }}>
         <AudioPlayer
-          source={url}
+          source={`file://${safeUrl}`}
           ref={(ref) => { this.player = ref; }}
           allowReplay={config.allowReplay}
           onEnd={() => onChange(true)}

@@ -1,8 +1,18 @@
-import { addMediaFile } from './media.actions';
-import { downloadFile } from '../../services/file';
+import { addMediaFile, clearMedia } from './media.actions';
+import { downloadFile, deleteFile } from '../../services/file';
+import { loggedInSelector } from '../user/user.selectors';
 
-export const downloadMediaFile = uri => dispatch => downloadFile(uri)
-  .then(filePath => dispatch(addMediaFile(uri, filePath)));
+export const downloadMediaFile = uri => (dispatch, getState) => downloadFile(uri)
+  .then((filePath) => {
+    // Make sure user is still logged in when the download finishes
+    const state = getState();
+    const loggedIn = loggedInSelector(state);
+    if (loggedIn) {
+      dispatch(addMediaFile(uri, filePath));
+    } else {
+      deleteFile(filePath);
+    }
+  });
 
 export const downloadAppletsMedia = transformedApplets => (dispatch) => {
   transformedApplets.forEach((applet) => {
@@ -18,4 +28,13 @@ export const downloadAppletsMedia = transformedApplets => (dispatch) => {
       });
     });
   });
+};
+
+export const deleteAndClearMedia = () => (dispatch, getState) => {
+  const { media } = getState();
+  const { mediaMap } = media;
+  Object.keys(mediaMap).forEach((key) => {
+    deleteFile(mediaMap[key]);
+  });
+  dispatch(clearMedia());
 };
