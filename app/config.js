@@ -1,5 +1,5 @@
 export default {
-  defaultApiHost: 'https://api.mindlogger.info/api/v1',
+  defaultApiHost: 'https://api.mindlogger.org/api/v1',
   defaultSkin: {
     name: 'MindLogger',
     colors: {
