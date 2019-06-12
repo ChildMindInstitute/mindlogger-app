@@ -23,10 +23,13 @@ export class AudioStimulus extends Component {
 
   render() {
     const { config, onChange } = this.props;
+    const url = config.stimulus.contentUrl
+      ? config.stimulus.contentUrl.en
+      : config.stimulus;
     return (
       <View style={{ paddingTop: 16, paddingBottom: 16 }}>
         <AudioPlayer
-          source={config.stimulus.contentUrl.en}
+          source={url}
           ref={(ref) => { this.player = ref; }}
           allowReplay={config.allowReplay}
           onEnd={() => onChange(true)}
@@ -39,7 +42,7 @@ export class AudioStimulus extends Component {
 AudioStimulus.defaultProps = {
   value: false,
   config: {
-    stimulus: {},
+    stimulus: '',
     autoStart: false,
   },
 };
@@ -49,9 +52,7 @@ AudioStimulus.propTypes = {
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
   config: PropTypes.shape({
-    stimulus: PropTypes.shape({
-      contentUrl: PropTypes.object,
-    }),
+    stimulus: PropTypes.string,
     autoStart: PropTypes.bool,
     autoAdvance: PropTypes.bool,
     allowReplay: PropTypes.bool,

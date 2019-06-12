@@ -1,6 +1,7 @@
 import { getApplets, registerOpenApplet } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
+import { downloadAppletsMedia } from '../media/media.thunks';
 import { activitiesSelector } from './applets.selectors';
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import {
@@ -28,6 +29,7 @@ export const downloadApplets = () => (dispatch, getState) => {
       const transformedApplets = applets.map(applet => transformApplet(applet));
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
+      dispatch(downloadAppletsMedia(transformedApplets));
     }
   }).finally(() => {
     dispatch(setDownloadingApplets(false));

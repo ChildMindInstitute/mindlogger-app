@@ -9,6 +9,7 @@ const CONTENT_URL = 'http://schema.org/contentUrl';
 const DELAY = 'https://schema.repronim.org/delay';
 const DESCRIPTION = 'http://schema.org/description';
 const DO_NOT_KNOW = 'https://schema.repronim.org/dont_know_answer';
+const ENCODING_FORMAT = 'http://schema.org/encodingFormat';
 const FULL_SCREEN = 'https://schema.repronim.org/full_screen';
 const IMAGE = 'http://schema.org/image';
 const IMAGE_OBJECT = 'http://schema.org/ImageObject';
@@ -17,6 +18,7 @@ const INPUTS = 'https://schema.repronim.org/inputs';
 const IS_ABOUT = 'https://schema.repronim.org/isAbout';
 const ITEM_LIST_ELEMENT = 'http://schema.org/itemListElement';
 const MAX_VALUE = 'http://schema.org/maxValue';
+const MEDIA = 'https://schema.repronim.org/media';
 const MIN_VALUE = 'http://schema.org/minValue';
 const MULTIPLE_CHOICE = 'http://schema.repronim.org/multipleChoice';
 const NAME = 'http://schema.org/name';
@@ -129,6 +131,23 @@ export const transformVariableMap = variableAr => variableAr.reduce((accumulator
   };
 }, {});
 
+export const transformMedia = (mediaObj) => {
+  if (typeof mediaObj === 'undefined') {
+    return undefined;
+  }
+
+  const keys = Object.keys(mediaObj);
+  return keys.map((key) => {
+    const media = mediaObj[key];
+    return {
+      contentUrl: R.path([0, CONTENT_URL, 0, '@value'], media),
+      transcript: R.path([0, TRANSCRIPT, 0, '@value'], media),
+      encodingType: R.path([0, ENCODING_FORMAT, 0, '@value'], media),
+      name: R.path([0, NAME, 0, '@value'], media),
+    };
+  });
+};
+
 export const isSkippable = (allowList) => {
   if (allowList.includes(REFUSE_TO_ANSWER)) {
     return true;
@@ -164,6 +183,8 @@ export const itemTransformJson = (itemJson) => {
   const inputs = R.pathOr([], [INPUTS], itemJson);
   const inputsObj = transformInputs(inputs);
 
+  const media = transformMedia(R.path([MEDIA, 0], itemJson));
+
   return {
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
@@ -180,6 +201,7 @@ export const itemTransformJson = (itemJson) => {
     backDisabled: allowList.includes(BACK_DISABLED),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
+    media,
   };
 };
 
