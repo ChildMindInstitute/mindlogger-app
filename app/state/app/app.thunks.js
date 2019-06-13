@@ -5,6 +5,7 @@ import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
 import { downloadApplets } from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
+import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearUser } from '../user/user.actions';
 import { signOut } from '../../services/network';
@@ -48,6 +49,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearUser());
   dispatch(clearApplets());
   dispatch(clearResponses());
+  dispatch(deleteAndClearMedia());
   PushNotification.cancelAllLocalNotifications();
 };
 

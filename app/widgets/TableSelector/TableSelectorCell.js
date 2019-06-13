@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Image } from 'react-native';
 import { Text, Button } from 'native-base';
 import styles from './styles';
-import { GImage } from '../../components/core';
+import { getURL } from '../../services/helper';
 
 const TableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) => {
   const imageStyle = {
-    width: (height - 3),
-    height: (height - 3),
+    width: (height - 6),
+    height: (height - 6),
     padding: 3,
   };
   switch (cell.type) {
@@ -25,9 +25,9 @@ const TableSelectorCell = ({ cell, isSelected = false, onPress, height = 60 }) =
     case 'file':
       return (
         <TouchableOpacity onPress={onPress}>
-          <GImage
+          <Image
             style={imageStyle}
-            file={cell.file}
+            source={{ uri: getURL(cell.file) }}
           />
         </TouchableOpacity>
       );

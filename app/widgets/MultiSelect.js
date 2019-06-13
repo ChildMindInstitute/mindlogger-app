@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { CachedImage } from 'react-native-img-cache';
 import {
   ListItem,
   Text,
@@ -42,9 +41,16 @@ export class MultiSelect extends Component {
           itemList.map((item, index) => (
             <ListItem onPress={() => this.onAnswer(item.value)} key={index}>
               <Body>
-                <View style={{flexDirection: 'row'}}>
-                  { item.image ? <CachedImage style={{ width: 64, height: 64, resizeMode: 'cover' }} source={{ uri: getURL(item.image.en) }} /> : <View></View>}
-                  <View style={{justifyContent: 'center'}}>
+                <View style={{ flexDirection: 'row' }}>
+                  {item.image
+                    ? (
+                      <Image
+                        style={{ width: 64, height: 64, resizeMode: 'cover' }}
+                        source={{ uri: getURL(item.image.en) }}
+                      />
+                    ) : <View />
+                  }
+                  <View style={{ justifyContent: 'center' }}>
                     <Text>{item.name.en}</Text>
                   </View>
                 </View>

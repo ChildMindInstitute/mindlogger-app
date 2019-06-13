@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import AudioRecorder from './AudioRecorder';
+import { getURL } from '../../services/helper';
 
 export class AudioImageRecord extends Component {
   onRecord = (filePath) => {
@@ -15,7 +16,7 @@ export class AudioImageRecord extends Component {
       <View style={{ paddingBottom: 16 }}>
         <Image
           style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
-          source={{ uri: config.image.en }}
+          source={{ uri: getURL(config.image.en) }}
         />
         <AudioRecorder
           onStop={this.onRecord}
