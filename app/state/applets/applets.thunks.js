@@ -45,12 +45,12 @@ export const joinOpenApplet = appletURI => (dispatch, getState) => {
     appletURI,
   )
     .then(() => {
-      downloadApplets()(dispatch, getState);
+      dispatch(downloadApplets());
     })
     .catch((e) => {
       console.warn(e);
     })
     .finally(() => {
-      dispatch(setDownloadingApplets(false));
+      // dispatch(setDownloadingApplets(false));
     });
 };

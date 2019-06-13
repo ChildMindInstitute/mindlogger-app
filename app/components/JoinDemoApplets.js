@@ -30,7 +30,7 @@ const DEMO_APPLETS = [
   },
   {
     label: 'MindLogger Demos',
-    uri: 'https://raw.githubusercontent.com/stufreen/schema-standardization/widget-demo-activity/activity-sets/mindlogger-demo/mindlogger-demo_schema.jsonld',
+    uri: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/mindlogger-demo/mindlogger-demo_schema.jsonld',
   },
 ];
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import {
   Button,
   Text,
@@ -10,7 +10,14 @@ import styles from './styles';
 import { FormInputItem } from '../../components/form/FormItem';
 import { colors } from '../../theme';
 
-const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValues, primaryColor }) => (
+const ChangeStudyForm = ({
+  onReset,
+  error,
+  handleSubmit,
+  submitting,
+  initialValues,
+  primaryColor,
+}) => (
   <Form>
     <Field
       component={FormInputItem}
@@ -22,16 +29,18 @@ const ChangeStudyForm = ({ onReset, error, handleSubmit, submitting, initialValu
       keyboardType="email-address"
     />
     {error && <Text style={styles.errorText}>{error}</Text>}
-    <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
-      {submitting
-        ? <ActivityIndicator color={primaryColor} />
-        : <Text style={[styles.buttonText, { color: primaryColor }]}>Submit</Text>}
-    </Button>
-    <Button style={styles.button} block onPress={onReset} disabled={submitting}>
-      {submitting
-        ? <ActivityIndicator color={primaryColor} />
-        : <Text style={[styles.buttonText, { color: primaryColor }]}>Reset</Text>}
-    </Button>
+    <View style={styles.buttonContainer}>
+      <Button style={styles.button} block onPress={onReset} disabled={submitting}>
+        {submitting
+          ? <ActivityIndicator color={primaryColor} />
+          : <Text style={[styles.buttonText, { color: primaryColor }]}>Reset</Text>}
+      </Button>
+      <Button style={styles.button} block onPress={handleSubmit} disabled={submitting}>
+        {submitting
+          ? <ActivityIndicator color={primaryColor} />
+          : <Text style={[styles.buttonText, { color: primaryColor }]}>Submit</Text>}
+      </Button>
+    </View>
   </Form>
 );
 

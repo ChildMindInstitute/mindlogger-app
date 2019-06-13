@@ -10,14 +10,15 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'column',
   },
-  padding: {
-    padding: 20,
-  },
-  paddingContent: {
-    padding: 20,
-    paddingTop: 40,
+  container: {
     flex: 1,
+    backgroundColor: 'white',
     position: 'relative',
+  },
+  contentContainer: {
+    padding: 20,
+    paddingTop: 60,
+    minHeight: '100%',
   },
   text: {
     paddingTop: 20,
@@ -132,8 +133,8 @@ class Screen extends Component {
     return (
       <ScrollView
         alwaysBounceVertical={false}
-        style={styles.paddingContent}
-        contentContainerStyle={{ paddingBottom: 20, minHeight: '100%' }}
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
         scrollEnabled={scrollEnabled}
       >
         {timerActive && (
