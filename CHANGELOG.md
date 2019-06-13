@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.10] - 2019-06-12
 ### Changed
 - https://api.mindlogger.info → https://api.mindlogger.org
+- v0.1 deprecated
 
 ## [0.2.9] - 2019-06-11
 ### Added
