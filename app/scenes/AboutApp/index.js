@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {StatusBar, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Content, Button, Text, Icon, View, Header, Right, Body, Title, Left } from 'native-base';
+import { Container, Content, Button, Icon, View, Header, Right, Body, Title, Left } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { MarkdownView } from 'react-native-markdown-view';
 import styles from './styles';
 import packageJson from '../../../package.json';
 import { skinSelector } from '../../state/app/app.selectors';
-import { markdownStyle } from '../../themes/activityTheme';
+import { Markdown } from '../../components/core';
 
 const logoImage = require('../../../img/color_logo.png');
 
@@ -44,7 +43,7 @@ class AboutApp extends Component { // eslint-disable-line
               </Header>
               <Content>
                 <View style={styles.content}>
-                  <MarkdownView styles={markdownStyle}>{skin.about}</MarkdownView>
+                  <Markdown>{skin.about}</Markdown>
                 </View>
               </Content>
             </Container>
@@ -67,9 +66,9 @@ class AboutApp extends Component { // eslint-disable-line
           </Header>
           <Content>
             <View style={styles.content}>
-              <MarkdownView styles={markdownStyle}>
+              <Markdown>
                 {mindloggerAbout}
-              </MarkdownView>
+              </Markdown>
               <View>
                 <Image
                   square

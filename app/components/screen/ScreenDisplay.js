@@ -1,13 +1,20 @@
 import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import { MarkdownView } from 'react-native-markdown-view';
-import { markdownStyle } from '../../themes/activityTheme';
+import { Markdown } from '../core';
 
 const ScreenDisplay = ({ screen }) => (
   <View style={{ marginBottom: 18 }}>
-    {screen.preamble && <MarkdownView styles={markdownStyle}>{screen.preamble.en}</MarkdownView>}
-    {screen.question && <MarkdownView styles={markdownStyle}>{screen.question.en}</MarkdownView>}
+    {screen.preamble && (
+      <Markdown>
+        {screen.preamble.en}
+      </Markdown>
+    )}
+    {screen.question && (
+      <Markdown>
+        {screen.question.en}
+      </Markdown>
+    )}
   </View>
 );
 
