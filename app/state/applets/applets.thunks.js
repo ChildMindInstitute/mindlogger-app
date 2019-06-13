@@ -49,8 +49,5 @@ export const joinOpenApplet = appletURI => (dispatch, getState) => {
     })
     .catch((e) => {
       console.warn(e);
-    })
-    .finally(() => {
-      // dispatch(setDownloadingApplets(false));
     });
 };
