@@ -69,12 +69,14 @@ export class AudioPlayer extends React.Component {
   stop = () => {
     const { player } = this.state;
     this.setState({ playing: false });
-    player.stop();
+    if (player) {
+      player.stop();
+    }
   }
 
   reset = () => {
     const { player, playing } = this.state;
-    if (playing) {
+    if (player && playing) {
       player.stop();
     }
     this.setState({

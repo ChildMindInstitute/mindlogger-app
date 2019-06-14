@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
   moreInfo: {
     marginTop: 16,
-    width: 60,
+    width: 'auto',
   },
   layout: {
     flex: 1,

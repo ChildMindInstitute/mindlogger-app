@@ -2,12 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 import ScreenButton from './screen/ScreenButton';
+import { colors } from '../themes/colors';
 
 const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 15,
+    backgroundColor: colors.secondary,
   },
 });
 
