@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, Platform, StyleSheet } from 'react-native';
+import { Image, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-native';
 import { View, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
 
@@ -70,8 +70,36 @@ const styles = StyleSheet.create({
 });
 
 export class Camera extends Component {
+  libraryAlert = (options, callback) => {
+    Alert.alert(
+      `Choose ${options.mediaType}`,
+      `Take a new ${options.mediaType} or choose one from your library.`,
+      [
+        {
+          text: 'Camera',
+          onPress: () => {
+            ImagePicker.launchCamera(options, (response) => {
+              response.choice = 'camera';
+              callback(response);
+            });
+          },
+        },
+        {
+          text: 'Library',
+          onPress: () => {
+            ImagePicker.launchImageLibrary(options, (response) => {
+              response.choice = 'library';
+              callback(response);
+            });
+          },
+        },
+      ],
+      { cancelable: true },
+    );
+  }
+
   take = () => {
-    const { video, onChange } = this.props;
+    const { video, onChange, config } = this.props;
     const options = {
       mediaType: video ? 'video' : 'photo',
       storageOptions: {
@@ -83,9 +111,13 @@ export class Camera extends Component {
       videoQuality: 'low',
       maxWidth: 2048,
       maxHeight: 2048,
-      chooseFromLibraryButtonTitle: 'Library',
     };
-    ImagePicker.launchCamera(options, (response) => {
+
+    const pickerFunc = config.allowLibrary
+      ? this.libraryAlert
+      : ImagePicker.launchCamera;
+
+    pickerFunc(options, (response) => {
       if (!response.didCancel && !response.error) {
         const uri = Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri;
         const filename = response.uri.split('/').pop();
@@ -93,6 +125,7 @@ export class Camera extends Component {
           uri,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
+          fromLibrary: response.choice === 'library',
         };
         onChange(picSource);
       }
@@ -137,12 +170,18 @@ export class Camera extends Component {
 Camera.defaultProps = {
   value: undefined,
   video: false,
+  config: {
+    allowLibrary: false,
+  },
 };
 
 Camera.propTypes = {
   video: PropTypes.bool,
   value: PropTypes.shape({
     uri: PropTypes.string,
+  }),
+  config: PropTypes.shape({
+    allowLibrary: PropTypes.bool,
   }),
   onChange: PropTypes.func.isRequired,
 };
