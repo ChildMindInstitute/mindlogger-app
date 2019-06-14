@@ -120,6 +120,7 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => 
       <Camera
         value={answer}
         onChange={onChange}
+        config={screen.inputs}
       />
     );
   }
@@ -128,6 +129,7 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => 
       <Camera
         value={answer}
         onChange={onChange}
+        config={screen.inputs}
         video
       />
     );
