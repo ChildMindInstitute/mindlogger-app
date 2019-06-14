@@ -171,7 +171,7 @@ Camera.defaultProps = {
   value: undefined,
   video: false,
   config: {
-    allowLibrary: false,
+    allowLibrary: true,
   },
 };
 
