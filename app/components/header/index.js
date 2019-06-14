@@ -7,8 +7,8 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    top: 16,
-    right: 16,
+    top: 30,
+    right: 20,
   },
 });
 

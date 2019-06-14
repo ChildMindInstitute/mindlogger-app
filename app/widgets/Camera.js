@@ -1,11 +1,73 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, Platform } from 'react-native';
+import { Image, TouchableOpacity, Platform, StyleSheet } from 'react-native';
 import { View, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
-import styles from '../themes/activityTheme';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
+
+const styles = StyleSheet.create({
+  body: {
+    flex: 1,
+  },
+  camera: {
+    width: '100%',
+    flex: 1,
+    position: 'relative',
+  },
+  buttonText: {
+    fontSize: 24,
+    fontWeight: '300',
+  },
+  takeButton: {
+    borderRadius: 12,
+    width: '100%',
+    height: 360,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#d10000',
+    backgroundColor: '#ffdddd',
+  },
+  videoConfirmed: {
+    borderRadius: 12,
+    width: '100%',
+    height: 360,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#00a30a',
+    backgroundColor: '#99ff9f',
+  },
+  chooseButton: {
+    borderRadius: 12,
+    width: '100%',
+    height: 116,
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#000000',
+    backgroundColor: '#dbdbdb',
+    marginTop: 8,
+  },
+  redIcon: {
+    color: '#d10000',
+    fontSize: 60,
+  },
+  greenIcon: {
+    color: '#00a30a',
+    fontSize: 60,
+  },
+  image: {
+    height: 360,
+    width: '100%',
+    backgroundColor: 'black',
+    resizeMode: 'contain',
+  },
+});
 
 export class Camera extends Component {
   take = () => {
@@ -17,7 +79,7 @@ export class Camera extends Component {
         waitUntilSaved: true,
       },
       quality: 0.5,
-      cameraType: 'back',
+      cameraType: 'front',
       videoQuality: 'low',
       maxWidth: 2048,
       maxHeight: 2048,
@@ -42,33 +104,31 @@ export class Camera extends Component {
     const iconName = video ? 'video-camera' : 'camera';
     return (
       <View style={styles.body}>
-        <View style={styles.camera}>
-          {value && video && (
-            <View style={styles.videoConfirmed}>
-              <Icon
-                type="Entypo"
-                name="check"
-                style={styles.greenIcon}
-              />
-            </View>
-          )}
-          {value && !video && (
-            <Image
-              source={value}
-              style={{ width: null, height: 200, flex: 1, margin: 20 }}
+        {value && video && (
+          <View style={styles.videoConfirmed}>
+            <Icon
+              type="Entypo"
+              name="check"
+              style={styles.greenIcon}
             />
-          )}
-          {!value && (
-            <View>
-              <TouchableOpacity
-                onPress={this.take}
-                style={styles.takeButton}
-              >
-                <Icon type="Entypo" name={iconName} style={styles.redIcon} />
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+          </View>
+        )}
+        {value && !video && (
+          <Image
+            source={value}
+            style={styles.image}
+          />
+        )}
+        {!value && (
+          <View>
+            <TouchableOpacity
+              onPress={this.take}
+              style={styles.takeButton}
+            >
+              <Icon type="Entypo" name={iconName} style={styles.redIcon} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }
