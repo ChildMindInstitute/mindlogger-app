@@ -101,7 +101,7 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode 6
         versionName "0.2.12"
         ndk {
             abiFilters "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
@@ -118,10 +118,10 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file("mdc_app_key.keystore")
-            storePassword "mdcapp"
-            keyAlias "mdc_app"
-            keyPassword "mdcapp"
+            storeFile file(System.getenv("HOME") + "/keystores/google_play_mindlogger.jks")
+            storePassword "${System.env.BITRISEIO_ANDROID_KEYSTORE_PASSWORD}"
+            keyAlias "key0"
+            keyPassword "${System.env.BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD}"
         }
     }
     buildTypes {
