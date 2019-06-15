@@ -73,7 +73,8 @@ class ChangeStudy extends Component {
   }
 
   toggleQrScanner = () => {
-    this.setState({ scanOpen: !this.state.scanOpen });
+    const { scanOpen } = this.state;
+    this.setState({ scanOpen: !scanOpen });
   }
 
   render() {
@@ -92,7 +93,7 @@ class ChangeStudy extends Component {
         </Left>
         <Right>
           <Button transparent block onPress={this.toggleQrScanner}>
-            <Text style={styles.text}>{ this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR' }</Text>
+            <Text>{ this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR' }</Text>
           </Button>
         </Right>
       </Header>

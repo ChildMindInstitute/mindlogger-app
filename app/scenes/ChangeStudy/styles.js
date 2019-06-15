@@ -19,14 +19,16 @@ export default {
     marginTop: 16,
     fontWeight: 'bold',
   },
-  button: {
-    alignSelf: 'center',
+  buttonContainer: {
     marginTop: 36,
-    height: 40,
-    width: 180,
+    flexDirection: 'row',
+  },
+  button: {
     backgroundColor: colors.secondary,
+    flex: 1,
+    margin: 4,
   },
   buttonText: {
-    fontSize: 20,
+    fontSize: 18,
   },
 };

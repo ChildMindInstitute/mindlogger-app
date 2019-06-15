@@ -69,7 +69,10 @@ class Login extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Content style={[styles.container, { backgroundColor: skin.colors.primary }]}>
+        <Content
+          style={[styles.container, { backgroundColor: skin.colors.primary }]}
+          contentContainerStyle={styles.contentContainer}
+        >
           <Text style={styles.header}>{title}</Text>
           <LoginForm
             onSubmit={this.onSubmit}
@@ -91,15 +94,13 @@ class Login extends Component {
               <Text style={styles.whiteText}>{'What is ' + title + '?'}</Text>
             </TouchableOpacity>
           </View>
-          <View style={{ marginTop: 26 }}>
-            <Image
-              square
-              style={styles.logo}
-              source={logo}
-            />
-          </View>
+          <Image
+            square
+            style={styles.logo}
+            source={logo}
+          />
         </Content>
-        <Footer style={[styles.footer, { backgroundColor: skin.colors.primary }]}>
+        <Footer style={styles.footer}>
           <Right>
             <TouchableOpacity onPress={this.onChangeStudy}>
               <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />

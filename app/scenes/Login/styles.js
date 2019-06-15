@@ -3,29 +3,28 @@ import { colors } from '../../theme';
 export default {
   container: {
     flex: 1,
-    width: null,
-    height: null,
     backgroundColor: colors.primary,
-    paddingTop: 20,
-    paddingLeft: 50,
-    paddingRight: 50,
+    position: 'relative',
+  },
+  contentContainer: {
+    padding: 50,
+    minHeight: '100%',
+    justifyContent: 'center',
   },
   header: {
-    marginTop: 60,
-    height: 100,
     fontSize: 40,
     textAlign: 'center',
     color: colors.secondary,
+    marginBottom: 15,
   },
   text: {
     color: colors.secondary,
     fontSize: 20,
-    // textAlign: 'center',
   },
   whiteText: {
     color: colors.secondary,
     fontSize: 16,
-    marginBottom: 30,
+    marginBottom: 16,
     padding: 0,
     textAlign: 'center',
   },
@@ -37,9 +36,14 @@ export default {
   button: {
     alignSelf: 'center',
     marginTop: 36,
-    height: 40,
-    width: 100,
+    marginBottom: 16,
+    width: 'auto',
     backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 30,
+    paddingRight: 30,
+    minWidth: 140,
   },
   buttonText: {
     fontSize: 20,
@@ -52,9 +56,12 @@ export default {
   },
   footer: {
     padding: 12,
-    backgroundColor: colors.primary,
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    bottom: 0,
   },
   logo: {
+    marginTop: 20,
     height: 63,
     width: 78,
     resizeMode: 'contain',

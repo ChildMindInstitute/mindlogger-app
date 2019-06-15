@@ -7,17 +7,19 @@ import Timer from '../Timer';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
-  content: {
-    flexDirection: 'column',
-  },
-  padding: {
-    padding: 20,
-  },
-  paddingContent: {
-    padding: 20,
-    paddingTop: 40,
+  outer: {
+    width: '100%',
     flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
     position: 'relative',
+  },
+  contentContainer: {
+    padding: 20,
+    paddingTop: 60,
+    minHeight: '100%',
   },
   text: {
     paddingTop: 20,
@@ -29,8 +31,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: 'absolute',
-    right: 0,
-    top: 0,
+    right: 20,
+    top: 60,
   },
   delayTimerView: {
     position: 'absolute',
@@ -130,53 +132,55 @@ class Screen extends Component {
     const { screen, answer, onChange, isCurrent } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
     return (
-      <ScrollView
-        alwaysBounceVertical={false}
-        style={styles.paddingContent}
-        contentContainerStyle={{ paddingBottom: 20, minHeight: '100%' }}
-        scrollEnabled={scrollEnabled}
-      >
+      <View style={styles.outer}>
+        <ScrollView
+          alwaysBounceVertical={false}
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          scrollEnabled={scrollEnabled}
+        >
+          <ScreenDisplay screen={screen} />
+          {inputDelayed
+            ? (
+              <View pointerEvents="none" style={styles.delayView}>
+                <View style={styles.delayTimerView}>
+                  <Timer
+                    duration={screen.delay}
+                    color={colors.tertiary}
+                    size={50}
+                    strokeWidth={5}
+                  />
+                </View>
+                <View style={{ opacity: 0.25 }}>
+                  <Widget
+                    answer={answer}
+                    onChange={onChange}
+                    isCurrent={isCurrent}
+                    screen={screen}
+                    onPress={() => { this.setState({ scrollEnabled: false }); }}
+                    onRelease={() => { this.setState({ scrollEnabled: true }); }}
+                  />
+                </View>
+              </View>
+            )
+            : (
+              <Widget
+                answer={answer}
+                onChange={onChange}
+                isCurrent={isCurrent}
+                screen={screen}
+                onPress={() => { this.setState({ scrollEnabled: false }); }}
+                onRelease={() => { this.setState({ scrollEnabled: true }); }}
+              />
+            )
+          }
+        </ScrollView>
         {timerActive && (
           <View style={styles.timerView}>
             <Timer duration={screen.timer} color={colors.primary} size={40} />
           </View>
         )}
-        <ScreenDisplay screen={screen} />
-        {inputDelayed
-          ? (
-            <View pointerEvents="none" style={styles.delayView}>
-              <View style={styles.delayTimerView}>
-                <Timer
-                  duration={screen.delay}
-                  color={colors.tertiary}
-                  size={50}
-                  strokeWidth={5}
-                />
-              </View>
-              <View style={{ opacity: 0.25 }}>
-                <Widget
-                  answer={answer}
-                  onChange={onChange}
-                  isCurrent={isCurrent}
-                  screen={screen}
-                  onPress={() => { this.setState({ scrollEnabled: false }); }}
-                  onRelease={() => { this.setState({ scrollEnabled: true }); }}
-                />
-              </View>
-            </View>
-          )
-          : (
-            <Widget
-              answer={answer}
-              onChange={onChange}
-              isCurrent={isCurrent}
-              screen={screen}
-              onPress={() => { this.setState({ scrollEnabled: false }); }}
-              onRelease={() => { this.setState({ scrollEnabled: true }); }}
-            />
-          )
-        }
-      </ScrollView>
+      </View>
     );
   }
 }

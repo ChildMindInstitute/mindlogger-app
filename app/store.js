@@ -8,7 +8,7 @@ let store;
 
 export default function configureStore(onCompletion) {
   const persistConfig = {
-    key: 'root-v2',
+    key: 'root-v3',
     storage,
     // whitelist: [],
     blacklist: ['form'],
