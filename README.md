@@ -120,8 +120,9 @@ For this repository, the version exists in 4 places:
 
 ## Authors
 
-* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer*
 * [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
+* [**Stuart Freen**](https://github.com/stufreen) - *Rangle.io developer: code refactoring, pilot version*
+* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer: initial prototype*
 
 See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
 
