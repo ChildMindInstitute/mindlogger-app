@@ -49,8 +49,8 @@ class SideBar extends Component {
       logout();
     } else {
       Actions.replace(route);
+      Actions.drawerClose();
     }
-    Actions.drawerClose();
   }
 
   render() {
