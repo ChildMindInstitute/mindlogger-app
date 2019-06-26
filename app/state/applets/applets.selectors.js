@@ -5,8 +5,6 @@ import moment from 'moment';
 import { getLastResponseTime, getNextAndLastTimes } from '../../services/time';
 import { responsesGroupedByActivitySelector } from '../responses/responses.selectors';
 
-console.log('moment', moment);
-
 // import console = require('console');
 
 export const dateParser = (schedule) => {
