@@ -20,6 +20,6 @@ export default () => (
     <StatusBar barStyle="light-content" />
     {/* <ActivityIndicator color="rgba(255, 255, 255, 0.4)" size="large" /> */}
     <Heading style={{ color: 'white', paddingBottom: 20 }}>Loading MindLogger</Heading>
-    <LottieView source={require('../../animations/hamster-run.json')} style={{ width: 100 }} autoPlay />
+    <LottieView source={require('../../animations/4052-smoothymon-typing.json')} style={{ width: 100 }} autoPlay />
   </View>
 );

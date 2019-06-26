@@ -70,12 +70,8 @@ class AboutScreen extends Component { // eslint-disable-line
               <View style={{ marginTop: 20 }}>
                 <Text style={{ fontWeight: 'bold' }}>Attributions:</Text>
                 <Text>
-                  {/* bear */}
-                  @kipoed / LottieFiles
-                </Text>
-                <Text>
-                  {/* hamster */}
-                  @vik4graphic / LottieFiles
+                  {/* smoothymons */}
+                  @smoothy.co / LottieFiles
                 </Text>
               </View>
 

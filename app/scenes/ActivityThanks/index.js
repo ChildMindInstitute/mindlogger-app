@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 40,
     flex: 1,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
   },
@@ -29,7 +29,7 @@ const ActivityThanks = () => (
       <Heading>Thanks!</Heading>
       <BodyText>We've saved your data</BodyText>
     </View>
-    <LottieView source={require('../../animations/4622-bear.json')} autoPlay />
+    <LottieView source={require('../../animations/4054-smoothymon-clap.json')} autoPlay style={{ width: 200 }} />
     <Button onPress={onPressStart} full rounded style={{ marginTop: 20 }}>
       <Text style={{ color: 'white' }}>Close</Text>
     </Button>
