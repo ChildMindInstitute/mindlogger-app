@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import LottieView from 'lottie-react-native';
 import {
   BodyText,
   Heading,
@@ -12,7 +13,7 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 40,
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'white',
   },
@@ -24,10 +25,11 @@ const onPressStart = () => {
 
 const ActivityThanks = () => (
   <View style={styles.box}>
-    <Heading>Thanks!</Heading>
-    <BodyText>
-      We've saved your answers!
-    </BodyText>
+    <View style={{ alignItems: 'center' }}>
+      <Heading>Thanks!</Heading>
+      <BodyText>We've saved your data</BodyText>
+    </View>
+    <LottieView source={require('../../animations/4622-bear.json')} autoPlay />
     <Button onPress={onPressStart} full rounded style={{ marginTop: 20 }}>
       <Text style={{ color: 'white' }}>Close</Text>
     </Button>

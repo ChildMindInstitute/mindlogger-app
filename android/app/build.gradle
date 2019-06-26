@@ -147,6 +147,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-vector-icons')
+    implementation project(':lottie-react-native')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-webview')
     implementation project(':rn-fetch-blob')
