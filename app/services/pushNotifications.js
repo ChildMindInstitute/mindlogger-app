@@ -1,7 +1,5 @@
 import { PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import moment from 'moment';
-import { getScheduledDateTimes } from './time';
 
 export const initializePushNotifications = (onNotification) => {
   PushNotification.configure({
@@ -24,15 +22,17 @@ export const initializePushNotifications = (onNotification) => {
 };
 
 export const scheduleNotifications = (activities) => {
+  console.log('SCHEDULING NOTIFICATIONS');
   PushNotification.cancelAllLocalNotifications();
 
-  const now = moment();
-  const lookaheadDate = moment().add(1, 'month');
+  // const now = moment();
+  // const lookaheadDate = moment().add(1, 'month');
 
   const notifications = [];
-  activities.forEach((activity) => {
-    // Returns an array of moment objects
-    const scheduleDateTimes = getScheduledDateTimes(activity, now, lookaheadDate);
+
+  for (let i = 0; i < activities.length; i += 1) {
+    const activity = activities[i];
+    const scheduleDateTimes = activity.act.notification || [];
     scheduleDateTimes.forEach((dateTime) => {
       notifications.push({
         timestamp: dateTime.valueOf(),
@@ -42,7 +42,8 @@ export const scheduleNotifications = (activities) => {
         appletName: activity.appletName,
       });
     });
-  });
+  }
+
 
   // Sort notifications by timestamp
   notifications.sort((a, b) => a.timestamp - b.timestamp);
