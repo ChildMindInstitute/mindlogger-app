@@ -20,6 +20,7 @@
   "dayspan": "^1.1.0",
   "expr-eval": "^1.2.2",
   "hash-int": "^1.0.0",
+  "lottie-react-native": "^2.6.1",
   "moment": "^2.13.0",
   "native-base": "2.9.2",
   "node-pre-gyp": "^0.10.0",
