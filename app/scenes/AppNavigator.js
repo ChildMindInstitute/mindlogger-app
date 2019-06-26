@@ -29,7 +29,7 @@ import VolumeInfo from './VolumeInfo';
 const Navigator = Actions.create(
   <Lightbox>
     <Modal hideNavBar>
-      <Scene key="root" hideNavBar>
+      <Stack key="root" hideNavBar>
         <Drawer key="side_menu" contentComponent={SideBar}>
           <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
             <Scene key="splash" component={Splash} hideNavBar initial />
@@ -49,12 +49,11 @@ const Navigator = Actions.create(
             <Scene key="sign_up" component={Signup} />
           </Scene>
         </Drawer>
-      </Scene>
+      </Stack>
       <Scene key="take_act" component={Activity} />
       <Scene key="activity_thanks" component={ActivityThanks} />
-    </Modal>
-    <Scene key="logout_warning" component={LogoutWarning} />
-  </Lightbox>
+      </Modal>
+    </Lightbox>
   ,
 );
 
