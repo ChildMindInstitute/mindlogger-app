@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {StatusBar, Image, TouchableOpacity} from 'react-native';
-import {connect} from 'react-redux';
-import {Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast} from 'native-base';
-import {Actions} from 'react-native-router-flux';
+import { StatusBar, Image, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
+import { Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 import { appletsSelector } from '../../state/applets/applets.selectors';
 import { skinSelector } from '../../state/app/app.selectors';
@@ -11,7 +11,7 @@ import { skinSelector } from '../../state/app/app.selectors';
 
 const logoImage = require('../../../img/color_logo.png');
 
-const text = "This app is part of the MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org). While the app can easily be configured for many different uses, we designed it with the specific application of assessing mental health and cognitive abilities in mind. It can collect data in a variety of ways, from conventional surveys to audio, touch screen, and movement recordings. There are three ways to interact with MindLogger: as an administrator, a user, or a viewer. An administrator logs into a website, and selects or creates activities to build a version of the app. Users log in to that version of the app and perform those activities. Viewers are given permission to view data for specific users on an online dashboard. We hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org. Cheers, Arno Klein"
+const text = 'This app is part of the MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org). While the app can easily be configured for many different uses, we designed it with the specific application of assessing mental health and cognitive abilities in mind. It can collect data in a variety of ways, from conventional surveys to audio, touch screen, and movement recordings. There are three ways to interact with MindLogger: as an administrator, a user, or a viewer. An administrator logs into a website, and selects or creates activities to build a version of the app. Users log in to that version of the app and perform those activities. Viewers are given permission to view data for specific users on an online dashboard. We hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org. Cheers, Arno Klein';
 
 class AboutScreen extends Component { // eslint-disable-line
     openAboutApp = () => {
@@ -22,29 +22,27 @@ class AboutScreen extends Component { // eslint-disable-line
     Actions.push('about_volume', { activity: info });
   }
 
-    renderVolumeInfo = (appletWithInfo) => {
-      return (
-        <TouchableOpacity
-          key={appletWithInfo._id}
-          style={styles.aboutLink}
-          onPress={() => this.openAboutInfo(appletWithInfo.info)}
-        >
-          <Icon name="information-circle" style={styles.aboutIcon} />
-          <Text numberOfLines={3} style={styles.buttonText}>About {appletWithInfo.name}</Text>
-        </TouchableOpacity>
-      );
-    }
+    renderVolumeInfo = appletWithInfo => (
+      <TouchableOpacity
+        key={appletWithInfo._id}
+        style={styles.aboutLink}
+        onPress={() => this.openAboutInfo(appletWithInfo.info)}
+      >
+        <Icon name="information-circle" style={styles.aboutIcon} />
+        <Text numberOfLines={3} style={styles.buttonText}>About {appletWithInfo.name}</Text>
+      </TouchableOpacity>
+    )
 
     render() {
       const { applets, skin } = this.props;
       const appletsWithInfo = applets.filter(applet => typeof applet.info !== 'undefined');
       return (
         <Container style={styles.container}>
-          <StatusBar barStyle='light-content'/>
+          <StatusBar barStyle="light-content" />
           <Header style={{ backgroundColor: skin.colors.primary }}>
             <Left />
             <Body>
-                <Title>About</Title>
+              <Title>About</Title>
             </Body>
             <Right>
               <Button transparent onPress={Actions.drawerOpen}>
@@ -59,6 +57,7 @@ class AboutScreen extends Component { // eslint-disable-line
                   ? <Text>Find out more about each of your Activity Sets and about the MindLogger platform.</Text>
                   : <Text>Find out more about the MindLogger data collection and analysis platform by tapping "About MindLogger" below.</Text>
                 }
+
               </View>
               <View style={styles.buttons}>
                 {appletsWithInfo.map(this.renderVolumeInfo)}
@@ -67,6 +66,15 @@ class AboutScreen extends Component { // eslint-disable-line
                   <Text style={[styles.buttonText, { color: skin.colors.primary }]}>About MindLogger</Text>
                 </TouchableOpacity>
               </View>
+
+              <View style={{ marginTop: 20 }}>
+                <Text style={{ fontWeight: 'bold' }}>Attributions:</Text>
+                <Text>
+                  {/* smoothymons */}
+                  @smoothy.co / LottieFiles
+                </Text>
+              </View>
+
             </View>
           </Content>
         </Container>
