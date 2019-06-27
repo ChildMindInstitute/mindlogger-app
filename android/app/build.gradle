@@ -101,10 +101,10 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "0.2.11"
+        versionCode 43
+        versionName "0.3.9"
         ndk {
-            abiFilters "armeabi-v7a", "x86"
+            abiFilters "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
         }
         multiDexEnabled true
     }
@@ -112,23 +112,14 @@ android {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
-            include "armeabi-v7a", "x86"
-        }
-    }
-    signingConfigs {
-        release {
-            storeFile file("mdc_app_key.keystore")
-            storePassword "mdcapp"
-            keyAlias "mdc_app"
-            keyPassword "mdcapp"
+            universalApk true  // If true, also generate a universal APK
+            include "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
         }
     }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -136,7 +127,7 @@ android {
         variant.outputs.each { output ->
             // For each separate APK per architecture, set a unique version code as described here:
             // http://tools.android.com/tech-docs/new-build-system/user-guide/apk-splits
-            def versionCodes = ["armeabi-v7a":1, "x86":2]
+            def versionCodes = ["armeabi-v7a":1, "x86":2, "arm64-v8a":3, "x86_64":4]
             def abi = output.getFilter(OutputFile.ABI)
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
@@ -147,30 +138,38 @@ android {
 }
 
 dependencies {
-    implementation project(':@react-native-community_netinfo')
-    implementation project(':react-native-webview')
-    implementation project(':rn-fetch-blob')
-    implementation project(':react-native-device-info')
-    implementation (project(':react-native-camera')) {
-        exclude group: "com.google.android.gms"
-        exclude group: "com.android.support", module: 'support-v4'
-        implementation 'com.android.support:exifinterface:+'
-        implementation ('com.google.android.gms:play-services-vision:12.0.1') {
-            force = true
-        }
+  configurations.all {
+    resolutionStrategy {
+      dependencySubstitution {
+        substitute module('com.google.android.gms:play-services-vision') with module('com.google.android.gms:play-services-vision:17.0.2')
+        substitute module('com.google.firebase:firebase-messaging') with module('com.google.firebase:firebase-messaging:19.0.0')
+      }
     }
-    implementation project(':react-native-image-picker')
-    implementation project(':react-native-push-notification')
-    implementation project(':react-native-svg')
-    implementation project(':react-native-audio-toolkit')
-    implementation project(':react-native-audiowaveform')
-    implementation project(':react-native-audio')
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation ('com.google.android.gms:play-services-gcm:+') {
-        force = true;
-    }
+  }
+  implementation project(':react-native-vector-icons')
+  implementation project(':@react-native-community_slider')
+  implementation (project(':@react-native-community_netinfo')) {
+    exclude group: "com.android.support", module: 'support-v4'
+  }
+  implementation project(':react-native-webview')
+  implementation project(':rn-fetch-blob')
+  implementation project(':react-native-device-info')
+  implementation (project(':react-native-camera')) {
+    exclude group: "com.android.support", module: 'support-v4'
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
+  }
+  implementation project(':react-native-image-picker')
+  implementation project(':react-native-push-notification')
+  implementation project(':react-native-svg')
+  implementation project(':react-native-audio-toolkit')
+  implementation project(':react-native-audiowaveform')
+  implementation project(':react-native-audio')
+  implementation fileTree(dir: "libs", include: ["*.jar"])
+  // implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+  implementation "com.facebook.react:react-native:+"  // From node_modules
+  implementation ('com.google.android.gms:play-services-gcm:16.1.0') {
+    force = true;
+  }
 }
 
 // Run this once to be able to run the application with BUCK
