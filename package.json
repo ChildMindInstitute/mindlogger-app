@@ -1,6 +1,6 @@
 {
  "name": "MindLogger",
- "version": "0.3.7",
+ "version": "0.3.8",
  "private": true,
  "scripts": {
   "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -20,6 +20,8 @@
   "color": "~0.11.1",
   "expr-eval": "^1.2.2",
   "hash-int": "^1.0.0",
+  "metro": "^0.54.1",
+  "metro-core": "^0.54.1",
   "moment": "^2.13.0",
   "native-base": "2.9.2",
   "node-pre-gyp": "^0.10.0",
@@ -32,7 +34,7 @@
   "react-native": "0.59.8",
   "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/suther/react-native-audio-toolkit.git#a66812fd359d786b89172c7a63e768836d13e540",
-  "react-native-audiowaveform": "2.0.3",
+  "react-native-audiowaveform": "^2.0.3",
   "react-native-camera": "^1.1.2",
   "react-native-cli": "2.0.1",
   "react-native-datepicker": "^1.6.0",
@@ -72,6 +74,7 @@
   "eslint-plugin-react": "^7.11.0",
   "inliner": "^1.13.1",
   "jest": "23.6.0",
+  "jetifier": "^1.5.1",
   "metro-react-native-babel-preset": "^0.54.1",
   "react-test-renderer": "16.5.0",
   "schedule": "0.4.0"

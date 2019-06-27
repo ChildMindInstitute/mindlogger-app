@@ -101,8 +101,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 37
-        versionName "0.3.7"
+        versionCode 40
+        versionName "0.3.8"
         ndk {
             abiFilters "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
         }
@@ -157,7 +157,7 @@ dependencies {
     implementation project(':react-native-device-info')
     implementation (project(':react-native-camera')) {
       exclude group: "com.android.support", module: 'support-v4'
-      implementation 'com.android.support:exifinterface:+'
+      implementation 'androidx.exifinterface:exifinterface:+'
     }
     implementation project(':react-native-image-picker')
     implementation project(':react-native-push-notification')
@@ -166,7 +166,7 @@ dependencies {
     implementation project(':react-native-audiowaveform')
     implementation project(':react-native-audio')
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    // implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation ('com.google.android.gms:play-services-gcm:16.1.0') {
         force = true;
