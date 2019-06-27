@@ -169,6 +169,7 @@ export const appletTransformJson = appletJson => ({
   visibility: listToObject(appletJson[VISIBILITY]),
   image: languageListToObject(appletJson[IMAGE]),
   order: flattenIdList(appletJson[ORDER][0]['@list']),
+  schedule: appletJson.schedule,
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 
@@ -219,7 +220,6 @@ export const itemAttachExtras = (
 
 export const activityTransformJson = (activityJson, itemsJson) => {
   const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
-
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
