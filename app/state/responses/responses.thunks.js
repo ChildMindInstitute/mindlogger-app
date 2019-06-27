@@ -35,6 +35,7 @@ import {
   getLastPos,
 } from '../../services/activityNavigation';
 
+
 export const startResponse = activity => (dispatch, getState) => {
   const { responses, user } = getState();
   const subjectId = R.path(['info', '_id'], user);

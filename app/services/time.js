@@ -44,7 +44,7 @@ export const getScheduledWeekDays = (activity, start, end) => {
     const accumulator = [];
     // Step through the search period
     while (index.isBefore(end)) {
-      if (typeof weekDayAr !== "undefined" && weekDayAr.includes(index.day())) {
+      if (typeof weekDayAr !== 'undefined' && weekDayAr.includes(index.day())) {
         accumulator.push(index.clone());
       }
       index.add(1, 'day');
@@ -81,6 +81,7 @@ export const getDateTimes = (dates, timeAr) => {
 };
 
 export const getScheduledDateTimes = (activity, start, end) => {
+  // console.log('activity', activity.name.en, activity);
   // Get all the scheduled dates
   const dates = getScheduledDates(activity, start, end);
 
