@@ -11,6 +11,6 @@ if [ ! -d "node_modules/react-native/third-party" ]; then
 fi
 
 # :robot: Android
-rm -rf node_modules/react-native-push-notifications/.git
+rm -rf node_modules/react-native-push-notification/.git
 npm install --save-dev jetifier
 npx jetify
