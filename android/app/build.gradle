@@ -140,23 +140,24 @@ android {
 dependencies {
     configurations.all {
             resolutionStrategy {
-                force 'com.google.android.gms:play-services-gcm:16.1.0'
-                force 'com.google.android.gms:play-services-base:16.1.0'
+
+                dependencySubstitution {
+                  substitute module('com.google.android.gms:play-services-vision') with module('com.google.android.gms:play-services-vision:17.0.2')
+                  substitute module('com.google.firebase:firebase-messaging') with module('com.google.firebase:firebase-messaging:19.0.0')
+                }
         }
     }
     implementation project(':react-native-vector-icons')
     implementation project(':@react-native-community_slider')
-    implementation project(':@react-native-community_netinfo')
+    implementation (project(':@react-native-community_netinfo')) {
+      exclude group: "com.android.support", module: 'support-v4'
+    }
     implementation project(':react-native-webview')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-device-info')
     implementation (project(':react-native-camera')) {
-        exclude group: "com.google.android.gms"
-        exclude group: "com.android.support", module: 'support-v4'
-        implementation 'com.android.support:exifinterface:+'
-        implementation ('com.google.android.gms:play-services-vision:16.1.0') {
-            force = true
-        }
+      exclude group: "com.android.support", module: 'support-v4'
+      implementation 'com.android.support:exifinterface:+'
     }
     implementation project(':react-native-image-picker')
     implementation project(':react-native-push-notification')
@@ -167,7 +168,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation ('com.google.android.gms:play-services-gcm:16.1.0+') {
+    implementation ('com.google.android.gms:play-services-gcm:16.1.0') {
         force = true;
     }
 }

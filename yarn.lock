@@ -626,7 +626,7 @@
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-3.2.1.tgz#cd073b81a4b978f7f55f1a960a0b56c462813e02"
 
-"@react-native-community/slider@^3.2.0":
+"@react-native-community/slider@^1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@react-native-community/slider/-/slider-1.1.4.tgz#ff7438afbc194d61f397e9258d78941c014ac110"
 
@@ -5397,9 +5397,9 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
   version "4.2.2"
   resolved "https://github.com/jsierles/react-native-audio.git#f223414c6a965d24cea74179194613cf37e566ef"
 
-"react-native-audiowaveform@https://github.com/erik-ilyin/react-native-audiowaveform.git":
-  version "1.0.51"
-  resolved "https://github.com/erik-ilyin/react-native-audiowaveform.git#6d5989fa9736dc81067cf31af1527d906a9fa666"
+react-native-audiowaveform@2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-audiowaveform/-/react-native-audiowaveform-2.0.3.tgz#43815225208e51311fa160683ab8f812edffbec2"
 
 react-native-camera@^1.1.2:
   version "1.13.1"
@@ -5494,7 +5494,7 @@ react-native-progress@^3.4.0:
   dependencies:
     prop-types "^15.7.2"
 
-react-native-push-notification@^3.0.2:
+react-native-push-notification@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-3.1.3.tgz#f8dab43aec734dbb1a8bbc50caf82dd682655392"
 
