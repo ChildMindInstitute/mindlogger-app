@@ -1,4 +1,4 @@
-# MindLogger 0.4.3
+# MindLogger 0.5.3
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -113,16 +113,15 @@ For this repository, the version exists in 4 places:
 2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json#L3)
 3. [mindlogger-app/android/app/build.gradle](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle)
    1. [`versionName`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L105)
-   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L104) (integer: increment from previous build regardless of the rest of the version numbering)
+   2. [`versionCode`](https://github.com/ChildMindInstitute/mindlogger-app/blob/e0903c84ca6ad94b0b942bd8aaa79c3d31ba04a6/android/app/build.gradle#L104) (integer: start at `1` and increment for dev builds, increment the patch or above and reset `versionCode` to `1` for pull requests)
 4. [ios/MDCApp/Info.plist](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/ios/MDCApp/Info.plist)
    1. [`CFBundleShortVersionString`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L19-L20)
    2. [`CFBundleVersion`](https://github.com/ChildMindInstitute/mindlogger-app/blob/26bb15b5836aae44df2cde04bf93a018cccfff04/ios/MDCApp/Info.plist#L23-L24) (match to [`versionCode`, above](#versioncode))
 
 ## Authors
 
+* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer*
 * [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
-* [**Stuart Freen**](https://github.com/stufreen) - *Rangle.io developer: code refactoring, pilot version*
-* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer: initial prototype*
 
 See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
 
