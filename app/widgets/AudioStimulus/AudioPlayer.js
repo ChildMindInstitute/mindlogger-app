@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Icon } from 'native-base';
-import { Player } from 'react-native-audio-toolkit';
+import { Player } from '@react-native-community/audio-toolkit';
 import { colors } from '../../themes/colors';
 
 const styles = StyleSheet.create({

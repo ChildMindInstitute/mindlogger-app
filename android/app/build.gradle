@@ -138,6 +138,7 @@ android {
 }
 
 dependencies {
+    implementation project(':@react-native-community_async-storage')
   configurations.all {
     resolutionStrategy {
       dependencySubstitution {
@@ -162,12 +163,12 @@ dependencies {
   implementation project(':react-native-image-picker')
   implementation project(':react-native-push-notification')
   implementation project(':react-native-svg')
-  implementation project(':react-native-audio-toolkit')
+  implementation project(':@react-native-community_audio-toolkit')
   implementation project(':react-native-audiowaveform')
   implementation project(':react-native-audio')
   implementation fileTree(dir: "libs", include: ["*.jar"])
-  // implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-  implementation "com.facebook.react:react-native:+"  // From node_modules
+  implementation "androidx.appcompat:appcompat:1.0.0"
+  implementation "com.facebook.react:react-native:0.59.8+"  // From node_modules
   implementation ('com.google.android.gms:play-services-gcm:16.1.0') {
     force = true;
   }

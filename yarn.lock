@@ -630,6 +630,18 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^12.0.9"
 
+"@react-native-community/async-storage@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.5.0.tgz#647ffcd832272068b0be57332e08d73036ed391f"
+
+"@react-native-community/audio-toolkit@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/audio-toolkit/-/audio-toolkit-2.0.1.tgz#5983cd5e91ded35ec947c6d2a3ab8ed50332fae3"
+  dependencies:
+    async "^2.0.0"
+    eventemitter3 "^1.2.0"
+    lodash "^4.13.1"
+
 "@react-native-community/cli@^1.2.1":
   version "1.9.11"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli/-/cli-1.9.11.tgz#b868b17201057b9cd16a3a20c30561176071f21a"
@@ -975,6 +987,10 @@ async@^2.0.0, async@^2.1.4, async@^2.4.0:
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.2.tgz#18330ea7e6e313887f5d2f2a904bac6fe4dd5381"
   dependencies:
     lodash "^4.17.11"
+
+async@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.1.0.tgz#42b3b12ae1b74927b5217d8c0016baaf62463772"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -5730,17 +5746,9 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-"react-native-audio-toolkit@https://github.com/suther/react-native-audio-toolkit.git#a66812fd359d786b89172c7a63e768836d13e540":
-  version "1.0.6"
-  resolved "https://github.com/suther/react-native-audio-toolkit.git#a66812fd359d786b89172c7a63e768836d13e540"
-  dependencies:
-    async "^2.0.0"
-    eventemitter3 "^1.2.0"
-    lodash "^4.13.1"
-
-"react-native-audio@https://github.com/jsierles/react-native-audio.git":
-  version "4.2.2"
-  resolved "https://github.com/jsierles/react-native-audio.git#f223414c6a965d24cea74179194613cf37e566ef"
+react-native-audio@4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-audio/-/react-native-audio-4.3.0.tgz#fae22b81f6a4dda706fd4837d0c6a89c66cf2e7e"
 
 react-native-audiowaveform@^2.0.3:
   version "2.0.3"
