@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, Text, StyleSheet } from 'react-native';
+import { Platform, Text, StyleSheet, PermissionsAndroid } from 'react-native';
 import PropTypes from 'prop-types';
 import { Recorder } from '@react-native-community/audio-toolkit';
 import randomString from 'random-string';
@@ -65,6 +65,21 @@ export default class AudioRecorder extends Component {
       RNFetchBlob.fs.unlink(this.state.path.replace('file://', ''));
     }
 
+    async checkPermission() {
+        if (Platform.OS !== 'android') {
+            return Promise.resolve(true);
+        }
+
+        let result;
+        try {
+            result = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, { title:'Microphone Permission', message:'MindLogger needs access to your microphone to record audio.' });
+        } catch(error) {
+            console.error('failed getting permission, result:', result);
+        }
+        console.log('permission result:', result);
+        return (result === true || result === PermissionsAndroid.RESULTS.GRANTED);
+    }
+
     recorder.prepare((prepareErr, fsPath) => {
       // Check if there was an error preparing
       if (prepareErr) {
@@ -98,19 +113,21 @@ export default class AudioRecorder extends Component {
   }
 
   startRecording = () => {
-    Permissions.check('microphone').then((response) => {
-      if (response !== 'authorized') {
-        Permissions.request('microphone').then((response) => {
+    if(checkPermission()){
+      Permissions.check('microphone').then((response) => {
+        if (response !== 'authorized') {
+          Permissions.request('microphone').then((response) => {
+            this.setState({ permission: response });
+            if (response === 'authorized') {
+              this.record();
+            }
+          });
+        } else {
           this.setState({ permission: response });
-          if (response === 'authorized') {
-            this.record();
-          }
-        });
-      } else {
-        this.setState({ permission: response });
-        this.record();
-      }
-    });
+          this.record();
+        }
+      });
+    }
   }
 
   stopRecording = () => {
