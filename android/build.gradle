@@ -34,6 +34,9 @@ allprojects {
         }
         maven { url 'https://maven.google.com' }
     }
+    configurations {
+        all*.exclude  module: 'drawee'
+    }
     subprojects {
         afterEvaluate {
             project ->

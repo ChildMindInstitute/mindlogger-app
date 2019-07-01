@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Platform, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { Recorder } from '@react-native-community_audio-toolkit';
+import { Recorder } from '@react-native-community/audio-toolkit';
 import randomString from 'random-string';
 import Permissions from 'react-native-permissions';
 import RNFetchBlob from 'rn-fetch-blob';
