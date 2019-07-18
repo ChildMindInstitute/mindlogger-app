@@ -5,6 +5,7 @@ import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'nativ
 import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
+import AppletInvite from '../../components/AppletInvite';
 import { BodyText } from '../../components/core';
 import JoinDemoApplets from '../../components/JoinDemoApplets';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
@@ -81,6 +82,11 @@ const AppletListComponent = ({
           applets.length === 0 && isDownloadingApplets
             ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
             : <JoinDemoApplets />
+        }
+        {
+          applets.length === 0 && isDownloadingApplets
+            ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
+            : <AppletInvite />
         }
       </ScrollView>
     </Container>
