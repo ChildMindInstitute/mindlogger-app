@@ -18,3 +18,8 @@ export const setNotifications = notifications => ({
   type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
   payload: notifications,
 });
+
+export const setInvites = invites => ({
+  type: APPLET_CONSTANTS.SET_INVITES,
+  payload: invites,
+});

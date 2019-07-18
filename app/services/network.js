@@ -180,3 +180,16 @@ export const registerOpenApplet = (authToken, schemaURI) => {
     body: objectToFormData({ url: schemaURI }),
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
+
+export const getAppletInvites = (authToken) => {
+  console.log('here in get appletInvites', authToken);
+  const url = `${apiHost()}/user/invites`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

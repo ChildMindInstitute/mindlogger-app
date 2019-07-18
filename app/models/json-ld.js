@@ -263,7 +263,6 @@ export const transformApplet = (payload) => {
       return activity;
     });
   const applet = appletTransformJson(payload.applet);
-
   // Add the items and activities to the applet object
   applet.activities = activities;
 
