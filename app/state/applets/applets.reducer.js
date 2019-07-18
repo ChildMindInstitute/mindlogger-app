@@ -31,6 +31,7 @@ export default (state = initialState, action = {}) => {
         notifications: action.payload,
       };
     case APPLET_CONSTANTS.SET_INVITES:
+      console.log('setting invtes to state', action.payload);
       return {
         ...state,
         invites: action.payload,

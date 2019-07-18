@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
 
 const AppletListComponent = ({
   applets,
+  invites,
   isDownloadingApplets,
   title,
   primaryColor,
@@ -88,6 +89,7 @@ const AppletListComponent = ({
 
 AppletListComponent.propTypes = {
   applets: PropTypes.array.isRequired,
+  invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,

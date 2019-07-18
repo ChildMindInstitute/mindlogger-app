@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import {
   appletsSelector,
+  invitesSelector,
   isDownloadingAppletsSelector,
 } from '../../state/applets/applets.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
+
 
 class AppletList extends Component {
   refresh = () => {
@@ -26,14 +28,17 @@ class AppletList extends Component {
   render() {
     const {
       applets,
+      invites,
       isDownloadingApplets,
       skin,
       mobileDataAllowed,
       toggleMobileDataAllowed,
     } = this.props;
+    console.log('invites', invites);
     return (
       <AppletListComponent
         applets={applets}
+        invites={invites}
         isDownloadingApplets={isDownloadingApplets}
         title={skin.name}
         primaryColor={skin.colors.primary}
@@ -49,6 +54,7 @@ class AppletList extends Component {
 
 AppletList.propTypes = {
   applets: PropTypes.array.isRequired,
+  invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   sync: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
@@ -59,6 +65,7 @@ AppletList.propTypes = {
 
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
+  invites: invitesSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),

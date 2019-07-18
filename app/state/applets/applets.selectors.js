@@ -86,6 +86,8 @@ export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApp
 
 export const notificationsSelector = R.path(['applets', 'notifications']);
 
+export const invitesSelector = R.path(['applets', 'invites']);
+
 // Flatten the applet activities into a single list
 export const activitiesSelector = createSelector(
   appletsSelector,
