@@ -18,7 +18,8 @@ export const dateParser = (schedule) => {
       output[uri] = [];
     }
 
-    const { notifications } = e.data;
+    let { notifications } = e.data;
+    notifications = notifications || [];
     // TODO: e.data might have some flag saying its relative to
     // the first response. update the schedule here before parsing it.
     // this might be kind of hard.
@@ -85,6 +86,8 @@ export const appletsSelector = createSelector(
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 
 export const notificationsSelector = R.path(['applets', 'notifications']);
+
+export const invitesSelector = R.path(['applets', 'invites']);
 
 // Flatten the applet activities into a single list
 export const activitiesSelector = createSelector(

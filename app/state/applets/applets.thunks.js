@@ -1,4 +1,4 @@
-import { getApplets, registerOpenApplet } from '../../services/network';
+import { getApplets, registerOpenApplet, getAppletInvites, acceptAppletInvite } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia } from '../media/media.thunks';
@@ -8,6 +8,7 @@ import {
   setNotifications,
   setDownloadingApplets,
   replaceApplets,
+  setInvites,
 } from './applets.actions';
 import { transformApplet } from '../../models/json-ld';
 
@@ -16,8 +17,19 @@ export const scheduleAndSetNotifications = () => (dispatch, getState) => {
   const activities = activitiesSelector(state);
   // This call schedules the notifications and returns a list of scheduled notifications
   const updatedNotifications = scheduleNotifications(activities);
+  console.log('dispatching set notifications', activities, updatedNotifications);
   dispatch(setNotifications(updatedNotifications));
 };
+
+export const getInvitations = () => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  getAppletInvites(auth.token).then((invites) => {
+    // console.log('setting applet invites', invites);
+    dispatch(setInvites(invites));
+  });
+};
+
 
 export const downloadApplets = () => (dispatch, getState) => {
   const state = getState();
@@ -33,6 +45,16 @@ export const downloadApplets = () => (dispatch, getState) => {
     }
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
+    dispatch(scheduleAndSetNotifications());
+    dispatch(getInvitations());
+  });
+};
+
+export const acceptInvitation = inviteId => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  acceptAppletInvite(auth.token, inviteId).then(() => {
+    dispatch(downloadApplets());
   });
 };
 

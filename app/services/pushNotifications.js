@@ -34,7 +34,6 @@ export const scheduleNotifications = (activities) => {
   for (let i = 0; i < activities.length; i += 1) {
     const activity = activities[i];
     const scheduleDateTimes = activity.notification || [];
-    console.log('activitiy', activity);
     scheduleDateTimes.forEach((dateTime) => {
       notifications.push({
         timestamp: dateTime.valueOf(),

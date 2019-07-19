@@ -8,6 +8,7 @@ export const initialState = {
     downloaded: 0,
   },
   notifications: {},
+  invites: [],
 };
 
 export default (state = initialState, action = {}) => {
@@ -28,6 +29,12 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         notifications: action.payload,
+      };
+    case APPLET_CONSTANTS.SET_INVITES:
+      console.log('setting invtes to state', action.payload);
+      return {
+        ...state,
+        invites: action.payload,
       };
     default:
       return state;
