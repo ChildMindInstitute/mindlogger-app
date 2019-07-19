@@ -18,7 +18,8 @@ export const dateParser = (schedule) => {
       output[uri] = [];
     }
 
-    const { notifications } = e.data;
+    let { notifications } = e.data;
+    notifications = notifications || [];
     // TODO: e.data might have some flag saying its relative to
     // the first response. update the schedule here before parsing it.
     // this might be kind of hard.

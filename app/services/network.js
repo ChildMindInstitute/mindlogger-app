@@ -193,3 +193,15 @@ export const getAppletInvites = (authToken) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
+
+export const acceptAppletInvite = (authToken, id) => {
+  const url = `${apiHost()}/group/${id}/member`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

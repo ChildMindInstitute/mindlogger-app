@@ -84,9 +84,8 @@ const AppletListComponent = ({
             : <JoinDemoApplets />
         }
         {
-          applets.length === 0 && isDownloadingApplets
-            ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
-            : <AppletInvite />
+          invites.length
+            ? <AppletInvite /> : null
         }
       </ScrollView>
     </Container>

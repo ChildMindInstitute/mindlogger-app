@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BodyText, Hyperlink } from './core';
-// import { joinOpenApplet } from '../state/applets/applets.thunks';
+import { acceptInvitation } from '../state/applets/applets.thunks';
 import { invitesSelector } from '../state/applets/applets.selectors';
 
 const styles = StyleSheet.create({
@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const AcceptAppletInvite = ({ invites }) => 
-    // const [joinInProgress, setJoinInProgress] = useState({});
+const AcceptAppletInvite = ({ invites, acceptInvitation }) => 
+    //const [joinInProgress, setJoinInProgress] = useState({});
 
-     (
+    (
       <View style={styles.container}>
         <BodyText style={styles.message}>
           You have new invites:
@@ -32,7 +32,7 @@ const AcceptAppletInvite = ({ invites }) =>
             key={invite.id}
             style={styles.link}
             onPress={() => {
-              console.log(invite);
+              acceptInvitation(invite._id);
             }}
             disabled={false}
           >
@@ -40,8 +40,7 @@ const AcceptAppletInvite = ({ invites }) =>
           </Hyperlink>
         ))}
       </View>
-    )
-  ;
+  );
 
 AcceptAppletInvite.propTypes = {
   // applets: PropTypes.arrayOf(PropTypes.shape({
@@ -57,6 +56,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // joinOpenApplet,
+  acceptInvitation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AcceptAppletInvite);
