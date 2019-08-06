@@ -1,5 +1,6 @@
 import { PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
+import moment from 'moment';
 
 export const initializePushNotifications = (onNotification) => {
   PushNotification.configure({
@@ -33,7 +34,20 @@ export const scheduleNotifications = (activities) => {
 
   for (let i = 0; i < activities.length; i += 1) {
     const activity = activities[i];
-    const scheduleDateTimes = activity.notification || [];
+    // const scheduleDateTimes = activity.notification || [];
+
+    /* below is for easy debugging.
+       every 10 seconds a notification will appear for an applet.
+    */
+    const scheduleDateTimes = [];
+
+    for (i = 0; i < 60; i += 1) {
+      const foo = new Date();
+      foo.setSeconds(foo.getSeconds() + i * 10);
+      scheduleDateTimes.push(moment(foo));
+    }
+    /* end easy debugging section */
+
     scheduleDateTimes.forEach((dateTime) => {
       notifications.push({
         timestamp: dateTime.valueOf(),
