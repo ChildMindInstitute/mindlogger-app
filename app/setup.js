@@ -9,7 +9,7 @@ import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.thunks';
 import { clearUser } from './state/user/user.actions';
 import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
-import { startResponse } from './state/responses/responses.thunks';
+import { startFreshResponse } from './state/responses/responses.thunks';
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -50,11 +50,10 @@ const setup = () => {
       if (state.user.auth && notification.foreground === false) {
         // eslint-disable-next-line
         const activity = JSON.parse(notification.data.activity);
-        // console.log('notification data', JSON.parse(notification.data.activity));
-        // Actions.replace('applet_list');
+
         store.dispatch(setCurrentApplet(activity.appletId));
         store.dispatch(setCurrentActivity(activity.id));
-        const resp = startResponse(activity);
+        const resp = startFreshResponse(activity);
         resp(store.dispatch, store.getState);
       }
     });

@@ -34,20 +34,20 @@ export const scheduleNotifications = (activities) => {
 
   for (let i = 0; i < activities.length; i += 1) {
     const activity = activities[i];
-    // const scheduleDateTimes = activity.notification || [];
+    const scheduleDateTimes = activity.notification || [];
 
-    /* below is for easy debugging.
-       every 10 seconds a notification will appear for an applet.
-    */
-    const scheduleDateTimes = [];
+    // /* below is for easy debugging.
+    //    every 10 seconds a notification will appear for an applet.
+    // */
+    // const scheduleDateTimes = [];
 
-    for (i = 0; i < 60; i += 1) {
-      const foo = new Date();
-      foo.setSeconds(foo.getSeconds() + i * 10);
-      scheduleDateTimes.push(moment(foo));
-    }
-    // console.log('activity', activity);
-    /* end easy debugging section */
+    // for (i = 0; i < 60; i += 1) {
+    //   const foo = new Date();
+    //   foo.setSeconds(foo.getSeconds() + i * 30);
+    //   scheduleDateTimes.push(moment(foo));
+    // }
+    // // console.log('activity', activity);
+    // /* end easy debugging section */
 
     scheduleDateTimes.forEach((dateTime) => {
       notifications.push({

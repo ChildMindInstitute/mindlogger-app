@@ -35,6 +35,17 @@ import {
   getLastPos,
 } from '../../services/activityNavigation';
 
+export const startFreshResponse = activity => (dispatch, getState) => {
+  const { user } = getState();
+  const subjectId = R.path(['info', '_id'], user);
+  const timeStarted = Date.now();
+
+  // There is no response in progress, so start a new one
+  dispatch(createResponseInProgress(activity, subjectId, timeStarted));
+  dispatch(setCurrentScreen(activity.id, 0));
+  dispatch(setCurrentActivity(activity.id));
+  Actions.push('take_act');
+};
 
 export const startResponse = activity => (dispatch, getState) => {
   const { responses, user } = getState();
