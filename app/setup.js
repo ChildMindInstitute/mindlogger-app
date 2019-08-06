@@ -49,7 +49,7 @@ const setup = () => {
 
       if (state.user.auth && notification.foreground === false) {
         // eslint-disable-next-line
-        const activity = JSON.parse(notification.data.activity);
+        const activity = JSON.parse(notification.data.activity || notification.data);
 
         store.dispatch(setCurrentApplet(activity.appletId));
         store.dispatch(setCurrentActivity(activity.id));

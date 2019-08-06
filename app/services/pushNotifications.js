@@ -76,6 +76,8 @@ export const scheduleNotifications = (activities) => {
         id: notification.activityId,
         activity: notification.activity,
       },
+      // android only (notification.activity is already stringified)
+      data: notification.activity,
     });
   });
 
