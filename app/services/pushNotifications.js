@@ -46,6 +46,7 @@ export const scheduleNotifications = (activities) => {
       foo.setSeconds(foo.getSeconds() + i * 10);
       scheduleDateTimes.push(moment(foo));
     }
+    // console.log('activity', activity);
     /* end easy debugging section */
 
     scheduleDateTimes.forEach((dateTime) => {
@@ -55,6 +56,7 @@ export const scheduleNotifications = (activities) => {
         activityId: activity._id,
         activityName: activity.name.en,
         appletName: activity.appletName,
+        activity: JSON.stringify(activity),
       });
     });
   }
@@ -64,12 +66,16 @@ export const scheduleNotifications = (activities) => {
 
   // Schedule the notifications
   notifications.forEach((notification) => {
-    console.log('scheduling', notification);
+    // console.log('scheduling', notification);
     PushNotification.localNotificationSchedule({
       message: `Please perform activity: ${notification.activityName}`,
       id: notification.tag,
       date: new Date(notification.timestamp),
       group: notification.activityName,
+      userInfo: {
+        id: notification.activityId,
+        activity: notification.activity,
+      },
     });
   });
 

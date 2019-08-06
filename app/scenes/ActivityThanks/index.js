@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
 });
 
 const onPressStart = () => {
-  Actions.popTo('applet_details');
+  console.log('actions', Actions);
+  Actions.applet_details();
+  Actions.push('applet_details');
 };
 
 const ActivityThanks = () => (
