@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.5.5] - 2019-08-07
+### Changed
+- Notifications go to activity instead of menu
+
+## [0.5.1‒0.5.4] - 2019-06-27‒28
+### Added
+- Animations
+
 ## [0.4.1‒0.4.3] - 2019-06-26‒27
 ### Changed
 - Restored basic notifications
@@ -13,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update slider bar (horizontal only)
 
-## [0.3.1‒0.3.3; 0.3.7‒0.3.9] - 2019-06-20; 2019-06-25‒27
+## [0.3.1‒0.3.3; 0.3.7‒0.3.9; 0.5.4] - 2019-06-20; 2019-06-25‒27; 2019-06-19
 ### Changed
 - Bug fix for Android build
 
