@@ -2,9 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
-import { colors } from '../theme';
 import Svg, {
-  Ellipse,
   Circle,
   Defs,
   LinearGradient,
