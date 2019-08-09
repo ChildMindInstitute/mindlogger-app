@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, RefreshControl, StatusBar } from 'react-native';
+import { StyleSheet, ScrollView, View, RefreshControl, StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -9,6 +9,7 @@ import AppletInvite from '../../components/AppletInvite';
 import { BodyText } from '../../components/core';
 import JoinDemoApplets from '../../components/JoinDemoApplets';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
+import BackgroundBlobs from '../../components/BackgroundBlobs';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,10 +17,10 @@ const styles = StyleSheet.create({
   },
   activityList: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
+    // backgroundColor: colors.lightGrey,
   },
   activityListContainer: {
-    backgroundColor: colors.secondary,
+    // backgroundColor: colors.secondary,
     flex: 1,
     paddingTop: 10,
   },
@@ -57,37 +58,43 @@ const AppletListComponent = ({
           </Button>
         </Right>
       </Header>
-      <ScrollView
-        style={styles.activityList}
-        refreshControl={(
-          <RefreshControl
-            refreshing={isDownloadingApplets}
-            onRefresh={() => {
-              if (!netInfo.isConnected) {
-                connectionAlert();
-              } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
-                mobileDataAlert(toggleMobileDataAllowed);
-              } else {
-                onPressRefresh();
-              }
-            }}
-          />
-        )}
-        contentContainerStyle={styles.activityListContainer}
-      >
-        {applets.map(applet => (
-          <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
-        ))}
-        {
-          applets.length === 0 && isDownloadingApplets
-            ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
-            : <JoinDemoApplets />
-        }
-        {
-          invites.length
-            ? <AppletInvite /> : null
-        }
-      </ScrollView>
+      <View style={{ flex: 1, backgroundColor: 'transparent' }}>
+        <BackgroundBlobs />
+        <ScrollView
+          style={styles.activityList}
+          refreshControl={(
+            <RefreshControl
+              refreshing={isDownloadingApplets}
+              onRefresh={() => {
+                if (!netInfo.isConnected) {
+                  connectionAlert();
+                } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
+                  mobileDataAlert(toggleMobileDataAllowed);
+                } else {
+                  onPressRefresh();
+                }
+              }}
+            />
+          )}
+          contentContainerStyle={styles.activityListContainer}
+        >
+
+          {applets.map(applet => (
+            <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
+          ))}
+          {
+            applets.length === 0 && isDownloadingApplets
+              ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
+              : <JoinDemoApplets />
+          }
+          {
+            invites.length
+              ? <AppletInvite /> : null
+          }
+
+        </ScrollView>
+      </View>
+
     </Container>
   );
 };
