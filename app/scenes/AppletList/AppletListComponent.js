@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, RefreshControl, StatusBar } from 'react-native';
+import { StyleSheet, ScrollView, View, ImageBackground, RefreshControl, StatusBar } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -58,8 +58,14 @@ const AppletListComponent = ({
           </Button>
         </Right>
       </Header>
-      <View style={{ flex: 1, backgroundColor: 'transparent' }}>
-        <BackgroundBlobs />
+      {/* <View style={{ flex: 1, backgroundColor: 'transparent' }}> */}
+      <ImageBackground
+        style={{ width: '100%', height: '100%', flex: 1 }}
+        source={{
+          uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
+        }}
+      >
+        {/* <BackgroundBlobs /> */}
         <ScrollView
           style={styles.activityList}
           refreshControl={(
@@ -82,18 +88,18 @@ const AppletListComponent = ({
           {applets.map(applet => (
             <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
           ))}
-          {
+          {/* {
             applets.length === 0 && isDownloadingApplets
               ? <BodyText style={styles.sync}>Synchronizing...</BodyText>
               : <JoinDemoApplets />
-          }
+          } */}
           {
             invites.length
               ? <AppletInvite /> : null
           }
 
         </ScrollView>
-      </View>
+      </ImageBackground>
 
     </Container>
   );

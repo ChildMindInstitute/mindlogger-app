@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 
 const ALLOW = 'https://schema.repronim.org/allow';
+const ABOUT = 'http://schema.org/about';
 const ALT_LABEL = 'http://www.w3.org/2004/02/skos/core#altLabel';
 const AUDIO_OBJECT = 'http://schema.org/AudioObject';
 const AUTO_ADVANCE = 'https://schema.repronim.org/auto_advance';
@@ -163,6 +164,7 @@ export const appletTransformJson = appletJson => ({
   schema: languageListToObject(appletJson[URL]).en,
   name: languageListToObject(appletJson[PREF_LABEL]),
   description: languageListToObject(appletJson[DESCRIPTION]),
+  about: languageListToObject(appletJson[ABOUT]),
   schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
   version: languageListToObject(appletJson[VERSION]),
   altLabel: languageListToObject(appletJson[ALT_LABEL]),

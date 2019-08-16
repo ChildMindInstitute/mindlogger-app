@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, Text, View } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Footer, FooterTab, } from 'native-base';
+import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import { colors } from '../../theme';
-import {
-  Svg,
-  Path,
-  G
-} from 'react-native-svg';
 import ActivityList from '../../components/ActivityList';
-import AppletSummary from '../../components/AppletSummary';
+// import AppletSummary from '../../components/AppletSummary';
 import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
+import AppletAbout from '../../components/AppletAbout';
+import AppletData from '../../components/AppletData';
 
 
 const styles = StyleSheet.create({
@@ -30,6 +27,7 @@ class AppletDetailsComponent extends React.Component {
     };
   }
 
+  // eslint-disable-next-line
   renderActiveTab() {
     const { selectedTab } = this.state;
     const {
@@ -37,10 +35,11 @@ class AppletDetailsComponent extends React.Component {
       onPressActivity,
       inProgress,
     } = this.props;
+    console.log('applet is', applet);
     switch (selectedTab) {
       case 'survey':
         return (
-          <View>
+          <View style={{ flex: 1 }}>
             <AppletCalendar />
             <ActivityList
               applet={applet}
@@ -50,9 +49,14 @@ class AppletDetailsComponent extends React.Component {
           </View>
         );
       case 'data':
-        break;
+        return (
+          <View>
+            <AppletCalendar />
+            <AppletData applet={applet} />
+          </View>
+        );
       case 'about':
-        return (<AppletSummary applet={applet} />);
+        return (<AppletAbout about={applet.about ? applet.about.en : ''} />);
       default:
         break;
     }
@@ -89,9 +93,17 @@ class AppletDetailsComponent extends React.Component {
             </Button>
           </Right>
         </Header>
-        <Content>
-          {this.renderActiveTab()}
-        </Content>
+        <ImageBackground
+          style={{ width: '100%', height: '100%', flex: 1 }}
+          source={{
+            // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
+            uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80'
+          }}
+        >
+          <Content>
+            {this.renderActiveTab()}
+          </Content>
+        </ImageBackground>
         <AppletFooter
           active={selectedTab}
           changeTab={tabName => this.setState({ selectedTab: tabName })}
