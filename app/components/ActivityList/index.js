@@ -9,7 +9,8 @@ const ActivityList = ({ applet, inProgress, onPressActivity }) => {
   const activities = sortActivities(applet.activities, inProgress);
   return (
     <View style={{ paddingBottom: 30 }}>
-      <Heading style={{ paddingLeft: 20, marginTop: 30 }}>Activities</Heading>
+      {/* <Heading style={{ paddingLeft: 20, marginTop: 30 }}>Activities</Heading> */}
+
       {activities.map(activity => (
         <ActivityListItem
           onPress={() => onPressActivity(activity)}
