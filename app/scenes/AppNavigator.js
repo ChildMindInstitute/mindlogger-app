@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
+import PropTypes from 'prop-types';
 import { Router, Scene, Lightbox, Actions, Stack, Drawer, ActionConst, Modal } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
-
+import { getStore } from '../store';
 // Scenes
 import About from './About';
 import AboutApp from './AboutApp';
@@ -26,7 +27,8 @@ import Signup from './Signup';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
 
-const Navigator = Actions.create(
+// eslint-disable-next-line
+const Navigator = (initialState) => Actions.create(
   <Lightbox>
     <Modal hideNavBar>
       <Scene key="root" hideNavBar>
@@ -57,7 +59,7 @@ const Navigator = Actions.create(
   ,
 );
 
-export default class AppNavigator extends Component {
+class AppNavigator extends Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', () => {
       Actions.pop();
@@ -66,10 +68,18 @@ export default class AppNavigator extends Component {
   }
 
   render() {
+    const state = this.props.store.getState();
+    console.log('state at nav', state);
     return (
       <StyleProvider style={getTheme(platform)}>
-        <Router navigator={Navigator} />
+        <Router navigator={Navigator(this.props.store)} />
       </StyleProvider>
     );
   }
 }
+
+AppNavigator.propTypes = {
+  store: PropTypes.object.isRequired,
+};
+
+export default AppNavigator;

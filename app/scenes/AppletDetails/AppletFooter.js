@@ -14,7 +14,7 @@ class AppletFooter extends React.Component {
     const { active, changeTab } = this.props;
     return (
       <Footer>
-        <FooterTab tabBarActiveTextColor="blue">
+        <FooterTab>
 
           <Button vertical active={active === 'survey'} onPress={() => changeTab('survey')}>
             {/* <Icon name="podium" /> */}

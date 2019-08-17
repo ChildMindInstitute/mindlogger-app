@@ -63,7 +63,7 @@ const setup = () => {
   return () => (
     <Provider store={store}>
       <Root>
-        <AppNavigator />
+        <AppNavigator store={store} />
       </Root>
     </Provider>
   );
