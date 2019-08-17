@@ -26,9 +26,15 @@ import SideBar from './Sidebar';
 import Signup from './Signup';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
+import { colors } from '../themes/colors';
 
+const theme = getTheme(platform);
+console.log('native theme', theme['NativeBase.FooterTab']);
+theme['NativeBase.Footer'].height = 80;
+theme['NativeBase.FooterTab']['NativeBase.Button']['.active'].backgroundColor = 'transparent';
+console.log('native theme', theme['NativeBase.FooterTab']);
 // eslint-disable-next-line
-const Navigator = (initialState) => Actions.create(
+const Navigator = Actions.create(
   <Lightbox>
     <Modal hideNavBar>
       <Scene key="root" hideNavBar>
@@ -68,18 +74,13 @@ class AppNavigator extends Component {
   }
 
   render() {
-    const state = this.props.store.getState();
-    console.log('state at nav', state);
     return (
-      <StyleProvider style={getTheme(platform)}>
-        <Router navigator={Navigator(this.props.store)} />
+      <StyleProvider style={theme}>
+        <Router navigator={Navigator} />
       </StyleProvider>
     );
   }
 }
 
-AppNavigator.propTypes = {
-  store: PropTypes.object.isRequired,
-};
 
 export default AppNavigator;

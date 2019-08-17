@@ -27,9 +27,12 @@ const checkAuthToken = (store) => {
   return true;
 };
 
-const setInitialScreen = (authOk) => {
+const setInitialScreen = (authOk, state) => {
+  console.log('state here is', state);
   if (!authOk) {
     Actions.replace('login');
+  } else if (state.app.currentApplet) {
+    Actions.replace('applet_details');
   } else {
     Actions.replace('applet_list');
   }
@@ -38,7 +41,7 @@ const setInitialScreen = (authOk) => {
 const setup = () => {
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
-    setInitialScreen(authOk);
+    setInitialScreen(authOk, store.getState());
     if (authOk) {
       store.dispatch(sync());
     }
@@ -63,7 +66,7 @@ const setup = () => {
   return () => (
     <Provider store={store}>
       <Root>
-        <AppNavigator store={store} />
+        <AppNavigator />
       </Root>
     </Provider>
   );
