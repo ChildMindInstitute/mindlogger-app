@@ -88,9 +88,9 @@ class AppletDetailsComponent extends React.Component {
             <Title>{applet.name.en}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
-            <Button transparent onPress={onPressDrawer}>
+            {/* <Button transparent onPress={onPressDrawer}>
               <Icon type="FontAwesome" name="bars" />
-            </Button>
+            </Button> */}
           </Right>
         </Header>
         <ImageBackground

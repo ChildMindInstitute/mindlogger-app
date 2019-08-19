@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
-import PropTypes from 'prop-types';
 import { Router, Scene, Lightbox, Actions, Stack, Drawer, ActionConst, Modal } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
-import { getStore } from '../store';
 // Scenes
-import About from './About';
 import AboutApp from './AboutApp';
 import Activity from './Activity';
 import ActivityDetails from './ActivityDetails';
@@ -29,10 +26,9 @@ import VolumeInfo from './VolumeInfo';
 import { colors } from '../themes/colors';
 
 const theme = getTheme(platform);
-console.log('native theme', theme['NativeBase.FooterTab']);
 theme['NativeBase.Footer'].height = 80;
 theme['NativeBase.FooterTab']['NativeBase.Button']['.active'].backgroundColor = 'transparent';
-console.log('native theme', theme['NativeBase.FooterTab']);
+
 // eslint-disable-next-line
 const Navigator = Actions.create(
   <Lightbox>
@@ -44,12 +40,12 @@ const Navigator = Actions.create(
             <Scene key="about_act" component={InfoAct} />
             <Scene key="about_app" component={AboutApp} />
             <Scene key="about_volume" component={VolumeInfo} />
-            <Scene key="about" component={About} />
             <Scene key="activity_details" component={ActivityDetails} />
             <Scene key="applet_details" component={AppletDetails} />
             <Scene key="applet_list" component={AppletList} />
             <Scene key="change_study" component={ChangeStudy} />
             <Scene key="consent" component={Consent} />
+            <Scene key="logout_warning" component={LogoutWarning} />
             <Scene key="forgot_password" component={ForgotPassword} />
             <Scene key="login" component={Login} />
             <Scene key="settings" component={Settings} />
@@ -60,8 +56,8 @@ const Navigator = Actions.create(
       </Scene>
       <Scene key="take_act" component={Activity} />
       <Scene key="activity_thanks" component={ActivityThanks} />
-      </Modal>
-    </Lightbox>
+    </Modal>
+  </Lightbox>
   ,
 );
 

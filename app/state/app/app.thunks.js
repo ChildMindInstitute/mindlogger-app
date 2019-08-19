@@ -56,11 +56,12 @@ const doLogout = (dispatch, getState) => {
 export const logout = () => (dispatch, getState) => {
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
+
   if (uploadQueue.length > 0) {
     Actions.push('logout_warning', {
       onCancel: () => { Actions.pop(); },
       onLogout: () => {
-        Actions.pop();
+        Actions.replace('login');
         doLogout(dispatch, getState);
       },
     });

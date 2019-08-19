@@ -6,51 +6,72 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
+import { logout } from '../../state/app/app.thunks';
 
-
-const SettingsScreen = ({ skin, mobileDataAllowed, toggleMobileDataAllowed }) => (
-  <Container>
-    <Header style={{ backgroundColor: skin.colors.primary }}>
-      <Left />
-      <Body>
-        <Title>Settings</Title>
-      </Body>
-      <Right>
-        <Button transparent onPress={Actions.drawerOpen}>
-          <Icon type="FontAwesome" name="bars" />
-        </Button>
-      </Right>
-    </Header>
-    <Content>
-      <List>
-        <ListItem button bordered onPress={() => Actions.replace('change_password')}>
+// eslint-disable-next-line
+class SettingsScreen extends React.Component {
+  render() {
+    const { skin, mobileDataAllowed, toggleMobileDataAllowed, logout } = this.props;
+    return (
+      <Container>
+        <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left>
-            <Text>Change Password</Text>
+            <Button transparent onPress={Actions.pop}>
+              <Icon
+                ios="ios-arrow-back"
+                android="md-arrow-back"
+              />
+            </Button>
           </Left>
-          <Right>
-            <Icon name="arrow-forward" />
-          </Right>
-        </ListItem>
-        <ListItem bordered>
-          <Left>
-            <Text>Use Cellular Data</Text>
-          </Left>
-          <Right>
-            <Switch
-              onValueChange={toggleMobileDataAllowed}
-              value={mobileDataAllowed}
-            />
-          </Right>
-        </ListItem>
-      </List>
-    </Content>
-  </Container>
-);
+          <Body>
+            <Title>Settings</Title>
+          </Body>
+          <Right />
+        </Header>
+        <Content>
+          <List>
+            <ListItem button bordered onPress={() => Actions.push('change_password')}>
+              <Left>
+                <Text>Change Password</Text>
+              </Left>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+            <ListItem bordered>
+              <Left>
+                <Text>Use Cellular Data</Text>
+              </Left>
+              <Right>
+                <Switch
+                  onValueChange={toggleMobileDataAllowed}
+                  value={mobileDataAllowed}
+                />
+              </Right>
+            </ListItem>
+            <ListItem onPress={() => {
+              logout();
+            }}
+            >
+              <Left>
+                <Text> Logout </Text>
+              </Left>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+          </List>
+        </Content>
+      </Container>
+    );
+  }
+}
 
 SettingsScreen.propTypes = {
   skin: PropTypes.object.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -58,8 +79,9 @@ const mapStateToProps = state => ({
   mobileDataAllowed: mobileDataAllowedSelector(state),
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps = dispatch => ({
   toggleMobileDataAllowed,
-};
+  logout: () => dispatch(logout()),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);

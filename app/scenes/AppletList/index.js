@@ -36,16 +36,17 @@ class AppletList extends Component {
       toggleMobileDataAllowed,
       user,
     } = this.props;
-    const { firstName } = user;
+
     return (
       <AppletListComponent
         applets={applets}
         invites={invites}
         isDownloadingApplets={isDownloadingApplets}
-        title={`Hi ${firstName}!`}
+        title={`Hi ${user ? user.firstName : ''}!`}
         primaryColor={skin.colors.primary}
-        onPressDrawer={Actions.drawerOpen}
+        onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
+        onPressAbout={() => { Actions.push('about_app'); }}
         onPressApplet={this.handlePressApplet}
         mobileDataAllowed={mobileDataAllowed}
         toggleMobileDataAllowed={toggleMobileDataAllowed}
