@@ -7,6 +7,7 @@ import {
   invitesSelector,
   isDownloadingAppletsSelector,
 } from '../../state/applets/applets.selectors';
+import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
@@ -33,14 +34,15 @@ class AppletList extends Component {
       skin,
       mobileDataAllowed,
       toggleMobileDataAllowed,
+      user,
     } = this.props;
-    console.log('invites', invites);
+    const { firstName } = user;
     return (
       <AppletListComponent
         applets={applets}
         invites={invites}
         isDownloadingApplets={isDownloadingApplets}
-        title={skin.name}
+        title={`Hi ${firstName}!`}
         primaryColor={skin.colors.primary}
         onPressDrawer={Actions.drawerOpen}
         onPressRefresh={this.refresh}
@@ -61,6 +63,7 @@ AppletList.propTypes = {
   skin: PropTypes.object.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -69,6 +72,7 @@ const mapStateToProps = state => ({
   isDownloadingApplets: isDownloadingAppletsSelector(state),
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
+  user: userInfoSelector(state),
 });
 
 const mapDispatchToProps = {
