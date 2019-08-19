@@ -25,7 +25,7 @@ export const sync = () => (dispatch, getState) => {
 };
 
 const doLogout = (dispatch, getState) => {
-  Actions.replace('login'); // Set screen back to login
+  Actions.push('login'); // Set screen back to login
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
   const inProgress = inProgressSelector(state);
@@ -61,7 +61,7 @@ export const logout = () => (dispatch, getState) => {
     Actions.push('logout_warning', {
       onCancel: () => { Actions.pop(); },
       onLogout: () => {
-        Actions.replace('login');
+        Actions.push('login');
         doLogout(dispatch, getState);
       },
     });

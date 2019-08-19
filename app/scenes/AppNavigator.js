@@ -34,25 +34,25 @@ const Navigator = Actions.create(
   <Lightbox>
     <Modal hideNavBar>
       <Scene key="root" hideNavBar>
-        <Drawer key="side_menu" contentComponent={SideBar}>
-          <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
-            <Scene key="splash" component={Splash} hideNavBar initial />
-            <Scene key="about_act" component={InfoAct} />
-            <Scene key="about_app" component={AboutApp} />
-            <Scene key="about_volume" component={VolumeInfo} />
-            <Scene key="activity_details" component={ActivityDetails} />
-            <Scene key="applet_details" component={AppletDetails} />
-            <Scene key="applet_list" component={AppletList} />
-            <Scene key="change_study" component={ChangeStudy} />
-            <Scene key="consent" component={Consent} />
-            <Scene key="logout_warning" component={LogoutWarning} />
-            <Scene key="forgot_password" component={ForgotPassword} />
-            <Scene key="login" component={Login} />
-            <Scene key="settings" component={Settings} />
-            <Scene key="change_password" component={ChangePassword} />
-            <Scene key="sign_up" component={Signup} />
-          </Scene>
-        </Drawer>
+        {/* <Drawer key="side_menu" contentComponent={SideBar}> */}
+        <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
+          <Scene key="splash" component={Splash} hideNavBar initial />
+          <Scene key="about_act" component={InfoAct} />
+          <Scene key="about_app" component={AboutApp} />
+          <Scene key="about_volume" component={VolumeInfo} />
+          <Scene key="activity_details" component={ActivityDetails} />
+          <Scene key="applet_details" component={AppletDetails} />
+          <Scene key="applet_list" component={AppletList} />
+          <Scene key="change_study" component={ChangeStudy} />
+          <Scene key="consent" component={Consent} />
+          <Scene key="logout_warning" component={LogoutWarning} />
+          <Scene key="forgot_password" component={ForgotPassword} />
+          <Scene key="login" component={Login} />
+          <Scene key="settings" component={Settings} />
+          <Scene key="change_password" component={ChangePassword} />
+          <Scene key="sign_up" component={Signup} />
+        </Scene>
+        {/* </Drawer> */}
       </Scene>
       <Scene key="take_act" component={Activity} />
       <Scene key="activity_thanks" component={ActivityThanks} />
