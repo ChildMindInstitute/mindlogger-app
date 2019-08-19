@@ -94,7 +94,8 @@ export const markdownStyle = {
   },
   paragraph: {
     alignSelf: 'flex-start',
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: '300',
     color: '#000000',
     fontFamily: theme.fontFamily,
   },

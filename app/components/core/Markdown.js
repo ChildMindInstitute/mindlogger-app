@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view';
 import { markdownStyle } from '../../themes/activityTheme';
 import { getURL } from '../../services/helper';
@@ -19,10 +20,13 @@ const rules = {
 };
 
 export const Markdown = ({ children }) => (
-  <MarkdownView
-    styles={markdownStyle}
-    rules={rules}
-  >
-    {children}
-  </MarkdownView>
+  <View style={{ alignContent: 'center', alignItems: 'center' }}>
+    <MarkdownView
+      styles={markdownStyle}
+      rules={rules}
+    >
+      {children}
+    </MarkdownView>
+  </View>
+
 );

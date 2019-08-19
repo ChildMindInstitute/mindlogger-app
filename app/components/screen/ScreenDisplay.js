@@ -11,7 +11,7 @@ const ScreenDisplay = ({ screen }) => (
       </Markdown>
     )}
     {screen.question && (
-      <Markdown>
+      <Markdown mstyle={{color: 'red'}}>
         {screen.question.en}
       </Markdown>
     )}
