@@ -1,8 +1,10 @@
 import { StyleSheet } from 'react-native';
+import theme from './base-theme';
 
 const styles = StyleSheet.create({
   body: {
     flex: 1,
+    fontFamily: theme.fontFamily,
   },
   camera: {
     width: '100%',
@@ -17,10 +19,12 @@ const styles = StyleSheet.create({
   footerText: {
     fontSize: 20,
     fontWeight: '300',
+    fontFamily: theme.fontFamily,
   },
   buttonText: {
     fontSize: 24,
     fontWeight: '300',
+    fontFamily: theme.fontFamily,
   },
   takeButton: {
     borderRadius: 12,
@@ -32,6 +36,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#d10000',
     backgroundColor: '#ffdddd',
+    fontFamily: theme.fontFamily,
   },
   videoConfirmed: {
     borderRadius: 12,
@@ -43,6 +48,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#00a30a',
     backgroundColor: '#99ff9f',
+    fontFamily: theme.fontFamily,
   },
   chooseButton: {
     borderRadius: 12,
@@ -55,6 +61,7 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#dbdbdb',
     marginTop: 8,
+    fontFamily: theme.fontFamily,
   },
   redIcon: {
     color: '#d10000',
@@ -71,36 +78,44 @@ export const markdownStyle = {
     fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 18,
+    fontFamily: theme.fontFamily,
   },
   heading2: {
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 18,
+    fontFamily: theme.fontFamily,
   },
   heading3: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 18,
+    fontFamily: theme.fontFamily,
   },
   paragraph: {
     alignSelf: 'flex-start',
     fontSize: 18,
     color: '#000000',
+    fontFamily: theme.fontFamily,
   },
   listItemUnorderedContent: {
     fontSize: 18,
     color: '#000000',
+    fontFamily: theme.fontFamily,
   },
   listItemOrderedContent: {
     fontSize: 18,
     color: '#000000',
+    fontFamily: theme.fontFamily,
   },
   linkWrapper: {
     alignSelf: 'flex-start',
+    fontFamily: theme.fontFamily,
   },
   link: {
     alignSelf: 'flex-start',
     textDecorationLine: 'underline',
+    fontFamily: theme.fontFamily,
   },
   image: {
     resizeMode: 'contain',
