@@ -5,6 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.5.8] - 2019-08-19‒20
+### Added
+- Settings gear
+
+### Changed
+- Default view
+- About tab
+- Data tab
+- Thanks page
+- Centered and made questions larger in the screens
+- :apple: Font
+
+### Removed
+- Drawer
+- Some branding
+
 ## [0.5.6] - 2019-08-09
 ### Added
 - Increased SVG support
