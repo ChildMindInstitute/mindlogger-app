@@ -75,12 +75,12 @@ const ActivityRow = ({ activity, onPress }) => {
               {activity.description.en}
             </BodyText>
             <ActivityDueDate activity={activity} />
-            <Hyperlink
+            {/* <Hyperlink
               style={styles.moreInfo}
               onPress={() => Actions.push('activity_details')}
             >
               Details
-            </Hyperlink>
+            </Hyperlink> */}
           </View>
           <View style={styles.right}>
             <Icon type="FontAwesome" name="chevron-right" style={styles.icon} />

@@ -49,15 +49,18 @@ class ChangePasswordScreen extends Component {
       <Container style={styles.container}>
         <StatusBar barStyle="light-content" />
         <Header style={{ backgroundColor: skin.colors.primary }}>
-          <Left />
+          <Left>
+            <Button transparent onPress={Actions.pop}>
+              <Icon
+                ios="ios-arrow-back"
+                android="md-arrow-back"
+              />
+            </Button>
+          </Left>
           <Body>
             <Title>Change Password</Title>
           </Body>
-          <Right>
-            <Button transparent onPress={Actions.drawerOpen}>
-              <Icon type="FontAwesome" name="bars" />
-            </Button>
-          </Right>
+          <Right />
         </Header>
         <Content>
           <Text style={styles.subHeader}>Profile</Text>

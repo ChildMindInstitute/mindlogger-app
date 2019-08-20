@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {StatusBar, Image } from 'react-native';
+import { StatusBar, Image, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Content, Button, Icon, View, Header, Right, Body, Title, Left } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -11,7 +11,35 @@ import { Markdown } from '../../components/core';
 
 const logoImage = require('../../../img/color_logo.png');
 
-const mindloggerAbout = 'This app is part of the MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org).\n\n### What is MindLogger?\n\nMindLogger is a general-purpose data collection platform:\n\n * App builder → Build iPhone/Android apps online without coding!\n * Mobile apps → Collect data remotely!\n * Database and analytics → Securely store and analyze data in the cloud!\n * Online dashboard → View analyzed data online!\n\n### What can MindLogger do?\n\nMindLogger\'s feature set is growing, and currently supports a wide variety of survey types, voice recording, and drawing and photo annotation capabilities.\n\n### Who uses MindLogger?\n\nMindLogger is being used to gather data in large-scale research studies, in the clinic for remote mental health assessment, and by others interested in collecting and analyzing data from themselves or from other people.\n\nWe hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org.\n\nCheers,\nArno Klein';
+const mindloggerAbout = `
+This app is part of the MindLogger data collection and analysis
+platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org).
+
+
+### What is MindLogger?
+
+MindLogger is a general-purpose data collection platform:
+* App builder → Build iPhone/Android apps online without coding!
+* Mobile apps → Collect data remotely!
+* Database and analytics → Securely store and analyze data in the cloud!
+* Online dashboard → View analyzed data online!
+
+### What can MindLogger do?
+
+MindLogger's feature set is growing,
+and currently supports a wide variety of survey types, voice recording,
+and drawing and photo annotation capabilities.
+
+### Who uses MindLogger?
+
+MindLogger is being used to gather data in large-scale research studies,
+in the clinic for remote mental health assessment, and by others interested
+in collecting and analyzing data from themselves or from other people.\n\n
+We hope that you find MindLogger to be useful! For more information,
+please visit matter.childmind.org.
+
+Cheers,
+MindLogger Team @ the Child Mind Institute`;
 
 class AboutApp extends Component { // eslint-disable-line
 
@@ -37,13 +65,17 @@ class AboutApp extends Component { // eslint-disable-line
                   </Button>
                 </Left>
                 <Body>
-                  <Title>{'About ' + title}</Title>
+                  <Title>About {title}</Title>
                 </Body>
-                <Right></Right>
+                <Right />
               </Header>
               <Content>
                 <View style={styles.content}>
                   <Markdown>{skin.about}</Markdown>
+                  <Text>
+                    NounProject icons were created by Alina Oleynik (survey),
+                    beth bolton (book), and Shakeel (chart)
+                  </Text>
                 </View>
               </Content>
             </Container>
@@ -52,7 +84,7 @@ class AboutApp extends Component { // eslint-disable-line
       }
       return (
         <Container style={styles.container}>
-          <StatusBar barStyle='light-content'/>
+          <StatusBar barStyle="light-content" />
           <Header style={{ backgroundColor: skin.colors.primary }}>
             <Left>
               <Button transparent onPress={this.onClose}>
@@ -62,13 +94,17 @@ class AboutApp extends Component { // eslint-disable-line
             <Body>
               <Title>About MindLogger {packageJson.version}</Title>
             </Body>
-            <Right></Right>
+            <Right />
           </Header>
           <Content>
             <View style={styles.content}>
               <Markdown>
                 {mindloggerAbout}
               </Markdown>
+              <Text>
+                  NounProject icons were created by Alina Oleynik (survey),
+                  beth bolton (book), and Shakeel (chart)
+              </Text>
               <View>
                 <Image
                   square
@@ -88,7 +124,7 @@ AboutApp.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  skin: skinSelector(state)
+  skin: skinSelector(state),
 });
 
 export default connect(mapStateToProps, null)(AboutApp);

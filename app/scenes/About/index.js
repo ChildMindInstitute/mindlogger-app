@@ -44,7 +44,7 @@ class AboutScreen extends Component { // eslint-disable-line
           <Header style={{ backgroundColor: skin.colors.primary }}>
             <Left />
             <Body>
-                <Title>About</Title>
+              <Title>About</Title>
             </Body>
             <Right>
               <Button transparent onPress={Actions.drawerOpen}>
@@ -66,6 +66,9 @@ class AboutScreen extends Component { // eslint-disable-line
                   <Icon name="information-circle" style={[styles.aboutIcon, { color: skin.colors.primary }]} />
                   <Text style={[styles.buttonText, { color: skin.colors.primary }]}>About MindLogger</Text>
                 </TouchableOpacity>
+                <Text>
+                  NounProject icons were created by Alina Oleynik (survey), beth bolton (book), and Shakeel (chart)
+                </Text>
               </View>
             </View>
           </Content>
