@@ -6,11 +6,12 @@ import moment from 'moment';
 
 import CalendarStrip from 'react-native-calendar-strip';
 import { colors } from '../themes/colors';
+import theme from '../themes/base-theme';
 
 // eslint-disable-next-line
 const ActCalendar = ({}) => {
   return (
-    <View>
+    <View style={{ fontFamily: theme.fontFamily }}>
       <CalendarStrip
         style={{ paddingTop: 10, paddingBottom: 5 }}
         selectedDate={new Date()}
@@ -32,8 +33,8 @@ const ActCalendar = ({}) => {
           start: moment(),
           end: moment().add(0, 'days') }]}
         // calendarAnimation={{ type: 'sequence', duration: 30 }}
-        calendarHeaderStyle={{ fontWeight: '300' }}
-        dateNumberStyle={{ fontWeight: 'normal' }}
+        calendarHeaderStyle={{ fontWeight: 'normal', fontFamily: theme.fontFamily }}
+        dateNumberStyle={{ fontWeight: 'normal', fontFamily: theme.fontFamily }}
         daySelectionAnimation={{ type: 'background',
           duration: 200,
           highlightColor: colors.lightBlue }}

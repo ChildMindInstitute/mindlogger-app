@@ -22,7 +22,7 @@ export default {
   badgePadding: (platform === 'ios') ? 3 : 0,
 
     // Button
-  btnFontFamily: (platform === 'ios') ? 'System' : 'Roboto_medium',
+  btnFontFamily: (platform === 'ios') ? 'Avenir' : 'Roboto_medium',
   btnDisabledBg: '#b5b5b5',
   btnDisabledClr: '#f1f1f1',
 
