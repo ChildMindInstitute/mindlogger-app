@@ -142,43 +142,41 @@ class Screen extends Component {
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
         >
-          <View style={{justifyContent: 'center'}}>
-            <ScreenDisplay screen={screen} />
-            {inputDelayed
-              ? (
-                <View pointerEvents="none" style={styles.delayView}>
-                  <View style={styles.delayTimerView}>
-                    <Timer
-                      duration={screen.delay}
-                      color={colors.tertiary}
-                      size={50}
-                      strokeWidth={5}
-                    />
-                  </View>
-                  <View style={{ opacity: 0.25 }}>
-                    <Widget
-                      answer={answer}
-                      onChange={onChange}
-                      isCurrent={isCurrent}
-                      screen={screen}
-                      onPress={() => { this.setState({ scrollEnabled: false }); }}
-                      onRelease={() => { this.setState({ scrollEnabled: true }); }}
-                    />
-                  </View>
+          <ScreenDisplay screen={screen} />
+          {inputDelayed
+            ? (
+              <View pointerEvents="none" style={styles.delayView}>
+                <View style={styles.delayTimerView}>
+                  <Timer
+                    duration={screen.delay}
+                    color={colors.tertiary}
+                    size={50}
+                    strokeWidth={5}
+                  />
                 </View>
-              )
-              : (
-                <Widget
-                  answer={answer}
-                  onChange={onChange}
-                  isCurrent={isCurrent}
-                  screen={screen}
-                  onPress={() => { this.setState({ scrollEnabled: false }); }}
-                  onRelease={() => { this.setState({ scrollEnabled: true }); }}
-                />
-              )
-            }
-          </View>
+                <View style={{ opacity: 0.25 }}>
+                  <Widget
+                    answer={answer}
+                    onChange={onChange}
+                    isCurrent={isCurrent}
+                    screen={screen}
+                    onPress={() => { this.setState({ scrollEnabled: false }); }}
+                    onRelease={() => { this.setState({ scrollEnabled: true }); }}
+                  />
+                </View>
+              </View>
+            )
+            : (
+              <Widget
+                answer={answer}
+                onChange={onChange}
+                isCurrent={isCurrent}
+                screen={screen}
+                onPress={() => { this.setState({ scrollEnabled: false }); }}
+                onRelease={() => { this.setState({ scrollEnabled: true }); }}
+              />
+            )
+          }
         </ScrollView>
         {timerActive && (
           <View style={styles.timerView}>
