@@ -8,6 +8,7 @@ import {
   G,
 } from 'react-native-svg';
 import { colors } from '../../themes/colors';
+import theme from '../../themes/base-theme';
 
 // eslint-disable-next-line
 class AppletFooter extends React.Component {
@@ -41,7 +42,7 @@ class AppletFooter extends React.Component {
                 fill={active === 'survey' ? colors.primary : defaultColor}/>
               </G>
             </Svg>
-            <Text style={active === 'survey' ? { color: colors.primary, fontWeight: 'bold' } : { color: defaultColor }}>Surveys</Text>
+            <Text style={active === 'survey' ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily } : { color: defaultColor, fontFamily: theme.fontFamily }}>Surveys</Text>
           </Button>
 
           <Button vertical active={active === 'data'} onPress={() => changeTab('data')}>
@@ -53,7 +54,7 @@ class AppletFooter extends React.Component {
               <Path d="M56.126 50.2701C56.1507 50.2336 56.1773 50.2029 56.1982 50.1626C56.2419 50.0742 56.2628 49.9782 56.2761 49.8765C56.2818 49.84 56.3027 49.8093 56.3046 49.7728C56.3046 49.7651 56.3008 49.7594 56.3008 49.7536C56.3008 49.7498 56.3027 49.7459 56.3027 49.7421C56.3027 49.6058 56.2723 49.4752 56.221 49.3581C56.202 49.3158 56.1697 49.2832 56.145 49.2448C56.0975 49.168 56.0481 49.095 55.9816 49.0355C55.9664 49.0221 55.9607 49.001 55.9436 48.9875L52.3336 46.1152C51.9232 45.7926 51.3247 45.8598 50.9998 46.2765C50.6749 46.6931 50.7452 47.296 51.1575 47.6243L52.6148 48.784H46.8844V12.3827C46.8844 11.8528 46.4588 11.4227 45.9344 11.4227H40.85C40.3256 11.4227 39.9 11.8528 39.9 12.3827V48.7821H36.3565V23.9046C36.3565 23.3747 35.9309 22.9446 35.4065 22.9446H30.4741C29.9497 22.9446 29.5241 23.3747 29.5241 23.9046V48.7821H25.9806V16.3283C25.9806 15.7984 25.555 15.3683 25.0306 15.3683H20.1001C19.5757 15.3683 19.1501 15.7984 19.1501 16.3283V48.7821H15.6085V32.0032C15.6085 31.4733 15.1829 31.0432 14.6585 31.0432H9.72797C9.20357 31.0432 8.77797 31.4733 8.77797 32.0032V48.7821H5.27437L5.37317 7.35424L6.28327 8.65984C6.46757 8.9248 6.76207 9.06688 7.06037 9.06688C7.25037 9.06688 7.44037 9.00928 7.60757 8.89216C8.03697 8.58688 8.13957 7.98784 7.83937 7.55392L5.20977 3.7792C5.19457 3.75808 5.16987 3.7504 5.15467 3.72928C5.09577 3.65824 5.02737 3.60256 4.95137 3.55072C4.91337 3.52384 4.88297 3.49504 4.84117 3.47584C4.74047 3.42592 4.62837 3.39904 4.51057 3.38944C4.48967 3.3856 4.47067 3.37216 4.44977 3.37216C4.44787 3.37216 4.44407 3.37408 4.44217 3.37408C4.43837 3.37408 4.43647 3.37216 4.43267 3.37216H4.43077C4.28257 3.37216 4.14767 3.41248 4.02417 3.47392C4.02037 3.47584 4.01847 3.47776 4.01657 3.47776C3.89877 3.53728 3.79997 3.61792 3.71637 3.71776C3.70497 3.7312 3.68787 3.73696 3.67647 3.7504L0.889173 7.44256C0.569973 7.86496 0.651673 8.46592 1.06967 8.78848C1.48197 9.10912 2.08047 9.0304 2.39967 8.608L3.47317 7.18336L3.37437 49.7402C3.37437 49.9955 3.47127 50.2394 3.65177 50.4198C3.83037 50.6003 4.07167 50.7021 4.32437 50.7021H52.2728L51.0454 51.5469C50.6103 51.8445 50.5001 52.4416 50.7946 52.8794C50.9789 53.152 51.2772 53.2998 51.5793 53.2998C51.7655 53.2998 51.9498 53.248 52.1132 53.1328L55.8885 50.5331C55.9075 50.5216 55.9151 50.4986 55.9322 50.4851C56.0082 50.4237 56.0709 50.3526 56.126 50.2701ZM41.8 13.3427H44.9844V48.6189H41.8V13.3427ZM31.4241 24.8646H34.4565V48.6189H31.4241V24.8646ZM21.0501 17.2883H24.0806V48.6189H21.0501V17.2883ZM10.678 32.9632H13.7085V48.6189H10.678V32.9632Z"
               fill={active === 'data' ? colors.primary : defaultColor}/>
             </Svg>
-            <Text style={active === 'data' ? { color: colors.primary, fontWeight: 'bold' } : { color: defaultColor }}>Data</Text>
+            <Text style={active === 'data' ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily } : { color: defaultColor, fontFamily: theme.fontFamily }}>Data</Text>
           </Button>
 
           <Button vertical active={active === 'about'} onPress={() => changeTab('about')}>
@@ -65,7 +66,7 @@ class AppletFooter extends React.Component {
                 fill={active === 'about' ? colors.primary : defaultColor}/>
               </G>
             </Svg>
-            <Text style={active === 'about' ? { color: colors.primary, fontWeight: 'bold' } : { color: defaultColor }}>About</Text>
+            <Text style={active === 'about' ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily } : { color: defaultColor, fontFamily: theme.fontFamily }}>About</Text>
           </Button>
         </FooterTab>
       </Footer>

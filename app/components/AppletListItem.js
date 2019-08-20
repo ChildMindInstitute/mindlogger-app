@@ -8,18 +8,22 @@ import {
   NotificationText,
 } from './core';
 import AppletImage from './AppletImage';
+import theme from '../themes/variables';
 
 const styles = StyleSheet.create({
   box: {
     position: 'relative',
+    fontFamily: theme.fontFamily,
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    fontFamily: theme.fontFamily,
   },
   textBlock: {
     flex: 1,
     marginLeft: 16,
+    fontFamily: theme.fontFamily,
   },
   notification: {
     position: 'absolute',
@@ -40,10 +44,10 @@ const AppletListItem = ({ applet, onPress }) => {
         <View style={styles.inner}>
           <AppletImage applet={applet} />
           <View style={styles.textBlock}>
-            <SubHeading>
+            <SubHeading style={{ fontFamily: theme.fontFamily }}>
               {applet.name.en}
             </SubHeading>
-            <BodyText>
+            <BodyText style={{ fontFamily: theme.fontFamily }}>
               {applet.description.en}
             </BodyText>
           </View>

@@ -8,14 +8,17 @@ import {
   SubHeading,
 } from './core';
 import { colors } from '../themes/colors';
+import theme from '../themes/base-theme';
 
 const styles = StyleSheet.create({
   box: {
     padding: 20,
     paddingTop: 40,
+    fontFamily: theme.fontFamily,
   },
   description: {
     marginBottom: 30,
+    fontFamily: theme.fontFamily,
   },
   lockup: {
     width: '100%',
@@ -23,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginLeft: 20,
+    fontFamily: theme.fontFamily,
   },
   icon: {
     fontSize: 30,

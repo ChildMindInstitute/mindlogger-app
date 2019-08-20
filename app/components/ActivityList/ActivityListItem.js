@@ -6,18 +6,22 @@ import { Icon } from 'native-base';
 import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading, Hyperlink } from '../core';
 import ActivityDueDate from './ActivityDueDate';
 import { colors } from '../../theme';
+import theme from '../../themes/base-theme';
 
 const styles = StyleSheet.create({
   box: {
     position: 'relative',
+    fontFamily: theme.fontFamily,
   },
   inner: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    fontFamily: theme.fontFamily,
   },
   textBlock: {
     flex: 1,
     marginLeft: 16,
+    fontFamily: theme.fontFamily,
   },
   notification: {
     position: 'absolute',
@@ -32,6 +36,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: colors.grey,
     flex: 1,
+    fontFamily: theme.fontFamily,
   },
   moreInfo: {
     marginTop: 16,
@@ -68,10 +73,10 @@ const ActivityRow = ({ activity, onPress }) => {
       <TouchBox onPress={() => onPress(activity)}>
         <View style={styles.layout}>
           <View style={styles.left}>
-            <SubHeading>
+            <SubHeading style={{ fontFamily: theme.fontFamily }}>
               {activity.name.en}
             </SubHeading>
-            <BodyText>
+            <BodyText style={{ fontFamily: theme.fontFamily }}>
               {activity.description.en}
             </BodyText>
             <ActivityDueDate activity={activity} />
