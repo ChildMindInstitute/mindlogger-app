@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.5.10] - 2019-08-20
+### Changed
+- :lock: Security upgrades
+
+## [0.5.9] - 2019-08-20‒21
+### Changed
+- Icon
+
 ## [0.5.8] - 2019-08-19‒20
 ### Added
 - Settings gear
