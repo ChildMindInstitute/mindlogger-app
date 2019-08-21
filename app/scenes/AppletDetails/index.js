@@ -5,6 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector } from '../../state/responses/responses.selectors';
+import { invitesSelector } from '../../state/applets/applets.selectors';
 import { setCurrentActivity } from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 
@@ -24,6 +25,7 @@ class AppletDetails extends Component {
       currentApplet,
       inProgress,
       skin,
+      hasInvites,
     } = this.props;
     if (!currentApplet) {
       return null;
@@ -37,6 +39,7 @@ class AppletDetails extends Component {
         onPressActivity={this.handlePressActivity}
         onPressBack={this.handleBack}
         primaryColor={skin.colors.primary}
+        hasInvites={hasInvites}
       />
     );
   }
@@ -54,6 +57,7 @@ const mapStateToProps = state => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
+  hasInvites: invitesSelector(state).length > 0,
 });
 
 const mapDispatchToProps = {
