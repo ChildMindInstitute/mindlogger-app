@@ -15,13 +15,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
   },
   activityList: {
-    flex: 1,
+    // flex: 1,
     // backgroundColor: colors.lightGrey,
   },
   activityListContainer: {
     // backgroundColor: colors.secondary,
-    flex: 1,
+    // flex: 1,
     paddingTop: 10,
+    // paddingBottom: 30,
   },
   sync: {
     padding: 50,
@@ -102,6 +103,7 @@ const AppletListComponent = ({
           <View
             style={{
               marginTop: 20,
+              marginBottom: 40,
               alignItems: 'center',
               alignContent: 'center',
               textAlign: 'center',
