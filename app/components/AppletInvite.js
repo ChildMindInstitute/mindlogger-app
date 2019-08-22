@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { BodyText, Hyperlink } from './core';
+import { BodyText, Hyperlink, TouchBox, SubHeading, NotificationDot } from './core';
 import { acceptInvitation } from '../state/applets/applets.thunks';
 import { invitesSelector } from '../state/applets/applets.selectors';
 
@@ -19,28 +19,29 @@ const styles = StyleSheet.create({
   },
 });
 
-const AcceptAppletInvite = ({ invites, acceptInvitation }) => 
-    //const [joinInProgress, setJoinInProgress] = useState({});
+const AcceptAppletInvite = ({ invites, acceptInvitation }) => (
+  <View style={styles.container}>
+    <BodyText style={styles.message}>
+      You have new invites:
+    </BodyText>
+    {invites.map(invite => (
+      <View key={invite.name}>
+        <TouchBox
+          onPress={() => {
+            acceptInvitation(invite._id);
+          }}
+        >
 
-    (
-      <View style={styles.container}>
-        <BodyText style={styles.message}>
-          You have new invites:
-        </BodyText>
-        {invites.map(invite => (
-          <Hyperlink
-            key={invite.id}
-            style={styles.link}
-            onPress={() => {
-              acceptInvitation(invite._id);
-            }}
-            disabled={false}
-          >
-            {invite.name}
-          </Hyperlink>
-        ))}
+          <SubHeading>
+            {invite.name.split('Default')[1].split('(')[0]}
+          </SubHeading>
+        </TouchBox>
+        <NotificationDot />
+
       </View>
-  );
+    ))}
+  </View>
+);
 
 AcceptAppletInvite.propTypes = {
   // applets: PropTypes.arrayOf(PropTypes.shape({
@@ -48,6 +49,7 @@ AcceptAppletInvite.propTypes = {
   // })).isRequired,
   // joinOpenApplet: PropTypes.func.isRequired,
   invites: PropTypes.array.isRequired,
+  acceptInvitation: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
