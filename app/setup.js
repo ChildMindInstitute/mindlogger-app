@@ -10,6 +10,7 @@ import { sync } from './state/app/app.thunks';
 import { clearUser } from './state/user/user.actions';
 import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
 import { startFreshResponse } from './state/responses/responses.thunks';
+import { currentAppletSelector } from './state/app/app.selectors';
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -28,10 +29,9 @@ const checkAuthToken = (store) => {
 };
 
 const setInitialScreen = (authOk, state) => {
-  console.log('state here is', state);
   if (!authOk) {
     Actions.replace('login');
-  } else if (state.app.currentApplet) {
+  } else if (state.app.currentApplet && currentAppletSelector(state)) {
     Actions.replace('applet_details');
   } else {
     Actions.replace('applet_list');

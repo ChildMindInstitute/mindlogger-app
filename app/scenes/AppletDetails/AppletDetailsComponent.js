@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Badge, Text } from 'native-base';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -14,6 +14,13 @@ import AppletData from '../../components/AppletData';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.secondary,
+  },
+  circle: {
+    width: 15,
+    height: 15,
+    borderRadius: 15 / 2,
+    backgroundColor: colors.alert,
+    position: 'absolute',
   },
 });
 
@@ -35,7 +42,7 @@ class AppletDetailsComponent extends React.Component {
       onPressActivity,
       inProgress,
     } = this.props;
-    console.log('applet is', applet);
+
     switch (selectedTab) {
       case 'survey':
         return (
@@ -66,6 +73,7 @@ class AppletDetailsComponent extends React.Component {
     const {
       applet,
       onPressDrawer,
+      hasInvites,
       onPressBack,
       primaryColor,
     } = this.props;
@@ -82,6 +90,7 @@ class AppletDetailsComponent extends React.Component {
                 ios="ios-home"
                 android="md-home"
               />
+              { hasInvites? <View style={styles.circle} /> : null }
             </Button>
           </Left>
           <Body>
@@ -120,6 +129,7 @@ AppletDetailsComponent.propTypes = {
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,
+  hasInvites: PropTypes.bool.isRequired,
 };
 
 export default AppletDetailsComponent;

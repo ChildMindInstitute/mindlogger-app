@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.5.13] - 2019-08-22
+### Added
+- [Red dot badges](https://www.nytimes.com/2018/02/27/magazine/red-dots-badge-phones-notification.html)
+  - Home button (new invitation)
+  - On new invitation
+
+## [0.5.12] - 2019-08-22
+### Changed
+- If an applet is removed, and that applet is the user's current applet, then this takes the user to the home screen instead of the current applet
+
 ## [0.5.11] - 2019-08-21
 ### Changed
 - Scroll no longer yo-yos
