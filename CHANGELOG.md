@@ -5,7 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.5.10] - 2019-08-20
+## [0.5.12] - 2019-08-22
+### Changed
+- if an applet is removed, and that applet is the user's current applet, then this takes the user to the home screen instead of the current applet
+
+## [0.5.11] - 2019-08-21
+### Changed
+- Scroll no longer yo-yos
+
+## [0.5.10] - 2019-08-20‒21
 ### Changed
 - :lock: Security upgrades
 
