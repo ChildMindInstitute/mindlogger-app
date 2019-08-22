@@ -24,6 +24,7 @@ import Signup from './Signup';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
 import { colors } from '../themes/colors';
+import AppletInviteFlow from './AppletInviteFlow';
 
 const theme = getTheme(platform);
 theme['NativeBase.Footer'].height = 80;
@@ -55,6 +56,7 @@ const Navigator = Actions.create(
         {/* </Drawer> */}
       </Scene>
       <Scene key="take_act" component={Activity} />
+      <Scene key="invite" component={AppletInviteFlow} />
       <Scene key="activity_thanks" component={ActivityThanks} />
     </Modal>
   </Lightbox>

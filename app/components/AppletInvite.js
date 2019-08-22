@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 import PropTypes from 'prop-types';
-import { BodyText, Hyperlink, TouchBox, SubHeading, NotificationDot } from './core';
-import { acceptInvitation } from '../state/applets/applets.thunks';
+import { BodyText, TouchBox, SubHeading, NotificationDot } from './core';
+// import { acceptInvitation } from '../state/applets/applets.thunks';
 import { invitesSelector } from '../state/applets/applets.selectors';
+import { setCurrentInvite } from '../state/applets/applets.actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +21,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const AcceptAppletInvite = ({ invites, acceptInvitation }) => (
+const AcceptAppletInvite = ({ invites, setCurrentInvite }) => (
   <View style={styles.container}>
     <BodyText style={styles.message}>
       You have new invites:
@@ -28,7 +30,8 @@ const AcceptAppletInvite = ({ invites, acceptInvitation }) => (
       <View key={invite.name}>
         <TouchBox
           onPress={() => {
-            acceptInvitation(invite._id);
+            setCurrentInvite(invite._id);
+            Actions.push('invite');
           }}
         >
 
@@ -49,7 +52,7 @@ AcceptAppletInvite.propTypes = {
   // })).isRequired,
   // joinOpenApplet: PropTypes.func.isRequired,
   invites: PropTypes.array.isRequired,
-  acceptInvitation: PropTypes.func.isRequired,
+  setCurrentInvite: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -58,7 +61,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   // joinOpenApplet,
-  acceptInvitation,
+  // acceptInvitation,
+  setCurrentInvite,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AcceptAppletInvite);

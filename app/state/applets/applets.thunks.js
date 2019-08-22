@@ -53,7 +53,8 @@ export const downloadApplets = () => (dispatch, getState) => {
 export const acceptInvitation = inviteId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  acceptAppletInvite(auth.token, inviteId).then(() => {
+  return acceptAppletInvite(auth.token, inviteId).then(() => {
+    dispatch(getInvitations());
     dispatch(downloadApplets());
   });
 };
