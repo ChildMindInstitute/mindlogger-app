@@ -19,7 +19,7 @@ class ItemChart extends React.Component {
     return (
       <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontWeight: 'bold' }}>
-          { item.question ? item.question.en : '' }
+          { item.description ? item.description.en : '' }
         </Text>
         <VictoryChart domainPadding={25}>
           <VictoryBar
