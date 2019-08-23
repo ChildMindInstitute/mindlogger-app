@@ -25,8 +25,10 @@ export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getAppletInvites(auth.token).then((invites) => {
-    // console.log('setting applet invites', invites);
+    console.log('setting applet invites', invites);
     dispatch(setInvites(invites));
+  }).catch((e) => {
+    console.warn(e);
   });
 };
 

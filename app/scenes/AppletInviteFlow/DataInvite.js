@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Text } from 'native-base';
+import PropTypes from 'prop-types';
+import R from 'ramda';
+// import _ from 'lodash';
+import { Text, View } from 'native-base';
 import { Markdown } from '../../components/core/Markdown';
 import { SubHeading } from '../../components/core/SubHeading';
 import DataIcon from '../../components/Icons/Data';
@@ -17,28 +20,54 @@ const styles = StyleSheet.create({
 
 // eslint-disable-next-line
 class DataInvite extends Component {
+  // eslint-disable-next-line
+  renderPeople(applet) {
+    const allPeople = applet.managers.concat(applet.reviewers);
+    const uniquePeople = R.groupBy(p => p.email);
+    const groupedPeople = uniquePeople(allPeople);
+    const mapper = (person, key) => (
+      <View key={key}>
+        <Text style={{ color: colors.tertiary }}>
+          {person[0].firstName} {person[0].lastName}
+        </Text>
+      </View>
+    );
+    const keys = Object.keys(groupedPeople);
+    const output = [];
+    for (let i = 0; i < keys.length; i += 1) {
+      const k = keys[i];
+      output.push(mapper(groupedPeople[k]));
+    }
+    // return uniquePeople(allPeople).map();
+    // return null;
+    return output;
+  }
+
   render() {
+    const { inviteInfo } = this.props;
+    const { applets } = inviteInfo;
+    const applet = applets[0];
     return (
       <ScrollView contentContainerStyle={styles.main}>
         <DataIcon color={colors.primary} width="100" height="100" />
         <SubHeading>Access to your Data</SubHeading>
         <Text style={{ color: colors.tertiary, textAlign: 'justify' }}>
           {`
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Fusce dapibus vitae diam ac aliquam.
-Nullam et lobortis sem, non semper turpis.
-Curabitur faucibus massa metus, et pulvinar lacus tempus non.
-Etiam convallis nulla nec felis posuere cursus.
-Nulla id blandit tortor. Curabitur rhoncus, tortor eget tristique imperdiet,
-justo augue consequat erat, id semper justo ex sit amet mauris.
-Aenean non lorem vulputate, fringilla sem mattis, porttitor eros.
-Duis nec ligula vitae lectus blandit bibendum. Sed pretium convallis imperdiet. 
-Aenean in ex non urna venenatis malesuada. Suspendisse pulvinar purus non tristique gravida.
-          `}
+We think its important for you to know who has access to your data if you accept this invitation.
+
+The following people will have acccess to your data if you accept this invitation:
+`}
         </Text>
+        {
+          this.renderPeople(applet)
+        }
       </ScrollView>
     );
   }
 }
+
+DataInvite.propTypes = {
+  inviteInfo: PropTypes.object.isRequired,
+};
 
 export default DataInvite;

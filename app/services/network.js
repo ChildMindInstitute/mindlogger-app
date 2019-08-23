@@ -182,7 +182,6 @@ export const registerOpenApplet = (authToken, schemaURI) => {
 };
 
 export const getAppletInvites = (authToken) => {
-  console.log('here in get appletInvites', authToken);
   const url = `${apiHost()}/user/invites`;
   const headers = {
     'Girder-Token': authToken,

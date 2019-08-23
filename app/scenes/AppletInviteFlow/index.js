@@ -64,10 +64,10 @@ class AppletInviteFlow extends Component {
       currentScreen: 0,
       direction: 'middle',
       steps: [
-        <AboutInvite />,
-        <DataInvite />,
+        <AboutInvite inviteInfo={currentInvite} />,
+        <DataInvite inviteInfo={currentInvite} />,
         <JoinInvite onAccept={() => {
-          acceptInvitation(currentInvite).then(() => {
+          acceptInvitation(currentInvite._id).then(() => {
             Actions.pop();
           });
         }}

@@ -26,12 +26,19 @@ class JoinInvite extends Component {
         <SubHeading>Join Now</SubHeading>
         <Text style={{ color: colors.tertiary, textAlign: 'justify' }}>
           {`
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Fusce dapibus vitae diam ac aliquam.
+Click below if you are ready to join this study. You can remove yourself from this study and/or delete your data at any time with no consequences.
           `}
         </Text>
         <FunButton onPress={onAccept}>Join Now</FunButton>
+        <Text style={{ color: colors.tertiary, textAlign: 'justify', paddingTop: 20 }}>
+          {`
+If you do not feel comfortable with sharing your data from this study, you may decline this invitation. 
 
+          `}
+        </Text>
+        <Button rounded full danger onPress={() => {}} style={{ borderRadius: 50 }} bordered>
+          <Text style={{ fontWeight: 'bold' }}>Decline</Text>
+        </Button>
       </ScrollView>
     );
   }

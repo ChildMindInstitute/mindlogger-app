@@ -7,10 +7,14 @@ import { BodyText, TouchBox, SubHeading, NotificationDot } from './core';
 // import { acceptInvitation } from '../state/applets/applets.thunks';
 import { invitesSelector } from '../state/applets/applets.selectors';
 import { setCurrentInvite } from '../state/applets/applets.actions';
+import theme from '../themes/base-theme';
+import AppletImage from './AppletImage';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    position: 'relative',
+    fontFamily: theme.fontFamily,
   },
   message: {
     fontSize: 18,
@@ -19,6 +23,16 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 18,
   },
+  inner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    fontFamily: theme.fontFamily,
+  },
+  textBlock: {
+    flex: 1,
+    marginLeft: 16,
+    fontFamily: theme.fontFamily,
+  },
 });
 
 const AcceptAppletInvite = ({ invites, setCurrentInvite }) => (
@@ -26,23 +40,46 @@ const AcceptAppletInvite = ({ invites, setCurrentInvite }) => (
     <BodyText style={styles.message}>
       You have new invites:
     </BodyText>
-    {invites.map(invite => (
-      <View key={invite.name}>
-        <TouchBox
-          onPress={() => {
-            setCurrentInvite(invite._id);
-            Actions.push('invite');
-          }}
-        >
+    {invites.map((invite, index) => {
+      const applet = invite.applets[0];
+      const { name, image } = applet;
+      if (applet.name && !applet.name.en) {
+        applet.name = {
+          en: name,
+        };
+      }
 
-          <SubHeading>
-            {invite.name.split('Default')[1].split('(')[0]}
-          </SubHeading>
-        </TouchBox>
-        <NotificationDot />
+      if (image && !applet.image.en) {
+        applet.image = {
+          en: image,
+        };
+      }
 
-      </View>
-    ))}
+      return (
+        <View key={applet.name.en + index}>
+          <TouchBox
+            onPress={() => {
+              setCurrentInvite(invite);
+              Actions.push('invite');
+            }}
+          >
+            <View style={styles.inner}>
+              <AppletImage applet={applet} />
+              <View style={styles.textBlock}>
+                <SubHeading style={{ fontFamily: theme.fontFamily }}>
+                  {applet.name.en}
+                </SubHeading>
+                <BodyText style={{ fontFamily: theme.fontFamily }}>
+                  {applet.description}
+                </BodyText>
+              </View>
+
+            </View>
+          </TouchBox>
+          <NotificationDot />
+        </View>
+      );
+    })}
   </View>
 );
 
