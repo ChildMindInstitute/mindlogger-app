@@ -12,7 +12,7 @@ import theme from '../../themes/base-theme';
 import AboutInvite from './AboutInvite';
 import DataInvite from './DataInvite';
 import JoinInvite from './JoinInvite';
-import { acceptInvitation } from '../../state/applets/applets.thunks';
+import { acceptInvitation, declineInvitation } from '../../state/applets/applets.thunks';
 import { currentInviteSelector } from '../../state/applets/applets.selectors';
 
 
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 class AppletInviteFlow extends Component {
   constructor(props) {
     super(props);
-    const { acceptInvitation, currentInvite } = props;
+    const { acceptInvitation, declineInvitation, currentInvite } = props;
     console.log('PROPS ARE', this.props);
     this.state = {
       currentScreen: 0,
@@ -66,11 +66,17 @@ class AppletInviteFlow extends Component {
       steps: [
         <AboutInvite inviteInfo={currentInvite} />,
         <DataInvite inviteInfo={currentInvite} />,
-        <JoinInvite onAccept={() => {
-          acceptInvitation(currentInvite._id).then(() => {
-            Actions.pop();
-          });
-        }}
+        <JoinInvite
+          onAccept={() => {
+            acceptInvitation(currentInvite._id).then(() => {
+              Actions.pop();
+            });
+          }}
+          onDecline={() => {
+            declineInvitation(currentInvite._id).then(() => {
+              Actions.pop();
+            });
+          }}
         />,
       ],
     };
@@ -144,6 +150,7 @@ class AppletInviteFlow extends Component {
 
 AppletInviteFlow.propTypes = {
   acceptInvitation: PropTypes.func.isRequired,
+  declineInvitation: PropTypes.func.isRequired,
   currentInvite: PropTypes.string.isRequired,
 };
 
@@ -154,6 +161,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   acceptInvitation,
+  declineInvitation,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletInviteFlow);

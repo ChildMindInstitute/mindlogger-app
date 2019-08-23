@@ -42,43 +42,45 @@ const AcceptAppletInvite = ({ invites, setCurrentInvite }) => (
     </BodyText>
     {invites.map((invite, index) => {
       const applet = invite.applets[0];
-      const { name, image } = applet;
-      if (applet.name && !applet.name.en) {
-        applet.name = {
-          en: name,
-        };
-      }
+      if (applet) {
+        const { name, image } = applet;
+        if (applet.name && !applet.name.en) {
+          applet.name = {
+            en: name,
+          };
+        }
 
-      if (image && !applet.image.en) {
-        applet.image = {
-          en: image,
-        };
-      }
+        if (image && !applet.image.en) {
+          applet.image = {
+            en: image,
+          };
+        }
 
-      return (
-        <View key={applet.name.en + index}>
-          <TouchBox
-            onPress={() => {
-              setCurrentInvite(invite);
-              Actions.push('invite');
-            }}
-          >
-            <View style={styles.inner}>
-              <AppletImage applet={applet} />
-              <View style={styles.textBlock}>
-                <SubHeading style={{ fontFamily: theme.fontFamily }}>
-                  {applet.name.en}
-                </SubHeading>
-                <BodyText style={{ fontFamily: theme.fontFamily }}>
-                  {applet.description}
-                </BodyText>
+        return (
+          <View key={applet.name.en + index}>
+            <TouchBox
+              onPress={() => {
+                setCurrentInvite(invite);
+                Actions.push('invite');
+              }}
+            >
+              <View style={styles.inner}>
+                <AppletImage applet={applet} />
+                <View style={styles.textBlock}>
+                  <SubHeading style={{ fontFamily: theme.fontFamily }}>
+                    {applet.name.en}
+                  </SubHeading>
+                  <BodyText style={{ fontFamily: theme.fontFamily }}>
+                    {applet.description}
+                  </BodyText>
+                </View>
+
               </View>
-
-            </View>
-          </TouchBox>
-          <NotificationDot />
-        </View>
-      );
+            </TouchBox>
+            <NotificationDot />
+          </View>
+        );
+      }
     })}
   </View>
 );

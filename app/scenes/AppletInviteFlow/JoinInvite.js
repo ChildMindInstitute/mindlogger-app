@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line
 class JoinInvite extends Component {
   render() {
-    const { onAccept } = this.props;
+    const { onAccept, onDecline } = this.props;
     return (
       <ScrollView contentContainerStyle={styles.main}>
         <SurveyIcon color={colors.primary} width="100" height="100" />
@@ -36,7 +36,7 @@ If you do not feel comfortable with sharing your data from this study, you may d
 
           `}
         </Text>
-        <Button rounded full danger onPress={() => {}} style={{ borderRadius: 50 }} bordered>
+        <Button rounded full danger onPress={onDecline} style={{ borderRadius: 50 }} bordered>
           <Text style={{ fontWeight: 'bold' }}>Decline</Text>
         </Button>
       </ScrollView>
@@ -46,6 +46,7 @@ If you do not feel comfortable with sharing your data from this study, you may d
 
 JoinInvite.propTypes = {
   onAccept: PropTypes.func.isRequired,
+  onDecline: PropTypes.func.isRequired,
 };
 
 export default JoinInvite;
