@@ -24,7 +24,7 @@ class SettingsScreen extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>Settings</Title>
+            <Title>User Settings</Title>
           </Body>
           <Right />
         </Header>
