@@ -23,3 +23,8 @@ export const setInvites = invites => ({
   type: APPLET_CONSTANTS.SET_INVITES,
   payload: invites,
 });
+
+export const setCurrentInvite = inviteId => ({
+  type: APPLET_CONSTANTS.SET_CURRENT_INVITE,
+  payload: inviteId,
+});

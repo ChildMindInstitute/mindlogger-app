@@ -182,7 +182,6 @@ export const registerOpenApplet = (authToken, schemaURI) => {
 };
 
 export const getAppletInvites = (authToken) => {
-  console.log('here in get appletInvites', authToken);
   const url = `${apiHost()}/user/invites`;
   const headers = {
     'Girder-Token': authToken,
@@ -201,6 +200,18 @@ export const acceptAppletInvite = (authToken, id) => {
   };
   return fetch(url, {
     method: 'post',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const declineAppletInvite = (authToken, id) => {
+  const url = `${apiHost()}/group/${id}/member`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
     mode: 'cors',
     headers,
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
