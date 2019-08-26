@@ -18,7 +18,7 @@ const getURL = (url) => {
 
 const AppletImage = ({ applet, size = 64 }) => {
   // Display the image if there is one
-  if (typeof applet.image !== 'undefined') {
+  if (typeof applet.image !== 'undefined' && applet.image.en) {
     return (
       <CachedImage
         style={{ width: size, height: size, resizeMode: 'cover' }}

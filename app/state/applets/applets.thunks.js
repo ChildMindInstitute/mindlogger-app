@@ -1,4 +1,4 @@
-import { getApplets, registerOpenApplet, getAppletInvites, acceptAppletInvite } from '../../services/network';
+import { getApplets, registerOpenApplet, getAppletInvites, acceptAppletInvite, declineAppletInvite } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia } from '../media/media.thunks';
@@ -25,8 +25,10 @@ export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getAppletInvites(auth.token).then((invites) => {
-    // console.log('setting applet invites', invites);
+    console.log('setting applet invites', invites);
     dispatch(setInvites(invites));
+  }).catch((e) => {
+    console.warn(e);
   });
 };
 
@@ -53,8 +55,21 @@ export const downloadApplets = () => (dispatch, getState) => {
 export const acceptInvitation = inviteId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  acceptAppletInvite(auth.token, inviteId).then(() => {
+  return acceptAppletInvite(auth.token, inviteId).then(() => {
+    dispatch(getInvitations());
     dispatch(downloadApplets());
+  });
+};
+
+export const declineInvitation = inviteId => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+
+  return declineAppletInvite(auth.token, inviteId).then(() => {
+    dispatch(getInvitations());
+    dispatch(downloadApplets());
+  }).catch((e) => {
+    console.log(e);
   });
 };
 
