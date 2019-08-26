@@ -4256,7 +4256,6 @@ lodash-es@^4.17.10, lodash-es@^4.2.1:
 lodash-es@^4.17.15:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
-  integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
 
 lodash._arrayeach@^3.0.0:
   version "3.0.0"
@@ -5921,9 +5920,9 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
     eventemitter3 "^1.2.0"
     lodash "^4.13.1"
 
-"react-native-audio@https://github.com/jsierles/react-native-audio.git":
+"react-native-audio@https://github.com/dguillamot/react-native-audio.git":
   version "4.2.2"
-  resolved "https://github.com/jsierles/react-native-audio.git#f223414c6a965d24cea74179194613cf37e566ef"
+  resolved "https://github.com/dguillamot/react-native-audio.git#ecdc4ba3678487aa970f8f65f11cbf2dfac651d5"
 
 "react-native-audiowaveform@https://github.com/shnizzedy/react-native-audiowaveform.git":
   version "2.0.3"
