@@ -22,6 +22,7 @@
   "dayspan": "^1.1.0",
   "expr-eval": "^1.2.2",
   "hash-int": "^1.0.0",
+  "lodash-es": "^4.17.15",
   "metro": "^0.54.1",
   "metro-core": "^0.54.1",
   "moment": "^2.13.0",
