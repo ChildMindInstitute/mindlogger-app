@@ -1,6 +1,6 @@
 {
  "name": "MindLogger",
- "version": "0.5.13",
+ "version": "0.5.14",
  "private": true,
  "scripts": {
   "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -9,8 +9,9 @@
   "eject-native-base": "node node_modules/native-base/ejectTheme.js",
   "test-bundle": "react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug",
   "test-build": "cd android && ./gradlew clean && ./gradlew assembleDebug",
-  "prod-bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res/merged/release",
-  "prod-build": "cd android && ./gradlew assembleRelease",
+  "prod-bundle": "react-native bundle --platform android --dev false --entry-file ./index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res",
+  "prod-build": "cd android && ./gradlew bundleRelease",
+  "postinstall": "jetify",
   "ios-build": "cd ios && fastlane ios beta"
  },
  "dependencies": {
@@ -36,7 +37,7 @@
   "react": "16.8.6",
   "react-dom": "^16.9.0",
   "react-native": "0.59.8",
-  "react-native-audio": "https://github.com/jsierles/react-native-audio.git",
+  "react-native-audio": "https://github.com/dguillamot/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/suther/react-native-audio-toolkit.git#a66812fd359d786b89172c7a63e768836d13e540",
   "react-native-audiowaveform": "https://github.com/shnizzedy/react-native-audiowaveform.git",
   "react-native-calendar-strip": "^1.3.8",

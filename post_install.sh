@@ -12,5 +12,5 @@ fi
 
 # :robot: Android
 rm -rf node_modules/react-native-push-notification/.git
-npm install --save-dev jetifier
+yarn add --dev jetifier
 npx jetify
