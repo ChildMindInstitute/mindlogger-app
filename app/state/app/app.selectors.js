@@ -13,7 +13,8 @@ export const mobileDataAllowedSelector = R.path(['app', 'mobileDataAllowed']);
 export const currentAppletSelector = createSelector(
   R.path(['app', 'currentApplet']),
   appletsSelector,
-  (currentAppletId, applets) => applets.find(applet => applet.id === currentAppletId),
+  // TODO: this could return undefined. So do we catch it here, or later on?
+  (currentAppletId, applets) => applets.find(applet => applet.id === currentAppletId) || null,
 );
 
 export const currentActivitySelector = createSelector(

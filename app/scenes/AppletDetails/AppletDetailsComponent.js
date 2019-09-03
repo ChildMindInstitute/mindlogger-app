@@ -72,7 +72,7 @@ class AppletDetailsComponent extends React.Component {
   render() {
     const {
       applet,
-      onPressDrawer,
+      onPressSettings,
       hasInvites,
       onPressBack,
       primaryColor,
@@ -90,16 +90,16 @@ class AppletDetailsComponent extends React.Component {
                 ios="ios-home"
                 android="md-home"
               />
-              { hasInvites? <View style={styles.circle} /> : null }
+              { hasInvites ? <View style={styles.circle} /> : null }
             </Button>
           </Left>
           <Body>
             <Title>{applet.name.en}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
-            {/* <Button transparent onPress={onPressDrawer}>
-              <Icon type="FontAwesome" name="bars" />
-            </Button> */}
+            <Button transparent onPress={onPressSettings}>
+              <Icon type="FontAwesome" name="gear" />
+            </Button>
           </Right>
         </Header>
         <ImageBackground
@@ -128,6 +128,7 @@ AppletDetailsComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
+  onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,
   hasInvites: PropTypes.bool.isRequired,
 };

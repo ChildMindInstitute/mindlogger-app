@@ -216,3 +216,41 @@ export const declineAppletInvite = (authToken, id) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
+
+export const removeApplet = (authToken, groupId) => {
+  const del = false;
+  const url = `${apiHost()}/group/${groupId}/member?delete=${del}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const deleteApplet = (authToken, groupId) => {
+  const del = true;
+  const url = `${apiHost()}/group/${groupId}/member?delete=${del}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const deleteUserAccount = (authToken, userId) => {
+  const url = `${apiHost()}/user/${userId}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

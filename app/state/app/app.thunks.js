@@ -8,9 +8,11 @@ import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearUser } from '../user/user.actions';
-import { signOut } from '../../services/network';
+import { signOut, deleteUserAccount } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
+import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
+
 
 export const showToast = toast => () => {
   Toast.show(toast);
@@ -68,4 +70,19 @@ export const logout = () => (dispatch, getState) => {
   } else {
     doLogout(dispatch, getState);
   }
+};
+
+export const removeAccount = () => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+  const user = userInfoSelector(state);
+
+  deleteUserAccount(authToken, user._id).then(() => {
+    dispatch(clearUser());
+    dispatch(clearApplets());
+    dispatch(clearResponses());
+    dispatch(deleteAndClearMedia());
+    PushNotification.cancelAllLocalNotifications();
+    Actions.push('login'); // Set screen back to login
+  });
 };

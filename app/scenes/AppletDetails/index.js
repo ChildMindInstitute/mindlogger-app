@@ -38,6 +38,7 @@ class AppletDetails extends Component {
         onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
         onPressBack={this.handleBack}
+        onPressSettings={() => Actions.push('applet_settings')}
         primaryColor={skin.colors.primary}
         hasInvites={hasInvites}
       />
@@ -45,12 +46,17 @@ class AppletDetails extends Component {
   }
 }
 
+AppletDetails.defaultProps = {
+  currentApplet: null,
+};
+
 AppletDetails.propTypes = {
-  currentApplet: PropTypes.object.isRequired,
+  currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
+  hasInvites: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({

@@ -161,6 +161,7 @@ export const isSkippable = (allowList) => {
 
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
+  groupId: appletJson.groups,
   schema: languageListToObject(appletJson[URL]).en,
   name: languageListToObject(appletJson[PREF_LABEL]),
   description: languageListToObject(appletJson[DESCRIPTION]),
@@ -267,6 +268,7 @@ export const transformApplet = (payload) => {
   const applet = appletTransformJson(payload.applet);
   // Add the items and activities to the applet object
   applet.activities = activities;
+  applet.groupId = payload.groups;
 
   return applet;
 };

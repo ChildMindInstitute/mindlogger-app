@@ -19,12 +19,13 @@ import Login from './Login';
 import LogoutWarning from './LogoutWarning';
 import Settings from './Settings';
 import ChangePassword from './ChangePassword';
-import SideBar from './Sidebar';
+// import SideBar from './Sidebar';
 import Signup from './Signup';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
-import { colors } from '../themes/colors';
+// import { colors } from '../themes/colors';
 import AppletInviteFlow from './AppletInviteFlow';
+import AppletSettings from './AppletSettings';
 
 const theme = getTheme(platform);
 theme['NativeBase.Footer'].height = 80;
@@ -52,6 +53,7 @@ const Navigator = Actions.create(
           <Scene key="settings" component={Settings} />
           <Scene key="change_password" component={ChangePassword} />
           <Scene key="sign_up" component={Signup} />
+          <Scene key="applet_settings" component={AppletSettings} />
         </Scene>
         {/* </Drawer> */}
       </Scene>
