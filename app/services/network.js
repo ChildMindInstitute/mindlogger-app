@@ -217,28 +217,34 @@ export const declineAppletInvite = (authToken, id) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const removeApplet = (authToken, id) => {
+export const removeApplet = (authToken, groupId) => {
   const del = false;
-  const url = `${apiHost()}/group/${id}/member`;
+  const url = `${apiHost()}/group/${groupId}/member`;
   const headers = {
     'Girder-Token': authToken,
   };
-  // return fetch(url, {
-  //   method: 'delete',
-  //   mode: 'cors',
-  //   headers,
-  // }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    data: {
+      delete: del,
+    },
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const deleteApplet = (authToken, id) => {
+export const deleteApplet = (authToken, groupId) => {
   const del = true;
-  const url = `${apiHost()}/group/${id}/member`;
+  const url = `${apiHost()}/group/${groupId}/member`;
   const headers = {
     'Girder-Token': authToken,
   };
-  // return fetch(url, {
-  //   method: 'delete',
-  //   mode: 'cors',
-  //   headers,
-  // }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    data: {
+      delete: del,
+    },
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

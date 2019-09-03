@@ -1,4 +1,4 @@
-import Actions from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import { getApplets,
   registerOpenApplet,
   getAppletInvites,
@@ -6,7 +6,7 @@ import { getApplets,
   declineAppletInvite,
   removeApplet,
   deleteApplet,
- } from '../../services/network';
+} from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia } from '../media/media.thunks';
@@ -19,6 +19,7 @@ import {
   replaceApplets,
   setInvites,
 } from './applets.actions';
+import { sync } from '../app/app.thunks';
 import { transformApplet } from '../../models/json-ld';
 
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -101,18 +102,21 @@ export const joinOpenApplet = appletURI => (dispatch, getState) => {
 export const deactivateApplet = groupId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  removeApplet(auth.token, groupId); // .then((resp) => {
-  //
-  // dispatch(setCurrentApplet(null));
-  // Actions.push('applet_list');
-  // });
+  removeApplet(auth.token, groupId)
+    .then(() => {
+      dispatch(setCurrentApplet(null));
+      dispatch(sync());
+      Actions.push('applet_list');
+    });
 };
 
 export const removeAndDeleteApplet = groupId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  deleteApplet(auth.token, groupId); // .then((resp) => {
-  // dispatch(setCurrentApplet(null));
-  // Actions.push('applet_list');
-  // });
+  deleteApplet(auth.token, groupId)
+    .then(() => {
+      dispatch(setCurrentApplet(null));
+      dispatch(sync());
+      Actions.push('applet_list');
+    });
 };

@@ -52,7 +52,8 @@ class SettingsScreen extends React.Component {
         </Header>
         <Content>
           <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', padding: 10 }}>
-            { userInfo.image ? <Text>{userInfo.image}</Text> : <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} /> }
+            {/* { userInfo.image ? <Text>{userInfo.image}</Text> : <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} /> } */}
+            <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} />
             <Text>{userInfo.firstName} {userInfo.lastName}</Text>
             <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
           </View>

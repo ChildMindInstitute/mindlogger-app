@@ -46,8 +46,12 @@ class AppletDetails extends Component {
   }
 }
 
+AppletDetails.defaultProps = {
+  currentApplet: null,
+};
+
 AppletDetails.propTypes = {
-  currentApplet: PropTypes.object.isRequired,
+  currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
