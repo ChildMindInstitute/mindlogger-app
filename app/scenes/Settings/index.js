@@ -9,6 +9,7 @@ import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.sel
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 import { logout } from '../../state/app/app.thunks';
 import { userInfoSelector } from '../../state/user/user.selectors';
+import { removeAccount } from '../../state/app/app.thunks';
 import { colors } from '../../themes/colors';
 
 // eslint-disable-next-line
@@ -31,7 +32,7 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    const { skin, mobileDataAllowed, toggleMobileDataAllowed, logout, userInfo } = this.props;
+    const { skin, mobileDataAllowed, toggleMobileDataAllowed, logout, userInfo, removeAccount } = this.props;
     const { showAlert } = this.state;
 
     return (
@@ -51,12 +52,17 @@ class SettingsScreen extends React.Component {
           <Right />
         </Header>
         <Content>
-          <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', padding: 10 }}>
-            {/* { userInfo.image ? <Text>{userInfo.image}</Text> : <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} /> } */}
-            <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} />
-            <Text>{userInfo.firstName} {userInfo.lastName}</Text>
-            <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
-          </View>
+          { userInfo ? (
+            <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', padding: 10 }}>
+              {/* { userInfo.image ? <Text>{userInfo.image}</Text> :
+              <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} /> } */}
+              <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} />
+              <Text>{userInfo.firstName} {userInfo.lastName}</Text>
+              <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
+            </View>
+          ) : <Text>You've logged out.</Text>
+          }
+
           <List>
             <ListItem button bordered onPress={() => Actions.push('change_password')}>
               <Left>
@@ -122,6 +128,7 @@ class SettingsScreen extends React.Component {
           onConfirmPressed={() => {
             // TODO: add function that deletes the data
             // & routes you back to applet list view
+            removeAccount();
             this.hideAlert();
           }}
         />
@@ -135,6 +142,7 @@ SettingsScreen.propTypes = {
   mobileDataAllowed: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  removeAccount: PropTypes.func.isRequired,
   userInfo: PropTypes.object.isRequired,
 };
 
@@ -147,6 +155,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   toggleMobileDataAllowed,
   logout: () => dispatch(logout()),
+  removeAccount: () => dispatch(removeAccount()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);

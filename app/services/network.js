@@ -242,3 +242,15 @@ export const deleteApplet = (authToken, groupId) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
+
+export const deleteUserAccount = (authToken, userId) => {
+  const url = `${apiHost()}/user/${userId}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'delete',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
