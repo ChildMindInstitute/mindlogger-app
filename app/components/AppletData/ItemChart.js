@@ -6,6 +6,7 @@ import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
 import { colors } from '../../themes/colors';
 import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
+import BarChart from './BarChart';
 
 const data = [
   { x: '?', y: 1 },
@@ -83,22 +84,32 @@ class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderBarPlot() {
-    return (
-      <VictoryChart domainPadding={25}>
-        <VictoryBar
-          categories={{
-            x: ['?', '??', '???'],
-          }}
-          barRatio={0.9}
-          x="x"
-          y="y"
-          alignment="middle"
-          style={{ data: { fill: colors.lightGrey } }}
-          data={data}
-          labelComponent={<VictoryLabel style={{ fill: colors.lightGrey }} />}
-        />
+    const { item } = this.props;
+    const data = [
+      {
+        value: 7,
+        date: '2019-09-06',
+      },
+      {
+        value: 4,
+        date: '2019-09-05',
+      },
+      {
+        value: 9,
+        date: '2019-09-04',
+      },
+      {
+        value: 8,
+        date: '2019-09-03',
+      },
+      {
+        value: 6,
+        date: '2019-09-01',
+      },
+    ];
 
-      </VictoryChart>
+    return (
+      <BarChart data={data} />
     );
   }
 
