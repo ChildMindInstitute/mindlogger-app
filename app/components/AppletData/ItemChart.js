@@ -14,6 +14,37 @@ const data = [
 // eslint-disable-next-line
 class ItemChart extends React.Component {
 
+  // eslint-disable-next-line
+  renderTimelinePlot() {
+
+  }
+
+  // eslint-disable-next-line
+  renderLinePlot() {
+
+  }
+
+  // eslint-disable-next-line
+  renderBarPlot() {
+    return (
+      <VictoryChart domainPadding={25}>
+        <VictoryBar
+          categories={{
+            x: ['?', '??', '???'],
+          }}
+          barRatio={0.9}
+          x="x"
+          y="y"
+          alignment="middle"
+          style={{ data: { fill: colors.lightGrey } }}
+          data={data}
+          labelComponent={<VictoryLabel style={{ fill: colors.lightGrey }} />}
+        />
+
+      </VictoryChart>
+    );
+  }
+
   render() {
     const { item } = this.props;
     return (
@@ -21,21 +52,7 @@ class ItemChart extends React.Component {
         <Text style={{ fontWeight: 'bold' }}>
           { item.description ? item.description.en : '' }
         </Text>
-        <VictoryChart domainPadding={25}>
-          <VictoryBar
-            categories={{
-              x: ['?', '??', '???'],
-            }}
-            barRatio={0.9}
-            x="x"
-            y="y"
-            alignment="middle"
-            style={{ data: { fill: colors.lightGrey } }}
-            data={data}
-            labelComponent={<VictoryLabel style={{ fill: colors.lightGrey }} />}
-          />
 
-        </VictoryChart>
       </View>
     );
   }
