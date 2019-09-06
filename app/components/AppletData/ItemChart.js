@@ -5,6 +5,7 @@ import { StyleSheet, StatusBar, Text, View } from 'react-native';
 import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
 import { colors } from '../../themes/colors';
 import TimelineChart from './TimelineChart';
+import LineChart from './LineChart';
 
 const data = [
   { x: '?', y: 1 },
@@ -49,8 +50,34 @@ class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderLinePlot() {
+    const { item } = this.props;
+    const data = [
+      {
+        value: 1,
+        date: '2019-09-06',
+      },
+      {
+        value: 2,
+        date: '2019-09-05',
+      },
+      {
+        value: 1,
+        date: '2019-09-04',
+      },
+      {
+        value: 4,
+        date: '2019-09-03',
+      },
+      {
+        value: 5,
+        date: '2019-09-01',
+      },
+    ];
+    const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
+    const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
+
     return (
-      <Text>Line Plot</Text>
+      <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
     );
   }
 
@@ -88,7 +115,7 @@ class ItemChart extends React.Component {
       default:
         return (
           <Text>
-            No chart type specified.
+            No chart type specified for {item.inputType}.
           </Text>
         );
     }
@@ -99,7 +126,7 @@ class ItemChart extends React.Component {
     // console.log('item is', item);
     return (
       <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20 }}>
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20 }}>
           { item.description ? item.description.en : '' }
         </Text>
         {this.renderChartByItemType()}

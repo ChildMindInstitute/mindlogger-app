@@ -46,7 +46,7 @@ class TimelineChart extends React.Component {
 
     // 2. min date should at least be 7 days before max date
     let diffDays = moment(maxDateMoment).diff(minDateMoment, 'days');
-    diffDays = max([diffDays, 7]);
+    diffDays = max([diffDays, 6]);
     minDate = maxDateMoment.subtract(diffDays, 'days').toDate();
 
     // 3. create linear mapping between width and min,max
