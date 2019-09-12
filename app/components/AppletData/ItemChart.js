@@ -1,18 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
-import { colors } from '../../themes/colors';
+// import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
+// import { colors } from '../../themes/colors';
 import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
 
-const data = [
-  { x: '?', y: 1 },
-  { x: '??', y: 2 },
-  { x: '???', y: 3 },
-];
 
 // eslint-disable-next-line
 class ItemChart extends React.Component {
@@ -84,7 +79,7 @@ class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderBarPlot() {
-    const { item } = this.props;
+    // const { item } = this.props;
     const data = [
       {
         value: 7,

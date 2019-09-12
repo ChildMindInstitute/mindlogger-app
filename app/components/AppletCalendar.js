@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { View } from 'react-native';
 // import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import moment from 'moment';
@@ -14,7 +14,15 @@ const ActCalendar = ({}) => {
     <View style={{ fontFamily: theme.fontFamily }}>
       <CalendarStrip
         style={{ paddingTop: 10, paddingBottom: 5 }}
-        selectedDate={new Date()}
+        // selectedDate={new Date()}
+        startingDate={moment().subtract(6, 'days')}
+        useIsoWeekday={false}
+        // TODO: comment the two lines below when you
+        // want to be able to go to different weeks.
+        leftSelector={[]}
+        rightSelector={[]}
+        // TODO: uncomment and fill the
+        // markedDates prop below to add dots to the calendar.
         // markedDates={[
         //   {
         //     date: new Date(),
@@ -45,6 +53,6 @@ const ActCalendar = ({}) => {
 
 ActCalendar.propTypes = {
 
-}
+};
 
 export default ActCalendar;

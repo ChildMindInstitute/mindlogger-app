@@ -1,16 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, Text, View, FlatList } from 'react-native';
-import { Heading } from 'native-base';
-import { VictoryBar, VictoryChart, VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
-import { colors } from '../../themes/colors';
+import { StyleSheet, ScrollView, FlatList } from 'react-native';
+// import { Heading } from 'native-base';
+// import { VictoryBar, VictoryChart,
+// VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
+// import { colors } from '../../themes/colors';
 import ActivityChart from './ActivityChart';
-
-const data = [
-  { x: '?', y: 1 },
-  { x: '??', y: 2 },
-  { x: '???', y: 3 },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -32,19 +27,15 @@ class AppletData extends React.Component {
 
   render() {
     const { applet } = this.props;
-    console.log('applet acgs is', applet.activities);
+    console.log('applet acts is', applet.activities);
     return (
-      <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <FlatList
           data={applet.activities}
-          renderItem={({ item }) => {
-            return <ActivityChart activity={item} />;
-          }}
-          keyExtractor={(item, index) => {
-            return `${applet.name.en}__${index}`;
-          }}
+          renderItem={({ item }) => <ActivityChart activity={item} />}
+          keyExtractor={(item, index) => `${applet.name.en}__${index}`}
         />
-      </View>
+      </ScrollView>
     );
   }
 }

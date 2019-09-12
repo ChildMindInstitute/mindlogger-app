@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, Badge, Text } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -106,7 +106,7 @@ class AppletDetailsComponent extends React.Component {
           style={{ width: '100%', height: '100%', flex: 1 }}
           source={{
             // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
-            uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80'
+            uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
           }}
         >
           <Content>
@@ -125,7 +125,7 @@ class AppletDetailsComponent extends React.Component {
 AppletDetailsComponent.propTypes = {
   applet: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
-  onPressDrawer: PropTypes.func.isRequired,
+  // onPressDrawer: PropTypes.func.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
