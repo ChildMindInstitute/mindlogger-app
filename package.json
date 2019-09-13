@@ -4,7 +4,10 @@
  "private": true,
  "scripts": {
   "start": "node node_modules/react-native/local-cli/cli.js start",
-  "eslint": "eslint",
+  "server": "node node_modules/.bin/react-native start",
+  "ios": "./node_modules/.bin/react-native run-ios",
+  "android": "./node_modules/.bin/react-native run-android",
+  "lint": "eslint App.js app/**",
   "test": "jest",
   "eject-native-base": "node node_modules/native-base/ejectTheme.js",
   "test-bundle": "react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug",
