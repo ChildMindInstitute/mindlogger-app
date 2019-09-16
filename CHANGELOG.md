@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.6.1] - 2019-09-16
+### Updated
+- Resolution of React Native extensions by eslint.
+- Setup and development instructions in README.
+- Yarn aliases to run React Native Bundler, deploy to Android and iOS, and run the linter.
+
 ## [0.5.16] - 2019-09-04
 ### Changed
 - :robot: Footer tab color
