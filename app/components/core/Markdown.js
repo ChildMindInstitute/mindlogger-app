@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { View } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view';
@@ -30,3 +31,13 @@ export const Markdown = ({ mstyle, children }) => (
     </MarkdownView>
   </View>
 );
+
+Markdown.defaultProps = {
+  mstyle: {},
+  children: undefined,
+};
+
+Markdown.propTypes = {
+  mstyle: PropTypes.object,
+  children: PropTypes.node,
+};

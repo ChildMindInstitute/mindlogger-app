@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import PropTypes from 'prop-types';
+import { StyleSheet } from 'react-native';
 import { Text, Button } from 'native-base';
 
 const styles = StyleSheet.create({
@@ -26,5 +27,19 @@ const ScreenButton = ({ transparent = false, onPress, text, children }) => {
       </Button>
     );
 };
+
+ScreenButton.defaultProps = {
+  onPress: undefined,
+  children: undefined,
+  text: '',
+};
+
+ScreenButton.propTypes = {
+  transparent: PropTypes.bool.isRequired,
+  onPress: PropTypes.any,
+  children: PropTypes.node,
+  text: PropTypes.string,
+};
+
 
 export default ScreenButton;

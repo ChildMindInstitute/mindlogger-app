@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import Screen from './screen';
+import ActivityScreen from './screen';
 import SlideInView from './SlideInView';
 
 const calcPosition = (currentScreen, index) => {
@@ -54,7 +54,7 @@ class ActivityScreens extends React.PureComponent {
             position={calcPosition(currentScreen, index)}
             slideInFrom={direction}
           >
-            <Screen
+            <ActivityScreen
               screen={activity.items[index]}
               answer={answers[index]}
               onChange={onChange}

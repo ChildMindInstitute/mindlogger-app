@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class Screen extends Component {
+class ActivityScreen extends Component {
   static isValid(answer, screen) {
     if (screen.inputType === 'markdown-message') {
       return true;
@@ -188,15 +188,15 @@ class Screen extends Component {
   }
 }
 
-Screen.defaultProps = {
+ActivityScreen.defaultProps = {
   answer: undefined,
 };
 
-Screen.propTypes = {
+ActivityScreen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
 };
 
-export default Screen;
+export default ActivityScreen;
