@@ -9,6 +9,13 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".android.js", ".ios.js"]
+      }
+    }
+  },
   "rules": {
     "react/jsx-filename-extension": [
       2,
