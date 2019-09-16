@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 import { View } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view';
 import { markdownStyle } from '../../themes/activityTheme';
@@ -19,14 +20,13 @@ const rules = {
   },
 };
 
-export const Markdown = ({ children }) => (
+export const Markdown = ({ mstyle, children }) => (
   <View style={{ alignContent: 'center', alignItems: 'center' }}>
     <MarkdownView
-      styles={markdownStyle}
+      styles={R.merge(markdownStyle, mstyle)}
       rules={rules}
     >
       {children}
     </MarkdownView>
   </View>
-
 );
