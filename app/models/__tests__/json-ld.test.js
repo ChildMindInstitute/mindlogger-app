@@ -12,6 +12,7 @@ import {
   itemTransformJson,
   itemAttachExtras,
   transformVariableMap,
+  attachPreamble,
 } from '../json-ld';
 
 test('languageListToObject', () => {
@@ -268,4 +269,35 @@ test('transformVariableMap', () => {
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld': 'sources_of_stress',
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld': 'stressful_day',
   });
+});
+
+test('attachPreamble', () => {
+  const longPreamble = {
+    en: 'For each item, please select how often your child behaved a certain way *over the past 6 months*, as best you can.',
+  };
+  const shortPreamble = {
+    en: 'This is a short preamble',
+  };
+
+  expect(attachPreamble(longPreamble, [{}, {}])).toEqual([{
+    inputType: 'markdown-message',
+    preamble: longPreamble,
+  }, {}, {}]);
+
+  expect(attachPreamble(shortPreamble, [
+    {
+      valueConstraints: undefined,
+    }, {
+      value: 0,
+    },
+  ])).toEqual([
+    {
+      preamble: shortPreamble,
+      valueConstraints: undefined,
+    }, {
+      value: 0,
+    },
+  ]);
+
+  expect(attachPreamble(shortPreamble, [])).toEqual([]);
 });
