@@ -70,11 +70,11 @@ class BarChart extends React.Component {
       <Svg width={width} height={height}>
         <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
         {
-          xTicks.map(x => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} />)
+          xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} key={`${x}__${i}`} />)
         }
 
         {
-          data.map(d => (
+          data.map((d, i) => (
             <Line
               x1={xMapper(moment(d.date).toDate())}
               x2={xMapper(moment(d.date).toDate())}
@@ -82,16 +82,18 @@ class BarChart extends React.Component {
               y2={yMapper(d.value)}
               strokeWidth="25"
               stroke={colors.primary}
+              key={`line__${d.date}__${d.value}__${i}`}
             />
           ))
         }
         {
-          data.map(d => (
+          data.map((d, i) => (
             <Text
               x={xMapper(moment(d.date).toDate()) - 5}
               y={yMapper(d.value) + 15}
               fill="white"
               textAnchor="start"
+              key={`text__${d.date}__${d.value}__${i}`}
             >
               {d.value}
             </Text>

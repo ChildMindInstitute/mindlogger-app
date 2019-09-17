@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 // import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import { colors } from '../themes/colors';
 import theme from '../themes/base-theme';
 
 // eslint-disable-next-line
-const ActCalendar = ({}) => {
+const ActCalendar = ({ responseDates }) => {
   return (
     <View style={{ fontFamily: theme.fontFamily }}>
       <CalendarStrip
@@ -23,12 +23,11 @@ const ActCalendar = ({}) => {
         rightSelector={[]}
         // TODO: uncomment and fill the
         // markedDates prop below to add dots to the calendar.
-        // markedDates={[
-        //   {
-        //     date: new Date(),
-        //     dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
-        //   },
-        // ]}
+        markedDates={responseDates.map(r =>
+          ({
+            date: moment(r),
+            dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
+          }))}
         customDatesStyles={[
           {
             startDate: moment(),
@@ -52,7 +51,7 @@ const ActCalendar = ({}) => {
 };
 
 ActCalendar.propTypes = {
-
+  responseDates: PropTypes.array.isRequired,
 };
 
 export default ActCalendar;

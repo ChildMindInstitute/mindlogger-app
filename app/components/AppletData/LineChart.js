@@ -101,22 +101,22 @@ class LineChart extends React.Component {
       <Svg width={width} height={height}>
         <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
         {
-          xTicks.map(x => <Circle x={x} y={height - bottomMargin} r="3" fill={colors.lightGrey} />)
+          xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="3" fill={colors.lightGrey} key={`xTick__${i}__${x}`} />)
         }
         <Line x1={leftMargin} y1={0} x2={leftMargin} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
         {
-          yTicks.map(y => <Circle x={leftMargin} y={y} r="3" fill={colors.lightGrey} />)
+          yTicks.map((y, i) => <Circle x={leftMargin} y={y} r="3" fill={colors.lightGrey} key={`yTick__${i}__${y}`} />)
         }
         {
-          data.map(d => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} />)
+          data.map((d, i) => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} key={`xTick__${i}__${d.date}__${d.value}`} />)
         }
         <Path d={lineCreator(data)} fill="none" stroke={colors.primary} strokeWidth="2" />
 
         <Text x={0} y={height - bottomMargin - 20} textAnchor="start">
-          {minLabelBreak.map(t => <TSpan x={0} dy={10}>{t}</TSpan>)}
+          {minLabelBreak.map((t, i) => <TSpan x={0} dy={10} key={`minLabel_${t}__${i}`}>{t}</TSpan>)}
         </Text>
         <Text x={0} y={10} textAnchor="start">
-          {maxLabelBreak.map(t => <TSpan x={0} dy={10}>{t}</TSpan>)}
+          {maxLabelBreak.map((t, i) => <TSpan x={0} dy={10} key={`maxLabel_${t}__${i}`}>{t}</TSpan>)}
         </Text>
       </Svg>
     );

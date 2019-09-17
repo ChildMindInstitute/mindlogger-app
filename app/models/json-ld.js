@@ -173,6 +173,7 @@ export const appletTransformJson = appletJson => ({
   image: languageListToObject(appletJson[IMAGE]),
   order: flattenIdList(appletJson[ORDER][0]['@list']),
   schedule: appletJson.schedule,
+  responseDates: appletJson.responseDates,
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 

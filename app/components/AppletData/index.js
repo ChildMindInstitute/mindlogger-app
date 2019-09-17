@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, ScrollView, FlatList } from 'react-native';
-// import { Heading } from 'native-base';
+import { Button, Text } from 'native-base';
 // import { VictoryBar, VictoryChart,
 // VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
@@ -20,28 +20,35 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line
 class AppletData extends React.Component {
 
-  renderActivityData() {
-    const { applet } = this.props;
-    return applet.activities.map(act => <ActivityChart activity={act} key={act.name.en} />);
-  }
-
   render() {
-    const { applet } = this.props;
+    const { applet, refreshData } = this.props;
     console.log('applet acts is', applet.activities);
     return (
       <ScrollView contentContainerStyle={styles.container}>
+        {/* TODO: refresh on scroll up, like appletListView */}
+        <Button onPress={refreshData} style={{ marginLeft: 10 }}>
+          <Text>Refresh</Text>
+        </Button>
         <FlatList
           data={applet.activities}
           renderItem={({ item }) => <ActivityChart activity={item} />}
-          keyExtractor={(item, index) => `${applet.name.en}__${index}`}
+          keyExtractor={(item, index) => `${applet.name.en}__${index}__${Math.random()}`}
         />
       </ScrollView>
     );
   }
 }
 
+AppletData.defaultProps = {
+  refreshData() {
+
+  },
+};
+
 AppletData.propTypes = {
   applet: PropTypes.object.isRequired,
+  appletData: PropTypes.object.isRequired,
+  refreshData: PropTypes.func,
 };
 
 export default AppletData;

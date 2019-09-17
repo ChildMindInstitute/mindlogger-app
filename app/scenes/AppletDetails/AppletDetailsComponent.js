@@ -41,13 +41,15 @@ class AppletDetailsComponent extends React.Component {
       applet,
       onPressActivity,
       inProgress,
+      appletData,
+      getAppletResponseData,
     } = this.props;
 
     switch (selectedTab) {
       case 'survey':
         return (
           <View style={{ flex: 1 }}>
-            <AppletCalendar />
+            <AppletCalendar responseDates={applet.responseDates} />
             <ActivityList
               applet={applet}
               inProgress={inProgress}
@@ -58,8 +60,14 @@ class AppletDetailsComponent extends React.Component {
       case 'data':
         return (
           <View>
-            <AppletCalendar />
-            <AppletData applet={applet} />
+            <AppletCalendar responseDates={applet.responseDates} />
+            <AppletData
+              applet={applet}
+              appletData={appletData}
+              // applet.id looks like `applet/:id` so we split it here.
+              // TODO: move this up 1 level.
+              refreshData={() => getAppletResponseData(applet.id.split('/')[1])}
+            />
           </View>
         );
       case 'about':
@@ -124,6 +132,8 @@ class AppletDetailsComponent extends React.Component {
 
 AppletDetailsComponent.propTypes = {
   applet: PropTypes.object.isRequired,
+  appletData: PropTypes.object.isRequired,
+  getAppletResponseData: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
   // onPressDrawer: PropTypes.func.isRequired,
   onPressActivity: PropTypes.func.isRequired,

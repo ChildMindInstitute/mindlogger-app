@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions } from 'react-native';
+import { Dimensions, FlatList } from 'react-native';
 import moment from 'moment';
 import {
   Svg,
@@ -24,11 +24,11 @@ class TimelineChart extends React.Component {
         <Text x="0" y="10">{label.name}</Text>
         <Line x1="0" y1="25" x2={width} y2="25" stroke={colors.lightGrey} strokeWidth="2" />
         {
-          xTicks.map(x => <Circle x={x} y="25" r="5" fill={colors.lightGrey} />)
+          xTicks.map(x => <Circle x={x} y="25" r="5" fill={colors.lightGrey} key={`xtick__${x}__${Math.random()}`} />)
         }
         {
           // only plot data where it matches label's value.
-          data.filter(x => x.value === label.value).map(x => <Circle x={xMapper(moment(x.date).toDate())} y="25" r="5" fill={colors.primary} />)
+          data.filter(x => x.value === label.value).map(x => <Circle x={xMapper(moment(x.date).toDate())} y="25" r="5" fill={colors.primary} key={`xtick__${x}__${Math.random()}`} />)
         }
       </Svg>
     );
@@ -61,8 +61,22 @@ class TimelineChart extends React.Component {
 
     // 5. put through mapper
     const xTicks = dateTicks.map(xMapper);
-
-    return labels.map(label => this.renderSingle(label, data, xTicks, xMapper));
+    //   <FlatList
+    //   data={applet.activities}
+    //   renderItem={({ item }) => <ActivityChart activity={item} />}
+    //   keyExtractor={(item, index) => `${applet.name.en}__${index}`}
+    // />
+    return (
+      <FlatList
+        data={labels}
+        keyExtractor={(item, index) => {
+          const key = `${item.name}__${index}__${Math.random()}`;
+          return key;
+        }}
+        renderItem={({ item }) => this.renderSingle(item, data, xTicks, xMapper)}
+      />
+    );
+    // labels.map(label => this.renderSingle(label, data, xTicks, xMapper));
   }
 }
 
