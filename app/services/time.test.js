@@ -1,3 +1,5 @@
+/* eslint camelcase: 0 */
+
 import moment from 'moment';
 import {
   getNextAndLastTimes,
@@ -8,19 +10,19 @@ import {
   getDateTimes,
 } from './time';
 
-const febraury26 = moment('2019-02-26T00:00:00-0500');
-const march1_midnight = moment('2019-03-01T00:00:00-0500');
-const march2_midnight = moment('2019-03-02T00:00:00-0500');
-const march4_midnight = moment('2019-03-04T00:00:00-0500');
-const march4_9am = moment('2019-03-04T09:00:00-0500'); // Monday
-const march4_10am = moment('2019-03-04T10:00:00-0500');
-const march4_2pm = moment('2019-03-04T14:00:00-0500');
-const march7 = moment('2019-03-07T00:00:00-0500'); // Thursday
-const march8_midnight = moment('2019-03-08T00:00:00-0500');
-const march8_9am = moment('2019-03-08T09:00:00-0500'); // Friday
-const march8_10am = moment('2019-03-08T10:00:00-0500');
-const march9_midnight = moment('2019-03-09T00:00:00-0500');
-const march28_midnight = moment('2019-03-28T00:00:00-0400');
+const febraury26 = moment('2019-02-26T00:00:00');
+const march1_midnight = moment('2019-03-01T00:00:00');
+const march2_midnight = moment('2019-03-02T00:00:00');
+const march4_midnight = moment('2019-03-04T00:00:00');
+const march4_9am = moment('2019-03-04T09:00:00'); // Monday
+const march4_10am = moment('2019-03-04T10:00:00');
+const march4_2pm = moment('2019-03-04T14:00:00');
+const march7 = moment('2019-03-07T00:00:00'); // Thursday
+const march8_midnight = moment('2019-03-08T00:00:00');
+const march8_9am = moment('2019-03-08T09:00:00'); // Friday
+const march8_10am = moment('2019-03-08T10:00:00');
+const march9_midnight = moment('2019-03-09T00:00:00');
+const march28_midnight = moment('2019-03-28T00:00:00');
 
 const mockActivityWithoutTimes = {
   meta: {
@@ -122,7 +124,11 @@ test('getScheduledMonthDays', () => {
 });
 
 test('getScheduledWeekDays', () => {
-  expect(JSON.stringify(getScheduledWeekDays(mockActivityWithoutTimes, march2_midnight, march9_midnight)))
+  expect(JSON.stringify(getScheduledWeekDays(
+    mockActivityWithoutTimes,
+    march2_midnight,
+    march9_midnight,
+  )))
     .toEqual(JSON.stringify([march4_midnight, march8_midnight]));
 });
 
