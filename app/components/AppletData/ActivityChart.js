@@ -21,8 +21,8 @@ class ActivityChart extends React.Component {
   }
 
   render() {
-    const { activity } = this.props;
-    console.log('activity items', activity.items);
+    const { activity, appletData } = this.props;
+    // console.log('activity items', activity.items);
     const itemTypesToIgnore = [
       'markdown-message',
       'audioRecord',
@@ -31,6 +31,9 @@ class ActivityChart extends React.Component {
     ];
     const itemsFiltered = activity.items.filter(i => itemTypesToIgnore
       .indexOf(i.inputType) < 0 && i.inputType);
+
+    // console.log('items filtered', itemsFiltered);
+
     return (
       <View style={{
         paddingTop: 10,
@@ -51,7 +54,7 @@ class ActivityChart extends React.Component {
         <FlatList
           data={itemsFiltered}
           keyExtractor={(item, index) => `${activity.name.en}__${index}`}
-          renderItem={({ item }) => <ItemChart item={item} />}
+          renderItem={({ item }) => <ItemChart item={item} data={appletData.responses[item.schema] || []} />}
         />
       </View>
     );
@@ -60,6 +63,7 @@ class ActivityChart extends React.Component {
 
 ActivityChart.propTypes = {
   activity: PropTypes.object.isRequired,
+  appletData: PropTypes.object.isRequired,
 };
 
 export default ActivityChart;

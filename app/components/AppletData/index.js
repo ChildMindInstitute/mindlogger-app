@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
 class AppletData extends React.Component {
 
   render() {
-    const { applet, refreshData } = this.props;
-    console.log('applet acts is', applet.activities);
+    const { applet, refreshData, appletData } = this.props;
+    // console.log('applet acts is', applet.activities);
     return (
       <ScrollView contentContainerStyle={styles.container}>
         {/* TODO: refresh on scroll up, like appletListView */}
@@ -31,7 +31,7 @@ class AppletData extends React.Component {
         </Button>
         <FlatList
           data={applet.activities}
-          renderItem={({ item }) => <ActivityChart activity={item} />}
+          renderItem={({ item }) => <ActivityChart activity={item} appletData={appletData} />}
           keyExtractor={(item, index) => `${applet.name.en}__${index}__${Math.random()}`}
         />
       </ScrollView>

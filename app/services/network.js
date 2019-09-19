@@ -257,16 +257,17 @@ export const deleteUserAccount = (authToken, userId) => {
 };
 
 export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
-  let url = `${apiHost}/response/last7Days/${appletId}`;
+  let url = `${apiHost()}/response/last7Days/${appletId}`;
   if (referenceDate) {
     url += `?referenceDate=${referenceDate}`;
   }
   const headers = {
     'Girder-Token': authToken,
   };
+  console.log('url is', url);
   return fetch(url, {
     method: 'get',
     mode: 'cors',
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };

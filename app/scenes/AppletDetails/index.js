@@ -33,7 +33,7 @@ class AppletDetails extends Component {
     if (!currentApplet) {
       return null;
     }
-
+    console.log('applet data is', appletData[currentApplet.id.split('/')[1]] || {});
     return (
       <AppletDetailsComponent
         applet={currentApplet}

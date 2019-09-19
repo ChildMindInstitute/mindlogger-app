@@ -16,7 +16,7 @@ export const inProgressSelector = R.path(['responses', 'inProgress']);
 export const responsesGroupedByActivitySelector = createSelector(
   responsesSelector,
   responses => R.groupBy(
-    response => `activity/${response.meta.activity['@id']}`,
+    response => (response.meta ? `activity/${response.meta.activity['@id']}` : null),
     responses,
   ),
 );

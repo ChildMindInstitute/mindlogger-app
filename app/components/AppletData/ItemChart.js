@@ -14,31 +14,32 @@ class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderTimelinePlot() {
-    const { item } = this.props;
-
+    const { item, data } = this.props;
+    // console.log('item, data', item, data);
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
-    const data = [
+    const data1 = [
       {
         value: 0,
-        date: '2019-09-06',
+        date: '2019-09-18',
       },
-      {
-        value: 0,
-        date: '2019-09-05',
-      },
-      {
-        value: 1,
-        date: '2019-09-04',
-      },
-      {
-        value: 1,
-        date: '2019-09-03',
-      },
-      {
-        value: 0,
-        date: '2019-09-01',
-      },
+      // {
+      //   value: 0,
+      //   date: '2019-09-05',
+      // },
+      // {
+      //   value: 1,
+      //   date: '2019-09-04',
+      // },
+      // {
+      //   value: 1,
+      //   date: '2019-09-03',
+      // },
+      // {
+      //   value: 0,
+      //   date: '2019-09-01',
+      // },
     ];
+    console.log('data1 ,data', data1, data);
     return (
       <TimelineChart data={data} labels={labels} />
     );
@@ -46,29 +47,29 @@ class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderLinePlot() {
-    const { item } = this.props;
-    const data = [
-      {
-        value: 1,
-        date: '2019-09-06',
-      },
-      {
-        value: 2,
-        date: '2019-09-05',
-      },
-      {
-        value: 1,
-        date: '2019-09-04',
-      },
-      {
-        value: 4,
-        date: '2019-09-03',
-      },
-      {
-        value: 5,
-        date: '2019-09-01',
-      },
-    ];
+    const { item, data } = this.props;
+    // const data = [
+    //   {
+    //     value: 1,
+    //     date: '2019-09-06',
+    //   },
+    //   {
+    //     value: 2,
+    //     date: '2019-09-05',
+    //   },
+    //   {
+    //     value: 1,
+    //     date: '2019-09-04',
+    //   },
+    //   {
+    //     value: 4,
+    //     date: '2019-09-03',
+    //   },
+    //   {
+    //     value: 5,
+    //     date: '2019-09-01',
+    //   },
+    // ];
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
     const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
 
@@ -143,6 +144,7 @@ class ItemChart extends React.Component {
 
 ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 export default ItemChart;

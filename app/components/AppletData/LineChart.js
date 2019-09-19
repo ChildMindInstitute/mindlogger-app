@@ -52,8 +52,16 @@ class LineChart extends React.Component {
     // 1. calculate minimum and maximum date
     const dateArray = data.map(d => moment(d.date).toDate());
     let minDate = min(dateArray);
+    if (!minDate) {
+      minDate = new Date();
+    }
+
     const minDateMoment = moment(minDate);
-    const maxDate = max(dateArray);
+    let maxDate = max(dateArray);
+
+    if (!maxDate) {
+      maxDate = new Date();
+    }
     const maxDateMoment = moment(maxDate);
 
     // 2. min date should at least be 7 days before max date

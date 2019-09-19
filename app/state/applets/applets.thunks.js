@@ -128,7 +128,6 @@ export const removeAndDeleteApplet = groupId => (dispatch, getState) => {
 export const getAppletResponseData = appletId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  console.log('hi there', appletId);
   getLast7DaysData({
     authToken: auth.token,
     appletId,
