@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, View } from 'react-native';
+import moment from 'moment';
 
 // import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
@@ -8,38 +9,14 @@ import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
 
-
 // eslint-disable-next-line
 class ItemChart extends React.Component {
 
   // eslint-disable-next-line
   renderTimelinePlot() {
     const { item, data } = this.props;
-    // console.log('item, data', item, data);
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
-    const data1 = [
-      {
-        value: 0,
-        date: '2019-09-18',
-      },
-      // {
-      //   value: 0,
-      //   date: '2019-09-05',
-      // },
-      // {
-      //   value: 1,
-      //   date: '2019-09-04',
-      // },
-      // {
-      //   value: 1,
-      //   date: '2019-09-03',
-      // },
-      // {
-      //   value: 0,
-      //   date: '2019-09-01',
-      // },
-    ];
-    console.log('data1 ,data', data1, data);
+
     return (
       <TimelineChart data={data} labels={labels} />
     );
@@ -48,28 +25,6 @@ class ItemChart extends React.Component {
   // eslint-disable-next-line
   renderLinePlot() {
     const { item, data } = this.props;
-    // const data = [
-    //   {
-    //     value: 1,
-    //     date: '2019-09-06',
-    //   },
-    //   {
-    //     value: 2,
-    //     date: '2019-09-05',
-    //   },
-    //   {
-    //     value: 1,
-    //     date: '2019-09-04',
-    //   },
-    //   {
-    //     value: 4,
-    //     date: '2019-09-03',
-    //   },
-    //   {
-    //     value: 5,
-    //     date: '2019-09-01',
-    //   },
-    // ];
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
     const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
 
@@ -79,9 +34,32 @@ class ItemChart extends React.Component {
   }
 
   // eslint-disable-next-line
+  calcTimeDiff(data) {
+    // data = {from: {hour: h, minute:mm}, to: {hour:h, minute: mm}}
+    console.log('data is', data);
+    const output = data.map((d) => {
+      const dp = {};
+      dp.date = d.date;
+      const from = moment(`${d.value.from.hour}:${d.value.from.minute}`, 'h:mm');
+      const to = moment(`${d.value.to.hour}:${d.value.to.minute}`, 'h:mm');
+      dp.value = Math.abs(to.diff(from, 'hours'));
+      return dp;
+    });
+
+    return output;
+  }
+
+  // eslint-disable-next-line
   renderBarPlot() {
-    // const { item } = this.props;
-    const data = [
+    const { item, data } = this.props;
+
+    if (item.inputType === 'timeRange') {
+      const dataFix = this.calcTimeDiff(data);
+      return (
+        <BarChart data={dataFix} />
+      );
+    }
+    const data1 = [
       {
         value: 7,
         date: '2019-09-06',
@@ -105,7 +83,7 @@ class ItemChart extends React.Component {
     ];
 
     return (
-      <BarChart data={data} />
+      <BarChart data={data1} />
     );
   }
 
