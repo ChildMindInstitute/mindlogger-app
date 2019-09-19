@@ -40,7 +40,7 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         mobileDataAllowed: !state.mobileDataAllowed,
-      }
+      };
     default:
       return state;
   }

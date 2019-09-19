@@ -45,6 +45,6 @@ const ActCalendar = ({}) => {
 
 ActCalendar.propTypes = {
 
-}
+};
 
 export default ActCalendar;

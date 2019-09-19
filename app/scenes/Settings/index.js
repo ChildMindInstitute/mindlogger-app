@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
-import { logout } from '../../state/app/app.thunks';
+import { logout, removeAccount } from '../../state/app/app.thunks';
 import { userInfoSelector } from '../../state/user/user.selectors';
-import { removeAccount } from '../../state/app/app.thunks';
+
 import { colors } from '../../themes/colors';
 
 // eslint-disable-next-line

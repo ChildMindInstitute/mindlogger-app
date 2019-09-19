@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { ImageBackground, Image, Platform } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-import {Header, Left, Right, Body, Button, Title, Icon, Container } from 'native-base';
+import { Header, Left, Right, Body, Button, Title, Icon, Container } from 'native-base';
 
 class InfoHeader extends Component {
   static propTypes = {
@@ -33,24 +33,22 @@ class InfoHeader extends Component {
               <Icon type="FontAwesome" name="close" />
             </Button>
           </Left>
-          <Body style={{flex:2}}>
-              <Title>{title}</Title>
+          <Body style={{ flex: 2 }}>
+            <Title>{title}</Title>
           </Body>
-          <Right>
-            
-          </Right>
+          <Right />
         </Header>
       </Container>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  
-})
+const mapStateToProps = state => ({
+
+});
 
 const mapDispatchToProps = {
-  
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(InfoHeader)
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(InfoHeader);

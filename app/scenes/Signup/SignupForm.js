@@ -10,17 +10,14 @@ import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
-const login = value =>
-  value && !RegExp('^[a-z][\\da-z\\-\\.]{3,}$').test(value) ?
-  'Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.' : undefined
+const login = value => (value && !RegExp('^[a-z][\\da-z\\-\\.]{3,}$').test(value)
+  ? 'Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.' : undefined);
 
-const email = value =>
-  value && !RegExp('^[\\w\\.\\-\\+]*@[\\w\\.\\-]*\\.\\w+$').test(value) ?
-  'Invalid email address' : undefined
+const email = value => (value && !RegExp('^[\\w\\.\\-\\+]*@[\\w\\.\\-]*\\.\\w+$').test(value)
+  ? 'Invalid email address' : undefined);
 
-const password = value =>
-  value && !RegExp('.{6}.*').test(value) ?
-  'Password must be at least 6 characters' : undefined
+const password = value => (value && !RegExp('.{6}.*').test(value)
+  ? 'Password must be at least 6 characters' : undefined);
 
 
 const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
@@ -34,7 +31,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
-      validate = {[required, login]}
+      validate={[required, login]}
     />
     <Field
       component={FormInputItem}
@@ -44,7 +41,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       placeholderTextColor="#aaa"
       autoComplete="off"
       autoCorrect={false}
-      validate = {required}
+      validate={required}
     />
     <Field
       component={FormInputItem}
@@ -54,7 +51,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       placeholderTextColor="#aaa"
       autoComplete="off"
       autoCorrect={false}
-      validate = {required}
+      validate={required}
     />
     <Field
       component={FormInputItem}
@@ -66,7 +63,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoCorrect={false}
       autoCapitalize="none"
       keyboardType="email-address"
-      validate = {[required, email]}
+      validate={[required, email]}
     />
     <Field
       component={FormInputItem}
@@ -78,7 +75,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
-      validate = {[required, password]}
+      validate={[required, password]}
     />
     <Button
       warning
