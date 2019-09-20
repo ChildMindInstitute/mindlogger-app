@@ -26,4 +26,4 @@ export const setCurrentActivity = activityId => ({
 
 export const toggleMobileDataAllowed = () => ({
   type: APP_ACTIONS.TOGGLE_MOBILE_DATA_ALLOWED,
-})
+});

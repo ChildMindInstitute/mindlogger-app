@@ -17,7 +17,7 @@ const LoginForm = ({
   submitting,
   primaryColor,
   mobileDataAllowed,
-  toggleMobileDataAllowed
+  toggleMobileDataAllowed,
 }) => {
   const netInfo = useNetInfo();
   return (

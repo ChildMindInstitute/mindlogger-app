@@ -84,14 +84,14 @@ class Login extends Component {
             <TouchableOpacity onPress={this.onRegister}>
               <Text style={styles.whiteText}>New User</Text>
             </TouchableOpacity>
-            <Text style={styles.whiteText}>{' or '}</Text>
+            <Text style={styles.whiteText}> or </Text>
             <TouchableOpacity onPress={this.onForgotPassword}>
               <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>{'What is ' + title + '?'}</Text>
+              <Text style={styles.whiteText}>{`What is ${title}?`}</Text>
             </TouchableOpacity>
           </View>
           <Image

@@ -32,7 +32,7 @@ class Clock extends React.Component {
           strokeDasharray={Math.PI * (size - strokeWidth)}
         />
       </Svg>
-    )
+    );
   }
 }
 
