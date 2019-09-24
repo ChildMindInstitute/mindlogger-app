@@ -32,14 +32,28 @@ class BarChart extends React.Component {
     // 1. calculate minimum and maximum date
     const dateArray = data.map(d => moment(d.date).toDate());
     let minDate = min(dateArray);
+
+    if (!minDate) {
+      minDate = new Date();
+    }
+
     const minDateMoment = moment(minDate);
-    const maxDate = max(dateArray);
-    const maxDateMoment = moment(maxDate);
+    let maxDate = max(dateArray);
+
+    if (!maxDate) {
+      maxDate = new Date();
+    }
+
+    // WATCH OUT: the max date for now is today.
+    const maxDateMoment = moment(); // moment(maxDate);
 
     // 2. min date should at least be 7 days before max date
     let diffDays = moment(maxDateMoment).diff(minDateMoment, 'days');
-    diffDays = max([diffDays, 6]);
-    minDate = maxDateMoment.subtract(diffDays, 'days').toDate();
+
+    // WATCH OUT: hard-code a week.
+    diffDays = 6; // max([diffDays, 6]);
+    minDate = maxDateMoment.subtract(diffDays, 'days').startOf('day').toDate();
+    maxDate = moment().startOf('day').toDate();
 
     // 3. create linear mapping between width and min,max
     const xMapper = scaleTime()
