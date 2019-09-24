@@ -42,7 +42,6 @@ class AppletDetailsComponent extends React.Component {
       onPressActivity,
       inProgress,
       appletData,
-      getAppletResponseData,
     } = this.props;
 
     switch (selectedTab) {
@@ -64,9 +63,6 @@ class AppletDetailsComponent extends React.Component {
             <AppletData
               applet={applet}
               appletData={appletData}
-              // applet.id looks like `applet/:id` so we split it here.
-              // TODO: move this up 1 level.
-              refreshData={() => getAppletResponseData(applet.id.split('/')[1])}
             />
           </View>
         );
@@ -133,9 +129,7 @@ class AppletDetailsComponent extends React.Component {
 AppletDetailsComponent.propTypes = {
   applet: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
-  getAppletResponseData: PropTypes.func.isRequired,
   inProgress: PropTypes.object.isRequired,
-  // onPressDrawer: PropTypes.func.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,

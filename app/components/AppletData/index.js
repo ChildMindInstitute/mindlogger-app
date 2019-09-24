@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, ScrollView, FlatList } from 'react-native';
-import { Button, Text } from 'native-base';
 // import { VictoryBar, VictoryChart,
 // VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
@@ -21,14 +20,10 @@ const styles = StyleSheet.create({
 class AppletData extends React.Component {
 
   render() {
-    const { applet, refreshData, appletData } = this.props;
+    const { applet, appletData } = this.props;
     // console.log('applet acts is', applet.activities);
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        {/* TODO: refresh on scroll up, like appletListView */}
-        <Button onPress={refreshData} style={{ marginLeft: 10 }}>
-          <Text>Refresh</Text>
-        </Button>
         <FlatList
           data={applet.activities}
           renderItem={({ item }) => <ActivityChart activity={item} appletData={appletData} />}
@@ -40,15 +35,12 @@ class AppletData extends React.Component {
 }
 
 AppletData.defaultProps = {
-  refreshData() {
 
-  },
 };
 
 AppletData.propTypes = {
   applet: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
-  refreshData: PropTypes.func,
 };
 
 export default AppletData;

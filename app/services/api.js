@@ -17,7 +17,8 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
     return getLast7DaysData({ authToken, appletId }).then((responses) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
-      return responses;
+      const appletId = applet.id;
+      return { ...responses, appletId };
     });
   });
   return Promise.all(requests)
