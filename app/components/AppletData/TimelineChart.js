@@ -28,7 +28,14 @@ class TimelineChart extends React.Component {
         }
         {
           // only plot data where it matches label's value.
-          data.filter(x => x.value === label.value).map(x => <Circle x={xMapper(moment(x.date).toDate())} y="25" r="5" fill={colors.primary} key={`xtick__${x}__${Math.random()}`} />)
+          data.filter((x) => {
+            // if x is a list, check if its value has the label.value in it.
+            if (Array.isArray(x.value)) {
+              return x.value.indexOf(label.value) >= 0;
+            }
+            // if x is not a list.
+            return x.value === label.value;
+          }).map(x => <Circle x={xMapper(moment(x.date).toDate())} y="25" r="5" fill={colors.primary} key={`xtick__${x}__${Math.random()}`} />)
         }
       </Svg>
     );

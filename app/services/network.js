@@ -264,7 +264,6 @@ export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
   const headers = {
     'Girder-Token': authToken,
   };
-  console.log('url is', url);
   return fetch(url, {
     method: 'get',
     mode: 'cors',
