@@ -1,6 +1,6 @@
 import { PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
-import moment from 'moment';
+// import moment from 'moment';
 
 export const initializePushNotifications = (onNotification) => {
   PushNotification.configure({
@@ -37,11 +37,11 @@ export const scheduleNotifications = (activities) => {
     const scheduleDateTimes = activity.notification || [];
 
     // /* below is for easy debugging.
-    //    every 10 seconds a notification will appear for an applet.
+    //    every 30 seconds a notification will appear for an applet.
     // */
     // const scheduleDateTimes = [];
 
-    // for (i = 0; i < 60; i += 1) {
+    // for (i = 0; i < 50; i += 1) {
     //   const foo = new Date();
     //   foo.setSeconds(foo.getSeconds() + i * 30);
     //   scheduleDateTimes.push(moment(foo));
@@ -53,7 +53,7 @@ export const scheduleNotifications = (activities) => {
       notifications.push({
         timestamp: dateTime.valueOf(),
         niceTime: dateTime.format(),
-        activityId: activity._id,
+        activityId: activity.id,
         activityName: activity.name.en,
         appletName: activity.appletName,
         activity: JSON.stringify(activity),
@@ -69,7 +69,6 @@ export const scheduleNotifications = (activities) => {
     // console.log('scheduling', notification);
     PushNotification.localNotificationSchedule({
       message: `Please perform activity: ${notification.activityName}`,
-      id: notification.tag,
       date: new Date(notification.timestamp),
       group: notification.activityName,
       userInfo: {
