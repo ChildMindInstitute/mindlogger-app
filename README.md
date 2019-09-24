@@ -1,4 +1,4 @@
-# MindLogger 0.5.16
+# MindLogger 0.6.3
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -16,7 +16,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You need to have your own Girder instance running or leave your `apiHost` set to `'https://api.mindlogger.info'` in [`app/config`](https://github.com/ChildMindInstitute/mindlogger-app/blob/dbcda38f4965ffbe6d3fc64c5d69c7be3d6e2098/app/config.js#L2).
+You need to have your own Girder instance running or leave your `defaultApiHost` set to `'https://api.mindlogger.org/api/v1'` in [`app/config.js`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/app/config.js#L2).
 
 You need [Node ≤10.11.0, npm ≥4.3.0 & ≤6.4.1](https://github.com/creationix/nvm#user-content-usage), [yarn ≥1.3.2](https://yarnpkg.com) and [React Native ≥0.49.3](https://facebook.github.io/react-native/) to be installed.
 For example
@@ -44,16 +44,30 @@ Link packages with React Native iOS and Android projects
 react-native link
 ```
 
-## Deployment
+## Development
 
 iOS:
 ```
-react-native run-ios
+yarn ios
 ```
 
 Android:
 ```
-react-native run-android
+yarn android
+```
+
+### Testing
+
+You can run unit tests locally.
+
+```
+yarn test
+```
+
+You can also run eslint on the entire codebase.
+
+```
+yarn lint
 ```
 
 ## Release build

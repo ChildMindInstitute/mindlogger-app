@@ -222,6 +222,22 @@ export const itemAttachExtras = (
   visibility: visibilityObj[variableMap[schemaUri]],
 });
 
+const SHORT_PREAMBLE_LENGTH = 90;
+
+export const attachPreamble = (preamble, items) => {
+  const text = preamble ? preamble.en : '';
+  if (text && text.length > SHORT_PREAMBLE_LENGTH) {
+    return R.prepend({
+      inputType: 'markdown-message',
+      preamble,
+    }, items);
+  }
+  if (text && items.length > 0) {
+    return R.assocPath([0, 'preamble'], preamble, items);
+  }
+  return items;
+};
+
 export const activityTransformJson = (activityJson, itemsJson) => {
   const allowList = flattenIdList(R.pathOr([], [ALLOW, 0, '@list'], activityJson));
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
@@ -232,11 +248,15 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const variableMap = transformVariableMap(variableMapAr);
   const visibility = listToObject(activityJson[VISIBILITY]);
 
+  const preamble = languageListToObject(activityJson[PREAMBLE]);
+
   const order = flattenIdList(activityJson[ORDER][0]['@list']);
-  const items = order.map((itemKey) => {
+
+  const mapItems = R.map((itemKey) => {
     const item = itemTransformJson(itemsJson[itemKey]);
     return itemAttachExtras(item, itemKey, variableMap, visibility);
   });
+  const items = attachPreamble(preamble, mapItems(order));
 
   return {
     id: activityJson._id,
@@ -244,7 +264,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     description: languageListToObject(activityJson[DESCRIPTION]),
     schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
     version: languageListToObject(activityJson[VERSION]),
-    preamble: languageListToObject(activityJson[PREAMBLE]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
     image: languageListToObject(activityJson[IMAGE]),
@@ -252,6 +271,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     backDisabled: allowList.includes(BACK_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
+    preamble,
     scoringLogic,
     notification,
     info,

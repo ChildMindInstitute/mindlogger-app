@@ -1,7 +1,8 @@
 import * as R from 'ramda';
 import RNFetchBlob from 'rn-fetch-blob';
 import {
-  getResponses,
+  // getResponses,
+  getLast7DaysData,
   postResponse,
   postFile,
 } from './network';
@@ -13,7 +14,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   onProgress(numDownloaded, applets.length);
   const requests = applets.map((applet) => {
     const appletId = applet.id.split('/').pop();
-    return getResponses(authToken, appletId).then((responses) => {
+    return getLast7DaysData({ authToken, appletId }).then((responses) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       return responses;

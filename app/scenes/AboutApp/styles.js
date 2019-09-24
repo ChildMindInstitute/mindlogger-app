@@ -24,7 +24,7 @@ export default {
     alignItems: 'flex-start',
   },
 
-  button:{
+  button: {
     marginTop: 10,
     paddingLeft: 0,
   },
@@ -48,5 +48,5 @@ export default {
     width: 78,
     resizeMode: 'contain',
     alignSelf: 'center',
-  }
+  },
 };

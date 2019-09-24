@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -50,9 +51,12 @@ const setup = () => {
       const state = store.getState();
       // If user is logged in when they get a push notification, go to the home
 
-      if (state.user.auth && notification.foreground === false) {
-        // eslint-disable-next-line
-        const activity = JSON.parse(notification.data.activity || notification.data);
+      if (state.user.auth && !notification.foreground) {
+        // On Android the activity object comes back already parsed in the data property
+        // On iOS the activity from userInfo.activity comes back as a JSON string in data.activity
+        const activity = Platform.OS === 'android'
+          ? notification.data
+          : JSON.parse(notification.data.activity);
 
         store.dispatch(setCurrentApplet(activity.appletId));
         store.dispatch(setCurrentActivity(activity.id));

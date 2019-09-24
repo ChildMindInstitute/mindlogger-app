@@ -88,6 +88,11 @@ export const startResponse = activity => (dispatch, getState) => {
   }
 };
 
+
+/**
+ * TODO: the below thunk isn't that useful. Instead,
+ * we want to download data from the last 7 days.
+ */
 export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
@@ -96,6 +101,7 @@ export const downloadResponses = () => (dispatch, getState) => {
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((responses) => {
+    console.log('downloaded responses', responses);
     if (loggedInSelector(getState())) {
       dispatch(replaceResponses(responses));
       dispatch(scheduleAndSetNotifications());

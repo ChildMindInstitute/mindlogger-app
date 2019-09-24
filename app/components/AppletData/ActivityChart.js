@@ -54,7 +54,7 @@ class ActivityChart extends React.Component {
         <FlatList
           data={itemsFiltered}
           keyExtractor={(item, index) => `${activity.name.en}__${index}`}
-          renderItem={({ item }) => <ItemChart item={item} data={appletData.responses[item.schema] || []} />}
+          renderItem={({ item }) => <ItemChart item={item} data={appletData.responses ? (appletData.responses[item.schema] || []) : []} />}
         />
       </View>
     );

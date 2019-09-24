@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   PanResponder,
-  Text
-} from "react-native";
-import styled from "styled-components";
+  Text,
+} from 'react-native';
+import styled from 'styled-components';
 
 const CIRCLE_DIAMETER = 25;
 
@@ -46,26 +46,25 @@ export default class Slider extends React.Component {
       -gestureState.dy,
       barHeight,
       min,
-      max
+      max,
     );
 
     this.setState({
       deltaValue: newDeltaValue,
-      selected: true
+      selected: true,
     });
   }
+
   onEndMove() {
     const { strict, min, max, onChange } = this.props;
     let { value, deltaValue } = this.state;
     value = this.capValueWithinRange(value + deltaValue, [
       min,
-      max
+      max,
     ]);
     this.setState({ value, deltaValue: 0, selected: false });
-    if (strict)
-      onChange(Math.floor(value));
-    else
-      onChange(value);
+    if (strict) onChange(Math.floor(value));
+    else onChange(value);
   }
 
   onBarLayout = (event) => {
@@ -83,7 +82,7 @@ export default class Slider extends React.Component {
     offset,
     barHeight,
     rangeMin,
-    rangeMax
+    rangeMax,
   ) => {
     if (barHeight === null) return 0;
     return ((rangeMax - rangeMin) * offset) / barHeight;
@@ -93,7 +92,7 @@ export default class Slider extends React.Component {
     value,
     rangeMin,
     rangeMax,
-    barHeight
+    barHeight,
   ) => {
     if (barHeight === null) return 0;
     const valueOffset = value - rangeMin;
@@ -108,27 +107,27 @@ export default class Slider extends React.Component {
 
     const cappedValue = this.capValueWithinRange(value + deltaValue, [
       min,
-      max
+      max,
     ]);
-    let offset = strict ? Math.floor(cappedValue) : cappedValue
+    const offset = strict ? Math.floor(cappedValue) : cappedValue;
     const bottomOffset = this.getBottomOffsetFromValue(
       offset,
       min,
       max,
-      barHeight
+      barHeight,
     );
     return (
       <PageContainer>
 
         <Container>
-          {labels &&
+          {labels
+            && (
             <LabelContainer>
               {
-                labels.map((label, idx) =>
-                  <Text key={idx}>{label.text}</Text>
-                )
+                labels.map((label, idx) => <Text key={idx}>{label.text}</Text>)
               }
             </LabelContainer>
+            )
           }
 
           <BarContainer {...this.panResponder.panHandlers}>
@@ -187,7 +186,7 @@ const Circle = styled.View`
   border-radius: ${CIRCLE_DIAMETER / 2};
   width: ${CIRCLE_DIAMETER};
   height: ${CIRCLE_DIAMETER};
-  background-color: ${props => props.isFilled ? '#0B3954' : 'white'};
+  background-color: ${props => (props.isFilled ? '#0B3954' : 'white')};
   border-color: ${borderColor};
   position: absolute;
   bottom: ${props => props.bottomOffset};
@@ -197,7 +196,7 @@ const RoundRect = styled.View`
   border-radius: 8;
   width: ${CIRCLE_DIAMETER * 2};
   height: ${CIRCLE_DIAMETER};
-  background-color: ${props => props.isFilled ? sliderFillColor : 'white'};
+  background-color: ${props => (props.isFilled ? sliderFillColor : 'white')};
   border-color: ${sliderFillColor};
   border-width: 3;
   position: absolute;

@@ -109,7 +109,7 @@ class AppletSettings extends Component {
         </Container>
       );
     }
-    // there isn't an applet defined so 
+    // there isn't an applet defined so
     return (<Text>There isn't an applet defined.</Text>);
   }
 }

@@ -9,6 +9,13 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".android.js", ".ios.js"]
+      }
+    }
+  },
   "rules": {
     "react/jsx-filename-extension": [
       2,
@@ -26,7 +33,8 @@
     "no-shadow": 0,
     "global-require": 0,
     "object-curly-newline": 0,
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "arrow-body-style": 0
   },
   "globals": {
     "describe": true,

@@ -20,7 +20,7 @@ export default {
   subSection: {
     paddingLeft: 40,
     paddingRight: 40,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   mb: {
     marginBottom: 15,

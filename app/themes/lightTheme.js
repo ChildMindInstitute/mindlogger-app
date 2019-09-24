@@ -1,15 +1,15 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const styles = {
   button: {
-    backgroundColor:'#ff0'
+    backgroundColor: '#ff0',
   },
   enabledColor: {
-    color: '#000000'
+    color: '#000000',
   },
   disabledColor: {
-    color: '#dddddd'
-  }
+    color: '#dddddd',
+  },
 };
 
-export default styles
+export default styles;

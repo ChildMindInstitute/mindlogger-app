@@ -13,16 +13,15 @@ export const zeroFill = (number, width) => {
   if (width > 0) {
     return new Array(width + (/\./.test(number) ? 2 : 1)).join('0') + number;
   }
-  return number + ""; // always return a string
-}
+  return `${number}`; // always return a string
+};
 
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 export const btoa = (input = '') => {
-  let str = input;
+  const str = input;
   let output = '';
 
   for (let block = 0, charCode, i = 0, map = chars; str.charAt(i | 0) || (map = '=', i % 1); output += map.charAt(63 & block >> 8 - i % 1 * 8)) {
-
     charCode = str.charCodeAt(i += 3 / 4);
 
     if (charCode > 0xFF) {
@@ -36,7 +35,7 @@ export const btoa = (input = '') => {
 };
 
 export const atob = (input = '') => {
-  let str = input.replace(/=+$/, '');
+  const str = input.replace(/=+$/, '');
   let output = '';
 
   if (str.length % 4 == 1) {
@@ -45,7 +44,7 @@ export const atob = (input = '') => {
   for (let bc = 0, bs = 0, buffer, i = 0; buffer = str.charAt(i++);
 
     ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
   ) {
     buffer = chars.indexOf(buffer);
   }
@@ -54,9 +53,9 @@ export const atob = (input = '') => {
 };
 
 export const randomLink = (files, token) => {
-  var rand = files[Math.floor(Math.random() * files.length)];
+  const rand = files[Math.floor(Math.random() * files.length)];
   return fileLink(rand, token);
-}
+};
 
 
 export const getURL = (url) => {
