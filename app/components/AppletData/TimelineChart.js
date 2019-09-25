@@ -43,6 +43,7 @@ class TimelineChart extends React.Component {
 
   render() {
     const { data, labels } = this.props;
+
     const width = Math.round(Dimensions.get('window').width * 0.9);
     // 1. calculate minimum and maximum date
     const dateArray = data.map(d => moment(d.date).toDate());

@@ -21,6 +21,7 @@ class AppletData extends React.Component {
 
   render() {
     const { applet, appletData } = this.props;
+    console.log('applet data is', appletData);
     // console.log('applet acts is', applet.activities);
     return (
       <ScrollView contentContainerStyle={styles.container}>

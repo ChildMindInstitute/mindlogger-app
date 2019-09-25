@@ -45,7 +45,7 @@ class LineChart extends React.Component {
     const width = Math.round(Dimensions.get('window').width * 0.9);
     const height = Math.round(width * (2 / 3));
 
-    const leftMargin = 70;
+    const leftMargin = 5;
     const rightMargin = 5;
     const bottomMargin = 5;
 
@@ -115,11 +115,11 @@ class LineChart extends React.Component {
       <Svg width={width} height={height}>
         <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
         {
-          xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="3" fill={colors.lightGrey} key={`xTick__${i}__${x}`} />)
+          xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} key={`xTick__${i}__${x}`} />)
         }
         <Line x1={leftMargin} y1={0} x2={leftMargin} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
         {
-          yTicks.map((y, i) => <Circle x={leftMargin} y={y} r="3" fill={colors.lightGrey} key={`yTick__${i}__${y}`} />)
+          yTicks.map((y, i) => <Circle x={leftMargin} y={y} r="5" fill={colors.lightGrey} key={`yTick__${i}__${y}`} />)
         }
         {
           data.map((d, i) => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} key={`xTick__${i}__${d.date}__${d.value}`} />)
