@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
+import moment from 'moment';
+import R from 'ramda';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -34,6 +36,30 @@ class AppletDetailsComponent extends React.Component {
     };
   }
 
+  getResponseDates() {
+    // TODO: a quick hack to add a dot for today's date
+    // if the user has responded today. This is instead of
+    // refreshing all the applets
+    const { applet, appletData } = this.props;
+    let allDates = [];
+    const mapper = (resp) => {
+      const d = resp.map(r => r.date);
+      allDates = allDates.concat(d);
+      return allDates;
+    };
+    // R.forEach(mapper, appletData.responses);
+    const items = Object.keys(appletData.responses);
+    items.map(item => mapper(appletData.responses[item]));
+
+    const maxDate = moment.max(allDates.map(d => moment(d)));
+
+    if (applet.responseDates.indexOf(maxDate) < 0) {
+      applet.responseDates.push(maxDate);
+    }
+
+    return applet.responseDates;
+  }
+
   // eslint-disable-next-line
   renderActiveTab() {
     const { selectedTab } = this.state;
@@ -44,11 +70,13 @@ class AppletDetailsComponent extends React.Component {
       appletData,
     } = this.props;
 
+    const responseDates = this.getResponseDates();
+
     switch (selectedTab) {
       case 'survey':
         return (
           <View style={{ flex: 1 }}>
-            <AppletCalendar responseDates={applet.responseDates} />
+            <AppletCalendar responseDates={responseDates} />
             <ActivityList
               applet={applet}
               inProgress={inProgress}
@@ -59,7 +87,7 @@ class AppletDetailsComponent extends React.Component {
       case 'data':
         return (
           <View>
-            <AppletCalendar responseDates={applet.responseDates} />
+            <AppletCalendar responseDates={responseDates} />
             <AppletData
               applet={applet}
               appletData={appletData}
