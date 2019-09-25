@@ -1,6 +1,6 @@
 {
  "name": "MindLogger",
- "version": "0.6.2",
+ "version": "0.7.1",
  "private": true,
  "scripts": {
   "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -41,7 +41,7 @@
   "rc-input-number": "^3.6.8",
   "react": "16.8.6",
   "react-dom": "^16.9.0",
-  "react-native": "0.59.8",
+  "react-native": "0.59.9",
   "react-native-audio": "https://github.com/dguillamot/react-native-audio.git",
   "react-native-audio-toolkit": "https://github.com/suther/react-native-audio-toolkit.git#a66812fd359d786b89172c7a63e768836d13e540",
   "react-native-audiowaveform": "https://github.com/shnizzedy/react-native-audiowaveform.git",
