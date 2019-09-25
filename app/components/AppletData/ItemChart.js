@@ -36,13 +36,21 @@ class ItemChart extends React.Component {
   // eslint-disable-next-line
   calcTimeDiff(data) {
     // data = {from: {hour: h, minute:mm}, to: {hour:h, minute: mm}}
-    console.log('data is', data);
+
     const output = data.map((d) => {
       const dp = {};
       dp.date = d.date;
       const from = moment(`${d.value.from.hour}:${d.value.from.minute}`, 'h:mm');
+
+      // we need to assume that if from.hour is > 12, then it was the day before.
+      // if not, it can stay as is for the current day.
+
+      if (d.value.from.hour >= 12) {
+        from.subtract(1, 'days');
+      }
+
       const to = moment(`${d.value.to.hour}:${d.value.to.minute}`, 'h:mm');
-      dp.value = Math.abs(to.diff(from, 'hours'));
+      dp.value = Math.round(Math.abs(to.diff(from, 'hours')));
       return dp;
     });
 
