@@ -6,8 +6,10 @@ import { getApplets,
   declineAppletInvite,
   removeApplet,
   deleteApplet,
+  getLast7DaysData,
 } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
+// eslint-disable-next-line
 import { downloadResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia } from '../media/media.thunks';
 import { activitiesSelector } from './applets.selectors';
@@ -18,7 +20,9 @@ import {
   setDownloadingApplets,
   replaceApplets,
   setInvites,
+  saveAppletResponseData,
 } from './applets.actions';
+// eslint-disable-next-line
 import { sync } from '../app/app.thunks';
 import { transformApplet } from '../../models/json-ld';
 
@@ -119,4 +123,16 @@ export const removeAndDeleteApplet = groupId => (dispatch, getState) => {
       dispatch(sync());
       Actions.push('applet_list');
     });
+};
+
+export const getAppletResponseData = appletId => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  getLast7DaysData({
+    authToken: auth.token,
+    appletId,
+  }).then((resp) => {
+    console.log('response is', resp);
+    dispatch(saveAppletResponseData(appletId, resp));
+  });
 };
