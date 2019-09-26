@@ -9,7 +9,7 @@ export default {
     flex: 1,
     backgroundColor:
     '#fff',
-    top: -1
+    top: -1,
   },
   drawerList: {
     marginLeft: 20,

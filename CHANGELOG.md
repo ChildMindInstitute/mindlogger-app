@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Upgraded
 - React Native @0.59.9
 
+## [0.6.3] - 2019-09-23
+### Fixed
+- Local notifications on Android and iOS
+
 ## [0.6.2] - 2019-09-17
 ### Added
 - Activity preamble handling

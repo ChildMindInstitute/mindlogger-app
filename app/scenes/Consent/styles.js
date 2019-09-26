@@ -50,9 +50,9 @@ export default {
   boldText: {
     color: '#D8D8D8',
     fontWeight: 'bold',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  button:{
+  button: {
     alignSelf: 'center',
     marginTop: 36,
     width: 'auto',
@@ -63,9 +63,9 @@ export default {
     color: colors.primary,
     fontSize: 20,
   },
-  bottomRow:{
+  bottomRow: {
     marginTop: 20,
-    flexDirection:'row',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -78,5 +78,5 @@ export default {
     width: 78,
     resizeMode: 'contain',
     alignSelf: 'center',
-  }
+  },
 };

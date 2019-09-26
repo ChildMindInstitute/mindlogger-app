@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 });
 
 export const LittleHeading = ({ children, style }) => (
-  <Text style={[ styles.subHeading, style ]}>
+  <Text style={[styles.subHeading, style]}>
     {children}
   </Text>
 );

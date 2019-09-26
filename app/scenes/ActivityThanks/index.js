@@ -28,7 +28,7 @@ const ActivityThanks = () => (
   <ImageBackground
     style={{ width: '100%', height: '100%', flex: 1 }}
     source={{
-      uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80'
+      uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80',
     }}
   >
     <View style={styles.box}>

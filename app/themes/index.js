@@ -1,2 +1,3 @@
-import lightTheme from './lightTheme'
-export default {lightTheme}
+import lightTheme from './lightTheme';
+
+export default { lightTheme };
