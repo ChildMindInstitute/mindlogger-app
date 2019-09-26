@@ -98,6 +98,15 @@ test('appletTransformJson: ema-hbn', () => {
   const appletJson = emaHbn.applet;
 
   const expectedResult = {
+    responseDates: [],
+    schedule: {},
+    groupId: ['12345'],
+    about: {
+      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md'
+    },
+    image: {
+      en: 'https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg'
+    },
     description: {
       en: "Daily questions about your child's physical and mental health",
     },
@@ -122,7 +131,9 @@ test('appletTransformJson: ema-hbn', () => {
     altLabel: {
       en: 'ema-hbn',
     },
-    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
+    schema: {
+      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld'
+    },
     id: 'applet/5ca5314fd27b4e0459cee21f',
   };
 
