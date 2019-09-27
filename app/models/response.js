@@ -34,9 +34,9 @@ export const prepareResponseForUpload = (inProgressResponse) => {
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
     client: {
-      os: DeviceInfo.getSystemName(),
-      osVersion: DeviceInfo.getSystemVersion(),
-      deviceModel: DeviceInfo.getModel(),
+      os: DeviceInfo.getSystemNameSync(),
+      osVersion: DeviceInfo.getSystemVersionSync(),
+      deviceModel: DeviceInfo.getModelSync(),
       appId: 'mindlogger-mobile',
       appVersion: packageJson.version,
     },

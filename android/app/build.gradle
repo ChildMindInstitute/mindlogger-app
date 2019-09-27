@@ -153,7 +153,9 @@ dependencies {
   }
   implementation project(':react-native-webview')
   implementation project(':rn-fetch-blob')
-  implementation project(':react-native-device-info')
+  implementation (project(":react-native-device-info"),  {
+    exclude group: "com.google.android.gms"
+  })
   implementation (project(':react-native-camera')) {
     exclude group: "com.android.support", module: 'support-v4'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
