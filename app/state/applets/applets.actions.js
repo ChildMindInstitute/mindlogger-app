@@ -28,3 +28,8 @@ export const setCurrentInvite = inviteId => ({
   type: APPLET_CONSTANTS.SET_CURRENT_INVITE,
   payload: inviteId,
 });
+
+export const saveAppletResponseData = (appletId, data) => ({
+  type: APPLET_CONSTANTS.SAVE_APPLET_RESPONSE_DATA,
+  payload: { appletId, data },
+});

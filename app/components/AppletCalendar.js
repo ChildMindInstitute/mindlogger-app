@@ -9,18 +9,25 @@ import { colors } from '../themes/colors';
 import theme from '../themes/base-theme';
 
 // eslint-disable-next-line
-const ActCalendar = ({}) => {
+const ActCalendar = ({ responseDates }) => {
   return (
     <View style={{ fontFamily: theme.fontFamily }}>
       <CalendarStrip
         style={{ paddingTop: 10, paddingBottom: 5 }}
-        selectedDate={new Date()}
-        // markedDates={[
-        //   {
-        //     date: new Date(),
-        //     dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
-        //   },
-        // ]}
+        // selectedDate={new Date()}
+        startingDate={moment().subtract(6, 'days')}
+        useIsoWeekday={false}
+        // TODO: comment the two lines below when you
+        // want to be able to go to different weeks.
+        leftSelector={[]}
+        rightSelector={[]}
+        // TODO: uncomment and fill the
+        // markedDates prop below to add dots to the calendar.
+        markedDates={responseDates.map(r =>
+          ({
+            date: moment(r),
+            dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
+          }))}
         customDatesStyles={[
           {
             startDate: moment(),
@@ -44,7 +51,7 @@ const ActCalendar = ({}) => {
 };
 
 ActCalendar.propTypes = {
-
+  responseDates: PropTypes.array.isRequired,
 };
 
 export default ActCalendar;

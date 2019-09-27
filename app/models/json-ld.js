@@ -162,7 +162,7 @@ export const isSkippable = (allowList) => {
 export const appletTransformJson = appletJson => ({
   id: appletJson._id,
   groupId: appletJson.groups,
-  schema: languageListToObject(appletJson[URL]).en,
+  schema: languageListToObject(appletJson[URL]),
   name: languageListToObject(appletJson[PREF_LABEL]),
   description: languageListToObject(appletJson[DESCRIPTION]),
   about: languageListToObject(appletJson[ABOUT]),
@@ -173,6 +173,7 @@ export const appletTransformJson = appletJson => ({
   image: languageListToObject(appletJson[IMAGE]),
   order: flattenIdList(appletJson[ORDER][0]['@list']),
   schedule: appletJson.schedule,
+  responseDates: appletJson.responseDates,
   shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
 });
 
