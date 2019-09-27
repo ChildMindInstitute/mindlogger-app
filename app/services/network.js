@@ -1,6 +1,7 @@
 import objectToFormData from 'object-to-formdata';
 import RNFetchBlob from 'rn-fetch-blob';
 import { getStore } from '../store';
+// eslint-disable-next-line
 import { btoa } from './helper';
 import { apiHostSelector } from '../state/app/app.selectors';
 
@@ -81,7 +82,7 @@ export const getResponses = (authToken, applet) => get(
 );
 
 export const getApplets = (authToken, userId) => get(
-  `user/${userId}/applets`,
+  `user/applets`,
   authToken,
   { role: 'user' },
 );
@@ -253,4 +254,19 @@ export const deleteUserAccount = (authToken, userId) => {
     mode: 'cors',
     headers,
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
+  let url = `${apiHost()}/response/last7Days/${appletId}`;
+  if (referenceDate) {
+    url += `?referenceDate=${referenceDate}`;
+  }
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };

@@ -206,6 +206,11 @@
       "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/ActivitySet.jsonld"
     ],
     "_id": "applet/5ca5314fd27b4e0459cee21f",
+    "groups": ["12345"],
+    "responseDates": [],
+    "schedule": {},
+    "http://schema.org/about":[{"@language": "en", "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md"}],
+    "http://schema.org/image": [{"@language": "en", "@value": "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg"}],
     "http://schema.org/description": [
       {
         "@language": "en",

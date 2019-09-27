@@ -12,11 +12,26 @@ export const downloadProgressSelector = R.path(['responses', 'downloadProgress']
 
 export const inProgressSelector = R.path(['responses', 'inProgress']);
 
+export const currentAppletResponsesSelector = createSelector(
+  responsesSelector,
+  R.path(['app', 'currentApplet']),
+  (responses, currentApplet) => {
+    let currentAppletResponses = R.filter(x => x.appletId === currentApplet, responses);
+    if (currentAppletResponses.length === 1) {
+      // eslint-disable-next-line
+      currentAppletResponses = currentAppletResponses[0];
+    } else {
+      currentAppletResponses = {};
+    }
+    return currentAppletResponses;
+  },
+);
+
 // Flatten the response history so that keys are activity ids
 export const responsesGroupedByActivitySelector = createSelector(
   responsesSelector,
   responses => R.groupBy(
-    response => `activity/${response.meta.activity['@id']}`,
+    response => (response.meta ? `activity/${response.meta.activity['@id']}` : null),
     responses,
   ),
 );

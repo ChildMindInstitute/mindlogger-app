@@ -10,6 +10,7 @@ export const initialState = {
   notifications: {},
   invites: [],
   currentInvite: '',
+  appletResponseData: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -41,6 +42,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         currentInvite: action.payload,
       };
+    case APPLET_CONSTANTS.SAVE_APPLET_RESPONSE_DATA:
+      // eslint-disable-next-line
+      const stateCopy = { ...state };
+      stateCopy.appletResponseData[action.payload.appletId] = action.payload.data;
+      return stateCopy;
     default:
       return state;
   }

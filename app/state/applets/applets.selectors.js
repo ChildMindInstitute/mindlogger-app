@@ -102,3 +102,5 @@ export const activitiesSelector = createSelector(
     [],
   ),
 );
+
+export const appletDataSelector = R.path(['applets', 'appletResponseData']);
