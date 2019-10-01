@@ -18,6 +18,9 @@ export const Slider = ({
     { itemList[itemList.length - 1].image ? <View style={{ justifyContent: 'center', alignItems: 'center' }}><Image style={{ width: 45, height: 45, resizeMode: 'cover' }} source={{ uri: getURL(itemList[itemList.length - 1].image.en) }} /></View> : <View />}
     <SliderComponent
       value={value || 0}
+      /**
+       * TODO: min and max below don't respect the schema's min and max
+       */
       min={1}
       max={itemList.length || 100}
       labels={itemList.map(item => ({ text: item.name.en }))}
