@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.8.3] - 2019-10-02
+### Fixed
+- Dots on current day iff responses on current day
+
 ## [0.8.2] - 2019-09-27
 ### Fixed
 - React Native version conflicts
