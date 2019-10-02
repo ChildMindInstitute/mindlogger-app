@@ -41,6 +41,7 @@ class AppletDetailsComponent extends React.Component {
     // if the user has responded today. This is instead of
     // refreshing all the applets
     const { applet, appletData } = this.props;
+    console.log('appletData in responseDates', appletData);
     let allDates = [];
     const mapper = (resp) => {
       const d = resp.map(r => r.date);
@@ -51,10 +52,12 @@ class AppletDetailsComponent extends React.Component {
     const items = Object.keys(appletData.responses);
     items.map(item => mapper(appletData.responses[item]));
 
-    const maxDate = moment.max(allDates.map(d => moment(d)));
+    if (allDates.length) {
+      const maxDate = moment.max(allDates.map(d => moment(d)));
 
-    if (applet.responseDates.indexOf(maxDate) < 0) {
-      applet.responseDates.push(maxDate);
+      if (applet.responseDates.indexOf(maxDate) < 0) {
+        applet.responseDates.push(maxDate);
+      }
     }
 
     return applet.responseDates;
