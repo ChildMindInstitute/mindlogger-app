@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.8.4] - 2019-10-30
+### Fixed
+- React Native Debugger crash
+
 ## [0.8.3] - 2019-10-02
 ### Fixed
 - Dots on current day iff responses on current day
