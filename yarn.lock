@@ -5957,7 +5957,9 @@ react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.0, react-lifecycles-com
 
 "react-native-audiowaveform@https://github.com/shnizzedy/react-native-audiowaveform.git":
   version "2.0.3"
-  resolved "https://github.com/shnizzedy/react-native-audiowaveform.git#a5aa68ed973efefdd598046da95af03d5cfc2105"
+  resolved "https://github.com/shnizzedy/react-native-audiowaveform.git#bf218033bca8c7bbf6472b3539277f1895bab7d8"
+  dependencies:
+    react "^16.9.0"
 
 react-native-awesome-alerts@^1.2.0:
   version "1.2.0"
@@ -6002,10 +6004,10 @@ react-native-datepicker@^1.6.0:
   dependencies:
     moment "^2.22.0"
 
-react-native-device-info@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-3.1.4.tgz#58a1d465ce9e2c28809132b1c68dd7ec7ce5f00f"
-  integrity sha512-r+7APHkPO9EA/9w3e9K7yrFigaU+0/g8i3psrNUwCGFxoDewkCHOPj/1YZnAPUwPxgyG3svjZXeCtymI3xcSlA==
+react-native-device-info@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-5.0.1.tgz#e941424f9ab18688fb343dc1542b2cfaaabb330a"
+  integrity sha512-wK1D+kpgDW4J4KipOblU8kKtqU090YUWWydvb4r530BlUqtmU5l/Prq46ej6lYuagsQnoOurrBn+nNSWltwjwg==
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
@@ -6319,6 +6321,15 @@ react@16.8.6:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.13.6"
+
+react@^16.9.0:
+  version "16.11.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.11.0.tgz#d294545fe62299ccee83363599bf904e4a07fdbb"
+  integrity sha512-M5Y8yITaLmU0ynd0r1Yvfq98Rmll6q8AxaEe88c8e7LxO8fZ2cNgmFt0aGAS9wzf1Ao32NKXtCl+/tVVtkxq6g==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
 
 read-all-stream@^3.0.0:
   version "3.1.0"
