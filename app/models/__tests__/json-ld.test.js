@@ -23,7 +23,7 @@ test('languageListToObject', () => {
 });
 
 test('listToObject', () => {
-  const languageList = emaHbn.applet['https://schema.repronim.org/visibility'];
+  const languageList = emaHbn.applet['reprolib:terms/visibility'];
   expect(listToObject(languageList)).toEqual({
     ema_evening: true,
     ema_morning: true,
@@ -31,7 +31,7 @@ test('listToObject', () => {
 });
 
 test('flattenIdList', () => {
-  const idList = emaHbn.applet['https://schema.repronim.org/order'][0]['@list'];
+  const idList = emaHbn.applet['reprolib:terms/order'][0]['@list'];
   expect(flattenIdList(idList)).toEqual([
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld',
     'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld',
@@ -40,7 +40,7 @@ test('flattenIdList', () => {
 
 test('flattenItemList', () => {
   const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
-  const valueConstraints = item['https://schema.repronim.org/valueconstraints'][0];
+  const valueConstraints = item['reprolib:terms/valueconstraints'][0];
   const itemList = valueConstraints['http://schema.org/itemListElement'][0]['@list'];
   expect(flattenItemList(itemList)).toEqual([
     {
@@ -66,7 +66,7 @@ test('flattenItemList', () => {
 
 test('flattenValueConstraints', () => {
   const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
-  const valueConstraints = item['https://schema.repronim.org/valueconstraints'][0];
+  const valueConstraints = item['reprolib:terms/valueconstraints'][0];
   expect(flattenValueConstraints(valueConstraints)).toEqual({
     multipleChoice: false,
     maxValue: 1,

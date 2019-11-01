@@ -1,12 +1,12 @@
 {
   "variableMap": [
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "stressful_day"
@@ -14,12 +14,12 @@
       ]
     },
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "sources_of_stress"
@@ -27,12 +27,12 @@
       ]
     },
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "good_bad_day"
@@ -40,12 +40,12 @@
       ]
     },
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "enjoyed_day"
@@ -53,12 +53,12 @@
       ]
     },
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "energy"
@@ -66,12 +66,12 @@
       ]
     },
     {
-      "https://schema.repronim.org/isAbout": [
+      "reprolib:terms/isAbout": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld"
         }
       ],
-      "https://schema.repronim.org/variableName": [
+      "reprolib:terms/variableName": [
         {
           "@language": "en",
           "@value": "health"

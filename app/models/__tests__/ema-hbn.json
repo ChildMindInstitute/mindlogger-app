@@ -48,7 +48,7 @@
           "@value": "EMA: Evening"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -75,14 +75,14 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/scoringLogic": [],
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
         }
       ],
-      "https://schema.repronim.org/visibility": [
+      "reprolib:terms/visibility": [
         {
           "@index": "energy",
           "@value": true
@@ -162,7 +162,7 @@
           "@value": "EMA: Morning"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -177,14 +177,14 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/scoringLogic": [],
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
         }
       ],
-      "https://schema.repronim.org/visibility": [
+      "reprolib:terms/visibility": [
         {
           "@index": "nightmares",
           "@value": true
@@ -247,7 +247,7 @@
         "@value": "Healthy Brain Network: EMA"
       }
     ],
-    "https://schema.repronim.org/activity_display_name": [
+    "reprolib:terms/activity_display_name": [
       {
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld": [
           {
@@ -261,7 +261,7 @@
         ]
       }
     ],
-    "https://schema.repronim.org/order": [
+    "reprolib:terms/order": [
       {
         "@list": [
           {
@@ -273,13 +273,13 @@
         ]
       }
     ],
-    "https://schema.repronim.org/shuffle": [
+    "reprolib:terms/shuffle": [
       {
         "@type": "http://schema.org/Boolean",
         "@value": false
       }
     ],
-    "https://schema.repronim.org/visibility": [
+    "reprolib:terms/visibility": [
       {
         "@index": "ema_evening",
         "@value": true
@@ -339,13 +339,13 @@
           "@value": "Energy level"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "slider"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#integer"
@@ -502,13 +502,13 @@
           "@value": "Enjoyed the day"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "slider"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#integer"
@@ -678,13 +678,13 @@
           "@value": "Good or Bad day"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -806,13 +806,13 @@
           "@value": "General Health"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -934,13 +934,13 @@
           "@value": "Sleeping Aids"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1050,13 +1050,13 @@
           "@value": "Sources of Stress"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1266,13 +1266,13 @@
           "@value": "Stress"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1394,13 +1394,13 @@
           "@value": "Nightmares"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1522,13 +1522,13 @@
           "@value": "Sleeping Aids"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1650,13 +1650,13 @@
           "@value": "Time in bed"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "timeRange"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {}
       ]
     }
