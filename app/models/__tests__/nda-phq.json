@@ -42,16 +42,16 @@
           "@value": "NDA guid"
         }
       ],
-      "https://schema.repronim.org/allow": [
+      "reprolib:terms/allow": [
         {
           "@list": [
             {
-              "@id": "https://schema.repronim.org/refused_to_answer"
+              "@id": "reprolib:terms/refused_to_answer"
             }
           ]
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -84,13 +84,13 @@
           ]
         }
       ],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
         }
       ],
-      "https://schema.repronim.org/visibility": [
+      "reprolib:terms/visibility": [
         {
           "@index": "countryOfBirth",
           "@value": true
@@ -177,14 +177,14 @@
           "@value": "PHQ-8 Assessment"
         }
       ],
-      "https://schema.repronim.org/branchLogic": [
+      "reprolib:terms/branchLogic": [
         {
           "@index": "javascript",
           "@language": "en",
           "@value": "if (phq8_1 != 0 | phq8_2 != 0 | phq8_3 !=0 | phq8_4 !=0 | phq8_5 !=0 | phq8_6 !=0 | phq8_7 !=0 | phq8_8 !=0) { phq8_10.ui.hidden = false }"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -214,14 +214,14 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [
+      "reprolib:terms/scoringLogic": [
         {
           "@index": "javascript",
           "@language": "en",
           "@value": "phq8_total_score = phq8_1 + phq8_2 + phq8_3 + phq8_4 + phq8_5 + phq8_6 + phq8_7 + phq8_8"
         }
       ],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
@@ -276,7 +276,7 @@
           "@value": "PHQ-9 Assessment"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -312,29 +312,29 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [
+      "reprolib:terms/scoringLogic": [
         {
           "@index": "phq9_total_score",
           "@language": "en",
           "@value": "phq9_1 + phq9_2 + phq9_3 + phq9_4 + phq9_5 + phq9_6 + phq9_7 + phq9_8 + phq9_9"
         }
       ],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
         }
       ],
-      "https://schema.repronim.org/variableMap": [
+      "reprolib:terms/variableMap": [
         {
           "@list": [
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_1.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_1"
@@ -342,12 +342,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_2.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_2"
@@ -355,12 +355,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_3.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_3"
@@ -368,12 +368,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_4.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_4"
@@ -381,12 +381,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_5.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_5"
@@ -394,12 +394,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_6.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_6"
@@ -407,12 +407,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_7.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_7"
@@ -420,12 +420,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_8.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_8"
@@ -433,12 +433,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_9.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_9"
@@ -446,12 +446,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_10.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_10"
@@ -459,12 +459,12 @@
               ]
             },
             {
-              "https://schema.repronim.org/isAbout": [
+              "reprolib:terms/isAbout": [
                 {
                   "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_total_score.jsonld"
                 }
               ],
-              "https://schema.repronim.org/variableName": [
+              "reprolib:terms/variableName": [
                 {
                   "@language": "en",
                   "@value": "phq9_total_score"
@@ -474,7 +474,7 @@
           ]
         }
       ],
-      "https://schema.repronim.org/visibility": [
+      "reprolib:terms/visibility": [
         {
           "@index": "phq9_1",
           "@value": true
@@ -566,14 +566,14 @@
           "@value": "PHQ-9a Assessment"
         }
       ],
-      "https://schema.repronim.org/branchLogic": [
+      "reprolib:terms/branchLogic": [
         {
           "@index": "javascript",
           "@language": "en",
           "@value": "if (phq9a_1 != 0 | phq9a_2 != 0 | phq9a_3 !=0 | phq9a_4 !=0 | phq9a_5 !=0 | phq9a_6 !=0 | phq9a_7 !=0 | phq9a_8 !=0 | phq9a_9 != 0) { phq9a_10.ui.hidden = false }"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -609,14 +609,14 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [
+      "reprolib:terms/scoringLogic": [
         {
           "@index": "javascript",
           "@language": "en",
           "@value": "phq9a_total_score = phq9a_1 + phq9a_2 + phq9a_3 + phq9a_4 + phq9a_5 + phq9a_6 + phq9a_7 + phq9a_8 + phq9a_9"
         }
       ],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
@@ -671,20 +671,20 @@
           "@value": "voice tasks"
         }
       ],
-      "https://schema.repronim.org/allow": [
+      "reprolib:terms/allow": [
         {
           "@list": [
             {
-              "@id": "https://schema.repronim.org/refused_to_answer"
+              "@id": "reprolib:terms/refused_to_answer"
             },
             {
-              "@id": "https://schema.repronim.org/dont_know_answer"
+              "@id": "reprolib:terms/dont_know_answer"
             }
           ]
         }
       ],
-      "https://schema.repronim.org/branchLogic": [],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/branchLogic": [],
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -714,8 +714,8 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/scoringLogic": [],
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
@@ -765,7 +765,7 @@
         "@value": "NDA PHQ Assessment"
       }
     ],
-    "https://schema.repronim.org/order": [
+    "reprolib:terms/order": [
       {
         "@list": [
           {
@@ -786,7 +786,7 @@
         ]
       }
     ],
-    "https://schema.repronim.org/shuffle": [
+    "reprolib:terms/shuffle": [
       {
         "@type": "http://schema.org/Boolean",
         "@value": false
@@ -842,13 +842,13 @@
           "@value": "Country of birth(as in birth certificate)"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "select"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.repronim.org/requiredValue": [
             {
@@ -907,13 +907,13 @@
           "@value": "Sex of the subject"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
@@ -1029,13 +1029,13 @@
           "@value": "Health Condition of participant"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "text"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {}
       ]
     },
@@ -1087,13 +1087,13 @@
           "@value": "medication of participant"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "text"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {}
       ]
     },
@@ -1145,13 +1145,13 @@
           "@value": "mental health diagnosis of participant"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "text"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {}
       ]
     },
@@ -1203,13 +1203,13 @@
           "@value": "Native language of participant"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "select"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.repronim.org/requiredValue": [
             {
@@ -1268,13 +1268,13 @@
           "@value": "Race or Ethnicity"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "select"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/itemListElement": [
             {
@@ -1404,13 +1404,13 @@
           "@value": "State of residence"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "select"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.repronim.org/requiredValue": [
             {
@@ -1469,13 +1469,13 @@
           "@value": "year of birth"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "date"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/maxValue": [
             {
@@ -1540,13 +1540,13 @@
           "@value": "PHQ-8 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1600,13 +1600,13 @@
           "@value": "PHQ-8 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1660,13 +1660,13 @@
           "@value": "PHQ-8 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1720,13 +1720,13 @@
           "@value": "PHQ-8 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1780,13 +1780,13 @@
           "@value": "PHQ-8 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1840,13 +1840,13 @@
           "@value": "Q6 PHQ-8"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1900,13 +1900,13 @@
           "@value": "Q7 PHQ-8"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -1960,13 +1960,13 @@
           "@value": "Q8 PHQ-8"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/valueConstraints.jsonld"
         }
@@ -2020,13 +2020,13 @@
           "@value": "Q1 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2080,13 +2080,13 @@
           "@value": "Q10 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/itemListElement": [
             {
@@ -2219,13 +2219,13 @@
           "@value": "Q2 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2279,13 +2279,13 @@
           "@value": "Q3 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2339,13 +2339,13 @@
           "@value": "Q4 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2399,13 +2399,13 @@
           "@value": "Q5 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2459,13 +2459,13 @@
           "@value": "Q6 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2519,13 +2519,13 @@
           "@value": "Q7 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2579,13 +2579,13 @@
           "@value": "Q8 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2639,13 +2639,13 @@
           "@value": "Q9 of PHQ-9 Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/valueConstraints.jsonld"
         }
@@ -2699,13 +2699,13 @@
           "@value": "Q1 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -2759,13 +2759,13 @@
           "@value": "Q10 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -2819,13 +2819,13 @@
           "@value": "Q2 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -2879,13 +2879,13 @@
           "@value": "Q3 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -2939,13 +2939,13 @@
           "@value": "Q4 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -2996,13 +2996,13 @@
           "@value": "Q5 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -3056,13 +3056,13 @@
           "@value": "Q6 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -3116,13 +3116,13 @@
           "@value": "Q7 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -3176,13 +3176,13 @@
           "@value": "Q8 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -3236,13 +3236,13 @@
           "@value": "Q9 of PHQ-9a Questionnaire"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "radio"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/valueConstraints.jsonld"
         }
@@ -3296,13 +3296,13 @@
           "@value": "Say pataka"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioImageRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/describe_image_valueConstraints.jsonld"
         }
@@ -3356,13 +3356,13 @@
           "@value": "Free speech"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/maxValue": [
             {
@@ -3437,13 +3437,13 @@
           "@value": "Guided speech"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioImageRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/image": [
             {
@@ -3524,13 +3524,13 @@
           "@value": "Say pataka"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/pataka_valueConstraints.jsonld"
         }
@@ -3590,13 +3590,13 @@
           "@value": "phonetic_passage"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioPassageRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/maxValue": [
             {
@@ -3671,13 +3671,13 @@
           "@value": "rainbow_passage"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioPassageRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "http://schema.org/maxValue": [
             {
@@ -3746,13 +3746,13 @@
           "@value": "Say Ah"
         }
       ],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "audioRecord"
         }
       ],
-      "https://schema.repronim.org/valueconstraints": [
+      "reprolib:terms/valueconstraints": [
         {
           "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/say_ah_valueConstraints.jsonld"
         }
@@ -3806,26 +3806,26 @@
           "@value": "voice tasks"
         }
       ],
-      "https://schema.repronim.org/allow": [
+      "reprolib:terms/allow": [
         {
           "@list": [
             {
-              "@id": "https://schema.repronim.org/refused_to_answer"
+              "@id": "reprolib:terms/refused_to_answer"
             },
             {
-              "@id": "https://schema.repronim.org/dont_know_answer"
+              "@id": "reprolib:terms/dont_know_answer"
             }
           ]
         }
       ],
-      "https://schema.repronim.org/branchLogic": [],
-      "https://schema.repronim.org/inputType": [
+      "reprolib:terms/branchLogic": [],
+      "reprolib:terms/inputType": [
         {
           "@type": "http://www.w3.org/2001/XMLSchema#string",
           "@value": "multipart"
         }
       ],
-      "https://schema.repronim.org/order": [
+      "reprolib:terms/order": [
         {
           "@list": [
             {
@@ -3840,8 +3840,8 @@
           ]
         }
       ],
-      "https://schema.repronim.org/scoringLogic": [],
-      "https://schema.repronim.org/shuffle": [
+      "reprolib:terms/scoringLogic": [],
+      "reprolib:terms/shuffle": [
         {
           "@type": "http://schema.org/Boolean",
           "@value": false
