@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.8.6] - 2019-11-08
+### Upgraded
+- :robot: Google Play API@28
+
 ## [0.8.5] - 2019-11-01
 ### Update
 - Schema keyword prefixes
