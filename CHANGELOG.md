@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.8.9] - 2019-11-12
+### Updated
+- :lock: :apple: :books: User privacy descriptions
+
 ## [0.8.8] - 2019-11-12
 ### Fixed
 - Schema handling for HBN EMA
