@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.8.8] - 2019-11-12
+### Fixed
+- Schema handling for HBN EMA
+
 ## [0.8.7] - 2019-11-08
 ### Upgraded
 - :rocket: :apple: BitRise Deploy to iTunes Connect - Application Loader@0.10.1
