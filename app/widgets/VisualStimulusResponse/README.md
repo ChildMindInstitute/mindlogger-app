@@ -20,7 +20,7 @@ The `VisualStimulusResponse` widget accepts a `config` object. The `config` obje
 
 ```js
 trials: PropTypes.arrayOf(PropTypes.shape({
-  image: PropTypes.object,
+  image: PropTypes.string,
   valueConstraints: PropTypes.object,
   value: PropTypes.number,
   weight: PropTypes.number,

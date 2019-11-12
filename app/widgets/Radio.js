@@ -22,7 +22,7 @@ export const Radio = ({ value, config, onChange }) => (
                 ? (
                   <Image
                     style={{ width: 64, height: 64, resizeMode: 'cover' }}
-                    source={{ uri: getURL(item.image.en) }}
+                    source={{ uri: getURL(item.image) }}
                   />
                 ) : <View />
               }
@@ -54,7 +54,7 @@ Radio.propTypes = {
     itemList: PropTypes.arrayOf(PropTypes.shape({
       name: PropTypes.object,
       value: PropTypes.any,
-      image: PropTypes.object,
+      image: PropTypes.string,
     })).isRequired,
   }).isRequired,
   onChange: PropTypes.func.isRequired,

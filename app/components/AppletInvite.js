@@ -50,10 +50,8 @@ const AcceptAppletInvite = ({ invites, setCurrentInvite }) => (
           };
         }
 
-        if (image && !applet.image.en) {
-          applet.image = {
-            en: image,
-          };
+        if (image && !applet.image) {
+          applet.image = image;
         }
 
         return (

@@ -16,7 +16,7 @@ export class AudioImageRecord extends Component {
       <View style={{ paddingBottom: 16 }}>
         <Image
           style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
-          source={{ uri: getURL(config.image.en) }}
+          source={{ uri: getURL(config.image) }}
         />
         <AudioRecorder
           onStop={this.onRecord}
@@ -36,7 +36,7 @@ AudioImageRecord.propTypes = {
     uri: PropTypes.string,
   }),
   config: PropTypes.shape({
-    image: PropTypes.object,
+    image: PropTypes.string,
   }).isRequired,
   onChange: PropTypes.func.isRequired,
 };
