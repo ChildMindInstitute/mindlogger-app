@@ -21,14 +21,14 @@ const ITEM_LIST_ELEMENT = 'http://schema.org/itemListElement';
 const MAX_VALUE = 'http://schema.org/maxValue';
 const MEDIA = 'reprolib:terms/media';
 const MIN_VALUE = 'http://schema.org/minValue';
-const MULTIPLE_CHOICE = 'http://schema.repronim.org/multipleChoice';
+const MULTIPLE_CHOICE = 'reprolib:terms/multipleChoice';
 const NAME = 'http://schema.org/name';
 const ORDER = 'reprolib:terms/order';
-const PREAMBLE = 'http://schema.repronim.org/preamble';
+const PREAMBLE = 'reprolib:terms/preamble';
 const PREF_LABEL = 'http://www.w3.org/2004/02/skos/core#prefLabel';
 const QUESTION = 'http://schema.org/question';
 const REFUSE_TO_ANSWER = 'reprolib:terms/refused_to_answer';
-const REQUIRED_VALUE = 'http://schema.repronim.org/requiredValue';
+const REQUIRED_VALUE = 'reprolib:terms/required';
 const SCHEMA_VERSION = 'http://schema.org/schemaVersion';
 const SCORING_LOGIC = 'reprolib:terms/scoringLogic';
 const SHUFFLE = 'reprolib:terms/shuffle';
@@ -66,7 +66,7 @@ export const flattenIdList = (list = []) => list.map(item => item['@id']);
 export const flattenItemList = (list = []) => list.map(item => ({
   name: languageListToObject(item[NAME]),
   value: R.path([VALUE, 0, '@value'], item),
-  image: languageListToObject(item[IMAGE]),
+  image: item[IMAGE],
   valueConstraints: item[VALUE_CONSTRAINTS]
     ? flattenValueConstraints(R.path([VALUE_CONSTRAINTS, 0], item))
     : undefined,
@@ -159,24 +159,6 @@ export const isSkippable = (allowList) => {
   return false;
 };
 
-export const appletTransformJson = appletJson => ({
-  id: appletJson._id,
-  groupId: appletJson.groups,
-  schema: languageListToObject(appletJson[URL]),
-  name: languageListToObject(appletJson[PREF_LABEL]),
-  description: languageListToObject(appletJson[DESCRIPTION]),
-  about: languageListToObject(appletJson[ABOUT]),
-  schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
-  version: languageListToObject(appletJson[VERSION]),
-  altLabel: languageListToObject(appletJson[ALT_LABEL]),
-  visibility: listToObject(appletJson[VISIBILITY]),
-  image: languageListToObject(appletJson[IMAGE]),
-  order: flattenIdList(appletJson[ORDER][0]['@list']),
-  schedule: appletJson.schedule,
-  responseDates: appletJson.responseDates,
-  shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
-});
-
 export const itemTransformJson = (itemJson) => {
   // For items, 'skippable' is undefined if there's no ALLOW prop
   const allowList = flattenIdList(R.path([ALLOW, 0, '@list'], itemJson));
@@ -247,9 +229,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const variableMapAr = R.pathOr([], [VARIABLE_MAP, 0, '@list'], activityJson);
   const variableMap = transformVariableMap(variableMapAr);
   const visibility = listToObject(activityJson[VISIBILITY]);
-
   const preamble = languageListToObject(activityJson[PREAMBLE]);
-
   const order = flattenIdList(activityJson[ORDER][0]['@list']);
 
   const mapItems = R.map((itemKey) => {
@@ -276,6 +256,26 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     notification,
     info,
     items,
+  };
+};
+
+export const appletTransformJson = (appletJson) => {
+  return {
+    id: appletJson._id,
+    groupId: appletJson.groups,
+    schema: appletJson.url || appletJson[URL],
+    name: languageListToObject(appletJson[PREF_LABEL]),
+    description: languageListToObject(appletJson[DESCRIPTION]),
+    about: languageListToObject(appletJson[ABOUT]),
+    schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
+    version: languageListToObject(appletJson[VERSION]),
+    altLabel: languageListToObject(appletJson[ALT_LABEL]),
+    visibility: listToObject(appletJson[VISIBILITY]),
+    image: appletJson[IMAGE],
+    order: flattenIdList(appletJson[ORDER][0]['@list']),
+    schedule: appletJson.schedule,
+    responseDates: appletJson.responseDates,
+    shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
   };
 };
 

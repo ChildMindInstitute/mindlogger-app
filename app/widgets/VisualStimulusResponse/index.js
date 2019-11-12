@@ -58,7 +58,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
 VisualStimulusResponse.propTypes = {
   config: PropTypes.shape({
     trials: PropTypes.arrayOf(PropTypes.shape({
-      image: PropTypes.object,
+      image: PropTypes.string,
       valueConstraints: PropTypes.object,
       value: PropTypes.number,
       weight: PropTypes.number,

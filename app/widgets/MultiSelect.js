@@ -46,7 +46,7 @@ export class MultiSelect extends Component {
                     ? (
                       <Image
                         style={{ width: 64, height: 64, resizeMode: 'cover' }}
-                        source={{ uri: getURL(item.image.en) }}
+                        source={{ uri: getURL(item.image) }}
                       />
                     ) : <View />
                   }

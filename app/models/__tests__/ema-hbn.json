@@ -18,19 +18,14 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.repronim.org/preamble": [
+      "reprolib:terms/preamble": [
         {
           "@language": "en",
           "@value": ""
@@ -132,19 +127,14 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.repronim.org/preamble": [
+      "reprolib:terms/preamble": [
         {
           "@language": "en",
           "@value": ""
@@ -210,7 +200,7 @@
     "responseDates": [],
     "schedule": {},
     "http://schema.org/about":[{"@language": "en", "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md"}],
-    "http://schema.org/image": [{"@language": "en", "@value": "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg"}],
+    "http://schema.org/image": "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
     "http://schema.org/description": [
       {
         "@language": "en",
@@ -223,12 +213,7 @@
         "@value": "0.0.1"
       }
     ],
-    "http://schema.org/url": [
-      {
-        "@language": "en",
-        "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld"
-      }
-    ],
+    "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
     "http://schema.org/version": [
       {
         "@language": "en",
@@ -315,12 +300,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -354,12 +334,7 @@
             {
               "@list": [
                 {
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -412,12 +387,7 @@
                   ]
                 },
                 {
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F606.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F606.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -445,7 +415,7 @@
               "@value": "very tired"
             }
           ],
-          "http://schema.repronim.org/requiredValue": [
+          "reprolib:terms/required": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -478,12 +448,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -517,12 +482,7 @@
             {
               "@list": [
                 {
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F621.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F621.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -588,12 +548,7 @@
                   ]
                 },
                 {
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F601.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F601.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -621,7 +576,7 @@
               "@value": "No enjoyment or pleasure"
             }
           ],
-          "http://schema.repronim.org/requiredValue": [
+          "reprolib:terms/required": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -654,12 +609,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -696,12 +646,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44E.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44E.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -718,12 +663,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44D.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44D.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -749,7 +689,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -782,12 +722,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -824,12 +759,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -846,12 +776,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/263A.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/263A.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -877,7 +802,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -910,12 +835,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/negative_event.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/negative_event.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -993,7 +913,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": true
@@ -1026,12 +946,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -1068,12 +983,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1090,12 +1000,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F469-200D-1F3EB.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F469-200D-1F3EB.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1112,12 +1017,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F4DD.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F4DD.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1134,12 +1034,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F47F.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F47F.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1156,12 +1051,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/E246.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/E246.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1178,12 +1068,7 @@
                   "@type": [
                     "http://schema.org/option"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/2764.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/2764.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1209,7 +1094,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": true
@@ -1242,12 +1127,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -1284,12 +1164,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F60A.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F60A.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1306,12 +1181,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F630.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F630.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1337,7 +1207,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -1370,12 +1240,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -1412,12 +1277,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1434,12 +1294,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1465,7 +1320,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -1498,12 +1353,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",
@@ -1540,12 +1390,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F6CF.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F6CF.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1562,12 +1407,7 @@
                   "@type": [
                     "http://schema.org/Boolean"
                   ],
-                  "http://schema.org/image": [
-                    {
-                      "@language": "en",
-                      "@value": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F48A.svg?sanitize=true"
-                    }
-                  ],
+                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F48A.svg?sanitize=true",
                   "http://schema.org/name": [
                     {
                       "@language": "en",
@@ -1593,7 +1433,7 @@
               "@value": 0
             }
           ],
-          "http://schema.repronim.org/multipleChoice": [
+          "reprolib:terms/multipleChoice": [
             {
               "@type": "http://schema.org/Boolean",
               "@value": false
@@ -1626,12 +1466,7 @@
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": [
-        {
-          "@language": "en",
-          "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld"
-        }
-      ],
+      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld",
       "http://schema.org/version": [
         {
           "@language": "en",

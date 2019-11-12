@@ -44,18 +44,14 @@ test('flattenItemList', () => {
   const itemList = valueConstraints['http://schema.org/itemListElement'][0]['@list'];
   expect(flattenItemList(itemList)).toEqual([
     {
-      image: {
-        en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
-      },
+      image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
       name: {
         en: 'No',
       },
       value: 0,
     },
     {
-      image: {
-        en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
-      },
+      image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
       name: {
         en: 'Yes',
       },
@@ -73,18 +69,14 @@ test('flattenValueConstraints', () => {
     minValue: 0,
     itemList: [
       {
-        image: {
-          en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
-        },
+        image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
         name: {
           en: 'No',
         },
         value: 0,
       },
       {
-        image: {
-          en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
-        },
+        image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
         name: {
           en: 'Yes',
         },
@@ -104,9 +96,7 @@ test('appletTransformJson: ema-hbn', () => {
     about: {
       en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md'
     },
-    image: {
-      en: 'https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg'
-    },
+    image: 'https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg',
     description: {
       en: "Daily questions about your child's physical and mental health",
     },
@@ -131,9 +121,7 @@ test('appletTransformJson: ema-hbn', () => {
     altLabel: {
       en: 'ema-hbn',
     },
-    schema: {
-      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld'
-    },
+    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
     id: 'applet/5ca5314fd27b4e0459cee21f',
   };
 
@@ -240,9 +228,7 @@ test('itemTransformJson', () => {
       minValue: 0,
       itemList: [
         {
-          image: {
-            en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
-          },
+          image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
           name: {
             en: 'No',
           },
@@ -250,9 +236,7 @@ test('itemTransformJson', () => {
           valueConstraints: undefined,
         },
         {
-          image: {
-            en: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
-          },
+          image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
           name: {
             en: 'Yes',
           },
