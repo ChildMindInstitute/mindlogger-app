@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
-## [0.8.9] - 2019-11-12
+## [0.8.10] - 2019-11-13
 ### Updated
 - :lock: :apple: :books: User privacy descriptions
 
