@@ -69,3 +69,8 @@ export const setCurrentScreen = (activityId, screenIndex) => ({
     screenIndex,
   },
 });
+
+export const setSchedule = schedule => ({
+  type: RESPONSES_CONSTANTS.SET_SCHEDULE,
+  payload: schedule,
+});

@@ -9,6 +9,7 @@ import {
   setAnswers,
   addToUploadQueue,
   shiftUploadQueue,
+  setSchedule,
 } from './responses.actions';
 
 test('it has an initial state', () => {
@@ -111,5 +112,12 @@ test('it adds to the upload queue', () => {
   expect(responsesReducer(twoItems, shiftUploadQueue())).toEqual({
     ...initialState,
     uploadQueue: ['itemB'],
+  });
+});
+
+test('it sets the schedule', () => {
+  expect(responsesReducer(initialState, setSchedule('schedule'))).toEqual({
+    ...initialState,
+    schedule: 'schedule',
   });
 });

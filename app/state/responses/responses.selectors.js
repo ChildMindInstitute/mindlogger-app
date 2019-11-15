@@ -12,6 +12,8 @@ export const downloadProgressSelector = R.path(['responses', 'downloadProgress']
 
 export const inProgressSelector = R.path(['responses', 'inProgress']);
 
+export const responseScheduleSelector = R.path(['responses', 'schedule']);
+
 export const currentAppletResponsesSelector = createSelector(
   responsesSelector,
   R.path(['app', 'currentApplet']),
@@ -25,15 +27,6 @@ export const currentAppletResponsesSelector = createSelector(
     }
     return currentAppletResponses;
   },
-);
-
-// Flatten the response history so that keys are activity ids
-export const responsesGroupedByActivitySelector = createSelector(
-  responsesSelector,
-  responses => R.groupBy(
-    response => (response.meta ? `activity/${response.meta.activity['@id']}` : null),
-    responses,
-  ),
 );
 
 export const currentResponsesSelector = createSelector(
