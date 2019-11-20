@@ -138,6 +138,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-localize')
   configurations.all {
     resolutionStrategy {
       dependencySubstitution {

@@ -1,128 +1,64 @@
 import moment from 'moment';
 import * as R from 'ramda';
 
-export const sortMomentAr = momentAr => momentAr.sort((a, b) => {
-  if (a.isBefore(b)) {
-    return -1;
-  }
-  if (b.isBefore(a)) {
-    return 1;
-  }
-  return 0;
-});
+const COVER_DAY = true;
+const TIMED_EVENTS = true;
 
-export const getScheduledCalendarDates = (activity, start) => {
-  if (R.path(['meta', 'notification', 'modeDate'], activity)) {
-    const calendarDayAr = activity.meta.notification.calendarDay;
-    return calendarDayAr.map(day => moment(day))
-      .filter(day => day.isSameOrAfter(start));
+const getStartOfInterval = R.pathOr(null, [0, 'start', 'date']);
+
+export const NOTIFICATION_DATETIME_FORMAT = 'YYYYMMDD HH:mm';
+
+export const formatTime = (timestamp) => {
+  const time = moment(timestamp);
+  if (moment().isSame(time, 'day')) {
+    return moment(timestamp).format('[Today at] h:mm A');
   }
-  return [];
+  return moment(timestamp).format('MMMM D');
 };
 
-export const getScheduledMonthDays = (activity, start, end) => {
-  if (R.path(['meta', 'notification', 'modeMonth'], activity)) {
-    const monthDayAr = activity.meta.notification.monthDay;
-    const index = start.clone();
-    const accumulator = [];
-    // Step through the search period
-    while (index.isBefore(end)) {
-      if (typeof monthDayAr !== 'undefined' && monthDayAr.includes(index.date())) {
-        accumulator.push(index.clone());
+// Generates a list of timestamps for when local notifications should be triggered,
+// reminding the user to complete their activities. Notification times are set in the
+// admin panel alongside the schedule for each activity.
+export const getScheduledNotifications = (eventSchedule, now, notifications) => {
+  const dates = eventSchedule.forecast(now, COVER_DAY, 4, 0).map(d => d[2]).array();
+  const dateTimes = [];
+
+  dates.forEach((date) => {
+    notifications.forEach((n) => {
+      // TODO: handle randomized notifiation times
+      // i.e. if n.random is true generate notification time between n.start and n.end
+      const timestamp = moment(`${date[2]} ${n.start}`, NOTIFICATION_DATETIME_FORMAT);
+      // The dayspan library can return dates from the past when projecting next dates,
+      // so let's filter those out.
+      if (timestamp.isAfter(moment(now.date))) {
+        dateTimes.push(timestamp);
       }
-      index.add(1, 'day');
-    }
-    return accumulator;
-  }
-  return [];
+    });
+  });
+
+  return dateTimes;
 };
 
-export const getScheduledWeekDays = (activity, start, end) => {
-  if (R.path(['meta', 'notification', 'modeWeek'], activity)) {
-    const weekDayAr = activity.meta.notification.weekDay;
-    const index = start.clone();
-    const accumulator = [];
-    // Step through the search period
-    while (index.isBefore(end)) {
-      if (typeof weekDayAr !== 'undefined' && weekDayAr.includes(index.day())) {
-        accumulator.push(index.clone());
-      }
-      index.add(1, 'day');
-    }
-    return accumulator;
-  }
-  return [];
+// Find the last event scheduled for before (or including) now.
+export const getLastScheduled = (eventSchedule, now) => {
+  const pastSchedule = eventSchedule
+    .forecast(now, COVER_DAY, 0, 2, TIMED_EVENTS);
+  const pastDays = pastSchedule.array().filter((event) => {
+    // Include only events that started before now.
+    return moment(getStartOfInterval(event)).isBefore(now.date);
+  });
+  const mostRecentLast = R.last(pastDays);
+  return getStartOfInterval(mostRecentLast);
 };
 
-export const getScheduledDates = (activity, start, end) => sortMomentAr([
-  ...getScheduledCalendarDates(activity, start),
-  ...getScheduledMonthDays(activity, start, end),
-  ...getScheduledWeekDays(activity, start, end),
-]);
-
-export const getDateTimes = (dates, timeAr) => {
-  // If no times been set, default to 9:00 AM
-  const defaultTime = { time: '09:00', timeMode: 'scheduled' };
-  const safeTimeAr = timeAr.length === 0 ? [defaultTime] : timeAr;
-
-  const dateTimes = safeTimeAr.reduce((acc, time) => {
-    const parsedTime = moment(time.time, 'HH:mm');
-    const currentDateTimes = dates.map(
-      date => date.clone()
-        .set('hour', parsedTime.get('hour'))
-        .set('minute', parsedTime.get('minute'))
-        .set('second', 0)
-        .set('millisecond', 0),
-    );
-    return [...acc, ...currentDateTimes];
-  }, []);
-
-  return sortMomentAr(dateTimes);
-};
-
-export const getScheduledDateTimes = (activity, start, end) => {
-  // console.log('activity', activity.name.en, activity);
-  // Get all the scheduled dates
-  const dates = getScheduledDates(activity, start, end);
-
-  // Attach times to the scheduled dates (will multiply the total number of
-  // scheduled times by the number of scheduled times)
-  const times = R.pathOr([], ['meta', 'notification', 'times'], activity)
-    .filter(time => time.timeMode === 'scheduled');
-  return getDateTimes(dates, times).filter(dateTime => dateTime.isBetween(start, end));
-};
-
-export const getNextAndLastTimes = (activity, nowTimestamp) => {
-  // Get all the scheduled date/times
-  const start = moment(nowTimestamp).subtract(1, 'month');
-  const end = moment(nowTimestamp).add(1, 'month');
-  const dateTimes = getScheduledDateTimes(activity, start, end);
-
-  // Split up the times based on before and after current time
-  const now = moment(nowTimestamp);
-  const beforeNow = dateTimes.filter(dateTime => dateTime.isBetween(start, now, null, '[]'));
-  const afterNow = dateTimes.filter(dateTime => dateTime.isBetween(now, end, null, '(]'));
-  return {
-    last: beforeNow.length > 0 ? beforeNow.pop().valueOf() : null,
-    next: afterNow.length > 0 ? afterNow[0].valueOf() : null,
-  };
-};
-
-export const getLastResponseTime = (activity, responses) => {
-  const activityResponses = responses[activity.id];
-
-  if (typeof activityResponses === 'undefined') {
-    return null; // No responses for that activity
-  }
-
-  const createdTimestamp = R.path(['meta', 'responseCompleted']);
-
-  const lastResponse = activityResponses.reduce(
-    (champion, challenger) => (createdTimestamp(challenger) > createdTimestamp(champion)
-      ? challenger
-      : champion),
-    activityResponses[0],
-  );
-
-  return createdTimestamp(lastResponse);
+// Find the immediately next scheduled event.
+export const getNextScheduled = (eventSchedule, now) => {
+  const futureSchedule = eventSchedule
+    .forecast(now, COVER_DAY, 1, 0, TIMED_EVENTS);
+  const nextDays = futureSchedule.array().filter((event) => {
+    // Include only events that start after now.
+    return moment(getStartOfInterval(event)).isAfter(now.date);
+  });
+  const earliestNext = R.head(nextDays);
+  return getStartOfInterval(earliestNext);
 };

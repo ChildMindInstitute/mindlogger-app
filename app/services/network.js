@@ -81,6 +81,12 @@ export const getResponses = (authToken, applet) => get(
   { applet },
 );
 
+export const getSchedule = (authToken, timezone) => get(
+  'schedule',
+  authToken,
+  { timezone },
+);
+
 export const getApplets = (authToken, userId) => get(
   `user/applets`,
   authToken,

@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
-import { Heading } from '../core';
 
 const ActivityList = ({ applet, inProgress, onPressActivity }) => {
   const activities = sortActivities(applet.activities, inProgress);
   return (
     <View style={{ paddingBottom: 30 }}>
-      {/* <Heading style={{ paddingLeft: 20, marginTop: 30 }}>Activities</Heading> */}
-
       {activities.map(activity => (
         <ActivityListItem
           onPress={() => onPressActivity(activity)}

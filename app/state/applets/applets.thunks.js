@@ -22,7 +22,6 @@ import {
   setInvites,
   saveAppletResponseData,
 } from './applets.actions';
-// eslint-disable-next-line
 import { sync } from '../app/app.thunks';
 import { transformApplet } from '../../models/json-ld';
 
@@ -31,7 +30,6 @@ export const scheduleAndSetNotifications = () => (dispatch, getState) => {
   const activities = activitiesSelector(state);
   // This call schedules the notifications and returns a list of scheduled notifications
   const updatedNotifications = scheduleNotifications(activities);
-  console.log('dispatching set notifications', activities, updatedNotifications);
   dispatch(setNotifications(updatedNotifications));
 };
 

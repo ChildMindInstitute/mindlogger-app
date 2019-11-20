@@ -5,14 +5,14 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.alert,
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
     // justifyContent: 'center',
     // alignItems: 'center',
     marginLeft: 12,
     marginTop: 6,
     borderRadius: 10,
-    elevation: 2,
+    elevation: 1,
     position: 'absolute',
   },
 });

@@ -2,66 +2,70 @@ import { createSelector } from 'reselect';
 import * as R from 'ramda';
 import { Parse, Day } from 'dayspan';
 import moment from 'moment';
-import { getLastResponseTime, getNextAndLastTimes } from '../../services/time';
-import { responsesGroupedByActivitySelector } from '../responses/responses.selectors';
-
-// import console = require('console');
+import {
+  getLastScheduled,
+  getNextScheduled,
+  getScheduledNotifications,
+} from '../../services/time';
+import { responseScheduleSelector } from '../responses/responses.selectors';
 
 export const dateParser = (schedule) => {
-  // output is an object indexed by URIs.
   const output = {};
-  schedule.events.map((e) => {
+
+  schedule.events.forEach((e) => {
     const uri = e.data.URI;
 
-
     if (!output[uri]) {
-      output[uri] = [];
+      output[uri] = {
+        notificationDateTimes: [],
+      };
     }
 
-    let { notifications } = e.data;
-    notifications = notifications || [];
-    // TODO: e.data might have some flag saying its relative to
-    // the first response. update the schedule here before parsing it.
-    // this might be kind of hard.
     const eventSchedule = Parse.schedule(e.schedule);
-    const today = Day.fromDate(new Date());
-    const dates = eventSchedule.forecast(today, false, 4, 0).map(d => d[2]).array();
-    const dateTimes = [];
-    // create a list of datetimes
-    // for each date in dates and
-    // for each notification in notifications
-    // TODO: handle random notification times (if n.random is true,
-    // then generate a time between n.start and n.end)
-    dates.map(date => notifications.map(n => dateTimes.push(moment(`${date[2]} ${n.start}`, 'YYYYMMDD HH:mm'))));
-    // TODO: only append unique datetimes
-    output[uri] = output[uri].concat(dateTimes);
-    return 0;
+    const now = Day.fromDate(new Date());
+
+    const lastScheduled = getLastScheduled(eventSchedule, now);
+    const nextScheduled = getNextScheduled(eventSchedule, now);
+
+    const notifications = R.pathOr([], ['data', 'notifications'], e);
+    const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
+
+    output[uri] = {
+      lastScheduledResponse: output[uri].lastScheduledResponse && lastScheduled
+        ? moment.max(moment(output[uri].lastScheduledResponse), moment(lastScheduled))
+        : lastScheduled,
+      nextScheduledResponse: output[uri].nextScheduledResponse && nextScheduled
+        ? moment.min(moment(output[uri].nextScheduledResponse), moment(nextScheduled))
+        : nextScheduled,
+
+      // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
+      notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
+    };
   });
+
   return output;
 };
 
 // Attach some info to each activity
 export const appletsSelector = createSelector(
   R.path(['applets', 'applets']),
-  responsesGroupedByActivitySelector,
-  (applets, responses) => applets.map((applet) => {
+  responseScheduleSelector,
+  (applets, responseSchedule) => applets.map((applet) => {
+    let scheduledDateTimesByActivity = {};
+
     // applet.schedule, if defined, has an events key.
     // events is a list of objects.
     // the events[idx].data.URI points to the specific activity's schema.
-
-    let notificationDateTimesByActivity = {};
     if (applet.schedule) {
-      notificationDateTimesByActivity = dateParser(applet.schedule);
+      scheduledDateTimesByActivity = dateParser(applet.schedule);
     }
 
     const extraInfoActivities = applet.activities.map((act) => {
-      const now = Date.now();
-      const { last, next } = getNextAndLastTimes(act, now);
-      const lastResponse = getLastResponseTime(act, responses);
-      // add in our parsed notifications here.
+      const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
 
-      // eslint-disable-next-line
-      act.notification = notificationDateTimesByActivity[act.schema];
+      const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
+      const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
+      const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
 
       return {
         ...act,
@@ -70,12 +74,16 @@ export const appletsSelector = createSelector(
         appletName: applet.name,
         appletSchema: applet.schema,
         appletSchemaVersion: applet.schemaVersion,
-        lastScheduledTimestamp: last,
+        lastScheduledTimestamp: lastScheduled,
         lastResponseTimestamp: lastResponse,
-        nextScheduledTimestamp: next,
-        isOverdue: last && lastResponse < last,
+        nextScheduledTimestamp: nextScheduled,
+        isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
+
+        // also add in our parsed notifications...
+        notification: R.prop('notificationDateTimes', scheduledDateTimes),
       };
     });
+
     return {
       ...applet,
       activities: extraInfoActivities,

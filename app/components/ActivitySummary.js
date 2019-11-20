@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { View, StyleSheet } from 'react-native';
 import { Button, Text, Icon } from 'native-base';
 import {
@@ -9,6 +8,7 @@ import {
 } from './core';
 import { colors } from '../themes/colors';
 import theme from '../themes/base-theme';
+import { formatTime } from '../services/time';
 
 const styles = StyleSheet.create({
   box: {
@@ -35,14 +35,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const formatTime = (timestamp) => {
-  const time = moment(timestamp);
-  if (moment().isSame(time, 'day')) {
-    return moment(timestamp).format('[today at] h:mm A');
-  }
-  return moment(timestamp).format('MMMM D');
-};
-
 const lastCompletedString = (timestamp) => {
   if (!timestamp) {
     return 'Not yet completed';
@@ -55,7 +47,7 @@ const nextScheduledString = (activity) => {
     return 'Unscheduled';
   }
   if (activity.isOverdue) {
-    return `Was due ${formatTime(activity.nextScheduledTimestamp)}`;
+    return `Due on ${formatTime(activity.lastScheduledTimestamp)}`;
   }
   return `Scheduled for ${formatTime(activity.nextScheduledTimestamp)}`;
 };
