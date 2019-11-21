@@ -22,22 +22,20 @@ export const getUnscheduled = activityList => activityList.filter(
 );
 
 export const getCompleted = activityList => activityList.filter(
-  activity => activity.nextScheduledTimestamp === null
-    && activity.lastScheduledTimestamp === null
+  activity => (activity.nextScheduledTimestamp === null || moment(activity.nextScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
+    && (activity.lastScheduledTimestamp === null || moment(activity.lastScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
     && activity.lastResponseTimestamp !== null,
 );
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
-    && (
-      moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp)
-      || activity.lastScheduledTimestamp === null
-      || activity.lastResponseTimestamp === null
-    ),
+    && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp)),
 );
 
 export const getOverdue = activityList => activityList.filter(
-  activity => moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp),
+  activity => activity.lastScheduledTimestamp !== null
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp)),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0
@@ -46,9 +44,8 @@ const addSectionHeader = (array, headerText) => (array.length > 0
 
 const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
-// Sort the activities into buckets of "in-progress", "overdue", "scheduled", "unscheduled",
-// and "completed". Inject header labels, e.g. "In Progress", before the activities that fit
-// into that bucket.
+// Sort the activities into categories and inject header labels, e.g. "In Progress",
+// before the activities that fit into that category.
 export default (activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(
@@ -57,11 +54,16 @@ export default (activityList, inProgress) => {
 
   const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
 
-  // Activities that are scheduled for that time.
+  // Activities currently scheduled - or - previously scheduled and not yet completed.
   const overdue = getOverdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
-  // Should tell the user when it will be activated.
+
+  // Activities scheduled some time in the future.
   const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
+
+  // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
+
+  // Activities which have been completed and have no more scheduled occurrences.
   const completed = getCompleted(notInProgress).reverse();
 
   return [
