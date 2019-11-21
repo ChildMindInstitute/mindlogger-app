@@ -1,6 +1,8 @@
 import * as R from 'ramda';
 import { Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import * as RNLocalize from 'react-native-localize';
+import { getSchedule } from '../../services/network';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { cleanFiles } from '../../services/file';
 import { prepareResponseForUpload } from '../../models/response';
@@ -19,6 +21,7 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
+  setSchedule,
 } from './responses.actions';
 import {
   setCurrentActivity,
@@ -88,15 +91,11 @@ export const startResponse = activity => (dispatch, getState) => {
   }
 };
 
-
-/**
- * TODO: the below thunk isn't that useful. Instead,
- * we want to download data from the last 7 days.
- */
 export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
+
   dispatch(setDownloadingResponses(true));
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
@@ -109,6 +108,12 @@ export const downloadResponses = () => (dispatch, getState) => {
   }).finally(() => {
     dispatch(setDownloadingResponses(false));
   });
+
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone)
+    .then((schedule) => {
+      dispatch(setSchedule(schedule));
+    });
 };
 
 export const startUploadQueue = () => (dispatch, getState) => {

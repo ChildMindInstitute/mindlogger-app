@@ -22,6 +22,7 @@ const ActivityDetailsComponent = ({
   primaryColor,
 }) => {
   const responses = responseHistory.filter((response) => {
+    // TODO: Update below or remove (currently unused) ActivityDetails from navigator.
     const responseActivityId = R.path(['meta', 'activity', '@id'], response);
     const formattedId = `activity/${responseActivityId}`;
     return activity.id === formattedId;

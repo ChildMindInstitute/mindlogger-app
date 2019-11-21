@@ -10,6 +10,7 @@ export const initialState = {
     downloaded: 0,
   },
   uploadQueue: [],
+  schedule: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -104,6 +105,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
+      };
+    case RESPONSES_CONSTANTS.SET_SCHEDULE:
+      return {
+        ...state,
+        schedule: action.payload,
       };
     default:
       return state;

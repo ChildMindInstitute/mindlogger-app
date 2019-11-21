@@ -23,11 +23,6 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     fontFamily: theme.fontFamily,
   },
-  notification: {
-    position: 'absolute',
-    top: 4,
-    right: 12,
-  },
   sectionHeading: {
     marginTop: 20,
     marginBottom: 0,
@@ -93,9 +88,7 @@ const ActivityRow = ({ activity, onPress }) => {
         </View>
       </TouchBox>
       {activity.isOverdue && (
-        <View style={styles.notification}>
-          <NotificationDot />
-        </View>
+        <NotificationDot />
       )}
     </View>
   );

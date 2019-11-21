@@ -1,6 +1,7 @@
 import * as R from 'ramda';
+import moment from 'moment';
 
-const sortActivitiesAlpha = (a, b) => {
+const compareByNameAlpha = (a, b) => {
   const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
   const nameB = b.name.en.toUpperCase(); // ignore upper and lowercase
   if (nameA < nameB) {
@@ -12,7 +13,7 @@ const sortActivitiesAlpha = (a, b) => {
   return 0;
 };
 
-const sortBy = propName => (a, b) => a[propName] - b[propName];
+const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
@@ -28,11 +29,15 @@ export const getCompleted = activityList => activityList.filter(
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
-    && activity.lastResponseTimestamp >= activity.lastScheduledTimestamp,
+    && (
+      moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp)
+      || activity.lastScheduledTimestamp === null
+      || activity.lastResponseTimestamp === null
+    ),
 );
 
 export const getOverdue = activityList => activityList.filter(
-  activity => activity.lastResponseTimestamp < activity.lastScheduledTimestamp,
+  activity => moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0
@@ -41,20 +46,27 @@ const addSectionHeader = (array, headerText) => (array.length > 0
 
 const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
+// Sort the activities into buckets of "in-progress", "overdue", "scheduled", "unscheduled",
+// and "completed". Inject header labels, e.g. "In Progress", before the activities that fit
+// into that bucket.
 export default (activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(
     activity => inProgressKeys.includes(activity.id),
   );
+
   const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
-  const overdue = getOverdue(notInProgress).sort(sortBy('lastScheduledTimestamp')).reverse();
-  const scheduled = getScheduled(notInProgress).sort(sortBy('nextScheduledTimestamp'));
-  const unscheduled = getUnscheduled(notInProgress).sort(sortActivitiesAlpha);
+
+  // Activities that are scheduled for that time.
+  const overdue = getOverdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
+  // Should tell the user when it will be activated.
+  const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
   const completed = getCompleted(notInProgress).reverse();
 
   return [
     ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
-    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Overdue'),
+    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Due'),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
     ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),
     ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),

@@ -1,17 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
-import moment from 'moment';
 import { colors } from '../../theme';
 import { LittleText } from '../core';
-
-const formatTime = (timestamp) => {
-  const time = moment(timestamp);
-  if (moment().isSame(time, 'day')) {
-    return moment(timestamp).format('[Today at] h:mm A');
-  }
-  return moment(timestamp).format('MMMM D');
-};
+import { formatTime } from '../../services/time';
 
 const styles = StyleSheet.create({
   textStyles: {
@@ -20,17 +12,17 @@ const styles = StyleSheet.create({
 });
 
 const ActivityDueDate = ({ activity }) => {
-  if (activity.lastResponseTimestamp < activity.lastScheduledTimestamp) {
+  if (activity.status === 'overdue') {
     return (
       <LittleText style={{ ...styles.textStyles, color: colors.alert }}>
-        {formatTime(activity.lastScheduledTimestamp)}
+        Due on: {formatTime(activity.lastScheduledTimestamp)}
       </LittleText>
     );
   }
   if (activity.status === 'scheduled') {
     return (
       <LittleText style={styles.textStyles}>
-        {formatTime(activity.nextScheduledTimestamp)}
+        Scheduled for: {formatTime(activity.nextScheduledTimestamp)}
       </LittleText>
     );
   }
