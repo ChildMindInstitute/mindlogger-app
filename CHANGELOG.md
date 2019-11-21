@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.2] - 2019-11-21
+### Fixed
+- Sorting of activities
+
 ## [0.9.1] - 2019-11-20
 ### Fixed
 - Scheduling of activities
