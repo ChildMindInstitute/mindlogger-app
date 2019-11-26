@@ -30,13 +30,19 @@ export const dateParser = (schedule) => {
     const notifications = R.pathOr([], ['data', 'notifications'], e);
     const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
 
+    let lastScheduledResponse = lastScheduled;
+    if (output[uri].lastScheduledResponse && lastScheduled) {
+      lastScheduledResponse = moment.max(moment(output[uri].lastScheduledResponse), moment(lastScheduled));
+    }
+
+    let nextScheduledResponse = nextScheduled;
+    if (output[uri].nextScheduledResponse && nextScheduled) {
+      nextScheduledResponse = moment.min(moment(output[uri].nextScheduledResponse), moment(nextScheduled));
+    }
+
     output[uri] = {
-      lastScheduledResponse: output[uri].lastScheduledResponse && lastScheduled
-        ? moment.max(moment(output[uri].lastScheduledResponse), moment(lastScheduled))
-        : lastScheduled,
-      nextScheduledResponse: output[uri].nextScheduledResponse && nextScheduled
-        ? moment.min(moment(output[uri].nextScheduledResponse), moment(nextScheduled))
-        : nextScheduled,
+      lastScheduledResponse,
+      nextScheduledResponse,
 
       // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
