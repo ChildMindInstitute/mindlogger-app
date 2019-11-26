@@ -41,7 +41,6 @@ class AppletDetailsComponent extends React.Component {
     // if the user has responded today. This is instead of
     // refreshing all the applets
     const { applet, appletData } = this.props;
-    console.log('appletData in responseDates', appletData);
     let allDates = [];
     const mapper = (resp) => {
       const d = resp.map(r => r.date);

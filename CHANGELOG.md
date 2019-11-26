@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update slider bar (horizontal only)
 
+## [0.9.3] - 2019-11-26
+### Changed
+- Remove due date from activity list
+
 ## [0.9.2] - 2019-11-21
 ### Fixed
 - Sorting of activities

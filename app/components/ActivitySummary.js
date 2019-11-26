@@ -47,7 +47,7 @@ const nextScheduledString = (activity) => {
     return 'Unscheduled';
   }
   if (activity.isOverdue) {
-    return `Due on ${formatTime(activity.lastScheduledTimestamp)}`;
+    return `Due ${formatTime(activity.lastScheduledTimestamp)}`;
   }
   return `Scheduled for ${formatTime(activity.nextScheduledTimestamp)}`;
 };
