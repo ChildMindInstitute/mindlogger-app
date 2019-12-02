@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.7] - 2019-12-02
+### Updated
+- :arrow_up: react-native-webview@5→7
+
 ## [0.9.4] - 2019-11-26
 ### Changed
 - Update slider bar (horizontal only)
