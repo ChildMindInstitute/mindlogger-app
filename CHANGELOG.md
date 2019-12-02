@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
-## [0.9.5] - 2019-12-02
+## [0.9.5]‒[0.9.6] - 2019-12-02
 ## Updated
 - :rocket: :robot: Google Play API @ v3.0
+- :rocket: Other Bitrise steps
 
 ## [0.9.4] - 2019-11-26
 ### Changed
@@ -36,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.7] - 2019-11-08
 ### Upgraded
-- :rocket: :apple: BitRise Deploy to iTunes Connect - Application Loader@0.10.1
+- :rocket: :apple: Bitrise Deploy to iTunes Connect - Application Loader@0.10.1
 
 ## [0.8.6] - 2019-11-08
 ### Upgraded
