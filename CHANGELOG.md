@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.5] - 2019-12-02
+## Updated
+- :rocket: :robot: Google Play API @ v3.0
+
 ## [0.9.4] - 2019-11-26
 ### Changed
 - Update slider bar (horizontal only)
