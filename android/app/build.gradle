@@ -101,8 +101,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 97
-        versionName "0.9.4"
+        versionCode 99
+        versionName "0.9.6"
         ndk {
             abiFilters "arm64-v8a", "x86_64", "armeabi-v7a", "x86"
         }
@@ -142,7 +142,7 @@ dependencies {
   configurations.all {
     resolutionStrategy {
       dependencySubstitution {
-        substitute module('com.google.android.gms:play-services-vision') with module('com.google.android.gms:play-services-vision:17.0.2')
+        substitute module('com.google.android.gms:play-services-vision') with module('com.google.android.gms:play-services-vision:19.0.0')
         substitute module('com.google.firebase:firebase-messaging') with module('com.google.firebase:firebase-messaging:19.0.0')
       }
     }
