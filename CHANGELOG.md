@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.8] - 2019-12-10
+### Fixed
+- :ambulance: Don't crash if responseDates is undefined 
+
 ## [0.9.7] - 2019-12-10
 ### Updated
 - :arrow_up: react-native-webview@5→7
