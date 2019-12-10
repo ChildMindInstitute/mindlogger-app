@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
-## [0.9.5]‒[0.9.6] - 2019-12-02
+## [0.9.7] - 2019-12-10
+### Updated
+- :arrow_up: react-native-webview@5→7
+- :arrow_up: :apple: libRNLocalize
+## [0.9.5]‒[0.9.6] - 2019-12-10
 ## Updated
 - :rocket: :robot: Google Play API @v3.0
 - :rocket: :robot: Google Play Mobile Vision @19.0.0
