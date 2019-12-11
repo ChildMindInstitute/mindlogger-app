@@ -72,7 +72,7 @@ class AppletDetailsComponent extends React.Component {
       appletData,
     } = this.props;
 
-    const responseDates = this.getResponseDates();
+    const responseDates = this.getResponseDates() || [];
 
     switch (selectedTab) {
       case 'survey':
