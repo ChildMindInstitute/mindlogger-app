@@ -47,9 +47,13 @@ class AppletDetailsComponent extends React.Component {
       allDates = allDates.concat(d);
       return allDates;
     };
-    // R.forEach(mapper, appletData.responses);
-    const items = Object.keys(appletData.responses);
-    items.map(item => mapper(appletData.responses[item]));
+    console.log("applet data ", appletData.responses)
+    const items = Object.keys(appletData);
+    console.log("item", items)
+    //R.forEach(mapper, appletData.responses);
+    // const items = Object.keys(appletData.responses);
+    // items.map(item => mapper(appletData.responses[item]));
+    //items.map(item => mapper(appletData.responses[item]));
 
     if (allDates.length) {
       const maxDate = moment.max(allDates.map(d => moment(d)));
@@ -72,7 +76,7 @@ class AppletDetailsComponent extends React.Component {
       appletData,
     } = this.props;
 
-    const responseDates = this.getResponseDates() || [];
+    const responseDates = this.getResponseDates();
 
     switch (selectedTab) {
       case 'survey':
@@ -124,7 +128,7 @@ class AppletDetailsComponent extends React.Component {
                 ios="ios-home"
                 android="md-home"
               />
-              { hasInvites ? <View style={styles.circle} /> : null }
+              {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>
           <Body>
