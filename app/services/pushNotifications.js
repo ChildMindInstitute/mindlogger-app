@@ -65,7 +65,7 @@ export const scheduleNotifications = (activities) => {
       let ugctime = new Date(dateTime.valueOf())
       console.log("ugctime", ugctime)
       notifications.push({
-        timestamp: 'Thu Dec 12 2019 19:40:00 GMT+0530',
+        timestamp: ugctime,
         niceTime: dateTime.format(),
         activityId: activity.id,
         activityName: activity.name.en,
