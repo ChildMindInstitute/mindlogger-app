@@ -20,6 +20,10 @@ const checkAuthToken = (store) => {
     return false;
   }
 
+  const resetBaseCount = () => {
+    PushNotificationIOS.setApplicationIconBadgeNumber(0)
+  }
+
   const authExpiration = moment(state.user.auth.expires);
   if (moment().isAfter(authExpiration)) {
     store.dispatch(clearUser()); // Auth token expired
@@ -40,6 +44,8 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
+  (Platform.OS == 'ios' &&
+    resetBaseCount())
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk, store.getState());

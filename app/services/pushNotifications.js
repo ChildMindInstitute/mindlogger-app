@@ -83,7 +83,7 @@ export const scheduleNotifications = (activities) => {
     console.log('scheduling', notification.timestamp);
     PushNotification.localNotificationSchedule({
       message: `Please perform activity: ${notification.activityName}`,
-      date: notification.timestamp,
+      date: new Date(notification.timestamp),
       group: notification.activityName,
       vibrate: true,
       userInfo: {
