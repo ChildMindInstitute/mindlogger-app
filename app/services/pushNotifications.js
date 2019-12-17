@@ -45,7 +45,7 @@ export const scheduleNotifications = (activities) => {
 
   for (let i = 0; i < activities.length; i += 1) {
     const activity = activities[i];
-    console.log("activity", activity)
+
     const scheduleDateTimes = activity.notification || [];
 
     // /* below is for easy debugging.
@@ -63,7 +63,6 @@ export const scheduleNotifications = (activities) => {
 
     scheduleDateTimes.forEach((dateTime) => {
       let ugctime = new Date(dateTime.valueOf())
-      console.log("ugctime", ugctime)
       notifications.push({
         timestamp: ugctime,
         niceTime: dateTime.format(),
@@ -80,7 +79,6 @@ export const scheduleNotifications = (activities) => {
 
   // Schedule the notifications
   notifications.forEach((notification) => {
-    console.log('scheduling', notification.timestamp);
     PushNotification.localNotificationSchedule({
       message: `Please perform activity: ${notification.activityName}`,
       date: new Date(notification.timestamp),

@@ -47,9 +47,8 @@ class AppletDetailsComponent extends React.Component {
       allDates = allDates.concat(d);
       return allDates;
     };
-    console.log("applet data ", appletData.responses)
+
     const items = Object.keys(appletData);
-    console.log("item", items)
     //R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
     // items.map(item => mapper(appletData.responses[item]));
@@ -57,7 +56,6 @@ class AppletDetailsComponent extends React.Component {
 
     if (allDates.length) {
       const maxDate = moment.max(allDates.map(d => moment(d)));
-
       if (applet.responseDates.indexOf(maxDate) < 0) {
         applet.responseDates.push(maxDate);
       }
@@ -76,7 +74,7 @@ class AppletDetailsComponent extends React.Component {
       appletData,
     } = this.props;
 
-    const responseDates = this.getResponseDates();
+    const responseDates = this.getResponseDates() || [];
 
     switch (selectedTab) {
       case 'survey':
