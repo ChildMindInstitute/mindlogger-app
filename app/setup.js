@@ -13,15 +13,15 @@ import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
 import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 
+const resetBaseCount = () => {
+  PushNotificationIOS.setApplicationIconBadgeNumber(0)
+}
+
 const checkAuthToken = (store) => {
   const state = store.getState();
   if (state.user.auth === null) {
     store.dispatch(clearUser()); // Just in case
     return false;
-  }
-
-  const resetBaseCount = () => {
-    PushNotificationIOS.setApplicationIconBadgeNumber(0)
   }
 
   const authExpiration = moment(state.user.auth.expires);
