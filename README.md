@@ -8,7 +8,7 @@ This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is int
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system, or visit https://matter.childmind.org/MindLogger/demo#mobile-app for instructions to download the demo mobile app.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system, or visit https://mindlogger.org for instructions to download the demo mobile app.
 
 ### Widget development
 
