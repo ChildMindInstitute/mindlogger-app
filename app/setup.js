@@ -44,7 +44,7 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  if (Platform.OS == 'ios') {
+  if (Platform.OS === 'ios') {
     resetBaseCount();
   }
   const store = configureStore(() => {
