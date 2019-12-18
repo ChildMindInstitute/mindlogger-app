@@ -47,30 +47,30 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to Apple Music</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use bluetooth, including when you are not using the app</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to Bluetooth</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use your camera</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use your location when you are using the app</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use your location, including when you are not using the app</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use your location when you are using the app</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use your microphone (for videos)</string>
+	<key>NSMotionUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to Motion</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like access to your photo gallery</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to Bluetooth</string>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use bluetooth, including when you are not using the app</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to your calendar</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to recognize speech</string>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to Apple Music</string>
-	<key>NSMotionUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like access to Motion</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
