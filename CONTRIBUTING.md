@@ -12,8 +12,6 @@
 
 Use [Semantic Versioning 2.0.0](https://semver.org/#semantic-versioning-200). Always develop in a feature-specific branch and update the version (at least the patch version, but a higher-level version if appropriate) when submitting a pull request.
 
-To increment a major or minor version, complete the relevant project board. Currently we're working on [v0.1](https://github.com/orgs/ChildMindInstitute/projects/6). [v0.2](https://github.com/orgs/ChildMindInstitute/projects/9) is on deck.
-
 For this repository, the version exists in 4 places:
 1. [README](./README.md)
 2. [package.json](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json): [`version`](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/package.json#L3)
