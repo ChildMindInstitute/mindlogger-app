@@ -8,7 +8,7 @@ This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is int
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system, or visit https://matter.childmind.org/MindLogger/demo#mobile-app for instructions to download the demo mobile app.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system, or visit https://mindLogger.org for instructions to download the demo mobile app.
 
 ### Widget development
 
@@ -109,7 +109,7 @@ It will create app-release.apk in android/app/build/outputs folder
 ## Contributing
 
 1. Check [open issues](https://github.com/ChildMindInstitute/mindlogger-app/issues) for known issues and discussions.
-2. If your issus is not already listed, add your issue, optionally with :octocat: [gitmoji](https://gitmoji.carloscuesta.me/).
+2. If your issue is not already listed, add your issue, optionally with :octocat: [gitmoji](https://gitmoji.carloscuesta.me/).
 3. Clone this repository.
 4. If your issue already has a discussion, see if it has a branch. If so, checkout that branch before creating your own.
 5. Create a new branch to work in.
