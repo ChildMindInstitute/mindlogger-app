@@ -47,9 +47,11 @@ const AppletListItem = ({ applet, onPress }) => {
             <SubHeading style={{ fontFamily: theme.fontFamily }}>
               {applet.name.en}
             </SubHeading>
-            <BodyText style={{ fontFamily: theme.fontFamily }}>
-              {applet.description.en}
-            </BodyText>
+            {applet.description && (
+              <BodyText style={{ fontFamily: theme.fontFamily }}>
+                {applet.description.en}
+              </BodyText>
+            )}
           </View>
         </View>
       </TouchBox>

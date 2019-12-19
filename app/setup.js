@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, PushNotificationIOS } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -13,15 +13,15 @@ import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
 import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 
+const resetBaseCount = () => {
+  PushNotificationIOS.setApplicationIconBadgeNumber(0);
+}
+
 const checkAuthToken = (store) => {
   const state = store.getState();
   if (state.user.auth === null) {
     store.dispatch(clearUser()); // Just in case
     return false;
-  }
-
-  const resetBaseCount = () => {
-    PushNotificationIOS.setApplicationIconBadgeNumber(0)
   }
 
   const authExpiration = moment(state.user.auth.expires);
@@ -44,8 +44,9 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  (Platform.OS == 'ios' &&
-    resetBaseCount())
+  if (Platform.OS == 'ios') {
+    resetBaseCount();
+  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk, store.getState());

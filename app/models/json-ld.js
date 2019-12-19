@@ -43,7 +43,7 @@ const VERSION = 'http://schema.org/version';
 const VISIBILITY = 'reprolib:terms/visibility';
 
 export const languageListToObject = (list) => {
-  if (typeof list === 'undefined' || list.length === 0) {
+  if (typeof list === 'undefined' || typeof list === 'string' || list.length === 0) {
     return undefined;
   }
   return list.reduce((obj, item) => ({

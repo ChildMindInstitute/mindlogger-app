@@ -1,4 +1,5 @@
 import { Actions } from 'react-native-router-flux';
+import * as R from 'ramda';
 import { getApplets,
   registerOpenApplet,
   getAppletInvites,
@@ -52,7 +53,9 @@ export const downloadApplets = () => (dispatch, getState) => {
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id).then((applets) => {
     if (loggedInSelector(getState())) { // Check that we are still logged in when fetch finishes
-      const transformedApplets = applets.map(applet => transformApplet(applet));
+      const transformedApplets = applets
+        .filter(applet => !R.isEmpty(applet.items))
+        .map(applet => transformApplet(applet));
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
       dispatch(downloadAppletsMedia(transformedApplets));
