@@ -14,7 +14,7 @@ import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 
 const resetBaseCount = () => {
-  PushNotificationIOS.setApplicationIconBadgeNumber(0)
+  PushNotificationIOS.setApplicationIconBadgeNumber(0);
 }
 
 const checkAuthToken = (store) => {
@@ -44,8 +44,9 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  (Platform.OS == 'ios' &&
-    resetBaseCount())
+  if (Platform.OS == 'ios') {
+    resetBaseCount();
+  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk, store.getState());
