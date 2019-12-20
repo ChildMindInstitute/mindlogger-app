@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.10]‒[0.9.11] - 2019-12-17
+- :lipstick: Fix font size scaling from device's settings
+- :lipstick: Change radio and checkbox buttons appearance
+- :ambulance: Add applets filtering to prevent rendering issue
+- Add TimePicker to the Widget's condition
+
 ## [0.9.9]‒[0.9.10] - 2019-12-17
 - :lipstick: More invasive notifications
 
