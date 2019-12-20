@@ -6,9 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.9]‒[0.9.10] - 2019-12-17
+- :lipstick: More invasive notifications
+
 ## [0.9.8] - 2019-12-10
 ### Fixed
-- :ambulance: Don't crash if responseDates is undefined 
+- :ambulance: Don't crash if responseDates is undefined
 
 ## [0.9.7] - 2019-12-10
 ### Updated
