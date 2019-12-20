@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, PushNotificationIOS } from 'react-native';
+import { Platform, PushNotificationIOS, Text, TextInput } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -81,5 +81,12 @@ const setup = () => {
     </Provider>
   );
 };
+
+// Limit font size scaling from device's font settings
+Text.defaultProps = {};
+Text.defaultProps.maxFontSizeMultiplier = 1;
+
+TextInput.defaultProps = {};
+TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 export default setup;
