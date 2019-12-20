@@ -7,9 +7,10 @@ import {
   Text,
   Body,
   Right,
-  CheckBox,
 } from 'native-base';
+import { CheckBox } from 'react-native-elements';
 import { getURL } from '../services/helper';
+import { colors } from '../themes/colors';
 
 export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
@@ -59,6 +60,10 @@ export class MultiSelect extends Component {
                 <CheckBox
                   checked={value && value.includes(item.value)}
                   onPress={() => this.onAnswer(item.value)}
+                  checkedIcon="check-square"
+                  uncheckedIcon="square-o"
+                  checkedColor={colors.primary}
+                  uncheckedColor={colors.primary}
                 />
               </Right>
             </ListItem>

@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { View, Image } from 'react-native';
 import {
   ListItem,
-  Radio as RadioNB,
   Right,
   Body,
   Text,
 } from 'native-base';
+import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 
@@ -32,10 +32,12 @@ export const Radio = ({ value, config, onChange }) => (
             </View>
           </Body>
           <Right>
-            <RadioNB
-              selectedColor={colors.primary}
-              selected={value === item.value}
+            <CheckBox
+              checked={value === item.value}
               onPress={() => onChange(item.value)}
+              checkedIcon="dot-circle-o"
+              uncheckedIcon="circle-o"
+              checkedColor={colors.primary}
             />
           </Right>
         </ListItem>
