@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, PushNotificationIOS } from 'react-native';
+import { Platform, PushNotificationIOS, Text, TextInput } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -14,7 +14,7 @@ import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 
 const resetBaseCount = () => {
-  PushNotificationIOS.setApplicationIconBadgeNumber(0)
+  PushNotificationIOS.setApplicationIconBadgeNumber(0);
 }
 
 const checkAuthToken = (store) => {
@@ -44,8 +44,9 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  (Platform.OS == 'ios' &&
-    resetBaseCount())
+  if (Platform.OS === 'ios') {
+    resetBaseCount();
+  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk, store.getState());
@@ -81,5 +82,12 @@ const setup = () => {
     </Provider>
   );
 };
+
+// Limit font size scaling from device's font settings
+Text.defaultProps = {};
+Text.defaultProps.maxFontSizeMultiplier = 1;
+
+TextInput.defaultProps = {};
+TextInput.defaultProps.maxFontSizeMultiplier = 1;
 
 export default setup;

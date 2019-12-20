@@ -47,9 +47,11 @@ class ActivityChart extends React.Component {
         <Text style={{ fontSize: 30, fontWeight: '200' }}>
           {activity.name.en}
         </Text>
-        <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}>
-          { activity.description.en }
-        </Text>
+        {activity.description && (
+          <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}>
+            { activity.description.en }
+          </Text>
+        )}
         {/* {this.renderItems()} */}
         <FlatList
           data={itemsFiltered}
