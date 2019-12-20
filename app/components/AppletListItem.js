@@ -55,11 +55,9 @@ const AppletListItem = ({ applet, onPress }) => {
           </View>
         </View>
       </TouchBox>
-      { numberOverdue > 0 && (
+      {numberOverdue > 0 && (
         <View style={styles.notification}>
-          <NotificationText>
-            {numberOverdue}
-          </NotificationText>
+          <NotificationText>{numberOverdue}</NotificationText>
         </View>
       )}
     </View>

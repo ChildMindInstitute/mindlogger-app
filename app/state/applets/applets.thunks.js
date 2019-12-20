@@ -60,6 +60,8 @@ export const downloadApplets = () => (dispatch, getState) => {
       dispatch(downloadResponses(transformedApplets));
       dispatch(downloadAppletsMedia(transformedApplets));
     }
+  }).catch((err) => {
+    console.warn(err.message);
   }).finally(() => {
     dispatch(setDownloadingApplets(false));
     dispatch(scheduleAndSetNotifications());
