@@ -71,9 +71,11 @@ const ActivityRow = ({ activity, onPress }) => {
             <SubHeading style={{ fontFamily: theme.fontFamily }}>
               {activity.name.en}
             </SubHeading>
-            <BodyText style={{ fontFamily: theme.fontFamily }}>
-              {activity.description.en}
-            </BodyText>
+            {activity.description && (
+              <BodyText style={{ fontFamily: theme.fontFamily }}>
+                {activity.description.en}
+              </BodyText>
+            )}
             <ActivityDueDate activity={activity} />
             {/* <Hyperlink
               style={styles.moreInfo}
