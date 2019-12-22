@@ -51,7 +51,6 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       placeholderTextColor="#aaa"
       autoComplete="off"
       autoCorrect={false}
-      validate={required}
     />
     <Field
       component={FormInputItem}
@@ -63,7 +62,7 @@ const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoCorrect={false}
       autoCapitalize="none"
       keyboardType="email-address"
-      validate={[required, email]}
+      validate={email}
     />
     <Field
       component={FormInputItem}
