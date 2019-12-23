@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform,PushNotificationIOS } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -45,7 +45,7 @@ const setInitialScreen = (authOk, state) => {
 
 const setup = () => {
   (Platform.OS == 'ios' &&
-    resetBaseCount())
+  PushNotificationIOS.setApplicationIconBadgeNumber(0))
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     setInitialScreen(authOk, store.getState());
