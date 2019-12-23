@@ -55,7 +55,7 @@ class AboutApp extends Component { // eslint-disable-line
           return (
             <Container style={styles.container}>
               <StatusBar barStyle="light-content" />
-              <Header style={{ backgroundColor: skin.colors.primary }}>
+              <Header hasSubtitle style={{ backgroundColor: skin.colors.primary }}>
                 <Left>
                   <Button transparent onPress={this.onClose}>
                     <Icon
@@ -85,7 +85,7 @@ class AboutApp extends Component { // eslint-disable-line
       return (
         <Container style={styles.container}>
           <StatusBar barStyle="light-content" />
-          <Header style={{ backgroundColor: skin.colors.primary }}>
+          <Header hasSubtitle style={{ backgroundColor: skin.colors.primary }}>
             <Left>
               <Button transparent onPress={this.onClose}>
                 <Icon name="close" />

@@ -19,6 +19,7 @@ import {
   TimeRange,
   VisualStimulusResponse,
 } from '../../widgets';
+import TimePicker from '../../widgets/TimeRange/TimePicker';
 
 const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => {
   if (screen.inputType === 'radio'
@@ -176,6 +177,14 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => 
   if (screen.inputType === 'geolocation') {
     return (
       <Geolocation
+        value={answer}
+        onChange={onChange}
+      />
+    );
+  }
+  if (screen.inputType === 'time') {
+    return (
+      <TimePicker
         value={answer}
         onChange={onChange}
       />
