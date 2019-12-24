@@ -276,3 +276,42 @@ export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };
+
+export const getApplet = ({ authToken, appletId }) => {
+  const url = `${apiHost()}/applet/${appletId}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  }).then(res => res && res.json())
+    .catch(err => console.log(err));
+};
+
+export const fetchOpenGroups = ({ authToken }) => {
+  const url = `${apiHost()}/group/open`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  })
+    .then(res => (res.status === 200 ? res.json() : Promise.reject(res)))
+    .then((groups) => {
+      // TODO: replace with appletId from the response when API will be updated
+      const appletIds = groups.map(({ name }) => name.split('(')[2].split(')')[0]);
+
+      Promise.all(appletIds.map(appletId => getApplet({
+        authToken,
+        appletId,
+      })));
+      // .then(res => console.log(res));
+
+      return groups;
+    });
+};

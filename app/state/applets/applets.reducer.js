@@ -11,6 +11,7 @@ export const initialState = {
   invites: [],
   currentInvite: '',
   appletResponseData: {},
+  openGroups: [],
 };
 
 export default (state = initialState, action = {}) => {
@@ -47,6 +48,11 @@ export default (state = initialState, action = {}) => {
       const stateCopy = { ...state };
       stateCopy.appletResponseData[action.payload.appletId] = action.payload.data;
       return stateCopy;
+    case APPLET_CONSTANTS.GET_OPEN_GROUPS:
+      return {
+        ...state,
+        openGroups: action.payload,
+      };
     default:
       return state;
   }

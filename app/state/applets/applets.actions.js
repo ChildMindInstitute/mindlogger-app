@@ -33,3 +33,8 @@ export const saveAppletResponseData = (appletId, data) => ({
   type: APPLET_CONSTANTS.SAVE_APPLET_RESPONSE_DATA,
   payload: { appletId, data },
 });
+
+export const getOpenGroups = groups => ({
+  type: APPLET_CONSTANTS.GET_OPEN_GROUPS,
+  payload: groups,
+});

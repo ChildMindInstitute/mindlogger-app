@@ -6,7 +6,7 @@ import { colors } from '../../theme';
 const styles = StyleSheet.create({
   box: {
     borderRadius: 12,
-    elevation: 3,
+    // elevation: 3,
     // shadowColor: '#000',
     // shadowOffset: { width: 0, height: 1 },
     // shadowOpacity: 0.3,
@@ -22,15 +22,23 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TouchBox = ({ children, onPress }) => (
+export const TouchBox = ({ children, onPress, style }) => (
   <TouchableOpacity onPress={onPress}>
-    <View style={styles.box}>
+    <View style={[styles.box, style]}>
       {children}
     </View>
   </TouchableOpacity>
 );
 
+TouchBox.defaultProps = {
+  style: {},
+};
+
 TouchBox.propTypes = {
   children: PropTypes.node.isRequired,
   onPress: PropTypes.func.isRequired,
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
 };

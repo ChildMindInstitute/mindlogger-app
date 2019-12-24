@@ -81,3 +81,9 @@ export const getURL = (url) => {
 
   return transformedUrl;
 };
+
+export const findObjectKeyFragment = (object, fragment) => {
+  const key = Object.keys(object).filter(key => key.includes(fragment))[0];
+
+  return object[key];
+};

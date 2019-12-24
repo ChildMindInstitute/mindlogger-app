@@ -118,3 +118,5 @@ export const activitiesSelector = createSelector(
 );
 
 export const appletDataSelector = R.path(['applets', 'appletResponseData']);
+
+export const openGroupsSelector = R.path(['applets', 'openGroups']);

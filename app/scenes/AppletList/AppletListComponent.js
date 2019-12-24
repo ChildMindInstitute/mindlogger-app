@@ -6,8 +6,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
-import { BodyText, Hyperlink } from '../../components/core';
-import JoinDemoApplets from '../../components/JoinDemoApplets';
+import ListButton from '../../components/ListButton';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 
 const styles = StyleSheet.create({
@@ -29,6 +28,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
   },
+  installButtonContainer: {
+    marginTop: 25,
+  },
 });
 
 const AppletListComponent = ({
@@ -43,6 +45,7 @@ const AppletListComponent = ({
   onPressApplet,
   mobileDataAllowed,
   toggleMobileDataAllowed,
+  handlePressInstallApplets,
 }) => {
   const netInfo = useNetInfo();
   return (
@@ -100,6 +103,10 @@ const AppletListComponent = ({
               ? <AppletInvite /> : null
           }
 
+          <View style={styles.installButtonContainer}>
+            <ListButton title="Join open groups" onPress={handlePressInstallApplets} />
+          </View>
+
           <View
             style={{
               marginTop: 20,
@@ -141,6 +148,7 @@ AppletListComponent.propTypes = {
   primaryColor: PropTypes.string.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
+  handlePressInstallApplets: PropTypes.func.isRequired,
 };
 
 export default AppletListComponent;

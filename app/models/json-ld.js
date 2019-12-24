@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 
+import { findObjectKeyFragment } from '../services/helper';
+
 const ALLOW = 'reprolib:terms/allow';
 const ABOUT = 'http://schema.org/about';
 const ALT_LABEL = 'http://www.w3.org/2004/02/skos/core#altLabel';
@@ -230,8 +232,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const variableMap = transformVariableMap(variableMapAr);
   const visibility = listToObject(activityJson[VISIBILITY]);
   const preamble = languageListToObject(activityJson[PREAMBLE]);
-  const order = flattenIdList(activityJson[ORDER][0]['@list']);
-
+  const order = flattenIdList(findObjectKeyFragment(activityJson, 'terms/order')[0]['@list']);
   const mapItems = R.map((itemKey) => {
     const item = itemTransformJson(itemsJson[itemKey]);
     return itemAttachExtras(item, itemKey, variableMap, visibility);
@@ -246,7 +247,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     version: languageListToObject(activityJson[VERSION]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
     shuffle: R.path([SHUFFLE, 0, '@value'], activityJson),
-    image: languageListToObject(activityJson[IMAGE]),
+    image: languageListToObject(findObjectKeyFragment(activityJson, '/image')),
     skippable: isSkippable(allowList),
     backDisabled: allowList.includes(BACK_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
@@ -260,6 +261,8 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const appletTransformJson = (appletJson) => {
+  const image = findObjectKeyFragment(appletJson, '/image');
+
   return {
     id: appletJson._id,
     groupId: appletJson.groups,
@@ -271,8 +274,8 @@ export const appletTransformJson = (appletJson) => {
     version: languageListToObject(appletJson[VERSION]),
     altLabel: languageListToObject(appletJson[ALT_LABEL]),
     visibility: listToObject(appletJson[VISIBILITY]),
-    image: appletJson[IMAGE],
-    order: flattenIdList(appletJson[ORDER][0]['@list']),
+    image: (typeof image === 'string' ? image : image[0]['@value']),
+    order: flattenIdList(findObjectKeyFragment(appletJson, 'terms/order')[0]['@list']),
     schedule: appletJson.schedule,
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),

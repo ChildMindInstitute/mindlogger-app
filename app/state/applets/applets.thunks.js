@@ -8,6 +8,7 @@ import { getApplets,
   removeApplet,
   deleteApplet,
   getLast7DaysData,
+  fetchOpenGroups,
 } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
@@ -22,6 +23,7 @@ import {
   replaceApplets,
   setInvites,
   saveAppletResponseData,
+  getOpenGroups as getOpenGroupsAction,
 } from './applets.actions';
 import { sync } from '../app/app.thunks';
 import { transformApplet } from '../../models/json-ld';
@@ -138,4 +140,11 @@ export const getAppletResponseData = appletId => (dispatch, getState) => {
     console.log('response is', resp);
     dispatch(saveAppletResponseData(appletId, resp));
   });
+};
+
+export const getOpenGroups = () => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authSelector(state);
+
+  fetchOpenGroups({ authToken }).then(res => dispatch(getOpenGroupsAction(res)));
 };
