@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { Dimensions } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 
@@ -39,6 +40,8 @@ export const prepareResponseForUpload = (inProgressResponse) => {
       deviceModel: DeviceInfo.getModel(),
       appId: 'mindlogger-mobile',
       appVersion: packageJson.version,
+      width: Dimensions.get('screen').width,
+      height: Dimensions.get('screen').height,
     },
     languageCode: languageKey,
   };
