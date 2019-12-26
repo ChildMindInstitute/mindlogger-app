@@ -23,11 +23,10 @@ const ActCalendar = ({ responseDates }) => {
         rightSelector={[]}
         // TODO: uncomment and fill the
         // markedDates prop below to add dots to the calendar.
-        markedDates={responseDates.map(r =>
-          ({
-            date: moment(r),
-            dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
-          }))}
+        markedDates={responseDates.map(r => ({
+          date: moment(r),
+          dots: [{ key: 0, color: colors.primary, selectedDotColor: colors.primary }],
+        }))}
         customDatesStyles={[
           {
             startDate: moment(),

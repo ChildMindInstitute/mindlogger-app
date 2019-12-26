@@ -15,7 +15,7 @@ import { currentAppletSelector } from './state/app/app.selectors';
 
 const resetBaseCount = () => {
   PushNotificationIOS.setApplicationIconBadgeNumber(0);
-}
+};
 
 const checkAuthToken = (store) => {
   const state = store.getState();
