@@ -143,8 +143,7 @@ class Slider extends Component {
 
   render() {
     const { currentValue } = this.state;
-    const {
-      config: {
+    const { config: {
         maxValue,
         minValue,
         itemList,
@@ -153,10 +152,7 @@ class Slider extends Component {
       onPress,
       value,
       onRelease,
-    } = this.props;
-
-    const left = this.calculateLabelPosition();
-
+    } = this.props;const left = this.calculateLabelPosition();
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
