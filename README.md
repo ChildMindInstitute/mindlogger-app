@@ -67,7 +67,7 @@ yarn test
 You can also run eslint on the entire codebase.
 
 ```
-yarn lint
+yarn lint "**/*.js"
 ```
 
 ## Release build
