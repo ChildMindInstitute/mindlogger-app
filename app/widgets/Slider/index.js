@@ -1,17 +1,84 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { Text } from 'native-base';
 import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
 
-class Slider extends Component {
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    paddingTop: 20,
+  },
+  sliderWrapper: {
+    width: '100%',
+    justifyContent: 'center',
+    // transform: [{ rotate: '-90deg' }],
+    paddingLeft: 35,
+    paddingRight: 35,
+  },
+  track: {
+    height: 4,
+    borderRadius: 2,
+  },
+  thumbUnselected: {
+    width: 35,
+    height: 35,
+    borderRadius: 35 / 2,
+    backgroundColor: 'transparent',
+    borderColor: '#919191',
+    borderWidth: 2,
+    elevation: 2,
+    borderStyle: 'dotted',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+  },
+  thumb: {
+    width: 26,
+    height: 26,
+    borderRadius: 26 / 2,
+    backgroundColor: colors.primary,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  label: { textAlign: 'center' },
+  iconWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 45,
+    height: 45,
+    resizeMode: 'cover',
+  },
+  labelContainer: {
+    width: '100%',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+  },
+  labelBox: { width: 100 },
+});
 
+
+class Slider extends Component {
   static defaultProps = {
     value: undefined,
-    onPress: () => { },
-    onRelease: () => { },
+    onPress: () => {
+    },
+    onRelease: () => {
+    },
   };
 
   static propTypes = {
@@ -26,34 +93,57 @@ class Slider extends Component {
     onRelease: PropTypes.func,
   };
 
+  sliderRef = React.createRef();
 
-  constructor(props) {
-    super(props)
-    
-  }
+  tapSliderHandler = (evt) => {
+    const { onChange, config: { itemList } } = this.props;
+
+    this.sliderRef.current.measure((fx, fy, width) => {
+      const calculatedValue = Math.ceil(
+        Math.abs(
+          (evt.nativeEvent.locationX / width),
+        ).toFixed(1) * itemList.length,
+      );
+
+      onChange(calculatedValue);
+    });
+  };
 
   render() {
-
-    const { config: { maxValue, minValue, itemList }, onChange, onPress,value, onRelease } = this.props
+    const {
+      config: {
+        maxValue,
+        minValue,
+        itemList,
+      },
+      onChange,
+      onPress,
+      value,
+      onRelease,
+    } = this.props;
     return (
       <View style={styles.container}>
-          <View style={styles.sliderWrapper} ref="slider">
-            <SliderComponent
-              value={value || Math.ceil((itemList.length) / 2)}
-              minimumValue={1}
-              maximumValue={itemList.length || 100}
-              minimumTrackTintColor="#CCC"
-              maximumTrackTintColor="#CCC"
-              trackStyle={styles.track}
-              thumbStyle={value ? styles.thumb : styles.thumbUnselected}
-              step={itemList ? 1 : 0}
-              onSlidingStart={onPress}
-              onSlidingComplete={(val) => {
-                onRelease();
-                onChange(val);
-              }}
-            />
-          </View>
+        <View style={styles.sliderWrapper}>
+          <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
+            <View ref={this.sliderRef}>
+              <SliderComponent
+                value={value || Math.ceil((itemList.length) / 2)}
+                minimumValue={1}
+                maximumValue={itemList.length || 100}
+                minimumTrackTintColor="#CCC"
+                maximumTrackTintColor="#CCC"
+                trackStyle={styles.track}
+                thumbStyle={value ? styles.thumb : styles.thumbUnselected}
+                step={itemList ? 1 : 0}
+                onSlidingStart={onPress}
+                onSlidingComplete={(val) => {
+                  onRelease();
+                  onChange(val);
+                }}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
 
         <View style={styles.labelContainer}>
           <View style={styles.labelBox}>
@@ -80,53 +170,8 @@ class Slider extends Component {
           </View>
         </View>
       </View>
-    )
+    );
   }
 }
 
-const styles = StyleSheet.create({
-  container: { alignItems: 'center', paddingTop: 20 },
-  sliderWrapper: {
-    width: '100%',
-    justifyContent: 'center',
-    // transform: [{ rotate: '-90deg' }],
-    paddingLeft: 35,
-    paddingRight: 35,
-  },
-  track: {
-    height: 4,
-    borderRadius: 2,
-  },
-  thumbUnselected: {
-    width: 35,
-    height: 35,
-    borderRadius: 35 / 2,
-    backgroundColor: 'transparent',
-    borderColor: '#919191',
-    borderWidth: 2,
-    elevation: 2,
-    borderStyle: "dotted",
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-  },
-  thumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 26 / 2,
-    backgroundColor: colors.primary,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-  },
-  label: { textAlign: 'center' },
-  iconWrapper: { justifyContent: 'center', alignItems: 'center' },
-  icon: { width: 45, height: 45, resizeMode: 'cover' },
-  labelContainer: { width: '100%', justifyContent: 'space-between', flexDirection: 'row' },
-  labelBox: { width: 100 },
-})
-
-export { Slider }
+export { Slider };
