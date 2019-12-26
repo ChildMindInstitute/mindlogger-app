@@ -1,2 +1,5 @@
 app/widgets/VisualStimulusResponse/web-src/*
 **/native-base-theme
+**/*.html
+**/*.md
+**/*.sh
