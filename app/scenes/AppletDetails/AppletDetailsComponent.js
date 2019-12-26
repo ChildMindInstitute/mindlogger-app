@@ -49,10 +49,10 @@ class AppletDetailsComponent extends React.Component {
     };
 
     const items = Object.keys(appletData);
-    //R.forEach(mapper, appletData.responses);
+    // R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
     // items.map(item => mapper(appletData.responses[item]));
-    //items.map(item => mapper(appletData.responses[item]));
+    // items.map(item => mapper(appletData.responses[item]));
 
     if (allDates.length) {
       const maxDate = moment.max(allDates.map(d => moment(d)));

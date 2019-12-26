@@ -94,7 +94,7 @@ test('appletTransformJson: ema-hbn', () => {
     schedule: {},
     groupId: ['12345'],
     about: {
-      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md'
+      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md',
     },
     image: 'https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg',
     description: {
