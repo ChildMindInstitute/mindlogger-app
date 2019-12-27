@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import moment from 'moment';
-import R from 'ramda';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -49,10 +48,10 @@ class AppletDetailsComponent extends React.Component {
     };
 
     const items = Object.keys(appletData);
-    //R.forEach(mapper, appletData.responses);
+    // R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
     // items.map(item => mapper(appletData.responses[item]));
-    //items.map(item => mapper(appletData.responses[item]));
+    // items.map(item => mapper(appletData.responses[item]));
 
     if (allDates.length) {
       const maxDate = moment.max(allDates.map(d => moment(d)));

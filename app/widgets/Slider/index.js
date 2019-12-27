@@ -69,6 +69,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   labelBox: { width: 100 },
+  knobLabel: {
+    position: 'absolute',
+    bottom: 40,
+    minWidth: 50,
+  },
 });
 
 
@@ -95,21 +100,49 @@ class Slider extends Component {
 
   sliderRef = React.createRef();
 
-  tapSliderHandler = (evt) => {
-    const { onChange, config: { itemList } } = this.props;
+  state = {
+    currentValue: null,
+    sliderWidth: 0,
+  };
+
+  measureSliderWidth = () => {
+    const { value } = this.props;
 
     this.sliderRef.current.measure((fx, fy, width) => {
-      const calculatedValue = Math.ceil(
-        Math.abs(
-          (evt.nativeEvent.locationX / width),
-        ).toFixed(1) * itemList.length,
-      );
-
-      onChange(calculatedValue);
+      this.setState({ sliderWidth: width, currentValue: value });
     });
   };
 
+  tapSliderHandler = (evt) => {
+    const { sliderWidth } = this.state;
+    const { onChange, config: { itemList } } = this.props;
+
+    const calculatedValue = Math.ceil(
+      Math.abs(
+        (evt.nativeEvent.locationX / sliderWidth),
+      ).toFixed(1) * itemList.length,
+    );
+
+    onChange(calculatedValue);
+    this.setState({ currentValue: calculatedValue });
+  };
+
+  /*
+  * Magic number 20 is a vertical padding of the parent component
+  * */
+  calculateLabelPosition = () => {
+    const { config: { itemList } } = this.props;
+    const { currentValue, sliderWidth } = this.state;
+
+    const left = Math.abs(
+      Math.ceil(currentValue * sliderWidth / itemList.length) - (20 / currentValue),
+    );
+
+    return left < 20 ? 20 : left;
+  };
+
   render() {
+    const { currentValue } = this.state;
     const {
       config: {
         maxValue,
@@ -121,13 +154,24 @@ class Slider extends Component {
       value,
       onRelease,
     } = this.props;
+
+    const left = this.calculateLabelPosition();
+
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
+          {!!currentValue && (
+          <View style={[styles.knobLabel, { left }]}>
+            <Text style={{ fontSize: 10, textAlign: 'center' }}>
+              {currentValue}
+            </Text>
+          </View>
+          )}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
-            <View ref={this.sliderRef}>
+            <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
                 value={value || Math.ceil((itemList.length) / 2)}
+                onValueChange={value => this.setState({ currentValue: value })}
                 minimumValue={1}
                 maximumValue={itemList.length || 100}
                 minimumTrackTintColor="#CCC"

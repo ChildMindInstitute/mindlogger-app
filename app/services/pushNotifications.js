@@ -1,4 +1,4 @@
-import { PushNotificationIOS, Platform } from 'react-native';
+import { PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 // import moment from 'moment';
 
@@ -36,7 +36,7 @@ export const initializePushNotifications = (onNotification) => {
 // }
 
 export const scheduleNotifications = (activities) => {
-  PushNotificationIOS.setApplicationIconBadgeNumber(1)
+  PushNotificationIOS.setApplicationIconBadgeNumber(1);
   PushNotification.cancelAllLocalNotifications();
   // const now = moment();
   // const lookaheadDate = moment().add(1, 'month');
@@ -62,7 +62,7 @@ export const scheduleNotifications = (activities) => {
     // /* end easy debugging section */
 
     scheduleDateTimes.forEach((dateTime) => {
-      let ugctime = new Date(dateTime.valueOf())
+      const ugctime = new Date(dateTime.valueOf());
       notifications.push({
         timestamp: ugctime,
         niceTime: dateTime.format(),

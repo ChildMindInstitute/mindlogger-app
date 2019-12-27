@@ -87,8 +87,8 @@ export const getSchedule = (authToken, timezone) => get(
   { timezone },
 );
 
-export const getApplets = (authToken, userId) => get(
-  `user/applets`,
+export const getApplets = (authToken) => get(
+  'user/applets',
   authToken,
   { role: 'user' },
 );
