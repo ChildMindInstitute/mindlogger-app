@@ -39,15 +39,8 @@ class AppletDetailsComponent extends React.Component {
     // TODO: a quick hack to add a dot for today's date
     // if the user has responded today. This is instead of
     // refreshing all the applets
-    const { applet, appletData } = this.props;
-    let allDates = [];
-    const mapper = (resp) => {
-      const d = resp.map(r => r.date);
-      allDates = allDates.concat(d);
-      return allDates;
-    };
-
-    const items = Object.keys(appletData);
+    const { applet } = this.props;
+    const allDates = [];
     // R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
     // items.map(item => mapper(appletData.responses[item]));

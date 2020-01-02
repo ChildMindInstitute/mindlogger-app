@@ -6,8 +6,6 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
-import { BodyText, Hyperlink } from '../../components/core';
-import JoinDemoApplets from '../../components/JoinDemoApplets';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 
 const styles = StyleSheet.create({
@@ -36,7 +34,6 @@ const AppletListComponent = ({
   invites,
   isDownloadingApplets,
   title,
-  primaryColor,
   onPressDrawer,
   onPressRefresh,
   onPressAbout,
@@ -138,7 +135,6 @@ AppletListComponent.propTypes = {
   onPressRefresh: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
-  primaryColor: PropTypes.string.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
 };

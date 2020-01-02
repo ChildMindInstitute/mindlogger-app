@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'react-native';
-import { Container, Button, H3, Text, Item, Label, Input, Form, View, Header, Right, Row, Body, ListItem, CheckBox } from 'native-base';
+import { Container, Button, Text, Item, Form, View, Row, CheckBox } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 import styles from './styles';
@@ -25,7 +25,6 @@ export default class Consent extends Component { // eslint-disable-line
     }
 
     render() {
-      const { login } = this.props;
       const { content, storage, contact } = this.state;
       return (
         <Container>
