@@ -51,7 +51,8 @@ Drawing.defaultProps = {
 
 Drawing.propTypes = {
   config: PropTypes.shape({
-    imageSource: PropTypes.object,
+    instruction: PropTypes.string,
+    backgroundImage: PropTypes.string,
   }),
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
