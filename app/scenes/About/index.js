@@ -11,7 +11,7 @@ import { skinSelector } from '../../state/app/app.selectors';
 
 const logoImage = require('../../../img/color_logo.png');
 
-const text = 'This app is part of the MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org). While the app can easily be configured for many different uses, we designed it with the specific application of assessing mental health and cognitive abilities in mind. It can collect data in a variety of ways, from conventional surveys to audio, touch screen, and movement recordings. There are three ways to interact with MindLogger: as an administrator, a user, or a viewer. An administrator logs into a website, and selects or creates activities to build a version of the app. Users log in to that version of the app and perform those activities. Viewers are given permission to view data for specific users on an online dashboard. We hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org. Cheers, Arno Klein';
+const text = 'This app is part of the MindLogger data collection platform created by the MATTER Lab at the Child Mind Institute (matter.childmind.org). While the app can easily be configured for many different uses, we designed it with the specific application of assessing mental health and cognitive abilities in mind. It can collect data in a variety of ways, including checkboxes, sliders, text entry, audio and camera recording, and drawing. A manager logs into a website and selects or creates activities to build an applet. Users log in to the app and perform those activities. Reviewers are given permission to view data for specific users. We hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org. Cheers, MATTER Lab team';
 
 class AboutScreen extends Component { // eslint-disable-line
     openAboutApp = () => {
@@ -56,8 +56,8 @@ class AboutScreen extends Component { // eslint-disable-line
             <View>
               <View style={styles.headerText}>
                 {appletsWithInfo > 0
-                  ? <Text>Find out more about each of your Activity Sets and about the MindLogger platform.</Text>
-                  : <Text>Find out more about the MindLogger data collection and analysis platform by tapping "About MindLogger" below.</Text>
+                  ? <Text>Find out more about each of your applets and about the MindLogger platform.</Text>
+                  : <Text>Find out more about the MindLogger data collection platform by tapping "About MindLogger" below.</Text>
                 }
               </View>
               <View style={styles.buttons}>
