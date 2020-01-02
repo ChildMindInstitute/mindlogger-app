@@ -1,4 +1,4 @@
-import { PushNotificationIOS, Platform } from 'react-native';
+import { PushNotificationIOS } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 // import moment from 'moment';
 
