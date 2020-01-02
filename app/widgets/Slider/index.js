@@ -74,6 +74,10 @@ const styles = StyleSheet.create({
     bottom: 40,
     minWidth: 50,
   },
+  knobLabelText: {
+    fontSize: 10,
+    textAlign: 'center',
+  },
 });
 
 
@@ -131,14 +135,24 @@ class Slider extends Component {
   * Magic number 20 is a vertical padding of the parent component
   * */
   calculateLabelPosition = () => {
-    const { config: { itemList } } = this.props;
+    const {
+      config: { itemList },
+    } = this.props;
     const { currentValue, sliderWidth } = this.state;
+    const minValue = 1;
+    const maxValue = itemList.length;
 
-    const left = Math.abs(
-      Math.ceil(currentValue * sliderWidth / itemList.length) - (20 / currentValue),
+    if (currentValue === minValue) {
+      return 20;
+    }
+    if (currentValue === maxValue) {
+      return sliderWidth;
+    }
+
+    return (
+      sliderWidth * (currentValue - minValue) / (itemList.length - minValue)
+      + (20 / (currentValue - minValue))
     );
-
-    return left < 20 ? 20 : left;
   };
 
   render() {
@@ -162,7 +176,7 @@ class Slider extends Component {
         <View style={styles.sliderWrapper}>
           {!!currentValue && (
           <View style={[styles.knobLabel, { left }]}>
-            <Text style={{ fontSize: 10, textAlign: 'center' }}>
+            <Text style={styles.knobLabelText}>
               {currentValue}
             </Text>
           </View>
