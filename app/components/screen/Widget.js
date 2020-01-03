@@ -21,7 +21,7 @@ import {
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 
-const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => {
+const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onContentError }) => {
   if (screen.inputType === 'radio'
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
     return (
@@ -194,6 +194,8 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease }) => 
   if (screen.inputType === 'markdown-message') {
     return null;
   }
+
+  onContentError();
   return <WidgetError />;
 };
 
@@ -207,6 +209,7 @@ Widget.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
+  onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,

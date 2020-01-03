@@ -42,10 +42,10 @@ export const getLastPos = (index, ar) => {
   return -1;
 };
 
-export const getNextLabel = (index, visibility, activity, responses) => {
+export const getNextLabel = (index, visibility, activity, responses, isContentError) => {
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index]);
-  if (!isValid) {
+  if (!isValid || isContentError) {
     return SKIP;
   }
 
@@ -60,10 +60,10 @@ export const getNextLabel = (index, visibility, activity, responses) => {
 };
 
 // If item has a valid response, or is skippable, then next is enabled
-export const isNextEnabled = (index, activity, responses) => {
+export const isNextEnabled = (index, activity, responses, isContentError) => {
   const isValid = checkValidity(activity.items[index], responses[index]);
   const isSkippable = checkSkippable(activity, activity.items[index]);
-  return isValid || isSkippable;
+  return isValid || isSkippable || isContentError;
 };
 
 export const isPrevEnabled = (index, activity) => {
