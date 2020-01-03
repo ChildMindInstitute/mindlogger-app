@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StatusBar, View, StyleSheet } from 'react-native';
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
@@ -55,6 +55,8 @@ const Activity = ({
   const fullScreen = currentItem.fullScreen || activity.fullScreen;
   const autoAdvance = currentItem.autoAdvance || activity.autoAdvance;
 
+  const [isContentError, setContentError] = useState(false);
+
   return (
     <Container>
       <StatusBar hidden />
@@ -69,6 +71,7 @@ const Activity = ({
           }
         }}
         authToken={authToken}
+        onContentError={() => setContentError(true)}
       />
       {!fullScreen && (
         <View style={styles.buttonArea}>
@@ -76,9 +79,18 @@ const Activity = ({
             <ActProgress index={currentScreen} length={activity.items.length} />
           )}
           <ActivityButtons
-            nextLabel={getNextLabel(currentScreen, itemVisibility, activity, responses)}
-            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
-            onPressNext={nextScreen}
+            nextLabel={getNextLabel(
+              currentScreen,
+              itemVisibility,
+              activity,
+              responses,
+              isContentError,
+            )}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses, isContentError)}
+            onPressNext={() => {
+              setContentError(false);
+              nextScreen();
+            }}
             prevLabel={getPrevLabel(currentScreen, itemVisibility)}
             prevEnabled={isPrevEnabled(currentScreen, activity)}
             onPressPrev={prevScreen}

@@ -39,6 +39,7 @@ class ActivityScreens extends React.PureComponent {
       currentScreen,
       onChange,
       authToken,
+      onContentError,
     } = this.props;
     const { activeScreens, direction } = this.state;
     return (
@@ -60,6 +61,7 @@ class ActivityScreens extends React.PureComponent {
               onChange={onChange}
               authToken={authToken}
               isCurrent={index === currentScreen}
+              onContentError={onContentError}
             />
           </SlideInView>
         ))}
@@ -74,6 +76,7 @@ ActivityScreens.propTypes = {
   currentScreen: PropTypes.number.isRequired,
   authToken: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  onContentError: PropTypes.func.isRequired,
 };
 
 export default ActivityScreens;

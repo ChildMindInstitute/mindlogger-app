@@ -132,7 +132,7 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { screen, answer, onChange, isCurrent } = this.props;
+    const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
     return (
       <View style={styles.outer}>
@@ -174,6 +174,7 @@ class ActivityScreen extends Component {
                 screen={screen}
                 onPress={() => { this.setState({ scrollEnabled: false }); }}
                 onRelease={() => { this.setState({ scrollEnabled: true }); }}
+                onContentError={onContentError}
               />
             )
           }
@@ -196,6 +197,7 @@ ActivityScreen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
+  onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
 };
 
