@@ -80,9 +80,9 @@ MultiSelect.defaultProps = {
 
 MultiSelect.propTypes = {
   config: PropTypes.shape({
-    options: PropTypes.array,
-    optionsMax: PropTypes.number,
-    optionsMin: PropTypes.number,
+    itemList: PropTypes.array,
+    minValue: PropTypes.number,
+    maxValue: PropTypes.number,
   }).isRequired,
   value: PropTypes.array,
   onChange: PropTypes.func.isRequired,
