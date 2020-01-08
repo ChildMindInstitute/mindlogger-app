@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.13] - 2019-01-08
+- :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
+
 ## [0.9.10]‒[0.9.11] - 2019-12-17
 - :lipstick: Fix font size scaling from device's settings
 - :lipstick: Change radio and checkbox buttons appearance
