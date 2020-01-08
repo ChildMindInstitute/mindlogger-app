@@ -1,5 +1,3 @@
-import { colors } from '../../theme';
-
 const React = require('react-native');
 
 const { Platform } = React;
