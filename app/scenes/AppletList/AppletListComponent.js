@@ -6,8 +6,6 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
-import { BodyText, Hyperlink } from '../../components/core';
-import JoinDemoApplets from '../../components/JoinDemoApplets';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 
 const styles = StyleSheet.create({
