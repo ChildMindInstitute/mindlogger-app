@@ -50,9 +50,23 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line
 class TabsView extends React.Component {
 
-  render() {
-    const { applets, onPress, currentApplet } = this.props;
+  sortedAlphabetically = (applets) => {
+    applets.sort((a, b) => {
+      if (a.name.en < b.name.en) {
+        return -1;
+      }
+      if (a.name.en > b.name.en) {
+        return 1;
+      }
+      return 0;
+    });
+  };
 
+  render() {
+    const { applets, onPress, currentApplet, sortedAlphabetically } = this.props;
+    if (sortedAlphabetically) {
+      this.sortedAlphabetically(applets);
+    }
     const renderBorder = (
       <Svg height={size} width={size} style={{ position: 'absolute' }}>
         <Defs>
@@ -107,9 +121,12 @@ class TabsView extends React.Component {
 
 
 TabsView.propTypes = {
+  sortedAlphabetically: PropTypes.bool,
   applets: PropTypes.array.isRequired,
   onPress: PropTypes.func.isRequired,
   currentApplet: PropTypes.object.isRequired,
 };
-
+TabsView.defaultProps = {
+  sortedAlphabetically: true,
+};
 export default TabsView;
