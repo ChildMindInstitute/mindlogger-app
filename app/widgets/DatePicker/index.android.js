@@ -11,7 +11,7 @@ const openDatePicker = (date, callback) => {
         year,
         month,
         day,
-      });
+      }, true);
     }
   });
 };

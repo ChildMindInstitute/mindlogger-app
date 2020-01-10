@@ -73,7 +73,7 @@ export class DatePicker extends React.Component {
                   year: date.getFullYear(),
                   month: date.getMonth(),
                   day: date.getDate(),
-                });
+                }, true);
                 this.setModalVisible(false);
               }}
             >

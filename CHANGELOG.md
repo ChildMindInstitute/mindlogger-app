@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.15] - 2020-01-10
+### Change behavior
+- When the user selects Okay on a DatePicker it progresses him to the next question
+
 ## [0.9.12] - 2020-01-07
 ### Added
 - :sparkles: Addig flag to request Lock Screen Notifications for Push Notifications
