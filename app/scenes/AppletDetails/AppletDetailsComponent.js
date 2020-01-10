@@ -1,15 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, List } from 'native-base';
 import moment from 'moment';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
 import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
+import AppletSmallList from './AppletSmallList';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
+import AppletImage from '../../components/AppletImage';
 
 
 const styles = StyleSheet.create({
@@ -40,6 +42,7 @@ class AppletDetailsComponent extends React.Component {
     // if the user has responded today. This is instead of
     // refreshing all the applets
     const { applet, appletData } = this.props;
+
     let allDates = [];
     const mapper = (resp) => {
       const d = resp.map(r => r.date);
@@ -106,8 +109,10 @@ class AppletDetailsComponent extends React.Component {
 
   render() {
     const {
+      applets,
       applet,
       onPressSettings,
+      onPressApplet,
       hasInvites,
       onPressBack,
       primaryColor,
@@ -143,8 +148,9 @@ class AppletDetailsComponent extends React.Component {
             // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
             uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
           }}
-        >
+        > 
           <Content>
+            {applets.length > 1 && <AppletSmallList applets={applets} currentApplet={applet} onPress={onPressApplet} />}
             {this.renderActiveTab()}
           </Content>
         </ImageBackground>
@@ -158,10 +164,12 @@ class AppletDetailsComponent extends React.Component {
 }
 
 AppletDetailsComponent.propTypes = {
+  applets: PropTypes.array.isRequired,
   applet: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onPressApplet: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,

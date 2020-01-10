@@ -16,7 +16,7 @@ const getURL = (url) => {
   return url;
 };
 
-const AppletImage = ({ applet, size = 64 }) => {
+const AppletImage = ({ applet, size = 64, withCircle = false }) => {
   // Display the image if there is one
   if (typeof applet.image !== 'undefined') {
     return (
@@ -36,6 +36,7 @@ const AppletImage = ({ applet, size = 64 }) => {
         height: size,
         justifyContent: 'center',
         alignItems: 'center',
+
         // backgroundColor: 'rgb(100, 200, 150)',
       }}
     >
@@ -45,8 +46,13 @@ const AppletImage = ({ applet, size = 64 }) => {
             <Stop offset="0" stopColor="#24A3FF" stopOpacity="1" />
             <Stop offset="1" stopColor="#35FDB5" stopOpacity="1" />
           </LinearGradient>
+          <LinearGradient id="grad-circle" x1="0" y1="0" x2={size} y2={size}>
+            <Stop offset="0" stopColor="red" stopOpacity="1" />
+            <Stop offset="1" stopColor="orange" stopOpacity="1" />
+          </LinearGradient>
         </Defs>
-        <Circle cx={size / 2} cy={size / 2} r={size / 2} fill="url(#grad)" />
+        <Circle cx={size / 2} cy={size / 2} r={withCircle ? ((size / 2) - 1) : size / 2} fill="url(#grad)" stroke={withCircle ? "url(#grad-circle)" : "none"} strokeLinecap="round" strokeWidth="2" />
+        { withCircle && <Circle cx={size / 2} cy={size / 2} r={(size / 2) - 3} stroke={"white"} fill="url(#grad)" strokeLinecap="round" strokeWidth="2" />}
       </Svg>
 
       <Text

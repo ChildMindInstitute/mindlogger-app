@@ -5,9 +5,9 @@ import { Actions } from 'react-native-router-flux';
 import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector, currentAppletResponsesSelector } from '../../state/responses/responses.selectors';
-import { invitesSelector } from '../../state/applets/applets.selectors';
+import { invitesSelector, appletsSelector } from '../../state/applets/applets.selectors';
 import { getAppletResponseData } from '../../state/applets/applets.thunks';
-import { setCurrentActivity } from '../../state/app/app.actions';
+import { setCurrentActivity, setCurrentApplet } from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 
 class AppletDetails extends Component {
@@ -21,8 +21,15 @@ class AppletDetails extends Component {
     Actions.replace('applet_list');
   }
 
+  handlePressApplet = (applet) => {
+    const { setCurrentApplet } = this.props;
+    setCurrentApplet(applet.id);
+    Actions.push('applet_details');
+  }
+
   render() {
     const {
+      applets,
       currentApplet,
       inProgress,
       skin,
@@ -36,12 +43,14 @@ class AppletDetails extends Component {
     // console.log('applet data is', appletData[currentApplet.id.split('/')[1]] || {});
     return (
       <AppletDetailsComponent
+        applets={applets}
         applet={currentApplet}
         appletData={appletData}
         getAppletResponseData={getAppletResponseData}
         inProgress={inProgress}
         onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
+        onPressApplet={this.handlePressApplet}
         onPressBack={this.handleBack}
         onPressSettings={() => Actions.push('applet_settings')}
         primaryColor={skin.colors.primary}
@@ -56,9 +65,11 @@ AppletDetails.defaultProps = {
 };
 
 AppletDetails.propTypes = {
+  applets: PropTypes.array.isRequired,
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
+  setCurrentApplet: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
   hasInvites: PropTypes.bool.isRequired,
@@ -67,6 +78,7 @@ AppletDetails.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  applets: appletsSelector(state),
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
@@ -77,6 +89,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
+  setCurrentApplet,
   startResponse,
   getAppletResponseData,
 };
