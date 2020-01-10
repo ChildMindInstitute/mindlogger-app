@@ -1,3 +1,5 @@
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+
 const styles = {
   content: {
     flex: 1,

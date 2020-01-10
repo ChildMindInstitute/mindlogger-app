@@ -1,7 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
+import {
+  StyleSheet,
+  StatusBar,
+  View,
+  ImageBackground,
+  ScrollView,
+} from 'react-native';
+import {
+  Container,
+  Header,
+  Title,
+  Content,
+  Button,
+  Icon,
+  Left,
+  Body,
+  Right,
+} from 'native-base';
 import moment from 'moment';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
@@ -10,7 +26,7 @@ import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
-
+import AppletTabs from '../../components/AppletTabs';
 
 const styles = StyleSheet.create({
   container: {
@@ -27,7 +43,6 @@ const styles = StyleSheet.create({
 
 // eslint-disable-next-line
 class AppletDetailsComponent extends React.Component {
-
   constructor() {
     super();
     this.state = {
@@ -66,42 +81,48 @@ class AppletDetailsComponent extends React.Component {
   // eslint-disable-next-line
   renderActiveTab() {
     const { selectedTab } = this.state;
-    const {
-      applet,
-      onPressActivity,
-      inProgress,
-      appletData,
-    } = this.props;
+    const { applet, onPressActivity, inProgress, appletData } = this.props;
 
     const responseDates = this.getResponseDates() || [];
 
     switch (selectedTab) {
       case 'survey':
         return (
-          <View style={{ flex: 1 }}>
+          <ScrollView style={{ flex: 1 }}>
             <AppletCalendar responseDates={responseDates} />
             <ActivityList
               applet={applet}
               inProgress={inProgress}
               onPressActivity={onPressActivity}
             />
-          </View>
+          </ScrollView>
         );
       case 'data':
         return (
-          <View>
+          <ScrollView style={{ flex: 1 }}>
             <AppletCalendar responseDates={responseDates} />
-            <AppletData
-              applet={applet}
-              appletData={appletData}
-            />
-          </View>
+            <AppletData applet={applet} appletData={appletData} />
+          </ScrollView>
         );
       case 'about':
-        return (<AppletAbout about={applet.about ? applet.about.en : ''} />);
+        return (
+          <ScrollView style={{ flex: 1 }}>
+            <AppletAbout about={applet.about ? applet.about.en : ''} />
+          </ScrollView>
+        );
       default:
         break;
     }
+  }
+
+  renderTab() {
+    const { applets } = this.props;
+
+    if (applets.length < 2) {
+      return null;
+    }
+
+    return <AppletTabs />;
   }
 
   render() {
@@ -121,10 +142,7 @@ class AppletDetailsComponent extends React.Component {
         <Header style={{ backgroundColor: primaryColor }}>
           <Left>
             <Button transparent onPress={onPressBack}>
-              <Icon
-                ios="ios-home"
-                android="md-home"
-              />
+              <Icon ios="ios-home" android="md-home" />
               {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>
@@ -137,14 +155,17 @@ class AppletDetailsComponent extends React.Component {
             </Button>
           </Right>
         </Header>
+
         <ImageBackground
-          style={{ width: '100%', height: '100%', flex: 1 }}
+          style={{ width: '100%', flex: 1 }}
           source={{
             // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
-            uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
+            uri:
+              'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
           }}
         >
           <Content>
+            {this.renderTab()}
             {this.renderActiveTab()}
           </Content>
         </ImageBackground>
@@ -159,6 +180,7 @@ class AppletDetailsComponent extends React.Component {
 
 AppletDetailsComponent.propTypes = {
   applet: PropTypes.object.isRequired,
+  applets: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,

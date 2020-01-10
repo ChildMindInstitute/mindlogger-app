@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
-import { Router, Scene, Lightbox, Actions, Modal } from 'react-native-router-flux';
+import { Router, Scene, Lightbox, Actions, Stack, Drawer, ActionConst, Modal } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 // Scenes

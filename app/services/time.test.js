@@ -102,11 +102,7 @@ test('schedule notifications twice daily on a one day schedule', () => {
     notificationMoment('20191112 12:30'),
     notificationMoment('20191112 18:30'),
   ];
-  const actualNotifications = getScheduledNotifications(
-    oneDaySchedule,
-    now,
-    twiceDailyNotifications,
-  );
+  const actualNotifications = getScheduledNotifications(oneDaySchedule, now, twiceDailyNotifications);
   expect(actualNotifications).toEqual(expectedNotifications);
 });
 
@@ -116,11 +112,7 @@ test('schedule notifications twice daily on a one day schedule', () => {
     notificationMoment('20191112 12:30'), // notifications for next and only day
     notificationMoment('20191112 18:30'),
   ];
-  const actualNotifications = getScheduledNotifications(
-    oneDaySchedule,
-    now,
-    twiceDailyNotifications,
-  );
+  const actualNotifications = getScheduledNotifications(oneDaySchedule, now, twiceDailyNotifications);
   expect(actualNotifications).toEqual(expectedNotifications);
 });
 
@@ -136,11 +128,7 @@ test('schedule notifications twice daily on a weekday schedule starting on the w
     notificationMoment('20191121 12:30'),
     notificationMoment('20191121 18:30'),
   ];
-  const actualNotifications = getScheduledNotifications(
-    weekdaySchedule,
-    now,
-    twiceDailyNotifications,
-  );
+  const actualNotifications = getScheduledNotifications(weekdaySchedule, now, twiceDailyNotifications);
   expect(actualNotifications).toEqual(expectedNotifications);
 });
 
@@ -158,11 +146,7 @@ test('schedule notifications twice daily on a weekday schedule starting on a Mon
     notificationMoment('20191122 12:30'),
     notificationMoment('20191122 18:30'),
   ];
-  const actualNotifications = getScheduledNotifications(
-    weekdaySchedule,
-    now,
-    twiceDailyNotifications,
-  );
+  const actualNotifications = getScheduledNotifications(weekdaySchedule, now, twiceDailyNotifications);
   expect(actualNotifications).toEqual(expectedNotifications);
 });
 

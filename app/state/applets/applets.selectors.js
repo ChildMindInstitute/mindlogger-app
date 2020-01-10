@@ -32,18 +32,12 @@ export const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     if (output[uri].lastScheduledResponse && lastScheduled) {
-      lastScheduledResponse = moment.max(
-        moment(output[uri].lastScheduledResponse),
-        moment(lastScheduled),
-      );
+      lastScheduledResponse = moment.max(moment(output[uri].lastScheduledResponse), moment(lastScheduled));
     }
 
     let nextScheduledResponse = nextScheduled;
     if (output[uri].nextScheduledResponse && nextScheduled) {
-      nextScheduledResponse = moment.min(
-        moment(output[uri].nextScheduledResponse),
-        moment(nextScheduled),
-      );
+      nextScheduledResponse = moment.min(moment(output[uri].nextScheduledResponse), moment(nextScheduled));
     }
 
     output[uri] = {

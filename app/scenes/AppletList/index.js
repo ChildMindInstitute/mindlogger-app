@@ -10,21 +10,26 @@ import {
 import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
-import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
-import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
-
+import {
+  setCurrentApplet,
+  toggleMobileDataAllowed,
+} from '../../state/app/app.actions';
+import {
+  skinSelector,
+  mobileDataAllowedSelector,
+} from '../../state/app/app.selectors';
 
 class AppletList extends Component {
   refresh = () => {
     const { sync } = this.props;
     sync();
-  }
+  };
 
   handlePressApplet = (applet) => {
     const { setCurrentApplet } = this.props;
-    setCurrentApplet(applet.id);
+    setCurrentApplet(applet === 'all' ? applet : applet.id);
     Actions.push('applet_details');
-  }
+  };
 
   render() {
     const {
@@ -46,7 +51,9 @@ class AppletList extends Component {
         primaryColor={skin.colors.primary}
         onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
-        onPressAbout={() => { Actions.push('about_app'); }}
+        onPressAbout={() => {
+          Actions.push('about_app');
+        }}
         onPressApplet={this.handlePressApplet}
         mobileDataAllowed={mobileDataAllowed}
         toggleMobileDataAllowed={toggleMobileDataAllowed}
@@ -67,7 +74,7 @@ AppletList.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   applets: appletsSelector(state),
   invites: invitesSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),

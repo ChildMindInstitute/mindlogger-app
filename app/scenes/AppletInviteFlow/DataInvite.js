@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 // import _ from 'lodash';
 import { Text, View } from 'native-base';
+import { Markdown } from '../../components/core/Markdown';
 import { SubHeading } from '../../components/core/SubHeading';
 import DataIcon from '../../components/Icons/Data';
 import { colors } from '../../themes/colors';

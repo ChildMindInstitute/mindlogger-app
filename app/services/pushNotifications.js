@@ -17,7 +17,6 @@ export const initializePushNotifications = (onNotification) => {
       alert: true,
       badge: true,
       sound: true,
-      lockScreen: true,
     },
     visibility: 'public',
     popInitialNotification: true,

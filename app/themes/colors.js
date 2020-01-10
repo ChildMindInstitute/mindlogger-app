@@ -8,4 +8,5 @@ export const colors = {
   alert: 'rgb(230, 50, 50)',
   blue: '#005fa3',
   lightBlue: '#dbf2ff',
+  black: '#000',
 };
