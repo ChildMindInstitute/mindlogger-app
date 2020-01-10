@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { ScrollView, StyleSheet } from 'react-native';
-import { Container, H3, Text } from 'native-base';
 import { Markdown } from '../../components/core/Markdown';
 import { SubHeading } from '../../components/core/SubHeading';
 import AboutIcon from '../../components/Icons/About';
