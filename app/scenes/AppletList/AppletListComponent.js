@@ -9,6 +9,7 @@ import AppletInvite from '../../components/AppletInvite';
 import { BodyText, Hyperlink } from '../../components/core';
 import JoinDemoApplets from '../../components/JoinDemoApplets';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
+import AllApplets from '../../components/AllApplets';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,9 +84,11 @@ const AppletListComponent = ({
                 }
               }}
             />
-          )}
+                            )}
           contentContainerStyle={styles.activityListContainer}
         >
+          {applets.length > 0
+                        && <AllApplets onPress={onPressApplet} key="allAppletsKey" />}
 
           {applets.map(applet => (
             <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
@@ -96,11 +99,12 @@ const AppletListComponent = ({
               : <JoinDemoApplets />
           } */}
           {
-            invites.length
-              ? <AppletInvite /> : null
-          }
+                            invites.length
+                              ? <AppletInvite /> : null
+                        }
 
           <View
+            key="aboutMindLoggerKey"
             style={{
               marginTop: 20,
               marginBottom: 40,
@@ -116,8 +120,7 @@ const AppletListComponent = ({
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}
-              >
-                About MindLogger
+              >About MindLogger
               </Text>
             </TouchableOpacity>
           </View>

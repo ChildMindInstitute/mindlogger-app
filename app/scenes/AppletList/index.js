@@ -12,6 +12,7 @@ import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
+import { ALL_APPLETS_ID } from '../../components/AllApplets';
 
 
 class AppletList extends Component {
@@ -22,8 +23,12 @@ class AppletList extends Component {
 
   handlePressApplet = (applet) => {
     const { setCurrentApplet } = this.props;
-    setCurrentApplet(applet.id);
-    Actions.push('applet_details');
+    if (applet.id === ALL_APPLETS_ID) {
+      // todo adasd
+    } else {
+      setCurrentApplet(applet.id);
+      Actions.push('applet_details');
+    }
   }
 
   render() {
