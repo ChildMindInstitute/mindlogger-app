@@ -22,9 +22,10 @@ class AppletList extends Component {
   }
 
   handlePressApplet = (applet) => {
-    const { setCurrentApplet } = this.props;
+    const { setCurrentApplet, applets } = this.props;
     if (applet.id === ALL_APPLETS_ID) {
-      // todo adasd
+      setCurrentApplet(applets[0].id);
+      Actions.push('applet_tabs');
     } else {
       setCurrentApplet(applet.id);
       Actions.push('applet_details');

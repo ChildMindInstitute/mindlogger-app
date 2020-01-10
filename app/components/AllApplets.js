@@ -36,7 +36,7 @@ const AllAppletsIcon = ({ size = 64 }) => {
         height: size,
         justifyContent: 'center',
         alignItems: 'center',
-        // backgroundColor: 'rgb(100, 200, 150)',
+        backgroundColor: 'white',
       }}
     >
 
@@ -45,8 +45,6 @@ const AllAppletsIcon = ({ size = 64 }) => {
           transform: [{ rotate: '180deg' }],
           fontFamily: theme.fontFamily,
           fontSize: size / 1.5,
-          // color: 'rgba(255, 255, 255, 0.8)',
-          // fontWeight: 'bold',
         }}
       >A
       </Text>
@@ -83,5 +81,5 @@ const AllApplets = ({ onPress }) => {
 AllApplets.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
-
+AllApplets.AllAppletsIcon = AllAppletsIcon;
 export default AllApplets;
