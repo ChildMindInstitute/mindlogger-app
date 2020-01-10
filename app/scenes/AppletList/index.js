@@ -13,6 +13,7 @@ import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { ALL_APPLETS_ID } from '../../components/AllApplets';
+import { sortAppletsAlphabetically } from '../../services/helper';
 
 
 class AppletList extends Component {
@@ -24,7 +25,9 @@ class AppletList extends Component {
   handlePressApplet = (applet) => {
     const { setCurrentApplet, applets } = this.props;
     if (applet.id === ALL_APPLETS_ID) {
-      setCurrentApplet(applets[0].id);
+      const sortedApplets = Object.assign([], applets);
+      sortAppletsAlphabetically(sortedApplets);
+      setCurrentApplet(sortedApplets[0].id);
       Actions.push('applet_tabs');
     } else {
       setCurrentApplet(applet.id);

@@ -6,6 +6,7 @@ import AppletImage from '../../components/AppletImage';
 import AllApplets, { ALL_APPLETS_ID } from '../../components/AllApplets';
 import theme from '../../themes/variables';
 import { colors } from '../../themes/colors';
+import { sortAppletsAlphabetically } from '../../services/helper';
 
 const size = 64;
 const fontSize = 12;
@@ -49,23 +50,44 @@ const styles = StyleSheet.create({
 
 // eslint-disable-next-line
 class TabsView extends React.Component {
+  fireOnInitial: false;
 
-  sortedAlphabetically = (applets) => {
-    applets.sort((a, b) => {
-      if (a.name.en < b.name.en) {
-        return -1;
-      }
-      if (a.name.en > b.name.en) {
-        return 1;
-      }
-      return 0;
-    });
-  };
+  onPress = (applet) => {
+    this.props.onPress(applet);
+    this.fireOnInitial = true;
+  }
+
+  renderTabs(applets, currentApplet, renderBorder) {
+    return (
+      <React.Fragment>
+        {applets.map(applet => (
+          <TouchableOpacity onPress={() => this.onPress(applet)} key={applet.id}>
+            <View style={[
+              styles.tab,
+              this.fireOnInitial
+                  && currentApplet.id === applet.id
+                  && { backgroundColor: colors.lightBlue },
+            ]}
+            >
+              <View style={styles.center}>
+                {renderBorder}
+                <View style={styles.tabImage}>
+                  <AppletImage applet={applet} size={scaleFactor * size} />
+                </View>
+              </View>
+              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.tabTitle}>{applet.name.en}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </React.Fragment>
+    );
+  }
 
   render() {
     const { applets, onPress, currentApplet, sortedAlphabetically } = this.props;
+    const data = Object.assign([], applets);
     if (sortedAlphabetically) {
-      this.sortedAlphabetically(applets);
+      sortAppletsAlphabetically(data);
     }
     const renderBorder = (
       <Svg height={size} width={size} style={{ position: 'absolute' }}>
@@ -84,8 +106,17 @@ class TabsView extends React.Component {
           horizontal
           style={styles.container}
         >
-          <TouchableOpacity onPress={() => onPress({ id: ALL_APPLETS_ID })} key="allApplets">
-            <View style={styles.tab}>
+          <TouchableOpacity
+            onPress={() => {
+              onPress({ id: ALL_APPLETS_ID });
+            }}
+            key="allApplets"
+          >
+            <View style={[
+              styles.tab,
+              this.fireOnInitial || { backgroundColor: colors.lightBlue },
+            ]}
+            >
               <View style={styles.center}>
                 {renderBorder}
                 <View style={styles.tabImage}>
@@ -96,23 +127,8 @@ class TabsView extends React.Component {
             </View>
           </TouchableOpacity>
 
-          {applets.map(applet => (
-            <TouchableOpacity onPress={() => onPress(applet)} key={applet.id}>
-              <View style={[
-                styles.tab,
-                currentApplet.id === applet.id && { backgroundColor: colors.lightBlue },
-              ]}
-              >
-                <View style={styles.center}>
-                  {renderBorder}
-                  <View style={styles.tabImage}>
-                    <AppletImage applet={applet} size={scaleFactor * size} />
-                  </View>
-                </View>
-                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.tabTitle}>{applet.name.en}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {this.renderTabs(data, currentApplet, renderBorder)}
+
         </ScrollView>
       </React.Fragment>
     );

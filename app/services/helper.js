@@ -81,3 +81,15 @@ export const getURL = (url) => {
 
   return transformedUrl;
 };
+
+export const sortAppletsAlphabetically = (applets) => {
+  applets.sort((a, b) => {
+    if (a.name.en < b.name.en) {
+      return -1;
+    }
+    if (a.name.en > b.name.en) {
+      return 1;
+    }
+    return 0;
+  });
+};
