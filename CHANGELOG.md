@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+
+## [0.9.13] - 2019-01-08
+- :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
+
 ## [0.9.12] - 2020-01-07
 ### Added
 - :sparkles: Addig flag to request Lock Screen Notifications for Push Notifications
