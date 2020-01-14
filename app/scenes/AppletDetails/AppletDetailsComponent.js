@@ -11,8 +11,6 @@ import AppletFooter from './AppletFooter';
 import AppletSmallList from './AppletSmallList';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
-import AppletImage from '../../components/AppletImage';
-
 
 const styles = StyleSheet.create({
   container: {
