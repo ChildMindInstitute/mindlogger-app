@@ -57,7 +57,7 @@ class AppletSmallList extends React.Component {
 };
 
 AppletSmallList.propTypes = {
-  applets: PropTypes.object.isRequired,
+  applets: PropTypes.array.isRequired,
   onPress: PropTypes.func.isRequired,
 };
 
