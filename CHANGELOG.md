@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+
+## [0.9.11]-[0.9.12] - 2020-01-14
+### Updated
+- Implemented tab header to AppletDetailsComponent
+- Updated AppletImage circle border
+
 ## [0.9.10]‒[0.9.11] - 2019-12-17
 - :lipstick: Fix font size scaling from device's settings
 - :lipstick: Change radio and checkbox buttons appearance
