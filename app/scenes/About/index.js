@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, Image, TouchableOpacity } from 'react-native';
+import { StatusBar, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { Container, Content, Button, H3, Text, Icon, View, Header, Right, Body, Title, Left, Toast } from 'native-base';
+import { Container, Content, Button, Text, Icon, View, Header, Right, Body, Title, Left } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import styles from './styles';
 import { appletsSelector } from '../../state/applets/applets.selectors';
 import { skinSelector } from '../../state/app/app.selectors';
-
-
-const logoImage = require('../../../img/color_logo.png');
-
-const text = 'This app is part of the MindLogger data collection platform created by the MATTER Lab at the Child Mind Institute (matter.childmind.org). While the app can easily be configured for many different uses, we designed it with the specific application of assessing mental health and cognitive abilities in mind. It can collect data in a variety of ways, including checkboxes, sliders, text entry, audio and camera recording, and drawing. A manager logs into a website and selects or creates activities to build an applet. Users log in to the app and perform those activities. Reviewers are given permission to view data for specific users. We hope that you find MindLogger to be useful! For more information, please visit matter.childmind.org. Cheers, MATTER Lab team';
 
 class AboutScreen extends Component { // eslint-disable-line
     openAboutApp = () => {

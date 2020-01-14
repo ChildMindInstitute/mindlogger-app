@@ -1,5 +1,3 @@
-import { StyleSheet } from 'react-native';
-
 const styles = {
   button: {
     backgroundColor: '#ff0',
