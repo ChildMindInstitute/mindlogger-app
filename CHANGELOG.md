@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 =======
 
-## [0.9.11]-[0.9.12] - 2020-01-14
-### Updated
+## [0.9.14] - 2020-01-14
+### Added
 - Implemented tab header to AppletDetailsComponent
 - Updated AppletImage circle border
+
+## [0.9.13] - 2019-01-08
+- :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
+
+## [0.9.12] - 2020-01-07
+### Added
+- :sparkles: Addig flag to request Lock Screen Notifications for Push Notifications
 
 ## [0.9.10]‒[0.9.11] - 2019-12-17
 - :lipstick: Fix font size scaling from device's settings
