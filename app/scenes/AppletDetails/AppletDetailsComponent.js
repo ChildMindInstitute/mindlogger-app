@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
-import { Container, Header, Title, Content, Button, Icon, Left, Body, Right, List } from 'native-base';
+import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import moment from 'moment';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
