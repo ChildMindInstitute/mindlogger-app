@@ -6,19 +6,21 @@ import theme from '../../themes/variables';
 import { colors } from '../../themes/colors';
 import AppletImage from '../../components/AppletImage';
 import { NotificationText } from '../../components/core/NotificationText';
-import AllApplets, { ALL_APPLETS_ID } from '../../components/AllApplets';
+import AllApplets from '../../components/AllApplets';
+import { isAllAppletsModel } from './AllAppletsModel';
 
 const size = 64;
 const fontSize = 12;
 const scaleFactor = 0.93;
 const padding = 5;
+export const tabHeight = size + 3 * padding + fontSize;
 
 const styles = StyleSheet.create({
   tab: {
     padding,
     overflow: 'hidden',
     width: size + 2 * padding,
-    height: size + 3 * padding + fontSize,
+    height: tabHeight,
   },
 
   center: {
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
 });
 
 const TabItem = ({ applet, onPress, selected }) => {
-  const numberOverdue = applet.id === ALL_APPLETS_ID ? 0 : applet.activities.reduce(
+  const numberOverdue = isAllAppletsModel(applet.id) ? 0 : applet.activities.reduce(
     (accumulator, activity) => (activity.isOverdue ? accumulator + 1 : accumulator),
     0,
   );
@@ -80,7 +82,7 @@ const TabItem = ({ applet, onPress, selected }) => {
           <View style={styles.center}>
             {renderBorder}
             <View style={styles.tabImage}>
-              {applet.id === ALL_APPLETS_ID
+              {isAllAppletsModel(applet.id)
                 ? <AllApplets.AllAppletsIcon size={scaleFactor * size} />
                 : <AppletImage applet={applet} size={scaleFactor * size} />}
             </View>

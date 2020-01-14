@@ -12,28 +12,25 @@ import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
 import { setCurrentApplet, toggleMobileDataAllowed } from '../../state/app/app.actions';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
-import { ALL_APPLETS_ID } from '../../components/AllApplets';
-import { sortAppletsAlphabetically } from '../../services/helper';
+import AllAppletsModel, { isAllAppletsModel } from '../AppletTabs/AllAppletsModel';
 
 
 class AppletList extends Component {
   refresh = () => {
     const { sync } = this.props;
     sync();
-  }
+  };
 
   handlePressApplet = (applet) => {
-    const { setCurrentApplet, applets } = this.props;
-    if (applet.id === ALL_APPLETS_ID) {
-      const sortedApplets = Object.assign([], applets);
-      sortAppletsAlphabetically(sortedApplets);
-      setCurrentApplet(sortedApplets[0].id);
+    const { setCurrentApplet } = this.props;
+    if (isAllAppletsModel(applet.id)) {
+      setCurrentApplet(AllAppletsModel.id);
       Actions.push('applet_tabs');
     } else {
       setCurrentApplet(applet.id);
       Actions.push('applet_details');
     }
-  }
+  };
 
   render() {
     const {

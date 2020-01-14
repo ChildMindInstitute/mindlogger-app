@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, Text } from 'react-native';
 import { TouchBox, SubHeading } from './core';
 import theme from '../themes/variables';
+import AllAppletsModel from '../scenes/AppletTabs/AllAppletsModel';
 
 const styles = StyleSheet.create({
   box: {
@@ -25,8 +26,6 @@ const styles = StyleSheet.create({
     right: 10,
   },
 });
-
-export const ALL_APPLETS_ID = 'allAppletsId';
 
 const AllAppletsIcon = ({ size = 64 }) => {
   return (
@@ -60,7 +59,7 @@ AllAppletsIcon.propTypes = {
 const AllApplets = ({ onPress }) => {
   return (
     <View style={styles.box}>
-      <TouchBox onPress={() => onPress({ id: ALL_APPLETS_ID })}>
+      <TouchBox onPress={() => onPress(AllAppletsModel)}>
         <View style={styles.inner}>
           <AllAppletsIcon />
           <View style={styles.textBlock}>

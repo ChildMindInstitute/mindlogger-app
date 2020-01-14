@@ -1,9 +1,9 @@
 import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import PropTypes from 'prop-types';
 import TabItem from './TabItem';
-import { ALL_APPLETS_ID } from '../../components/AllApplets';
 import { sortAppletsAlphabetically } from '../../services/helper';
+import AllAppletsModel from './AllAppletsModel';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +14,6 @@ const styles = StyleSheet.create({
 class TabsView extends React.Component {
   onPress = (applet) => {
     this.props.onPress(applet);
-    this.fireOnInitial = true;
   };
 
   renderTabs(applets, currentApplet) {
@@ -25,8 +24,7 @@ class TabsView extends React.Component {
             applet={applet}
             onPress={() => this.onPress(applet)}
             key={applet.id}
-            selected={this.fireOnInitial
-            && currentApplet.id === applet.id}
+            selected={currentApplet.id === applet.id}
           />
 
         ))}
@@ -34,37 +32,31 @@ class TabsView extends React.Component {
     );
   }
 
-
   render() {
     const { applets, onPress, currentApplet, sortedAlphabetically } = this.props;
     const data = Object.assign([], applets);
     if (sortedAlphabetically) {
       sortAppletsAlphabetically(data);
     }
-    const allAppletsItem = {
-      id: ALL_APPLETS_ID,
-      name: { en: 'All applets' },
-    };
 
     return (
-      <React.Fragment>
+      <View style={styles.container}>
         <ScrollView
           horizontal
-          style={styles.container}
         >
           <TabItem
             key="allApplets"
-            applet={allAppletsItem}
-            selected={!this.fireOnInitial}
+            applet={AllAppletsModel}
+            selected={currentApplet.id === AllAppletsModel.id}
             onPress={() => {
-              onPress(allAppletsItem);
+              onPress(AllAppletsModel);
             }}
           />
 
           {this.renderTabs(data, currentApplet)}
 
         </ScrollView>
-      </React.Fragment>
+      </View>
     );
   }
 }

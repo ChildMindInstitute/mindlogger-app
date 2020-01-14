@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import { createSelector } from 'reselect';
+import AllAppletsModel, { isAllAppletsModel } from '../../scenes/AppletTabs/AllAppletsModel';
 import { appletsSelector, activitiesSelector } from '../applets/applets.selectors';
 
 export const apiHostSelector = R.path(['app', 'apiHost']);
@@ -14,7 +15,12 @@ export const currentAppletSelector = createSelector(
   R.path(['app', 'currentApplet']),
   appletsSelector,
   // TODO: this could return undefined. So do we catch it here, or later on?
-  (currentAppletId, applets) => applets.find(applet => applet.id === currentAppletId) || null,
+  (currentAppletId, applets) => {
+    if (isAllAppletsModel(currentAppletId)) {
+      return AllAppletsModel;
+    }
+    return applets.find(applet => applet.id === currentAppletId) || null;
+  },
 );
 
 export const currentActivitySelector = createSelector(

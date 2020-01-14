@@ -82,7 +82,8 @@
         "rn-range-slider": "^1.3.0",
         "string-hash": "^1.1.3",
         "styled-components": "^4.1.1",
-        "victory-native": "^32.0.2"
+        "victory-native": "^32.0.2",
+        "react-native-status-bar-height": "^2.4.0"
     },
     "devDependencies": {
         "@babel/plugin-external-helpers": "^7.2.0",
@@ -98,7 +99,8 @@
         "jetifier": "^1.5.1",
         "metro-react-native-babel-preset": "^0.54.1",
         "react-test-renderer": "16.5.0",
-        "schedule": "0.4.0"
+        "schedule": "0.4.0",
+        "react-devtools": "^3.6.3"
     },
     "jest": {
         "preset": "react-native",
