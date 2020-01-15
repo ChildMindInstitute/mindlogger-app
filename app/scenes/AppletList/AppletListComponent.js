@@ -45,7 +45,7 @@ const AppletListComponent = ({
   const netInfo = useNetInfo();
 
   const allActivityApplet = {};
-  if (applets.length > 0) {
+  if (applets.length > 1) {
     allActivityApplet.name = { en: 'All My Activities' };
     allActivityApplet.activities = [];
     allActivityApplet.id = 'applet/all';
@@ -91,7 +91,7 @@ const AppletListComponent = ({
           )}
           contentContainerStyle={styles.activityListContainer}
         >
-          { applets.length > 0 && (
+          { applets.length > 1 && (
             <AppletListItem applet={allActivityApplet} onPress={onPressApplet} key={allActivityApplet.id} />
           )}
           {applets.map(applet => (

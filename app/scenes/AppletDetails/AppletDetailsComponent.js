@@ -66,7 +66,7 @@ class AppletDetailsComponent extends React.Component {
   renderActivityTabs() {
     const { applets, applet, onPressApplet } = this.props;
     const allActivityApplet = {};
-    if (applets.length > 0) {
+    if (applets.length > 1) {
       allActivityApplet.name = { en: 'All Activities' };
       allActivityApplet.activities = [];
       allActivityApplet.id = 'applet/all';
@@ -83,7 +83,7 @@ class AppletDetailsComponent extends React.Component {
         borderBottomColor: '#ddd',
       }}
       >
-        { applets.length > 0 && (
+        { applets.length > 1 && (
           <TouchableOpacity
             onPress={() => onPressApplet(allActivityApplet)}
           >
