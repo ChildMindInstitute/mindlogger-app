@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
+import { StyleSheet, StatusBar, View, ImageBackground, TouchableOpacity } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import moment from 'moment';
 import { colors } from '../../theme';
@@ -10,7 +10,7 @@ import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
-
+import AppletImage from '../../components/AppletImage';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,7 +46,6 @@ class AppletDetailsComponent extends React.Component {
       allDates = allDates.concat(d);
       return allDates;
     };
-
     const items = Object.keys(appletData);
     // R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
@@ -61,6 +60,60 @@ class AppletDetailsComponent extends React.Component {
     }
 
     return applet.responseDates;
+  }
+
+  // eslint-disable-next-line
+  renderActivityTabs() {
+    const { applets, applet, onPressApplet } = this.props;
+    const allActivityApplet = {};
+    if (applets.length > 0) {
+      allActivityApplet.name = { en: 'All Activities' };
+      allActivityApplet.activities = [];
+      allActivityApplet.id = 'applet/all';
+    }
+
+    return (
+      <View style={{
+        flex: 1,
+        flexDirection: 'row',
+        paddingLeft: 5,
+        paddingRight: 5,
+        backgroundColor: '#fff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ddd',
+      }}
+      >
+        { applets.length > 0 && (
+          <TouchableOpacity
+            onPress={() => onPressApplet(allActivityApplet)}
+          >
+            <AppletImage
+              applet={allActivityApplet}
+              size={48}
+              selected={applet.id === 'applet/all'}
+              footerText
+              border
+              key={allActivityApplet.id}
+            />
+          </TouchableOpacity>
+        )}
+        {applets.map(appletItem => (
+          <TouchableOpacity
+            key={appletItem.id}
+            onPress={() => onPressApplet(appletItem)}
+          >
+            <AppletImage
+              applet={appletItem}
+              size={48}
+              selected={applet ? appletItem.id === applet.id : false}
+              footerText
+              onPress={() => onPressApplet(appletItem)}
+              border
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
   }
 
   // eslint-disable-next-line
@@ -129,7 +182,7 @@ class AppletDetailsComponent extends React.Component {
             </Button>
           </Left>
           <Body>
-            <Title>{applet.name.en}</Title>
+            <Title>{applet ? applet.name.en : 'All Activities'}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
             <Button transparent onPress={onPressSettings}>
@@ -145,6 +198,7 @@ class AppletDetailsComponent extends React.Component {
           }}
         >
           <Content>
+            {this.renderActivityTabs()}
             {this.renderActiveTab()}
           </Content>
         </ImageBackground>
@@ -158,10 +212,12 @@ class AppletDetailsComponent extends React.Component {
 }
 
 AppletDetailsComponent.propTypes = {
+  applets: PropTypes.array.isRequired,
   applet: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onPressApplet: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,

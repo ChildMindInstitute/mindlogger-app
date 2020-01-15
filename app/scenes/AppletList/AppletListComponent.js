@@ -43,6 +43,13 @@ const AppletListComponent = ({
   toggleMobileDataAllowed,
 }) => {
   const netInfo = useNetInfo();
+
+  const allActivityApplet = {};
+  if (applets.length > 0) {
+    allActivityApplet.name = { en: 'All My Activities' };
+    allActivityApplet.activities = [];
+    allActivityApplet.id = 'applet/all';
+  }
   return (
     <Container style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -84,7 +91,9 @@ const AppletListComponent = ({
           )}
           contentContainerStyle={styles.activityListContainer}
         >
-
+          { applets.length > 0 && (
+            <AppletListItem applet={allActivityApplet} onPress={onPressApplet} key={allActivityApplet.id} />
+          )}
           {applets.map(applet => (
             <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
           ))}

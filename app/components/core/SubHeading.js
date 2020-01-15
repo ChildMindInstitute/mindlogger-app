@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: theme.fontFamily,
     fontSize: 18,
-    marginBottom: 8,
     color: colors.tertiary,
   },
 });

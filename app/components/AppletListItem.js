@@ -24,6 +24,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
     fontFamily: theme.fontFamily,
+    minHeight: 60,
+    justifyContent: 'center',
   },
   notification: {
     position: 'absolute',
@@ -37,7 +39,6 @@ const AppletListItem = ({ applet, onPress }) => {
     (accumulator, activity) => (activity.isOverdue ? accumulator + 1 : accumulator),
     0,
   );
-
   return (
     <View style={styles.box}>
       <TouchBox onPress={() => onPress(applet)}>
@@ -48,7 +49,7 @@ const AppletListItem = ({ applet, onPress }) => {
               {applet.name.en}
             </SubHeading>
             {applet.description && (
-              <BodyText style={{ fontFamily: theme.fontFamily }}>
+              <BodyText style={{ fontFamily: theme.fontFamily, marginTop: 8 }}>
                 {applet.description.en}
               </BodyText>
             )}
