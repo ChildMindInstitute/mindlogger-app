@@ -102,7 +102,7 @@ class AppletTabsComponent extends React.Component {
     return isAllAppletsModel(applet.id) && (
       <ScrollView>
         {sortedApplets.map(applet => (
-          <Fragment>
+          <Fragment key={`item${applet.id}`}>
             <AppletTabViewComponent
               style={{ height: contentHeight }}
               key={applet.id}

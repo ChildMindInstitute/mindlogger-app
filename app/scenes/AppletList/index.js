@@ -25,11 +25,11 @@ class AppletList extends Component {
     const { setCurrentApplet } = this.props;
     if (isAllAppletsModel(applet.id)) {
       setCurrentApplet(AllAppletsModel.id);
-      Actions.push('applet_tabs');
     } else {
       setCurrentApplet(applet.id);
-      Actions.push('applet_details');
     }
+    // Actions.push('applet_details');
+    Actions.push('applet_tabs');
   };
 
   render() {
