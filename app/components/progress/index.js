@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   progress: {
     alignItems: 'center',
     flexDirection: 'row',
-    color: colors.blue,
+    color: colors.mediumBlue,
   },
 });
 
@@ -21,13 +21,15 @@ const ActProgress = ({ index, length }) => (
   <View padder style={styles.progress}>
     <Progress.Bar
       color={styles.progress.color}
-      borderColor="white"
       style={{ flexGrow: 1 }}
       progress={(index + 1) / length}
       width={null}
-      height={3}
-      borderRadius={0}
-      borderWidth={0}
+      height={10}
+      borderRadius={5}
+      borderTopWidth={1}
+      borderBottomWidth={1}
+      borderColor={colors.lightGrey}
+      backgroundColor={colors.mediumGrey}
     />
   </View>
 );
