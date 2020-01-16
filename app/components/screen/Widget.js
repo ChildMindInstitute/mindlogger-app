@@ -191,7 +191,7 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onCon
     );
   }
   // markdown items are rendered in ScreenDisplay
-  if (screen.inputType === 'markdown-message') {
+  if (screen.inputType === 'markdown-message' || screen.inputType === 'static') {
     return null;
   }
 
