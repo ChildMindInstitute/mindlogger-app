@@ -6,7 +6,6 @@ import {
   Form,
 } from 'native-base';
 import { reduxForm, Field, propTypes } from 'redux-form';
-import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 
@@ -20,7 +19,7 @@ const password = value => (value && !RegExp('.{6}.*').test(value)
   ? 'Password must be at least 6 characters' : undefined);
 
 
-const SignUpForm = ({ handleSubmit, submitting, error, primaryColor }) => (
+const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
