@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.16] - 2019-01-16
 - :lipstick: Redesign Progress Bar
 
+## [0.9.15] - 2020-01-10
+### Change behavior
+- When the user selects Okay on a DatePicker it progresses him to the next question
+
+## [0.9.14] - 2019-01-10
+- :bug: Fix Resume action to take the user back to the last question he or she did not answer
+
 ## [0.9.13] - 2019-01-08
 - :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
 
