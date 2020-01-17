@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 =======
 
+## [0.9.16] - 2020-01-17
+- :recycle: Cross platform refactor for Select Component without Modal
+
 ## [0.9.13] - 2019-01-08
 - :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
 

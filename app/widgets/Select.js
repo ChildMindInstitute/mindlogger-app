@@ -6,10 +6,7 @@ import { colors } from '../theme';
 
 const styles = StyleSheet.create({
   paddingContent: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    height: '40%',
+    flex: 1,
     borderTopWidth: 2,
     borderTopColor: colors.grey,
     justifyContent: 'flex-start',
@@ -50,23 +47,7 @@ export class Select extends React.Component {
     const selectedItem = config.itemList.find(item => item.value === value);
     return (
       <View style={{ marginBottom: 20 }}>
-        <ListItem
-          onPress={() => {
-            this.setModalVisible(true);
-          }}
-        >
-          <Left>
-            <Text>{selectedItem ? selectedItem.name.en : 'Select one'}</Text>
-          </Left>
-          <Right>
-            <Icon name="arrow-forward" />
-          </Right>
-        </ListItem>
-        <Modal
-          animationType="slide"
-          transparent
-          visible={this.state.modalVisible}
-        >
+        {this.state.modalVisible ? (
           <Container style={styles.paddingContent}>
             <Picker
               selectedValue={value}
@@ -87,7 +68,20 @@ export class Select extends React.Component {
               }
             </Picker>
           </Container>
-        </Modal>
+        ) : (
+          <ListItem
+            onPress={() => {
+              this.setModalVisible(true);
+            }}
+          >
+            <Left>
+              <Text>{selectedItem ? selectedItem.name.en : 'Select one'}</Text>
+            </Left>
+            <Right>
+              <Icon name="arrow-forward" />
+            </Right>
+          </ListItem>
+        )}
       </View>
     );
   }
