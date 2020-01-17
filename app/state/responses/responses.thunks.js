@@ -54,6 +54,7 @@ export const startResponse = activity => (dispatch, getState) => {
   const { responses, user } = getState();
   const subjectId = R.path(['info', '_id'], user);
   const timeStarted = Date.now();
+  const currentScreen = currentScreenSelector(getState());
 
   if (typeof responses.inProgress[activity.id] === 'undefined') {
     // There is no response in progress, so start a new one
@@ -80,7 +81,7 @@ export const startResponse = activity => (dispatch, getState) => {
         {
           text: 'Resume',
           onPress: () => {
-            dispatch(setCurrentScreen(activity.id, 0));
+            dispatch(setCurrentScreen(activity.id, currentScreen));
             dispatch(setCurrentActivity(activity.id));
             Actions.push('take_act');
           },
