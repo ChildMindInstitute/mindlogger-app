@@ -27,6 +27,7 @@ class ActivityChart extends React.Component {
       'markdown-message',
       'audioRecord',
       'audioStimulus',
+      'static',
       '',
     ];
     const itemsFiltered = activity.items.filter(i => itemTypesToIgnore
