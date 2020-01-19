@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.17] - 2019-01-19
+- :bug: Ignore data for 'static' input type 
+
 ## [0.9.16] - 2019-01-16
 - :lipstick: Redesign Progress Bar
 
