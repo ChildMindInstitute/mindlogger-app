@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.18] - 2019-01-20
+:sparkles: Added See More button for scrollable contenent on options that overflow the page
 ## [0.9.16] - 2019-01-16
 - :lipstick: Redesign Progress Bar
 
