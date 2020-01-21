@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import moment from 'moment';
 import {
   Svg,
   Line,
-  Text,
-  TSpan,
   Circle,
   Path,
 } from 'react-native-svg';
@@ -16,34 +14,29 @@ import { line } from 'd3-shape';
 
 import { colors } from '../../themes/colors';
 
+const width = Math.round(Dimensions.get('window').width * 0.9);
+const height = Math.round(width * (2 / 3));
 
-const textBreaker = (text, charLength) => {
-  const textBreakBySpace = text.split(' ');
-  let current = 0;
-  const output = [textBreakBySpace[0]];
-
-  // eslint-disable-next-line
-  for (let i=1; i<textBreakBySpace.length; i += 1) {
-    const tt = textBreakBySpace[i];
-    const line = output[current];
-    if (line.length < charLength) {
-      output[current] += ` ${tt}`;
-    } else {
-      output.push(tt);
-      current += 1;
-    }
-  }
-
-  return output;
-};
+const styles = StyleSheet.create({
+  lineChartContainer: {
+    width,
+    height: height + 40,
+  },
+  topLabel: {
+    paddingBottom: 10,
+  },
+  bottomLabel: {
+    alignSelf: 'flex-end',
+    paddingTop: 10,
+    paddingRight: 5
+  },
+});
 
 // eslint-disable-next-line
 class LineChart extends React.Component {
   // eslint-disable-next-line
   render() {
     const { data, labels, minMaxLabels } = this.props;
-    const width = Math.round(Dimensions.get('window').width * 0.9);
-    const height = Math.round(width * (2 / 3));
 
     const leftMargin = 5;
     const rightMargin = 5;
@@ -109,30 +102,30 @@ class LineChart extends React.Component {
       .x(d => xMapper(moment(d.date)))
       .y(d => yMapper(d.value));
 
-    const minLabelBreak = textBreaker(minMaxLabels[0], 9);
-    const maxLabelBreak = textBreaker(minMaxLabels[1], 9);
     return (
-      <Svg width={width} height={height}>
-        <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
-        {
-          xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} key={`xTick__${i}__${x}`} />)
-        }
-        <Line x1={leftMargin} y1={0} x2={leftMargin} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
-        {
-          yTicks.map((y, i) => <Circle x={leftMargin} y={y} r="5" fill={colors.lightGrey} key={`yTick__${i}__${y}`} />)
-        }
-        {
-          data.map((d, i) => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} key={`xTick__${i}__${d.date}__${d.value}`} />)
-        }
-        <Path d={lineCreator(data)} fill="none" stroke={colors.primary} strokeWidth="2" />
+      <View style={styles.lineChartContainer}>
+        <Text style={styles.topLabel}>
+          {minMaxLabels[1]}
+        </Text>
+        <Svg width={width} height={height}>
+          <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
+          {
+            xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} key={`xTick__${i}__${x}`} />)
+          }
+          <Line x1={leftMargin} y1={0} x2={leftMargin} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
+          {
+            yTicks.map((y, i) => <Circle x={leftMargin} y={y} r="5" fill={colors.lightGrey} key={`yTick__${i}__${y}`} />)
+          }
+          {
+            data.map((d, i) => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} key={`xTick__${i}__${d.date}__${d.value}`} />)
+          }
+          <Path d={lineCreator(data)} fill="none" stroke={colors.primary} strokeWidth="2" />
 
-        <Text x={0} y={height - bottomMargin - 35} textAnchor="start">
-          {minLabelBreak.map((t, i) => <TSpan x={width - 90} dy={10} key={`minLabel_${t}__${i}`}>{t}</TSpan>)}
+        </Svg>
+        <Text style={styles.bottomLabel}>
+          {minMaxLabels[0]}
         </Text>
-        <Text x={0} y={0} textAnchor="start">
-          {maxLabelBreak.map((t, i) => <TSpan x={20} dy={10} key={`maxLabel_${t}__${i}`}>{t}</TSpan>)}
-        </Text>
-      </Svg>
+      </View>
     );
   }
 }
