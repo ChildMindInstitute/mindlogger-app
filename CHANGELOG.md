@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 =======
+## [0.9.18] - 2019-01-21
+- :lipstick: Repositioning chart labels outside LineChart component
+
 ## [0.9.16] - 2019-01-16
 - :lipstick: Redesign Progress Bar
 
