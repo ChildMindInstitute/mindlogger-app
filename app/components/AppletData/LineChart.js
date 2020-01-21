@@ -126,11 +126,11 @@ class LineChart extends React.Component {
         }
         <Path d={lineCreator(data)} fill="none" stroke={colors.primary} strokeWidth="2" />
 
-        <Text x={0} y={height - bottomMargin - 20} textAnchor="start">
-          {minLabelBreak.map((t, i) => <TSpan x={0} dy={10} key={`minLabel_${t}__${i}`}>{t}</TSpan>)}
+        <Text x={0} y={height - bottomMargin - 35} textAnchor="start">
+          {minLabelBreak.map((t, i) => <TSpan x={width - 90} dy={10} key={`minLabel_${t}__${i}`}>{t}</TSpan>)}
         </Text>
-        <Text x={0} y={10} textAnchor="start">
-          {maxLabelBreak.map((t, i) => <TSpan x={0} dy={10} key={`maxLabel_${t}__${i}`}>{t}</TSpan>)}
+        <Text x={0} y={0} textAnchor="start">
+          {maxLabelBreak.map((t, i) => <TSpan x={20} dy={10} key={`maxLabel_${t}__${i}`}>{t}</TSpan>)}
         </Text>
       </Svg>
     );
