@@ -1,8 +1,8 @@
-# MindLogger 0.9.11
+# MindLogger 0.9.16
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
-This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data for the Child Mind Institute
+This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data.
 
 [![Bitrise Build Status](https://app.bitrise.io/app/cd8e019aed55b142.svg?token=wFJ6Vq6YzRq4Od8HvEbwug)](https://app.bitrise.io/app/cd8e019aed55b142)
 
