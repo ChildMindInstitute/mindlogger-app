@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  View,
+  Image,
+  TouchableWithoutFeedback,
+  StyleSheet,
+} from 'react-native';
 import { Text } from 'native-base';
 import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
@@ -99,14 +104,11 @@ const styles = StyleSheet.create({
   },
 });
 
-
 class Slider extends Component {
   static defaultProps = {
     value: undefined,
-    onPress: () => {
-    },
-    onRelease: () => {
-    },
+    onPress: () => {},
+    onRelease: () => {},
   };
 
   static propTypes = {
@@ -124,9 +126,31 @@ class Slider extends Component {
   sliderRef = React.createRef();
 
   state = {
+    minimumValue: 1,
     currentValue: null,
+    maximumValue: 7,
     sliderWidth: 0,
   };
+
+  componentDidMount() {
+    const {
+      config: { itemList },
+    } = this.props;
+    const minValue = Math.min.apply(
+      Math,
+      itemList.map((item) => {
+        return item.value;
+      }),
+    );
+    const maxValue = Math.max.apply(
+      Math,
+      itemList.map((item) => {
+        return item.value;
+      }),
+    );
+
+    this.setState({ minimumValue: minValue, maximumValue: maxValue });
+  }
 
   measureSliderWidth = () => {
     const { value } = this.props;
@@ -137,13 +161,17 @@ class Slider extends Component {
   };
 
   tapSliderHandler = (evt) => {
-    const { sliderWidth } = this.state;
-    const { onChange, config: { itemList } } = this.props;
+    const { sliderWidth, minimumValue } = this.state;
+    const {
+      onChange,
+      config: { itemList },
+    } = this.props;
 
     const calculatedValue = Math.ceil(
-      Math.abs(
-        (evt.nativeEvent.locationX / sliderWidth),
-      ).toFixed(1) * itemList.length,
+      Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
+        * itemList.length
+        + minimumValue
+        - 1,
     );
 
     onChange(calculatedValue);
@@ -151,46 +179,46 @@ class Slider extends Component {
   };
 
   /*
-  * Magic number 20 is a vertical padding of the parent component
-  * */
+   * Magic number 20 is a vertical padding of the parent component
+   * */
   calculateLabelPosition = () => {
     const {
-      config: { itemList },
-    } = this.props;
-    const { currentValue, sliderWidth } = this.state;
-    const minValue = 1;
-    const maxValue = itemList.length;
+      minimumValue,
+      currentValue,
+      maximumValue,
+      sliderWidth,
+    } = this.state;
 
-    if (currentValue === minValue) {
+    if (currentValue === minimumValue) {
       return 20;
     }
-    if (currentValue === maxValue) {
+    if (currentValue === maximumValue) {
       return sliderWidth;
     }
 
     return (
-      sliderWidth * (currentValue - minValue) / (itemList.length - minValue)
-      + (20 / (currentValue - minValue))
+      (sliderWidth * (currentValue - minimumValue))
+        / (maximumValue - minimumValue)
+      + 20 / (currentValue - minimumValue)
     );
   };
 
   getTickPosition = (value) => {
-    const { sliderWidth } = this.state;
-    const minValue = 1;
-    const maxValue = testTicks.length;
+    const { sliderWidth, minimumValue, maximumValue } = this.state;
 
-    if (value === minValue) {
+    if (value === minimumValue) {
       return {
         left: 0,
       };
     }
-    if (value === maxValue) {
+    if (value === maximumValue) {
       return {
         left: sliderWidth - 5,
       };
     }
     return {
-      left: sliderWidth * (value - minValue) / (maxValue - minValue),
+      left:
+        (sliderWidth * (value - minimumValue)) / (maximumValue - minimumValue),
     };
   };
 
@@ -204,7 +232,9 @@ class Slider extends Component {
       this.getTickPosition(tick.value, tickWidth),
     ];
     return (
-      <Text style={tickStyle} key={tick.value}>{tick.name}</Text>
+      <Text style={tickStyle} key={tick.value}>
+        {tick.name}
+      </Text>
     );
   };
 
@@ -213,21 +243,16 @@ class Slider extends Component {
     const tickWidth = sliderWidth / testTicks.length;
     return (
       <View style={styles.ticks}>
-        {
-          testTicks.map(tick => this.renderTick(tick, tickWidth))
-        }
+        {testTicks.map(tick => this.renderTick(tick, tickWidth))}
       </View>
     );
   }
 
   render() {
-    const { currentValue } = this.state;
+    const { minimumValue, currentValue, maximumValue } = this.state;
+
     const {
-      config: {
-        maxValue,
-        minValue,
-        itemList,
-      },
+      config: { maxValue, minValue, itemList },
       onChange,
       onPress,
       value,
@@ -240,19 +265,17 @@ class Slider extends Component {
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
           {!!currentValue && (
-          <View style={[styles.knobLabel, { left }]}>
-            <Text style={styles.knobLabelText}>
-              {currentValue}
-            </Text>
-          </View>
+            <View style={[styles.knobLabel, { left }]}>
+              <Text style={styles.knobLabelText}>{currentValue}</Text>
+            </View>
           )}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
-                value={value || Math.ceil((itemList.length) / 2)}
+                value={value || Math.ceil((minimumValue + maximumValue) / 2)}
                 onValueChange={value => this.setState({ currentValue: value })}
-                minimumValue={1}
-                maximumValue={itemList.length || 100}
+                minimumValue={minimumValue}
+                maximumValue={maximumValue}
                 minimumTrackTintColor="#CCC"
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
