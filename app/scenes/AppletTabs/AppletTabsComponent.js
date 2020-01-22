@@ -1,8 +1,9 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, View, ScrollView, Platform } from 'react-native';
+import { StyleSheet, StatusBar, View, Platform } from 'react-native';
 import { Container, Header, Title, Button, Icon, Left, Body, Right } from 'native-base';
 import { getStatusBarHeight } from 'react-native-status-bar-height';
+import AppletTabAllViewComponent from './AppletTabAllViewComponent';
 import AppletTabViewComponent from './AppletTabViewComponent';
 import { colors } from '../../theme';
 // import AppletSummary from '../../components/AppletSummary';
@@ -92,7 +93,6 @@ class AppletTabsComponent extends React.Component {
   renderAllApplets() {
     const {
       applet,
-      appletData,
       applets,
       inProgress,
       onPressActivity,
@@ -100,31 +100,13 @@ class AppletTabsComponent extends React.Component {
     const sortedApplets = Object.assign([], applets);
     sortAppletsAlphabetically(sortedApplets);
     return isAllAppletsModel(applet.id) && (
-      <ScrollView>
-        {sortedApplets.map(applet => (
-          <Fragment key={`item${applet.id}`}>
-            <AppletTabViewComponent
-              style={{ height: contentHeight }}
-              key={applet.id}
-              applet={applet}
-              appletData={appletData}
-              inProgress={inProgress}
-              onPressActivity={onPressActivity}
-            />
-            <View
-              key={`separator${applet.id}`}
-              style={{
-                height: 2,
-                width: '100%',
-                backgroundColor: colors.blue,
-              }}
-            />
-          </Fragment>
-
-        ))}
-
-      </ScrollView>
-
+      <AppletTabAllViewComponent
+        style={{ height: contentHeight }}
+        applet={applet}
+        applets={sortedApplets}
+        inProgress={inProgress}
+        onPressActivity={onPressActivity}
+      />
     );
   }
 }

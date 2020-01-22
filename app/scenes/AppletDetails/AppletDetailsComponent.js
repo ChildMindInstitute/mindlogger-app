@@ -81,7 +81,7 @@ class AppletDetailsComponent extends React.Component {
           <View style={{ flex: 1 }}>
             <AppletCalendar responseDates={responseDates} />
             <ActivityList
-              applet={applet}
+              activities={applet.activities}
               inProgress={inProgress}
               onPressActivity={onPressActivity}
             />

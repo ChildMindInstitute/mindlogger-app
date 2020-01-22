@@ -77,7 +77,7 @@ class AppletTabViewComponent extends Component {
           <View>
             <AppletCalendar responseDates={responseDates} />
             <ActivityList
-              applet={applet}
+              activities={applet.activities}
               inProgress={inProgress}
               onPressActivity={onPressActivity}
             />

@@ -4,11 +4,11 @@ import { View } from 'react-native';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 
-const ActivityList = ({ applet, inProgress, onPressActivity }) => {
-  const activities = sortActivities(applet.activities, inProgress);
+const ActivityList = ({ activities, inProgress, onPressActivity }) => {
+  const list = sortActivities(activities, inProgress);
   return (
     <View style={{ paddingBottom: 30 }}>
-      {activities.map(activity => (
+      {list.map(activity => (
         <ActivityListItem
           onPress={() => onPressActivity(activity)}
           activity={activity}
