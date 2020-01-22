@@ -249,7 +249,7 @@ class Slider extends Component {
   }
 
   render() {
-    const { minimumValue, currentValue, maximumValue } = this.state;
+    const { minimumValue, maximumValue } = this.state;
 
     const {
       config: { maxValue, minValue, itemList },
@@ -259,16 +259,9 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
-    const left = this.calculateLabelPosition();
-
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
-          {!!currentValue && (
-            <View style={[styles.knobLabel, { left }]}>
-              <Text style={styles.knobLabelText}>{currentValue}</Text>
-            </View>
-          )}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
