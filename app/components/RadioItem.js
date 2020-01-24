@@ -6,6 +6,7 @@ import {
   Body,
   Right,
 } from 'native-base';
+import PropTypes from 'prop-types';
 import { CheckBox } from 'react-native-elements';
 import { getURL } from '../services/helper';
 import { colors } from '../themes/colors';
@@ -44,3 +45,14 @@ export class RadioItem extends React.PureComponent {
     );
   }
 }
+
+RadioItem.defaultProps = {
+  value: undefined,
+};
+
+RadioItem.propTypes = {
+  item: PropTypes.object.isRequired,
+  value: PropTypes.array,
+  index: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
