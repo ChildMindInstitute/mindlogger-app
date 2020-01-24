@@ -1,18 +1,10 @@
-import React, { Component } from 'react';
-import { View, Image } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import {
-  ListItem,
-  Text,
-  Body,
-  Right,
-} from 'native-base';
-import { CheckBox } from 'react-native-elements';
-import { getURL } from '../services/helper';
-import { colors } from '../themes/colors';
+import { MultiItem as Item } from '../components/MultiItem';
 
-export class MultiSelect extends Component {
+export class MultiSelect extends React.PureComponent {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
     if (!value
       || value.length < minValue
@@ -40,33 +32,7 @@ export class MultiSelect extends Component {
       <View style={{ alignItems: 'stretch' }}>
         {
           itemList.map((item, index) => (
-            <ListItem onPress={() => this.onAnswer(item.value)} key={index}>
-              <Body>
-                <View style={{ flexDirection: 'row' }}>
-                  {item.image
-                    ? (
-                      <Image
-                        style={{ width: 64, height: 64, resizeMode: 'cover' }}
-                        source={{ uri: getURL(item.image) }}
-                      />
-                    ) : <View />
-                  }
-                  <View style={{ justifyContent: 'center' }}>
-                    <Text>{item.name.en}</Text>
-                  </View>
-                </View>
-              </Body>
-              <Right>
-                <CheckBox
-                  checked={value && value.includes(item.value)}
-                  onPress={() => this.onAnswer(item.value)}
-                  checkedIcon="check-square"
-                  uncheckedIcon="square-o"
-                  checkedColor={colors.primary}
-                  uncheckedColor={colors.primary}
-                />
-              </Right>
-            </ListItem>
+            <Item index={index} value={value} item={item} onAnswer={this.onAnswer} />
           ))
         }
       </View>
