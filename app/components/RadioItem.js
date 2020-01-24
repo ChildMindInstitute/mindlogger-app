@@ -13,10 +13,10 @@ import { colors } from '../themes/colors';
 
 export class RadioItem extends React.PureComponent {
   render() {
-    const { item, index, value, onChange } = this.props;
+    const { item, value, onChange } = this.props;
 
     return (
-      <ListItem onPress={() => onChange(item.value)} key={index}>
+      <ListItem onPress={() => onChange(item.value)}>
         <Body>
           <View style={{ flexDirection: 'row' }}>
             { item.image
@@ -52,7 +52,6 @@ RadioItem.defaultProps = {
 
 RadioItem.propTypes = {
   item: PropTypes.object.isRequired,
-  value: PropTypes.array,
-  index: PropTypes.number.isRequired,
+  value: PropTypes.number,
   onChange: PropTypes.func.isRequired,
 };

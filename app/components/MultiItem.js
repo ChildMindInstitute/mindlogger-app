@@ -13,10 +13,10 @@ import { colors } from '../themes/colors';
 
 export class MultiItem extends React.PureComponent {
   render() {
-    const { item, value, index, onAnswer } = this.props;
+    const { item, value, onAnswer } = this.props;
 
     return (
-      <ListItem onPress={() => onAnswer(item.value)} key={index}>
+      <ListItem onPress={() => onAnswer(item.value)}>
         <Body>
           <View style={{ flexDirection: 'row' }}>
             {item.image
@@ -54,6 +54,5 @@ MultiItem.defaultProps = {
 MultiItem.propTypes = {
   item: PropTypes.object.isRequired,
   value: PropTypes.array,
-  index: PropTypes.number.isRequired,
   onAnswer: PropTypes.func.isRequired,
 };

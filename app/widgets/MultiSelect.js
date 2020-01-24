@@ -32,7 +32,7 @@ export class MultiSelect extends React.PureComponent {
       <View style={{ alignItems: 'stretch' }}>
         {
           itemList.map((item, index) => (
-            <Item index={index} value={value} item={item} onAnswer={this.onAnswer} />
+            <Item key={index} value={value} item={item} onAnswer={this.onAnswer} />
           ))
         }
       </View>

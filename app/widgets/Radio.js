@@ -11,7 +11,7 @@ export class Radio extends React.PureComponent {
       <View style={{ alignItems: 'stretch' }}>
         {
           config.itemList.map((item, index) => (
-            <Item value={value} item={item} index={index} onChange={onChange} />
+            <Item value={value} item={item} key={index} onChange={onChange} />
           ))
         }
       </View>
