@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.1] - 2019-01-29
 - :design: Update slider knob
 
+## [0.9.19] - 2019-01-21
+- Add custom method in ```visibility.js``` to compute multi-select conditional visibility logic
+- Fix regex in ```visibility.js``` to replace all occurrences of matches
+
 ## [0.9.16] - 2019-01-16
 - :lipstick: Redesign Progress Bar
 
@@ -18,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.9.14] - 2019-01-10
 - :bug: Fix Resume action to take the user back to the last question he or she did not answer
+
+## [0.9.16] - 2020-01-17
+- :recycle: Cross platform refactor for Select Component without Modal
 
 ## [0.9.13] - 2019-01-08
 - :bug: Fix DatePickerIOS doesn't show on Dark Mode for iOS 13.3
