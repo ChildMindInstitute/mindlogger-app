@@ -145,6 +145,10 @@ class ActivityScreen extends Component {
     this.setState({ screenHeight: contentHeight });
   }
 
+  isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
+  };
+
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
@@ -158,6 +162,11 @@ class ActivityScreen extends Component {
           // eslint-disable-next-line no-return-assign
           ref={scrollView => this.scrollView = scrollView}
           onContentSizeChange={this.onContentSizeChange}
+          onScroll={({ nativeEvent }) => {
+            if (this.isCloseToBottom(nativeEvent)) {
+              this.setState({ screenHeight: height });
+            }
+          }}
         >
           <ScreenDisplay screen={screen} />
           {inputDelayed
