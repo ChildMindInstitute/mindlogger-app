@@ -12,34 +12,34 @@ import { Markdown } from '../../components/core';
 const logoImage = require('../../../img/color_logo.png');
 
 const mindloggerAbout = `
-This app is part of the MindLogger data collection and analysis
-platform designed by the MATTER Lab at the Child Mind Institute (matter.childmind.org).
-
-
 ### What is MindLogger?
 
-MindLogger is a general-purpose data collection platform:
-* App builder → Build iPhone/Android apps online without coding!
-* Mobile apps → Collect data remotely!
-* Database and analytics → Securely store and analyze data in the cloud!
-* Online dashboard → View analyzed data online!
+This app is part of the open source MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (https://matter.childmind.org).
 
 ### What can MindLogger do?
 
-MindLogger's feature set is growing,
-and currently supports a wide variety of survey types, voice recording,
-and drawing and photo annotation capabilities.
+MindLogger's feature set is growing, and currently supports a wide variety of input types. Each screen in a MindLogger activity can include any of the following:
+  - Text, picture, and audio
+  - Question followed by image and/or text response options
+  - Slider bar
+  - Text entry
+  - Table entry
+  - Audio record
+  - Photo/video capture
+  - Drawing or tapping
+  - Current geolocation
+  - Simple cognitive task
+  - Delay before response
+  - Timer
+  - Conditional logic to determine where to go next
 
-### Who uses MindLogger?
+### Where can I learn more?
 
-MindLogger is being used to gather data in large-scale research studies,
-in the clinic for remote mental health assessment, and by others interested
-in collecting and analyzing data from themselves or from other people.\n\n
-We hope that you find MindLogger to be useful! For more information,
-please visit matter.childmind.org.
+Please visit https://mindlogger.org for more information.
 
 Cheers,
-MindLogger Team @ the Child Mind Institute`;
+MindLogger Team
+Child Mind Institute`;
 
 class AboutApp extends Component { // eslint-disable-line
 
@@ -73,8 +73,7 @@ class AboutApp extends Component { // eslint-disable-line
                 <View style={styles.content}>
                   <Markdown>{skin.about}</Markdown>
                   <Text>
-                    NounProject icons were created by Alina Oleynik (survey),
-                    beth bolton (book), and Shakeel (chart)
+                    Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.
                   </Text>
                 </View>
               </Content>
@@ -102,8 +101,7 @@ class AboutApp extends Component { // eslint-disable-line
                 {mindloggerAbout}
               </Markdown>
               <Text>
-                  NounProject icons were created by Alina Oleynik (survey),
-                  beth bolton (book), and Shakeel (chart)
+                  Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.
               </Text>
               <View>
                 <Image
