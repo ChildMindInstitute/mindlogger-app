@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.3] - 2019-01-29
+### Fixed
+- :bug: Fix displaying the history of questions/answers in data tab
+
 ## [0.10.2] - 2019-01-28
 ### Fixed
 - :lipstick: Prevent Text overflows onto checkboxes and radio buttons
