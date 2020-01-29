@@ -11,14 +11,6 @@ import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
 
-const testTicks = [
-  { name: 'One', value: 1 },
-  { name: 'Two', value: 2 },
-  { name: 'Three', value: 3 },
-  { name: 'Four', value: 4 },
-  { name: 'Five', value: 5 },
-];
-
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -177,76 +169,6 @@ class Slider extends Component {
     onChange(calculatedValue);
     this.setState({ currentValue: calculatedValue });
   };
-
-  /*
-   * Magic number 20 is a vertical padding of the parent component
-   * */
-  calculateLabelPosition = () => {
-    const {
-      minimumValue,
-      currentValue,
-      maximumValue,
-      sliderWidth,
-    } = this.state;
-
-    if (currentValue === minimumValue) {
-      return 20;
-    }
-    if (currentValue === maximumValue) {
-      return sliderWidth;
-    }
-
-    return (
-      (sliderWidth * (currentValue - minimumValue))
-        / (maximumValue - minimumValue)
-      + 20 / (currentValue - minimumValue)
-    );
-  };
-
-  getTickPosition = (value) => {
-    const { sliderWidth, minimumValue, maximumValue } = this.state;
-
-    if (value === minimumValue) {
-      return {
-        left: 0,
-      };
-    }
-    if (value === maximumValue) {
-      return {
-        left: sliderWidth - 5,
-      };
-    }
-    return {
-      left:
-        (sliderWidth * (value - minimumValue)) / (maximumValue - minimumValue),
-    };
-  };
-
-  renderTick = (tick, tickWidth) => {
-    const tickStyle = [
-      styles.tick,
-      {
-        width: tickWidth - 20,
-        transform: [{ translateX: -tickWidth / 2 }],
-      },
-      this.getTickPosition(tick.value, tickWidth),
-    ];
-    return (
-      <Text style={tickStyle} key={tick.value}>
-        {tick.name}
-      </Text>
-    );
-  };
-
-  renderTicks() {
-    const { sliderWidth } = this.state;
-    const tickWidth = sliderWidth / testTicks.length;
-    return (
-      <View style={styles.ticks}>
-        {testTicks.map(tick => this.renderTick(tick, tickWidth))}
-      </View>
-    );
-  }
 
   render() {
     const { minimumValue, maximumValue } = this.state;
