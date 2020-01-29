@@ -5,9 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-=======
-## [0.10.1] - 2019-01-29
+
+## [0.10.4] - 2019-01-29
 - :design: Update slider knob
+
+## [0.10.3] - 2019-01-29
+### Fixed
+- :bug: Fix displaying the history of questions/answers in data tab
+
+## [0.10.2] - 2019-01-28
+### Fixed
+- :lipstick: Prevent Text overflows onto checkboxes and radio buttons
+
+## [10.0.1] - 2019-01-28
+- Add See More Button when it overflows the page
 
 ## [0.9.19] - 2019-01-21
 - Add custom method in ```visibility.js``` to compute multi-select conditional visibility logic
