@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { Dimensions, StyleSheet, ScrollView, View } from 'react-native';
 import PropTypes from 'prop-types';
+import { Icon, Button, Text } from 'native-base';
 import ScreenDisplay from './ScreenDisplay';
 import Widget from './Widget';
 import Timer from '../Timer';
@@ -45,7 +46,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     opacity: 0.5,
   },
+  icon: {
+    color: '#fff',
+    fontSize: 16,
+    paddingBottom: 5,
+    paddingHorizontal: 5,
+  },
 });
+
+const { height } = Dimensions.get('window');
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
@@ -61,6 +70,7 @@ class ActivityScreen extends Component {
       scrollEnabled: true,
       inputDelayed: false,
       timerActive: false,
+      screenHeight: 0,
     };
     this.interval = null;
     this.startTime = null;
@@ -131,6 +141,14 @@ class ActivityScreen extends Component {
     }
   }
 
+  onContentSizeChange = (contentWidth, contentHeight) => {
+    this.setState({ screenHeight: contentHeight });
+  }
+
+  isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+    return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
+  };
+
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
@@ -141,6 +159,14 @@ class ActivityScreen extends Component {
           style={styles.container}
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
+          // eslint-disable-next-line no-return-assign
+          ref={scrollView => this.scrollView = scrollView}
+          onContentSizeChange={this.onContentSizeChange}
+          onScroll={({ nativeEvent }) => {
+            if (this.isCloseToBottom(nativeEvent)) {
+              this.setState({ screenHeight: height });
+            }
+          }}
         >
           <ScreenDisplay screen={screen} />
           {inputDelayed
@@ -184,6 +210,24 @@ class ActivityScreen extends Component {
             <Timer duration={screen.timer} color={colors.primary} size={40} />
           </View>
         )}
+        { this.state.screenHeight > height ? (
+          <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center' }}>
+            <Button
+              onPress={() => {
+                this.scrollView.scrollToEnd();
+                this.setState({ screenHeight: height });
+              }}
+              full
+              rounded
+              style={{ backgroundColor: colors.primaryColor }}
+            >
+              <Icon type="FontAwesome" name="chevron-down" style={styles.icon} />
+              <Text>See More</Text>
+              <Icon type="FontAwesome" name="chevron-down" style={styles.icon} />
+            </Button>
+          </View>
+        ) : (null)}
+
       </View>
     );
   }

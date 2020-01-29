@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   progress: {
     alignItems: 'center',
     flexDirection: 'row',
-    color: colors.mediumBlue,
+    color: colors.blue,
   },
 });
 

@@ -116,11 +116,10 @@ class ItemChart extends React.Component {
 
   render() {
     const { item } = this.props;
-    // console.log('item is', item);
     return (
       <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20 }}>
-          { item.description ? item.description.en : '' }
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+          { item.description ? item.description.en : item.question.en }
         </Text>
         {this.renderChartByItemType()}
       </View>

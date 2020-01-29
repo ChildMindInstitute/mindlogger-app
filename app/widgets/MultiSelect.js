@@ -2,21 +2,14 @@ import React, { Component } from 'react';
 import { View, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import {
-  ListItem,
-  Text,
-  Body,
-  Right,
-} from 'native-base';
+import { ListItem, Text } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { getURL } from '../services/helper';
 import { colors } from '../themes/colors';
 
 export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
-    if (!value
-      || value.length < minValue
-      || value.length > maxValue) {
+    if (!value || value.length < minValue || value.length > maxValue) {
       return false;
     }
     return true;
@@ -32,43 +25,66 @@ export class MultiSelect extends Component {
     } else {
       onChange(R.append(itemVal, value));
     }
-  }
+  };
 
   render() {
-    const { config: { itemList }, value = [] } = this.props;
+    const {
+      config: { itemList },
+      value = [],
+    } = this.props;
     return (
       <View style={{ alignItems: 'stretch' }}>
-        {
-          itemList.map((item, index) => (
-            <ListItem onPress={() => this.onAnswer(item.value)} key={index}>
-              <Body>
-                <View style={{ flexDirection: 'row' }}>
-                  {item.image
-                    ? (
-                      <Image
-                        style={{ width: 64, height: 64, resizeMode: 'cover' }}
-                        source={{ uri: getURL(item.image) }}
-                      />
-                    ) : <View />
-                  }
-                  <View style={{ justifyContent: 'center' }}>
+        {itemList.map((item, index) => (
+          <ListItem
+            style={{ width: '90%' }}
+            onPress={() => this.onAnswer(item.value)}
+            key={index}
+          >
+            <View style={{ width: '85%' }}>
+              <View style={{ width: '100%', flexDirection: 'row' }}>
+                {item.image ? (
+                  <Image
+                    style={{ width: '20%', height: 64, resizeMode: 'cover' }}
+                    source={{ uri: getURL(item.image) }}
+                  />
+                ) : (
+                  <View />
+                )}
+                {item.image ? (
+                  <View
+                    style={{
+                      marginLeft: '8%',
+                      maxWidth: '72%',
+                      justifyContent: 'center',
+                    }}
+                  >
                     <Text>{item.name.en}</Text>
                   </View>
-                </View>
-              </Body>
-              <Right>
-                <CheckBox
-                  checked={value && value.includes(item.value)}
-                  onPress={() => this.onAnswer(item.value)}
-                  checkedIcon="check-square"
-                  uncheckedIcon="square-o"
-                  checkedColor={colors.primary}
-                  uncheckedColor={colors.primary}
-                />
-              </Right>
-            </ListItem>
-          ))
-        }
+                ) : (
+                  <View
+                    style={{
+                      marginLeft: '8%',
+                      maxWidth: '92%',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text>{item.name.en}</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+            <View style={{ width: '15%' }}>
+              <CheckBox
+                checked={value && value.includes(item.value)}
+                onPress={() => this.onAnswer(item.value)}
+                checkedIcon="check-square"
+                uncheckedIcon="square-o"
+                checkedColor={colors.primary}
+                uncheckedColor={colors.primary}
+              />
+            </View>
+          </ListItem>
+        ))}
       </View>
     );
   }
