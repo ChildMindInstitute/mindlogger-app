@@ -14,7 +14,9 @@ import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 
 const resetBaseCount = () => {
-  PushNotificationIOS.setApplicationIconBadgeNumber(0);
+  if (Platform.OS === 'ios') {
+    PushNotificationIOS.setApplicationIconBadgeNumber(0);
+  }
 };
 
 const checkAuthToken = (store) => {

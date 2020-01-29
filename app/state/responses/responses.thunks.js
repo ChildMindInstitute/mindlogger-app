@@ -101,7 +101,6 @@ export const downloadResponses = () => (dispatch, getState) => {
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((responses) => {
-    console.log('downloaded responses', responses);
     if (loggedInSelector(getState())) {
       dispatch(replaceResponses(responses));
       dispatch(scheduleAndSetNotifications());
