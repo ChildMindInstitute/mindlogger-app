@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.10.4] - 2019-01-29
+- :bug: Fix slider widget to be compliant
 - :lipstick: Remove number above slider
 
 ## [0.10.3] - 2019-01-29
