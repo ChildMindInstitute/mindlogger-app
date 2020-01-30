@@ -163,10 +163,6 @@ class Slider extends Component {
     this.setState({ currentValue: calculatedValue });
   };
 
-  /*
-   * Magic number 20 is a vertical padding of the parent component
-   * */
-
   render() {
     const { minimumValue, maximumValue } = this.state;
 
