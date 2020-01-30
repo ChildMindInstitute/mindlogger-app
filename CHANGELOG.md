@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - :bug: Fix slider issues at the left.
 
+## [0.10.4] - 2019-01-29
+- :bug: Fix slider widget to be compliant
+- :design: Update slider knob
+- :lipstick: Remove number above slider
+
 ## [0.10.3] - 2019-01-29
 ### Fixed
 - :bug: Fix displaying the history of questions/answers in data tab
