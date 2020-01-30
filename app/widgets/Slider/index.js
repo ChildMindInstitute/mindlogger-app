@@ -133,7 +133,7 @@ class Slider extends Component {
         return item.value;
       }),
     );
-
+    
     this.setState({ minimumValue: minValue, maximumValue: maxValue });
   }
 
@@ -144,6 +144,16 @@ class Slider extends Component {
       this.setState({ sliderWidth: width, currentValue: value });
     });
   };
+
+  handleValue = (value) => {
+    const { minimumValue } = this.state;
+
+    if (value <= minimumValue) {
+      this.setState({ currentValue: minimumValue });
+    } else {
+      this.setState({ currentValue: value });
+    }
+  }
 
   tapSliderHandler = (evt) => {
     const { sliderWidth, minimumValue } = this.state;
@@ -174,20 +184,25 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
+    let currentValue = value;
+    if (currentValue === minimumValue - 1) {
+      currentValue = minimumValue;
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
-                value={value || Math.ceil((minimumValue + maximumValue) / 2)}
-                onValueChange={value => this.setState({ currentValue: value })}
+                value={currentValue >= minimumValue ? currentValue : Math.ceil((minimumValue + maximumValue) / 2)}
+                onValueChange={value => this.handleValue(value)}
                 minimumValue={minimumValue}
                 maximumValue={maximumValue}
                 minimumTrackTintColor="#CCC"
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
-                thumbStyle={value ? styles.thumb : styles.thumbUnselected}
+                thumbStyle={currentValue >= minimumValue ? styles.thumb : styles.thumbUnselected}
                 step={itemList ? 1 : 0}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
