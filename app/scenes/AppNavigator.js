@@ -67,10 +67,15 @@ const Navigator = Actions.create(
 
 class AppNavigator extends Component {
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', () => {
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
       Actions.pop();
       return true;
     });
+  }
+
+
+  componentWillUnmount() {
+    this.backHandler.remove();
   }
 
   render() {

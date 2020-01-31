@@ -90,11 +90,7 @@ const styles = StyleSheet.create({
 });
 
 class Slider extends Component {
-  static defaultProps = {
-    value: undefined,
-    onPress: () => {},
-    onRelease: () => {},
-  };
+  sliderRef = React.createRef();
 
   static propTypes = {
     config: PropTypes.shape({
@@ -108,7 +104,11 @@ class Slider extends Component {
     onRelease: PropTypes.func,
   };
 
-  sliderRef = React.createRef();
+  static defaultProps = {
+    value: undefined,
+    onPress: () => {},
+    onRelease: () => {},
+  };
 
   state = {
     minimumValue: 1,
@@ -133,7 +133,7 @@ class Slider extends Component {
         return item.value;
       }),
     );
-    
+
     this.setState({ minimumValue: minValue, maximumValue: maxValue });
   }
 
@@ -195,7 +195,8 @@ class Slider extends Component {
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
-                value={currentValue >= minimumValue ? currentValue : Math.ceil((minimumValue + maximumValue) / 2)}
+                value={currentValue >= minimumValue
+                  ? currentValue : Math.ceil((minimumValue + maximumValue) / 2)}
                 onValueChange={value => this.handleValue(value)}
                 minimumValue={minimumValue}
                 maximumValue={maximumValue}

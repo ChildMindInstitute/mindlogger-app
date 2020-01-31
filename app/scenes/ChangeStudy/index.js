@@ -13,6 +13,8 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import { Platform } from 'react-native';
+import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import styles from './styles';
 import { getSkin } from '../../services/network';
 import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
@@ -74,7 +76,26 @@ class ChangeStudy extends Component {
 
   toggleQrScanner = () => {
     const { scanOpen } = this.state;
-    this.setState({ scanOpen: !scanOpen });
+    const permission = Platform.select({
+      android: PERMISSIONS.ANDROID.CAMERA,
+      ios: PERMISSIONS.IOS.CAMERA,
+    });
+
+    if (!scanOpen) {
+      Permissions.check(permission).then((response) => {
+        if (response !== Permissions.RESULTS.GRANTED) {
+          Permissions.request(permission).then((response) => {
+            if (response === Permissions.RESULTS.GRANTED) {
+              this.setState({ scanOpen: true });
+            }
+          });
+        } else {
+          this.setState({ scanOpen: true });
+        }
+      });
+    } else {
+      this.setState({ scanOpen: !scanOpen });
+    }
   }
 
   render() {

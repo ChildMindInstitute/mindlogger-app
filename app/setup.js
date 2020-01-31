@@ -1,5 +1,6 @@
 import React from 'react';
-import { Platform, PushNotificationIOS, Text, TextInput } from 'react-native';
+import { Platform, Text, TextInput } from 'react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';

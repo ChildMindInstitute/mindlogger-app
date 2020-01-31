@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import NativeGeolocation from '@react-native-community/geolocation';
 import { Icon } from 'native-base';
-import Permissions from 'react-native-permissions';
+import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { colors } from '../theme';
 
 const styles = StyleSheet.create({
@@ -38,17 +39,21 @@ const styles = StyleSheet.create({
 
 export const Geolocation = ({ value, onChange }) => {
   const [locationPermission, setLocationPermission] = useState('undetermined');
+  const permission = Platform.select({
+    android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+    ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+  });
 
   useEffect(() => {
-    Permissions.check('location').then(setLocationPermission);
+    Permissions.check(permission).then(setLocationPermission);
   });
 
   const onPress = () => {
-    Permissions.request('location').then((response) => {
+    Permissions.request(permission).then((response) => {
       console.log(response);
       setLocationPermission(response);
-      if (response === 'authorized') {
-        navigator.geolocation.getCurrentPosition(
+      if (response === Permissions.RESULTS.GRANTED) {
+        NativeGeolocation.getCurrentPosition(
           (successResponse) => {
             onChange({
               latitude: successResponse.coords.latitude,

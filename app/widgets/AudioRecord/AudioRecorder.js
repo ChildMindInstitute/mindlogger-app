@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Platform, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { Recorder } from 'react-native-audio-toolkit';
+import { Recorder } from '@react-native-community/audio-toolkit';
 import randomString from 'random-string';
-import Permissions from 'react-native-permissions';
+import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import RNFetchBlob from 'rn-fetch-blob';
 import RecordButton from './RecordButton';
 import { colors } from '../../theme';
@@ -98,11 +98,15 @@ export default class AudioRecorder extends Component {
   }
 
   startRecording = () => {
-    Permissions.check('microphone').then((response) => {
-      if (response !== 'authorized') {
-        Permissions.request('microphone').then((response) => {
+    const permission = Platform.select({
+      android: PERMISSIONS.ANDROID.RECORD_AUDIO,
+      ios: PERMISSIONS.IOS.MICROPHONE,
+    });
+    Permissions.check(permission).then((response) => {
+      if (response !== Permissions.RESULTS.GRANTED) {
+        Permissions.request(permission).then((response) => {
           this.setState({ permission: response });
-          if (response === 'authorized') {
+          if (response === Permissions.RESULTS.GRANTED) {
             this.record();
           }
         });
