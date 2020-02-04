@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [10.0.5] - 2019-02-03
+## [0.10.5] - 2019-02-03
 - Update style of see more button
 
 ## [0.10.4] - 2019-01-29
