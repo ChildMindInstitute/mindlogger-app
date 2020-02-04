@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   button: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 0,
     backgroundColor: colors.secondary,
     borderWidth: 1.5,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: colors.primary,
-    fontSize: 25,
+    fontSize: 17,
     padding: 0,
     margin: 0,
   },
@@ -232,7 +232,7 @@ class ActivityScreen extends Component {
           <View
             style={{
               position: 'absolute',
-              bottom: -30,
+              bottom: -25,
               alignSelf: 'center',
               flex: 1,
             }}
