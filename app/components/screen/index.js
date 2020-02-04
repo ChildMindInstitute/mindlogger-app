@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, ScrollView, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { Icon, Button, Text } from 'native-base';
+import { Icon, Button } from 'native-base';
 import ScreenDisplay from './ScreenDisplay';
 import Widget from './Widget';
 import Timer from '../Timer';
@@ -46,11 +46,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     opacity: 0.5,
   },
+  button: {
+    width: 70,
+    height: 70,
+    padding: 0,
+    backgroundColor: colors.secondary,
+    borderWidth: 1.5,
+    borderRadius: 35,
+    borderColor: colors.primary,
+  },
   icon: {
-    color: '#fff',
-    fontSize: 16,
-    paddingBottom: 5,
-    paddingHorizontal: 5,
+    color: colors.primary,
+    fontSize: 25,
+    padding: 0,
+    margin: 0,
   },
 });
 
@@ -61,7 +70,7 @@ class ActivityScreen extends Component {
     if (screen.inputType === 'markdown-message') {
       return true;
     }
-    return (answer !== null && typeof answer !== 'undefined');
+    return answer !== null && typeof answer !== 'undefined';
   }
 
   constructor() {
@@ -99,7 +108,7 @@ class ActivityScreen extends Component {
   _startClock = () => {
     this.interval = setInterval(this._clockTick, 100);
     this.startTime = Date.now();
-  }
+  };
 
   _resetClock = () => {
     if (this.interval) {
@@ -111,7 +120,7 @@ class ActivityScreen extends Component {
         timerActive: false,
       });
     }
-  }
+  };
 
   _clockTick = () => {
     const { onChange, screen, answer } = this.props;
@@ -132,18 +141,22 @@ class ActivityScreen extends Component {
     if (timer) {
       const safeDelay = delay || 0;
       const timerEnd = safeDelay + timer;
-      if (timeElapsed > safeDelay && timeElapsed < timerEnd && timerActive === false) {
+      if (
+        timeElapsed > safeDelay
+        && timeElapsed < timerEnd
+        && timerActive === false
+      ) {
         this.setState({ timerActive: true });
       } else if (timeElapsed >= timerEnd) {
         this.setState({ timerActive: false });
         onChange(answer, true);
       }
     }
-  }
+  };
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
-  }
+  };
 
   isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
@@ -160,7 +173,7 @@ class ActivityScreen extends Component {
           contentContainerStyle={styles.contentContainer}
           scrollEnabled={scrollEnabled}
           // eslint-disable-next-line no-return-assign
-          ref={scrollView => this.scrollView = scrollView}
+          ref={scrollView => (this.scrollView = scrollView)}
           onContentSizeChange={this.onContentSizeChange}
           onScroll={({ nativeEvent }) => {
             if (this.isCloseToBottom(nativeEvent)) {
@@ -169,65 +182,76 @@ class ActivityScreen extends Component {
           }}
         >
           <ScreenDisplay screen={screen} />
-          {inputDelayed
-            ? (
-              <View pointerEvents="none" style={styles.delayView}>
-                <View style={styles.delayTimerView}>
-                  <Timer
-                    duration={screen.delay}
-                    color={colors.tertiary}
-                    size={50}
-                    strokeWidth={5}
-                  />
-                </View>
-                <View style={{ opacity: 0.25 }}>
-                  <Widget
-                    answer={answer}
-                    onChange={onChange}
-                    isCurrent={isCurrent}
-                    screen={screen}
-                    onPress={() => { this.setState({ scrollEnabled: false }); }}
-                    onRelease={() => { this.setState({ scrollEnabled: true }); }}
-                  />
-                </View>
+          {inputDelayed ? (
+            <View pointerEvents="none" style={styles.delayView}>
+              <View style={styles.delayTimerView}>
+                <Timer
+                  duration={screen.delay}
+                  color={colors.tertiary}
+                  size={50}
+                  strokeWidth={5}
+                />
               </View>
-            )
-            : (
-              <Widget
-                answer={answer}
-                onChange={onChange}
-                isCurrent={isCurrent}
-                screen={screen}
-                onPress={() => { this.setState({ scrollEnabled: false }); }}
-                onRelease={() => { this.setState({ scrollEnabled: true }); }}
-                onContentError={onContentError}
-              />
-            )
-          }
+              <View style={{ opacity: 0.25 }}>
+                <Widget
+                  answer={answer}
+                  onChange={onChange}
+                  isCurrent={isCurrent}
+                  screen={screen}
+                  onPress={() => {
+                    this.setState({ scrollEnabled: false });
+                  }}
+                  onRelease={() => {
+                    this.setState({ scrollEnabled: true });
+                  }}
+                />
+              </View>
+            </View>
+          ) : (
+            <Widget
+              answer={answer}
+              onChange={onChange}
+              isCurrent={isCurrent}
+              screen={screen}
+              onPress={() => {
+                this.setState({ scrollEnabled: false });
+              }}
+              onRelease={() => {
+                this.setState({ scrollEnabled: true });
+              }}
+              onContentError={onContentError}
+            />
+          )}
         </ScrollView>
         {timerActive && (
           <View style={styles.timerView}>
             <Timer duration={screen.timer} color={colors.primary} size={40} />
           </View>
         )}
-        { this.state.screenHeight > height ? (
-          <View style={{ position: 'absolute', bottom: 0, alignSelf: 'center' }}>
+        {this.state.screenHeight > height ? (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: -30,
+              alignSelf: 'center',
+              flex: 1,
+            }}
+          >
             <Button
               onPress={() => {
                 this.scrollView.scrollToEnd();
                 this.setState({ screenHeight: height });
               }}
-              full
-              rounded
-              style={{ backgroundColor: colors.primaryColor }}
+              style={styles.button}
             >
-              <Icon type="FontAwesome" name="chevron-down" style={styles.icon} />
-              <Text>See More</Text>
-              <Icon type="FontAwesome" name="chevron-down" style={styles.icon} />
+              <Icon
+                type="FontAwesome"
+                name="chevron-down"
+                style={styles.icon}
+              />
             </Button>
           </View>
-        ) : (null)}
-
+        ) : null}
       </View>
     );
   }

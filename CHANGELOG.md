@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [10.0.5] - 2019-02-03
+- Update style of see more button
+
 ## [0.10.4] - 2019-01-29
 - :bug: Fix slider issues at the left.
 - :bug: Fix slider widget to be compliant
