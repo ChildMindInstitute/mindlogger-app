@@ -67,37 +67,12 @@ class ItemChart extends React.Component {
         <BarChart data={dataFix} />
       );
     }
-    const data1 = [
-      {
-        value: 7,
-        date: '2019-09-06',
-      },
-      {
-        value: 4,
-        date: '2019-09-05',
-      },
-      {
-        value: 9,
-        date: '2019-09-04',
-      },
-      {
-        value: 8,
-        date: '2019-09-03',
-      },
-      {
-        value: 6,
-        date: '2019-09-01',
-      },
-    ];
-
-    return (
-      <BarChart data={data1} />
-    );
   }
 
   // eslint-disable-next-line
   renderChartByItemType() {
     const { item } = this.props;
+
     switch (item.inputType) {
       case 'radio':
         return this.renderTimelinePlot();
