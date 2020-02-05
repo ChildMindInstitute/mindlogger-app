@@ -101,11 +101,14 @@ export const postResponse = ({ authToken, response }) => postFormData(
   },
 );
 
-export const signIn = ({ user, password }) => get(
+export const signIn = ({ user, password, deviceId }) => get(
   'user/authentication',
   null,
   null,
-  { 'Girder-Authorization': `Basic ${btoa(`${user}:${password}`)}` },
+  {
+    'Girder-Authorization': `Basic ${btoa(`${user}:${password}`)}`,
+    deviceId,
+  },
 );
 
 export const signOut = (authToken) => {
