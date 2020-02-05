@@ -1,5 +1,15 @@
 import React from 'react';
-import { StyleSheet, ScrollView, View, Text, ImageBackground, RefreshControl, StatusBar, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  Text,
+  ImageBackground,
+  RefreshControl,
+  StatusBar,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -52,6 +62,7 @@ const AppletListComponent = ({
           uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80',
         }}
       >
+        <SafeAreaView />
         <Header style={{ backgroundColor: 'transparent', borderBottomWidth: 0 }}>
           <Left />
           <Body>

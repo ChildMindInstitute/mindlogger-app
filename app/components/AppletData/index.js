@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 // import { VictoryBar, VictoryChart,
 // VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
@@ -19,16 +19,20 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line
 class AppletData extends React.Component {
 
+  renderItem = ({ item }) => {
+    const { appletData } = this.props;
+    return <ActivityChart activity={item} appletData={appletData} />;
+  };
+
   render() {
-    const { applet, appletData } = this.props;
+    const { applet } = this.props;
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <FlatList
-          data={applet.activities}
-          renderItem={({ item }) => <ActivityChart activity={item} appletData={appletData} />}
-          keyExtractor={(item, index) => `${applet.name.en}__${index}__${Math.random()}`}
-        />
-      </ScrollView>
+      <FlatList
+        contentContainerStyle={styles.container}
+        data={applet.activities}
+        renderItem={this.renderItem}
+        keyExtractor={(item, index) => `${applet.name.en}__${index}__${Math.random()}`}
+      />
     );
   }
 }
