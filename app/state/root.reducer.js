@@ -4,6 +4,7 @@ import app from './app/app.reducer';
 import applets from './applets/applets.reducer';
 import responses from './responses/responses.reducer';
 import user from './user/user.reducer';
+import fcm from './fcm/fcm.reducer';
 import media from './media/media.reducer';
 
 export default combineReducers({
@@ -13,4 +14,5 @@ export default combineReducers({
   media,
   responses,
   user,
+  fcm,
 });

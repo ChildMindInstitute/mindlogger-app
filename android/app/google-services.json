@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "158587556670",
+    "firebase_url": "https://mindlogger-7352d.firebaseio.com",
+    "project_id": "mindlogger-7352d",
+    "storage_bucket": "mindlogger-7352d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158587556670:android:65cf73eef649f842f4d26f",
+        "android_client_info": {
+          "package_name": "lab.childmindinstitute.data"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158587556670-ev5gbu4c9n491ea5ttonfg12ovq42eug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_aeQ47Vyn4f3pp8uFDqNG3l_5eCVap5M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158587556670-ev5gbu4c9n491ea5ttonfg12ovq42eug.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "158587556670-hgcb0k1tb7b4mdlqvpoo0f8r2kv2gtsu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "test.test"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
