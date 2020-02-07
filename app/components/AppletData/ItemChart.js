@@ -8,7 +8,6 @@ import moment from 'moment';
 import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
-
 // eslint-disable-next-line
 class ItemChart extends React.Component {
 
@@ -16,9 +15,27 @@ class ItemChart extends React.Component {
   renderTimelinePlot() {
     const { item, data } = this.props;
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const differenceTime = (new Date().getTime() - moment(data[i].date).toDate().getTime())
+      const differenceDay = differenceTime / (1000 * 3600 * 24);
+      if (differenceDay < 7) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     return (
-      <TimelineChart data={data} labels={labels} />
+      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+          { item.description ? item.description.en : item.question.en }
+        </Text>
+        <TimelineChart data={data} labels={labels} />
+      </View>
     );
   }
 
@@ -27,9 +44,27 @@ class ItemChart extends React.Component {
     const { item, data } = this.props;
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
     const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const differenceTime = new Date().getTime() - moment(data[i].date).toDate().getTime();
+      const differenceDay = differenceTime / (1000 * 3600 * 24);
+      if (differenceDay < 7) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     return (
-      <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
+      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+          { item.description ? item.description.en : item.question.en }
+        </Text>
+        <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
+      </View>
     );
   }
 
@@ -60,11 +95,29 @@ class ItemChart extends React.Component {
   // eslint-disable-next-line
   renderBarPlot() {
     const { item, data } = this.props;
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const differenceTime = (new Date().getTime() - moment(data[i].date).toDate().getTime())
+      const differenceDay = differenceTime / (1000 * 3600 * 24);
+      if (differenceDay < 7) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     if (item.inputType === 'timeRange') {
       const dataFix = this.calcTimeDiff(data);
       return (
-        <BarChart data={dataFix} />
+        <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+            { item.description ? item.description.en : item.question.en }
+          </Text>
+          <BarChart data={dataFix} />
+        </View>
       );
     }
   }
@@ -82,23 +135,13 @@ class ItemChart extends React.Component {
         return this.renderBarPlot();
       default:
         return (
-          <Text>
-            No chart type specified for {item.inputType}.
-          </Text>
+          <Text />
         );
     }
   }
 
   render() {
-    const { item } = this.props;
-    return (
-      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
-          { item.description ? item.description.en : item.question.en }
-        </Text>
-        {this.renderChartByItemType()}
-      </View>
-    );
+    return this.renderChartByItemType();
   }
 }
 
