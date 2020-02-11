@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.2] - 2019-02-11
+- Update the style of see more button
+
 ## [0.11.1] - 2020-02-06
 - :sparkles: :zap: :bug: Introduced new push notification feature with firebase
 - :bug: Fix issues of push notifcation feature
