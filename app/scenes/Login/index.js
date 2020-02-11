@@ -13,6 +13,7 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
+import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
 import styles from './styles';
 import { signInSuccessful } from '../../state/user/user.thunks';
 import { signIn } from '../../services/network';
@@ -39,9 +40,12 @@ class Login extends Component {
     Actions.about_app();
   }
 
-  onSubmit = (body) => {
-    const { signInSuccessful } = this.props;
-    return signIn(body)
+  onSubmit = async (body) => {
+    const { signInSuccessful, fcmToken } = this.props;
+    const dataBody = { ...body, deviceId: fcmToken };
+    // eslint-disable-next-line no-console
+    console.log('Login submit data:', dataBody);
+    return signIn({ ...body, deviceId: fcmToken })
       .then((response) => {
         if (typeof response.exception !== 'undefined') {
           throw response.exception;
@@ -117,11 +121,15 @@ Login.propTypes = {
   toggleMobileDataAllowed: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
+  fcmToken: PropTypes.string,
 };
-
+Login.defaultProps = {
+  fcmToken: null,
+};
 const mapStateToProps = state => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
+  fcmToken: fcmFcmTokenSelector(state),
 });
 
 const mapDispatchToProps = {

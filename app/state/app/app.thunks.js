@@ -1,6 +1,7 @@
 import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
 // import PushNotification from 'react-native-push-notification';
+import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
 import { downloadApplets } from '../applets/applets.thunks';
@@ -53,6 +54,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
   // PushNotification.cancelAllLocalNotifications();
+  firebase.notifications().cancelAllNotifications();
 };
 
 export const logout = () => (dispatch, getState) => {
@@ -83,6 +85,7 @@ export const removeAccount = () => (dispatch, getState) => {
     dispatch(clearResponses());
     dispatch(deleteAndClearMedia());
     // PushNotification.cancelAllLocalNotifications();
+    firebase.notifications().cancelAllNotifications();
     Actions.push('login'); // Set screen back to login
   });
 };

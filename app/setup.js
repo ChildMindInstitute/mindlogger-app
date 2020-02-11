@@ -13,6 +13,7 @@ import { clearUser } from './state/user/user.actions';
 import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
 import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
+import FireBaseMessaging from './components/FireBaseMessaging';
 
 const resetBaseCount = () => {
   if (Platform.OS === 'ios') {
@@ -80,7 +81,9 @@ const setup = () => {
   return () => (
     <Provider store={store}>
       <Root>
-        <AppNavigator />
+        <FireBaseMessaging>
+          <AppNavigator />
+        </FireBaseMessaging>
       </Root>
     </Provider>
   );
