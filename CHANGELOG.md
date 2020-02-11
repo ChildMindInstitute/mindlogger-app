@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove questions without answers on Data Tab
 - Change question width into 100%
 
+## [0.11.1] - 2020-02-06
+- :sparkles: :zap: :bug: Introduced new push notification feature with firebase
+- :bug: Fix issues of push notifcation feature
+
 ## [0.11.0] - 2020-02-05
 - :arrow_up: upgrade react native version @0.61.5
 

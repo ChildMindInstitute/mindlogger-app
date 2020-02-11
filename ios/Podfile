@@ -52,6 +52,8 @@ target 'MDCApp' do
 #  pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition.podspec"
 #  pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit.podspec"
 
+  pod 'Firebase/Messaging'
+
   target 'MDCAppTests' do
     inherit! :search_paths
     # Pods for testing

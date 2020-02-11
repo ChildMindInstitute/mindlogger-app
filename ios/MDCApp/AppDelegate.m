@@ -6,7 +6,9 @@
  */
 
 #import "AppDelegate.h"
-
+#import <Firebase.h>
+#import "RNFirebaseNotifications.h"
+#import "RNFirebaseMessaging.h"
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -20,7 +22,8 @@
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"MDCApp"
                                             initialProperties:nil];
-
+  [FIRApp configure];
+  [RNFirebaseNotifications configure];
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
@@ -36,6 +39,7 @@
 // Required to register for notifications
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
+  [[RNFirebaseMessaging instance] didRegisterUserNotificationSettings:notificationSettings];
   [RNCPushNotificationIOS didRegisterUserNotificationSettings:notificationSettings];
 }
 // Required for the register event.
@@ -47,6 +51,7 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
+  [[RNFirebaseNotifications instance] didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
 // Required for the registrationError event.
@@ -57,6 +62,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 // Required for the localNotification event.
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
+  [[RNFirebaseNotifications instance] didReceiveLocalNotification:notification];
   [RNCPushNotificationIOS didReceiveLocalNotification:notification];
 }
 
