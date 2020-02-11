@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.11.2] - 2020-02-06
+## [0.11.2] - 2020-02-11
 - Add Monday through Sunday to the X-axis using only the first letter
 - Remove questions without answers on Data Tab
 - Change question width into 100%
