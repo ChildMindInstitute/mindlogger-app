@@ -4,15 +4,8 @@ import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
-import {
-  nextScreen,
-  prevScreen,
-} from '../../state/responses/responses.thunks';
-import {
-  currentResponsesSelector,
-  itemVisiblitySelector,
-  currentScreenSelector,
-} from '../../state/responses/responses.selectors';
+import { nextScreen, prevScreen } from '../../state/responses/responses.thunks';
+import { currentResponsesSelector, itemVisiblitySelector, currentScreenSelector } from '../../state/responses/responses.selectors';
 import { setAnswer } from '../../state/responses/responses.actions';
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
@@ -35,6 +28,7 @@ const styles = StyleSheet.create({
     shadowColor: 'lightgray',
     shadowOffset: { height: 0, width: 0 },
     elevation: 2,
+    zIndex: -1,
   },
 });
 
@@ -58,7 +52,7 @@ const Activity = ({
   const [isContentError, setContentError] = useState(false);
 
   return (
-    <Container>
+    <Container style={{ flex: 1 }}>
       <StatusBar hidden />
       <ActivityScreens
         activity={activity}
@@ -86,7 +80,12 @@ const Activity = ({
               responses,
               isContentError,
             )}
-            nextEnabled={isNextEnabled(currentScreen, activity, responses, isContentError)}
+            nextEnabled={isNextEnabled(
+              currentScreen,
+              activity,
+              responses,
+              isContentError,
+            )}
             onPressNext={() => {
               setContentError(false);
               nextScreen();
@@ -94,8 +93,14 @@ const Activity = ({
             prevLabel={getPrevLabel(currentScreen, itemVisibility)}
             prevEnabled={isPrevEnabled(currentScreen, activity)}
             onPressPrev={prevScreen}
-            actionLabel={getActionLabel(currentScreen, responses, activity.items)}
-            onPressAction={() => { setAnswer(activity.id, currentScreen, undefined); }}
+            actionLabel={getActionLabel(
+              currentScreen,
+              responses,
+              activity.items,
+            )}
+            onPressAction={() => {
+              setAnswer(activity.id, currentScreen, undefined);
+            }}
           />
         </View>
       )}
