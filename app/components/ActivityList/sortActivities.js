@@ -22,15 +22,15 @@ export const getUnscheduled = activityList => activityList.filter(
 );
 
 export const getCompleted = activityList => activityList.filter(
-  activity => (activity.nextScheduledTimestamp === null || moment(activity.nextScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
-    && (activity.lastScheduledTimestamp === null || moment(activity.lastScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
-    && activity.lastResponseTimestamp !== null,
+  activity => activity.nextScheduledTimestamp === null
+    && activity.lastResponseTimestamp !== null
+    && activity.lastScheduledTimestamp === null,
 );
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
-    && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp)),
+    && (moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && (moment() <= moment(activity.nextScheduledTimestamp)),
 );
 
 export const getOverdue = activityList => activityList.filter(
@@ -68,9 +68,9 @@ export default (activityList, inProgress) => {
 
   return [
     ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
-    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Due'),
-    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
     ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),
     ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
+    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
+    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Due'),
   ];
 };
