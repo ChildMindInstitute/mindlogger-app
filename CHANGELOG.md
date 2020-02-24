@@ -5,11 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
-## [0.11.3] - 2020-02-24
+## [0.11.3] - 2019-02-24
 - Add Monday through Sunday to the X-axis using only the first letter
 - Remove questions without answers on Data Tab
 - Change question width into 100%
+- Change slider bar start location
 
 ## [0.11.2] - 2019-02-11
 - :lipstick: Update the style of see more button

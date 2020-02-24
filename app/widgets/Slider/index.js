@@ -196,7 +196,7 @@ class Slider extends Component {
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
                 value={currentValue >= minimumValue
-                  ? currentValue : Math.ceil((minimumValue + maximumValue) / 2)}
+                  ? currentValue : (minimumValue + maximumValue) / 2}
                 onValueChange={value => this.handleValue(value)}
                 minimumValue={minimumValue}
                 maximumValue={maximumValue}
