@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ## [0.11.4] - 2019-02-28
 - Send timezone to receive notification based on user mobile timezone
+- Check where the schema's ```variableMap``` is stored and modify ```variableMapPath``` and ```variableMapAr``` accordingly in ```\app\models\json-ld.js```
 
 ## [0.11.3] - 2019-02-24
 - Add Monday through Sunday to the X-axis using only the first letter
