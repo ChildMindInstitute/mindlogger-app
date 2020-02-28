@@ -42,10 +42,11 @@ class Login extends Component {
 
   onSubmit = async (body) => {
     const { signInSuccessful, fcmToken } = this.props;
-    const dataBody = { ...body, deviceId: fcmToken };
+    const timezone = this.getTimezone();
+    const dataBody = { ...body, deviceId: fcmToken, timezone };
     // eslint-disable-next-line no-console
     console.log('Login submit data:', dataBody);
-    return signIn({ ...body, deviceId: fcmToken })
+    return signIn({ ...body, deviceId: fcmToken, timezone })
       .then((response) => {
         if (typeof response.exception !== 'undefined') {
           throw response.exception;
@@ -64,6 +65,10 @@ class Login extends Component {
           });
         }
       });
+  }
+
+  getTimezone = () => {
+    return new Date().getTimezoneOffset() / 60;
   }
 
   render() {
