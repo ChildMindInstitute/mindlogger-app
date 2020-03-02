@@ -65,14 +65,14 @@ const ActivityRow = ({ activity, onPress }) => {
   }
   return (
     <View style={styles.box}>
-      <TouchBox onPress={() => onPress(activity)}>
+      <TouchBox activity={activity} onPress={() => onPress(activity)}>
         <View style={styles.layout}>
           <View style={styles.left}>
-            <SubHeading style={{ fontFamily: theme.fontFamily }}>
+            <SubHeading style={[(activity.status === 'scheduled') ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
               {activity.name.en}
             </SubHeading>
             {activity.description && (
-              <BodyText style={{ fontFamily: theme.fontFamily }}>
+              <BodyText style={[(activity.status === 'scheduled') ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
                 {activity.description.en}
               </BodyText>
             )}

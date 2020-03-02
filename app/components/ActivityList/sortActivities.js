@@ -17,14 +17,14 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
-    && activity.lastScheduledTimestamp === null
-    && activity.lastResponseTimestamp === null,
+    && (activity.lastScheduledTimestamp === null || (activity.lastScheduledTimestamp !== null && !moment().isSame(moment(activity.nextScheduledTimestamp), 'day')))
+    && activity.nextScheduledTimestamp === null,
 );
 
 export const getCompleted = activityList => activityList.filter(
-  activity => activity.nextScheduledTimestamp === null
-    && activity.lastResponseTimestamp !== null
-    && activity.lastScheduledTimestamp === null,
+  activity => activity.lastResponseTimestamp !== null
+    && (!moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) > moment(activity.lastScheduledTimestamp)),
 );
 
 export const getScheduled = activityList => activityList.filter(
@@ -33,9 +33,10 @@ export const getScheduled = activityList => activityList.filter(
     && (moment() <= moment(activity.nextScheduledTimestamp)),
 );
 
-export const getOverdue = activityList => activityList.filter(
+export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp !== null
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp)),
+    && (new Date().getTime() > activity.lastScheduledTimestamp)
+    && (new Date().getTime() - activity.lastScheduledTimestamp < activity.timeout),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0
@@ -46,31 +47,69 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (activityList, inProgress) => {
+export default (activityList, inProgress, schedule) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(
     activity => inProgressKeys.includes(activity.id),
   );
+  // console.log('#########', activityList);
+  // console.log('%%%%%%%%%', inProgressActivities);
 
-  const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
-
+  const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(activity.id)) : activityList;
+  console.log('**********', activityList);
   // Activities currently scheduled - or - previously scheduled and not yet completed.
-  const overdue = getOverdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
+  const notprogress = notInProgress.map((obj) => {
+    if (schedule.events.length) {
+      let event;
+      // eslint-disable-next-line no-restricted-syntax
+      for (event of schedule.events) {
+        if (event.data.URI === obj.schema) {
+          const date = new Date(obj.lastScheduledTimestamp).getTime();
+          if (event.schedule.start && event.schedule.end) {
+            if ((date - event.schedule.start) % 86400000 === 0 && date < event.schedule.end) {
+              const milli = (event.data.timeout.day * 24 + event.data.timeout.hour) * 3600000 + event.data.timeout.minute * 60000;
+              return R.assoc('timeout', milli, obj);
+            }
+          } else {
+            const thatDay = new Date(event.schedule.year, event.schedule.month, event.schedule.dayOfMonth).getTime();
+            let millisecs = thatDay;
+            if (event.schedule.times) {
+              if (event.schedule.times[0].length === 2) {
+                millisecs = +event.schedule.times[0] * 3600000 + thatDay;
+              } else {
+                const hhMm = event.schedule.times[0].split(':');
+                millisecs = ((+hhMm[0]) * 60 + (+hhMm[1])) * 60000 + thatDay;
+              }
+            }
+            const date = new Date(obj.lastScheduledTimestamp).getTime();
+            if (millisecs === date) {
+              const milli = event.data.timeout ? (event.data.timeout.day * 24 + event.data.timeout.hour) * 3600000 + event.data.timeout.minute * 60000 : 0;
+              return R.assoc('timeout', milli, obj);
+            }
+          }
+        }
+      }
+    }
+    return obj;
+  });
 
+  // console.log('----start-----', moment(schedule.events[1].schedule.start).format('DD MMM YYYY hh:mm a'));
   // Activities scheduled some time in the future.
-  const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const pastdue = getPastdue(notprogress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
+
+  const scheduled = getScheduled(notprogress).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
+  const unscheduled = getUnscheduled(notprogress).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
-  const completed = getCompleted(notInProgress).reverse();
+  const completed = getCompleted(notprogress).reverse();
 
   return [
+    ...addSectionHeader(addProp('status', 'pastdue', pastdue), 'Past Due'),
     ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
     ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),
     ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
-    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Due'),
   ];
 };

@@ -5,7 +5,7 @@ import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 
 const ActivityList = ({ applet, inProgress, onPressActivity }) => {
-  const activities = sortActivities(applet.activities, inProgress);
+  const activities = sortActivities(applet.activities, inProgress, applet.schedule);
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
