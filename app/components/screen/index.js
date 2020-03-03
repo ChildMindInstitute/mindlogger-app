@@ -232,8 +232,16 @@ class ActivityScreen extends Component {
           <View
             style={{
               position: 'absolute',
-              bottom: -25,
+              bottom: 7,
               alignSelf: 'center',
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.5,
+              shadowRadius: 7.50,
+              elevation: 4,
               flex: 1,
             }}
           >
