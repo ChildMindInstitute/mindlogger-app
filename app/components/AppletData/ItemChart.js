@@ -32,7 +32,7 @@ class ItemChart extends React.Component {
     return (
       <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
-          { item.description ? item.description.en : item.question.en }
+          { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
         </Text>
         <TimelineChart data={data} labels={labels} />
       </View>
@@ -61,7 +61,7 @@ class ItemChart extends React.Component {
     return (
       <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
-          { item.description ? item.description.en : item.question.en }
+          { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
         </Text>
         <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
       </View>
@@ -114,7 +114,7 @@ class ItemChart extends React.Component {
       return (
         <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
-            { item.description ? item.description.en : item.question.en }
+            { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
           </Text>
           <BarChart data={dataFix} />
         </View>
@@ -129,10 +129,6 @@ class ItemChart extends React.Component {
     switch (item.inputType) {
       case 'radio':
         return this.renderTimelinePlot();
-      case 'slider':
-        return this.renderLinePlot();
-      case 'timeRange':
-        return this.renderBarPlot();
       default:
         return (
           <Text />
