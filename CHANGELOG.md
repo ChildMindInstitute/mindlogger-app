@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.7] - 2019-03-03
+- Update Style of See More button above progress bar
+
 ## [0.11.6] - 2019-03-02
 - Image URLs and markup text are removed from questions
 
