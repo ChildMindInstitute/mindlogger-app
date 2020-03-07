@@ -76,8 +76,8 @@ class TimelineChart extends React.Component {
 
     // WATCH OUT: hard-code a week.
     diffDays = 6; // max([diffDays, 6]);
-    minDate = maxDateMoment.subtract(diffDays, 'days').startOf('day').toDate();
-    maxDate = moment().startOf('day').toDate();
+    minDate = maxDateMoment.subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+    maxDate = maxDateMoment.add(6, 'days').startOf('day').toDate();
 
     // 3. create linear mapping between width and min,max
     const xMapper = scaleTime().domain([minDate, maxDate]).range([5, width - 5]).nice();

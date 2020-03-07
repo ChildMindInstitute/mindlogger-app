@@ -18,9 +18,9 @@ class ItemChart extends React.Component {
     let activeCount = 0;
 
     for (let i = 0; i < data.length; i += 1) {
-      const differenceTime = (new Date().getTime() - moment(data[i].date).toDate().getTime());
-      const differenceDay = differenceTime / (1000 * 3600 * 24);
-      if (differenceDay < 7) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
     }
@@ -47,9 +47,9 @@ class ItemChart extends React.Component {
     let activeCount = 0;
 
     for (let i = 0; i < data.length; i += 1) {
-      const differenceTime = new Date().getTime() - moment(data[i].date).toDate().getTime();
-      const differenceDay = differenceTime / (1000 * 3600 * 24);
-      if (differenceDay < 7) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
     }
@@ -98,9 +98,9 @@ class ItemChart extends React.Component {
     let activeCount = 0;
 
     for (let i = 0; i < data.length; i += 1) {
-      const differenceTime = (new Date().getTime() - moment(data[i].date).toDate().getTime());
-      const differenceDay = differenceTime / (1000 * 3600 * 24);
-      if (differenceDay < 7) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
     }
