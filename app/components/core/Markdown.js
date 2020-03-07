@@ -22,8 +22,9 @@ const rules = {
 };
 
 export const Markdown = ({ mstyle, children }) => (
-  <View style={{ alignContent: 'center', alignItems: 'center' }}>
+  <View>
     <MarkdownView
+      style={{ justifyContent: 'center', alignItems: 'center' }}
       styles={R.merge(markdownStyle, mstyle)}
       rules={rules}
     >

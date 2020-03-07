@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.11.5] - 2019-03-02
+- Align Images to center that are above questions
+
 ## [0.11.4] - 2019-02-28
 - Send timezone to receive notification based on user mobile timezone
 - Check where the schema's ```variableMap``` is stored and modify ```variableMapPath``` and ```variableMapAr``` accordingly in ```\app\models\json-ld.js```
