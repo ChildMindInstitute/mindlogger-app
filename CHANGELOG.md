@@ -5,9 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.11.8] - 2019-03-04
+- Shows data on correct day on data tab.
+
+## [0.11.7] - 2019-03-03
+- Update Style of See More button above progress bar
+
+## [0.11.6] - 2019-03-02
+- Image URLs and markup text are removed from questions
+
+## [0.11.5] - 2019-03-02
+- Align Images to center that are above questions
+
+## [0.11.4] - 2019-02-28
+- Send timezone to receive notification based on user mobile timezone
+- Check where the schema's ```variableMap``` is stored and modify ```variableMapPath``` and ```variableMapAr``` accordingly in ```\app\models\json-ld.js```
+
+## [0.11.3] - 2019-02-24
+- Add Monday through Sunday to the X-axis using only the first letter
+- Remove questions without answers on Data Tab
+- Change question width into 100%
+- Change slider bar start location
 
 ## [0.11.2] - 2019-02-11
-- Update the style of see more button
+- :lipstick: Update the style of see more button
 
 ## [0.11.1] - 2020-02-06
 - :sparkles: :zap: :bug: Introduced new push notification feature with firebase

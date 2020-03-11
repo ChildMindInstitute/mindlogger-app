@@ -17,13 +17,13 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
-    && (activity.lastScheduledTimestamp === null || (activity.lastScheduledTimestamp !== null && !moment().isSame(moment(activity.nextScheduledTimestamp), 'day')))
-    && activity.nextScheduledTimestamp === null,
+    && activity.lastScheduledTimestamp === null,
 );
 
 export const getCompleted = activityList => activityList.filter(
   activity => activity.lastResponseTimestamp !== null
-    && (!moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && activity.nextScheduledTimestamp === null
+    && (!moment().isSame(moment(activity.lastResponseTimestamp), 'day'))
     && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) > moment(activity.lastScheduledTimestamp)),
 );
 
@@ -56,7 +56,7 @@ export default (activityList, inProgress, schedule) => {
   // console.log('%%%%%%%%%', inProgressActivities);
 
   const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(activity.id)) : activityList;
-  console.log('**********', activityList);
+  //console.log('*************', schedule.events);
   // Activities currently scheduled - or - previously scheduled and not yet completed.
   const notprogress = notInProgress.map((obj) => {
     if (schedule.events.length) {
@@ -65,7 +65,12 @@ export default (activityList, inProgress, schedule) => {
       for (event of schedule.events) {
         if (event.data.URI === obj.schema) {
           const date = new Date(obj.lastScheduledTimestamp).getTime();
+          const nextDate = new Date(obj.nextScheduledTimestamp).getTime();
+
           if (event.schedule.start && event.schedule.end) {
+            // if ((nextDate - event.schedule.start) % 86400000 === 0 && nextDate < event.schedule.end) {
+            //   return R.assoc('access', event.data.timeout.access, obj);
+            // }
             if ((date - event.schedule.start) % 86400000 === 0 && date < event.schedule.end) {
               const milli = (event.data.timeout.day * 24 + event.data.timeout.hour) * 3600000 + event.data.timeout.minute * 60000;
               return R.assoc('timeout', milli, obj);
@@ -81,7 +86,11 @@ export default (activityList, inProgress, schedule) => {
                 millisecs = ((+hhMm[0]) * 60 + (+hhMm[1])) * 60000 + thatDay;
               }
             }
-            const date = new Date(obj.lastScheduledTimestamp).getTime();
+
+            // if (millisecs === nextDate) {
+            //   return R.assoc('access', event.data.timeout.access, obj);
+            // }
+
             if (millisecs === date) {
               const milli = event.data.timeout ? (event.data.timeout.day * 24 + event.data.timeout.hour) * 3600000 + event.data.timeout.minute * 60000 : 0;
               return R.assoc('timeout', milli, obj);
@@ -93,7 +102,6 @@ export default (activityList, inProgress, schedule) => {
     return obj;
   });
 
-  // console.log('----start-----', moment(schedule.events[1].schedule.start).format('DD MMM YYYY hh:mm a'));
   // Activities scheduled some time in the future.
   const pastdue = getPastdue(notprogress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
 

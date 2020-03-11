@@ -6,13 +6,10 @@ import {
   Svg,
   Line,
   Text,
-  TSpan,
   Circle,
-  Path,
 } from 'react-native-svg';
 import { min, max } from 'd3-array';
 import { scaleTime, scaleLinear } from 'd3-scale';
-import { line } from 'd3-shape';
 
 import { colors } from '../../themes/colors';
 
@@ -27,7 +24,7 @@ class BarChart extends React.Component {
 
     const leftMargin = 10;
     const rightMargin = 10;
-    const bottomMargin = 5;
+    const bottomMargin = 25;
 
     // 1. calculate minimum and maximum date
     const dateArray = data.map(d => moment(d.date).toDate());
@@ -52,8 +49,8 @@ class BarChart extends React.Component {
 
     // WATCH OUT: hard-code a week.
     diffDays = 6; // max([diffDays, 6]);
-    minDate = maxDateMoment.subtract(diffDays, 'days').startOf('day').toDate();
-    maxDate = moment().startOf('day').toDate();
+    minDate = maxDateMoment.subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+    maxDate = maxDateMoment.add(6, 'days').startOf('day').toDate();
 
     // 3. create linear mapping between width and min,max
     const xMapper = scaleTime()
@@ -69,6 +66,7 @@ class BarChart extends React.Component {
 
     // 5. put through mapper
     const xTicks = dateTicks.map(xMapper);
+    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     // 6. calculate max data value.
     // bar plots should have 0 as the min.
@@ -86,7 +84,13 @@ class BarChart extends React.Component {
         {
           xTicks.map((x, i) => <Circle x={x} y={height - bottomMargin} r="5" fill={colors.lightGrey} key={`${x}__${i}`} />)
         }
-
+        {
+          xTicks.map((x, i) => (
+            <Text x={x - 4} y={height - bottomMargin + 20} fill={colors.grey} key={`${x}__${i}__DAY`}>
+              {xDays[i]}
+            </Text>
+          ))
+        }
         {
           data.map((d, i) => (
             <Line

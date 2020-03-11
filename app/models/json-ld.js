@@ -226,7 +226,10 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
 
-  const variableMapAr = R.pathOr([], [VARIABLE_MAP, 0, '@list'], activityJson);
+  const isVariableMapExpanded = R.hasPath([VARIABLE_MAP, 0, '@list'], activityJson);
+  const variableMapPath = isVariableMapExpanded ? [VARIABLE_MAP, 0, '@list'] : [VARIABLE_MAP];
+  const variableMapAr = R.pathOr([], variableMapPath, activityJson);
+
   const variableMap = transformVariableMap(variableMapAr);
   const visibility = listToObject(activityJson[VISIBILITY]);
   const preamble = languageListToObject(activityJson[PREAMBLE]);

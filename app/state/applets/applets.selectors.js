@@ -36,6 +36,7 @@ export const dateParser = (schedule) => {
         moment(output[uri].lastScheduledResponse),
         moment(lastScheduled),
       );
+      // console.log('56565656', lastScheduled);
     }
 
     let nextScheduledResponse = nextScheduled;
@@ -47,8 +48,8 @@ export const dateParser = (schedule) => {
     }
 
     output[uri] = {
-      lastScheduledResponse,
-      nextScheduledResponse,
+      lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
+      nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
 
       // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
@@ -74,11 +75,10 @@ export const appletsSelector = createSelector(
 
     const extraInfoActivities = applet.activities.map((act) => {
       const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
-
       const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
       const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
       const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
-
+      console.log('111lastscheduled', lastScheduled);
       return {
         ...act,
         appletId: applet.id,

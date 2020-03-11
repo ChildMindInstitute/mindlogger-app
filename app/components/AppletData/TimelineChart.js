@@ -19,12 +19,20 @@ class TimelineChart extends React.Component {
   // eslint-disable-next-line
   renderSingle(label, data, xTicks, xMapper) {
     const width = Math.round(Dimensions.get('window').width * 0.9);
+    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     return (
-      <Svg width={width} height={50} key={label.name}>
+      <Svg width={width} height={65} key={label.name}>
         <Text x="0" y="10">{label.name}</Text>
         <Line x1="0" y1="25" x2={width} y2="25" stroke={colors.lightGrey} strokeWidth="2" />
         {
           xTicks.map(x => <Circle x={x} y="25" r="5" fill={colors.lightGrey} key={`xtick__${x}__${Math.random()}`} />)
+        }
+        {
+          xTicks.map((x, i) => (
+            <Text x={x - 4} y={45} fill={colors.grey} key={`${x}__${i}__DAY`}>
+              {xDays[i]}
+            </Text>
+          ))
         }
         {
           // only plot data where it matches label's value.
@@ -68,8 +76,8 @@ class TimelineChart extends React.Component {
 
     // WATCH OUT: hard-code a week.
     diffDays = 6; // max([diffDays, 6]);
-    minDate = maxDateMoment.subtract(diffDays, 'days').startOf('day').toDate();
-    maxDate = moment().startOf('day').toDate();
+    minDate = maxDateMoment.subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+    maxDate = maxDateMoment.add(6, 'days').startOf('day').toDate();
 
     // 3. create linear mapping between width and min,max
     const xMapper = scaleTime().domain([minDate, maxDate]).range([5, width - 5]).nice();

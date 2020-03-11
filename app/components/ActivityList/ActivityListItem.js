@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
 });
 
 const ActivityRow = ({ activity, onPress }) => {
+  // console.log('!!!!', activity);
   if (activity.isHeader === true) {
     return (
       <View style={styles.sectionHeading}>

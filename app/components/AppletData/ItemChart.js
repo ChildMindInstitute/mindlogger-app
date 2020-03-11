@@ -8,7 +8,6 @@ import moment from 'moment';
 import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
-
 // eslint-disable-next-line
 class ItemChart extends React.Component {
 
@@ -16,9 +15,27 @@ class ItemChart extends React.Component {
   renderTimelinePlot() {
     const { item, data } = this.props;
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     return (
-      <TimelineChart data={data} labels={labels} />
+      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+          { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
+        </Text>
+        <TimelineChart data={data} labels={labels} />
+      </View>
     );
   }
 
@@ -27,9 +44,27 @@ class ItemChart extends React.Component {
     const { item, data } = this.props;
     const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
     const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     return (
-      <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
+      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+          { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
+        </Text>
+        <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
+      </View>
     );
   }
 
@@ -60,70 +95,49 @@ class ItemChart extends React.Component {
   // eslint-disable-next-line
   renderBarPlot() {
     const { item, data } = this.props;
+    let activeCount = 0;
 
+    for (let i = 0; i < data.length; i += 1) {
+      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
+      const thatTime = moment(data[i].date).toDate().getTime();
+      if (mondayTime.getTime() <= thatTime) {
+        activeCount += 1;
+      }
+    }
+    if (activeCount === 0) {
+      return (
+        <View />
+      );
+    }
     if (item.inputType === 'timeRange') {
       const dataFix = this.calcTimeDiff(data);
       return (
-        <BarChart data={dataFix} />
+        <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+            { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length) : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length) }
+          </Text>
+          <BarChart data={dataFix} />
+        </View>
       );
     }
-    const data1 = [
-      {
-        value: 7,
-        date: '2019-09-06',
-      },
-      {
-        value: 4,
-        date: '2019-09-05',
-      },
-      {
-        value: 9,
-        date: '2019-09-04',
-      },
-      {
-        value: 8,
-        date: '2019-09-03',
-      },
-      {
-        value: 6,
-        date: '2019-09-01',
-      },
-    ];
-
-    return (
-      <BarChart data={data1} />
-    );
   }
 
   // eslint-disable-next-line
   renderChartByItemType() {
     const { item } = this.props;
+
     switch (item.inputType) {
       case 'radio':
         return this.renderTimelinePlot();
-      case 'slider':
-        return this.renderLinePlot();
-      case 'timeRange':
-        return this.renderBarPlot();
       default:
         return (
-          <Text>
-            No chart type specified for {item.inputType}.
-          </Text>
+          <Text />
         );
     }
   }
 
   render() {
-    const { item } = this.props;
-    return (
-      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
-          { item.description ? item.description.en : item.question.en }
-        </Text>
-        {this.renderChartByItemType()}
-      </View>
-    );
+    return this.renderChartByItemType();
   }
 }
 

@@ -5,6 +5,7 @@ import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 
 const ActivityList = ({ applet, inProgress, onPressActivity }) => {
+  console.log('###', applet);
   const activities = sortActivities(applet.activities, inProgress, applet.schedule);
   return (
     <View style={{ paddingBottom: 30 }}>
