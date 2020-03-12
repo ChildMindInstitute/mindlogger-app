@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import { Icon } from 'native-base';
-import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading, Hyperlink } from '../core';
+import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading } from '../core';
 import ActivityDueDate from './ActivityDueDate';
 import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
 });
 
 const ActivityRow = ({ activity, onPress }) => {
-  // console.log('!!!!', activity);
   if (activity.isHeader === true) {
     return (
       <View style={styles.sectionHeading}>
@@ -69,11 +67,11 @@ const ActivityRow = ({ activity, onPress }) => {
       <TouchBox activity={activity} onPress={() => onPress(activity)}>
         <View style={styles.layout}>
           <View style={styles.left}>
-            <SubHeading style={[(activity.status === 'scheduled') ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
+            <SubHeading style={[(activity.status === 'scheduled' && !activity.nextAccess) ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
               {activity.name.en}
             </SubHeading>
             {activity.description && (
-              <BodyText style={[(activity.status === 'scheduled') ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
+              <BodyText style={[(activity.status === 'scheduled' && !activity.nextAccess) ? { opacity: 0.5 } : { opacity: 1 }, { fontFamily: theme.fontFamily }]}>
                 {activity.description.en}
               </BodyText>
             )}

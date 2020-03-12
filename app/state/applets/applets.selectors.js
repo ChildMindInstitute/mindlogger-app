@@ -11,7 +11,6 @@ import { responseScheduleSelector } from '../responses/responses.selectors';
 
 export const dateParser = (schedule) => {
   const output = {};
-
   schedule.events.forEach((e) => {
     const uri = e.data.URI;
 
@@ -31,26 +30,40 @@ export const dateParser = (schedule) => {
     const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
 
     let lastScheduledResponse = lastScheduled;
+    let lastScheduledTimeout = output[uri].lastScheduledTimeout;
+
+    if(lastScheduledResponse) {
+      lastScheduledTimeout = e.data.timeout;
+    }
+
     if (output[uri].lastScheduledResponse && lastScheduled) {
       lastScheduledResponse = moment.max(
         moment(output[uri].lastScheduledResponse),
         moment(lastScheduled),
       );
-      // console.log('56565656', lastScheduled);
+      lastScheduledTimeout = e.data.timeout;
     }
 
     let nextScheduledResponse = nextScheduled;
+    let nextScheduledTimeout = output[uri].nextScheduledTimeout;
+
+    if(nextScheduledResponse) {
+      nextScheduledTimeout = e.data.timeout;
+    }
+
     if (output[uri].nextScheduledResponse && nextScheduled) {
       nextScheduledResponse = moment.min(
         moment(output[uri].nextScheduledResponse),
         moment(nextScheduled),
       );
+      nextScheduledTimeout = e.data.timeout;
     }
 
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
-
+      lastScheduledTimeout,
+      nextScheduledTimeout,
       // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
     };
@@ -77,8 +90,18 @@ export const appletsSelector = createSelector(
       const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
       const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
       const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
+      let lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
+      let nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
       const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
-      console.log('111lastscheduled', lastScheduled);
+      
+      if(lastTimeout) {
+        lastTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
+      }
+
+      if(nextTimeout) {
+        nextTimeout = nextTimeout.access;
+      }
+
       return {
         ...act,
         appletId: applet.id,
@@ -89,6 +112,8 @@ export const appletsSelector = createSelector(
         lastScheduledTimestamp: lastScheduled,
         lastResponseTimestamp: lastResponse,
         nextScheduledTimestamp: nextScheduled,
+        lastTimeout: lastTimeout,
+        nextAccess: nextTimeout,
         isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
 
         // also add in our parsed notifications...
