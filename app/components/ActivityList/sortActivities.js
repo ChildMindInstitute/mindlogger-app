@@ -52,7 +52,6 @@ export default (activityList, inProgress, schedule) => {
   );
   const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(activity.id)) : activityList;
   // Activities currently scheduled - or - previously scheduled and not yet completed.
-  console.log('%%%', notInProgress);
 
   // Activities scheduled some time in the future.
   const pastdue = getPastdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();

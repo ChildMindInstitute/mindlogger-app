@@ -8,65 +8,68 @@ import {
   getScheduledNotifications,
 } from '../../services/time';
 import { responseScheduleSelector } from '../responses/responses.selectors';
+import { userInfoSelector } from '../user/user.selectors';
 
-export const dateParser = (schedule) => {
+export const dateParser = (schedule, userInfo) => {
   const output = {};
   schedule.events.forEach((e) => {
-    const uri = e.data.URI;
+    if (e.data.users && e.data.users.find(({ email }) => email === userInfo.email)) {
+      const uri = e.data.URI;
 
-    if (!output[uri]) {
+      if (!output[uri]) {
+        output[uri] = {
+          notificationDateTimes: [],
+        };
+      }
+
+      const eventSchedule = Parse.schedule(e.schedule);
+      const now = Day.fromDate(new Date());
+
+      const lastScheduled = getLastScheduled(eventSchedule, now);
+      const nextScheduled = getNextScheduled(eventSchedule, now);
+
+      const notifications = R.pathOr([], ['data', 'notifications'], e);
+      const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
+
+      let lastScheduledResponse = lastScheduled;
+      let { lastScheduledTimeout } = output[uri];
+
+      if (lastScheduledResponse) {
+        lastScheduledTimeout = e.data.timeout;
+      }
+
+      if (output[uri].lastScheduledResponse && lastScheduled) {
+        lastScheduledResponse = moment.max(
+          moment(output[uri].lastScheduledResponse),
+          moment(lastScheduled),
+        );
+        lastScheduledTimeout = e.data.timeout;
+      }
+
+      let nextScheduledResponse = nextScheduled;
+      let { nextScheduledTimeout } = output[uri];
+
+      if (nextScheduledResponse) {
+        nextScheduledTimeout = e.data.timeout;
+      }
+
+      if (output[uri].nextScheduledResponse && nextScheduled) {
+        nextScheduledResponse = moment.min(
+          moment(output[uri].nextScheduledResponse),
+          moment(nextScheduled),
+        );
+        nextScheduledTimeout = e.data.timeout;
+      }
+
       output[uri] = {
-        notificationDateTimes: [],
+        lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
+        nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+        lastScheduledTimeout,
+        nextScheduledTimeout,
+        // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
+        notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
       };
     }
-
-    const eventSchedule = Parse.schedule(e.schedule);
-    const now = Day.fromDate(new Date());
-
-    const lastScheduled = getLastScheduled(eventSchedule, now);
-    const nextScheduled = getNextScheduled(eventSchedule, now);
-
-    const notifications = R.pathOr([], ['data', 'notifications'], e);
-    const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
-
-    let lastScheduledResponse = lastScheduled;
-    let lastScheduledTimeout = output[uri].lastScheduledTimeout;
-
-    if(lastScheduledResponse) {
-      lastScheduledTimeout = e.data.timeout;
-    }
-
-    if (output[uri].lastScheduledResponse && lastScheduled) {
-      lastScheduledResponse = moment.max(
-        moment(output[uri].lastScheduledResponse),
-        moment(lastScheduled),
-      );
-      lastScheduledTimeout = e.data.timeout;
-    }
-
-    let nextScheduledResponse = nextScheduled;
-    let nextScheduledTimeout = output[uri].nextScheduledTimeout;
-
-    if(nextScheduledResponse) {
-      nextScheduledTimeout = e.data.timeout;
-    }
-
-    if (output[uri].nextScheduledResponse && nextScheduled) {
-      nextScheduledResponse = moment.min(
-        moment(output[uri].nextScheduledResponse),
-        moment(nextScheduled),
-      );
-      nextScheduledTimeout = e.data.timeout;
-    }
-
-    output[uri] = {
-      lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
-      nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
-      lastScheduledTimeout,
-      nextScheduledTimeout,
-      // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
-      notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
-    };
   });
 
   return output;
@@ -76,14 +79,15 @@ export const dateParser = (schedule) => {
 export const appletsSelector = createSelector(
   R.path(['applets', 'applets']),
   responseScheduleSelector,
-  (applets, responseSchedule) => applets.map((applet) => {
+  userInfoSelector,
+  (applets, responseSchedule, userInfo) => applets.map((applet) => {
     let scheduledDateTimesByActivity = {};
 
     // applet.schedule, if defined, has an events key.
     // events is a list of objects.
     // the events[idx].data.URI points to the specific activity's schema.
     if (applet.schedule) {
-      scheduledDateTimesByActivity = dateParser(applet.schedule);
+      scheduledDateTimesByActivity = dateParser(applet.schedule, userInfo);
     }
 
     const extraInfoActivities = applet.activities.map((act) => {
@@ -93,12 +97,12 @@ export const appletsSelector = createSelector(
       let lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
       let nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
       const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
-      
-      if(lastTimeout) {
+
+      if (lastTimeout) {
         lastTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
       }
 
-      if(nextTimeout) {
+      if (nextTimeout) {
         nextTimeout = nextTimeout.access;
       }
 
@@ -112,7 +116,7 @@ export const appletsSelector = createSelector(
         lastScheduledTimestamp: lastScheduled,
         lastResponseTimestamp: lastResponse,
         nextScheduledTimestamp: nextScheduled,
-        lastTimeout: lastTimeout,
+        lastTimeout,
         nextAccess: nextTimeout,
         isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
 

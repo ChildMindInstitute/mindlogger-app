@@ -6,7 +6,6 @@ import ActivityListItem from './ActivityListItem';
 
 const ActivityList = ({ applet, inProgress, onPressActivity }) => {
   const activities = sortActivities(applet.activities, inProgress, applet.schedule);
-  console.log('######', activities);
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
