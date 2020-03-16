@@ -18,7 +18,7 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
     && activity.lastScheduledTimestamp === null
-    && (!moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
+    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
 // export const getCompleted = activityList => activityList.filter(
@@ -29,11 +29,14 @@ export const getUnscheduled = activityList => activityList.filter(
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
+    && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp))
     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day')),
 );
 
 export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp !== null
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp))
     && (new Date().getTime() - activity.lastScheduledTimestamp < activity.lastTimeout),
 );
 
