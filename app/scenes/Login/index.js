@@ -13,6 +13,7 @@ import {
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
+import moment from 'moment';
 import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
 import styles from './styles';
 import { signInSuccessful } from '../../state/user/user.thunks';
@@ -68,7 +69,7 @@ class Login extends Component {
   }
 
   getTimezone = () => {
-    return new Date().getTimezoneOffset() / 60;
+    return moment().utcOffset() / 60;
   }
 
   render() {
