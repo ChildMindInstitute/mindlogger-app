@@ -392,6 +392,12 @@ class Slider extends Component {
               +
             </Text>
           </Button>
+          {tickMarks.map(tickMark => (
+            <View key={tickMark.value} style={[styles.tickMark, { left: tickMark.left }]}>
+              <Text style={styles.tickLabel}> l </Text>
+              <Text> { tickMark.value } </Text>
+            </View>
+          ))}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
