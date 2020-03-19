@@ -387,6 +387,11 @@ class Slider extends Component {
             </Text>
           </View>
           )}
+          <Button onPress={this.onPressPlus} style={styles.plusButton}>
+            <Text style={styles.leftLabel}>
+              +
+            </Text>
+          </Button>
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
@@ -408,6 +413,11 @@ class Slider extends Component {
               />
             </View>
           </TouchableWithoutFeedback>
+          <Button onPress={this.onPressMinus} style={styles.minusButton}>
+            <Text style={styles.leftLabel}>
+              -
+            </Text>
+          </Button>
         </View>
 
         <View style={styles.labelContainer}>
