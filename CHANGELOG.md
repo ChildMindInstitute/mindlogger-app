@@ -5,10 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ## [0.11.11] - 2019-03-18
 - Adds control buttons to slider bar
 - Adds tick marks and labels to slider bar
 - Updates slider styles
+
+## [0.11.10] - 2019-03-16
+- Removed asterisk around text on data tab
+- Finished individual schedules.
+- Updated tests for individual schedules.
+
+## [0.11.9] - 2019-03-12
+- Finished activity timeout issue
+- Finished general scheduling issue
+- Fixed push notification to be taken to the activity's first question.
 
 ## [0.11.8] - 2019-03-04
 - Shows data on correct day on data tab.
