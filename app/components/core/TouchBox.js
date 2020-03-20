@@ -22,17 +22,16 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TouchBox = ({ children, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={styles.box}>
-        {children}
-      </View>
-    </TouchableOpacity>
-  );
-};
+export const TouchBox = ({ children, activity, onPress }) => (
+  <TouchableOpacity disabled={activity ? (activity.status === 'scheduled' && !activity.nextAccess) : false} onPress={onPress}>
+    <View style={styles.box}>
+      {children}
+    </View>
+  </TouchableOpacity>
+);
 
 TouchBox.propTypes = {
   children: PropTypes.node.isRequired,
+  activity: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
 };
