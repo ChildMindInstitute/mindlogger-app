@@ -9,6 +9,7 @@ import {
 import { Button, Text } from 'native-base';
 import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
+import { colors } from '../../themes/colors';
 
 const testTicks = [
   { name: 'One', value: 1 },
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 26 / 2,
-    backgroundColor: '#008060',
+    backgroundColor: colors.primary,
     elevation: 4,
     shadowColor: '#000',
     shadowOffset: {
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: '800',
     lineHeight: 25,
-    color: '#008060',
+    color: colors.primary,
   },
   minusButton: {
     position: 'absolute',
@@ -106,18 +107,18 @@ const styles = StyleSheet.create({
     borderColor: '#008060',
     backgroundColor: '#eee',
     height: 30,
-    bottom: 7,
+    bottom: 5,
     left: -15,
   },
   rightLabel: {
     fontSize: 25,
     fontWeight: '800',
     lineHeight: 25,
-    color: '#008060',
+    color: colors.primary,
   },
   tickMark: {
     position: 'absolute',
-    bottom: -34,
+    bottom: -33,
   },
   knobLabel: {
     position: 'absolute',
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
   tickLabel: {
     paddingLeft: 5,
     fontSize: 12,
-    color: '#cfcfcf',
+    color: '#a0a0a0',
   },
 });
 
@@ -406,7 +407,7 @@ class Slider extends Component {
                 onValueChange={value => this.handleValue(value)}
                 minimumValue={minimumValue}
                 maximumValue={maximumValue}
-                minimumTrackTintColor={currentVal >= minimumValue ? '#49aF2A' : '#CCC'}
+                minimumTrackTintColor="#CCC"
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
                 thumbStyle={currentVal >= minimumValue ? styles.thumb : styles.thumbUnselected}
