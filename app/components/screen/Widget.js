@@ -23,6 +23,7 @@ import TimePicker from '../../widgets/TimeRange/TimePicker';
 
 const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onContentError }) => {
   if (screen.inputType === 'radio'
+    // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
     return (
       <MultiSelect
@@ -33,6 +34,7 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onCon
     );
   }
   if (screen.inputType === 'radio'
+    // && Array.isArray(answer)
     && R.path(['valueConstraints', 'itemList'], screen)) {
     return (
       <Radio
