@@ -5,8 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
-## [0.11.10] - 2019-03-15
+## [0.11.10] - 2019-03-16
+- Removed asterisk around text on data tab
 - Finished individual schedules.
 - Updated tests for individual schedules.
 
