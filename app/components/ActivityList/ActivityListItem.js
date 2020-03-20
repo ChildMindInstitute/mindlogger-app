@@ -89,7 +89,7 @@ const ActivityRow = ({ activity, onPress }) => {
         </View>
       </TouchBox>
       {activity.isOverdue && (
-        <NotificationDot />
+        <NotificationDot onPress={() => onPress(activity)} />
       )}
     </View>
   );
