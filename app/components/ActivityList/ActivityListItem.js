@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import { Icon } from 'native-base';
-import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading, Hyperlink } from '../core';
+import { SubHeading, NotificationDot, BodyText, TouchBox, LittleHeading } from '../core';
 import ActivityDueDate from './ActivityDueDate';
 import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
@@ -90,7 +89,7 @@ const ActivityRow = ({ activity, onPress }) => {
         </View>
       </TouchBox>
       {activity.isOverdue && (
-        <NotificationDot />
+        <NotificationDot onPress={() => onPress(activity)} />
       )}
     </View>
   );
