@@ -18,24 +18,26 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
     && activity.lastScheduledTimestamp === null
-    && activity.lastResponseTimestamp === null,
+    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
-export const getCompleted = activityList => activityList.filter(
-  activity => (activity.nextScheduledTimestamp === null || moment(activity.nextScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
-    && (activity.lastScheduledTimestamp === null || moment(activity.lastScheduledTimestamp) <= moment(activity.lastResponseTimestamp))
-    && activity.lastResponseTimestamp !== null,
-);
+// export const getCompleted = activityList => activityList.filter(
+//   activity => activity.lastResponseTimestamp !== null
+//     && activity.nextScheduledTimestamp === null
+//     && (!moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
+// );
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
     && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp)),
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp))
+    && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day')),
 );
 
-export const getOverdue = activityList => activityList.filter(
+export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp !== null
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp)),
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp))
+    && (new Date().getTime() - activity.lastScheduledTimestamp < activity.lastTimeout),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0
@@ -46,31 +48,30 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (activityList, inProgress) => {
+export default (activityList, inProgress, schedule) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(
     activity => inProgressKeys.includes(activity.id),
   );
-
-  const notInProgress = activityList.filter(activity => !inProgressKeys.includes(activity.id));
-
+  const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(activity.id)) : activityList;
   // Activities currently scheduled - or - previously scheduled and not yet completed.
-  const overdue = getOverdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
 
   // Activities scheduled some time in the future.
+  const pastdue = getPastdue(notInProgress).sort(compareByTimestamp('lastScheduledTimestamp')).reverse();
+
   const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
-  const completed = getCompleted(notInProgress).reverse();
+  // const completed = getCompleted(notInProgress).reverse();
 
   return [
+    ...addSectionHeader(addProp('status', 'pastdue', pastdue), 'Past Due'),
     ...addSectionHeader(addProp('status', 'in-progress', inProgressActivities), 'In Progress'),
-    ...addSectionHeader(addProp('status', 'overdue', overdue), 'Due'),
-    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
     ...addSectionHeader(addProp('status', 'unscheduled', unscheduled), 'Unscheduled'),
-    ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
+    // ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
+    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
   ];
 };
