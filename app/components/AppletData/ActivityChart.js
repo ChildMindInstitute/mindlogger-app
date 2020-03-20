@@ -89,7 +89,7 @@ class ActivityChart extends React.Component {
           {activity.name.en}
         </Text>
         {activity.description && (
-          <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}>
+          <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 0 }}>
             { activity.description.en }
           </Text>
         )}

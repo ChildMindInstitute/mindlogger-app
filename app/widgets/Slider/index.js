@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
-import { Button, Text } from 'native-base';
+import { Text } from 'native-base';
 import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     paddingTop: 20,
-    paddingRight: 20,
-    paddingLeft: 20,
   },
   sliderWrapper: {
     width: '100%',
@@ -388,11 +386,6 @@ class Slider extends Component {
             </Text>
           </View>
           )}
-          <Button onPress={this.onPressPlus} style={styles.plusButton}>
-            <Text style={styles.leftLabel}>
-              +
-            </Text>
-          </Button>
           {tickMarks.map(tickMark => (
             <View key={tickMark.value} style={[styles.tickMark, { left: tickMark.left }]}>
               <Text style={styles.tickLabel}> l </Text>
@@ -420,11 +413,6 @@ class Slider extends Component {
               />
             </View>
           </TouchableWithoutFeedback>
-          <Button onPress={this.onPressMinus} style={styles.minusButton}>
-            <Text style={styles.leftLabel}>
-              -
-            </Text>
-          </Button>
         </View>
 
         <View style={styles.labelContainer}>
