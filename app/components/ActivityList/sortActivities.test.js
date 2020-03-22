@@ -1,5 +1,6 @@
 import * as R from 'ramda';
-import { getUnscheduled, getScheduled, getOverdue, getCompleted } from './sortActivities';
+import moment from 'moment';
+import { getUnscheduled, getScheduled, getPastdue } from './sortActivities';
 
 const unscheduled = {
   // Note the _id prop is used only to help debugging.
@@ -14,6 +15,7 @@ const scheduled = {
   lastScheduledTimestamp: 100,
   lastResponseTimestamp: 500,
   nextScheduledTimestamp: 1000,
+  nextAccess: true,
 };
 
 const scheduledNoResponse = {
@@ -21,6 +23,7 @@ const scheduledNoResponse = {
   lastScheduledTimestamp: null,
   lastResponseTimestamp: null,
   nextScheduledTimestamp: 800,
+  nextAccess: true,
 };
 
 const scheduledNoLastScheduled = {
@@ -28,34 +31,39 @@ const scheduledNoLastScheduled = {
   lastScheduledTimestamp: null,
   lastResponseTimestamp: 600,
   nextScheduledTimestamp: 1200,
+  nextAccess: true,
 };
 
 const overdue = {
   _id: 'Overdue',
-  lastScheduledTimestamp: 600,
+  lastScheduledTimestamp: new Date().getTime(),
   lastResponseTimestamp: 500,
   nextScheduledTimestamp: 1000,
+  lastTimeout: 1000,
 };
 
 const overdueBeforeResponse = {
   _id: 'Overdue - No Previous Response',
-  lastScheduledTimestamp: 600,
+  lastScheduledTimestamp: new Date().getTime(),
   lastResponseTimestamp: null,
   nextScheduledTimestamp: 1000,
+  lastTimeout: 1000,
 };
 
 const overdueNoNextScheduled = {
   _id: 'Overdue - Nothing Scheduled Next',
-  lastScheduledTimestamp: 700,
+  lastScheduledTimestamp: new Date().getTime(),
   lastResponseTimestamp: 400,
   nextScheduledTimestamp: null,
+  lastTimeout: 1000,
 };
 
 const overdueOnlyLastScheduled = {
   _id: 'Overdue - No Response & Nothing Scheduled Next',
-  lastScheduledTimestamp: 700,
+  lastScheduledTimestamp: new Date().getTime(),
   lastResponseTimestamp: null,
   nextScheduledTimestamp: null,
+  lastTimeout: 1000,
 };
 
 const completedWithoutSchedule = {
@@ -114,12 +122,8 @@ describe('getUnscheduled', () => {
     expect(getUnscheduled([])).toEqual([]);
   });
 
-  test('should return empty array if all activites have notification times', () => {
-    expect(getUnscheduled(R.difference(ALL_ACTIVITY_SCENARIOS, UNSCHEDULED_ACTIVITES))).toEqual([]);
-  });
-
   test('should return array of all activites with no notification times', () => {
-    expect(getUnscheduled(ALL_ACTIVITY_SCENARIOS)).toEqual(UNSCHEDULED_ACTIVITES);
+    expect(getUnscheduled(UNSCHEDULED_ACTIVITES)).toEqual(UNSCHEDULED_ACTIVITES);
   });
 });
 
@@ -137,30 +141,16 @@ describe('getScheduled', () => {
   });
 });
 
-describe('getCompleted', () => {
+describe('getPastdue', () => {
   test('should return empty array if passed empty list', () => {
-    expect(getCompleted([])).toEqual([]);
-  });
-
-  test('should return empty array if no activities are completedWithoutSchedule', () => {
-    expect(getCompleted(R.difference(ALL_ACTIVITY_SCENARIOS, COMPLETED_ACTIVITIES))).toEqual([]);
-  });
-
-  test('should return array of all activites with no notification times', () => {
-    expect(getCompleted(ALL_ACTIVITY_SCENARIOS)).toEqual(COMPLETED_ACTIVITIES);
-  });
-});
-
-describe('getOverdue', () => {
-  test('should return empty array if passed empty list', () => {
-    expect(getOverdue([])).toEqual([]);
+    expect(getPastdue([])).toEqual([]);
   });
 
   test('should return empty array if no activities are overdue', () => {
-    expect(getOverdue(R.difference(ALL_ACTIVITY_SCENARIOS, OVERDUE_ACTIVITIES))).toEqual([]);
+    expect(getPastdue(R.difference(ALL_ACTIVITY_SCENARIOS, OVERDUE_ACTIVITIES))).toEqual([]);
   });
 
   test('should return array of all activites with no notification times', () => {
-    expect(getOverdue(ALL_ACTIVITY_SCENARIOS)).toEqual(OVERDUE_ACTIVITIES);
+    expect(getPastdue(ALL_ACTIVITY_SCENARIOS)).toEqual(OVERDUE_ACTIVITIES);
   });
 });

@@ -4,12 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
 ## [0.11.13] - 2019-03-22
-- Fix loading error on Time picker
+- Fixed loading error on Time picker
+- Fixed critical error (division by zero) on slider
 
 ## [0.11.12] - 2019-03-19
-- Fix crashes of the app on radio button (multi select)
+- Fixed crashes of the app on radio button (multi select)
+
+## [0.11.11] - 2019-03-18
+- Added control buttons to slider bar
+- Added tick marks and labels to slider bar
+- Updated slider styles
+
+## [0.11.10] - 2019-03-16
+- Removed asterisk around text on data tab
+- Finished individual schedules.
+- Updated tests for individual schedules.
+
+## [0.11.9] - 2019-03-12
+- Finished activity timeout issue
+- Finished general scheduling issue
+- Fixed push notification to be taken to the activity's first question.
 
 ## [0.11.8] - 2019-03-04
 - Shows data on correct day on data tab.

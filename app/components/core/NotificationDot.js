@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -17,6 +18,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export const NotificationDot = () => (
-  <View style={styles.container} />
+export const NotificationDot = ({ onPress }) => (
+  <TouchableOpacity onPress={onPress} style={styles.container} />
 );
+
+NotificationDot.propTypes = {
+  onPress: PropTypes.func.isRequired,
+};

@@ -6,6 +6,8 @@ export const testVisibility = (testExpression = true, items = [], responses = []
   if (testExpression === true || testExpression === 'true') {
     return true;
   }
+  // console.log("111testExpression", testExpression);
+  // console.log("222items", items);
 
   const parser = new Parser({
     logical: true,
@@ -47,7 +49,6 @@ export const testVisibility = (testExpression = true, items = [], responses = []
 
     // Run the expression
     const result = expr.evaluate(inputs);
-
     return !!result; // Cast the result to true or false
   } catch (error) {
     return true; // Default to true if we can't parse the expression
