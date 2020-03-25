@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.15] - 2019-03-25
+- Updated getEvents with changed 'users' field
+
 ## [0.11.11] - 2019-03-18
 - Adds control buttons to slider bar
 - Adds tick marks and labels to slider bar
