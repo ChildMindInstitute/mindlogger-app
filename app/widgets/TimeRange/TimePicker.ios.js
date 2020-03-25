@@ -32,8 +32,14 @@ class TimePicker extends React.Component {
   render() {
     const { onChange, value = {}, label } = this.props;
     const date = new Date();
-    date.setHours(value.hour || 0);
-    date.setMinutes(value.minute || 0);
+
+    if (value) {
+      date.setHours(value.hour || 0);
+      date.setMinutes(value.minute || 0);
+    } else {
+      date.setHours(0);
+      date.setMinutes(0);
+    }
     return (
       <View style={{ marginBottom: 20 }}>
         <Text style={styles.label}>{label}</Text>

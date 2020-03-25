@@ -247,15 +247,17 @@ class Slider extends Component {
       config: { itemList },
     } = this.props;
 
-    const calculatedValue = Math.ceil(
-      Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
-        * itemList.length
-        + minimumValue
-        - 1,
-    );
+    if (sliderWidth) {
+      const calculatedValue = Math.ceil(
+        Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
+          * itemList.length
+          + minimumValue
+          - 1,
+      );
 
-    onChange(calculatedValue);
-    this.setState({ currentValue: calculatedValue });
+      onChange(calculatedValue);
+      this.setState({ currentValue: calculatedValue });
+    }
   };
 
   calculateLabelPosition = () => {
