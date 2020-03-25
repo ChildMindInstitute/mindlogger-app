@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
 });
 
 const ActivityDueDate = ({ activity }) => {
-  if (activity.status === 'scheduled') {
+  if ((activity.status === 'scheduled' || activity.status === 'in-progress') && activity.nextScheduledTimestamp) {
     return (
       <LittleText style={styles.textStyles}>
         Scheduled for: {formatTime(activity.nextScheduledTimestamp)}
