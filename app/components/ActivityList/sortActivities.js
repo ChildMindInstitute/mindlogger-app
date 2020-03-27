@@ -31,6 +31,7 @@ export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
     && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
     && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp))
+    && (activity.nextScheduledTimestamp > new Date().getTime())
     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day')),
 );
 
