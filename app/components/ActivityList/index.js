@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
+import * as RNLocalize from 'react-native-localize';
 import { Parse, Day } from 'dayspan';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -13,6 +14,10 @@ import {
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import { newAppletSelector } from '../../state/app/app.selectors';
+import {
+  authTokenSelector,
+} from '../../state/user/user.selectors';
+import { getSchedule } from '../../services/network';
 // import { secondSelector } from '../../state/applets/applets.selectors';
 import { responseScheduleSelector, inProgressSelector } from '../../state/responses/responses.selectors';
 
@@ -147,18 +152,21 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
-const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity }) => {
-  const newApplet = getActivities(applet.applet, responseSchedule);
-  const [activities, setActivities] = useState(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+const ActivityList = ({ applet, responseSchedule, authToken, inProgress, onPressActivity }) => {
+  // const newApplet = getActivities(applet.applet, responseSchedule);
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const newApplet = getActivities(applet.applet, responseSchedule);
-      setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+      const timezone = RNLocalize.getTimeZone();
+      getSchedule(authToken, timezone)
+        .then((schedule) => {
+          const newApplet = getActivities(applet.applet, schedule);
+          setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+        });
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [applet]);
-
+  }, []);
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
@@ -174,6 +182,7 @@ const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity })
 
 ActivityList.propTypes = {
   applet: PropTypes.object.isRequired,
+  authToken: PropTypes.string.isRequired,
   responseSchedule: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
@@ -182,6 +191,7 @@ ActivityList.propTypes = {
 const mapStateToProps = state => ({
   applet: newAppletSelector(state),
   responseSchedule: responseScheduleSelector(state),
+  authToken: authTokenSelector(state),
   // perSecond: secondSelector(state),
   inProgress: inProgressSelector(state),
 });

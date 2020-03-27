@@ -14,7 +14,7 @@ const scheduled = {
   _id: 'Scheduled',
   lastScheduledTimestamp: 100,
   lastResponseTimestamp: 500,
-  nextScheduledTimestamp: 1000,
+  nextScheduledTimestamp: new Date().getTime() + 1000000,
   nextAccess: true,
 };
 
@@ -22,7 +22,7 @@ const scheduledNoResponse = {
   _id: 'Scheduled - No Previous Response',
   lastScheduledTimestamp: null,
   lastResponseTimestamp: null,
-  nextScheduledTimestamp: 800,
+  nextScheduledTimestamp: new Date().getTime() + 1000000,
   nextAccess: true,
 };
 
@@ -30,7 +30,7 @@ const scheduledNoLastScheduled = {
   _id: 'Scheduled - No Last Scheduled',
   lastScheduledTimestamp: null,
   lastResponseTimestamp: 600,
-  nextScheduledTimestamp: 1200,
+  nextScheduledTimestamp: new Date().getTime() + 1000000,
   nextAccess: true,
 };
 
