@@ -17,9 +17,8 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
-    && (new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
-    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day'))
-    && (activity.lastScheduledTimestamp === null || (new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)),
+    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day') || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
+    && (activity.lastScheduledTimestamp === null || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout),
 );
 
 // export const getCompleted = activityList => activityList.filter(
@@ -36,7 +35,8 @@ export const getScheduled = activityList => activityList.filter(
 
 export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp !== null
-    && (moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp.getTime() > activity.lastTimeout))
+    && activity.lastTimeout
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp > activity.lastTimeout))
     && (new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout),
 );
 

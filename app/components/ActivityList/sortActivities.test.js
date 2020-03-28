@@ -12,7 +12,7 @@ const unscheduled = {
 
 const scheduled = {
   _id: 'Scheduled',
-  lastScheduledTimestamp: 100,
+  lastScheduledTimestamp: new Date(300),
   lastResponseTimestamp: 500,
   nextScheduledTimestamp: new Date().getTime() + 1000000,
   nextAccess: true,
@@ -36,34 +36,26 @@ const scheduledNoLastScheduled = {
 
 const overdue = {
   _id: 'Overdue',
-  lastScheduledTimestamp: new Date().getTime(),
+  lastScheduledTimestamp: new Date(),
   lastResponseTimestamp: 500,
   nextScheduledTimestamp: 1000,
-  lastTimeout: 1000,
+  lastTimeout: 10000,
 };
 
 const overdueBeforeResponse = {
   _id: 'Overdue - No Previous Response',
-  lastScheduledTimestamp: new Date().getTime(),
+  lastScheduledTimestamp: new Date(),
   lastResponseTimestamp: null,
   nextScheduledTimestamp: 1000,
-  lastTimeout: 1000,
+  lastTimeout: 10000,
 };
 
 const overdueNoNextScheduled = {
   _id: 'Overdue - Nothing Scheduled Next',
-  lastScheduledTimestamp: new Date().getTime(),
-  lastResponseTimestamp: 400,
-  nextScheduledTimestamp: null,
-  lastTimeout: 1000,
-};
-
-const overdueOnlyLastScheduled = {
-  _id: 'Overdue - No Response & Nothing Scheduled Next',
-  lastScheduledTimestamp: new Date().getTime(),
-  lastResponseTimestamp: null,
-  nextScheduledTimestamp: null,
-  lastTimeout: 1000,
+  lastScheduledTimestamp: new Date(),
+  lastResponseTimestamp: new Date().getTime() + 20000,
+  nextScheduledTimestamp: 1000,
+  lastTimeout: 10000,
 };
 
 const completedWithoutSchedule = {
@@ -75,7 +67,7 @@ const completedWithoutSchedule = {
 
 const completedWithSchedule = {
   _id: 'Completed - With Schedule',
-  lastScheduledTimestamp: 300,
+  lastScheduledTimestamp: new Date(300),
   lastResponseTimestamp: 600,
   nextScheduledTimestamp: null,
 };
@@ -97,7 +89,6 @@ const OVERDUE_ACTIVITIES = [
   overdue,
   overdueBeforeResponse,
   overdueNoNextScheduled,
-  overdueOnlyLastScheduled,
 ];
 
 const UNSCHEDULED_ACTIVITES = [
