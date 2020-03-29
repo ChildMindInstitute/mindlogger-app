@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+## [0.11.16] - 2019-03-26
+- Updated activity status automatically every second
+- Updated unit tests for sortActivities
+
+## [0.11.15] - 2019-03-25
+- Updated getEvents with changed 'users' field
+
 ## [0.11.14] - 2019-03-23
 - A due by time is shown on the activity button regardless of the state it is in
 
@@ -15,9 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.12] - 2019-03-19
 - Fixed crashes of the app on radio button (multi select)
-
-## [0.11.15] - 2019-03-25
-- Updated getEvents with changed 'users' field
 
 ## [0.11.11] - 2019-03-18
 - Added control buttons to slider bar
