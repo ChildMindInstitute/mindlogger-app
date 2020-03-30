@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import WidgetError from './WidgetError';
@@ -20,8 +21,9 @@ import {
   VisualStimulusResponse,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
+import { currentAppletSelector } from '../../state/app/app.selectors';
 
-const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onContentError }) => {
+const Widget = ({ screen, answer, onChange, applet, isCurrent, onPress, onRelease, onContentError }) => {
   if (screen.inputType === 'radio'
     // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
@@ -48,6 +50,7 @@ const Widget = ({ screen, answer, onChange, isCurrent, onPress, onRelease, onCon
     return (
       <Slider
         config={screen.valueConstraints}
+        appletName={applet.name.en}
         onChange={onChange}
         onPress={onPress}
         onRelease={onRelease}
@@ -211,10 +214,15 @@ Widget.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
   onChange: PropTypes.func.isRequired,
+  applet: PropTypes.object.isRequired,
   onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
 };
 
-export default Widget;
+const mapStateToProps = state => ({
+  applet: currentAppletSelector(state),
+});
+
+export default connect(mapStateToProps)(Widget);
