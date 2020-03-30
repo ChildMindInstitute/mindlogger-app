@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ## [0.11.16] - 2019-03-26
+- Updated sliderbar to be discrete for NIMH applet
+
+## [0.11.16] - 2019-03-26
 - Updated activity status automatically every second
 - Updated unit tests for sortActivities
 
