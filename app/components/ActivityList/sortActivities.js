@@ -17,7 +17,7 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
-    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day') || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
+    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day') || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp > activity.lastTimeout) || (new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp))
     && (activity.lastScheduledTimestamp === null || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout),
 );
 
