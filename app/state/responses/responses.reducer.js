@@ -11,7 +11,6 @@ export const initialState = {
   },
   uploadQueue: [],
   schedule: {},
-  scheduleFlag: false,
 };
 
 export default (state = initialState, action = {}) => {
@@ -110,7 +109,6 @@ export default (state = initialState, action = {}) => {
     case RESPONSES_CONSTANTS.SET_SCHEDULE:
       return {
         ...state,
-        scheduleFlag: !state.scheduleFlag,
         schedule: action.payload,
       };
     default:
