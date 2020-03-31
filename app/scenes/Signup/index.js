@@ -4,12 +4,12 @@ import { StatusBar } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
-  Content,
   Button,
+  View,
   Header,
   Left,
-  Icon,
   Right,
+  Icon,
   Body,
   Title,
 } from 'native-base';
@@ -21,7 +21,7 @@ import { signUp } from '../../services/network';
 import styles from './styles';
 import SignupForm from './SignupForm';
 
-class SignUp extends Component { // eslint-disable-line
+class SignUp extends Component {
   onSubmit = (body) => {
     const { signUpSuccessful } = this.props;
     return signUp(body)
@@ -29,6 +29,7 @@ class SignUp extends Component { // eslint-disable-line
       .catch((e) => {
         throw new SubmissionError({
           _error: e.message,
+          password: 'Sign up failed: username may already be in use.',
         });
       });
   }
@@ -49,9 +50,9 @@ class SignUp extends Component { // eslint-disable-line
           </Body>
           <Right />
         </Header>
-        <Content style={styles.container2}>
+        <View style={[styles.container2, { backgroundColor: skin.colors.primary }]}>
           <SignupForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
-        </Content>
+        </View>
       </Container>
     );
   }
