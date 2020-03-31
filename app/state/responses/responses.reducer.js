@@ -108,7 +108,6 @@ export default (state = initialState, action = {}) => {
         uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
     case RESPONSES_CONSTANTS.SET_SCHEDULE:
-      console.log('arrive reducer', new Date().getTime());
       return {
         ...state,
         scheduleFlag: !state.scheduleFlag,

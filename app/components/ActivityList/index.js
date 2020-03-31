@@ -145,20 +145,13 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
-const ActivityList = ({ applet, responseSchedule, scheduleFlag, inProgress, onPressActivity }) => {
+const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    console.log('scheduling is updated: ', responseSchedule);
-    console.log('arrived component', new Date().getTime());
-  }, [scheduleFlag]);
-
-  useEffect(() => {
     const intervalId = setInterval(() => {
-      // console.log('inProgress is updated', inProgress);
       const newApplet = getActivities(applet.applet, responseSchedule);
-      // console.log('================>: ', newApplet);
       setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
     }, 1000);
     return () => clearInterval(intervalId);
@@ -182,16 +175,13 @@ ActivityList.propTypes = {
   responseSchedule: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
-  scheduleFlag: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  console.log('------>', state.responses);
   return {
     applet: newAppletSelector(state),
     responseSchedule: state.responses.schedule,
     inProgress: state.responses.inProgress,
-    scheduleFlag: state.responses.scheduleFlag,
   };
 };
 export default connect(mapStateToProps)(ActivityList);
