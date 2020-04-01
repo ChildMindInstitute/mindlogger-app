@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+## [0.11.19] - 2019-03-31
+- Updated signup scene + signup form style
+- Update fields available for new account
+    - Remove first name, last name, email fields
+    - Add display name field
+- Remove button to recover password with email
 
 ## [Unreleased]
 

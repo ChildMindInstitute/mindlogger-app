@@ -29,10 +29,6 @@ class Login extends Component {
     Actions.sign_up();
   }
 
-  onForgotPassword = () => {
-    Actions.forgot_password();
-  }
-
   onChangeStudy = () => {
     Actions.change_study();
   }
@@ -93,10 +89,6 @@ class Login extends Component {
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
               <Text style={styles.whiteText}>New User</Text>
-            </TouchableOpacity>
-            <Text style={styles.whiteText}> or </Text>
-            <TouchableOpacity onPress={this.onForgotPassword}>
-              <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
           </View>
           <View>
