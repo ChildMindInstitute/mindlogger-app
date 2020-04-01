@@ -17,8 +17,8 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp === null
-    && activity.lastScheduledTimestamp === null
-    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
+    && (activity.lastResponseTimestamp === null || !moment().isSame(moment(activity.lastResponseTimestamp), 'day') || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp > activity.lastTimeout) || (new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp))
+    && (activity.lastScheduledTimestamp === null || !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')),
 );
 
 // export const getCompleted = activityList => activityList.filter(
@@ -29,15 +29,15 @@ export const getUnscheduled = activityList => activityList.filter(
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp !== null
-    && (activity.lastScheduledTimestamp === null || moment(activity.lastResponseTimestamp) >= moment(activity.lastScheduledTimestamp))
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.nextScheduledTimestamp))
+    && (activity.lastScheduledTimestamp === null || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day')),
 );
 
 export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp !== null
-    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < moment(activity.lastScheduledTimestamp))
-    && (new Date().getTime() - activity.lastScheduledTimestamp < activity.lastTimeout),
+    && activity.lastTimeout
+    && (activity.lastResponseTimestamp === null || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp > activity.lastTimeout))
+    && (new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0

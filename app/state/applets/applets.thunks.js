@@ -49,14 +49,12 @@ export const getInvitations = () => (dispatch, getState) => {
 export const downloadApplets = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  const userInfo = userInfoSelector(state);
   dispatch(setDownloadingApplets(true));
-  getApplets(auth.token, userInfo._id).then((applets) => {
+  getApplets(auth.token).then((applets) => {
     if (loggedInSelector(getState())) { // Check that we are still logged in when fetch finishes
       const transformedApplets = applets
         .filter(applet => !R.isEmpty(applet.items))
         .map(applet => transformApplet(applet));
-      // console.log('++++++++++++++++++++++++++', applets);
       dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
       dispatch(downloadAppletsMedia(transformedApplets));

@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     paddingTop: 20,
-    paddingRight: 20,
-    paddingLeft: 20,
   },
   sliderWrapper: {
     width: '100%',
@@ -156,6 +154,7 @@ class Slider extends Component {
       maxValue: PropTypes.string,
       itemList: PropTypes.array,
     }).isRequired,
+    appletName: PropTypes.string.isRequired,
     value: PropTypes.number,
     onChange: PropTypes.func.isRequired,
     onPress: PropTypes.func,
@@ -247,15 +246,17 @@ class Slider extends Component {
       config: { itemList },
     } = this.props;
 
-    const calculatedValue = Math.ceil(
-      Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
-        * itemList.length
-        + minimumValue
-        - 1,
-    );
+    if (sliderWidth) {
+      const calculatedValue = Math.ceil(
+        Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
+          * itemList.length
+          + minimumValue
+          - 1,
+      );
 
-    onChange(calculatedValue);
-    this.setState({ currentValue: calculatedValue });
+      onChange(calculatedValue);
+      this.setState({ currentValue: calculatedValue });
+    }
   };
 
   calculateLabelPosition = () => {
@@ -368,11 +369,11 @@ class Slider extends Component {
       onChange,
       onPress,
       value,
+      appletName,
       onRelease,
     } = this.props;
 
     let currentVal = value;
-
     if (currentVal === minimumValue - 1) {
       currentVal = minimumValue;
     }
@@ -388,11 +389,6 @@ class Slider extends Component {
             </Text>
           </View>
           )}
-          <Button onPress={this.onPressPlus} style={styles.plusButton}>
-            <Text style={styles.leftLabel}>
-              +
-            </Text>
-          </Button>
           {tickMarks.map(tickMark => (
             <View key={tickMark.value} style={[styles.tickMark, { left: tickMark.left }]}>
               <Text style={styles.tickLabel}> l </Text>
@@ -411,7 +407,7 @@ class Slider extends Component {
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
                 thumbStyle={currentVal >= minimumValue ? styles.thumb : styles.thumbUnselected}
-                step={itemList ? 0.05 : 0}
+                step={appletName.includes('NIMH content') ? 1 : 0.05}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
@@ -420,11 +416,6 @@ class Slider extends Component {
               />
             </View>
           </TouchableWithoutFeedback>
-          <Button onPress={this.onPressMinus} style={styles.minusButton}>
-            <Text style={styles.leftLabel}>
-              -
-            </Text>
-          </Button>
         </View>
 
         <View style={styles.labelContainer}>

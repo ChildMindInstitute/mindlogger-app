@@ -19,7 +19,7 @@ export class MultiSelect extends Component {
     const { value, onChange, config } = this.props;
     if (!value || (config.maxValue === 1 && config.minValue === 1)) {
       onChange([itemVal]);
-    } else if (value.includes(itemVal)) {
+    } else if (Array.isArray(value) && value.includes(itemVal)) {
       const answerIndex = value.indexOf(itemVal);
       onChange(R.remove(answerIndex, 1, value));
     } else {
@@ -75,7 +75,7 @@ export class MultiSelect extends Component {
             </View>
             <View style={{ width: '15%' }}>
               <CheckBox
-                checked={value && value.includes(item.value)}
+                checked={value && Array.isArray(value) && value.includes(item.value)}
                 onPress={() => this.onAnswer(item.value)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
