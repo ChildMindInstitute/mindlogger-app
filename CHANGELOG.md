@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved the performance on NIMH applet
 
 ## [0.11.18] - 2019-03-30
-- Updated sliderbar to be discrete for NIMH applet
+- updated request for refreshing applets
 
-## [0.11.16] - 2019-03-29
+## [0.11.17] - 2019-03-29
 - Updated sliderbar to be discrete for NIMH applet
 
 ## [0.11.16] - 2019-03-26
