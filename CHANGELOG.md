@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.20] - 2019-04-01
+- Reverted to the version 0.11.15
+- Implemented changes of current version on it
+
 ## [0.11.15] - 2019-03-25
 - Updated getEvents with changed 'users' field
 
