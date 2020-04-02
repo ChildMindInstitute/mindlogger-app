@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.20] - 2019-04-01
+- Updated activity every 10 mins
+- Changed scroll bar to be discrete on NIMH applet
+- Timeout issue is fixed
+
 ## [0.11.19] - 2019-03-31
 - Improved the performance on NIMH applet
 

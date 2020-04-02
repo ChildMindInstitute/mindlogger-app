@@ -150,13 +150,14 @@ const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity })
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    // const intervalId = setInterval(() => {
-    const newApplet = getActivities(applet.applet, responseSchedule);
-    console.log('did mount', moment().isSame(moment(newApplet.activities[3].lastScheduledTimestamp), 'day'));
+    let newApplet = getActivities(applet.applet, responseSchedule);
     setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
-    // }, 1000);
-    // return () => clearInterval(intervalId);
-  }, [inProgress, responseSchedule]);
+    const intervalId = setInterval(() => {
+      newApplet = getActivities(applet.applet, responseSchedule);
+      setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+    }, 300000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <View style={{ paddingBottom: 30 }}>

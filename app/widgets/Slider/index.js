@@ -407,7 +407,7 @@ class Slider extends Component {
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
                 thumbStyle={currentVal >= minimumValue ? styles.thumb : styles.thumbUnselected}
-                step={appletName === 'Healthy Brain Network (NIMH content) v0.24' ? 1 : 0.05}
+                step={appletName.includes('NIMH content') ? 1 : 0.05}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
