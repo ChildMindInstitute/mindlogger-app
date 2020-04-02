@@ -12,24 +12,7 @@ import {
 } from '../../services/time';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
-import { newAppletSelector } from '../../state/app/app.selectors';
-
-// const useInterval = ({ callback, delay }) => {
-//   // const savedCallback = useRef();
-
-//   // // Remember the latest callback.
-//   // useEffect(() => {
-//   //   savedCallback.current = callback;
-//   // }, [callback]);
- 
-//   // Set up the interval.
-//   useEffect(() => {
-//     if (delay !== null) {
-//       const id = setInterval(callback, delay);
-//       return () => clearInterval(id);
-//     }
-//   }, [delay]);
-// };
+import { newAppletSelector, currentAppletSelector } from '../../state/app/app.selectors';
 
 const dateParser = (schedule) => {
   const output = {};
@@ -145,19 +128,21 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
-const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity }) => {
+const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
 
   useEffect(() => {
-    let newApplet = getActivities(applet.applet, responseSchedule);
-    setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
     const intervalId = setInterval(() => {
-      newApplet = getActivities(applet.applet, responseSchedule);
+      const newApplet = getActivities(applet.applet, responseSchedule);
       setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
     }, 300000);
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    setActivities(sortActivities(currentApplet.activities, inProgress, currentApplet.schedule));
+  }, [responseSchedule, inProgress]);
 
   return (
     <View style={{ paddingBottom: 30 }}>
@@ -174,6 +159,7 @@ const ActivityList = ({ applet, responseSchedule, inProgress, onPressActivity })
 
 ActivityList.propTypes = {
   applet: PropTypes.object.isRequired,
+  currentApplet: PropTypes.object.isRequired,
   responseSchedule: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
@@ -182,6 +168,7 @@ ActivityList.propTypes = {
 const mapStateToProps = (state) => {
   return {
     applet: newAppletSelector(state),
+    currentApplet: currentAppletSelector(state),
     responseSchedule: state.responses.schedule,
     inProgress: state.responses.inProgress,
   };
