@@ -8,9 +8,8 @@ import {
   getScheduledNotifications,
 } from '../../services/time';
 import { responseScheduleSelector } from '../responses/responses.selectors';
-import { userInfoSelector } from '../user/user.selectors';
 
-export const dateParser = (schedule, userInfo) => {
+export const dateParser = (schedule) => {
   const output = {};
   schedule.events.forEach((e) => {
     const uri = e.data.URI;
@@ -77,15 +76,14 @@ export const dateParser = (schedule, userInfo) => {
 export const appletsSelector = createSelector(
   R.path(['applets', 'applets']),
   responseScheduleSelector,
-  userInfoSelector,
-  (applets, responseSchedule, userInfo) => applets.map((applet) => {
+  (applets, responseSchedule) => applets.map((applet) => {
     let scheduledDateTimesByActivity = {};
 
     // applet.schedule, if defined, has an events key.
     // events is a list of objects.
     // the events[idx].data.URI points to the specific activity's schema.
     if (applet.schedule) {
-      scheduledDateTimesByActivity = dateParser(applet.schedule, userInfo);
+      scheduledDateTimesByActivity = dateParser(applet.schedule);
     }
 
     const extraInfoActivities = applet.activities.map((act) => {
