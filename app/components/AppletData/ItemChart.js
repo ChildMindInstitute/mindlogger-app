@@ -8,9 +8,27 @@ import moment from 'moment';
 import TimelineChart from './TimelineChart';
 import LineChart from './LineChart';
 import BarChart from './BarChart';
-// eslint-disable-next-line
-class ItemChart extends React.Component {
 
+const styles = {
+  plotView: {
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 8,
+  },
+  linePlotTitle: {
+    fontWeight: 'bold',
+    paddingTop: 20,
+    paddingBottom: 8,
+    paddingHorizontal: 20,
+  },
+  linePlotLabel: {
+    alignSelf: 'flex-start',
+    paddingLeft: 14,
+  },
+};
+
+class ItemChart extends React.Component {
   // eslint-disable-next-line
   renderTimelinePlot() {
     const { item, data } = this.props;
@@ -30,7 +48,7 @@ class ItemChart extends React.Component {
       );
     }
     return (
-      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+      <View style={styles.plotView}>
         <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
           { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length).replace(/[**]/gi, '')
             : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length).replace(/[**]/gi, '') }
@@ -60,12 +78,18 @@ class ItemChart extends React.Component {
       );
     }
     return (
-      <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+      <View style={styles.plotView}>
+        <Text style={styles.linePlotTitle}>
           { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length).replace(/[**]/gi, '')
             : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length).replace(/[**]/gi, '') }
         </Text>
-        <LineChart data={data} labels={labels} minMaxLabels={minMaxLabels} />
+        <Text style={styles.linePlotLabel}>
+          {minMaxLabels[1]}
+        </Text>
+        <LineChart data={data} labels={labels} />
+        <Text style={styles.linePlotLabel}>
+          {minMaxLabels[0]}
+        </Text>
       </View>
     );
   }
@@ -114,7 +138,7 @@ class ItemChart extends React.Component {
     if (item.inputType === 'timeRange') {
       const dataFix = this.calcTimeDiff(data);
       return (
-        <View style={{ alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <View style={styles.plotView}>
           <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
             { item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length).replace(/[**]/gi, '')
               : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length).replace(/[**]/gi, '') }

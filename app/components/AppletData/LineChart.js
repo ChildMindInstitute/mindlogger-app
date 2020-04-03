@@ -21,15 +21,7 @@ const height = Math.round(width * (2 / 3)) + 20;
 const styles = StyleSheet.create({
   lineChartContainer: {
     width,
-    height: height + 40,
-  },
-  topLabel: {
-    paddingBottom: 10,
-  },
-  bottomLabel: {
-    alignSelf: 'flex-end',
-    paddingTop: 10,
-    paddingRight: 5
+    height,
   },
 });
 
@@ -37,7 +29,7 @@ const styles = StyleSheet.create({
 class LineChart extends React.Component {
   // eslint-disable-next-line
   render() {
-    const { data, labels, minMaxLabels } = this.props;
+    const { data, labels } = this.props;
 
     const leftMargin = 5;
     const rightMargin = 5;
@@ -106,9 +98,6 @@ class LineChart extends React.Component {
 
     return (
       <View style={styles.lineChartContainer}>
-        <Text style={styles.topLabel}>
-          {minMaxLabels[1]}
-        </Text>
         <Svg width={width} height={height}>
           <Line x1={leftMargin} y1={height - bottomMargin} x2={width} y2={height - bottomMargin} stroke={colors.lightGrey} strokeWidth="2" />
           {
@@ -129,11 +118,7 @@ class LineChart extends React.Component {
             data.map((d, i) => <Circle x={xMapper(moment(d.date).toDate())} y={yMapper(d.value)} r="5" fill={colors.primary} key={`xTick__${i}__${d.date}__${d.value}`} />)
           }
           <Path d={lineCreator(data)} fill="none" stroke={colors.primary} strokeWidth="2" />
-
         </Svg>
-        <Text style={styles.bottomLabel}>
-          {minMaxLabels[0]}
-        </Text>
       </View>
     );
   }
@@ -142,7 +127,6 @@ class LineChart extends React.Component {
 LineChart.propTypes = {
   data: PropTypes.array.isRequired,
   labels: PropTypes.array.isRequired,
-  minMaxLabels: PropTypes.array.isRequired,
 };
 
 export default LineChart;
