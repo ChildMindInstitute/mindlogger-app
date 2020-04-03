@@ -41,12 +41,12 @@ const setInitialScreen = (authOk, state) => {
   if (!authOk) {
     Actions.replace('login');
   } else if (state.app.currentApplet && currentAppletSelector(state)) {
-    Actions.replace('applet_details');
+    Actions.replace('activity_details');
   } else {
     Actions.replace('applet_list');
   }
 };
-
+ 
 const setup = () => {
   if (Platform.OS === 'ios') {
     resetBaseCount();

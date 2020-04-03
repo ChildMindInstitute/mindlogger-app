@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.22] - 2019-04-02
+- Set initial screen once push notification is clicked
+
 ## [0.11.21] - 2019-03-31
 - Changed ItemChart + LineChart label positioning
 
