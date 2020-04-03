@@ -46,14 +46,13 @@ const setInitialScreen = (authOk, state) => {
     Actions.replace('applet_list');
   }
 };
- 
+
 const setup = () => {
   if (Platform.OS === 'ios') {
     resetBaseCount();
   }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
-    setInitialScreen(authOk, store.getState());
     if (authOk) {
       store.dispatch(sync());
     }
@@ -75,6 +74,8 @@ const setup = () => {
         resp(store.dispatch, store.getState);
       }
     });
+
+    setInitialScreen(authOk, store.getState());
   });
 
   // Root component
