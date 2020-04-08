@@ -148,13 +148,6 @@ export const activitiesSelector = createSelector(
   ),
 );
 
-export const allAppletsSelector = createSelector(
-  R.path(['applets', 'applets']),
-  applets => applets.map((applet) => {
-    return {
-      applet,
-    };
-  }),
-);
+export const allAppletsSelector = R.path(['applets', 'applets']);
 
 export const appletDataSelector = R.path(['applets', 'appletResponseData']);

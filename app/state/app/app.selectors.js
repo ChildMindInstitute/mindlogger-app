@@ -21,10 +21,10 @@ export const currentAppletSelector = createSelector(
 
 export const newAppletSelector = createSelector(
   R.path(['app', 'currentApplet']),
-  allAppletsSelector,
+  R.path(['applets', 'applets']),
   // TODO: this could return undefined. So do we catch it here, or later on?
   (currentAppletId, newApplets) => newApplets.find((applet) => {
-    return applet.applet.id === currentAppletId;
+    return applet.id === currentAppletId;
   }) || null,
 );
 

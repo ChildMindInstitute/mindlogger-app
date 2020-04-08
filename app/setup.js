@@ -41,7 +41,7 @@ const setInitialScreen = (authOk, state) => {
   if (!authOk) {
     Actions.replace('login');
   } else if (state.app.currentApplet && currentAppletSelector(state)) {
-    Actions.replace('activity_details');
+    Actions.replace('applet_details');
   } else {
     Actions.replace('applet_list');
   }
