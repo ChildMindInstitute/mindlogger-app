@@ -53,7 +53,6 @@ const setup = () => {
   }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
-    setInitialScreen(authOk, store.getState());
     if (authOk) {
       store.dispatch(sync());
     }
@@ -75,6 +74,8 @@ const setup = () => {
         resp(store.dispatch, store.getState);
       }
     });
+
+    setInitialScreen(authOk, store.getState());
   });
 
   // Root component

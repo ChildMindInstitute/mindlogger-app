@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
 import { Parse, Day } from 'dayspan';
@@ -13,6 +13,7 @@ import {
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import { newAppletSelector, currentAppletSelector } from '../../state/app/app.selectors';
+import { responseScheduleSelector, inProgressSelector } from '../../state/responses/responses.selectors';
 
 const dateParser = (schedule) => {
   const output = {};
@@ -128,21 +129,77 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
+// function useInterval(callback) {
+//   const savedCallback = useRef();
+
+//   useEffect(() => {
+//     savedCallback.current = callback;
+//   });
+
+//   useEffect(() => {
+//     function tick() {
+//       savedCallback.current();
+//     }
+
+//     const id = setInterval(tick, 1000);
+//     return () => clearInterval(id);
+//   }, []);
+// }
+
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      const id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
+}
+
 const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
 
+  const stateUpdate = () => {
+    const newApplet = getActivities(applet, responseSchedule);
+    setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+  };
+
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const newApplet = getActivities(applet.applet, responseSchedule);
-      setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
-    }, 300000);
-    return () => clearInterval(intervalId);
-  }, []);
+    let intervalId;
+    const delay = (60 - new Date().getSeconds()) * 1000;
+    const timeOutId = setTimeout(() => {
+      stateUpdate();
+      intervalId = setInterval(stateUpdate, 60000);
+    }, delay);
+    return () => {
+      clearTimeout(timeOutId);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [Object.keys(inProgress).length, responseSchedule]);
 
   useEffect(() => {
     setActivities(sortActivities(currentApplet.activities, inProgress, currentApplet.schedule));
-  }, [responseSchedule, inProgress]);
+  }, [Object.keys(inProgress).length, responseSchedule]);
+
+  // useEffect(() => {
+  //   console.log('responses are changed!', responseSchedule);
+  // }, [responseSchedule]);
+  // useEffect(() => {
+  //   console.log('response changed1', responseSchedule);
+  // }, [responseSchedule]);
 
   return (
     <View style={{ paddingBottom: 30 }}>
@@ -169,8 +226,8 @@ const mapStateToProps = (state) => {
   return {
     applet: newAppletSelector(state),
     currentApplet: currentAppletSelector(state),
-    responseSchedule: state.responses.schedule,
-    inProgress: state.responses.inProgress,
+    responseSchedule: responseScheduleSelector(state),
+    inProgress: inProgressSelector(state),
   };
 };
 export default connect(mapStateToProps)(ActivityList);
