@@ -13,6 +13,9 @@ import { colors } from '../../theme';
 const login = value => (value && !RegExp('^[a-z][\\da-z\\-\\.]{3,}$').test(value)
   ? 'Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.' : undefined);
 
+const email = value => (value && !RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$').test(value)
+  ? 'Looks like this email is incomplete' : undefined);
+
 const password = value => (value && !RegExp('.{6}.*').test(value)
   ? 'Password must be at least 6 characters' : undefined);
 
@@ -39,6 +42,16 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       validate={required}
+    />
+    <Field
+      component={FormInputItem}
+      placeholder="Email"
+      name="email"
+      style={styles.text}
+      placeholderTextColor={colors.secondary_50}
+      autoComplete="off"
+      autoCorrect={false}
+      validate={[required, email]}
     />
     <Field
       component={FormInputItem}
