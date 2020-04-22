@@ -59,7 +59,7 @@ class AppletInviteFlow extends Component {
   constructor(props) {
     super(props);
     const { acceptInvitation, declineInvitation, currentInvite } = props;
-    console.log('PROPS ARE', this.props);
+    // console.log('PROPS ARE', this.props);
     this.state = {
       currentScreen: 0,
       direction: 'middle',

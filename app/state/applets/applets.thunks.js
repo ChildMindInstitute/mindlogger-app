@@ -38,7 +38,7 @@ export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getAppletInvites(auth.token).then((invites) => {
-    console.log('setting applet invites', invites);
+    // console.log('setting applet invites', invites);
     dispatch(setInvites(invites));
   }).catch((e) => {
     console.warn(e);
@@ -56,8 +56,8 @@ export const downloadApplets = () => (dispatch, getState) => {
       const transformedApplets = applets
         .filter(applet => !R.isEmpty(applet.items))
         .map(applet => transformApplet(applet));
-      // console.log('++++++++++++++++++++++++++', applets);
-      dispatch(replaceApplets(transformedApplets));
+
+        dispatch(replaceApplets(transformedApplets));
       dispatch(downloadResponses(transformedApplets));
       dispatch(downloadAppletsMedia(transformedApplets));
     }
@@ -136,7 +136,7 @@ export const getAppletResponseData = appletId => (dispatch, getState) => {
     authToken: auth.token,
     appletId,
   }).then((resp) => {
-    console.log('response is', resp);
+    // console.log('response is', resp);
     dispatch(saveAppletResponseData(appletId, resp));
   });
 };

@@ -147,7 +147,6 @@ export const nextScreen = () => (dispatch, getState) => {
   const next = getNextPos(screenIndex, visibilityArray);
   const activityId = currentActivityIdSelector(state);
 
-  //console.log('^^^^^^^^^^^^^^', visibilityArray);
   if (next === -1) {
     dispatch(completeResponse());
     Actions.push('activity_thanks');
