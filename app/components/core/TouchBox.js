@@ -1,6 +1,8 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { getResponseInActivity, getResponseInApplet } from '../../state/responses/responses.actions';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -22,31 +24,60 @@ const styles = StyleSheet.create({
   },
 });
 
-export const TouchBox = ({ children, activity, onPress }) => {
+// const withPreventDoubleClick = (WrappedComponent) => {
+//   class PreventDoubleClick extends React.PureComponent {
+//     onPress = debounce(this.debouncedOnPress, 300, { leading: true, trailing: false });
+
+//     debouncedOnPress = () => {
+//       this.props.onPress && this.props.onPress();
+//     }
+
+//     render() {
+//       return <WrappedComponent {...this.props} onPress={this.onPress} />;
+//     }
+//   }
+
+//   PreventDoubleClick.displayName = `withPreventDoubleClick(${WrappedComponent.displayName ||WrappedComponent.name})`
+//   return PreventDoubleClick;
+// };
+
+// const TouchableOpacityEx = withPreventDoubleClick(TouchableOpacity);
+
+const TouchBox = ({ children, activity, onPress, getResponseInActivity, getResponseInApplet, isActivity, isApplet }) => {
   const [touched, setTouched] = useState(false);
+  const [appletTouched, setAppletTouched] = useState(false);
 
   useEffect(() => {
-    console.log('perfect!');
-    setTouched(false);
+    if (activity) {
+      getResponseInActivity(false);
+    }
+    // setTouched(false);
   }, []);
 
   const handlePress = () => {
-    onPress();
-    setTouched(true);
+    if (activity) {
+      getResponseInActivity(true);
+      if (!touched) {
+        onPress();
+      }
+      setTouched(true);
+    }
   };
 
   useEffect(() => {
-    // console.log('nice!', activity);
-    // setTouched(false);
-  }, [activity]);
+    if (activity) {
+      setTouched(isActivity);
+    }
+  }, [isActivity]);
 
   useEffect(() => {
-    //console.log('good!');
-    //setTouched(false);
-  }, [onPress]);
+    if (!activity) {
+      setAppletTouched(isApplet);
+    }
+  }, [isApplet]);
 
   return (
-    <TouchableOpacity disabled={activity ? (activity.status === 'scheduled' && !activity.nextAccess) : false} onPress={handlePress}>
+    <TouchableOpacity disabled={(activity && activity.status === 'scheduled' && !activity.nextAccess)} onPress={handlePress}>
       <View style={styles.box}>
         {children}
       </View>
@@ -58,4 +89,20 @@ TouchBox.propTypes = {
   children: PropTypes.node.isRequired,
   activity: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
+  getResponseInActivity: PropTypes.func.isRequired,
+  getResponseInApplet: PropTypes.func.isRequired,
+  isApplet: PropTypes.func.isRequired,
+  isActivity: PropTypes.bool,
 };
+
+const mapStateToProps = state => ({
+  isActivity: state.responses.isActivity,
+  isApplet: state.responses.isApplet,
+});
+
+const mapDispatchToProps = {
+  getResponseInActivity,
+  getResponseInApplet,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(TouchBox);
