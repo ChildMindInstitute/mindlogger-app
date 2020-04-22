@@ -31,6 +31,10 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
+  [application registerForRemoteNotifications];
+  
   return YES;
 }
 

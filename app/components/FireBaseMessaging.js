@@ -124,10 +124,13 @@ class FireBaseMessaging extends Component {
     const localNotification = new firebase.notifications.Notification()
       .setNotificationId(notificationId)
       .setTitle(title)
-      .setSubtitle(subtitle)
       .setBody(body)
       .setSound('default')
       .setData(data);
+
+    if (subtitle) {
+      localNotification.setSubtitle(subtitle);
+    }
 
     if (isAndroid) {
       localNotification.android.setChannelId(AndroidChannelId);
