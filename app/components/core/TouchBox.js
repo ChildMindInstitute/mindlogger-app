@@ -50,6 +50,8 @@ const TouchBox = ({ children, activity, onPress, getResponseInActivity, getRespo
   useEffect(() => {
     if (activity) {
       getResponseInActivity(false);
+    } else {
+      getResponseInApplet(false);
     }
     // setTouched(false);
   }, []);
@@ -61,6 +63,12 @@ const TouchBox = ({ children, activity, onPress, getResponseInActivity, getRespo
         onPress();
       }
       setTouched(true);
+    } else {
+      getResponseInApplet(true);
+      if (!appletTouched) {
+        onPress();
+      }
+      setAppletTouched(true);
     }
   };
 
