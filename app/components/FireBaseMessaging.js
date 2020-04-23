@@ -62,9 +62,9 @@ class FireBaseMessaging extends Component {
   }
 
   handleAppStateChange = (nextAppState: AppStateStatus) => {
-    const isToActive = this.state.appState.match(/inactive|background/) && nextAppState === 'active';
+    const isAppStateChanged = this.state.appState !== nextAppState;
 
-    if (isToActive) {
+    if (isAppStateChanged) {
       firebase.notifications().setBadge(0);
     }
 
