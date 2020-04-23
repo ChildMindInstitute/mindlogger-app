@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
@@ -37,16 +38,18 @@ class FireBaseMessaging extends Component {
       }
     });
 
-    await firebase.messaging().ios.registerForRemoteNotifications();
-
     const fcmToken = await fMessaging.getToken();
 
     this.props.setFCMToken(fcmToken);
+
+    // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
 
     if (isIOS) {
+      await firebase.messaging().ios.registerForRemoteNotifications();
       const apns = await firebase.messaging().ios.getAPNSToken();
 
+      // eslint-disable-next-line no-console
       console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
     }
   }
@@ -131,17 +134,20 @@ class FireBaseMessaging extends Component {
     console.log(`FCM[${Platform.OS}]: message.data: ${message.data}`);
     const { data } = message;
 
-    const localNotification = this.newNotification({
-      notificationId: message.messageId,
-      title: data.title || 'Push Notification',
-      subtitle: data.subtitle || null,
-      data,
-      iosBadge: 1,
-    });
+    PushNotificationIOS.getApplicationIconBadgeNumber((prevBadges = 0) => {
+      const localNotification = this.newNotification({
+        notificationId: message.messageId,
+        title: data.title || 'Push Notification',
+        subtitle: data.subtitle || null,
+        data,
+        iosBadge: prevBadges + 1,
+      });
 
-    firebase.notifications().displayNotification(localNotification).catch((error) => {
-      // eslint-disable-next-line no-console
-      console.warn(`FCM[${Platform.OS}]: error `, error);
+      firebase.notifications().displayNotification(localNotification).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.warn(`FCM[${Platform.OS}]: error `, error);
+      });
+
     });
   };
 
