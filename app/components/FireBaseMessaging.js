@@ -13,7 +13,7 @@ const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
 class FireBaseMessaging extends Component {
-  componentDidMount() {
+  async componentDidMount() {
     this.initAndroidChannel();
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
@@ -32,12 +32,18 @@ class FireBaseMessaging extends Component {
       }
     });
 
-    fMessaging.getToken().then((fcmToken) => {
-      // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
-      const { setFCMToken } = this.props;
-      setFCMToken(fcmToken);
-    });
+    await firebase.messaging().ios.registerForRemoteNotifications();
+
+    const fcmToken = await fMessaging.getToken();
+
+    this.props.setFCMToken(fcmToken);
+    console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
+
+    if (isIOS) {
+      const apns = await firebase.messaging().ios.getAPNSToken();
+
+      console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
+    }
   }
 
   componentWillUnmount() {
@@ -70,6 +76,9 @@ class FireBaseMessaging extends Component {
     };
 
     onNotification = (notification: firebase.RNFirebase.notifications.Notification) => {
+      // eslint-disable-next-line no-console
+      console.log('onNotification', { notification });
+
       const localNotification = this.newNotification({
         notificationId: notification.notificationId,
         title: notification.title,
