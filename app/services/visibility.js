@@ -44,7 +44,7 @@ export const testVisibility = (testExpression = true, items = [], responses = []
     // item responses
     const inputs = items.reduce((acc, item, index) => ({
       ...acc,
-      [item.variableName]: responses[index], // cast undefined to null
+      [item.variableName]: responses[index] === 0 ? 0 : (responses[index] || null), // cast undefined to null
     }), {});
 
     // Run the expression
