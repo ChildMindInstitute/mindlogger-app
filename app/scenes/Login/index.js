@@ -29,10 +29,6 @@ class Login extends Component {
     Actions.sign_up();
   }
 
-  onChangeStudy = () => {
-    Actions.change_study();
-  }
-
   onAbout = () => {
     Actions.about_app();
   }
@@ -102,13 +98,6 @@ class Login extends Component {
             source={logo}
           />
         </Content>
-        <Footer style={styles.footer}>
-          <Right>
-            <TouchableOpacity onPress={this.onChangeStudy}>
-              <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />
-            </TouchableOpacity>
-          </Right>
-        </Footer>
       </Container>
     );
   }
