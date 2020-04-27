@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.23] - 2019-04-24
+- Fixed NaN issue on slider
+
 ## [0.11.22] - 2019-04-02
 - Implemented foreground jobs to update activity status
 
