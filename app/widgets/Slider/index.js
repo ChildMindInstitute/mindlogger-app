@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
-import { Button, Text } from 'native-base';
+import { Text } from 'native-base';
 import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
@@ -253,7 +253,6 @@ class Slider extends Component {
           + minimumValue
           - 1,
       );
-
       onChange(calculatedValue);
       this.setState({ currentValue: calculatedValue });
     }
@@ -261,19 +260,24 @@ class Slider extends Component {
 
   calculateLabelPosition = () => {
     const { currentValue, sliderWidth, minimumValue, maximumValue } = this.state;
-    if (!currentValue) {
+    const { value } = this.props;
+    let correctVal = currentValue;
+    if (!correctVal) {
+      if (!value) {
+        return 22;
+      }
+      correctVal = value;
+    }
+    if (correctVal === minimumValue) {
       return 22;
     }
-    if (currentValue === minimumValue) {
-      return 22;
-    }
-    if (currentValue === maximumValue) {
+    if (correctVal === maximumValue) {
       return sliderWidth;
     }
 
     return (
-      sliderWidth * (currentValue - minimumValue) / (maximumValue - minimumValue)
-      + (22 - 22 * currentValue / maximumValue)
+      sliderWidth * (correctVal - minimumValue) / (maximumValue - minimumValue)
+      + (22 - 22 * correctVal / maximumValue)
     );
   };
 
@@ -311,44 +315,6 @@ class Slider extends Component {
     );
   };
 
-  onPressMinus = () => {
-    const { minimumValue, maximumValue } = this.state;
-    const { value, onChange } = this.props;
-    let currentVal;
-
-    if (value >= minimumValue) {
-      currentVal = value - 0.25;
-    } else {
-      currentVal = (minimumValue + maximumValue) / 2 + 0.25;
-    }
-
-    if (currentVal < minimumValue) {
-      currentVal = minimumValue;
-    }
-
-    onChange(currentVal);
-    this.setState({ currentValue: currentVal });
-  };
-
-  onPressPlus = () => {
-    const { minimumValue, maximumValue } = this.state;
-    const { value, onChange } = this.props;
-    let currentVal;
-
-    if (value >= minimumValue) {
-      currentVal = value + 0.25;
-    } else {
-      currentVal = (minimumValue + maximumValue) / 2 + 0.25;
-    }
-
-    if (currentVal > maximumValue) {
-      currentVal = maximumValue;
-    }
-
-    onChange(currentVal);
-    this.setState({ currentValue: currentVal });
-  };
-
   renderTicks() {
     const { sliderWidth } = this.state;
     const tickWidth = sliderWidth / testTicks.length;
@@ -369,23 +335,26 @@ class Slider extends Component {
       onChange,
       onPress,
       value,
-      appletName,
       onRelease,
     } = this.props;
 
     let currentVal = value;
+    if (!value && value !== currentValue) {
+      this.setState({ currentValue: value });
+    }
+
     if (currentVal === minimumValue - 1) {
       currentVal = minimumValue;
     }
 
-    const labelPosition = currentValue ? this.calculateLabelPosition() : 22;
+    const labelPosition = currentVal ? this.calculateLabelPosition() : 22;
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
           {currentVal !== null && (
           <View style={[styles.knobLabel, { left: labelPosition }]}>
             <Text style={styles.knobLabelText}>
-              {currentVal >= minimumValue ? Math.round(currentValue * 100) / 100 : ''}
+              {currentVal >= minimumValue ? (Math.round(currentValue * 100) / 100 || Math.round(currentVal * 100) / 100) : ''}
             </Text>
           </View>
           )}
