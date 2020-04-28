@@ -18,7 +18,6 @@ import Login from './Login';
 import LogoutWarning from './LogoutWarning';
 import Settings from './Settings';
 import ChangePassword from './ChangePassword';
-// import SideBar from './Sidebar';
 import Splash from './Splash';
 import VolumeInfo from './VolumeInfo';
 // import { colors } from '../themes/colors';
@@ -34,7 +33,6 @@ const Navigator = Actions.create(
   <Lightbox>
     <Modal hideNavBar>
       <Scene key="root" hideNavBar>
-        {/* <Drawer key="side_menu" contentComponent={SideBar}> */}
         <Scene hideNavBar panHandlers={null} drawerLockMode="locked-closed">
           <Scene key="splash" component={Splash} hideNavBar initial />
           <Scene key="about_act" component={InfoAct} />
