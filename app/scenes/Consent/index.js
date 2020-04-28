@@ -14,10 +14,6 @@ export default class Consent extends Component { // eslint-disable-line
     });
   }
 
-  onNext = () => {
-    Actions.sign_up();
-  }
-
   toggleState(name) {
     const data = {};
     data[name] = !this.state[name];

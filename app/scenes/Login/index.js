@@ -25,9 +25,6 @@ import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 const defaultLogo = require('../../../img/CMI_white_logo.png');
 
 class Login extends Component {
-  onRegister = () => {
-    Actions.sign_up();
-  }
 
   onChangeStudy = () => {
     Actions.change_study();
@@ -86,11 +83,6 @@ class Login extends Component {
             mobileDataAllowed={mobileDataAllowed}
             toggleMobileDataAllowed={toggleMobileDataAllowed}
           />
-          <View style={styles.bottomRow}>
-            <TouchableOpacity onPress={this.onRegister}>
-              <Text style={styles.whiteText}>New User</Text>
-            </TouchableOpacity>
-          </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
               <Text style={styles.whiteText}>{`What is ${title}?`}</Text>

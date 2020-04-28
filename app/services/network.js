@@ -133,15 +133,6 @@ export const forgotPassword = (email) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const signUp = (userData) => {
-  const url = `${apiHost()}/user`;
-  return fetch(url, {
-    method: 'post',
-    mode: 'cors',
-    body: objectToFormData(userData),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
-};
-
 export const updateUserDetails = (authToken, { id, firstName, lastName, email }) => {
   const url = `${apiHost()}/user/${id}`;
   const headers = {
