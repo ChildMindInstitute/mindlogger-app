@@ -3,7 +3,7 @@ export default {
   defaultSkin: {
     name: 'MindLogger',
     colors: {
-      primary: '#0067A0',
+      primary: '#cc5500',
       secondary: '#FFFFFF',
     },
   },

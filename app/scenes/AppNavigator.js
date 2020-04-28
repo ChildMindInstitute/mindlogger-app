@@ -11,7 +11,6 @@ import ActivityDetails from './ActivityDetails';
 import ActivityThanks from './ActivityThanks';
 import AppletDetails from './AppletDetails';
 import AppletList from './AppletList';
-import ChangeStudy from './ChangeStudy';
 import Consent from './Consent';
 import ForgotPassword from './ForgotPassword';
 import InfoAct from './InfoAct';
@@ -44,7 +43,6 @@ const Navigator = Actions.create(
           <Scene key="activity_details" component={ActivityDetails} />
           <Scene key="applet_details" component={AppletDetails} />
           <Scene key="applet_list" component={AppletList} />
-          <Scene key="change_study" component={ChangeStudy} />
           <Scene key="consent" component={Consent} />
           <Scene key="logout_warning" component={LogoutWarning} />
           <Scene key="forgot_password" component={ForgotPassword} />
