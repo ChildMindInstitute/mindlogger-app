@@ -50,7 +50,7 @@ export const Geolocation = ({ value, onChange }) => {
 
   const onPress = () => {
     Permissions.request(permission).then((response) => {
-      console.log(response);
+      // console.log(response);
       setLocationPermission(response);
       if (response === Permissions.RESULTS.GRANTED) {
         NativeGeolocation.getCurrentPosition(

@@ -16,7 +16,11 @@ class ChangePasswordScreen extends Component {
   updateUser = (firstName, lastName) => {
     const { user, authToken, updateUserDetailsSuccessful } = this.props;
     return updateUserDetails(authToken, { id: user._id, email: user.email, firstName, lastName })
-      .then(updateUserDetailsSuccessful)
+      .then(() => {
+        user.firstName = firstName;
+        user.displayName = firstName;
+        updateUserDetailsSuccessful(user);
+      })
       .catch(() => {
         throw new SubmissionError({
           _error: 'Unable to update user details.',

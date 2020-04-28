@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import moment from 'moment';
@@ -10,6 +11,7 @@ import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
+import { getResponseInApplet } from '../../state/responses/responses.actions';
 
 
 const styles = StyleSheet.create({
@@ -102,12 +104,17 @@ class AppletDetailsComponent extends React.Component {
     }
   }
 
+  handlePress() {
+    const { onPressBack, getResponseInApplet } = this.props;
+    getResponseInApplet(false);
+    onPressBack();
+  }
+
   render() {
     const {
       applet,
       onPressSettings,
       hasInvites,
-      onPressBack,
       primaryColor,
     } = this.props;
 
@@ -118,7 +125,7 @@ class AppletDetailsComponent extends React.Component {
         <StatusBar barStyle="light-content" />
         <Header style={{ backgroundColor: primaryColor }}>
           <Left>
-            <Button transparent onPress={onPressBack}>
+            <Button transparent onPress={() => this.handlePress()}>
               <Icon
                 ios="ios-home"
                 android="md-home"
@@ -164,6 +171,11 @@ AppletDetailsComponent.propTypes = {
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,
   hasInvites: PropTypes.bool.isRequired,
+  getResponseInApplet: PropTypes.func.isRequired,
 };
 
-export default AppletDetailsComponent;
+const mapDispatchToProps = {
+  getResponseInApplet,
+};
+
+export default connect(null, mapDispatchToProps)(AppletDetailsComponent);

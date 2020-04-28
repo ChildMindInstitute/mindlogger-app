@@ -8,4 +8,3 @@ export * from './Markdown';
 export * from './NotificationDot';
 export * from './NotificationText';
 export * from './SubHeading';
-export * from './TouchBox';
