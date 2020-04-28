@@ -99,8 +99,8 @@ TouchBox.propTypes = {
   onPress: PropTypes.func.isRequired,
   getResponseInActivity: PropTypes.func.isRequired,
   getResponseInApplet: PropTypes.func.isRequired,
-  isApplet: PropTypes.func.isRequired,
-  isActivity: PropTypes.bool,
+  isApplet: PropTypes.bool.isRequired,
+  isActivity: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = state => ({
