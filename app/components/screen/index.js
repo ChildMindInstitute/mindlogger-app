@@ -70,6 +70,9 @@ class ActivityScreen extends Component {
     if (screen.inputType === 'markdown-message') {
       return true;
     }
+    if (Array.isArray(answer)) {
+      return answer.length !== 0;
+    }
     return answer !== null && typeof answer !== 'undefined';
   }
 

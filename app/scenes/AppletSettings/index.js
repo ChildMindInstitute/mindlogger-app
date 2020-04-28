@@ -28,7 +28,7 @@ class AppletSettings extends Component {
 
   render() {
     const { skin, applet, removeAndDeleteApplet, deactivateApplet } = this.props;
-    console.log('applet is', applet);
+
     if (applet) {
       let { groupId } = applet;
       // eslint-disable-next-line

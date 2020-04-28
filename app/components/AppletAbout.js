@@ -31,7 +31,7 @@ The authors of this applet have not provided any information!
   async getMD(url) {
     const resp = await fetch(url);
     const markdown = await resp.text();
-    console.log('response is', resp);
+    // console.log('response is', resp);
     this.setState({
       markdown,
     });
