@@ -5,6 +5,8 @@ export const initialState = {
   responseHistory: [],
   inProgress: {},
   isDownloadingResponses: false,
+  isActivity: false,
+  isApplet: false,
   downloadProgress: {
     total: 0,
     downloaded: 0,
@@ -31,6 +33,16 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         currentActivity: action.payload,
+      };
+    case RESPONSES_CONSTANTS.GET_RESPONSE_IN_ACTIVITY:
+      return {
+        ...state,
+        isActivity: action.payload,
+      };
+    case RESPONSES_CONSTANTS.GET_RESPONSE_IN_APPLET:
+      return {
+        ...state,
+        isApplet: action.payload,
       };
     case RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS:
       return {

@@ -47,7 +47,7 @@ export const itemVisiblitySelector = createSelector(
       return [];
     }
     const { responses, activity } = current;
-    // console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&', current);
+
     return activity.items.map(item => testVisibility(item.visibility, activity.items, responses));
   },
 );
