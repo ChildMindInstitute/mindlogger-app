@@ -39,12 +39,11 @@ export const testVisibility = (testExpression = true, items = [], responses = []
 
   try {
     const expr = parser.parse(testExpressionFixed);
-
     // Build an object where the keys are item variableNames, and values are
     // item responses
     const inputs = items.reduce((acc, item, index) => ({
       ...acc,
-      [item.variableName]: responses[index] || null, // cast undefined to null
+      [item.variableName]: responses[index] === 0 ? 0 : (responses[index] || null), // cast undefined to null
     }), {});
 
     // Run the expression

@@ -129,7 +129,7 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
-// function useInterval(callback) {
+// const useForeJobs = (callback) => {
 //   const savedCallback = useRef();
 
 //   useEffect(() => {
@@ -146,28 +146,37 @@ const getActivities = (applet, responseSchedule) => {
 //   }, []);
 // }
 
-function useInterval(callback, delay) {
+const useInterval = (callback, delay, progress, response) => {
   const savedCallback = useRef();
 
-  // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback;
-  }, [callback]);
+  });
 
-  // Set up the interval.
   useEffect(() => {
     function tick() {
       savedCallback.current();
     }
-    if (delay !== null) {
-      const id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
-}
+
+    let id;
+    const leftTime = (60 - new Date().getSeconds()) * 1000;
+    const leftOutId = setTimeout(() => {
+      tick();
+      id = setInterval(tick, delay);
+    }, leftTime);
+
+    return () => {
+      clearTimeout(leftOutId);
+      if (id) {
+        clearInterval(id);
+      }
+    };
+  }, [progress, response]);
+};
 
 const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
+  const delay = 60 * 1000;
   const [activities, setActivities] = useState([]);
 
   const stateUpdate = () => {
@@ -175,31 +184,11 @@ const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onP
     setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
   };
 
-  useEffect(() => {
-    let intervalId;
-    const delay = (60 - new Date().getSeconds()) * 1000;
-    const timeOutId = setTimeout(() => {
-      stateUpdate();
-      intervalId = setInterval(stateUpdate, 60000);
-    }, delay);
-    return () => {
-      clearTimeout(timeOutId);
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [Object.keys(inProgress).length, responseSchedule]);
+  useInterval(stateUpdate, delay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
     setActivities(sortActivities(currentApplet.activities, inProgress, currentApplet.schedule));
   }, [Object.keys(inProgress).length, responseSchedule]);
-
-  // useEffect(() => {
-  //   console.log('responses are changed!', responseSchedule);
-  // }, [responseSchedule]);
-  // useEffect(() => {
-  //   console.log('response changed1', responseSchedule);
-  // }, [responseSchedule]);
 
   return (
     <View style={{ paddingBottom: 30 }}>

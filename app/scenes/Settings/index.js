@@ -91,24 +91,20 @@ class SettingsScreen extends React.Component {
                 <Text> Logout </Text>
               </Left>
               <Right>
-                <Icon name="arrow-forward" />
+                <Icon name="key" />
+              </Right>
+            </ListItem>
+            <ListItem 
+              onPress={() => this.showAlert()}
+            >
+              <Left>
+                <Text> Permanently Delete Account </Text>
+              </Left>
+              <Right>
+                <Icon name="trash" />
               </Right>
             </ListItem>
           </List>
-          <View style={{ padding: 10 }}>
-            <Text style={{ margin: 20 }}>
-              If you want to delete your data from this applet and remove it, click below.
-            </Text>
-            <Button
-              rounded
-              full
-              danger
-              style={{ borderRadius: 50 }}
-              onPress={() => this.showAlert()}
-            >
-              <Text style={{ fontWeight: 'bold' }}>Delete your Account & Data</Text>
-            </Button>
-          </View>
 
         </Content>
         <AwesomeAlert

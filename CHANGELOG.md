@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.28] - 2019-4-28
+- Fixd Notification Badge Issue
+
+## [0.11.25] - 2019-04-22
+- Fixed double click of activity button
+- Removed login log
+- Fixed double click of applet button
+
+## [0.11.24] - 2019-04-14
+- Hide next button until the user makes a selection on all question type.
+
+## [0.11.23] - 2019-04-08
+- Fixed user identity issue after password reset
+
+## [0.11.23] - 2019-04-24
+- Fixed NaN issue on slider
+
 ## [0.11.22] - 2019-04-02
 - Implemented foreground jobs to update activity status
 

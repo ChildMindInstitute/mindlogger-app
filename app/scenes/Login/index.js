@@ -40,9 +40,7 @@ class Login extends Component {
   onSubmit = async (body) => {
     const { signInSuccessful, fcmToken } = this.props;
     const timezone = this.getTimezone();
-    const dataBody = { ...body, deviceId: fcmToken, timezone };
-    // eslint-disable-next-line no-console
-    console.log('Login submit data:', dataBody);
+
     return signIn({ ...body, deviceId: fcmToken, timezone })
       .then((response) => {
         if (typeof response.exception !== 'undefined') {
