@@ -44,7 +44,7 @@ export class MultiSelect extends Component {
               <View style={{ width: '100%', flexDirection: 'row' }}>
                 {item.image ? (
                   <Image
-                    style={{ width: '20%', height: 64, resizeMode: 'cover' }}
+                    style={{ width: '20%', height: 64, resizeMode: 'contain' }}
                     source={{ uri: getURL(item.image) }}
                   />
                 ) : (
