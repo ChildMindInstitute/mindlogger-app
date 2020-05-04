@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.32] - 2019-05-03
+- Fixd Notification Badge Issue
+
 ## [0.11.28] - 2019-4-28
 - Fixd Notification Badge Issue
 
