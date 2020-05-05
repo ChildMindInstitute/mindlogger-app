@@ -73,9 +73,7 @@ class ActivityScreen extends Component {
     if (Array.isArray(answer)) {
       return answer.length !== 0;
     }
-    if (!answer) {
-      return false;
-    }
+
     return answer !== null && typeof answer !== 'undefined';
   }
 
