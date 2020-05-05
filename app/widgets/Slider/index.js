@@ -338,12 +338,13 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
+    console.log('slider value is -------', value);
     let currentVal = value;
     if (!value && value !== currentValue) {
       this.setState({ currentValue: value });
     }
 
-    if (currentVal === minimumValue - 1) {
+    if (currentVal < minimumValue) {
       currentVal = minimumValue;
     }
 
