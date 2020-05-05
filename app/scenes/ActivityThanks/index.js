@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { ImageBackground, View, StyleSheet } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import {
@@ -7,6 +9,7 @@ import {
 } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
+import { getResponseInActivity } from '../../state/responses/responses.actions';
 
 const styles = StyleSheet.create({
   box: {
@@ -20,29 +23,39 @@ const styles = StyleSheet.create({
   },
 });
 
-const onPressStart = () => {
-  Actions.replace('applet_details');
+const ActivityThanks = ({ getResponseInActivity }) => {
+  const onPressStart = () => {
+    getResponseInActivity(false);
+    Actions.replace('applet_details');
+  };
+  return (
+    <ImageBackground
+      style={{ width: '100%', height: '100%', flex: 1 }}
+      source={{
+        uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80',
+      }}
+    >
+      <View style={styles.box}>
+        <Heading style={{ fontFamily: theme.fontFamily }}>Thanks!</Heading>
+        <BodyText style={{ fontFamily: theme.fontFamily }}>
+          We've saved your answers!
+        </BodyText>
+  
+        <FunButton onPress={onPressStart}>
+          Close
+        </FunButton>
+
+      </View>
+    </ImageBackground>
+  );
 };
 
-const ActivityThanks = () => (
-  <ImageBackground
-    style={{ width: '100%', height: '100%', flex: 1 }}
-    source={{
-      uri: 'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80',
-    }}
-  >
-    <View style={styles.box}>
-      <Heading style={{ fontFamily: theme.fontFamily }}>Thanks!</Heading>
-      <BodyText style={{ fontFamily: theme.fontFamily }}>
-        We've saved your answers!
-      </BodyText>
+ActivityThanks.propTypes = {
+  getResponseInActivity: PropTypes.func.isRequired,
+};
 
-      <FunButton onPress={onPressStart}>
-        Close
-      </FunButton>
+const mapDispatchToProps = {
+  getResponseInActivity,
+};
 
-    </View>
-  </ImageBackground>
-);
-
-export default ActivityThanks;
+export default connect(null, mapDispatchToProps)(ActivityThanks);
