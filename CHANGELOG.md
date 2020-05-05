@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.31] - 2019-05-01
+- Removed outdated lifecycle methods
+
 ## [0.11.30] - 2019-4-30
 - Removed number above slider
 - Fixed questionniare issue
