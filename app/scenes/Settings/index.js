@@ -64,7 +64,11 @@ class SettingsScreen extends React.Component {
           }
 
           <List>
-            <ListItem button bordered onPress={() => Actions.push('change_password')}>
+            <ListItem
+              button
+              bordered
+              onPress={() => Actions.push('change_password')}
+            >
               <Left>
                 <Text>Change Password</Text>
               </Left>
@@ -72,7 +76,10 @@ class SettingsScreen extends React.Component {
                 <Icon name="arrow-forward" />
               </Right>
             </ListItem>
-            <ListItem bordered>
+            <ListItem
+              button
+              bordered
+            >
               <Left>
                 <Text>Use Cellular Data</Text>
               </Left>
@@ -83,22 +90,25 @@ class SettingsScreen extends React.Component {
                 />
               </Right>
             </ListItem>
-            <ListItem onPress={() => {
-              logout();
-            }}
+            <ListItem
+              button
+              bordered
+              onPress={() => logout()}
             >
               <Left>
-                <Text> Logout </Text>
+                <Text>Logout</Text>
               </Left>
               <Right>
                 <Icon name="key" />
               </Right>
             </ListItem>
-            <ListItem 
+            <ListItem
+              button
+              bordered
               onPress={() => this.showAlert()}
             >
               <Left>
-                <Text> Permanently Delete Account </Text>
+                <Text>Permanently Delete Account</Text>
               </Left>
               <Right>
                 <Icon name="trash" />

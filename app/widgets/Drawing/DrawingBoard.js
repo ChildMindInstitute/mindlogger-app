@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   picture: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   blank: {
     width: '100%',
