@@ -2,7 +2,9 @@ import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
-import { Platform } from 'react-native';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { Platform, AppState, AppStateStatus } from 'react-native';
+
 import { setFcmToken } from '../state/fcm/fcm.actions';
 
 const AndroidChannelId = 'MindLoggerChannelId';
@@ -13,7 +15,11 @@ const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
 class FireBaseMessaging extends Component {
-  componentDidMount() {
+  state = { appState: AppState.currentState };
+
+  async componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+
     this.initAndroidChannel();
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
@@ -32,12 +38,20 @@ class FireBaseMessaging extends Component {
       }
     });
 
-    fMessaging.getToken().then((fcmToken) => {
+    const fcmToken = await fMessaging.getToken();
+
+    this.props.setFCMToken(fcmToken);
+
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
+
+    if (isIOS) {
+      await firebase.messaging().ios.registerForRemoteNotifications();
+      const apns = await firebase.messaging().ios.getAPNSToken();
+
       // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
-      const { setFCMToken } = this.props;
-      setFCMToken(fcmToken);
-    });
+      console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
+    }
   }
 
   componentWillUnmount() {
@@ -46,88 +60,108 @@ class FireBaseMessaging extends Component {
     this.notificationOpenedListener();
     this.onTokenRefreshListener();
     this.messageListener();
+
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
-    initAndroidChannel = () => {
-      if (Platform.OS === 'android') {
-        const channel = new firebase.notifications.Android.Channel(
-          AndroidChannelId,
-          'MindLogger Channel',
-          firebase.notifications.Android.Importance.Max,
-        ).setDescription('MindLogger Channel');
+  handleAppStateChange = (nextAppState: AppStateStatus) => {
+    const isAppStateChanged = this.state.appState !== nextAppState;
 
-        // Create the channel
-        firebase.notifications().android.createChannel(channel).then(() => {
-          // eslint-disable-next-line no-console
-          console.log(`FCM[${Platform.OS}]: Android channel created successful`, channel);
-        });
-      }
-    };
+    if (isAppStateChanged) {
+      firebase.notifications().setBadge(0);
+    }
 
-    onNotificationDisplayed = (notification: firebase.RNFirebase.notifications.Notification) => {
-      // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}]: onNotificationDisplayed`, notification);
-    };
+    this.setState({ appState: nextAppState });
+  }
 
-    onNotification = (notification: firebase.RNFirebase.notifications.Notification) => {
-      const localNotification = this.newNotification({
-        notificationId: notification.notificationId,
-        title: notification.title,
-        subtitle: notification.subtitle,
-        body: notification.body,
-        data: notification.data,
-        iosBadge: notification.ios.badge,
-      });
+  initAndroidChannel = () => {
+    if (Platform.OS === 'android') {
+      const channel = new firebase.notifications.Android.Channel(
+        AndroidChannelId,
+        'MindLogger Channel',
+        firebase.notifications.Android.Importance.Max,
+      ).setDescription('MindLogger Channel');
 
-      firebase.notifications().displayNotification(localNotification).catch((error) => {
+      // Create the channel
+      firebase.notifications().android.createChannel(channel).then(() => {
         // eslint-disable-next-line no-console
-        console.warn(`FCM[${Platform.OS}]: error `, error);
+        console.log(`FCM[${Platform.OS}]: Android channel created successful`, channel);
       });
-    };
+    }
+  };
 
-    onNotificationOpened =
-      (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
-        // eslint-disable-next-line no-console
-        console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
-        firebase.notifications().setBadge(0);
-      };
+  onNotificationDisplayed = (notification: firebase.RNFirebase.notifications.Notification) => {
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}]: onNotificationDisplayed`, notification);
+  };
 
-    onTokenRefresh = (fcmToken: string) => {
+  onNotification = (notification: firebase.RNFirebase.notifications.Notification) => {
+    // eslint-disable-next-line no-console
+    console.log('onNotification', { notification });
+
+    const localNotification = this.newNotification({
+      notificationId: notification.notificationId,
+      title: notification.title,
+      subtitle: notification.subtitle,
+      body: notification.body,
+      data: notification.data,
+      iosBadge: notification.ios.badge,
+    });
+
+    firebase.notifications().displayNotification(localNotification).catch((error) => {
       // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}]: onTokenRefresh: ${fcmToken}`);
-      const { setFCMToken } = this.props;
-      setFCMToken(fcmToken);
-    };
+      console.warn(`FCM[${Platform.OS}]: error `, error);
+    });
+  };
 
-    onMessage = (message: firebase.RNFirebase.messaging.RemoteMessage) => {
-      // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}]: onMessage: `, message, message.data);
-      // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}]: message.data: ${message.data}`);
-      const { data } = message;
+  onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
+    firebase.notifications().setBadge(0);
+  };
 
+  onTokenRefresh = (fcmToken: string) => {
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}]: onTokenRefresh: ${fcmToken}`);
+    const { setFCMToken } = this.props;
+    setFCMToken(fcmToken);
+  };
+
+  onMessage = (message: firebase.RNFirebase.messaging.RemoteMessage) => {
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}]: onMessage: `, message, message.data);
+    // eslint-disable-next-line no-console
+    console.log(`FCM[${Platform.OS}]: message.data: ${message.data}`);
+    const { data } = message;
+
+    PushNotificationIOS.getApplicationIconBadgeNumber((prevBadges = 0) => {
       const localNotification = this.newNotification({
         notificationId: message.messageId,
         title: data.title || 'Push Notification',
         subtitle: data.subtitle || null,
         data,
-        iosBadge: 1,
+        iosBadge: prevBadges + 1,
       });
 
       firebase.notifications().displayNotification(localNotification).catch((error) => {
         // eslint-disable-next-line no-console
         console.warn(`FCM[${Platform.OS}]: error `, error);
       });
-    };
+
+    });
+  };
 
   newNotification = ({ notificationId, title, subtitle, body, iosBadge = 1, data }) => {
     const localNotification = new firebase.notifications.Notification()
       .setNotificationId(notificationId)
       .setTitle(title)
-      .setSubtitle(subtitle)
       .setBody(body)
       .setSound('default')
       .setData(data);
+
+    if (subtitle) {
+      localNotification.setSubtitle(subtitle);
+    }
 
     if (isAndroid) {
       localNotification.android.setChannelId(AndroidChannelId);

@@ -8,6 +8,7 @@ import { getApplets,
   removeApplet,
   deleteApplet,
   getLast7DaysData,
+  getAppletSchedule,
 } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
@@ -56,10 +57,21 @@ export const downloadApplets = () => (dispatch, getState) => {
       const transformedApplets = applets
         .filter(applet => !R.isEmpty(applet.items))
         .map(applet => transformApplet(applet));
-
-        dispatch(replaceApplets(transformedApplets));
-      dispatch(downloadResponses(transformedApplets));
-      dispatch(downloadAppletsMedia(transformedApplets));
+      const requests = transformedApplets.map((applet) => {
+        const appletId = applet.id.split('/')[1];
+        return getAppletSchedule(auth.token, appletId).then((response) => {
+          return {
+            ...applet,
+            schedule: response,
+          };
+        });
+      });
+      return Promise.all(requests)
+        .then((updatedApplets) => {
+          dispatch(replaceApplets(updatedApplets));
+          dispatch(downloadResponses(updatedApplets));
+          dispatch(downloadAppletsMedia(updatedApplets));
+        });
     }
   }).catch((err) => {
     console.warn(err.message);

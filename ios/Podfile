@@ -52,7 +52,10 @@ target 'MDCApp' do
 #  pod 'Permission-SpeechRecognition', :path => "#{permissions_path}/SpeechRecognition.podspec"
 #  pod 'Permission-StoreKit', :path => "#{permissions_path}/StoreKit.podspec"
 
-  pod 'Firebase/Messaging'
+  pod 'Firebase/Core', '~> 6.13.0'
+  pod 'Firebase/Auth', '~> 6.13.0'
+  pod 'Firebase/Messaging', '~> 6.13.0'
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
 
   target 'MDCAppTests' do
     inherit! :search_paths

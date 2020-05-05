@@ -6,8 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.11.30] - 2019-05-01
+## [0.11.31] - 2019-05-01
 - Removed outdated lifecycle methods
+
+## [0.11.30] - 2019-4-30
+- Removed number above slider
+- Fixed questionniare issue
+
+## [0.11.29] - 2019-05-03
+- Added getAppletSchedule
+
+## [0.11.28] - 2019-4-28
+- Fixd Notification Badge Issue
 
 ## [0.11.25] - 2019-04-22
 - Fixed double click of activity button
