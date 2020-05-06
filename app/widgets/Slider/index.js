@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 45,
     height: 45,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   labelContainer: {
     width: '100%',
