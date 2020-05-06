@@ -181,13 +181,13 @@ const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onP
 
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
-    setActivities(sortActivities(newApplet.activities, inProgress, newApplet.schedule));
+    setActivities(sortActivities(applet.id, newApplet.activities, inProgress, newApplet.schedule));
   };
 
   useInterval(stateUpdate, delay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
-    setActivities(sortActivities(currentApplet.activities, inProgress, currentApplet.schedule));
+    setActivities(sortActivities(applet.id, currentApplet.activities, inProgress, currentApplet.schedule));
   }, [Object.keys(inProgress).length, responseSchedule]);
 
   return (

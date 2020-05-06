@@ -48,12 +48,12 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (activityList, inProgress, schedule) => {
+export default (appletId, activityList, inProgress, schedule) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(
-    activity => inProgressKeys.includes(activity.id),
+    activity => inProgressKeys.includes(appletId + activity.id),
   );
-  const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(activity.id)) : activityList;
+  const notInProgress = inProgressKeys ? activityList.filter(activity => !inProgressKeys.includes(appletId + activity.id)) : activityList;
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
   // Activities scheduled some time in the future.
