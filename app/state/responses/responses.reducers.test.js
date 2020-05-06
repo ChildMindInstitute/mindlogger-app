@@ -47,11 +47,12 @@ test('it sets responses download progress', () => {
 });
 
 test('it creates a response in progress', () => {
+  const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  expect(responsesReducer(initialState, createResponseInProgress(activity))).toEqual({
+  expect(responsesReducer(initialState, createResponseInProgress(appletId, activity))).toEqual({
     ...initialState,
     inProgress: {
-      myActivity: {
+      myAppletmyActivity: {
         activity,
         responses: [undefined],
         screenIndex: 0,
@@ -61,21 +62,23 @@ test('it creates a response in progress', () => {
 });
 
 test('it removes response in progress', () => {
+  const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
-  expect(responsesReducer(oneResponseState, removeResponseInProgress('myActivity'))).toEqual({
+  const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
+  expect(responsesReducer(oneResponseState, removeResponseInProgress('myAppletmyActivity'))).toEqual({
     ...initialState,
     inProgress: {},
   });
 });
 
 test('it can set all answers at once', () => {
+  const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
-  expect(responsesReducer(oneResponseState, setAnswers('myActivity', 'new answers'))).toEqual({
+  const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
+  expect(responsesReducer(oneResponseState, setAnswers('myApplet', 'myActivity', 'new answers'))).toEqual({
     ...initialState,
     inProgress: {
-      myActivity: {
+      myAppletmyActivity: {
         activity,
         responses: 'new answers',
         screenIndex: 0,
@@ -85,12 +88,13 @@ test('it can set all answers at once', () => {
 });
 
 test('it sets an answer', () => {
+  const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  const oneResponseState = responsesReducer(initialState, createResponseInProgress(activity));
-  expect(responsesReducer(oneResponseState, setAnswer('myActivity', 0, 'foobar'))).toEqual({
+  const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
+  expect(responsesReducer(oneResponseState, setAnswer('myApplet', 'myActivity', 0, 'foobar'))).toEqual({
     ...initialState,
     inProgress: {
-      myActivity: {
+      myAppletmyActivity: {
         activity,
         responses: ['foobar'],
         screenIndex: 0,

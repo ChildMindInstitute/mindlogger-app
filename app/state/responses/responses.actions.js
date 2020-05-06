@@ -57,9 +57,10 @@ export const setAnswer = (appletId, activityId, screenIndex, answer) => ({
   },
 });
 
-export const setAnswers = (activityId, response) => ({
+export const setAnswers = (appletId, activityId, response) => ({
   type: RESPONSES_CONSTANTS.SET_ANSWERS,
   payload: {
+    appletId,
     activityId,
     response,
   },
