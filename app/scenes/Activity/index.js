@@ -86,7 +86,6 @@ const Activity = ({
               currentScreen,
               activity,
               responses,
-              isContentError,
             )}
             onPressNext={() => {
               setContentError(false);
