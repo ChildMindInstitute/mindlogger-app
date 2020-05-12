@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.33] - 2019-05-04
+- Removed contentError to fix app crashes
+- Remove console Logs
+- Updated isEnable on nextButton
+
 ## [0.11.32] - 2019-5-3
 - Change ```resizeMode``` property of images in widgets to prevent sides from being cut off
 
