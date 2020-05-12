@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 45,
     height: 45,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   labelContainer: {
     width: '100%',
@@ -258,29 +258,6 @@ class Slider extends Component {
     }
   };
 
-  calculateLabelPosition = () => {
-    const { currentValue, sliderWidth, minimumValue, maximumValue } = this.state;
-    const { value } = this.props;
-    let correctVal = currentValue;
-    if (!correctVal) {
-      if (!value) {
-        return 22;
-      }
-      correctVal = value;
-    }
-    if (correctVal === minimumValue) {
-      return 22;
-    }
-    if (correctVal === maximumValue) {
-      return sliderWidth;
-    }
-
-    return (
-      sliderWidth * (correctVal - minimumValue) / (maximumValue - minimumValue)
-      + (22 - 22 * correctVal / maximumValue)
-    );
-  };
-
   getTickPosition = (value) => {
     const { sliderWidth } = this.state;
     const minValue = 1;
@@ -347,17 +324,9 @@ class Slider extends Component {
       currentVal = minimumValue;
     }
 
-    const labelPosition = currentVal ? this.calculateLabelPosition() : 22;
     return (
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
-          {currentVal !== null && (
-          <View style={[styles.knobLabel, { left: labelPosition }]}>
-            <Text style={styles.knobLabelText}>
-              {currentVal >= minimumValue ? (Math.round(currentValue * 100) / 100 || Math.round(currentVal * 100) / 100) : ''}
-            </Text>
-          </View>
-          )}
           {tickMarks.map(tickMark => (
             <View key={tickMark.value} style={[styles.tickMark, { left: tickMark.left }]}>
               <Text style={styles.tickLabel}> l </Text>
