@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.34] - 2019-05-05
+- Fixed reflected actions in same applets
+- Modified test cases
+- Updated acceptance of invitations
+
 ## [0.11.33] - 2019-05-04
 - Removed contentError to fix app crashes
 - Remove console Logs
