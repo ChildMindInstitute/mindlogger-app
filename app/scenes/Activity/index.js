@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StatusBar, View, StyleSheet } from 'react-native';
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
+import { Actions } from 'react-native-router-flux';
 import { nextScreen, prevScreen } from '../../state/responses/responses.thunks';
 import { currentResponsesSelector, itemVisiblitySelector, currentScreenSelector } from '../../state/responses/responses.selectors';
-import { setAnswer } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
+import { setAnswer, getResponseInActivity } from '../../state/responses/responses.actions';
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
 import ActHeader from '../../components/header';
@@ -33,82 +34,118 @@ const styles = StyleSheet.create({
   },
 });
 
-const Activity = ({
-  currentApplet,
-  setAnswer,
-  currentResponse,
-  authToken,
-  currentScreen,
-  nextScreen,
-  prevScreen,
-  itemVisibility,
-}) => {
-  if (!currentResponse) {
-    return <View />;
+class Activity extends React.Component {
+  subscription;
+
+  state = { isContentError: false, idleTimer: this.idleTime };
+
+  componentDidMount() {
+    this.subscription = setInterval(this.decreaseTimer, 60000);
   }
-  const { activity, responses } = currentResponse;
-  const currentItem = R.path(['items', currentScreen], activity);
-  const fullScreen = currentItem.fullScreen || activity.fullScreen;
-  const autoAdvance = currentItem.autoAdvance || activity.autoAdvance;
 
-  const [isContentError, setContentError] = useState(false);
+  componentWillUnmount() {
+    clearInterval(this.subscription);
+  }
 
-  return (
-    <Container style={{ flex: 1 }}>
-      <StatusBar hidden />
-      <ActivityScreens
-        activity={activity}
-        answers={responses}
-        currentScreen={currentScreen}
-        onChange={(answer, goToNext = false) => {
-          setAnswer(currentApplet.id, activity.id, currentScreen, answer);
-          if (goToNext || autoAdvance || fullScreen) {
-            nextScreen();
-          }
-        }}
-        authToken={authToken}
-        onContentError={() => setContentError(true)}
-      />
-      {!fullScreen && (
-        <View style={styles.buttonArea}>
-          {activity.items.length > 1 && (
-            <ActProgress index={currentScreen} length={activity.items.length} />
-          )}
-          <ActivityButtons
-            nextLabel={getNextLabel(
-              currentScreen,
-              itemVisibility,
-              activity,
-              responses,
-              isContentError,
-            )}
-            nextEnabled={isNextEnabled(
-              currentScreen,
-              activity,
-              responses,
-            )}
-            onPressNext={() => {
-              setContentError(false);
+  get currentItem() { return R.path(['items', this.props.currentScreen], this.props.currentResponse.activity); }
+
+  get idleTime() { return this.props.currentResponse.activity.appletIdleTime || 60; }
+
+  decreaseTimer = () => {
+    this.setState(
+      ({ idleTimer }) => ({ idleTimer: idleTimer - 1 }),
+      this.handleTimerChanged,
+    );
+  };
+
+  resetTimer = () => this.setState({ idleTimer: this.idleTime });
+
+  handleTimerChanged = () => {
+    if (this.state.idleTimer === 0) {
+      clearInterval(this.subscription);
+      this.props.getResponseInActivity(false);
+      Actions.pop();
+    }
+  }
+
+  render() {
+    const {
+      currentApplet,
+      setAnswer,
+      currentResponse,
+      authToken,
+      currentScreen,
+      nextScreen,
+      prevScreen,
+      itemVisibility,
+    } = this.props;
+    const { activity, responses } = currentResponse;
+
+    if (!currentResponse) {
+      return <View />;
+    }
+
+    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
+    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+
+    return (
+      <Container style={{ flex: 1 }}>
+        <StatusBar hidden />
+        <ActivityScreens
+          activity={activity}
+          answers={responses}
+          currentScreen={currentScreen}
+          onChange={(answer, goToNext = false) => {
+            setAnswer(currentApplet.id, activity.id, currentScreen, answer);
+            if (goToNext || autoAdvance || fullScreen) {
               nextScreen();
-            }}
-            prevLabel={getPrevLabel(currentScreen, itemVisibility)}
-            prevEnabled={isPrevEnabled(currentScreen, activity)}
-            onPressPrev={prevScreen}
-            actionLabel={getActionLabel(
-              currentScreen,
-              responses,
-              activity.items,
+            }
+          }}
+          authToken={authToken}
+          onContentError={() => this.setState({ isContentError: true })}
+          onAnyTouch={this.resetTimer}
+        />
+        {!fullScreen && (
+          <View style={styles.buttonArea}>
+            {activity.items.length > 1 && (
+              <ActProgress index={currentScreen} length={activity.items.length} />
             )}
-            onPressAction={() => {
-              setAnswer(currentApplet.id, activity.id, currentScreen, undefined);
-            }}
-          />
-        </View>
-      )}
-      {!fullScreen && <ActHeader title={activity.name.en} />}
-    </Container>
-  );
-};
+            <ActivityButtons
+              nextLabel={getNextLabel(
+                currentScreen,
+                itemVisibility,
+                activity,
+                responses,
+                this.state.isContentError,
+              )}
+              nextEnabled={isNextEnabled(
+                currentScreen,
+                activity,
+                responses,
+              )}
+              onPressNext={() => {
+                this.setState({ isContentError: false });
+                nextScreen();
+              }}
+              prevLabel={getPrevLabel(currentScreen, itemVisibility)}
+              prevEnabled={isPrevEnabled(currentScreen, activity)}
+              onPressPrev={prevScreen}
+              actionLabel={getActionLabel(
+                currentScreen,
+                responses,
+                activity.items,
+              )}
+              onPressAction={() => {
+                setAnswer(currentApplet.id, activity.id, currentScreen, undefined);
+              }}
+            />
+          </View>
+        )}
+        {!fullScreen && <ActHeader title={activity.name.en} />}
+      </Container>
+    );
+  }
+}
 
 Activity.defaultProps = {
   currentResponse: undefined,
@@ -124,6 +161,7 @@ Activity.propTypes = {
   nextScreen: PropTypes.func.isRequired,
   prevScreen: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
+  getResponseInActivity: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -135,6 +173,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
+  getResponseInActivity,
   setAnswer,
   nextScreen,
   prevScreen,
