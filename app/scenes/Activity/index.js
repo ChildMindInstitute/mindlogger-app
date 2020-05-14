@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, View, StyleSheet } from 'react-native';
+import { StatusBar, View, StyleSheet, AppState } from 'react-native';
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -37,23 +37,48 @@ const styles = StyleSheet.create({
 class Activity extends React.Component {
   subscription;
 
-  state = { isContentError: false, idleTimer: this.idleTime };
+  beforeBackground = new Date();
+
+  state = {
+    isContentError: false,
+    idleTimer: this.idleTime,
+    appState: AppState.currentState,
+  };
 
   componentDidMount() {
-    this.subscription = setInterval(this.decreaseTimer, 60000);
+    this.subscription = setInterval(this.decreaseTimer, 1000);
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
     clearInterval(this.subscription);
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
   get currentItem() { return R.path(['items', this.props.currentScreen], this.props.currentResponse.activity); }
 
-  get idleTime() { return this.props.currentResponse.activity.appletIdleTime || 60; }
+  get idleTime() { return (this.props.currentResponse.activity.appletIdleTime || 60) * 60; }
 
-  decreaseTimer = () => {
+  handleAppStateChange = (nextAppState) => {
+    const isInactriveToBackground = this.state.appState === 'inactive' && nextAppState === 'background';
+    const isBackgroundToActive = this.state.appState === 'background' && nextAppState === 'active';
+
+    if (isInactriveToBackground) {
+      this.beforeBackground = new Date();
+    }
+    if (isBackgroundToActive) {
+      const afterBackground = new Date();
+      const dMinutes = Math.round((afterBackground - this.beforeBackground) / 1000);
+      this.decreaseTimer(dMinutes);
+    }
+
+    this.setState({ appState: nextAppState });
+  }
+
+
+  decreaseTimer = (minutes = 1) => {
     this.setState(
-      ({ idleTimer }) => ({ idleTimer: idleTimer - 1 }),
+      ({ idleTimer }) => ({ idleTimer: idleTimer - minutes }),
       this.handleTimerChanged,
     );
   };
@@ -61,7 +86,7 @@ class Activity extends React.Component {
   resetTimer = () => this.setState({ idleTimer: this.idleTime });
 
   handleTimerChanged = () => {
-    if (this.state.idleTimer === 0) {
+    if (this.state.idleTimer <= 0) {
       clearInterval(this.subscription);
       this.props.getResponseInActivity(false);
       Actions.pop();
@@ -106,7 +131,7 @@ class Activity extends React.Component {
           onAnyTouch={this.resetTimer}
         />
         {!fullScreen && (
-          <View style={styles.buttonArea}>
+          <View onTouchStart={this.resetTimer} style={styles.buttonArea}>
             {activity.items.length > 1 && (
               <ActProgress index={currentScreen} length={activity.items.length} />
             )}
