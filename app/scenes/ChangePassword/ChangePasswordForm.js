@@ -6,15 +6,9 @@ import { reduxForm, Field } from 'redux-form';
 import { FormInputItem } from '../../components/form/FormItem';
 import styles from './styles';
 
-const validate = ({ firstName, lastName, oldPassword, password }) => {
+const validate = ({ oldPassword, password }) => {
   const errors = {};
 
-  if (!firstName || firstName.length === 0) {
-    errors.firstName = 'Please enter a first name';
-  }
-  if (!lastName || lastName.length === 0) {
-    errors.lastName = 'Please enter a last name';
-  }
   if (password && (!oldPassword || oldPassword.length === 0)) {
     errors.oldPassword = 'Please enter your old password';
   }
@@ -27,22 +21,6 @@ const validate = ({ firstName, lastName, oldPassword, password }) => {
 
 const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
-    <Field
-      component={FormInputItem}
-      name="firstName"
-      placeholder="First Name"
-      style={styles.text}
-      autoComplete="off"
-      autoCorrect={false}
-    />
-    <Field
-      component={FormInputItem}
-      name="lastName"
-      placeholder="Last Name"
-      style={styles.text}
-      autoComplete="off"
-      autoCorrect={false}
-    />
     <Field
       component={FormInputItem}
       placeholder="Current password"

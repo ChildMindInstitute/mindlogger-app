@@ -33,6 +33,10 @@ class Login extends Component {
     Actions.change_study();
   }
 
+  onForgotPassword = () => {
+    Actions.forgot_password();
+  }
+
   onAbout = () => {
     Actions.about_app();
   }
@@ -87,6 +91,9 @@ class Login extends Component {
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
               <Text style={styles.whiteText}>New User</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.forgotPassword} onPress={this.onForgotPassword}>
+              <Text style={styles.whiteText}>Forgot Password</Text>
             </TouchableOpacity>
           </View>
           <View>

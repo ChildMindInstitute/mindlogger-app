@@ -24,7 +24,7 @@ const LoginForm = ({
     <Form>
       <Field
         component={FormInputItem}
-        placeholder="Username"
+        placeholder="Email"
         placeholderTextColor={colors.secondary_50}
         name="user"
         autoCapitalize="none"

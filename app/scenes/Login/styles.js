@@ -60,6 +60,9 @@ export default {
     position: 'absolute',
     bottom: 0,
   },
+  forgotPassword: {
+    marginLeft: 20,
+  },
   logo: {
     marginTop: 20,
     height: 63,
