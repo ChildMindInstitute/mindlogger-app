@@ -193,7 +193,7 @@ export const registerOpenApplet = (authToken, schemaURI) => {
 };
 
 export const getAppletSchedule = (authToken, appletId) => {
-  const url = `${apiHost()}/applet/${appletId}/schedule?getAllEvents=true`;
+  const url = `${apiHost()}/applet/${appletId}/schedule?getAllEvents=false`;
   const headers = {
     'Girder-Token': authToken,
   };
