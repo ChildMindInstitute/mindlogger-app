@@ -13,11 +13,15 @@ const styles = StyleSheet.create({
   },
 });
 
+
 const renderButton = (label, enabled, onPress) => {
+  const handlePress = (label, onPress) => {
+    onPress();
+  };
   if (!enabled || !label) {
     return (<ScreenButton transparent />);
   }
-  return (<ScreenButton transparent onPress={onPress} text={label} />);
+  return (<ScreenButton transparent onPress={() => handlePress(label, onPress)} text={label} />);
 };
 
 const ActivityButtons = ({

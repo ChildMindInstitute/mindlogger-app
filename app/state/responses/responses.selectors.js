@@ -31,8 +31,9 @@ export const currentAppletResponsesSelector = createSelector(
 
 export const currentResponsesSelector = createSelector(
   R.path(['app', 'currentActivity']),
+  R.path(['app', 'currentApplet']),
   inProgressSelector,
-  (activityId, inProgress) => inProgress[activityId],
+  (activityId, appletId, inProgress) => inProgress[appletId + activityId],
 );
 
 export const currentScreenSelector = createSelector(

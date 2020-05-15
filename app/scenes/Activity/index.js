@@ -7,6 +7,7 @@ import * as R from 'ramda';
 import { nextScreen, prevScreen } from '../../state/responses/responses.thunks';
 import { currentResponsesSelector, itemVisiblitySelector, currentScreenSelector } from '../../state/responses/responses.selectors';
 import { setAnswer } from '../../state/responses/responses.actions';
+import { currentAppletSelector } from '../../state/app/app.selectors';
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
 import ActHeader from '../../components/header';
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
 });
 
 const Activity = ({
+  currentApplet,
   setAnswer,
   currentResponse,
   authToken,
@@ -59,7 +61,7 @@ const Activity = ({
         answers={responses}
         currentScreen={currentScreen}
         onChange={(answer, goToNext = false) => {
-          setAnswer(activity.id, currentScreen, answer);
+          setAnswer(currentApplet.id, activity.id, currentScreen, answer);
           if (goToNext || autoAdvance || fullScreen) {
             nextScreen();
           }
@@ -84,7 +86,6 @@ const Activity = ({
               currentScreen,
               activity,
               responses,
-              isContentError,
             )}
             onPressNext={() => {
               setContentError(false);
@@ -99,7 +100,7 @@ const Activity = ({
               activity.items,
             )}
             onPressAction={() => {
-              setAnswer(activity.id, currentScreen, undefined);
+              setAnswer(currentApplet.id, activity.id, currentScreen, undefined);
             }}
           />
         </View>
@@ -115,6 +116,7 @@ Activity.defaultProps = {
 };
 
 Activity.propTypes = {
+  currentApplet: PropTypes.object.isRequired,
   currentResponse: PropTypes.object,
   setAnswer: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
@@ -125,6 +127,7 @@ Activity.propTypes = {
 };
 
 const mapStateToProps = state => ({
+  currentApplet: currentAppletSelector(state),
   currentResponse: currentResponsesSelector(state),
   authToken: authTokenSelector(state),
   currentScreen: currentScreenSelector(state),

@@ -54,7 +54,7 @@ export default (state = initialState, action = {}) => {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.activity.id]: {
+          [action.payload.appletId + action.payload.activity.id]: {
             activity: R.clone(action.payload.activity),
             responses: new Array(action.payload.activity.items.length),
             subjectId: action.payload.subjectId,
@@ -68,8 +68,8 @@ export default (state = initialState, action = {}) => {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.activityId]: {
-            ...state.inProgress[action.payload.activityId],
+          [action.payload.appletId + action.payload.activityId]: {
+            ...state.inProgress[action.payload.appletId + action.payload.activityId],
             responses: action.payload.response,
           },
         },
@@ -79,8 +79,8 @@ export default (state = initialState, action = {}) => {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.activityId]: {
-            ...state.inProgress[action.payload.activityId],
+          [action.payload.appletId + action.payload.activityId]: {
+            ...state.inProgress[action.payload.appletId + action.payload.activityId],
             screenIndex: action.payload.screenIndex,
           },
         },
@@ -90,12 +90,12 @@ export default (state = initialState, action = {}) => {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.activityId]: {
-            ...state.inProgress[action.payload.activityId],
+          [action.payload.appletId + action.payload.activityId]: {
+            ...state.inProgress[action.payload.appletId + action.payload.activityId],
             responses: R.update(
               action.payload.screenIndex,
               action.payload.answer,
-              state.inProgress[action.payload.activityId].responses,
+              state.inProgress[action.payload.appletId + action.payload.activityId].responses,
             ),
           },
         },

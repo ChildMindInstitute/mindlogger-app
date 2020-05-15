@@ -39,7 +39,7 @@ export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getAppletInvites(auth.token).then((invites) => {
-    // console.log('setting applet invites', invites);
+    // console.log('---------setting applet invites', invites);
     dispatch(setInvites(invites));
   }).catch((e) => {
     console.warn(e);
@@ -64,6 +64,9 @@ export const downloadApplets = () => (dispatch, getState) => {
             ...applet,
             schedule: response,
           };
+        }).catch((err) => {
+          console.warn(err.message);
+          return applet;
         });
       });
       return Promise.all(requests)

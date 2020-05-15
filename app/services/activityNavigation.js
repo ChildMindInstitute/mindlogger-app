@@ -58,12 +58,12 @@ export const getNextLabel = (index, visibility, activity, responses, isContentEr
   // If this is the last visible item, then label is Done
   return DONE;
 };
-
+ 
 // If item has a valid response, or is skippable, then next is enabled
-export const isNextEnabled = (index, activity, responses, isContentError) => {
+export const isNextEnabled = (index, activity, responses) => {
   const isValid = checkValidity(activity.items[index], responses[index]);
   const isSkippable = checkSkippable(activity, activity.items[index]);
-  return isValid || isSkippable || isContentError;
+  return isValid || isSkippable;
 };
 
 export const isPrevEnabled = (index, activity) => {
