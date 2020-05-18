@@ -325,7 +325,7 @@ class ContinuousSlider extends Component {
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
                 thumbStyle={currentVal >= minimumValue ? styles.thumb : styles.thumbUnselected}
-                step={(minimumValue + maximumValue) / 200}
+                step={(minimumValue - maximumValue) / 200}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
