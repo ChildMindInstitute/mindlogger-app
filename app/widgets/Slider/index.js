@@ -154,7 +154,6 @@ class Slider extends Component {
       maxValue: PropTypes.string,
       itemList: PropTypes.array,
     }).isRequired,
-    appletName: PropTypes.string.isRequired,
     value: PropTypes.number,
     onChange: PropTypes.func.isRequired,
     onPress: PropTypes.func,
@@ -179,19 +178,16 @@ class Slider extends Component {
     const {
       config: { itemList },
     } = this.props;
-    const minValue = Math.min.apply(
-      Math,
-      itemList.map((item) => {
+    const minValue = Math.min(
+      ...itemList.map((item) => {
         return item.value;
       }),
     );
-    const maxValue = Math.max.apply(
-      Math,
-      itemList.map((item) => {
+    const maxValue = Math.max(
+      ...itemList.map((item) => {
         return item.value;
       }),
     );
-
 
     this.setState({ minimumValue: minValue, maximumValue: maxValue });
   }
