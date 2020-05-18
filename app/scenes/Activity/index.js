@@ -4,6 +4,7 @@ import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
+import _ from 'lodash';
 import { Actions } from 'react-native-router-flux';
 import { nextScreen, prevScreen } from '../../state/responses/responses.thunks';
 import { currentResponsesSelector, itemVisiblitySelector, currentScreenSelector } from '../../state/responses/responses.selectors';
@@ -39,16 +40,27 @@ class Activity extends React.Component {
   state = { isContentError: false };
 
   componentDidMount() {
-    idleTimer.subscribe(this.idleTime, this.handleTimeIsUp);
+    if (this.idleTime) {
+      idleTimer.subscribe(this.idleTime, this.handleTimeIsUp);
+    }
   }
 
   componentWillUnmount() {
-    idleTimer.unsubscribe();
+    if (this.idleTime) {
+      idleTimer.unsubscribe();
+    }
   }
 
   get currentItem() { return R.path(['items', this.props.currentScreen], this.props.currentResponse.activity); }
 
-  get idleTime() { return (this.props.currentResponse.activity.appletIdleTime || 60) * 60; }
+  get idleTime() {
+    const allow = _.get(this.props.currentApplet, 'schedule.events[0].data.idleTime.allow', false);
+    if (allow) {
+      const idleMinutes = _.get(this.props.currentApplet, 'schedule.events[0].data.idleTime.minute', null);
+      return idleMinutes && parseInt(idleMinutes, 10) * 60;
+    }
+    return null;
+  }
 
   handleTimeIsUp = () => {
     this.props.getResponseInActivity(false);

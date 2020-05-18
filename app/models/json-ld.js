@@ -279,7 +279,6 @@ export const appletTransformJson = (appletJson) => {
     schedule: appletJson.schedule,
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, '@value'], appletJson),
-    idleTime: appletJson.idle_time || 60,
   };
 };
 

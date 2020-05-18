@@ -109,7 +109,6 @@ export const appletsSelector = createSelector(
         appletName: applet.name,
         appletSchema: applet.schema,
         appletSchemaVersion: applet.schemaVersion,
-        appletIdleTime: applet.idleTime,
         lastScheduledTimestamp: lastScheduled,
         lastResponseTimestamp: lastResponse,
         nextScheduledTimestamp: nextScheduled,

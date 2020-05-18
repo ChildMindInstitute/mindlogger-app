@@ -114,7 +114,6 @@ test('appletTransformJson: ema-hbn', () => {
       en: '0.0.1',
     },
     shuffle: false,
-    idleTime: 10,
     visibility: {
       ema_evening: true,
       ema_morning: true,
