@@ -28,19 +28,16 @@ class ChangePasswordScreen extends Component {
       });
   }
 
-  onSubmit = ({ firstName, lastName, oldPassword, password }) => {
+  onSubmit = ({ oldPassword, password }) => {
     const { authToken } = this.props;
-    if (password && oldPassword) {
-      return updatePassword(authToken, oldPassword, password)
-        .then(() => this.updateUser(firstName, lastName))
-        .catch((e) => {
-          throw new SubmissionError({
-            _error: 'The current password you entered was incorrect.',
-          });
+    return updatePassword(authToken, oldPassword, password)
+      .then(() => {})
+      .catch((e) => {
+        throw new SubmissionError({
+          _error: 'The current password you entered was incorrect.',
         });
-    }
-    // No update password - just update the first name and last name
-    return this.updateUser(firstName, lastName);
+      });
+  // No update password - just update the first name and last name
   }
 
   popRoute = () => {
@@ -67,7 +64,7 @@ class ChangePasswordScreen extends Component {
           <Right />
         </Header>
         <Content>
-          <Text style={styles.subHeader}>Profile</Text>
+          <Text style={styles.subHeader}> </Text>
           <View style={styles.subSection}>
             <ChangePasswordForm
               onSubmit={this.onSubmit}
