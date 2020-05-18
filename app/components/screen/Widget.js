@@ -8,6 +8,7 @@ import {
   AudioRecord,
   AudioStimulus,
   Camera,
+  ContinuousSlider,
   DatePicker,
   Drawing,
   Geolocation,
@@ -49,6 +50,18 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, onPress, onReleas
   if (screen.inputType === 'slider') {
     return (
       <Slider
+        config={screen.valueConstraints}
+        appletName={applet.name.en}
+        onChange={onChange}
+        onPress={onPress}
+        onRelease={onRelease}
+        value={answer}
+      />
+    );
+  }
+  if (screen.inputType === 'continuousSlider') {
+    return (
+      <ContinuousSlider
         config={screen.valueConstraints}
         appletName={applet.name.en}
         onChange={onChange}

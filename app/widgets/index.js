@@ -2,6 +2,7 @@ export * from './AudioRecord/AudioImageRecord';
 export * from './AudioRecord';
 export * from './AudioStimulus';
 export * from './Camera';
+export * from './ContinuousSlider';
 export * from './DatePicker';
 export * from './Drawing';
 export * from './Geolocation';
