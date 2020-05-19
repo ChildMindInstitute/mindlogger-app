@@ -11,6 +11,8 @@ import SliderComponent from 'react-native-slider';
 import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
 
+const NUM_STEPS = 200;
+
 const testTicks = [
   { name: 'One', value: 1 },
   { name: 'Two', value: 2 },
@@ -267,6 +269,10 @@ class ContinuousSlider extends Component {
     );
   };
 
+  getStepSize = (minimumValue, maximumValue) => {
+    return (maximumValue - minimumValue) / NUM_STEPS;
+  }
+
   renderTicks() {
     const { sliderWidth } = this.state;
     const tickWidth = sliderWidth / testTicks.length;
@@ -300,9 +306,13 @@ class ContinuousSlider extends Component {
       this.setState({ currentValue: value });
     }
 
-    if (currentVal === minimumValue - 1) {
+    if (currentVal < minimumValue) {
       currentVal = minimumValue;
+    } else if (currentVal > maximumValue) {
+      currentVal = maximumValue;
     }
+
+    const stepSize = this.getStepSize(minimumValue, maximumValue);
 
     return (
       <View style={styles.container}>
@@ -325,7 +335,7 @@ class ContinuousSlider extends Component {
                 maximumTrackTintColor="#CCC"
                 trackStyle={styles.track}
                 thumbStyle={currentVal >= minimumValue ? styles.thumb : styles.thumbUnselected}
-                step={(minimumValue - maximumValue) / 200}
+                step={stepSize}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
