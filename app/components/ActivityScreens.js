@@ -43,7 +43,7 @@ class ActivityScreens extends React.PureComponent {
     } = this.props;
     const { activeScreens, direction } = this.state;
     return (
-      <View style={{ flex: 1, width: '100%', position: 'relative' }}>
+      <View onTouchStart={this.props.onAnyTouch} style={{ flex: 1, width: '100%', position: 'relative' }}>
         {activeScreens.map(index => (
           <SlideInView
             key={`${activity.id}-screen-${index}`}
@@ -77,6 +77,7 @@ ActivityScreens.propTypes = {
   authToken: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onContentError: PropTypes.func.isRequired,
+  onAnyTouch: PropTypes.func.isRequired,
 };
 
 export default ActivityScreens;
