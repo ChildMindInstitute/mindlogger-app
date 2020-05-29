@@ -7,6 +7,7 @@ import moment from 'moment';
 import ItemChart from './ItemChart';
 import { colors } from '../../themes/colors';
 import AppletCalendar from '../AppletCalendar';
+import SvgGenerator from './SvgGenerator';
 // import ActivityChart from './ActivityChart';
 
 const { width } = Dimensions.get('window');
@@ -80,8 +81,7 @@ class AppletData extends React.Component {
   // eslint-disable-next-line
   calcTimeDiff(data) {
     // data = {from: {hour: h, minute:mm}, to: {hour:h, minute: mm}}
-
-    const output = data.map((d) => {
+    return data.map((d) => {
       const dp = {};
       dp.date = d.date;
       const from = moment(`${d.value.from.hour}:${d.value.from.minute}`, 'h:mm');
@@ -97,8 +97,6 @@ class AppletData extends React.Component {
       dp.value = Math.round(Math.abs(to.diff(from, 'hours')));
       return dp;
     });
-
-    return output;
   }
 
   getActiveCount = (data) => {
@@ -124,16 +122,22 @@ class AppletData extends React.Component {
 
     if (item.inputType === 'radio') {
       const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
-      return { ...item, additionalParams: { activeCount, labels, description } };
+      const timelineChart = SvgGenerator.generateTimelineChart(data, labels);
+      return { ...item, additionalParams: { activeCount, labels, description, timelineChart } };
     }
     if (item.inputType === 'slider') {
       const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
       const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
-      return { ...item, additionalParams: { activeCount, labels, description, minMaxLabels } };
+      const lineChart = SvgGenerator.generateLineChart(data, labels);
+      return {
+        ...item,
+        additionalParams: { activeCount, labels, description, minMaxLabels, lineChart },
+      };
     }
     if (item.inputType === 'timeRange') {
       const dataFix = this.calcTimeDiff(data);
-      return { ...item, additionalParams: { activeCount, dataFix, description } };
+      const barChart = SvgGenerator.generateBarChart(dataFix);
+      return { ...item, additionalParams: { activeCount, dataFix, description, barChart } };
     }
     return { ...item, additionalParams: { activeCount } };
   }

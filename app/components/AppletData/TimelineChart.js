@@ -15,6 +15,7 @@ import { colors } from '../../themes/colors';
 
 const width = Math.round(Dimensions.get('window').width * 0.9);
 
+// deprecated
 // eslint-disable-next-line
 class TimelineChart extends React.Component {
 

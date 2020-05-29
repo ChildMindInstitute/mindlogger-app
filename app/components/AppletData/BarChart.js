@@ -16,6 +16,7 @@ import { colors } from '../../themes/colors';
 const width = Math.round(Dimensions.get('window').width * 0.9);
 const height = Math.round(width * (2 / 3));
 
+// deprecated
 // eslint-disable-next-line
 class BarChart extends React.Component {
   // eslint-disable-next-line
