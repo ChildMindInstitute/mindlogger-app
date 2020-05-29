@@ -6,6 +6,7 @@ import moment from 'moment';
 import { colors } from '../../themes/colors';
 import ItemChart from './ItemChart';
 
+// deprecated
 // eslint-disable-next-line
 class ActivityChart extends React.Component {
 
