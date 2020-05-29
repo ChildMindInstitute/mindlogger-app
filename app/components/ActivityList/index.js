@@ -37,9 +37,11 @@ const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let { lastScheduledTimeout } = output[uri];
+    let { completion } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
+      completion = e.data.completion;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -47,7 +49,10 @@ const dateParser = (schedule) => {
         moment(output[uri].lastScheduledResponse),
         moment(lastScheduled),
       );
-      lastScheduledTimeout = e.data.timeout;
+      if (lastScheduledResponse === output[uri].lastScheduledResponse) {
+        lastScheduledTimeout = output[uri].lastScheduledTimeout;
+        completion = output[uri].completion;
+      }
     }
 
     let nextScheduledResponse = nextScheduled;
@@ -62,7 +67,9 @@ const dateParser = (schedule) => {
         moment(output[uri].nextScheduledResponse),
         moment(nextScheduled),
       );
-      nextScheduledTimeout = e.data.timeout;
+      if (nextScheduledResponse === output[uri].nextScheduledResponse) {
+        nextScheduledTimeout = output[uri].nextScheduledTimeout;
+      }
     }
 
     output[uri] = {
@@ -70,6 +77,7 @@ const dateParser = (schedule) => {
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
       lastScheduledTimeout,
       nextScheduledTimeout,
+      completion,
       // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
     };
@@ -91,6 +99,7 @@ const getActivities = (applet, responseSchedule) => {
     const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
     const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
     const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
+    const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
     let lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
     let nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
@@ -113,6 +122,7 @@ const getActivities = (applet, responseSchedule) => {
       lastScheduledTimestamp: lastScheduled,
       lastResponseTimestamp: lastResponse,
       nextScheduledTimestamp: nextScheduled,
+      oneTimeCompletion: oneTimeCompletion || false,
       lastTimeout,
       currentTime: new Date().getTime(),
       nextAccess: nextTimeout,
