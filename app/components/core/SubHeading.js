@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
 });
 
 export const SubHeading = ({ children, style }) => (
-  <Text style={[styles.subHeading, style]}>
+  <Text style={{...styles.subHeading, ...style}}>
     {children}
   </Text>
 );
@@ -26,5 +26,5 @@ SubHeading.defaultProps = {
 
 SubHeading.propTypes = {
   children: PropTypes.node.isRequired,
-  style: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+  style: PropTypes.object,
 };
