@@ -5,70 +5,73 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.11.37] - 2019-5-28
+## [0.11.38] - 2020-6-1
+- Improve Performance of FlatList (DataTab Page)
+
+## [0.11.37] - 2020-5-28
 - Allowed one-time completion 
 
 ## [0.11.36] - 2020-05-18
 - IdleTimer service
 - handle idle time in Activity
 
-## [0.11.35] - 2019-5-11
+## [0.11.35] - 2020-5-11
 - Implemented forgotPassword
 - Rebuilt user signin and signup
 - Modified some styles
 
-## [0.11.34] - 2019-05-05
+## [0.11.34] - 2020-05-05
 - Fixed reflected actions in same applets
 - Modified test cases
 - Updated acceptance of invitations
 
-## [0.11.33] - 2019-05-04
+## [0.11.33] - 2020-05-04
 - Removed contentError to fix app crashes
 - Remove console Logs
 - Updated isEnable on nextButton
 
-## [0.11.32] - 2019-5-3
+## [0.11.32] - 2020-5-3
 - Change ```resizeMode``` property of images in widgets to prevent sides from being cut off
 
-## [0.11.31] - 2019-05-01
+## [0.11.31] - 2020-05-01
 - Removed outdated lifecycle methods
 
-## [0.11.30] - 2019-4-30
+## [0.11.30] - 2020-4-30
 - Removed number above slider
 - Fixed questionniare issue
 
-## [0.11.29] - 2019-05-03
+## [0.11.29] - 2020-05-03
 - Added getAppletSchedule
 
-## [0.11.28] - 2019-4-28
+## [0.11.28] - 2020-4-28
 - Fixd Notification Badge Issue
 
-## [0.11.25] - 2019-04-22
+## [0.11.25] - 2020-04-22
 - Fixed double click of activity button
 - Removed login log
 - Fixed double click of applet button
 
-## [0.11.24] - 2019-04-14
+## [0.11.24] - 2020-04-14
 - Hide next button until the user makes a selection on all question type.
 
-## [0.11.23] - 2019-04-08
+## [0.11.23] - 2020-04-08
 - Fixed user identity issue after password reset
 
-## [0.11.23] - 2019-04-24
+## [0.11.23] - 2020-04-24
 - Fixed NaN issue on slider
 
-## [0.11.22] - 2019-04-02
+## [0.11.22] - 2020-04-02
 - Implemented foreground jobs to update activity status
 
-## [0.11.21] - 2019-03-31
+## [0.11.21] - 2020-03-31
 - Changed ItemChart + LineChart label positioning
 
-## [0.11.20] - 2019-04-01
+## [0.11.20] - 2020-04-01
 - Updated activity every 10 mins
 - Changed scroll bar to be discrete on NIMH applet
 - Timeout issue is fixed
 
-## [0.11.19] - 2019-03-31
+## [0.11.19] - 2020-03-31
 - Updated signup scene + signup form style
 - Update fields available for new account
 - Remove first name, last name, email fields
@@ -76,67 +79,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove button to recover password with email
 - Improved the performance on NIMH applet
 
-## [0.11.18] - 2019-03-30
+## [0.11.18] - 2020-03-30
 - updated request for refreshing applets
 
-## [0.11.17] - 2019-03-29
+## [0.11.17] - 2020-03-29
 - Updated sliderbar to be discrete for NIMH applet
 
-## [0.11.16] - 2019-03-26
+## [0.11.16] - 2020-03-26
 - Updated activity status automatically every second
 - Updated unit tests for sortActivities
 
-## [0.11.15] - 2019-03-25
+## [0.11.15] - 2020-03-25
 - Updated getEvents with changed 'users' field
 
-## [0.11.14] - 2019-03-23
+## [0.11.14] - 2020-03-23
 - A due by time is shown on the activity button regardless of the state it is in
 
-## [0.11.13] - 2019-03-22
+## [0.11.13] - 2020-03-22
 - Fixed loading error on Time picker
 - Fixed critical error (division by zero) on slider
 
-## [0.11.12] - 2019-03-19
+## [0.11.12] - 2020-03-19
 - Fixed crashes of the app on radio button (multi select)
 
-## [0.11.11] - 2019-03-18
+## [0.11.11] - 2020-03-18
 - Added control buttons to slider bar
 - Added tick marks and labels to slider bar
 - Updated slider styles
 
-## [0.11.10] - 2019-03-16
+## [0.11.10] - 2020-03-16
 - Removed asterisk around text on data tab
 - Finished individual schedules.
 - Updated tests for individual schedules.
 
-## [0.11.9] - 2019-03-12
+## [0.11.9] - 2020-03-12
 - Finished activity timeout issue
 - Finished general scheduling issue
 - Fixed push notification to be taken to the activity's first question.
 
-## [0.11.8] - 2019-03-04
+## [0.11.8] - 2020-03-04
 - Shows data on correct day on data tab.
 
-## [0.11.7] - 2019-03-03
+## [0.11.7] - 2020-03-03
 - Update Style of See More button above progress bar
 
-## [0.11.6] - 2019-03-02
+## [0.11.6] - 2020-03-02
 - Image URLs and markup text are removed from questions
 
-## [0.11.5] - 2019-03-02
+## [0.11.5] - 2020-03-02
 - Align Images to center that are above questions
 
-## [0.11.4] - 2019-02-28
+## [0.11.4] - 2020-02-28
 - Send timezone to receive notification based on user mobile timezone
 - Check where the schema's ```variableMap``` is stored and modify ```variableMapPath``` and ```variableMapAr``` accordingly in ```\app\models\json-ld.js```
 
-## [0.11.3] - 2019-02-24
+## [0.11.3] - 2020-02-24
 - Add Monday through Sunday to the X-axis using only the first letter
 - Remove questions without answers on Data Tab
 - Change question width into 100%
 - Change slider bar start location
 
-## [0.11.2] - 2019-02-11
+## [0.11.2] - 2020-02-11
 - :lipstick: Update the style of see more button
 
 ## [0.11.1] - 2020-02-06
@@ -146,35 +149,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.11.0] - 2020-02-05
 - :arrow_up: upgrade react native version @0.61.5
 
-## [0.10.4] - 2019-01-29
+## [0.10.4] - 2020-01-29
 - :bug: Fix slider issues at the left.
 - :bug: Fix slider widget to be compliant
 - :design: Update slider knob
 - :lipstick: Remove number above slider
 
-## [0.10.3] - 2019-01-29
+## [0.10.3] - 2020-01-29
 ### Fixed
 - :bug: Fix displaying the history of questions/answers in data tab
 
-## [0.10.2] - 2019-01-28
+## [0.10.2] - 2020-01-28
 ### Fixed
 - :lipstick: Prevent Text overflows onto checkboxes and radio buttons
 
-## [10.0.1] - 2019-01-28
+## [10.0.1] - 2020-01-28
 - Add See More Button when it overflows the page
 
-## [0.9.19] - 2019-01-21
+## [0.9.19] - 2020-01-21
 - Add custom method in ```visibility.js``` to compute multi-select conditional visibility logic
 - Fix regex in ```visibility.js``` to replace all occurrences of matches
 
-## [0.9.16] - 2019-01-16
+## [0.9.16] - 2020-01-16
 - :lipstick: Redesign Progress Bar
 
 ## [0.9.15] - 2020-01-10
 ### Change behavior
 - When the user selects Okay on a DatePicker it progresses him to the next question
 
-## [0.9.14] - 2019-01-10
+## [0.9.14] - 2020-01-10
 - :bug: Fix Resume action to take the user back to the last question he or she did not answer
 
 ## [0.9.16] - 2020-01-17
