@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// deprecated
 // eslint-disable-next-line
 class LineChart extends React.Component {
   // eslint-disable-next-line

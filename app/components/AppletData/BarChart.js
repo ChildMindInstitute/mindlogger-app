@@ -13,14 +13,15 @@ import { scaleTime, scaleLinear } from 'd3-scale';
 
 import { colors } from '../../themes/colors';
 
+const width = Math.round(Dimensions.get('window').width * 0.9);
+const height = Math.round(width * (2 / 3));
 
+// deprecated
 // eslint-disable-next-line
 class BarChart extends React.Component {
   // eslint-disable-next-line
   render() {
     const { data } = this.props;
-    const width = Math.round(Dimensions.get('window').width * 0.9);
-    const height = Math.round(width * (2 / 3));
 
     const leftMargin = 10;
     const rightMargin = 10;

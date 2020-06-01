@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
-import moment from 'moment';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -41,26 +40,26 @@ class AppletDetailsComponent extends React.Component {
     // TODO: a quick hack to add a dot for today's date
     // if the user has responded today. This is instead of
     // refreshing all the applets
-    const { applet, appletData } = this.props;
-    let allDates = [];
-    const mapper = (resp) => {
-      const d = resp.map(r => r.date);
-      allDates = allDates.concat(d);
-      return allDates;
-    };
+    const { applet/* , appletData */ } = this.props;
+    // let allDates = [];
+    // const mapper = (resp) => {
+    //   const d = resp.map(r => r.date);
+    //   allDates = allDates.concat(d);
+    //   return allDates;
+    // };
 
-    const items = Object.keys(appletData);
+    // const items = Object.keys(appletData);
     // R.forEach(mapper, appletData.responses);
     // const items = Object.keys(appletData.responses);
     // items.map(item => mapper(appletData.responses[item]));
     // items.map(item => mapper(appletData.responses[item]));
 
-    if (allDates.length) {
-      const maxDate = moment.max(allDates.map(d => moment(d)));
-      if (applet.responseDates.indexOf(maxDate) < 0) {
-        applet.responseDates.push(maxDate);
-      }
-    }
+    // if (allDates.length) {
+    //   const maxDate = moment.max(allDates.map(d => moment(d)));
+    //   if (applet.responseDates.indexOf(maxDate) < 0) {
+    //     applet.responseDates.push(maxDate);
+    //   }
+    // }
 
     return applet.responseDates;
   }
@@ -71,34 +70,39 @@ class AppletDetailsComponent extends React.Component {
     const {
       applet,
       onPressActivity,
-      inProgress,
+      // inProgress,
       appletData,
     } = this.props;
 
     const responseDates = this.getResponseDates() || [];
-
     switch (selectedTab) {
       case 'survey':
         return (
-          <View style={{ flex: 1 }}>
-            <AppletCalendar responseDates={responseDates} />
-            <ActivityList
-              onPressActivity={onPressActivity}
-            />
-          </View>
+          <Content>
+            <View style={{ flex: 1 }}>
+              <AppletCalendar responseDates={responseDates} />
+              <ActivityList
+                onPressActivity={onPressActivity}
+              />
+            </View>
+          </Content>
         );
       case 'data':
         return (
-          <View>
-            <AppletCalendar responseDates={responseDates} />
+          <View style={{ flex: 1 }}>
             <AppletData
+              responseDates={responseDates}
               applet={applet}
               appletData={appletData}
             />
           </View>
         );
       case 'about':
-        return (<AppletAbout about={applet.about ? applet.about.en : ''} />);
+        return (
+          <Content>
+            <AppletAbout about={applet.about ? applet.about.en : ''} />
+          </Content>
+        );
       default:
         break;
     }
@@ -121,7 +125,7 @@ class AppletDetailsComponent extends React.Component {
     const { selectedTab } = this.state;
 
     return (
-      <Container style={styles.container}>
+      <Container style={[styles.container, { flex: 1 }]}>
         <StatusBar barStyle="light-content" />
         <Header style={{ backgroundColor: primaryColor }}>
           <Left>
@@ -149,9 +153,7 @@ class AppletDetailsComponent extends React.Component {
             uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
           }}
         >
-          <Content>
-            {this.renderActiveTab()}
-          </Content>
+          {this.renderActiveTab()}
         </ImageBackground>
         <AppletFooter
           active={selectedTab}
@@ -165,7 +167,7 @@ class AppletDetailsComponent extends React.Component {
 AppletDetailsComponent.propTypes = {
   applet: PropTypes.object.isRequired,
   appletData: PropTypes.object.isRequired,
-  inProgress: PropTypes.object.isRequired,
+  // inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,

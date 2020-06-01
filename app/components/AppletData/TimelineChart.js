@@ -13,12 +13,14 @@ import { scaleTime } from 'd3-scale';
 
 import { colors } from '../../themes/colors';
 
+const width = Math.round(Dimensions.get('window').width * 0.9);
+
+// deprecated
 // eslint-disable-next-line
 class TimelineChart extends React.Component {
 
   // eslint-disable-next-line
   renderSingle(label, data, xTicks, xMapper) {
-    const width = Math.round(Dimensions.get('window').width * 0.9);
     const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
     return (
       <Svg width={width} height={65} key={label.name}>
@@ -52,7 +54,6 @@ class TimelineChart extends React.Component {
   render() {
     const { data, labels } = this.props;
 
-    const width = Math.round(Dimensions.get('window').width * 0.9);
     // 1. calculate minimum and maximum date
     const dateArray = data.map(d => moment(d.date).toDate());
     let minDate = min(dateArray);

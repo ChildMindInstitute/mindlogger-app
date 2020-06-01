@@ -78,11 +78,12 @@ class Activity extends React.Component {
       prevScreen,
       itemVisibility,
     } = this.props;
-    const { activity, responses } = currentResponse;
 
     if (!currentResponse) {
       return <View />;
     }
+
+    const { activity, responses } = currentResponse;
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
