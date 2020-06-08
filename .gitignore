@@ -61,3 +61,4 @@ android/app/src/main/assets/index.android.bundle.meta
 # Bundle artifact
 *.jsbundle
 
+!android/app/debug.keystore
