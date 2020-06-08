@@ -40,8 +40,8 @@ test('flattenIdList', () => {
 
 test('flattenItemList', () => {
   const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
-  const valueConstraints = item['reprolib:terms/valueconstraints'][0];
-  const itemList = valueConstraints['http://schema.org/itemListElement'][0]['@list'];
+  const valueConstraints = item['reprolib:terms/responseOptions'][0];
+  const itemList = valueConstraints['http://schema.org/itemListElement'];
   expect(flattenItemList(itemList)).toEqual([
     {
       image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
@@ -62,7 +62,7 @@ test('flattenItemList', () => {
 
 test('flattenValueConstraints', () => {
   const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
-  const valueConstraints = item['reprolib:terms/valueconstraints'][0];
+  const valueConstraints = item['reprolib:terms/responseOptions'][0];
   expect(flattenValueConstraints(valueConstraints)).toEqual({
     multipleChoice: false,
     maxValue: 1,

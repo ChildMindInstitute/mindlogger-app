@@ -1,35 +1,42 @@
-import React from 'react';
-import { StatusBar, View, StyleSheet } from 'react-native';
-import { Container } from 'native-base';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import * as R from 'ramda';
-import _ from 'lodash';
-import { Actions } from 'react-native-router-flux';
-import { nextScreen, prevScreen } from '../../state/responses/responses.thunks';
-import { currentResponsesSelector, itemVisiblitySelector, currentScreenSelector } from '../../state/responses/responses.selectors';
-import { currentAppletSelector } from '../../state/app/app.selectors';
-import { setAnswer, getResponseInActivity } from '../../state/responses/responses.actions';
-import { authTokenSelector } from '../../state/user/user.selectors';
-import ActivityScreens from '../../components/ActivityScreens';
-import ActHeader from '../../components/header';
-import ActProgress from '../../components/progress';
-import ActivityButtons from '../../components/ActivityButtons';
+import React from "react";
+import { StatusBar, View, StyleSheet } from "react-native";
+import { Container } from "native-base";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import * as R from "ramda";
+import _ from "lodash";
+import { Actions } from "react-native-router-flux";
+import { nextScreen, prevScreen } from "../../state/responses/responses.thunks";
+import {
+  currentResponsesSelector,
+  itemVisiblitySelector,
+  currentScreenSelector,
+} from "../../state/responses/responses.selectors";
+import { currentAppletSelector } from "../../state/app/app.selectors";
+import {
+  setAnswer,
+  getResponseInActivity,
+} from "../../state/responses/responses.actions";
+import { authTokenSelector } from "../../state/user/user.selectors";
+import ActivityScreens from "../../components/ActivityScreens";
+import ActHeader from "../../components/header";
+import ActProgress from "../../components/progress";
+import ActivityButtons from "../../components/ActivityButtons";
 import {
   getNextLabel,
   getPrevLabel,
   getActionLabel,
   isNextEnabled,
   isPrevEnabled,
-} from '../../services/activityNavigation';
-import { idleTimer } from '../../services/idleTimer';
+} from "../../services/activityNavigation";
+import { idleTimer } from "../../services/idleTimer";
 
 const styles = StyleSheet.create({
   buttonArea: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     shadowOpacity: 0.75,
     shadowRadius: 5,
-    shadowColor: 'lightgray',
+    shadowColor: "lightgray",
     shadowOffset: { height: 0, width: 0 },
     elevation: 2,
     zIndex: -1,
@@ -51,12 +58,25 @@ class Activity extends React.Component {
     }
   }
 
-  get currentItem() { return R.path(['items', this.props.currentScreen], this.props.currentResponse.activity); }
+  get currentItem() {
+    return R.path(
+      ["items", this.props.currentScreen],
+      this.props.currentResponse.activity
+    );
+  }
 
   get idleTime() {
-    const allow = _.get(this.props.currentApplet, 'schedule.events[0].data.idleTime.allow', false);
+    const allow = _.get(
+      this.props.currentApplet,
+      "schedule.events[0].data.idleTime.allow",
+      false
+    );
     if (allow) {
-      const idleMinutes = _.get(this.props.currentApplet, 'schedule.events[0].data.idleTime.minute', null);
+      const idleMinutes = _.get(
+        this.props.currentApplet,
+        "schedule.events[0].data.idleTime.minute",
+        null
+      );
       return idleMinutes && parseInt(idleMinutes, 10) * 60;
     }
     return null;
@@ -65,7 +85,7 @@ class Activity extends React.Component {
   handleTimeIsUp = () => {
     this.props.getResponseInActivity(false);
     Actions.pop();
-  }
+  };
 
   render() {
     const {
@@ -103,12 +123,15 @@ class Activity extends React.Component {
           }}
           authToken={authToken}
           onContentError={() => this.setState({ isContentError: true })}
-          onAnyTouch={this.resetTimer}
+          onAnyTouch={idleTimer.resetTimer}
         />
         {!fullScreen && (
-          <View onTouchStart={this.resetTimer} style={styles.buttonArea}>
+          <View onTouchStart={idleTimer.resetTimer} style={styles.buttonArea}>
             {activity.items.length > 1 && (
-              <ActProgress index={currentScreen} length={activity.items.length} />
+              <ActProgress
+                index={currentScreen}
+                length={activity.items.length}
+              />
             )}
             <ActivityButtons
               nextLabel={getNextLabel(
@@ -116,13 +139,9 @@ class Activity extends React.Component {
                 itemVisibility,
                 activity,
                 responses,
-                this.state.isContentError,
+                this.state.isContentError
               )}
-              nextEnabled={isNextEnabled(
-                currentScreen,
-                activity,
-                responses,
-              )}
+              nextEnabled={isNextEnabled(currentScreen, activity, responses)}
               onPressNext={() => {
                 this.setState({ isContentError: false });
                 nextScreen();
@@ -133,10 +152,15 @@ class Activity extends React.Component {
               actionLabel={getActionLabel(
                 currentScreen,
                 responses,
-                activity.items,
+                activity.items
               )}
               onPressAction={() => {
-                setAnswer(currentApplet.id, activity.id, currentScreen, undefined);
+                setAnswer(
+                  currentApplet.id,
+                  activity.id,
+                  currentScreen,
+                  undefined
+                );
               }}
             />
           </View>
@@ -164,7 +188,7 @@ Activity.propTypes = {
   getResponseInActivity: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   currentResponse: currentResponsesSelector(state),
   authToken: authTokenSelector(state),
@@ -179,4 +203,7 @@ const mapDispatchToProps = {
   prevScreen,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Activity);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Activity);

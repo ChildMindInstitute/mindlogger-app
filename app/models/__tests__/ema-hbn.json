@@ -1265,47 +1265,43 @@
           "@value": "radio"
         }
       ],
-      "reprolib:terms/valueconstraints": [
+      "reprolib:terms/responseOptions": [
         {
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
           "http://schema.org/itemListElement": [
             {
-              "@list": [
+              "@type": [
+                "http://schema.org/Boolean"
+              ],
+              "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
+              "http://schema.org/name": [
                 {
-                  "@type": [
-                    "http://schema.org/Boolean"
-                  ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
-                  "http://schema.org/name": [
-                    {
-                      "@language": "en",
-                      "@value": "No"
-                    }
-                  ],
-                  "http://schema.org/value": [
-                    {
-                      "@value": 0
-                    }
-                  ]
-                },
+                  "@language": "en",
+                  "@value": "No"
+                }
+              ],
+              "http://schema.org/value": [
                 {
-                  "@type": [
-                    "http://schema.org/Boolean"
-                  ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true",
-                  "http://schema.org/name": [
-                    {
-                      "@language": "en",
-                      "@value": "Yes"
-                    }
-                  ],
-                  "http://schema.org/value": [
-                    {
-                      "@value": 1
-                    }
-                  ]
+                  "@value": 0
+                }
+              ]
+            },
+            {
+              "@type": [
+                "http://schema.org/Boolean"
+              ],
+              "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true",
+              "http://schema.org/name": [
+                {
+                  "@language": "en",
+                  "@value": "Yes"
+                }
+              ],
+              "http://schema.org/value": [
+                {
+                  "@value": 1
                 }
               ]
             }
