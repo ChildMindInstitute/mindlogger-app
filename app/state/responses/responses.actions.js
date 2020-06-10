@@ -4,6 +4,11 @@ export const clearResponses = () => ({
   type: RESPONSES_CONSTANTS.CLEAR,
 });
 
+export const setSelected = isSelected => ({
+  type: RESPONSES_CONSTANTS.SET_SELECTED,
+  payload: isSelected,
+});
+
 export const replaceResponses = responses => ({
   type: RESPONSES_CONSTANTS.REPLACE_RESPONSES,
   payload: responses,

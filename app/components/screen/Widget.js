@@ -12,6 +12,7 @@ import {
   Drawing,
   Geolocation,
   MultiSelect,
+  TLMultiSelect,
   Radio,
   Select,
   Slider,
@@ -21,12 +22,24 @@ import {
   VisualStimulusResponse,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
+import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, onPress, onRelease, onContentError }) => {
+const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ReproNim/reproschema/master/protocols/TokenLogger/TokenLogger_schema';
+
+const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
   if (screen.inputType === 'radio'
     // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
+    if (applet.schema === TOKEN_LOGGER_SCHEMA) {
+      return (
+        <TLMultiSelect
+          config={screen.valueConstraints}
+          onChange={onChange}
+          value={answer}
+        />
+      );
+    }
     return (
       <MultiSelect
         config={screen.valueConstraints}
@@ -42,7 +55,9 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, onPress, onReleas
       <Radio
         config={screen.valueConstraints}
         onChange={onChange}
+        onSelected={setSelected}
         value={answer}
+        selected={isSelected}
       />
     );
   }
@@ -188,9 +203,10 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, onPress, onReleas
     );
   }
   if (screen.inputType === 'time') {
+    const screenValue = (typeof answer === 'object') ? answer : undefined;
     return (
       <TimePicker
-        value={answer}
+        value={screenValue}
         onChange={onChange}
       />
     );
@@ -216,13 +232,20 @@ Widget.propTypes = {
   onChange: PropTypes.func.isRequired,
   applet: PropTypes.object.isRequired,
   onContentError: PropTypes.func.isRequired,
+  setSelected: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
+  isSelected: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
   applet: currentAppletSelector(state),
+  isSelected: state.responses.isSelected,
 });
 
-export default connect(mapStateToProps)(Widget);
+const mapDispatchToProps = {
+  setSelected,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Widget);

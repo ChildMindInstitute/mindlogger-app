@@ -4,6 +4,7 @@ import RESPONSES_CONSTANTS from './responses.constants';
 export const initialState = {
   responseHistory: [],
   inProgress: {},
+  isSelected: false,
   isDownloadingResponses: false,
   isActivity: false,
   isApplet: false,
@@ -19,6 +20,11 @@ export default (state = initialState, action = {}) => {
   switch (action.type) {
     case RESPONSES_CONSTANTS.CLEAR:
       return initialState;
+    case RESPONSES_CONSTANTS.SET_SELECTED:
+      return {
+        ...state,
+        isSelected: action.payload,
+      };
     case RESPONSES_CONSTANTS.REPLACE_RESPONSES:
       return {
         ...state,
