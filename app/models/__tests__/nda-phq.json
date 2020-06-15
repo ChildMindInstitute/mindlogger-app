@@ -6,20 +6,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cba3c1f86fafd5df796d913",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema describing terms needed to generate NDA guid"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/nda_guid.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -81,7 +81,7 @@
       ],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ],
@@ -130,20 +130,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cbf866d86fafd5189aee229",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "PHQ-8 assessment schema"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/phq8_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/phq8_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -213,7 +213,7 @@
       ],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ]
@@ -224,20 +224,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cba3c0a86fafd5df796d90e",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "PHQ-9 assessment schema"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/phq9_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/phq9_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -306,7 +306,7 @@
       ],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ],
@@ -509,20 +509,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cbf866c86fafd5189aee227",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "PHQ-9a assessment schema"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/phq9a_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/phq9a_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -598,7 +598,7 @@
       ],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ]
@@ -609,20 +609,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cba425486fafd5df796d919",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Voice tasks"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/voice_task_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/voice_task_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -692,7 +692,7 @@
       "reprolib:terms/scoringLogic": [],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ]
@@ -704,20 +704,20 @@
       "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/ActivitySet.jsonld"
     ],
     "_id": "applet/5ca3a5dfd27b4e3dd5db30b4",
-    "http://schema.org/description": [
+    "schema:description": [
       {
         "@language": "en",
         "@value": "activity set for NDA-PHQ Assessments"
       }
     ],
-    "http://schema.org/schemaVersion": [
+    "schema:schemaVersion": [
       {
         "@language": "en",
         "@value": "0.0.1"
       }
     ],
-    "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/example/nda-phq.jsonld",
-    "http://schema.org/version": [
+    "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/example/nda-phq.jsonld",
+    "schema:version": [
       {
         "@language": "en",
         "@value": "0.0.1"
@@ -758,7 +758,7 @@
     ],
     "reprolib:terms/shuffle": [
       {
-        "@type": "http://schema.org/Boolean",
+        "@type": "schema:Boolean",
         "@value": false
       }
     ]
@@ -770,26 +770,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850786fafd4e422e8c2a",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Country of birth of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Country of birth"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -817,7 +817,7 @@
         {
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -830,26 +830,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850686fafd4e422e8c28",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Sex of the subject"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Sex"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -878,20 +878,20 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Female"
+                    "schema:Female"
                   ],
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Female"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -899,15 +899,15 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Male"
+                    "schema:Male"
                   ],
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Male"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -916,25 +916,25 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -947,26 +947,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850986fafd4e422e8c2d",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for health condition information of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Any health condition?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1000,26 +1000,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850986fafd4e422e8c2e",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for medication of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Medication"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1053,26 +1053,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850886fafd4e422e8c2c",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for mental health of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Diagnosed with any mental-health disorder?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1106,26 +1106,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850886fafd4e422e8c2b",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for native language of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Native Language"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1153,7 +1153,7 @@
         {
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1166,26 +1166,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850686fafd4e422e8c27",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for race or Ethnicity of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Race/Ethnicity"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1211,69 +1211,69 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "American Indian or Alaska Native"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Asian"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Black or African American"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 2
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Native Hawaiian or Other Pacific Islander"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 3
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "White"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 4
                     }
@@ -1284,7 +1284,7 @@
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1297,26 +1297,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850786fafd4e422e8c29",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for state of residence of participant"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "State of residence"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1344,7 +1344,7 @@
         {
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1357,26 +1357,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf850586fafd4e422e8c26",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Year of birth YYYY"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Year of birth"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1402,7 +1402,7 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@language": "en",
               "@value": "new Date()"
@@ -1410,7 +1410,7 @@
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -1423,26 +1423,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867986fafd5189aee23e",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q1 of the PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Little interest or pleasure in doing things"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_1.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_1.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1478,26 +1478,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867a86fafd5189aee23f",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q2 of PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling down, depressed or hopeless?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_2.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_2.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1533,26 +1533,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867a86fafd5189aee240",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q3 of PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble falling or staying asleep, or sleeping too much?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_3.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_3.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1588,26 +1588,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867b86fafd5189aee241",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q4 of PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling tired or having little energy?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_4.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_4.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1643,26 +1643,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867c86fafd5189aee242",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Poor appetite or overeating?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_5.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_5.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1698,26 +1698,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867d86fafd5189aee243",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q6 of PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_6.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_6.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1753,26 +1753,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867d86fafd5189aee244",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q7 of PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble concentrating on things, such as reading the newspaper or watching television? ENG"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_7.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_7.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1808,26 +1808,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867e86fafd5189aee245",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q8 of the PHQ-8 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_8.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-8/items/phq8_8.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1863,26 +1863,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf866e86fafd5189aee22a",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q1 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Little interest or pleasure in doing things"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_1.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_1.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1918,26 +1918,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867386fafd5189aee233",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q10 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "How difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_10.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_10.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1963,56 +1963,56 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Not difficult at all"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Somewhat difficult"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Very difficult"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 2
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Extremely difficult"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 3
                     }
@@ -2021,25 +2021,25 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 3
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -2052,26 +2052,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf866f86fafd5189aee22b",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q2 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling down, depressed or hopeless?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_2.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_2.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2107,26 +2107,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf866f86fafd5189aee22c",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q3 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble falling or staying asleep, or sleeping too much?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_3.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_3.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2162,26 +2162,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867086fafd5189aee22d",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q4 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling tired or having little energy?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_4.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_4.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2217,26 +2217,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867086fafd5189aee22e",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q5 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Poor appetite or overeating?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_5.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_5.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2272,26 +2272,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867186fafd5189aee22f",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q6 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_6.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_6.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2327,26 +2327,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867186fafd5189aee230",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q7 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble concentrating on things, such as reading the newspaper or watching television?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_7.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_7.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2382,26 +2382,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867286fafd5189aee231",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q8 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_8.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_8.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2437,26 +2437,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867286fafd5189aee232",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q9 of the PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Thoughts that you would be better off dead or of hurting yourself in some way?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_9.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9/items/phq9_9.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2492,26 +2492,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867386fafd5189aee234",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q1 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Little interest or pleasure in doing things"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_1.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_1.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2547,26 +2547,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867886fafd5189aee23d",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q10 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "If you checked off any problems, how difficult have these problems made it for you to do your work, take care of things at home, or get along with other people?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_10.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_10.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2602,26 +2602,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867486fafd5189aee235",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q2 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling down, depressed or hopeless?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_2.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_2.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2657,26 +2657,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867486fafd5189aee236",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q3 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble falling or staying asleep, or sleeping too much?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_3.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_3.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2712,26 +2712,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867586fafd5189aee237",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Q4 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling tired or having little energy?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_4.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_4.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2764,26 +2764,26 @@
     "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_5.jsonld": {
       "@id": "/phq9a_5",
       "_id": "screen/5cbf867686fafd5189aee238",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q5 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Poor appetite or overeating?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_5.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_5.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2819,26 +2819,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867686fafd5189aee239",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q6 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_6.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_6.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2874,26 +2874,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867786fafd5189aee23a",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q7 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Trouble concentrating on things, such as reading the newspaper or watching television?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_7.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_7.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2929,26 +2929,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867786fafd5189aee23b",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q8 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_8.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_8.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -2984,26 +2984,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867886fafd5189aee23c",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "schema for Q9 of the derived PHQ-9 Assessment"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Thoughts that you would be better off dead or of hurting yourself in some way?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_9.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/PHQ-9a/items/phq9a_9.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3039,26 +3039,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf868086fafd5189aee24a",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "say ah for 10 seconds"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Describe the image shown below for a minute"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/describe_image.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/describe_image.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3094,26 +3094,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf868086fafd5189aee249",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "free speech item for voice task"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "In 1 min please state the name of the last movie or television show that you were really \"struck by\". Describe three things that made it memorable."
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/free_speech.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/free_speech.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3139,25 +3139,25 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 60000
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -3170,26 +3170,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867f86fafd5189aee248",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "guided speech item for voice task"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Look at the map in the image below, and give directions in 1 min to another person over the phone as to how you would go from Start to End."
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/guided_speech.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/guided_speech.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3215,26 +3215,26 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/image": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/map.png",
-          "http://schema.org/maxValue": [
+          "schema:image": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/map.png",
+          "schema:maxValue": [
             {
               "@value": 60000
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -3247,26 +3247,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867f86fafd5189aee247",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "pataka task"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Say 'pataka' as fast as you can for a minute"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/pataka.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/pataka.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3302,26 +3302,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf868186fafd5189aee24c",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "phonetic passage task"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Some time ago, in a place neither near nor far, there lived a king who didn’t know how to count, not even to zero.  Some say this is the reason he would always wish for more — more food, more gold, more land. He simply didn’t realize how much he already owned.  Everyone in his kingdom could do the math and tally bushels of corn, loaves of bread, and urns of gold. But how would they measure the height of his castle or the stretch of his kingdom?  You might think “Aaah, ooh, easy — just measure it in meters!” But in those days, the useless unit of measure was based on stains splattered along the king’s cloak while drinking shrub juice.  The kingdom needed a new way of counting distance. “A kingdom without a proper ruler,” proclaimed the king, “is like riches without measure.” He launched a challenge amid trumpets, drums, flags and cannons.  “The person who creates a unit of measure fit for a ruler will be rewarded beyond measure!” A tall order indeed! The first person to come forward was a bulky locksmith with a stiff jaw. He approached the king with an air of secrecy and whispered, “I have the key to measure the kingdom, but only I can wield it.”  He then rubbed his beard and pulled the key from his locks of oily hair. The key turned out to be a hair itself! “Judge the reach of my vast kingdom with a hair’s width?” laughed the king. “What a poor idea. That would take forever or longer!” The second person eager for the prize was a fidgety boy who knew all numbers (including zero).  He produced a curious object from one of his many pockets. It was a complex shape that seemed to change proportions depending on which direction you gazed upon it. The boy said in a measured voice, “This polyhedron has many edges, with each edge of a different length. Only a king could be counted on to use it justly.” He gave the king an awful earful of an explanation that went on and on.  The long and the short of it was that the king could make no more use of it than of a puddle of spilled oatmeal. Finally, a little girl with a big idea tugged on the mismeasured cloak of the king. The king sized up the little girl with the big idea and said “I don’t have time for this, and for that matter, I have no concept of space, either.” The girl looked up, then down, then spun around and blurted out: “Aren’t you able to solve the puzzle yourself?  Why must you break up your kingdom into tiny pieces when everything around you is Humpty Dumpty together again? Your kingdom IS a unit and you are the ruler.” The king — startled, befuddled, and bemused — found the words wise. He aimed to be satisfied with all around him, big or small or somewhere in between."
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/phonetic.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/phonetic.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3353,19 +3353,19 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 60000
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -3378,26 +3378,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf868186fafd5189aee24d",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "rainbow task"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow. The rainbow is a division of white light into many beautiful colors. These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon. There is , according to legend, a boiling pot of gold at one end. People look, but no one ever finds it. When a man looks for something beyond his reach, his friends say he is looking for the pot of gold at the end of the rainbow. Throughout the centuries people have explained the rainbow in various ways. Some have accepted it as a miracle without physical explanation. To the Hebrews it was a token that there would be no more universal floods. The Greeks used to imagine that it was a sign from the gods to foretell war or heavy rain. The Norsemen considered the rainbow as a bridge over which the gods passed from earth to their home in the sky. Others have tried to explain the phenomenon physically. Aristotle thought that the rainbow was caused by reflection of the sun's rays by the rain. Since then physicists have found that it is not reflection, but refraction by the raindrops which causes the rainbows. Many complicated ideas about the rainbow have been formed. The difference in the rainbow depends considerably upon the size of the drops, and the width of the colored band increases as the size of the drops increases. The actual primary rainbow observed is said to be the effect of super-imposition of a number of bows. If the red of the second bow falls upon the green of the first, the result is to give a bow with an abnormally wide yellow band, since red and green light when mixed form yellow. This is a very common type of bow, one showing mainly red and yellow, with little or no green or blue."
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/rainbow_passage.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/rainbow_passage.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3429,19 +3429,19 @@
       ],
       "reprolib:terms/valueconstraints": [
         {
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 60000
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -3454,26 +3454,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf867e86fafd5189aee246",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "say ah for 10 seconds"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Say 'ahhh' for 10 seconds"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/say_ah.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/items/say_ah.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3509,20 +3509,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "screen/5cbf868186fafd5189aee24b",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Voice tasks"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/multipart_voice_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/voice_task/multipart_voice_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -3583,7 +3583,7 @@
       "reprolib:terms/scoringLogic": [],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ]

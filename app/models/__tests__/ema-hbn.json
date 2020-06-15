@@ -6,20 +6,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cba23ab86fafd5df796d90c",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Evening Questions"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -73,7 +73,7 @@
       "reprolib:terms/scoringLogic": [],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ],
@@ -115,20 +115,20 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Activity.jsonld"
       ],
       "_id": "activity/5cba070386fafd5df796d908",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "Morning Questions"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -170,7 +170,7 @@
       "reprolib:terms/scoringLogic": [],
       "reprolib:terms/shuffle": [
         {
-          "@type": "http://schema.org/Boolean",
+          "@type": "schema:Boolean",
           "@value": false
         }
       ],
@@ -199,22 +199,22 @@
     "groups": ["12345"],
     "responseDates": [],
     "schedule": {},
-    "http://schema.org/about":[{"@language": "en", "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md"}],
-    "http://schema.org/image": "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
-    "http://schema.org/description": [
+    "schema:about":[{"@language": "en", "@value": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md"}],
+    "schema:image": "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
+    "schema:description": [
       {
         "@language": "en",
         "@value": "Daily questions about your child's physical and mental health"
       }
     ],
-    "http://schema.org/schemaVersion": [
+    "schema:schemaVersion": [
       {
         "@language": "en",
         "@value": "0.0.1"
       }
     ],
-    "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
-    "http://schema.org/version": [
+    "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
+    "schema:version": [
       {
         "@language": "en",
         "@value": "0.0.1"
@@ -260,7 +260,7 @@
     ],
     "reprolib:terms/shuffle": [
       {
-        "@type": "http://schema.org/Boolean",
+        "@type": "schema:Boolean",
         "@value": false
       }
     ],
@@ -282,26 +282,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf992086fafd5189aee258",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "how energetic your child was today"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "How tired vs energetic did you child seem today?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/energy.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -330,71 +330,71 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#integer"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "1"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "2"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 2
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "3"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 3
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "4"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 4
                     }
                   ]
                 },
                 {
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F606.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F606.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "5"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 5
                     }
@@ -403,13 +403,13 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@language": "en",
               "@value": "high energy"
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@language": "en",
               "@value": "very tired"
@@ -417,7 +417,7 @@
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -430,26 +430,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf992086fafd5189aee257",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "whether or not your child took sleeping aids to fall asleep last night"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Did your child seem like they enjoyed the day?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/enjoyed_day.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -478,84 +478,84 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#integer"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F621.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F621.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "0"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "1"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "2"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 2
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "3"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 3
                     }
                   ]
                 },
                 {
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "4"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 4
                     }
                   ]
                 },
                 {
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F601.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F601.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "5"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 5
                     }
@@ -564,13 +564,13 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@language": "en",
               "@value": "Really enjoying things"
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@language": "en",
               "@value": "No enjoyment or pleasure"
@@ -578,7 +578,7 @@
           ],
           "reprolib:terms/required": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -591,26 +591,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991f86fafd5189aee256",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "did you child have a good or bad day"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Did your child have a good day or bad day today?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/good_bad_day.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -639,21 +639,21 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44E.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44E.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Bad Day"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -661,16 +661,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44D.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F44D.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Good Day"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -679,19 +679,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -704,26 +704,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf992186fafd5189aee259",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "was your child in good health today"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Was your child in good health today?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/health.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -752,21 +752,21 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "No"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -774,16 +774,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/263A.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/263A.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Yes"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -792,19 +792,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -817,26 +817,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf992186fafd5189aee25a",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "whether or not your child took sleeping aids to fall asleep last night"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Please think of ONE event that may have affected your child the most today (positively or negatively), no matter how slightly. In what context did the event occur?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/negative_event.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/negative_event.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -865,20 +865,20 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "No"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -886,15 +886,15 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/name": [
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Yes"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -903,19 +903,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -928,26 +928,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991f86fafd5189aee255",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "your child's sources of stress"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Choose the source(s) of your child's stress today:"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/sources_of_stress.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -976,21 +976,21 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F915.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Didn't feel well"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -998,16 +998,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F469-200D-1F3EB.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F469-200D-1F3EB.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Classroom learning"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -1015,16 +1015,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F4DD.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F4DD.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "A test or quiz at school"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 2
                     }
@@ -1032,16 +1032,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F47F.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F47F.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Bullying"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 3
                     }
@@ -1049,16 +1049,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/E246.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/E246.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Online relationships"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 4
                     }
@@ -1066,16 +1066,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/option"
+                    "schema:option"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/2764.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/2764.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Death of a loved one"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 5
                     }
@@ -1084,19 +1084,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 2
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": true
             }
           ]
@@ -1109,26 +1109,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991e86fafd5189aee254",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "whether or not your child took sleeping aids to fall asleep last night"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Do you think your child had a stressful day today?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/items/stressful_day.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1157,21 +1157,21 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F60A.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F60A.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "No"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -1179,16 +1179,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F630.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F630.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Yes"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -1197,19 +1197,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1222,26 +1222,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991e86fafd5189aee252",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "whether or not your child experience nightmares or night terrors"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Did your child have any nightmares or night terrors last night?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1270,19 +1270,19 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@type": [
-                "http://schema.org/Boolean"
+                "schema:Boolean"
               ],
-              "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
-              "http://schema.org/name": [
+              "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true",
+              "schema:name": [
                 {
                   "@language": "en",
                   "@value": "No"
                 }
               ],
-              "http://schema.org/value": [
+              "schema:value": [
                 {
                   "@value": 0
                 }
@@ -1290,35 +1290,35 @@
             },
             {
               "@type": [
-                "http://schema.org/Boolean"
+                "schema:Boolean"
               ],
-              "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true",
-              "http://schema.org/name": [
+              "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true",
+              "schema:name": [
                 {
                   "@language": "en",
                   "@value": "Yes"
                 }
               ],
-              "http://schema.org/value": [
+              "schema:value": [
                 {
                   "@value": 1
                 }
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1331,26 +1331,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991e86fafd5189aee253",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "whether or not your child took sleeping aids to fall asleep last night"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Did your child take sleeping pills or anything else to help their sleep last night?"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
@@ -1379,21 +1379,21 @@
           "@type": [
             "http://www.w3.org/2001/XMLSchema#anyURI"
           ],
-          "http://schema.org/itemListElement": [
+          "schema:itemListElement": [
             {
               "@list": [
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F6CF.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F6CF.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "No"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 0
                     }
@@ -1401,16 +1401,16 @@
                 },
                 {
                   "@type": [
-                    "http://schema.org/Boolean"
+                    "schema:Boolean"
                   ],
-                  "http://schema.org/image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F48A.svg?sanitize=true",
-                  "http://schema.org/name": [
+                  "schema:image": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F48A.svg?sanitize=true",
+                  "schema:name": [
                     {
                       "@language": "en",
                       "@value": "Yes"
                     }
                   ],
-                  "http://schema.org/value": [
+                  "schema:value": [
                     {
                       "@value": 1
                     }
@@ -1419,19 +1419,19 @@
               ]
             }
           ],
-          "http://schema.org/maxValue": [
+          "schema:maxValue": [
             {
               "@value": 1
             }
           ],
-          "http://schema.org/minValue": [
+          "schema:minValue": [
             {
               "@value": 0
             }
           ],
           "reprolib:terms/multipleChoice": [
             {
-              "@type": "http://schema.org/Boolean",
+              "@type": "schema:Boolean",
               "@value": false
             }
           ]
@@ -1444,26 +1444,26 @@
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/schemas/Field.jsonld"
       ],
       "_id": "screen/5cbf991d86fafd5189aee251",
-      "http://schema.org/description": [
+      "schema:description": [
         {
           "@language": "en",
           "@value": "time spent in bed"
         }
       ],
-      "http://schema.org/question": [
+      "schema:question": [
         {
           "@language": "en",
           "@value": "Mark the hours that your child was in bed"
         }
       ],
-      "http://schema.org/schemaVersion": [
+      "schema:schemaVersion": [
         {
           "@language": "en",
           "@value": "0.0.1"
         }
       ],
-      "http://schema.org/url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld",
-      "http://schema.org/version": [
+      "schema:url": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld",
+      "schema:version": [
         {
           "@language": "en",
           "@value": "0.0.1"
