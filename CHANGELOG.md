@@ -5,12 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.11.40] - 2020-6-09
+- Prevent multiple touch on Radio widget
+- Created TLMultiselect widget for TokenLogger applet
+
 ## [0.11.39] - 2020-6-05
 - Rebuilt JSON-LD with updated reproschema
 - Implemented updated JSON data
 - Modified JSON-LD tests
 
-## [Unreleased]
 ## [0.11.38] - 2020-6-1
 - Improve Performance of FlatList (DataTab Page)
 

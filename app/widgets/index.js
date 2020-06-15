@@ -6,6 +6,7 @@ export * from './DatePicker';
 export * from './Drawing';
 export * from './Geolocation';
 export * from './MultiSelect';
+export * from './TLMultiSelect';
 export * from './Radio';
 export * from './Select';
 export * from './Slider';

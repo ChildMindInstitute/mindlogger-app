@@ -15,8 +15,10 @@ import {
 import { currentAppletSelector } from "../../state/app/app.selectors";
 import {
   setAnswer,
+  setSelected,
   getResponseInActivity,
 } from "../../state/responses/responses.actions";
+
 import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
 import ActHeader from "../../components/header";
@@ -96,7 +98,9 @@ class Activity extends React.Component {
       currentScreen,
       nextScreen,
       prevScreen,
+      setSelected,
       itemVisibility,
+      isSelected,
     } = this.props;
 
     if (!currentResponse) {
@@ -145,10 +149,18 @@ class Activity extends React.Component {
               onPressNext={() => {
                 this.setState({ isContentError: false });
                 nextScreen();
+                if (isSelected) {
+                  setSelected(false);
+                }
               }}
               prevLabel={getPrevLabel(currentScreen, itemVisibility)}
               prevEnabled={isPrevEnabled(currentScreen, activity)}
-              onPressPrev={prevScreen}
+              onPressPrev={() => {
+                prevScreen();
+                if (isSelected) {
+                  setSelected(false);
+                }
+              }}
               actionLabel={getActionLabel(
                 currentScreen,
                 responses,
@@ -182,6 +194,7 @@ Activity.propTypes = {
   setAnswer: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
   currentScreen: PropTypes.number,
+  setSelected: PropTypes.func.isRequired,
   nextScreen: PropTypes.func.isRequired,
   prevScreen: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
@@ -194,11 +207,13 @@ const mapStateToProps = (state) => ({
   authToken: authTokenSelector(state),
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
+  isSelected: state.responses.isSelected,
 });
 
 const mapDispatchToProps = {
   getResponseInActivity,
   setAnswer,
+  setSelected,
   nextScreen,
   prevScreen,
 };
