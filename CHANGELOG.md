@@ -14,7 +14,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented updated JSON data
 - Modified JSON-LD tests
 
-## [Unreleased]
 ## [0.11.38] - 2020-6-1
 - Improve Performance of FlatList (DataTab Page)
 
