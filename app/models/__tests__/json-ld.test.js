@@ -16,7 +16,7 @@ import {
 } from '../json-ld';
 
 test('languageListToObject', () => {
-  const languageList = emaHbn.applet['http://schema.org/description'];
+  const languageList = emaHbn.applet['schema:description'];
   expect(languageListToObject(languageList)).toEqual({
     en: 'Daily questions about your child\'s physical and mental health',
   });
@@ -41,7 +41,7 @@ test('flattenIdList', () => {
 test('flattenItemList', () => {
   const item = emaHbn.items['https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld'];
   const valueConstraints = item['reprolib:terms/responseOptions'][0];
-  const itemList = valueConstraints['http://schema.org/itemListElement'];
+  const itemList = valueConstraints['schema:itemListElement'];
   expect(flattenItemList(itemList)).toEqual([
     {
       image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
