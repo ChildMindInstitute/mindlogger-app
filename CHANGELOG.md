@@ -4,10 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
+
+## [0.11.43] - 2020-6-15
+- Set defaultValue on sliderbar
+- Rebuilt conditional logic with updated JSON data
+
 ## [0.11.42] - 2020-6-15
 - Changed `http://schema.org/` to `schema:`
 
-## [Unreleased]
 ## [0.11.41] - 2020-6-09
 - Fixed event card to be displayed on unscheduled status
 
@@ -20,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented updated JSON data
 - Modified JSON-LD tests
 
-## [Unreleased]
 ## [0.11.38] - 2020-6-1
 - Improve Performance of FlatList (DataTab Page)
 
