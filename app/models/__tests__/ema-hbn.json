@@ -167,25 +167,28 @@
           ]
         }
       ],
+      "reprolib:terms/addProperties": [
+        {
+          "variableName": "nightmares",
+          "isAbout": "nightmares",
+          "isVis": true
+        },
+        {
+          "variableName": "sleeping_aids",
+          "isAbout": "sleeping_aids",
+          "isVis": true
+        },
+        {
+          "variableName": "time_in_bed",
+          "isAbout": "time_in_bed",
+          "isVis": true
+        }
+      ],
       "reprolib:terms/scoringLogic": [],
       "reprolib:terms/shuffle": [
         {
           "@type": "schema:Boolean",
           "@value": false
-        }
-      ],
-      "reprolib:terms/visibility": [
-        {
-          "@index": "nightmares",
-          "@value": true
-        },
-        {
-          "@index": "sleeping_aids",
-          "@value": true
-        },
-        {
-          "@index": "time_in_bed",
-          "@value": true
         }
       ]
     }

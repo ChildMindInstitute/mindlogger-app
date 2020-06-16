@@ -46,6 +46,53 @@
           ]
         }
       ],
+      "reprolib:terms/addProperties": [
+        {
+          "variableName": "countryOfBirth",
+          "isAbout": "countryOfBirth",
+          "isVis": true
+        },
+        {
+          "variableName": "gender",
+          "isAbout": "gender",
+          "isVis": true
+        },
+        {
+          "variableName": "healthCondition",
+          "isAbout": "healthCondition",
+          "isVis": true
+        },
+        {
+          "variableName": "medication",
+          "isAbout": "medication",
+          "isVis": true
+        },
+        {
+          "variableName": "mentalHealth",
+          "isAbout": "mentalHealth",
+          "isVis": true
+        },
+        {
+          "variableName": "nativeLanguage",
+          "isAbout": "nativeLanguage",
+          "isVis": true
+        },
+        {
+          "variableName": "raceEthnicity",
+          "isAbout": "raceEthnicity",
+          "isVis": true
+        },
+        {
+          "variableName": "state",
+          "isAbout": "state",
+          "isVis": true
+        },
+        {
+          "variableName": "yearOfBirth",
+          "isAbout": "yearOfBirth",
+          "isVis": true
+        }
+      ],
       "reprolib:terms/order": [
         {
           "@list": [
@@ -83,44 +130,6 @@
         {
           "@type": "schema:Boolean",
           "@value": false
-        }
-      ],
-      "reprolib:terms/visibility": [
-        {
-          "@index": "countryOfBirth",
-          "@value": true
-        },
-        {
-          "@index": "gender",
-          "@value": true
-        },
-        {
-          "@index": "healthCondition",
-          "@value": true
-        },
-        {
-          "@index": "medication",
-          "@value": true
-        },
-        {
-          "@index": "mentalHealth",
-          "@value": true
-        },
-        {
-          "@index": "nativeLanguage",
-          "@value": true
-        },
-        {
-          "@index": "raceEthnicity",
-          "@value": true
-        },
-        {
-          "@index": "state",
-          "@value": true
-        },
-        {
-          "@index": "yearOfBirth",
-          "@value": true
         }
       ]
     },

@@ -320,7 +320,7 @@ class Slider extends Component {
       this.setState({ currentValue: value });
     }
 
-    if (currentVal < minimumValue) {
+    if (currentVal !== null && currentVal < minimumValue) {
       currentVal = minimumValue;
     }
 
