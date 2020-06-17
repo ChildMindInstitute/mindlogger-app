@@ -38,8 +38,6 @@ const AppletListItem = ({ applet, onPress }) => {
     0,
   );
 
-  console.log('===>', applet);
-
   return (
     <View style={styles.box}>
       <TouchBox onPress={() => onPress(applet)}>
