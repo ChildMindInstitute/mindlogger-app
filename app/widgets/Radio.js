@@ -15,8 +15,8 @@ export const Radio = ({ value, config, onChange, selected, onSelected }) => {
 
   const handlePress = (itemValue) => {
     if (!selected) {
-      onChange(itemValue);
       onSelected(true);
+      onChange(itemValue);
     }
   };
 

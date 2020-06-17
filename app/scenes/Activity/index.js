@@ -46,7 +46,10 @@ const styles = StyleSheet.create({
 });
 
 class Activity extends React.Component {
-  state = { isContentError: false };
+  constructor() {
+    super();
+    this.state = { isContentError: false };
+  }
 
   componentDidMount() {
     if (this.idleTime) {
@@ -123,6 +126,7 @@ class Activity extends React.Component {
             setAnswer(currentApplet.id, activity.id, currentScreen, answer);
             if (goToNext || autoAdvance || fullScreen) {
               nextScreen();
+              setTimeout(setSelected, 200); // set Timeout for rendering the next screen
             }
           }}
           authToken={authToken}
@@ -143,7 +147,7 @@ class Activity extends React.Component {
                 itemVisibility,
                 activity,
                 responses,
-                this.state.isContentError
+                this.state.isContentError,
               )}
               nextEnabled={isNextEnabled(currentScreen, activity, responses)}
               onPressNext={() => {
@@ -199,6 +203,7 @@ Activity.propTypes = {
   prevScreen: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
   getResponseInActivity: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
