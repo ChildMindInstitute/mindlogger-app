@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import * as R from "ramda";
 import _ from "lodash";
 import { Actions } from "react-native-router-flux";
-import { nextScreen, prevScreen } from "../../state/responses/responses.thunks";
+import { nextScreen, prevScreen, completeResponse } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
   itemVisiblitySelector,
@@ -85,8 +85,8 @@ class Activity extends React.Component {
   }
 
   handleTimeIsUp = () => {
-    this.props.getResponseInActivity(false);
-    Actions.pop();
+    this.props.completeResponse();
+    Actions.replace('activity_thanks');
   };
 
   render() {
@@ -216,6 +216,7 @@ const mapDispatchToProps = {
   setSelected,
   nextScreen,
   prevScreen,
+  completeResponse
 };
 
 export default connect(
