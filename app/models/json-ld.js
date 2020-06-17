@@ -42,6 +42,8 @@ const VARIABLE_MAP = "reprolib:terms/variableMap";
 const VARIABLE_NAME = "reprolib:terms/variableName";
 const VERSION = "schema:version";
 const VISIBILITY = "reprolib:terms/visibility";
+const IS_VIS = "reprolib:terms/isVis";
+const ADD_PROPERTIES = "reprolib:terms/addProperties";
 
 export const languageListToObject = (list) => {
   if (
@@ -214,13 +216,12 @@ export const itemTransformJson = (itemJson) => {
 export const itemAttachExtras = (
   transformedItem,
   schemaUri,
-  variableMap = {},
-  visibilityObj = {}
+  addProperties = {},
 ) => ({
   ...transformedItem,
   schema: schemaUri,
-  variableName: variableMap[schemaUri],
-  visibility: visibilityObj[variableMap[schemaUri]],
+  variableName: R.path([0, "@value"], addProperties[VARIABLE_NAME]),
+  visibility: R.path([0, "@value"], addProperties[IS_VIS]),
 });
 
 const SHORT_PREAMBLE_LENGTH = 90;
@@ -259,14 +260,16 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     : [VARIABLE_MAP];
   const variableMapAr = R.pathOr([], variableMapPath, activityJson);
 
-  const variableMap = transformVariableMap(variableMapAr);
-  const visibility = listToObject(activityJson[VISIBILITY]);
+  const addProperties = activityJson[ADD_PROPERTIES];
+
   const preamble = languageListToObject(activityJson[PREAMBLE]);
   const order = flattenIdList(activityJson[ORDER][0]["@list"]);
+  let itemIndex = -1;
 
   const mapItems = R.map((itemKey) => {
+    itemIndex += 1;
     const item = itemTransformJson(itemsJson[itemKey]);
-    return itemAttachExtras(item, itemKey, variableMap, visibility);
+    return itemAttachExtras(item, itemKey, addProperties[itemIndex]);
   });
   const items = attachPreamble(preamble, mapItems(order));
 

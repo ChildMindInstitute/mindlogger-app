@@ -138,7 +138,7 @@ test('activityTransformJson: ema-hbn', () => {
   ];
   const transformedItems = itemKeys.map((key) => {
     const item = itemTransformJson(emaHbn.items[key]);
-    return itemAttachExtras(item, key, {}, {});
+    return itemAttachExtras(item, key, {});
   });
 
   const expectedResult = {
@@ -180,7 +180,7 @@ test('activityTransformJson: nda-phq', () => {
   ];
   const transformedItems = itemKeys.map((key) => {
     const item = itemTransformJson(ndaPhq.items[key]);
-    return itemAttachExtras(item, key, {}, {});
+    return itemAttachExtras(item, key, {});
   });
 
   const expectedResult = {
