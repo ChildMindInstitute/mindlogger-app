@@ -4,7 +4,7 @@ export const clearResponses = () => ({
   type: RESPONSES_CONSTANTS.CLEAR,
 });
 
-export const setSelected = isSelected => ({
+export const setSelected = (isSelected = false) => ({
   type: RESPONSES_CONSTANTS.SET_SELECTED,
   payload: isSelected,
 });
