@@ -6,6 +6,10 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
+import { setCurrentActivity } from '../state/app/app.actions';
+import { currentActivitySelector } from '../state/app/app.selectors';
+import { startResponse } from '../state/responses/responses.thunks';
+import { Actions } from 'react-native-router-flux';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -19,7 +23,6 @@ class FireBaseMessaging extends Component {
 
   async componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
-
     this.initAndroidChannel();
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
@@ -116,6 +119,9 @@ class FireBaseMessaging extends Component {
 
   onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
     // eslint-disable-next-line no-console
+    Actions.push('applet_details');
+    this.props.setCurrentActivity('reprolib:activities/MindLoggerDemo/MindLoggerDemo_schema');
+    console.log({ activity: this.props.currentActivity });
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
     firebase.notifications().setBadge(0);
   };
@@ -189,11 +195,16 @@ FireBaseMessaging.propTypes = {
   setFCMToken: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => ({
+  currentActivity: currentActivitySelector(state),
+});
+
 const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
-
+  setCurrentActivity,
+  startResponse
 });
 
-export default connect(null, mapDispatchToProps)(FireBaseMessaging);
+export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
