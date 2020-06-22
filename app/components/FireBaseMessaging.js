@@ -13,6 +13,7 @@ import { currentActivitySelector } from '../state/app/app.selectors';
 import { setCurrentApplet } from '../state/app/app.actions';
 import { setCurrentActivity } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
+import { sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -142,7 +143,7 @@ class FireBaseMessaging extends Component {
     // eslint-disable-next-line no-console
     const eventId = _.get(notificationOpen, 'notification._data.event_id', '');
     if (eventId) {
-      this.openActivityByEventId(eventId);
+      this.props.sync(() => this.openActivityByEventId(eventId));
     }
 
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
@@ -229,7 +230,8 @@ const mapDispatchToProps = dispatch => ({
   },
   setCurrentApplet,
   setCurrentActivity,
-  startResponse: activity => dispatch(startResponse(activity))
+  startResponse: activity => dispatch(startResponse(activity)),
+  sync: cb => dispatch(sync(cb))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);

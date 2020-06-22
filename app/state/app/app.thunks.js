@@ -19,10 +19,10 @@ export const showToast = toast => () => {
   Toast.show(toast);
 };
 
-export const sync = () => (dispatch, getState) => {
+export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
-    dispatch(downloadApplets());
+    dispatch(downloadApplets(onAppletsDownloaded));
     dispatch(startUploadQueue());
   }
 };
