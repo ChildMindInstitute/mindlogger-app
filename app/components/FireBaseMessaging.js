@@ -1,15 +1,18 @@
 import React, { Component, Fragment } from 'react';
+import { Alert } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
-import { setCurrentActivity } from '../state/app/app.actions';
+import { appletsSelector } from '../state/applets/applets.selectors';
 import { currentActivitySelector } from '../state/app/app.selectors';
+import { setCurrentApplet } from '../state/app/app.actions';
+import { setCurrentActivity } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
-import { Actions } from 'react-native-router-flux';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -67,6 +70,24 @@ class FireBaseMessaging extends Component {
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
+  openActivityByEventId = eventId => {
+    let activityId = null;
+    const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
+      const event = events.find(({ id }) => id === eventId);
+      activityId = event.data.URI;
+      return event;
+    });
+
+    if (!currentApplet) {
+      Alert.alert('Applet not found', 'There is no applet for given event id.');
+    }
+    const appletId = currentApplet.id.split('/')[1];
+
+    this.props.setCurrentApplet(appletId);
+    this.props.setCurrentActivity(activityId);
+    this.props.startResponse(this.props.currentActivity);
+  }
+
   handleAppStateChange = (nextAppState: AppStateStatus) => {
     const isAppStateChanged = this.state.appState !== nextAppState;
 
@@ -119,9 +140,11 @@ class FireBaseMessaging extends Component {
 
   onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
     // eslint-disable-next-line no-console
-    Actions.push('applet_details');
-    this.props.setCurrentActivity('reprolib:activities/MindLoggerDemo/MindLoggerDemo_schema');
-    console.log({ activity: this.props.currentActivity });
+    const eventId = _.get(notificationOpen, 'notification._data.event_id', '');
+    if (eventId) {
+      this.openActivityByEventId(eventId);
+    }
+
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
     firebase.notifications().setBadge(0);
   };
@@ -196,15 +219,17 @@ FireBaseMessaging.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  currentActivity: currentActivitySelector(state),
+  applets: appletsSelector(state),
+  currentActivity: currentActivitySelector(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
+  setCurrentApplet,
   setCurrentActivity,
-  startResponse
+  startResponse: activity => dispatch(startResponse(activity))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
