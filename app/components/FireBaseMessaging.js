@@ -9,9 +9,7 @@ import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { currentActivitySelector } from '../state/app/app.selectors';
 import { setCurrentApplet } from '../state/app/app.actions';
-import { setCurrentActivity } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { sync } from '../state/app/app.thunks';
 
@@ -72,21 +70,21 @@ class FireBaseMessaging extends Component {
   }
 
   openActivityByEventId = eventId => {
-    let activityId = null;
+    let schema = null;
     const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
       const event = events.find(({ id }) => id === eventId);
-      activityId = event.data.URI;
+      schema = event.data.URI;
       return event;
     });
 
     if (!currentApplet) {
       Alert.alert('Applet not found', 'There is no applet for given event id.');
+      return;
     }
-    const appletId = currentApplet.id.split('/')[1];
 
-    this.props.setCurrentApplet(appletId);
-    this.props.setCurrentActivity(activityId);
-    this.props.startResponse(this.props.currentActivity);
+    const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
+    this.props.setCurrentApplet(currentApplet.id);
+    this.props.startResponse(currentActivity);
   }
 
   handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -220,16 +218,14 @@ FireBaseMessaging.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  applets: appletsSelector(state),
-  currentActivity: currentActivitySelector(state)
+  applets: appletsSelector(state)
 });
 
 const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
-  setCurrentApplet,
-  setCurrentActivity,
+  setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
   sync: cb => dispatch(sync(cb))
 });
