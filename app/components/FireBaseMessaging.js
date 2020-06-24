@@ -24,18 +24,22 @@ class FireBaseMessaging extends Component {
   state = { appState: AppState.currentState };
 
   async componentDidMount() {
+    const result = await fNotifications.getInitialNotification();
+    if (result) {
+      const eventId = _.get(result, 'notification._data.event_id', '');
+      if (eventId) {
+        this.props.sync(() => this.openActivityByEventId(eventId));
+      }
+    }
+
     AppState.addEventListener('change', this.handleAppStateChange);
     this.initAndroidChannel();
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
-    this.notificationListener = fNotifications
-      .onNotification(this.onNotification);
-    this.notificationOpenedListener = fNotifications
-      .onNotificationOpened(this.onNotificationOpened);
-    this.onTokenRefreshListener = fMessaging
-      .onTokenRefresh(this.onTokenRefresh);
-    this.messageListener = fMessaging
-      .onMessage(this.onMessage);
+    this.notificationListener = fNotifications.onNotification(this.onNotification);
+    this.notificationOpenedListener = fNotifications.onNotificationOpened(this.onNotificationOpened);
+    this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
+    this.messageListener = fMessaging.onMessage(this.onMessage);
 
     fMessaging.hasPermission().then((granted) => {
       if (!granted) {
@@ -76,13 +80,17 @@ class FireBaseMessaging extends Component {
       schema = event.data.URI;
       return event;
     });
-
     if (!currentApplet) {
-      Alert.alert('Applet not found', 'There is no applet for given event id.');
+      Alert.alert('Applet was not found', 'There is no applet for given event id.');
       return;
     }
 
     const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
+    if (!currentActivity) {
+      Alert.alert('Activity was not found', 'There is no activity for given event id.');
+      return;
+    }
+
     this.props.setCurrentApplet(currentApplet.id);
     this.props.startResponse(currentActivity);
   }
