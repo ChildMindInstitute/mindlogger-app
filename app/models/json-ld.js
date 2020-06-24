@@ -36,12 +36,9 @@ const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
-const VALUE_CONSTRAINTS = "reprolib:terms/valueconstraints";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
-const VARIABLE_MAP = "reprolib:terms/variableMap";
 const VARIABLE_NAME = "reprolib:terms/variableName";
 const VERSION = "schema:version";
-const VISIBILITY = "reprolib:terms/visibility";
 const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
 
@@ -67,6 +64,15 @@ export const listToObject = (list = []) =>
     (obj, item) => ({
       ...obj,
       [item["@index"]]: item["@value"],
+    }),
+    {}
+  );
+
+export const listToVisObject = (list = []) =>
+  list.reduce(
+    (obj, item, index) => ({
+      ...obj,
+      [index]: item[IS_VIS][0]["@value"],
     }),
     {}
   );
@@ -250,16 +256,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
-
-  const isVariableMapExpanded = R.hasPath(
-    [VARIABLE_MAP, 0, "@list"],
-    activityJson
-  );
-  const variableMapPath = isVariableMapExpanded
-    ? [VARIABLE_MAP, 0, "@list"]
-    : [VARIABLE_MAP];
-  const variableMapAr = R.pathOr([], variableMapPath, activityJson);
-
   const addProperties = activityJson[ADD_PROPERTIES];
 
   const preamble = languageListToObject(activityJson[PREAMBLE]);
@@ -305,7 +301,7 @@ export const appletTransformJson = (appletJson) => {
     schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
     version: languageListToObject(appletJson[VERSION]),
     altLabel: languageListToObject(appletJson[ALT_LABEL]),
-    visibility: listToObject(appletJson[VISIBILITY]),
+    visibility: listToVisObject(appletJson[ADD_PROPERTIES]),
     image: appletJson[IMAGE],
     order: flattenIdList(appletJson[ORDER][0]["@list"]),
     schedule: appletJson.schedule,
