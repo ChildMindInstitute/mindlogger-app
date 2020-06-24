@@ -249,6 +249,44 @@
         ]
       }
     ],
+    "reprolib:terms/addProperties": [
+      {
+        "reprolib:terms/isAbout": [
+          {
+            "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld"
+          }
+        ],
+        "reprolib:terms/isVis": [
+          {
+            "@value": true
+          }
+        ],
+        "reprolib:terms/variableName": [
+          {
+            "@language": "en",
+            "@value": "ema_evening"
+          }
+        ]
+      },
+      {
+        "reprolib:terms/isAbout": [
+          {
+            "@id": "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld"
+          }
+        ],
+        "reprolib:terms/isVis": [
+          {
+            "@value": true
+          }
+        ],
+        "reprolib:terms/variableName": [
+          {
+            "@language": "en",
+            "@value": "ema_morning"
+          }
+        ]
+      }
+    ],
     "reprolib:terms/order": [
       {
         "@list": [
@@ -265,16 +303,6 @@
       {
         "@type": "schema:Boolean",
         "@value": false
-      }
-    ],
-    "reprolib:terms/visibility": [
-      {
-        "@index": "ema_evening",
-        "@value": true
-      },
-      {
-        "@index": "ema_morning",
-        "@value": true
       }
     ]
   },

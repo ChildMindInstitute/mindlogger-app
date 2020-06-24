@@ -70,9 +70,9 @@ export const listToObject = (list = []) =>
 
 export const listToVisObject = (list = []) =>
   list.reduce(
-    (obj, item, index) => ({
+    (obj, item) => ({
       ...obj,
-      [index]: item[IS_VIS][0]["@value"],
+      [item[VARIABLE_NAME][0]["@value"]]: item[IS_VIS][0]["@value"],
     }),
     {}
   );
@@ -314,7 +314,7 @@ export const transformApplet = (payload) => {
   const activities = Object.keys(payload.activities).map((key) => {
     const activity = activityTransformJson(
       payload.activities[key],
-      payload.items
+      payload.items,
     );
     activity.schema = key;
     return activity;
