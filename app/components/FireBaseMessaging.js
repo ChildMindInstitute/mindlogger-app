@@ -26,10 +26,7 @@ class FireBaseMessaging extends Component {
   async componentDidMount() {
     const result = await fNotifications.getInitialNotification();
     if (result) {
-      const eventId = _.get(result, 'notification._data.event_id', '');
-      if (eventId) {
-        this.props.sync(() => this.openActivityByEventId(eventId));
-      }
+      this.openActivityByEventId(result);
     }
 
     AppState.addEventListener('change', this.handleAppStateChange);
@@ -73,7 +70,14 @@ class FireBaseMessaging extends Component {
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
-  openActivityByEventId = eventId => {
+  openActivityByEventId = notificationObj => {
+    const eventId = _.get(notificationObj, 'notification._data.event_id', '');
+    if (eventId) {
+      this.props.sync(() => this.openActivityByEventIdCb(eventId));
+    }
+  }
+
+  openActivityByEventIdCb = eventId => {
     let schema = null;
     const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
       const event = events.find(({ id }) => id === eventId);
@@ -147,10 +151,7 @@ class FireBaseMessaging extends Component {
 
   onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
     // eslint-disable-next-line no-console
-    const eventId = _.get(notificationOpen, 'notification._data.event_id', '');
-    if (eventId) {
-      this.props.sync(() => this.openActivityByEventId(eventId));
-    }
+    this.openActivityByEventId(notificationOpen);
 
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
     firebase.notifications().setBadge(0);
