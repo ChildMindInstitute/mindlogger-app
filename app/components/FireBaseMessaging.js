@@ -81,7 +81,9 @@ class FireBaseMessaging extends Component {
     let schema = null;
     const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
       const event = events.find(({ id }) => id === eventId);
-      schema = event.data.URI;
+      if (event) {
+        schema = event.data.URI;
+      }
       return event;
     });
     if (!currentApplet) {
