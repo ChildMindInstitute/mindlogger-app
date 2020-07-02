@@ -18,13 +18,6 @@ class FireBaseMessaging extends Component {
   state = { appState: AppState.currentState };
 
   async componentDidMount() {
-    const result = await fNotifications.getInitialNotification();
-    console.log({ result });
-    if (result) {
-      console.log('fires correctly.');
-      PushNotificationIOS.getApplicationIconBadgeNumber(prevBages => console.log({ prevBages }));
-    }
-    
     AppState.addEventListener('change', this.handleAppStateChange);
 
     this.initAndroidChannel();
@@ -39,11 +32,10 @@ class FireBaseMessaging extends Component {
     this.messageListener = fMessaging
       .onMessage(this.onMessage);
 
-    fMessaging.hasPermission().then((granted) => {
-      if (!granted) {
-        fMessaging.requestPermission();
-      }
-    });
+    const granted = await fMessaging.hasPermission();
+    if (!granted) {
+      await fMessaging.requestPermission();
+    }
 
     const fcmToken = await fMessaging.getToken();
 
@@ -75,7 +67,7 @@ class FireBaseMessaging extends Component {
     const isAppStateChanged = this.state.appState !== nextAppState;
 
     if (isAppStateChanged) {
-      // firebase.notifications().setBadge(6);
+      fNotifications.setBadge(0);
     }
 
     this.setState({ appState: nextAppState });
@@ -175,7 +167,7 @@ class FireBaseMessaging extends Component {
       localNotification.android.setPriority(firebase.notifications.Android.Priority.High);
       localNotification.android.setAutoCancel(true);
     } else if (isIOS) {
-      localNotification.ios.setBadge(iosBadge);
+      // localNotification.ios.setBadge(iosBadge);
     }
     return localNotification;
   };
