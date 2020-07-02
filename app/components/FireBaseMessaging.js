@@ -18,6 +18,13 @@ class FireBaseMessaging extends Component {
   state = { appState: AppState.currentState };
 
   async componentDidMount() {
+    const result = await fNotifications.getInitialNotification();
+    console.log({ result });
+    if (result) {
+      console.log('fires correctly.');
+      PushNotificationIOS.getApplicationIconBadgeNumber(prevBages => console.log({ prevBages }));
+    }
+    
     AppState.addEventListener('change', this.handleAppStateChange);
 
     this.initAndroidChannel();
@@ -68,7 +75,7 @@ class FireBaseMessaging extends Component {
     const isAppStateChanged = this.state.appState !== nextAppState;
 
     if (isAppStateChanged) {
-      firebase.notifications().setBadge(0);
+      // firebase.notifications().setBadge(6);
     }
 
     this.setState({ appState: nextAppState });
@@ -117,7 +124,7 @@ class FireBaseMessaging extends Component {
   onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
     // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
-    firebase.notifications().setBadge(0);
+    // firebase.notifications().setBadge(0);
   };
 
   onTokenRefresh = (fcmToken: string) => {
