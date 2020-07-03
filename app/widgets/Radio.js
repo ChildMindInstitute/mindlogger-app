@@ -7,16 +7,11 @@ import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 
 export const Radio = ({ value, config, onChange, selected, onSelected }) => {
-  useEffect(() => {
-    if (selected) {
-      onSelected(false);
-    }
-  }, []);
 
   const handlePress = (itemValue) => {
     if (!selected) {
-      onChange(itemValue);
       onSelected(true);
+      onChange(itemValue);
     }
   };
 

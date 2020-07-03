@@ -90,7 +90,7 @@ export const getSchedule = (authToken, timezone) => get(
 export const getApplets = authToken => get(
   'user/applets',
   authToken,
-  { role: 'user' },
+  { role: 'user', getAllApplets: true },
 );
 
 export const postResponse = ({ authToken, response }) => postFormData(
