@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.11.45] - 2020-6-23
+- Removed unnecessary fields and values in JSON-ld
+- Rebuilt tests for the updated JSON-ld
+
 ## [0.11.44] - 2020-6-17
 - Fixed tapping issue on radio widget
 

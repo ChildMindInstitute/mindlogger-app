@@ -5,7 +5,7 @@ import {
   activityTransformJson,
   appletTransformJson,
   languageListToObject,
-  listToObject,
+  listToVisObject,
   flattenIdList,
   flattenItemList,
   flattenValueConstraints,
@@ -22,9 +22,9 @@ test('languageListToObject', () => {
   });
 });
 
-test('listToObject', () => {
-  const languageList = emaHbn.applet['reprolib:terms/visibility'];
-  expect(listToObject(languageList)).toEqual({
+test('listToVisObject', () => {
+  const languageList = emaHbn.applet['reprolib:terms/addProperties'];
+  expect(listToVisObject(languageList)).toEqual({
     ema_evening: true,
     ema_morning: true,
   });
