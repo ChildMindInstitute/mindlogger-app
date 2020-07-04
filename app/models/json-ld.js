@@ -72,7 +72,7 @@ export const listToVisObject = (list = []) =>
   list.reduce(
     (obj, item) => ({
       ...obj,
-      [item[VARIABLE_NAME][0]["@value"]]: item[IS_VIS][0]["@value"],
+      [item[VARIABLE_NAME][0]["@value"]]: item[IS_VIS] ? item[IS_VIS][0]["@value"] : true,
     }),
     {}
   );
