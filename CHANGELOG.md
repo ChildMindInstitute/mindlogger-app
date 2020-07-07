@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.11.47] - 2020-7-3
 - User is now transitioned to correct activity based on notification event_id
 
+## [0.11.46] - 2020-7-3
+- Added activity response completion on idle timer expiration
+
 ## [0.11.45] - 2020-6-23
 - Removed unnecessary fields and values in JSON-ld
 - Rebuilt tests for the updated JSON-ld
