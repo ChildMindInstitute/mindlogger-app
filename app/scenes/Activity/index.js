@@ -124,7 +124,6 @@ class Activity extends React.Component {
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
