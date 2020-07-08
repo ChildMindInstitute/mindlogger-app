@@ -52,7 +52,7 @@ export const getInvitations = () => (dispatch, getState) => {
     });
 };
 
-export const downloadApplets = () => (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const userInfo = userInfoSelector(state);
@@ -61,33 +61,27 @@ export const downloadApplets = () => (dispatch, getState) => {
     .then((applets) => {
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
-        const transformedApplets = applets
-          .filter((applet) => !R.isEmpty(applet.items))
-          .map((applet) => transformApplet(applet));
+        const transformedApplets = applets.filter((applet) => !R.isEmpty(applet.items)).map(transformApplet);
         const requests = transformedApplets.map((applet) => {
           const appletId = applet.id.split("/")[1];
           return getAppletSchedule(auth.token, appletId)
-            .then((response) => {
-              return {
-                ...applet,
-                schedule: response,
-              };
-            })
+            .then((response) => ({ ...applet, schedule: response }))
             .catch((err) => {
               console.warn(err.message);
               return applet;
-            });
+            })
         });
         return Promise.all(requests).then((updatedApplets) => {
           dispatch(replaceApplets(updatedApplets));
           dispatch(downloadResponses(updatedApplets));
           dispatch(downloadAppletsMedia(updatedApplets));
+          if (onAppletsDownloaded) {
+            onAppletsDownloaded();
+          }
         });
       }
     })
-    .catch((err) => {
-      console.warn(err.message);
-    })
+    .catch((err) => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
       dispatch(scheduleAndSetNotifications());

@@ -1,11 +1,17 @@
 import React, { Component, Fragment } from 'react';
+import { Alert } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
+import { appletsSelector } from '../state/applets/applets.selectors';
+import { setCurrentApplet } from '../state/app/app.actions';
+import { startResponse } from '../state/responses/responses.thunks';
+import { sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -18,19 +24,19 @@ class FireBaseMessaging extends Component {
   state = { appState: AppState.currentState };
 
   async componentDidMount() {
-    AppState.addEventListener('change', this.handleAppStateChange);
+    const result = await fNotifications.getInitialNotification();
+    if (result) {
+      this.openActivityByEventId(result);
+    }
 
+    AppState.addEventListener('change', this.handleAppStateChange);
     this.initAndroidChannel();
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
-    this.notificationListener = fNotifications
-      .onNotification(this.onNotification);
-    this.notificationOpenedListener = fNotifications
-      .onNotificationOpened(this.onNotificationOpened);
-    this.onTokenRefreshListener = fMessaging
-      .onTokenRefresh(this.onTokenRefresh);
-    this.messageListener = fMessaging
-      .onMessage(this.onMessage);
+    this.notificationListener = fNotifications.onNotification(this.onNotification);
+    this.notificationOpenedListener = fNotifications.onNotificationOpened(this.onNotificationOpened);
+    this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
+    this.messageListener = fMessaging.onMessage(this.onMessage);
 
     fMessaging.hasPermission().then((granted) => {
       if (!granted) {
@@ -62,6 +68,37 @@ class FireBaseMessaging extends Component {
     this.messageListener();
 
     AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  openActivityByEventId = notificationObj => {
+    const eventId = _.get(notificationObj, 'notification._data.event_id', '');
+    if (eventId) {
+      this.props.sync(() => this.openActivityByEventIdCb(eventId));
+    }
+  }
+
+  openActivityByEventIdCb = eventId => {
+    let schema = null;
+    const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
+      const event = events.find(({ id }) => id === eventId);
+      if (event) {
+        schema = event.data.URI;
+      }
+      return event;
+    });
+    if (!currentApplet) {
+      Alert.alert('Applet was not found', 'There is no applet for given event id.');
+      return;
+    }
+
+    const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
+    if (!currentActivity) {
+      Alert.alert('Activity was not found', 'There is no activity for given event id.');
+      return;
+    }
+
+    this.props.setCurrentApplet(currentApplet.id);
+    this.props.startResponse(currentActivity);
   }
 
   handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -116,6 +153,8 @@ class FireBaseMessaging extends Component {
 
   onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
     // eslint-disable-next-line no-console
+    this.openActivityByEventId(notificationOpen);
+
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
     firebase.notifications().setBadge(0);
   };
@@ -189,11 +228,17 @@ FireBaseMessaging.propTypes = {
   setFCMToken: PropTypes.func.isRequired,
 };
 
+const mapStateToProps = state => ({
+  applets: appletsSelector(state)
+});
+
 const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
-
+  setCurrentApplet: id => dispatch(setCurrentApplet(id)),
+  startResponse: activity => dispatch(startResponse(activity)),
+  sync: cb => dispatch(sync(cb))
 });
 
-export default connect(null, mapDispatchToProps)(FireBaseMessaging);
+export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);

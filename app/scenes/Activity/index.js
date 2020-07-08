@@ -6,7 +6,8 @@ import { connect } from "react-redux";
 import * as R from "ramda";
 import _ from "lodash";
 import { Actions } from "react-native-router-flux";
-import { nextScreen, prevScreen } from "../../state/responses/responses.thunks";
+import moment from "moment";
+import { nextScreen, prevScreen, completeResponse } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
   itemVisiblitySelector,
@@ -48,17 +49,19 @@ const styles = StyleSheet.create({
 class Activity extends React.Component {
   constructor() {
     super();
-    this.state = { isContentError: false };
+    this.state = { isContentError: false, idleTime: null };
   }
 
   componentDidMount() {
-    if (this.idleTime) {
-      idleTimer.subscribe(this.idleTime, this.handleTimeIsUp);
-    }
+    this.setState({ idleTime: this.getIdleTime() }, () => {
+      if (this.state.idleTime) {
+        idleTimer.subscribe(this.state.idleTime, this.handleTimeIsUp);
+      }
+    });
   }
 
   componentWillUnmount() {
-    if (this.idleTime) {
+    if (this.state.idleTime) {
       idleTimer.unsubscribe();
     }
   }
@@ -70,16 +73,23 @@ class Activity extends React.Component {
     );
   }
 
-  get idleTime() {
+  getIdleTime = () => {
+    const currentEvent = this.props.currentApplet.schedule.events.find(({ schedule }) => {
+      const [dayOfMonth] = schedule.dayOfMonth;
+      const [month] = schedule.month;
+      const [year] = schedule.year;
+      return dayOfMonth === moment().date() && month === moment().month() && year === moment().year()
+    });
+
     const allow = _.get(
-      this.props.currentApplet,
-      "schedule.events[0].data.idleTime.allow",
+      currentEvent,
+      "data.idleTime.allow",
       false
     );
     if (allow) {
       const idleMinutes = _.get(
-        this.props.currentApplet,
-        "schedule.events[0].data.idleTime.minute",
+        currentEvent,
+        "data.idleTime.minute",
         null
       );
       return idleMinutes && parseInt(idleMinutes, 10) * 60;
@@ -88,8 +98,8 @@ class Activity extends React.Component {
   }
 
   handleTimeIsUp = () => {
-    this.props.getResponseInActivity(false);
-    Actions.pop();
+    this.props.completeResponse();
+    Actions.replace('activity_thanks');
   };
 
   render() {
@@ -114,7 +124,6 @@ class Activity extends React.Component {
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
@@ -221,6 +230,7 @@ const mapDispatchToProps = {
   setSelected,
   nextScreen,
   prevScreen,
+  completeResponse
 };
 
 export default connect(
