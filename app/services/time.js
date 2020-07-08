@@ -16,6 +16,14 @@ export const formatTime = (timestamp) => {
   return moment(timestamp).format('MMMM D');
 };
 
+export const scheduledTime = (timestamp) => {
+  const time = moment(timestamp);
+  if (moment().isSame(time, 'day')) {
+    return moment(timestamp).format('[Today at] h:mm A');
+  }
+  return null;
+};
+
 // Generates a list of timestamps for when local notifications should be triggered,
 // reminding the user to complete their activities. Notification times are set in the
 // admin panel alongside the schedule for each activity.

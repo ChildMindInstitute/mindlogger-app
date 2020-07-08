@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { LittleText } from '../core';
-import { formatTime } from '../../services/time';
+import { scheduledTime } from '../../services/time';
 
 const styles = StyleSheet.create({
   textStyles: {
@@ -11,17 +11,22 @@ const styles = StyleSheet.create({
 });
 
 const ActivityDueDate = ({ activity }) => {
-  if ((activity.status === 'scheduled' || activity.status === 'in-progress') && activity.nextScheduledTimestamp) {
+  const nextScheduledTime = scheduledTime(activity.nextScheduledTimestamp);
+  if (
+    (activity.status === 'scheduled' || activity.status === 'in-progress')
+    && activity.nextScheduledTimestamp
+    && nextScheduledTime
+  ) {
     return (
       <LittleText style={styles.textStyles}>
-        Scheduled for: {formatTime(activity.nextScheduledTimestamp)}
+        Scheduled for: {nextScheduledTime}
       </LittleText>
     );
   }
   if (activity.status === 'completed') {
     return (
       <LittleText style={styles.textStyles}>
-        Last completed: {formatTime(activity.lastResponseTimestamp)}
+        Last completed: {nextScheduledTime}
       </LittleText>
     );
   }
