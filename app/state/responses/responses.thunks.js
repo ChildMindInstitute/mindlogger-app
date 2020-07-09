@@ -71,6 +71,7 @@ export const startResponse = activity => (dispatch, getState) => {
     dispatch(setCurrentActivity(activity.id));
     Actions.push('take_act');
   } else {
+    Actions.push('applet_details');
     Alert.alert(
       'Resume activity',
       'Would you like to resume this activity in progress or restart?',
