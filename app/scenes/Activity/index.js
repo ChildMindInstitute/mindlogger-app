@@ -107,6 +107,7 @@ class Activity extends React.Component {
       currentApplet,
       setAnswer,
       currentResponse,
+      getResponseInActivity,
       authToken,
       currentScreen,
       nextScreen,
@@ -124,6 +125,8 @@ class Activity extends React.Component {
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const prevLabel = getPrevLabel(currentScreen, itemVisibility);
+
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
@@ -143,7 +146,10 @@ class Activity extends React.Component {
           onAnyTouch={idleTimer.resetTimer}
         />
         {!fullScreen && (
-          <View onTouchStart={idleTimer.resetTimer} style={styles.buttonArea}>
+          <View
+            onTouchStart={idleTimer.resetTimer}
+            style={styles.buttonArea}
+          >
             {activity.items.length > 1 && (
               <ActProgress
                 index={currentScreen}
@@ -156,9 +162,13 @@ class Activity extends React.Component {
                 itemVisibility,
                 activity,
                 responses,
-                this.state.isContentError,
+                this.state.isContentError
               )}
-              nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+              nextEnabled={isNextEnabled(
+                currentScreen,
+                activity,
+                responses
+              )}
               onPressNext={() => {
                 this.setState({ isContentError: false });
                 nextScreen();
@@ -166,9 +176,12 @@ class Activity extends React.Component {
                   setSelected(false);
                 }
               }}
-              prevLabel={getPrevLabel(currentScreen, itemVisibility)}
+              prevLabel={prevLabel}
               prevEnabled={isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
+                if (!currentScreen) {
+                  getResponseInActivity(false);
+                }
                 prevScreen();
                 if (isSelected) {
                   setSelected(false);
