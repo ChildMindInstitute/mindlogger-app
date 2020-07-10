@@ -105,7 +105,9 @@ class FireBaseMessaging extends Component {
     const isAppStateChanged = this.state.appState !== nextAppState;
     if (isAppStateChanged) {
       this.setState({ appState: nextAppState });
-      this.updateApplicationIconBadgeNumber();
+      if (isIOS) {
+        this.updateApplicationIconBadgeNumber();
+      }
     }
   }
 

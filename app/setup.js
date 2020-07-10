@@ -54,7 +54,6 @@ const setup = () => {
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {
-      console.log('configureStore, start sync');
       store.dispatch(sync());
     }
 
@@ -80,8 +79,9 @@ const setup = () => {
   });
 
   // Root component
+  // eslint-disable-next-line react/prop-types
   return ({ isHeadless }) => {
-    if (isHeadless) {
+    if (Platform.OS === 'ios' && isHeadless) {
       // App has been launched in the background by iOS, ignore
       return null;
     }
