@@ -24,6 +24,7 @@
         "@react-native-community/netinfo": "^3.2.0",
         "@react-native-community/push-notification-ios": "^1.0.5",
         "@react-native-community/slider": "^2.0.8",
+        "@sentry/react-native": "^1.6.1",
         "chardet": "^0.4.0",
         "color": "~0.11.1",
         "d3-array": "^2.3.1",
