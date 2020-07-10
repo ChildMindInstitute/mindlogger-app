@@ -6,11 +6,11 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
+import { Actions } from 'react-native-router-flux';
 import { setFcmToken } from '../state/fcm/fcm.actions';
-import { appletsSelector } from '../state/applets/applets.selectors';
+import { activitiesSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
-import { sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -82,33 +82,23 @@ class FireBaseMessaging extends Component {
 
   openActivityByEventId = (notificationObj) => {
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
-    if (eventId) {
-      this.props.sync(() => this.openActivityByEventIdCb(eventId));
-    }
-  }
+    const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
+    const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
+    // eslint-disable-next-line no-console
+    console.log('openActivityByEventId', { eventId, appletId, activityId });
 
-  openActivityByEventIdCb = (eventId) => {
-    let schema = null;
-    const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
-      const event = events.find(({ id }) => id === eventId);
-      if (event) {
-        schema = event.data.URI;
+    if (eventId && appletId && activityId) {
+      const currentActivity = this.props.activities.find(activity => activity.id === `activity/${activityId}`);
+      // eslint-disable-next-line no-console
+      console.log('currentActivity:', { currentActivity, activities: this.props.activities });
+      if (!currentActivity) {
+        Alert.alert('Activity was not found', 'There is no activity for given event id.');
+        return;
       }
-      return event;
-    });
-    if (!currentApplet) {
-      Alert.alert('Applet was not found', 'There is no applet for given event id.');
-      return;
+      this.props.setCurrentApplet(`applet/${appletId}`);
+      Actions.push('applet_details');
+      this.props.startResponse(currentActivity);
     }
-
-    const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
-    if (!currentActivity) {
-      Alert.alert('Activity was not found', 'There is no activity for given event id.');
-      return;
-    }
-
-    this.props.setCurrentApplet(currentApplet.id);
-    this.props.startResponse(currentActivity);
   }
 
   handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -272,10 +262,13 @@ class FireBaseMessaging extends Component {
 FireBaseMessaging.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
+  activities: PropTypes.array.isRequired,
+  setCurrentApplet: PropTypes.func.isRequired,
+  startResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  applets: appletsSelector(state),
+  activities: activitiesSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -284,7 +277,6 @@ const mapDispatchToProps = dispatch => ({
   },
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
-  sync: cb => dispatch(sync(cb)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
