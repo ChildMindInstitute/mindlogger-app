@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import { Platform, AppState, AppStateStatus } from 'react-native';
 
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
@@ -34,7 +33,8 @@ class FireBaseMessaging extends Component {
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
     this.notificationListener = fNotifications.onNotification(this.onNotification);
-    this.notificationOpenedListener = fNotifications.onNotificationOpened(this.onNotificationOpened);
+    this.notificationOpenedListener = fNotifications
+      .onNotificationOpened(this.onNotificationOpened);
     this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
     this.messageListener = fMessaging.onMessage(this.onMessage);
 
@@ -53,31 +53,41 @@ class FireBaseMessaging extends Component {
 
     if (isIOS) {
       await firebase.messaging().ios.registerForRemoteNotifications();
-      const apns = await firebase.messaging().ios.getAPNSToken();
+      // const apns = await firebase.messaging().ios.getAPNSToken();
 
       // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
+      // console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
     }
   }
 
   componentWillUnmount() {
-    this.notificationDisplayedListener();
-    this.notificationListener();
-    this.notificationOpenedListener();
-    this.onTokenRefreshListener();
-    this.messageListener();
+    if (this.notificationDisplayedListener) {
+      this.notificationDisplayedListener();
+    }
+    if (this.notificationListener) {
+      this.notificationListener();
+    }
+    if (this.notificationOpenedListener) {
+      this.notificationOpenedListener();
+    }
+    if (this.onTokenRefreshListener) {
+      this.onTokenRefreshListener();
+    }
+    if (this.messageListener) {
+      this.messageListener();
+    }
 
-    AppState.addEventListener('change', this.handleAppStateChange);
+    AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
-  openActivityByEventId = notificationObj => {
+  openActivityByEventId = (notificationObj) => {
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     if (eventId) {
       this.props.sync(() => this.openActivityByEventIdCb(eventId));
     }
   }
 
-  openActivityByEventIdCb = eventId => {
+  openActivityByEventIdCb = (eventId) => {
     let schema = null;
     const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
       const event = events.find(({ id }) => id === eventId);
@@ -103,12 +113,10 @@ class FireBaseMessaging extends Component {
 
   handleAppStateChange = (nextAppState: AppStateStatus) => {
     const isAppStateChanged = this.state.appState !== nextAppState;
-
     if (isAppStateChanged) {
-      firebase.notifications().setBadge(0);
+      this.setState({ appState: nextAppState });
+      this.updateApplicationIconBadgeNumber();
     }
-
-    this.setState({ appState: nextAppState });
   }
 
   initAndroidChannel = () => {
@@ -127,12 +135,29 @@ class FireBaseMessaging extends Component {
     }
   };
 
-  onNotificationDisplayed = (notification: firebase.RNFirebase.notifications.Notification) => {
+  onNotificationDisplayed = async (
+    notification: firebase.RNFirebase.notifications.Notification,
+  ) => {
     // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: onNotificationDisplayed`, notification);
+    if (isIOS) {
+      await this.updateApplicationIconBadgeNumber();
+    }
   };
 
-  onNotification = (notification: firebase.RNFirebase.notifications.Notification) => {
+  getDeliveredNotificationsCount = ():Promise<number> => new Promise((resolve) => {
+    PushNotificationIOS.getDeliveredNotifications((notifications) => {
+      resolve(notifications.length);
+    });
+  });
+
+  getScheduledLocalNotificationsCount = ():Promise<number> => new Promise((resolve) => {
+    PushNotificationIOS.getScheduledLocalNotifications((notifications) => {
+      resolve(notifications.length);
+    });
+  });
+
+  onNotification = async (notification: firebase.RNFirebase.notifications.Notification) => {
     // eslint-disable-next-line no-console
     console.log('onNotification', { notification });
 
@@ -142,8 +167,13 @@ class FireBaseMessaging extends Component {
       subtitle: notification.subtitle,
       body: notification.body,
       data: notification.data,
-      iosBadge: notification.ios.badge,
+      // iosBadge: notification.ios.badge,
     });
+
+    if (isIOS) {
+      const notificationsCount = await this.generateApplicationIconBadgeNumber();
+      localNotification.ios.setBadge(notificationsCount);
+    }
 
     firebase.notifications().displayNotification(localNotification).catch((error) => {
       // eslint-disable-next-line no-console
@@ -151,12 +181,28 @@ class FireBaseMessaging extends Component {
     });
   };
 
-  onNotificationOpened = (notificationOpen: firebase.RNFirebase.notifications.NotificationOpen) => {
+  onNotificationOpened = async (
+    notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
+  ) => {
     // eslint-disable-next-line no-console
     this.openActivityByEventId(notificationOpen);
 
+    // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
-    firebase.notifications().setBadge(0);
+    if (isIOS) {
+      await this.updateApplicationIconBadgeNumber();
+    }
+  };
+
+  updateApplicationIconBadgeNumber = async () => {
+    const iconBadgeNumber = await this.generateApplicationIconBadgeNumber();
+    PushNotificationIOS.setApplicationIconBadgeNumber(iconBadgeNumber);
+  }
+
+  generateApplicationIconBadgeNumber = async () => {
+    const deliveredNotificationsCount = await this.getDeliveredNotificationsCount();
+    const scheduledLocalNotificationsCount = await this.getScheduledLocalNotificationsCount();
+    return deliveredNotificationsCount + scheduledLocalNotificationsCount;
   };
 
   onTokenRefresh = (fcmToken: string) => {
@@ -166,27 +212,27 @@ class FireBaseMessaging extends Component {
     setFCMToken(fcmToken);
   };
 
-  onMessage = (message: firebase.RNFirebase.messaging.RemoteMessage) => {
+  onMessage = async (message: firebase.RNFirebase.messaging.RemoteMessage) => {
     // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: onMessage: `, message, message.data);
     // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: message.data: ${message.data}`);
     const { data } = message;
 
-    PushNotificationIOS.getApplicationIconBadgeNumber((prevBadges = 0) => {
-      const localNotification = this.newNotification({
-        notificationId: message.messageId,
-        title: data.title || 'Push Notification',
-        subtitle: data.subtitle || null,
-        data,
-        iosBadge: prevBadges + 1,
-      });
-
-      firebase.notifications().displayNotification(localNotification).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.warn(`FCM[${Platform.OS}]: error `, error);
-      });
-
+    const localNotification = this.newNotification({
+      notificationId: message.messageId,
+      title: data.title || 'Push Notification',
+      subtitle: data.subtitle || null,
+      data,
+      // iosBadge: prevBadges + 1,
+    });
+    if (isIOS) {
+      const notificationsCount = await this.generateApplicationIconBadgeNumber();
+      localNotification.ios.setBadge(notificationsCount + 1);
+    }
+    firebase.notifications().displayNotification(localNotification).catch((error) => {
+      // eslint-disable-next-line no-console
+      console.warn(`FCM[${Platform.OS}]: error `, error);
     });
   };
 
@@ -229,7 +275,7 @@ FireBaseMessaging.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  applets: appletsSelector(state)
+  applets: appletsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -238,7 +284,7 @@ const mapDispatchToProps = dispatch => ({
   },
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
-  sync: cb => dispatch(sync(cb))
+  sync: cb => dispatch(sync(cb)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
