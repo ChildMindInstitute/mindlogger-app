@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.12.0] - 2020-07-10
+- Added sentry logging
+
 ## [0.11.48] - 2020-07-08
 - Fixed future schedules in progress status
 
@@ -44,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Performance of FlatList (DataTab Page)
 
 ## [0.11.37] - 2020-5-28
-- Allowed one-time completion 
+- Allowed one-time completion
 
 ## [0.11.36] - 2020-05-18
 - IdleTimer service
