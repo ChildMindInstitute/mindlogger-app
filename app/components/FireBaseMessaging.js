@@ -7,6 +7,7 @@ import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { activitiesSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet } from '../state/app/app.actions';
@@ -97,7 +98,12 @@ class FireBaseMessaging extends Component {
       }
       this.props.setCurrentApplet(`applet/${appletId}`);
       Actions.push('applet_details');
-      this.props.startResponse(currentActivity);
+      if (new Date().getTime() - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0) >= 0) {
+        this.props.startResponse(currentActivity);
+      } else {
+        const time = moment(currentActivity.nextScheduledTimestamp).format('HH:mm');
+        Alert.alert('Activity not ready', `You’re not able to start activity yet, ‘${currentActivity.name.en}’ is scheduled to start at ${time} today`);
+      }
     }
   }
 
