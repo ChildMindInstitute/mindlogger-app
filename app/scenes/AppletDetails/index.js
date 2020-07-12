@@ -29,6 +29,7 @@ class AppletDetails extends Component {
       hasInvites,
       appletData,
       getAppletResponseData,
+      initialTab,
     } = this.props;
     if (!currentApplet) {
       return null;
@@ -46,6 +47,7 @@ class AppletDetails extends Component {
         onPressSettings={() => Actions.push('applet_settings')}
         primaryColor={skin.colors.primary}
         hasInvites={hasInvites}
+        initialTab={initialTab}
       />
     );
   }
@@ -53,6 +55,7 @@ class AppletDetails extends Component {
 
 AppletDetails.defaultProps = {
   currentApplet: null,
+  initialTab: 'survey',
 };
 
 AppletDetails.propTypes = {
@@ -62,6 +65,7 @@ AppletDetails.propTypes = {
   skin: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
   hasInvites: PropTypes.bool.isRequired,
+  initialTab: PropTypes.string,
   appletData: PropTypes.object.isRequired,
   getAppletResponseData: PropTypes.func.isRequired,
 };

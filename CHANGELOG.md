@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.11.51] - 2020-07-12
+- Fixed issue "The user is able to complete an assessment if notification is set before scheduled time after tapping the push notification"
+
 ## [0.11.50] - 2020-07-12
 - Fixed huge delay after tapping the push notification the start screen of the assessment is displayed
 - Fixed issue "The 'Resume activity' pop-up is displayed on the home screen after opening the push notification if the activity is 'In Progress' status"
