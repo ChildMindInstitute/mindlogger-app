@@ -7,11 +7,11 @@ import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
-import { initializePushNotifications } from './services/pushNotifications';
+// import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.thunks';
 import { clearUser } from './state/user/user.actions';
-import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
-import { startFreshResponse } from './state/responses/responses.thunks';
+// import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
+// import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 import FireBaseMessaging from './components/FireBaseMessaging';
 
@@ -57,37 +57,44 @@ const setup = () => {
       store.dispatch(sync());
     }
 
-    initializePushNotifications((notification) => {
-      const state = store.getState();
-      // If user is logged in when they get a push notification, go to the home
-
-      if (state.user.auth && !notification.foreground) {
-        // On Android the activity object comes back already parsed in the data property
-        // On iOS the activity from userInfo.activity comes back as a JSON string in data.activity
-        const activity = Platform.OS === 'android'
-          ? notification.data
-          : JSON.parse(notification.data.activity);
-
-        store.dispatch(setCurrentApplet(activity.appletId));
-        store.dispatch(setCurrentActivity(activity.id));
-        const resp = startFreshResponse(activity);
-        resp(store.dispatch, store.getState);
-      }
-    });
+    // initializePushNotifications((notification) => {
+    //   const state = store.getState();
+    //   // If user is logged in when they get a push notification, go to the home
+    //
+    //   if (state.user.auth && !notification.foreground) {
+    //     // On Android the activity object comes back already parsed in the data property
+    //     // On iOS the activity from userInfo.activity comes back as a JSON string in data.activity
+    //     const activity = Platform.OS === 'android'
+    //       ? notification.data
+    //       : JSON.parse(notification.data.activity);
+    //
+    //     store.dispatch(setCurrentApplet(activity.appletId));
+    //     store.dispatch(setCurrentActivity(activity.id));
+    //     const resp = startFreshResponse(activity);
+    //     resp(store.dispatch, store.getState);
+    //   }
+    // });
 
     setInitialScreen(authOk, store.getState());
   });
 
   // Root component
-  return () => (
-    <Provider store={store}>
-      <Root>
-        <FireBaseMessaging>
-          <AppNavigator />
-        </FireBaseMessaging>
-      </Root>
-    </Provider>
-  );
+  // eslint-disable-next-line react/prop-types
+  return ({ isHeadless }) => {
+    if (Platform.OS === 'ios' && isHeadless) {
+      // App has been launched in the background by iOS, ignore
+      return null;
+    }
+    return (
+      <Provider store={store}>
+        <Root>
+          <FireBaseMessaging>
+            <AppNavigator />
+          </FireBaseMessaging>
+        </Root>
+      </Provider>
+    );
+  };
 };
 
 // Limit font size scaling from device's font settings
