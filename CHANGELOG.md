@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.50] - 2020-07-12
 - Fixed huge delay after tapping the push notification the start screen of the assessment is displayed
+- Fixed issue "The 'Resume activity' pop-up is displayed on the home screen after opening the push notification if the activity is 'In Progress' status"
 
 ## [0.11.49] - 2020-07-12
 - Fixed iOS notifications (Tapping 1 notification from the notification list clears other notifications)
