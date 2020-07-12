@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus, Linking } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
@@ -42,7 +42,9 @@ class FireBaseMessaging extends Component {
 
     fMessaging.hasPermission().then((granted) => {
       if (!granted) {
-        fMessaging.requestPermission();
+        fMessaging.requestPermission()
+          .then(() => this.checkPermissionAgain())
+          .catch(() => this.checkPermissionAgain());
       }
     });
 
@@ -81,6 +83,30 @@ class FireBaseMessaging extends Component {
 
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
+
+  checkPermissionAgain = () => {
+    fMessaging.hasPermission().then((granted) => {
+      if (!granted) {
+        Alert.alert(
+          '"MindLogger" would like to send you notifications',
+          'These can be configured in Settings',
+          [
+            {
+              text: 'Dismiss',
+              style: 'cancel',
+            },
+            {
+              text: 'Open Settings',
+              onPress: this.openSettings,
+              style: 'default',
+            },
+          ],
+        );
+      }
+    });
+  }
+
+  openSettings = () => Linking.openSettings();
 
   isCompleted = activity => activity.lastResponseTimestamp !== null
     && activity.nextScheduledTimestamp === null
