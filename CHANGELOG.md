@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.11.50] - 2020-07-12
+- Fixed huge delay after tapping the push notification the start screen of the assessment is displayed
+
 ## [0.11.49] - 2020-07-12
 - Fixed iOS notifications (Tapping 1 notification from the notification list clears other notifications)
 
