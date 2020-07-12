@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
 // eslint-disable-next-line
 class AppletDetailsComponent extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      selectedTab: 'survey',
+      selectedTab: props.initialTab,
     };
   }
 
@@ -174,6 +174,7 @@ AppletDetailsComponent.propTypes = {
   primaryColor: PropTypes.string.isRequired,
   hasInvites: PropTypes.bool.isRequired,
   getResponseInApplet: PropTypes.func.isRequired,
+  initialTab: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = {

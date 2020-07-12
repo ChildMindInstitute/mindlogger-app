@@ -9,9 +9,10 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { setFcmToken } from '../state/fcm/fcm.actions';
-import { activitiesSelector } from '../state/applets/applets.selectors';
+import { appletsSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
+import { inProgressSelector } from '../state/responses/responses.selectors';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -81,6 +82,23 @@ class FireBaseMessaging extends Component {
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
+  isCompleted = activity => activity.lastResponseTimestamp !== null
+    && activity.nextScheduledTimestamp === null
+    && (moment().isSame(moment(activity.lastResponseTimestamp), 'day'));
+
+  isActivityCompleted = (currentApplet, currentActivity) => {
+    const inProgressKeys = Object.keys(this.props.inProgress);
+    if (inProgressKeys) {
+      const isActivityNotInProgress = !inProgressKeys
+        .includes(currentApplet.id + currentActivity.id);
+      if (isActivityNotInProgress) {
+        return this.isCompleted(currentActivity);
+      }
+      return false;
+    }
+    return this.isCompleted(currentActivity);
+  };
+
   openActivityByEventId = (notificationObj) => {
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
@@ -89,15 +107,27 @@ class FireBaseMessaging extends Component {
     console.log('openActivityByEventId', { eventId, appletId, activityId });
 
     if (eventId && appletId && activityId) {
-      const currentActivity = this.props.activities.find(activity => activity.id === `activity/${activityId}`);
-      // eslint-disable-next-line no-console
-      console.log('currentActivity:', { currentActivity, activities: this.props.activities });
-      if (!currentActivity) {
-        Alert.alert('Activity was not found', 'There is no activity for given event id.');
+      const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
+      if (!currentApplet) {
+        Alert.alert('Applet was not found', 'There is no applet for given id.');
         return;
       }
+      const currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
+      if (!currentActivity) {
+        Alert.alert('Activity was not found', 'There is no activity for given id.');
+        return;
+      }
+
+      const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
       this.props.setCurrentApplet(`applet/${appletId}`);
+
+      if (isActivityCompleted) {
+        Actions.push('applet_details', { initialTab: 'data' });
+        Alert.alert('', `You have already completed ‘${currentActivity.name.en}’`);
+        return;
+      }
       Actions.push('applet_details');
+
       if (new Date().getTime() - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0) >= 0) {
         this.props.startResponse(currentActivity);
       } else {
@@ -270,13 +300,15 @@ class FireBaseMessaging extends Component {
 FireBaseMessaging.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
-  activities: PropTypes.array.isRequired,
+  applets: PropTypes.array.isRequired,
+  inProgress: PropTypes.array.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  activities: activitiesSelector(state),
+  applets: appletsSelector(state),
+  inProgress: inProgressSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
