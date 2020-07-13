@@ -1,45 +1,49 @@
-import React from "react";
-import { StatusBar, View, StyleSheet } from "react-native";
-import { Container } from "native-base";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import * as R from "ramda";
-import _ from "lodash";
-import { Actions } from "react-native-router-flux";
-import moment from "moment";
-import { nextScreen, prevScreen, completeResponse } from "../../state/responses/responses.thunks";
+import React from 'react';
+import { StatusBar, View, StyleSheet } from 'react-native';
+import { Container } from 'native-base';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import * as R from 'ramda';
+import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
+import moment from 'moment';
+import {
+  nextScreen,
+  prevScreen,
+  completeResponse,
+} from '../../state/responses/responses.thunks';
 import {
   currentResponsesSelector,
   itemVisiblitySelector,
   currentScreenSelector,
-} from "../../state/responses/responses.selectors";
-import { currentAppletSelector } from "../../state/app/app.selectors";
+} from '../../state/responses/responses.selectors';
+import { currentAppletSelector } from '../../state/app/app.selectors';
 import {
   setAnswer,
   setSelected,
   getResponseInActivity,
-} from "../../state/responses/responses.actions";
+} from '../../state/responses/responses.actions';
 
-import { authTokenSelector } from "../../state/user/user.selectors";
-import ActivityScreens from "../../components/ActivityScreens";
-import ActHeader from "../../components/header";
-import ActProgress from "../../components/progress";
-import ActivityButtons from "../../components/ActivityButtons";
+import { authTokenSelector } from '../../state/user/user.selectors';
+import ActivityScreens from '../../components/ActivityScreens';
+import ActHeader from '../../components/header';
+import ActProgress from '../../components/progress';
+import ActivityButtons from '../../components/ActivityButtons';
 import {
   getNextLabel,
   getPrevLabel,
   getActionLabel,
   isNextEnabled,
   isPrevEnabled,
-} from "../../services/activityNavigation";
-import { idleTimer } from "../../services/idleTimer";
+} from '../../services/activityNavigation';
+import { idleTimer } from '../../services/idleTimer';
 
 const styles = StyleSheet.create({
   buttonArea: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     shadowOpacity: 0.75,
     shadowRadius: 5,
-    shadowColor: "lightgray",
+    shadowColor: 'lightgray',
     shadowOffset: { height: 0, width: 0 },
     elevation: 2,
     zIndex: -1,
@@ -68,34 +72,32 @@ class Activity extends React.Component {
 
   get currentItem() {
     return R.path(
-      ["items", this.props.currentScreen],
-      this.props.currentResponse.activity
+      ['items', this.props.currentScreen],
+      this.props.currentResponse.activity,
     );
   }
 
   getIdleTime = () => {
-    const currentEvent = this.props.currentApplet.schedule.events.find(({ schedule }) => {
-      const [dayOfMonth] = schedule.dayOfMonth;
-      const [month] = schedule.month;
-      const [year] = schedule.year;
-      return dayOfMonth === moment().date() && month === moment().month() && year === moment().year()
-    });
-
-    const allow = _.get(
-      currentEvent,
-      "data.idleTime.allow",
-      false
+    const currentEvent = this.props.currentApplet.schedule.events.find(
+      ({ schedule }) => {
+        const [dayOfMonth] = schedule.dayOfMonth;
+        const [month] = schedule.month;
+        const [year] = schedule.year;
+        return (
+          dayOfMonth === moment().date()
+          && month === moment().month()
+          && year === moment().year()
+        );
+      },
     );
+
+    const allow = _.get(currentEvent, 'data.idleTime.allow', false);
     if (allow) {
-      const idleMinutes = _.get(
-        currentEvent,
-        "data.idleTime.minute",
-        null
-      );
+      const idleMinutes = _.get(currentEvent, 'data.idleTime.minute', null);
       return idleMinutes && parseInt(idleMinutes, 10) * 60;
     }
     return null;
-  }
+  };
 
   handleTimeIsUp = () => {
     this.props.completeResponse();
@@ -107,6 +109,7 @@ class Activity extends React.Component {
       currentApplet,
       setAnswer,
       currentResponse,
+      getResponseInActivity,
       authToken,
       currentScreen,
       nextScreen,
@@ -124,6 +127,8 @@ class Activity extends React.Component {
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const prevLabel = getPrevLabel(currentScreen, itemVisibility);
+
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
@@ -166,9 +171,12 @@ class Activity extends React.Component {
                   setSelected(false);
                 }
               }}
-              prevLabel={getPrevLabel(currentScreen, itemVisibility)}
+              prevLabel={prevLabel}
               prevEnabled={isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
+                if (!currentScreen) {
+                  getResponseInActivity(false);
+                }
                 prevScreen();
                 if (isSelected) {
                   setSelected(false);
@@ -177,14 +185,14 @@ class Activity extends React.Component {
               actionLabel={getActionLabel(
                 currentScreen,
                 responses,
-                activity.items
+                activity.items,
               )}
               onPressAction={() => {
                 setAnswer(
                   currentApplet.id,
                   activity.id,
                   currentScreen,
-                  undefined
+                  undefined,
                 );
               }}
             />
@@ -210,12 +218,13 @@ Activity.propTypes = {
   setSelected: PropTypes.func.isRequired,
   nextScreen: PropTypes.func.isRequired,
   prevScreen: PropTypes.func.isRequired,
+  completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
   getResponseInActivity: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   currentApplet: currentAppletSelector(state),
   currentResponse: currentResponsesSelector(state),
   authToken: authTokenSelector(state),
@@ -230,10 +239,10 @@ const mapDispatchToProps = {
   setSelected,
   nextScreen,
   prevScreen,
-  completeResponse
+  completeResponse,
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Activity);
