@@ -9,7 +9,7 @@ import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearUser } from '../user/user.actions';
-import { signOut, deleteUserAccount } from '../../services/network';
+import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
@@ -53,12 +53,14 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearApplets());
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
-  dispatch(updateBadgeNumber(0));
   firebase.notifications().cancelAllNotifications();
 };
 
 export const logout = () => (dispatch, getState) => {
   const state = getState();
+  if (state.user?.auth?.token) {
+    postAppletBadge(state.user.auth.token, 0);
+  }
   const uploadQueue = uploadQueueSelector(state);
 
   if (uploadQueue.length > 0) {
