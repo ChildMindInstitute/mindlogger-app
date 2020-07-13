@@ -117,14 +117,16 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const auth = authSelector(state);
-  postAppletBadge(auth.token, badgeNumber)
-    .then((response) => {
-      console.log('updateBadgeNumber success', response);
-    })
-    .catch((e) => {
-      console.warn(e);
-    });
+  const token = state.user?.auth?.token;
+  if (token) {
+    postAppletBadge(token, badgeNumber)
+      .then((response) => {
+        console.log('updateBadgeNumber success', response);
+      })
+      .catch((e) => {
+        console.warn(e);
+      });
+  }
 };
 
 export const deactivateApplet = (groupId) => (dispatch, getState) => {
