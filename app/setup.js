@@ -1,6 +1,5 @@
 import React from 'react';
 import { Platform, Text, TextInput } from 'react-native';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -14,12 +13,6 @@ import { clearUser } from './state/user/user.actions';
 // import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 import FireBaseMessaging from './components/FireBaseMessaging';
-
-const resetBaseCount = () => {
-  if (Platform.OS === 'ios') {
-    PushNotificationIOS.setApplicationIconBadgeNumber(0);
-  }
-};
 
 const checkAuthToken = (store) => {
   const state = store.getState();
@@ -48,9 +41,6 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  if (Platform.OS === 'ios') {
-    resetBaseCount();
-  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {
