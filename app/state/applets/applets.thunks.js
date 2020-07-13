@@ -10,7 +10,8 @@ import {
   deleteApplet,
   getLast7DaysData,
   getAppletSchedule,
-} from "../../services/network";
+  postAppletBadge,
+} from '../../services/network';
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadResponses } from "../responses/responses.thunks";
@@ -119,6 +120,18 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
   registerOpenApplet(auth.token, appletURI)
     .then(() => {
       dispatch(downloadApplets());
+    })
+    .catch((e) => {
+      console.warn(e);
+    });
+};
+
+export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  postAppletBadge(auth.token, badgeNumber)
+    .then((response) => {
+      console.log('updateBadgeNumber success', response);
     })
     .catch((e) => {
       console.warn(e);
