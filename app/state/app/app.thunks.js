@@ -4,7 +4,7 @@ import * as R from 'ramda';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
-import { downloadApplets } from '../applets/applets.thunks';
+import { downloadApplets, updateBadgeNumber } from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
@@ -53,7 +53,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearApplets());
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
-  // PushNotification.cancelAllLocalNotifications();
+  dispatch(updateBadgeNumber(0));
   firebase.notifications().cancelAllNotifications();
 };
 
