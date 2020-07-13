@@ -101,6 +101,18 @@ export const postResponse = ({ authToken, response }) => postFormData(
   },
 );
 
+export const postAppletBadge = (authToken, badge) => {
+  const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
 export const signIn = ({ user, password, deviceId, timezone }) => get(
   'user/authentication',
   null,
