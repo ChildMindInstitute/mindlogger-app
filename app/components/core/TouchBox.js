@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { getResponseInActivity, getResponseInApplet } from '../../state/responses/responses.actions';
+import {
+  getResponseInActivity,
+  getResponseInApplet,
+} from '../../state/responses/responses.actions';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -43,7 +46,15 @@ const styles = StyleSheet.create({
 
 // const TouchableOpacityEx = withPreventDoubleClick(TouchableOpacity);
 
-const TouchBox = ({ children, activity, onPress, getResponseInActivity, getResponseInApplet, isActivity, isApplet }) => {
+const TouchBox = ({
+  children,
+  activity,
+  onPress,
+  getResponseInActivity,
+  getResponseInApplet,
+  isActivity,
+  isApplet,
+}) => {
   const [touched, setTouched] = useState(false);
   const [appletTouched, setAppletTouched] = useState(false);
 
@@ -58,11 +69,11 @@ const TouchBox = ({ children, activity, onPress, getResponseInActivity, getRespo
 
   const handlePress = () => {
     if (activity) {
-      getResponseInActivity(true);
-      if (!touched) {
+      if (!touched || !isActivity) {
         onPress();
       }
       setTouched(true);
+      getResponseInActivity(true);
     } else {
       getResponseInApplet(true);
       if (!appletTouched) {
@@ -73,22 +84,19 @@ const TouchBox = ({ children, activity, onPress, getResponseInActivity, getRespo
   };
 
   useEffect(() => {
-    if (activity) {
-      setTouched(isActivity);
-    }
-  }, [isActivity]);
-
-  useEffect(() => {
     if (!activity) {
       setAppletTouched(isApplet);
     }
   }, [isApplet]);
 
   return (
-    <TouchableOpacity disabled={(activity && activity.status === 'scheduled' && !activity.nextAccess)} onPress={handlePress}>
-      <View style={styles.box}>
-        {children}
-      </View>
+    <TouchableOpacity
+      disabled={
+        activity && activity.status === 'scheduled' && !activity.nextAccess
+      }
+      onPress={handlePress}
+    >
+      <View style={styles.box}>{children}</View>
     </TouchableOpacity>
   );
 };
@@ -113,4 +121,7 @@ const mapDispatchToProps = {
   getResponseInApplet,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TouchBox);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(TouchBox);
