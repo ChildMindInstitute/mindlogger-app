@@ -140,11 +140,7 @@ class Activity extends React.Component {
             setAnswer(currentApplet.id, activity.id, currentScreen, answer);
             if (goToNext || autoAdvance || fullScreen) {
               nextScreen();
-              if (isSelected) {
-                setSelected(
-                  false,
-                );
-              }// set Timeout for rendering the next screen
+              setSelected(false);
             }
           }}
           authToken={authToken}
