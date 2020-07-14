@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.11.55] - 2020-07-13
+- Fixed radio button to work correctly
+
 ## [0.11.54] - 2020-07-13
 - Removed 200 ms delay on each item
 - Updated the default api server URL
