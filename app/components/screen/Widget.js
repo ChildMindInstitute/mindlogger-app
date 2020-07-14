@@ -40,11 +40,12 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         />
       );
     }
+    const screenValue = (typeof answer === 'object') ? answer : undefined;
     return (
       <MultiSelect
         config={screen.valueConstraints}
         onChange={onChange}
-        value={answer}
+        value={screenValue}
       />
     );
   }
