@@ -100,16 +100,21 @@ const getActivities = (applet, responseSchedule) => {
     const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
     const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
     const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
-    let lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
-    let nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
+    const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
+    const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+    let nextAccess = false;
+    let prevTimeout = null;
+    let scheduledTimeout = null;
 
     if (lastTimeout) {
-      lastTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
+      prevTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
     }
-
     if (nextTimeout) {
-      nextTimeout = nextTimeout.access;
+      nextAccess = nextTimeout.access;
+      scheduledTimeout = ((nextTimeout.day * 24 + nextTimeout.hour) * 60
+          + nextTimeout.minute)
+        * 60000;
     }
 
     return {
@@ -123,10 +128,12 @@ const getActivities = (applet, responseSchedule) => {
       lastResponseTimestamp: lastResponse,
       nextScheduledTimestamp: nextScheduled,
       oneTimeCompletion: oneTimeCompletion || false,
-      lastTimeout,
+      lastTimeout: prevTimeout,
+      nextTimeout: scheduledTimeout,
       currentTime: new Date().getTime(),
-      nextAccess: nextTimeout,
-      isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
+      nextAccess,
+      isOverdue:
+        lastScheduled && moment(lastResponse) < moment(lastScheduled),
 
       // also add in our parsed notifications...
       notification: R.prop('notificationDateTimes', scheduledDateTimes),

@@ -19,9 +19,44 @@ export const formatTime = (timestamp) => {
 export const scheduledTime = (timestamp) => {
   const time = moment(timestamp);
   if (moment().isSame(time, 'day')) {
-    return moment(timestamp).format('[Today at] h:mm A');
+    return moment(timestamp).format('h:mm A');
   }
   return null;
+};
+
+export const scheduledEndTime = (timestamp, timeout) => {
+  const time = moment(timestamp);
+
+  if (timeout === 86340000) {
+    if (moment().isSame(time, 'day')) {
+      return time.set({ hour: 23, minute: 59 }).format('Do h:mm A');
+    }
+    return null;
+  }
+  if (moment().isSame(time, 'day')) {
+    return time.add(timeout, 'milliseconds').format('Do h:mm A');
+  }
+  return null;
+};
+
+export const lastScheduledTime = (timestamp) => {
+  if (timestamp) {
+    return moment(timestamp).format('h:mm A');
+  }
+  return null;
+};
+
+export const lastScheduledEndTime = (timestamp, timeout) => {
+  const time = moment(timestamp);
+
+  if (!timestamp) {
+    return null;
+  }
+
+  if (timeout === 86340000) {
+    return time.set({ hour: 23, minute: 59 }).format('Do h:mm A');
+  }
+  return time.add(timeout, 'milliseconds').format('Do h:mm A');
 };
 
 // Generates a list of timestamps for when local notifications should be triggered,
