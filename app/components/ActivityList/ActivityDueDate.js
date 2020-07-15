@@ -32,14 +32,16 @@ const ActivityDueDate = ({ activity }) => {
   ) {
     return (
       <LittleText style={styles.textStyles}>
-        Available: {nextScheduledTime} to {nextScheduledEndTime}
+        {activity.nextTimeout === 86340000 ? 'Available: All day' : `Available: ${nextScheduledTime} to ${nextScheduledEndTime}`}
       </LittleText>
     );
   }
   if (activity.status === 'pastdue') {
     return (
       <LittleText style={styles.textStyles}>
-        Available: {prevScheduledTime} to {prevScheduledEndTime}
+        {activity.lastTimeout === 86340000
+          ? 'Available: All day'
+          : `Available: ${prevScheduledTime} to ${prevScheduledEndTime}`}
       </LittleText>
     );
   }
