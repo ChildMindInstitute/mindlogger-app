@@ -100,11 +100,21 @@ export const markdownStyle = {
     fontFamily: theme.fontFamily,
   },
   listItemUnorderedContent: {
-    fontSize: 18,
+    fontSize: 20,
     color: '#000000',
     fontFamily: theme.fontFamily,
   },
   listItemOrderedContent: {
+    fontSize: 18,
+    color: '#000000',
+    fontFamily: theme.fontFamily,
+  },
+  list: {
+    fontSize: 18,
+    color: '#000000',
+    fontFamily: theme.fontFamily,
+  },
+  sublist: {
     fontSize: 18,
     color: '#000000',
     fontFamily: theme.fontFamily,

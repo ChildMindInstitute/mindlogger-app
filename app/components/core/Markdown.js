@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { View } from 'react-native';
+import { View, Linking } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view';
 import { markdownStyle } from '../../themes/activityTheme';
 import { getURL } from '../../services/helper';
@@ -21,17 +21,22 @@ const rules = {
   },
 };
 
-export const Markdown = ({ mstyle, children }) => (
-  <View>
-    <MarkdownView
-      style={{ justifyContent: 'center', alignItems: 'center' }}
-      styles={R.merge(markdownStyle, mstyle)}
-      rules={rules}
-    >
-      {children}
-    </MarkdownView>
-  </View>
-);
+export const Markdown = ({ mstyle, children }) => {
+  return (
+    <View>
+      <MarkdownView
+        style={{ justifyContent: 'center'}}
+        styles={R.merge(markdownStyle, mstyle)}
+        rules={rules}
+        onLinkPress={(url) => {
+          Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
+        }}
+      >
+        {children}
+      </MarkdownView>
+    </View>
+  );
+};
 
 Markdown.defaultProps = {
   mstyle: {},
