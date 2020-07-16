@@ -1,4 +1,4 @@
-# MindLogger 0.12.2
+# MindLogger 0.12.3
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
