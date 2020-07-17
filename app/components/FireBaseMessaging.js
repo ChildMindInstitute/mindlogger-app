@@ -143,7 +143,6 @@ class FireBaseMessaging extends Component {
         Alert.alert('Activity was not found', 'There is no activity for given id.');
         return;
       }
-
       const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
       this.props.setCurrentApplet(`applet/${appletId}`);
 
@@ -153,6 +152,14 @@ class FireBaseMessaging extends Component {
         return;
       }
       Actions.push('applet_details');
+
+      if (currentActivity.lastScheduledTimestamp && currentActivity.lastTimeout) {
+        const deltaTime = new Date().getTime()
+          - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
+        if (deltaTime >= 0) {
+          return;
+        }
+      }
 
       const deltaTime = new Date().getTime()
         - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
