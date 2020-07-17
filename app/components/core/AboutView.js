@@ -1,17 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import * as R from 'ramda';
-import { View, Linking } from 'react-native';
-import { MarkdownView } from 'react-native-markdown-view';
-import { markdownStyle } from '../../themes/activityTheme';
-import { getURL } from '../../services/helper';
+import React from "react";
+import PropTypes from "prop-types";
+import * as R from "ramda";
+import { View, Linking } from "react-native";
+import { MarkdownView } from "react-native-markdown-view";
+import { markdownStyle } from "../../themes/activityTheme";
+import { getURL } from "../../services/helper";
 
-const unescapeUrl = url => url.replace(/\\([^0-9A-Za-z\s])/g, '$1');
+const unescapeUrl = (url) => url.replace(/\\([^0-9A-Za-z\s])/g, "$1");
 
 // We add a custom parse function so that we can grab preloaded images locally
 const rules = {
   image: {
-    parse: capture => ({
+    parse: (capture) => ({
       alt: capture[1],
       target: getURL(unescapeUrl(capture[2])),
       title: capture[3],
@@ -21,15 +21,17 @@ const rules = {
   },
 };
 
-export const Markdown = ({ mstyle, children }) => {
+export const AboutView = ({ mstyle, children }) => {
   return (
     <View>
       <MarkdownView
-        style={{ justifyContent: 'center', alignItems: 'center' }}
+        style={{ justifyContent: "center" }}
         styles={R.merge(markdownStyle, mstyle)}
         rules={rules}
         onLinkPress={(url) => {
-          Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
+          Linking.openURL(url).catch((error) =>
+            console.warn("An error occurred: ", error)
+          );
         }}
       >
         {children}
@@ -38,12 +40,12 @@ export const Markdown = ({ mstyle, children }) => {
   );
 };
 
-Markdown.defaultProps = {
+AboutView.defaultProps = {
   mstyle: {},
   children: undefined,
 };
 
-Markdown.propTypes = {
+AboutView.propTypes = {
   mstyle: PropTypes.object,
   children: PropTypes.node,
 };
