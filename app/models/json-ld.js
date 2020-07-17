@@ -1,7 +1,7 @@
 import * as R from "ramda";
 
 const ALLOW = "reprolib:terms/allow";
-const ABOUT = "schema:about";
+const ABOUT = "reprolib:terms/landingPage";
 const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
@@ -291,7 +291,8 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const appletTransformJson = (appletJson) => {
-  return {
+  console.log('applet', appletJson);
+  const res = {
     id: appletJson._id,
     groupId: appletJson.groups,
     schema: appletJson.url || appletJson[URL],
@@ -308,6 +309,8 @@ export const appletTransformJson = (appletJson) => {
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
   };
+  console.log('res-->', res);
+  return res;
 };
 
 export const transformApplet = (payload) => {

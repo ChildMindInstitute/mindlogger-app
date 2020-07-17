@@ -92,26 +92,28 @@ test('appletTransformJson: ema-hbn', () => {
   const expectedResult = {
     responseDates: [],
     schedule: {},
-    groupId: ['12345'],
+    groupId: ["12345"],
     about: {
-      en: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md',
+      en:
+        "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md",
     },
-    image: 'https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg',
+    image:
+      "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
     description: {
       en: "Daily questions about your child's physical and mental health",
     },
     name: {
-      en: 'Healthy Brain Network: EMA',
+      en: "Healthy Brain Network: EMA",
     },
     order: [
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld',
-      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld',
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/ema_morning_schema.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNEvening/ema_evening_schema.jsonld",
     ],
     schemaVersion: {
-      en: '0.0.1',
+      en: "0.0.1",
     },
     version: {
-      en: '0.0.1',
+      en: "0.0.1",
     },
     shuffle: false,
     visibility: {
@@ -119,10 +121,11 @@ test('appletTransformJson: ema-hbn', () => {
       ema_morning: true,
     },
     altLabel: {
-      en: 'ema-hbn',
+      en: "ema-hbn",
     },
-    schema: 'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld',
-    id: 'applet/5ca5314fd27b4e0459cee21f',
+    schema:
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
+    id: "applet/5ca5314fd27b4e0459cee21f",
   };
 
   expect(appletTransformJson(appletJson)).toEqual(expectedResult);

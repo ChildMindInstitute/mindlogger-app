@@ -2,7 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import { LittleText } from '../core';
-import { scheduledTime } from '../../services/time';
+import {
+  scheduledTime,
+  scheduledEndTime,
+  lastScheduledTime,
+  lastScheduledEndTime,
+} from '../../services/time';
 
 const styles = StyleSheet.create({
   textStyles: {
@@ -12,6 +17,14 @@ const styles = StyleSheet.create({
 
 const ActivityDueDate = ({ activity }) => {
   const nextScheduledTime = scheduledTime(activity.nextScheduledTimestamp);
+  const nextScheduledEndTime = scheduledEndTime(activity.nextScheduledTimestamp, activity.nextTimeout);
+  const prevScheduledTime = lastScheduledTime(
+    activity.lastScheduledTimestamp,
+  );
+  const prevScheduledEndTime = lastScheduledEndTime(
+    activity.lastScheduledTimestamp,
+    activity.lastTimeout,
+  );
   if (
     (activity.status === 'scheduled' || activity.status === 'in-progress')
     && activity.nextScheduledTimestamp
@@ -19,14 +32,16 @@ const ActivityDueDate = ({ activity }) => {
   ) {
     return (
       <LittleText style={styles.textStyles}>
-        Scheduled for: {nextScheduledTime}
+        {activity.nextTimeout === 86340000 ? 'Available: All day' : `Available: ${nextScheduledTime} to ${nextScheduledEndTime}`}
       </LittleText>
     );
   }
-  if (activity.status === 'completed') {
+  if (activity.status === 'pastdue') {
     return (
       <LittleText style={styles.textStyles}>
-        Last completed: {nextScheduledTime}
+        {activity.lastTimeout === 86340000
+          ? 'Available: All day'
+          : `Available: ${prevScheduledTime} to ${prevScheduledEndTime}`}
       </LittleText>
     );
   }

@@ -5,8 +5,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
-## [0.11.48] - 2020-07-06
+## [0.12.4] - 2020-07-06
 - Implemented Bar chart with token values
+
+## [0.12.3] - 2020-07-15
+- Updated `about` filed to `landingPage` in JSON-LD
+- Fixed links in markdown file
+- Changed styles to fix listView
+
+## [0.12.2] - 2020-07-14
+- Added start and end times on activity card
+
+## [0.12.1] - 2020-07-13
+- Fixed radio button to work correctly
+
+## [0.12.0] - 2020-07-13
+- Added sentry logging
+
+## [0.11.54] - 2020-07-13
+- Removed 200 ms delay on each item
+- Updated the default api server URL
+
+## [0.11.53] - 2020-07-12
+- Fixed activity card to work after tapping `return` button
+
+## [0.11.52] - 2020-07-12
+- Fixed issue "There is no pop-up to allow notifications after installing and launching the app"
+
+## [0.11.51] - 2020-07-12
+- Fixed issue "The user is able to complete an assessment if notification is set before scheduled time after tapping the push notification"
+
+## [0.11.50] - 2020-07-12
+- Fixed huge delay after tapping the push notification the start screen of the assessment is displayed
+- Fixed issue "The 'Resume activity' pop-up is displayed on the home screen after opening the push notification if the activity is 'In Progress' status"
+
+## [0.11.49] - 2020-07-12
+- Fixed iOS notifications (Tapping 1 notification from the notification list clears other notifications)
+
+## [0.11.48] - 2020-07-08
+- Fixed future schedules in progress status
 
 ## [0.11.47] - 2020-7-3
 - User is now transitioned to correct activity based on notification event_id
@@ -44,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Performance of FlatList (DataTab Page)
 
 ## [0.11.37] - 2020-5-28
-- Allowed one-time completion 
+- Allowed one-time completion
 
 ## [0.11.36] - 2020-05-18
 - IdleTimer service
