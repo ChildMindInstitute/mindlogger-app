@@ -157,6 +157,8 @@ class FireBaseMessaging extends Component {
         const deltaTime = new Date().getTime()
           - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
         if (deltaTime >= 0) {
+          const time = moment(currentActivity.lastScheduledTimestamp).format('HH:mm');
+          Alert.alert('', `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
           return;
         }
       }
