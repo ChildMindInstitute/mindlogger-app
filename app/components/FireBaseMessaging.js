@@ -154,7 +154,10 @@ class FireBaseMessaging extends Component {
       }
       Actions.push('applet_details');
 
-      if (new Date().getTime() - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0) >= 0) {
+      const deltaTime = new Date().getTime()
+        - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
+
+      if (currentActivity.nextAccess || deltaTime >= 0) {
         this.props.startResponse(currentActivity);
       } else {
         const time = moment(currentActivity.nextScheduledTimestamp).format('HH:mm');
