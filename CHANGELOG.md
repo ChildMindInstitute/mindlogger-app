@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.12.4] - 2020-07-17
+- Fixed issue: The pop-up "Activity not ready" is displayed after opening the push notification if the notification is set before scheduled time with allowing access to that event
+
 ## [0.12.3] - 2020-07-15
 - Updated `about` filed to `landingPage` in JSON-LD
 - Fixed links in markdown file
