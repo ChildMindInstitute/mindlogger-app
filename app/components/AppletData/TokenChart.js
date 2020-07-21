@@ -43,7 +43,7 @@ class TokenChart extends React.Component {
       .padding(2);
 
     const tickSize = (topValue > 9) ? (topValue > 24 ? 10 : 5) : 2;
-    const ticks = Array.from(Array(topValue / tickSize + 1).keys()).slice(1);
+    const ticks = Array.from(Array(Math.ceil(topValue / tickSize) + 1).keys()).slice(1);
 
     // top axis and middle axis
 
