@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.12.7] - 2020-07-23
+- Fixed idleTime issue which cause App crashes
+- Fixed start and end time on activity card
+
+## [0.12.6] - 2020-07-22
+- Added soloader to fix white screen in android
+- Changed rootView to fix white screen in ios
+
 ## [0.12.5] - 2020-07-17
 - Fixed issue: The user has access to the assessment after time out by tapping the push notification
 
