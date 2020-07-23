@@ -29,12 +29,12 @@ export const scheduledEndTime = (timestamp, timeout) => {
 
   if (timeout === 86340000) {
     if (moment().isSame(time, 'day')) {
-      return time.set({ hour: 23, minute: 59 }).format('Do h:mm A');
+      return time.set({ hour: 23, minute: 59 }).format('h:mm A');
     }
     return null;
   }
   if (moment().isSame(time, 'day')) {
-    return time.add(timeout, 'milliseconds').format('Do h:mm A');
+    return time.add(timeout, 'milliseconds').format('h:mm A');
   }
   return null;
 };
