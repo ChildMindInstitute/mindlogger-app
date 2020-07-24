@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>158587556670-romgi2fdi0nl56b3ug93gpvfdrn6f1cu.apps.googleusercontent.com</string>
+	<string>88569001506-uqc78prsojo0f34k4aj28at80h6es7td.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.158587556670-romgi2fdi0nl56b3ug93gpvfdrn6f1cu</string>
+	<string>com.googleusercontent.apps.88569001506-uqc78prsojo0f34k4aj28at80h6es7td</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDAcZeeVXdmrbGMDXHXwIN_Izl-LKsYkS8</string>
+	<string>AIzaSyDlNiCVmQB5XslWSeMSw8QMG94cS8FCiuo</string>
 	<key>GCM_SENDER_ID</key>
-	<string>158587556670</string>
+	<string>88569001506</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>lab.childmindinstitute.data</string>
 	<key>PROJECT_ID</key>
-	<string>mindlogger-7352d</string>
+	<string>mindlogger-platform</string>
 	<key>STORAGE_BUCKET</key>
-	<string>mindlogger-7352d.appspot.com</string>
+	<string>mindlogger-platform.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:158587556670:ios:8310cfca1b4feb22f4d26f</string>
+	<string>1:88569001506:ios:a49028b3e02ea17703bc7b</string>
 	<key>DATABASE_URL</key>
-	<string>https://mindlogger-7352d.firebaseio.com</string>
+	<string>https://mindlogger-platform.firebaseio.com</string>
 </dict>
 </plist>
