@@ -14,6 +14,7 @@ import { setCurrentApplet } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { updateBadgeNumber } from '../state/applets/applets.thunks';
+import { sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -26,6 +27,7 @@ class FireBaseMessaging extends Component {
   componentDidMount() {
     this.appState = 'active';
     fNotifications.getInitialNotification().then((result) => {
+      console.log('getInitialNotification, result', { result });
       this.openActivityByEventId(result);
     });
 
@@ -124,12 +126,46 @@ class FireBaseMessaging extends Component {
     return this.isCompleted(currentActivity);
   };
 
+  openActivityByEventIdCb = (eventId) => {
+    console.log('start find applet and activity');
+    let schema = null;
+    const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
+      const event = events.find(({ id }) => id === eventId);
+      console.log('[TEST] check event', { event });
+      if (event) {
+        console.log('[TEST] event not NULL', { event });
+        schema = event.data.URI;
+      }
+      return event;
+    });
+
+    if (!currentApplet) {
+      Alert.alert('Applet was not found', 'There is no applet for given event id.');
+      return;
+    }
+
+    const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
+    if (!currentActivity) {
+      Alert.alert('Activity was not found', 'There is no activity for given event id.');
+      return;
+    }
+
+    this.props.setCurrentApplet(currentApplet.id);
+    this.props.startResponse(currentActivity);
+  }
+
   openActivityByEventId = (notificationObj) => {
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
     const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
     // eslint-disable-next-line no-console
     console.log('openActivityByEventId', { eventId, appletId, activityId });
+
+    if (eventId) {
+      console.log('try to sync');
+      this.props.sync(() => this.openActivityByEventIdCb(eventId));
+      return;
+    }
 
     if (eventId && appletId && activityId) {
       const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
@@ -241,6 +277,7 @@ class FireBaseMessaging extends Component {
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
     // eslint-disable-next-line no-console
+    console.log('onNotificationOpened');
     this.openActivityByEventId(notificationOpen);
 
     // eslint-disable-next-line no-console
@@ -363,6 +400,7 @@ FireBaseMessaging.propTypes = {
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
   updateBadgeNumber: PropTypes.func.isRequired,
+  sync: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -377,6 +415,7 @@ const mapDispatchToProps = dispatch => ({
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
+  sync: cb => dispatch(sync(cb)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
