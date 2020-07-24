@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.12.8] - 2020-07-23
+- Fixed missing image issue in Android
+
 ## [0.12.7] - 2020-07-23
 - Fixed idleTime issue which cause App crashes
 - Fixed start and end time on activity card
