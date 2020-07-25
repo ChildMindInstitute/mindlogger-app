@@ -112,8 +112,8 @@ class FireBaseMessaging extends Component {
 
   openSettings = () => Linking.openSettings();
 
-  isCompleted = activity => activity.lastResponseTimestamp !== null
-    && activity.nextScheduledTimestamp === null
+  isCompleted = activity => activity.lastResponseTimestamp
+    && !activity.nextScheduledTimestamp
     && (moment().isSame(moment(activity.lastResponseTimestamp), 'day'));
 
   isActivityCompleted = (currentApplet, currentActivity) => {
@@ -171,15 +171,21 @@ class FireBaseMessaging extends Component {
     }
   }
 
+  getMilliseconds = date => (date ? moment(date).toDate().getTime() : 0);
+
   prepareAndOpenActivity = (currentApplet, currentActivity) => {
     if (!currentActivity) {
       Alert.alert('Activity was not found', 'There is no activity for given id.');
       return;
     }
+    // eslint-disable-next-line no-console
+    console.log('prepareAndOpenActivity', { currentActivity });
     const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
     this.props.setCurrentApplet(currentApplet.id);
 
     if (isActivityCompleted) {
+      // eslint-disable-next-line no-console
+      console.log(`isActivityCompleted${isActivityCompleted}, display popup: You have already completed ‘${currentActivity.name.en}’`);
       Actions.push('applet_details', { initialTab: 'data' });
       Alert.alert('', `You have already completed ‘${currentActivity.name.en}’`);
       return;
@@ -190,25 +196,44 @@ class FireBaseMessaging extends Component {
       Actions.push('applet_details');
     }
 
+    const currentDate = new Date();
     if (currentActivity.lastScheduledTimestamp && currentActivity.lastTimeout) {
-      const deltaTime = new Date().getTime()
-        - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
+      const deltaTime = currentDate.getTime()
+        - this.getMilliseconds(currentActivity.lastScheduledTimestamp)
+        - currentActivity.lastTimeout;
+
       if (deltaTime >= 0) {
         const time = moment(currentActivity.lastScheduledTimestamp)
           .format('HH:mm');
+        // eslint-disable-next-line no-console
+        console.log(`lastScheduledTimestamp: ${currentActivity.lastScheduledTimestamp},  lastTimeout: ${currentActivity.lastTimeout}`,
+          'deltaTime:', deltaTime, 'time:', time, 'display popup:',
+          `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
         Alert.alert('', `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
         return;
       }
     }
 
-    const deltaTime = new Date().getTime()
-      - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
+    let deltaTime = currentDate.getTime()
+      - this.getMilliseconds(currentActivity.nextScheduledTimestamp);
+
+    if (currentActivity.nextScheduledTimestamp && moment(currentDate).isBefore(moment(currentActivity.nextScheduledTimestamp), 'day')) {
+      // eslint-disable-next-line no-console
+      console.log('clear deltaTime');
+      deltaTime = 0;
+    }
 
     if (currentActivity.nextAccess || deltaTime >= 0) {
+      // eslint-disable-next-line no-console
+      console.log('startResponse', 'nextScheduledTimestamp:', currentActivity.nextScheduledTimestamp,
+        'nextAccess:', currentActivity.nextAccess, 'deltaTime:', deltaTime);
       this.props.startResponse(currentActivity);
     } else {
       const time = moment(currentActivity.nextScheduledTimestamp)
         .format('HH:mm');
+      // eslint-disable-next-line no-console
+      console.log('display popup: "Activity not ready"', 'nextScheduledTimestamp:', currentActivity.nextScheduledTimestamp,
+        'nextAccess:', currentActivity.nextAccess, 'deltaTime:', deltaTime, 'time:', time);
       Alert.alert('Activity not ready', `You’re not able to start activity yet, ‘${currentActivity.name.en}’ is scheduled to start at ${time} today`);
     }
   };
