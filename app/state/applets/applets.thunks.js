@@ -10,6 +10,7 @@ import {
   deleteApplet,
   getLast7DaysData,
   postAppletBadge,
+  getTargetApplet,
 } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
@@ -81,40 +82,16 @@ export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState
   const state = getState();
   const auth = authSelector(state);
   dispatch(setDownloadingTargetApplet(true));
-  // getTargetApplet(auth.token, appletId)
-  //   .then((applet) => {
-  //     if (loggedInSelector(getState())) {
-  //       // Check that we are still logged in when fetch finishes
-  //       const transformedApplets = [applet]
-  //         .filter(applet => !R.isEmpty(applet.items)).map(transformApplet);
-  //       if (transformedApplets && transformedApplets.length > 0) {
-  //         const transformedApplet = transformedApplets[0];
-  //         // eslint-disable-next-line no-console
-  //         console.log('replaceTargetApplet', { applet, transformedApplet });
-  //         dispatch(replaceTargetApplet(transformedApplet));
-  //         dispatch(downloadAppletResponses(transformedApplet));
-  //         dispatch(downloadAppletMedia(transformedApplet));
-  //       }
-  //       dispatch(setDownloadingTargetApplet(false));
-  //       if (cb) {
-  //         cb();
-  //       }
-  //     }
-  //   })
-  //   .catch(err => console.warn(err.message));
-
-  // todo workaround
-  getApplets(auth.token)
-    .then((applets) => {
+  getTargetApplet(auth.token, appletId)
+    .then((applet) => {
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
-        const currentApplet = applets.find(applet => applet.applet._id === `applet/${appletId}`);
-        const transformedApplets = [currentApplet]
+        const transformedApplets = [applet]
           .filter(applet => !R.isEmpty(applet.items)).map(transformApplet);
         if (transformedApplets && transformedApplets.length > 0) {
           const transformedApplet = transformedApplets[0];
           // eslint-disable-next-line no-console
-          console.log('replaceTargetApplet', { currentApplet, transformedApplet });
+          console.log('replaceTargetApplet', { applet, transformedApplet });
           dispatch(replaceTargetApplet(transformedApplet));
           dispatch(downloadAppletResponses(transformedApplet));
           dispatch(downloadAppletMedia(transformedApplet));
