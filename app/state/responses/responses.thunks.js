@@ -21,7 +21,7 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setSchedule,
+  setSchedule, replaceAppletResponses,
 } from './responses.actions';
 import {
   setCurrentActivity,
@@ -132,8 +132,7 @@ export const downloadAppletResponses = applet => (dispatch, getState) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   }).then((responses) => {
     if (loggedInSelector(getState())) {
-      dispatch(replaceResponses(responses));
-      dispatch(scheduleAndSetNotifications());
+      dispatch(replaceAppletResponses(responses));
     }
   });
 

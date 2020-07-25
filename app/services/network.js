@@ -93,10 +93,16 @@ export const getApplets = authToken => get(
   { role: 'user', getAllApplets: true },
 );
 
+// export const getTargetApplet = (authToken, appletId) => get(
+//   `applet/${appletId}`,
+//   authToken,
+//   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
+// );
+
 export const getTargetApplet = (authToken, appletId) => get(
-  `applet/${appletId}`,
+  `user/applet/${appletId}`,
   authToken,
-  { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
+  { retrieveSchedule: true, role: 'user', getAllApplets: true },
 );
 
 export const postResponse = ({ authToken, response }) => postFormData(

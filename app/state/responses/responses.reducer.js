@@ -16,6 +16,24 @@ export const initialState = {
   schedule: {},
 };
 
+const replaceAppletResponses = (state, action) => {
+  const newResponse = action.payload[0];
+  const responseHistory = [];
+  const isExist = state.responseHistory.find(resp => resp.appletId === newResponse.appletId);
+  if (isExist) {
+    responseHistory.push(...state.responseHistory.map(
+      resp => (resp.appletId === newResponse.appletId ? newResponse : resp),
+    ));
+  } else {
+    responseHistory.push(...state.responseHistory);
+    responseHistory.push(...action.payload);
+  }
+  return ({
+    ...state,
+    responseHistory,
+  });
+};
+
 export default (state = initialState, action = {}) => {
   switch (action.type) {
     case RESPONSES_CONSTANTS.CLEAR:
@@ -30,6 +48,8 @@ export default (state = initialState, action = {}) => {
         ...state,
         responseHistory: action.payload,
       };
+    case RESPONSES_CONSTANTS.REPLACE_APPLET_RESPONSES:
+      return replaceAppletResponses(state, action);
     case RESPONSES_CONSTANTS.SET_DOWNLOADING_RESPONSES:
       return {
         ...state,

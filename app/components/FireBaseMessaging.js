@@ -29,7 +29,9 @@ class FireBaseMessaging extends Component {
     fNotifications.getInitialNotification().then((result) => {
       // eslint-disable-next-line no-console
       console.log('getInitialNotification, result', { result });
-      this.openActivityByEventId(result);
+      if (result) {
+        this.openActivityByEventId(result);
+      }
     });
 
     AppState.addEventListener('change', this.handleAppStateChange.bind(this));
@@ -127,7 +129,11 @@ class FireBaseMessaging extends Component {
     return this.isCompleted(currentActivity);
   };
 
-  findActivityByEventId = (eventId, currentApplet) => {
+  findActivityById = (eventId, currentApplet, activityId) => {
+    const currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
+    if (currentActivity) {
+      return currentActivity;
+    }
     const event = currentApplet.schedule.events.find(({ id }) => id === eventId);
     if (!event) {
       return null;
@@ -154,9 +160,9 @@ class FireBaseMessaging extends Component {
           Actions.push('applet_list');
         }
         this.props.syncTargetApplet(appletId, () => {
-          currentActivity = this.findActivityByEventId(eventId, currentApplet);
+          currentActivity = this.findActivityById(eventId, currentApplet, activityId);
           // eslint-disable-next-line no-console
-          console.log('findActivityByEventId', { currentActivity });
+          console.log('findActivityById', { currentActivity });
           this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
         });
       } else {
