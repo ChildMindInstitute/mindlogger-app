@@ -5,7 +5,7 @@ import { Actions } from 'react-native-router-flux';
 import {
   appletsSelector,
   invitesSelector,
-  isDownloadingAppletsSelector,
+  isDownloadingAppletsSelector, isDownloadingTargetAppletSelector,
 } from '../../state/applets/applets.selectors';
 import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
@@ -31,17 +31,18 @@ class AppletList extends Component {
       applets,
       invites,
       isDownloadingApplets,
+      isDownloadingTargetApplet,
       skin,
       mobileDataAllowed,
       toggleMobileDataAllowed,
       user,
     } = this.props;
-
     return (
       <AppletListComponent
         applets={applets}
         invites={invites}
         isDownloadingApplets={isDownloadingApplets}
+        isDownloadingTargetApplet={isDownloadingTargetApplet}
         title={`Hi ${user ? user.firstName : ''}!`}
         primaryColor={skin.colors.primary}
         onPressDrawer={() => Actions.push('settings')}
@@ -59,6 +60,7 @@ AppletList.propTypes = {
   applets: PropTypes.array.isRequired,
   invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
+  isDownloadingTargetApplet: PropTypes.bool.isRequired,
   sync: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
@@ -71,6 +73,7 @@ const mapStateToProps = state => ({
   applets: appletsSelector(state),
   invites: invitesSelector(state),
   isDownloadingApplets: isDownloadingAppletsSelector(state),
+  isDownloadingTargetApplet: isDownloadingTargetAppletSelector(state),
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   user: userInfoSelector(state),

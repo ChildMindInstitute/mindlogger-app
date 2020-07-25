@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Text, TextInput } from 'react-native';
+import { Text, TextInput } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -53,7 +53,8 @@ const setup = () => {
     //
     //   if (state.user.auth && !notification.foreground) {
     //     // On Android the activity object comes back already parsed in the data property
-    //     // On iOS the activity from userInfo.activity comes back as a JSON string in data.activity
+    //     // On iOS the activity from userInfo.activity
+    //     //comes back as a JSON string in data.activity
     //     const activity = Platform.OS === 'android'
     //       ? notification.data
     //       : JSON.parse(notification.data.activity);
@@ -71,7 +72,7 @@ const setup = () => {
   // Root component
   // eslint-disable-next-line react/prop-types
   return ({ isHeadless }) => {
-    if (Platform.OS === 'ios' && isHeadless) {
+    if (isHeadless) {
       // App has been launched in the background by iOS, ignore
       return null;
     }

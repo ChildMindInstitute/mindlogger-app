@@ -4,7 +4,10 @@ import * as R from 'ramda';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
-import { downloadApplets, updateBadgeNumber } from '../applets/applets.thunks';
+import {
+  downloadApplets,
+  downloadTargetApplet,
+} from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
@@ -24,6 +27,13 @@ export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   if (state.user.auth !== null) {
     dispatch(downloadApplets(onAppletsDownloaded));
     dispatch(startUploadQueue());
+  }
+};
+
+export const syncTargetApplet = (appletId, cb) => (dispatch, getState) => {
+  const state = getState();
+  if (state.user.auth !== null) {
+    dispatch(downloadTargetApplet(appletId, cb));
   }
 };
 
