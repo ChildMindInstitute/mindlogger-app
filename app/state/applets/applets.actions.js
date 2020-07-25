@@ -24,6 +24,7 @@ export const setDownloadingTargetApplet = isDownloading => ({
   payload: isDownloading,
 });
 
+/* deprecated */
 export const setNotifications = notifications => ({
   type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
   payload: notifications,
