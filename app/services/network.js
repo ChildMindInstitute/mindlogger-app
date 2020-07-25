@@ -93,6 +93,12 @@ export const getApplets = authToken => get(
   { role: 'user', getAllApplets: true },
 );
 
+export const getTargetApplet = (authToken, appletId) => get(
+  `applet/${appletId}`,
+  authToken,
+  { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
+);
+
 export const postResponse = ({ authToken, response }) => postFormData(
   `response/${response.applet.id}/${response.activity.id}`,
   authToken,

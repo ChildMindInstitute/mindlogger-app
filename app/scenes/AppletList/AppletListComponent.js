@@ -9,6 +9,7 @@ import {
   StatusBar,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
@@ -43,6 +44,7 @@ const AppletListComponent = ({
   applets,
   invites,
   isDownloadingApplets,
+  isDownloadingTargetApplet,
   title,
   primaryColor,
   onPressDrawer,
@@ -95,7 +97,7 @@ const AppletListComponent = ({
           )}
           contentContainerStyle={styles.activityListContainer}
         >
-
+          {isDownloadingTargetApplet && <ActivityIndicator size="large" />}
           {applets.map(applet => (
             <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
           ))}
@@ -142,6 +144,7 @@ AppletListComponent.propTypes = {
   applets: PropTypes.array.isRequired,
   invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
+  isDownloadingTargetApplet: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,

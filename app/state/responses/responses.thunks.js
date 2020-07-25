@@ -124,6 +124,26 @@ export const downloadResponses = () => (dispatch, getState) => {
     });
 };
 
+export const downloadAppletResponses = applet => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+
+  downloadAllResponses(authToken, [applet], (downloaded, total) => {
+    dispatch(setResponsesDownloadProgress(downloaded, total));
+  }).then((responses) => {
+    if (loggedInSelector(getState())) {
+      dispatch(replaceResponses(responses));
+      dispatch(scheduleAndSetNotifications());
+    }
+  });
+
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone)
+    .then((schedule) => {
+      dispatch(setSchedule(schedule));
+    });
+};
+
 export const startUploadQueue = () => (dispatch, getState) => {
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);

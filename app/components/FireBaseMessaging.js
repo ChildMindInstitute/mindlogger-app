@@ -14,7 +14,7 @@ import { setCurrentApplet } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { updateBadgeNumber } from '../state/applets/applets.thunks';
-import { sync } from '../state/app/app.thunks';
+import { syncTargetApplet, sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -27,6 +27,7 @@ class FireBaseMessaging extends Component {
   componentDidMount() {
     this.appState = 'active';
     fNotifications.getInitialNotification().then((result) => {
+      // eslint-disable-next-line no-console
       console.log('getInitialNotification, result', { result });
       this.openActivityByEventId(result);
     });
@@ -126,32 +127,12 @@ class FireBaseMessaging extends Component {
     return this.isCompleted(currentActivity);
   };
 
-  openActivityByEventIdCb = (eventId) => {
-    console.log('start find applet and activity');
-    let schema = null;
-    const currentApplet = this.props.applets.find(({ schedule: { events } }) => {
-      const event = events.find(({ id }) => id === eventId);
-      console.log('[TEST] check event', { event });
-      if (event) {
-        console.log('[TEST] event not NULL', { event });
-        schema = event.data.URI;
-      }
-      return event;
-    });
-
-    if (!currentApplet) {
-      Alert.alert('Applet was not found', 'There is no applet for given event id.');
-      return;
+  findActivityByEventId = (eventId, currentApplet) => {
+    const event = currentApplet.schedule.events.find(({ id }) => id === eventId);
+    if (!event) {
+      return null;
     }
-
-    const currentActivity = currentApplet.activities.find(activity => activity.schema === schema);
-    if (!currentActivity) {
-      Alert.alert('Activity was not found', 'There is no activity for given event id.');
-      return;
-    }
-
-    this.props.setCurrentApplet(currentApplet.id);
-    this.props.startResponse(currentActivity);
+    return currentApplet.activities.find(activity => activity.schema === event.data.URI);
   }
 
   openActivityByEventId = (notificationObj) => {
@@ -161,54 +142,70 @@ class FireBaseMessaging extends Component {
     // eslint-disable-next-line no-console
     console.log('openActivityByEventId', { eventId, appletId, activityId });
 
-    if (eventId) {
-      console.log('try to sync');
-      this.props.sync(() => this.openActivityByEventIdCb(eventId));
-      return;
-    }
-
     if (eventId && appletId && activityId) {
       const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
       if (!currentApplet) {
         Alert.alert('Applet was not found', 'There is no applet for given id.');
         return;
       }
-      const currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
+      let currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
       if (!currentActivity) {
-        Alert.alert('Activity was not found', 'There is no activity for given id.');
-        return;
-      }
-      const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
-      this.props.setCurrentApplet(`applet/${appletId}`);
-
-      if (isActivityCompleted) {
-        Actions.push('applet_details', { initialTab: 'data' });
-        Alert.alert('', `You have already completed ‘${currentActivity.name.en}’`);
-        return;
-      }
-      Actions.push('applet_details');
-
-      if (currentActivity.lastScheduledTimestamp && currentActivity.lastTimeout) {
-        const deltaTime = new Date().getTime()
-          - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
-        if (deltaTime >= 0) {
-          const time = moment(currentActivity.lastScheduledTimestamp).format('HH:mm');
-          Alert.alert('', `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
-          return;
+        if (Actions.currentScene !== 'applet_list') {
+          Actions.push('applet_list');
         }
-      }
-
-      const deltaTime = new Date().getTime()
-        - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
-
-      if (currentActivity.nextAccess || deltaTime >= 0) {
-        this.props.startResponse(currentActivity);
+        this.props.syncTargetApplet(appletId, () => {
+          currentActivity = this.findActivityByEventId(eventId, currentApplet);
+          // eslint-disable-next-line no-console
+          console.log('findActivityByEventId', { currentActivity });
+          this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
+        });
       } else {
-        const time = moment(currentActivity.nextScheduledTimestamp).format('HH:mm');
-        Alert.alert('Activity not ready', `You’re not able to start activity yet, ‘${currentActivity.name.en}’ is scheduled to start at ${time} today`);
+        this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
       }
     }
   }
+
+  prepareAndOpenActivity = (currentApplet, currentActivity) => {
+    if (!currentActivity) {
+      Alert.alert('Activity was not found', 'There is no activity for given id.');
+      return;
+    }
+    const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
+    this.props.setCurrentApplet(currentApplet.id);
+
+    if (isActivityCompleted) {
+      Actions.push('applet_details', { initialTab: 'data' });
+      Alert.alert('', `You have already completed ‘${currentActivity.name.en}’`);
+      return;
+    }
+    if (Actions.currentScene === 'applet_details') {
+      Actions.replace('applet_details');
+    } else {
+      Actions.push('applet_details');
+    }
+
+    if (currentActivity.lastScheduledTimestamp && currentActivity.lastTimeout) {
+      const deltaTime = new Date().getTime()
+        - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
+      if (deltaTime >= 0) {
+        const time = moment(currentActivity.lastScheduledTimestamp)
+          .format('HH:mm');
+        Alert.alert('', `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
+        return;
+      }
+    }
+
+    const deltaTime = new Date().getTime()
+      - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
+
+    if (currentActivity.nextAccess || deltaTime >= 0) {
+      this.props.startResponse(currentActivity);
+    } else {
+      const time = moment(currentActivity.nextScheduledTimestamp)
+        .format('HH:mm');
+      Alert.alert('Activity not ready', `You’re not able to start activity yet, ‘${currentActivity.name.en}’ is scheduled to start at ${time} today`);
+    }
+  };
 
 
   initAndroidChannel = () => {
@@ -383,7 +380,6 @@ class FireBaseMessaging extends Component {
 
   render() {
     const { children } = this.props;
-
     return (
       <Fragment>
         {children}
@@ -396,11 +392,15 @@ FireBaseMessaging.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
-  inProgress: PropTypes.array.isRequired,
+  inProgress: PropTypes.object,
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
   updateBadgeNumber: PropTypes.func.isRequired,
-  sync: PropTypes.func.isRequired,
+  syncTargetApplet: PropTypes.func.isRequired,
+};
+
+FireBaseMessaging.defaultProps = {
+  inProgress: {},
 };
 
 const mapStateToProps = state => ({
@@ -416,6 +416,7 @@ const mapDispatchToProps = dispatch => ({
   startResponse: activity => dispatch(startResponse(activity)),
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
   sync: cb => dispatch(sync(cb)),
+  syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
