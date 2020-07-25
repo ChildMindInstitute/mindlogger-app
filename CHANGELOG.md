@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
+## [0.12.9] - 2020-07-25
+- Fixed issue: The pop up "Applet was not found" is displayed after tapping the push notification next day
+- Fixed issue: The app doesn't respond on tapping after oppening the push notification next day
+
 ## [0.12.8] - 2020-07-24
 - added new feature to sync badge numbers with backend
 - switched to a new firebase config (Project ID: mindlogger-platform)
