@@ -4,12 +4,15 @@ import * as R from 'ramda';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
-import { downloadApplets } from '../applets/applets.thunks';
+import {
+  downloadApplets,
+  downloadTargetApplet,
+} from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearUser } from '../user/user.actions';
-import { signOut, deleteUserAccount } from '../../services/network';
+import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
@@ -24,6 +27,13 @@ export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   if (state.user.auth !== null) {
     dispatch(downloadApplets(onAppletsDownloaded));
     dispatch(startUploadQueue());
+  }
+};
+
+export const syncTargetApplet = (appletId, cb) => (dispatch, getState) => {
+  const state = getState();
+  if (state.user.auth !== null) {
+    dispatch(downloadTargetApplet(appletId, cb));
   }
 };
 
@@ -53,12 +63,14 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearApplets());
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
-  // PushNotification.cancelAllLocalNotifications();
   firebase.notifications().cancelAllNotifications();
 };
 
 export const logout = () => (dispatch, getState) => {
   const state = getState();
+  if (state.user?.auth?.token) {
+    postAppletBadge(state.user.auth.token, 0);
+  }
   const uploadQueue = uploadQueueSelector(state);
 
   if (uploadQueue.length > 0) {

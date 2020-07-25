@@ -14,19 +14,23 @@ export const downloadMediaFile = uri => (dispatch, getState) => downloadFile(uri
     }
   });
 
+export const downloadAppletMedia = applet => (dispatch) => {
+  applet.activities.forEach((activity) => {
+    activity.items.forEach((item) => {
+      if (item.media) {
+        item.media.forEach((media) => {
+          if (typeof media.contentUrl === 'string') {
+            dispatch(downloadMediaFile(media.contentUrl));
+          }
+        });
+      }
+    });
+  });
+};
+
 export const downloadAppletsMedia = transformedApplets => (dispatch) => {
   transformedApplets.forEach((applet) => {
-    applet.activities.forEach((activity) => {
-      activity.items.forEach((item) => {
-        if (item.media) {
-          item.media.forEach((media) => {
-            if (typeof media.contentUrl === 'string') {
-              dispatch(downloadMediaFile(media.contentUrl));
-            }
-          });
-        }
-      });
-    });
+    downloadAppletMedia(applet)(dispatch);
   });
 };
 

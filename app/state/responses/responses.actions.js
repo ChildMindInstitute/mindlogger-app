@@ -14,6 +14,11 @@ export const replaceResponses = responses => ({
   payload: responses,
 });
 
+export const replaceAppletResponses = responses => ({
+  type: RESPONSES_CONSTANTS.REPLACE_APPLET_RESPONSES,
+  payload: responses,
+});
+
 export const setDownloadingResponses = isDownloading => ({
   type: RESPONSES_CONSTANTS.SET_DOWNLOADING_RESPONSES,
   payload: isDownloading,
