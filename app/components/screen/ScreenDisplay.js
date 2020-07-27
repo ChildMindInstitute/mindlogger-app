@@ -2,7 +2,7 @@ import React from 'react';
 import * as R from 'ramda';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
-import { Markdown } from '../core';
+import { MarkdownScreen } from '../core';
 import { markdownStyle } from '../../themes/activityTheme';
 
 const styleLens = R.lensPath(['paragraph', 'fontWeight']);
@@ -11,14 +11,14 @@ const preambleStyle = R.set(styleLens, 'bold', markdownStyle);
 const ScreenDisplay = ({ screen }) => (
   <View style={{ marginBottom: 18 }}>
     {screen.preamble && (
-      <Markdown mstyle={preambleStyle}>
+      <MarkdownScreen mstyle={preambleStyle}>
         {screen.preamble.en}
-      </Markdown>
+      </MarkdownScreen>
     )}
     {screen.question && (
-      <Markdown>
+      <MarkdownScreen>
         {screen.question.en}
-      </Markdown>
+      </MarkdownScreen>
     )}
   </View>
 );
