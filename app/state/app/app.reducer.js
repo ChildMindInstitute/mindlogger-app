@@ -7,6 +7,7 @@ export const initialState = {
   currentApplet: null,
   currentActivity: null,
   mobileDataAllowed: true,
+  appStatus: true,
 };
 
 export default (state = initialState, action = {}) => {
@@ -20,6 +21,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         apiHost: initialState.apiHost,
+      };
+    case APP_CONSTANTS.SET_APP_STATUS:
+      return {
+        ...state,
+        appStatus: action.payload,
       };
     case APP_CONSTANTS.SET_SKIN:
       return {

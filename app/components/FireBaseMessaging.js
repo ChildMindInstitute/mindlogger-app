@@ -10,7 +10,7 @@ import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet } from '../state/app/app.actions';
+import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { updateBadgeNumber } from '../state/applets/applets.thunks';
@@ -384,8 +384,10 @@ class FireBaseMessaging extends Component {
   isBackgroundState = state => state?.match(/inactive|background/);
 
   handleAppStateChange(nextAppState: AppStateStatus) {
+    const { setAppStatus } = this.props;
     if (this.isBackgroundState(nextAppState) && this.appState === 'active') {
       // eslint-disable-next-line no-console
+      setAppStatus(false);
       console.log('App is going background');
       if (isIOS) {
         this.updateApplicationIconBadgeNumber()
@@ -398,6 +400,7 @@ class FireBaseMessaging extends Component {
       && nextAppState === 'active'
     ) {
       // eslint-disable-next-line no-console
+      setAppStatus(true);
       console.log('App is coming to foreground');
       if (isIOS) {
         this.updateApplicationIconBadgeNumber()
@@ -423,6 +426,7 @@ FireBaseMessaging.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
+  setAppStatus: PropTypes.func.isRequired,
   inProgress: PropTypes.object,
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
@@ -443,6 +447,7 @@ const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
+  setAppStatus: appStatus => dispatch(setAppStatus(appStatus)),
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),

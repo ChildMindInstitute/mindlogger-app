@@ -24,6 +24,11 @@ export const setCurrentActivity = activityId => ({
   payload: activityId,
 });
 
+export const setAppStatus = appStatus => ({
+  type: APP_ACTIONS.SET_APP_STATUS,
+  payload: appStatus,
+});
+
 export const toggleMobileDataAllowed = () => ({
   type: APP_ACTIONS.TOGGLE_MOBILE_DATA_ALLOWED,
 });
