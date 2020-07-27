@@ -291,7 +291,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const appletTransformJson = (appletJson) => {
-  console.log('applet', appletJson);
   const res = {
     id: appletJson._id,
     groupId: appletJson.groups,
@@ -309,7 +308,6 @@ export const appletTransformJson = (appletJson) => {
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
   };
-  console.log('res-->', res);
   return res;
 };
 
