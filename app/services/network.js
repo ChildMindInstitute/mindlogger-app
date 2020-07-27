@@ -93,6 +93,18 @@ export const getApplets = authToken => get(
   { role: 'user', getAllApplets: true },
 );
 
+// export const getTargetApplet = (authToken, appletId) => get(
+//   `applet/${appletId}`,
+//   authToken,
+//   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
+// );
+
+export const getTargetApplet = (authToken, appletId) => get(
+  `user/applet/${appletId}`,
+  authToken,
+  { retrieveSchedule: true, role: 'user', getAllApplets: true },
+);
+
 export const postResponse = ({ authToken, response }) => postFormData(
   `response/${response.applet.id}/${response.activity.id}`,
   authToken,
@@ -100,6 +112,18 @@ export const postResponse = ({ authToken, response }) => postFormData(
     metadata: JSON.stringify(response),
   },
 );
+
+export const postAppletBadge = (authToken, badge) => {
+  const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
 
 export const signIn = ({ user, password, deviceId, timezone }) => get(
   'user/authentication',

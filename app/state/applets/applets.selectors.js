@@ -146,6 +146,8 @@ export const appletsSelector = createSelector(
 
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 
+export const isDownloadingTargetAppletSelector = R.path(['applets', 'isDownloadingTargetApplet']);
+
 export const notificationsSelector = R.path(['applets', 'notifications']);
 
 export const invitesSelector = R.path(['applets', 'invites']);

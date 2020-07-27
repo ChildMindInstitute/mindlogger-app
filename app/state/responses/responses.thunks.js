@@ -21,7 +21,7 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setSchedule,
+  setSchedule, replaceAppletResponses,
 } from './responses.actions';
 import {
   setCurrentActivity,
@@ -115,6 +115,25 @@ export const downloadResponses = () => (dispatch, getState) => {
     }
   }).finally(() => {
     dispatch(setDownloadingResponses(false));
+  });
+
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone)
+    .then((schedule) => {
+      dispatch(setSchedule(schedule));
+    });
+};
+
+export const downloadAppletResponses = applet => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+
+  downloadAllResponses(authToken, [applet], (downloaded, total) => {
+    dispatch(setResponsesDownloadProgress(downloaded, total));
+  }).then((responses) => {
+    if (loggedInSelector(getState())) {
+      dispatch(replaceAppletResponses(responses));
+    }
   });
 
   const timezone = RNLocalize.getTimeZone();

@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { createLogger } from 'redux-logger/src';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer from './state/root.reducer';
@@ -16,9 +17,30 @@ export default function configureStore(onCompletion) {
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose; // eslint-disable-line
+  // eslint-disable-next-line no-undef
+  const composeEnhancers = (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+  // eslint-disable-next-line no-undef
+      && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        trace: true,
+        traceLimit: 25,
+      }))
+    || compose;
+
+  const middlewares = [
+    thunk,
+  ];
+  if (__DEV__) {
+    middlewares.push(
+      createLogger({
+        level: 'info',
+        collapsed: true,
+        diff: true,
+      }),
+    );
+  }
+
   store = createStore(persistedReducer, {}, composeEnhancers(
-    applyMiddleware(thunk),
+    applyMiddleware(...middlewares),
   ));
 
   persistStore(store, null, onCompletion);

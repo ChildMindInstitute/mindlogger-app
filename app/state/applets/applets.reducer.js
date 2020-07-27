@@ -3,6 +3,7 @@ import APPLET_CONSTANTS from './applets.constants';
 export const initialState = {
   applets: [],
   isDownloadingApplets: false,
+  isDownloadingTargetApplet: false,
   downloadProgress: {
     total: 0,
     downloaded: 0,
@@ -22,10 +23,24 @@ export default (state = initialState, action = {}) => {
         ...state,
         applets: action.payload,
       };
+    case APPLET_CONSTANTS.REPLACE_TARGET_APPLET:
+      return {
+        ...state,
+        applets: [
+          ...state.applets.map(
+            applet => (applet.id === action.payload.id ? action.payload : applet),
+          ),
+        ],
+      };
     case APPLET_CONSTANTS.SET_DOWNLOADING_APPLETS:
       return {
         ...state,
         isDownloadingApplets: action.payload,
+      };
+    case APPLET_CONSTANTS.SET_DOWNLOADING_TARGET_APPLET:
+      return {
+        ...state,
+        isDownloadingTargetApplet: action.payload,
       };
     case APPLET_CONSTANTS.SET_NOTIFICATIONS:
       return {
