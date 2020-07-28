@@ -21,11 +21,11 @@ const rules = {
   },
 };
 
-export const Markdown = ({ mstyle, children }) => {
+export const MarkdownScreen = ({ mstyle, children }) => {
   return (
     <View>
       <MarkdownView
-        style={{ justifyContent: 'center' }}
+        style={{ justifyContent: 'center', alignItems: 'center' }}
         styles={R.merge(markdownStyle, mstyle)}
         rules={rules}
         onLinkPress={(url) => {
@@ -38,12 +38,12 @@ export const Markdown = ({ mstyle, children }) => {
   );
 };
 
-Markdown.defaultProps = {
+MarkdownScreen.defaultProps = {
   mstyle: {},
   children: undefined,
 };
 
-Markdown.propTypes = {
+MarkdownScreen.propTypes = {
   mstyle: PropTypes.object,
   children: PropTypes.node,
 };

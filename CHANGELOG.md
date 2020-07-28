@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.10] - 2020-07-25
+- Fixed screenDisplay to work with centered image
+- Add MarkdownScreen component
+- Fixed time stamp from the previous day
+
 ## [0.12.9] - 2020-07-25
 - Fixed missing image issue in Android
 

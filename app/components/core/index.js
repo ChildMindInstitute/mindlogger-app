@@ -5,6 +5,7 @@ export * from './Hyperlink';
 export * from './LittleHeading';
 export * from './LittleText';
 export * from './Markdown';
+export * from './MarkdownScreen';
 export * from './NotificationDot';
 export * from './NotificationText';
 export * from './SubHeading';
