@@ -1,10 +1,12 @@
 import * as R from 'ramda';
 import { createSelector } from 'reselect';
-import { activitiesSelector, appletsSelector, allAppletsSelector } from '../applets/applets.selectors';
+import { activitiesSelector, appletsSelector } from '../applets/applets.selectors';
 
 export const apiHostSelector = R.path(['app', 'apiHost']);
 
 export const skinSelector = R.path(['app', 'skin']);
+
+export const appStatusSelector = R.path(['app', 'appStatus']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 

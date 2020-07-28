@@ -191,7 +191,7 @@ const useInterval = (callback, delay, progress, response) => {
   }, [progress, response]);
 };
 
-const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
+const ActivityList = ({ applet, appStatus, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const delay = 60 * 1000;
   const [activities, setActivities] = useState([]);
@@ -202,6 +202,12 @@ const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onP
   };
 
   useInterval(stateUpdate, delay, Object.keys(inProgress).length, responseSchedule);
+
+  useEffect(() => {
+    if (appStatus === true) {
+      stateUpdate();
+    }
+  }, [appStatus]);
 
   useEffect(() => {
     setActivities(sortActivities(applet.id, currentApplet.activities, inProgress, currentApplet.schedule));
@@ -222,6 +228,7 @@ const ActivityList = ({ applet, currentApplet, responseSchedule, inProgress, onP
 
 ActivityList.propTypes = {
   applet: PropTypes.object.isRequired,
+  appStatus: PropTypes.bool.isRequired,
   currentApplet: PropTypes.object.isRequired,
   responseSchedule: PropTypes.object.isRequired,
   inProgress: PropTypes.object.isRequired,
@@ -230,6 +237,7 @@ ActivityList.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
+    appStatus: state.app.appStatus,
     applet: newAppletSelector(state),
     currentApplet: currentAppletSelector(state),
     responseSchedule: responseScheduleSelector(state),
