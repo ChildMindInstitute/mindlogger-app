@@ -210,7 +210,7 @@ const ActivityList = ({ applet, appStatus, currentApplet, responseSchedule, inPr
   }, [appStatus]);
 
   useEffect(() => {
-    setActivities(sortActivities(applet.id, currentApplet.activities, inProgress, currentApplet.schedule));
+    stateUpdate();
   }, [Object.keys(inProgress).length, responseSchedule]);
 
   return (
