@@ -14,6 +14,11 @@ export const setSkin = newSkin => ({
   payload: newSkin,
 });
 
+export const setUpdatedTime = updatedTime => ({
+  type: APP_ACTIONS.SET_UPDATED_TIME,
+  payload: updatedTime,
+});
+
 export const setCurrentApplet = appletId => ({
   type: APP_ACTIONS.SET_CURRENT_APPLET,
   payload: appletId,
