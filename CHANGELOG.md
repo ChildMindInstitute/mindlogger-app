@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.1] - 2020-07-31
+- Filtered only today's schedule
+- Removed unnecessary calls to improve performance
+- Updated activities once schedules are updated
+- Fixed updating schedules in background-mode
+
 ## [0.12.11] - 2020-07-27
 - Updated the status of applets after opening the app from the background mode
 - Fixed issue on activityList screen

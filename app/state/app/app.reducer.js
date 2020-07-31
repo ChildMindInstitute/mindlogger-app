@@ -7,7 +7,8 @@ export const initialState = {
   currentApplet: null,
   currentActivity: null,
   mobileDataAllowed: true,
-  appStatus: true,
+  appStatus: false,
+  lastUpdatedTime: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -16,6 +17,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         apiHost: action.payload,
+      };
+    case APP_CONSTANTS.SET_UPDATED_TIME:
+      return {
+        ...state,
+        lastUpdatedTime: action.payload,
       };
     case APP_CONSTANTS.RESET_API_HOST:
       return {

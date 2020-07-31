@@ -17,7 +17,9 @@ export const currentAppletSelector = createSelector(
   appletsSelector,
   // TODO: this could return undefined. So do we catch it here, or later on?
   (currentAppletId, applets) => applets.find((applet) => {
-    return applet.id === currentAppletId;
+    if (applet.id === currentAppletId) {
+      return true;
+    }
   }) || null,
 );
 
