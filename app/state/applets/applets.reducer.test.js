@@ -19,6 +19,7 @@ test('it replaces applets', () => {
       'foo',
       'bar',
     ],
+    currentTime: new Date(),
   });
 });
 
