@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2] - 2020-08-03
+- Fixed unscheduled status after timeout
+
 ## [0.13.1] - 2020-07-31
 - Filtered only today's schedule
 - Removed unnecessary calls to improve performance
