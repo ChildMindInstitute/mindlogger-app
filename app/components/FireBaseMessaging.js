@@ -30,7 +30,7 @@ class FireBaseMessaging extends Component {
       // eslint-disable-next-line no-console
       console.log('getInitialNotification, result', { result });
       if (result) {
-        this.openActivityByEventId(result);
+        // this.openActivityByEventId(result);
       }
     });
 
@@ -306,7 +306,7 @@ class FireBaseMessaging extends Component {
   ) => {
     // eslint-disable-next-line no-console
     console.log('onNotificationOpened');
-    this.openActivityByEventId(notificationOpen);
+    // this.openActivityByEventId(notificationOpen);
 
     // eslint-disable-next-line no-console
     console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);

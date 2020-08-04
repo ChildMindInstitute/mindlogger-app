@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.3] - 2020-08-03
+- Removed openActivityByEvent to fix white screen issue 
+
 ## [0.13.2] - 2020-08-03
 - Fixed unscheduled status after timeout
 
