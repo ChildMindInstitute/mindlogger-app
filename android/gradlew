@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
-export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jre/jdk/Contents/Home
-yes | ~/Library/Android/sdk/tools/bin/sdkmanager --licenses
+# export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jre/jdk/Contents/Home
+# yes | ~/Library/Android/sdk/tools/bin/sdkmanager --licenses
 #
 # Copyright 2015 the original author or authors.
 #
