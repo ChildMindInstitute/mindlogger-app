@@ -19,7 +19,8 @@ export const getUnscheduled = activityList => activityList.filter(
   activity => (!activity.nextScheduledTimestamp || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
     && (!activity.oneTimeCompletion || !activity.lastResponseTimestamp || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
     && (!activity.lastResponseTimestamp || !moment().isSame(moment(activity.lastResponseTimestamp), 'day') || (new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp > activity.lastTimeout) || (new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp))
-    && (!activity.lastScheduledTimestamp || (new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day'))),
+    && (!activity.lastScheduledTimestamp || (new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
+    && activity.invalid !== false,
 );
 
 // export const getCompleted = activityList => activityList.filter(

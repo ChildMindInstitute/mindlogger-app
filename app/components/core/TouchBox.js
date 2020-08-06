@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Actions } from 'react-native-router-flux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import {
   getResponseInActivity,
@@ -68,6 +69,7 @@ const TouchBox = ({
   }, []);
 
   const handlePress = () => {
+
     if (activity) {
       if (!touched || !isActivity) {
         onPress();

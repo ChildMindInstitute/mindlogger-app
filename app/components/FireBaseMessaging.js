@@ -132,11 +132,8 @@ class FireBaseMessaging extends Component {
   }
 
   openActivityByEventId = (notificationObj) => {
-    if (AppState.currentState === 'active') {
-      Actions.replace('applet_list');
-    } else {
-      Actions.push('applet_list');
-    }
+    Actions.pop();
+    Actions.push('applet_list');
     // const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     // const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
     // const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
