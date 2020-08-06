@@ -48,9 +48,9 @@ class AppletDetails extends Component {
       .setBody('Test notification')
       //.setSound('default')
       .setData({
-        eventId: 1,
-        appletId: this.props.appletData.id,
-        activityId: activity.id,
+        event_id: 1,
+        applet_id: this.props.currentApplet.id.split('/').pop(),
+        activity_id: activity.id.split('/').pop(),
       });
 
     notification.android.setChannelId('MindLoggerChannelId');
