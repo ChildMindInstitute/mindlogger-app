@@ -7,6 +7,8 @@
         "server": "node node_modules/.bin/react-native start",
         "ios": "./node_modules/.bin/react-native run-ios",
         "android": "./node_modules/.bin/react-native run-android",
+        "log-ios": "./node_modules/.bin/react-native log-ios",
+        "log-android": "./node_modules/.bin/react-native log-android",
         "lint": "eslint App.js app/**",
         "test": "jest",
         "eject-native-base": "node node_modules/native-base/ejectTheme.js",
