@@ -70,6 +70,7 @@ class AppletDetailsComponent extends React.Component {
     const {
       applet,
       onPressActivity,
+      onLongPressActivity,
       // inProgress,
       appletData,
     } = this.props;
@@ -83,6 +84,7 @@ class AppletDetailsComponent extends React.Component {
               <AppletCalendar responseDates={responseDates} />
               <ActivityList
                 onPressActivity={onPressActivity}
+                onLongPressActivity={onLongPressActivity}
               />
             </View>
           </Content>
@@ -169,6 +171,7 @@ AppletDetailsComponent.propTypes = {
   appletData: PropTypes.object.isRequired,
   // inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onLongPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,

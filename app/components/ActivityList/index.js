@@ -166,6 +166,7 @@ const ActivityList = ({
   responseSchedule,
   inProgress,
   onPressActivity,
+  onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const updateStatusDelay = 60 * 1000;
@@ -275,6 +276,7 @@ const ActivityList = ({
       {activities.map(activity => (
         <ActivityListItem
           onPress={() => onPressActivity(activity)}
+          onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
           key={activity.id || activity.text}
         />
@@ -291,6 +293,7 @@ ActivityList.propTypes = {
   appletTime: PropTypes.any.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onLongPressActivity: PropTypes.func.isRequired,
   lastUpdatedTime: PropTypes.object.isRequired,
   setUpdatedTime: PropTypes.func.isRequired,
   getSchedules: PropTypes.func.isRequired,

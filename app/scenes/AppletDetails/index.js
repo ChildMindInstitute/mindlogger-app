@@ -9,12 +9,63 @@ import { invitesSelector } from '../../state/applets/applets.selectors';
 import { getAppletResponseData } from '../../state/applets/applets.thunks';
 import { setCurrentActivity } from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
+import * as firebase from 'react-native-firebase';
+
 
 class AppletDetails extends Component {
+  /**
+   * Method called when the activity is tapped.
+   *
+   * It opens the activity screen.
+   *
+   * @param {object} activity the activity data object.
+   * @returns {void}
+   */
   handlePressActivity = (activity) => {
     const { setCurrentActivity, startResponse } = this.props;
+
     setCurrentActivity(activity.id);
     startResponse(activity);
+  }
+
+  /**
+   * Method called when the activity is pressed for a few seconds.
+   *
+   * It creates a new test notification for the pressed activity.
+   *
+   * @param {object} activity the activity data object.
+   * @returns {void}
+   */
+  handleLongPressActivity = async (activity) => {
+    if (!__DEV__) {
+      return this.handlePressActivity(activity);
+    }
+
+    const settings = { showInForeground: true };
+    const notification = new firebase.notifications.Notification(settings)
+      .setNotificationId(`${activity.id}-${Math.random()}`)
+      .setTitle(activity.name.en)
+      .setBody('Test notification')
+      //.setSound('default')
+      .setData({
+        eventId: 1,
+        appletId: this.props.appletData.id,
+        activityId: activity.id,
+      });
+
+    notification.android.setChannelId('MindLoggerChannelId');
+    notification.android.setPriority(firebase.notifications.Android.Priority.High);
+    notification.android.setAutoCancel(true);
+
+    try {
+      console.log('Displaying notification');
+      await firebase
+        .notifications()
+        .displayNotification(notification);
+    } catch(error) {
+      // eslint-disable-next-line no-console
+      console.warn(`Failed to display the notification`, error);
+    }
   }
 
   handleBack = () => {
@@ -43,6 +94,7 @@ class AppletDetails extends Component {
         inProgress={inProgress}
         onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
+        onLongPressActivity={this.handleLongPressActivity}
         onPressBack={this.handleBack}
         onPressSettings={() => Actions.push('applet_settings')}
         primaryColor={skin.colors.primary}

@@ -50,6 +50,7 @@ const TouchBox = ({
   children,
   activity,
   onPress,
+  onLongPress,
   getResponseInActivity,
   getResponseInApplet,
   isActivity,
@@ -95,6 +96,7 @@ const TouchBox = ({
         activity && activity.status === 'scheduled' && !activity.nextAccess
       }
       onPress={handlePress}
+      onLongPress={onLongPress}
     >
       <View style={styles.box}>{children}</View>
     </TouchableOpacity>
