@@ -33,12 +33,14 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
+    this.listeners = [
+      fNotifications.onNotification(this.onNotification),
+      fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
+      fNotifications.onNotificationOpened(this.onNotificationOpened),
+      fMessaging.onTokenRefresh(this.onTokenRefresh),
+      fMessaging.onMessage(this.onMessage),
+    ];
     this.appState = 'active';
-    const event = await fNotifications.getInitialNotification()
-
-    if (event) {
-      //this.openActivityByEventId(event);
-    }
 
     AppState.addEventListener('change', this.handleAppStateChange);
 
@@ -46,27 +48,18 @@ class FireBaseMessaging extends Component {
       this.initAndroidChannel();
     }
 
-    this.notificationListener = fNotifications
-      .onNotification(this.onNotification);
-    this.notificationDisplayedListener = fNotifications
-      .onNotificationDisplayed(this.onNotificationDisplayed);
-    this.notificationOpenedListener = fNotifications
-      .onNotificationOpened(this.onNotificationOpened);
-    this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
-    this.messageListener = fMessaging.onMessage(this.onMessage);
-
-    const permissionGranted = await fMessaging.hasPermission();
-
-    if (!permissionGranted) {
-      await fMessaging.requestPermission()
-      this.checkPermissionAgain()
-    }
-
-    this.props.setFCMToken(await fMessaging.getToken());
-
     if (isIOS) {
       firebase.messaging().ios.registerForRemoteNotifications();
     }
+
+    this.requestPermissions();
+    this.props.setFCMToken(await fMessaging.getToken());
+
+    // const event = await fNotifications.getInitialNotification()
+
+    //if (event) {
+      //this.openActivityByEventId(event);
+    //}
   }
 
   /**
@@ -75,26 +68,7 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   componentWillUnmount() {
-    if (this.notificationDisplayedListener) {
-      this.notificationDisplayedListener();
-    }
-
-    if (this.notificationListener) {
-      this.notificationListener();
-    }
-
-    if (this.notificationOpenedListener) {
-      this.notificationOpenedListener();
-    }
-
-    if (this.onTokenRefreshListener) {
-      this.onTokenRefreshListener();
-    }
-
-    if (this.messageListener) {
-      this.messageListener();
-    }
-
+    this.listeners.forEach(removeListener => removeListener());
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -105,10 +79,15 @@ class FireBaseMessaging extends Component {
    *
    * @returns {void}
    */
-  checkPermissionAgain = async () => {
+  async requestPermissions() {
     const permissionGranted = await fMessaging.hasPermission();
 
-    if (!permissionGranted) {
+    if (permissionGranted) return;
+
+    try {
+      await fMessaging.requestPermission()
+    } catch (error) {
+      // If the user denied permissions.
       Alert.alert(
         '"MindLogger" would like to send you notifications',
         'These can be configured in Settings',
@@ -119,20 +98,13 @@ class FireBaseMessaging extends Component {
           },
           {
             text: 'Open Settings',
-            onPress: this.openSettings,
+            onPress: Linking.openSettings.bind(Linking),
             style: 'default',
           },
         ],
       );
     }
   }
-
-  /**
-   * Opens the Android settings.
-   *
-   * @returns {void}
-   */
-  openSettings = () => Linking.openSettings();
 
   /**
    * Checks whether an activity should be shown as completed.
@@ -169,7 +141,10 @@ class FireBaseMessaging extends Component {
   };
 
   /**
-   * Finds an activity by its ID or the event ID.
+   * Finds an activity.
+   *
+   * It tries to get the activity by ID. If it fails to do that, it tries to get
+   * the event by ID and extract the activity data from it.
    *
    * @param {string} eventId the unique ID for the scheduled event.
    * @param {object} applet the applet instance.
@@ -177,8 +152,8 @@ class FireBaseMessaging extends Component {
    *
    * @returns {object} the requested activity.
    */
-  findActivityById = (eventId, applet, activityId) => {
-    const activity = applet.activities.find({ id } => id === `activity/${activityId}`);
+  findActivityById(eventId, applet, activityId) {
+    const activity = applet.activities.find(({ id }) => id === `activity/${activityId}`);
 
     if (activity) {
       return activity;
@@ -190,7 +165,7 @@ class FireBaseMessaging extends Component {
       return null;
     }
 
-    return applet.activities.find({ schema } => schema === event.data.URI);
+    return applet.activities.find(({ schema }) => schema === event.data.URI);
   }
 
   /**
@@ -211,7 +186,7 @@ class FireBaseMessaging extends Component {
     // Ignore the notification if some data is missing.
     if (!eventId || !appletId || !activityId) return;
 
-    const applet = this.props.applets.find({ id } => id === `applet/${appletId}`);
+    const applet = this.props.applets.find(({ id }) => id === `applet/${appletId}`);
 
     if (!applet) {
       return Alert.alert(
@@ -219,7 +194,7 @@ class FireBaseMessaging extends Component {
       );
     }
     
-    let activity = applet.activities.find({ id } => id === `activity/${activityId}`);
+    let activity = applet.activities.find(({ id }) => id === `activity/${activityId}`);
     
     if (activity) {
       return this.prepareAndOpenActivity(applet, activity);
@@ -235,7 +210,7 @@ class FireBaseMessaging extends Component {
       activity = this.findActivityById(eventId, applet, activityId);
       this.prepareAndOpenActivity(applet, activity, appletId);
     });
-  }
+  };
 
   /**
    * Returns the given date as the number of miliseconds elapsed since the UNIX
@@ -322,7 +297,7 @@ class FireBaseMessaging extends Component {
    *
    * @return {void}
    */
-  initAndroidChannel = () => {
+  async initAndroidChannel() {
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
       'MindLogger Channel',
@@ -331,7 +306,7 @@ class FireBaseMessaging extends Component {
 
     // Create the channel
     await firebase.notifications().android.createChannel(channel)
-  };
+  }
 
   /**
    * Method called when a notification has been displayed.
@@ -356,7 +331,7 @@ class FireBaseMessaging extends Component {
   getDeliveredNotificationsCount() : Promise<number> {
     return new Promise(resolve =>
       PushNotificationIOS
-        .getDeliveredNotifications({ length } => resolve(length))
+        .getDeliveredNotifications(({ length }) => resolve(length))
     );
   }
 
@@ -366,7 +341,7 @@ class FireBaseMessaging extends Component {
   getScheduledLocalNotificationsCount() : Promise<number> {
     return new Promise(resolve =>
       PushNotificationIOS
-        .getScheduledLocalNotifications({ length } => resolve(length))
+        .getScheduledLocalNotifications(({ length }) => resolve(length))
     );
   }
 
@@ -408,10 +383,17 @@ class FireBaseMessaging extends Component {
     }
   };
 
+  /**
+   * Method called when the notification is pressed.
+   *
+   * @param {object} notificationOpen the notification data.
+   *
+   * @returns {void}
+   */
   onNotificationOpened = async (
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
-    //this.openActivityByEventId(notificationOpen);
+    this.openActivityByEventId(notificationOpen);
 
     if (isIOS) {
       const iconBadgeNumber = await this.updateApplicationIconBadgeNumber();
