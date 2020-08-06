@@ -49,7 +49,7 @@ const dateParser = (schedule) => {
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
       completion = e.data.completion;
-      invalid = e.invalid;
+      invalid = e.valid;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -59,7 +59,7 @@ const dateParser = (schedule) => {
       );
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
-        invalid = output[uri].invalid;
+        invalid = output[uri].valid;
         completion = output[uri].completion;
       }
     }

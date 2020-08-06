@@ -30,11 +30,13 @@ export const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let { lastScheduledTimeout } = output[uri];
+    let { invalid } = output[uri];
     let { completion } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
       completion = e.data.completion;
+      invalid = e.valid;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -44,6 +46,7 @@ export const dateParser = (schedule) => {
       );
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
+        invalid = output[uri].valid;
         completion = output[uri].completion;
       }
     }
@@ -68,6 +71,7 @@ export const dateParser = (schedule) => {
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      invalid,
       lastScheduledTimeout,
       nextScheduledTimeout,
       completion,
