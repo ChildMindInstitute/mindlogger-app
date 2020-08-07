@@ -55,11 +55,11 @@ class FireBaseMessaging extends Component {
     this.requestPermissions();
     this.props.setFCMToken(await fMessaging.getToken());
 
-    // const event = await fNotifications.getInitialNotification()
+    const event = await fNotifications.getInitialNotification()
 
-    //if (event) {
-      //this.openActivityByEventId(event);
-    //}
+    if (event) {
+      this.openActivityByEventId(event);
+    }
   }
 
   /**
@@ -179,6 +179,12 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   openActivityByEventId = (notificationObj) => {
+    if (AppState.currentState === 'active') {
+      return Actions.push('applet_list');
+    } else {
+      return Actions.replace('applet_list');
+    }
+
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
     const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
