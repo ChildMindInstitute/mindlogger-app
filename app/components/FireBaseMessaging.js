@@ -153,7 +153,7 @@ class FireBaseMessaging extends Component {
    * @returns {object} the requested activity.
    */
   findActivityById(eventId, applet, activityId) {
-    const activity = applet.activities.find(({ id }) => id === `activity/${activityId}`);
+    const activity = applet.activities.find(({ id }) => id.endsWith(activityId));
 
     if (activity) {
       return activity;
@@ -179,12 +179,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   openActivityByEventId = (notificationObj) => {
-    if (AppState.currentState === 'active') {
-      return Actions.push('applet_list');
-    } else {
-      return Actions.replace('applet_list');
-    }
-
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
     const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
@@ -192,7 +186,7 @@ class FireBaseMessaging extends Component {
     // Ignore the notification if some data is missing.
     if (!eventId || !appletId || !activityId) return;
 
-    const applet = this.props.applets.find(({ id }) => id === `applet/${appletId}`);
+    const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
 
     if (!applet) {
       return Alert.alert(
@@ -200,7 +194,7 @@ class FireBaseMessaging extends Component {
       );
     }
     
-    let activity = applet.activities.find(({ id }) => id === `activity/${activityId}`);
+    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
     
     if (activity) {
       return this.prepareAndOpenActivity(applet, activity);
