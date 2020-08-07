@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     // backgroundColor: 'white',
     fontFamily: theme.fontFamily,
   },
@@ -36,8 +35,8 @@ const ActivityThanks = ({ getResponseInActivity }) => {
       }}
     >
       <View style={styles.box}>
-        <Heading style={{ fontFamily: theme.fontFamily }}>Thanks!</Heading>
-        <BodyText style={{ fontFamily: theme.fontFamily }}>
+        <Heading style={{ fontFamily: theme.fontFamily, textAlign: 'center' }}>Thanks!</Heading>
+        <BodyText style={{ fontFamily: theme.fontFamily, textAlign: 'center' }}>
           We've saved your answers!
         </BodyText>
   
