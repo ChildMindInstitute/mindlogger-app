@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.12] - 2020-08-08
+- Fixed idle timer
+
 ## [0.12.11] - 2020-07-27
 - Updated the status of applets after opening the app from the background mode
 - Removed console logs in JSON-LD
