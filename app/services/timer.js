@@ -32,18 +32,6 @@ class Timer {
    */
   _callback = null;
 
-
-  /**
-   * Binds the public functions.
-   * @constructor
-   */
-  constructor() {
-    this.startCountdown = this.startCountdown.bind(this);
-    this.resetCountdown = this.resetCountdown.bind(this);
-    this.clear = this.clear.bind(this);
-    this._checkTime = this._checkTime.bind(this);
-  }
-
   /**
    * Waits a number of seconds and then calls the given function.
    *
@@ -64,7 +52,7 @@ class Timer {
    *
    * @returns {void}
    */
-  resetCountdown() {
+  resetCountdown = () => {
     this._cbTriggerTime = Date.now() + this._countdownTime * 1000;
   };
 
@@ -73,7 +61,7 @@ class Timer {
    *
    * @returns {void}
    */
-  clear() {
+  clear = () => {
     this._countdownTime = 0;
     this._cbTriggerTime = Date.now();
     this._callback = null;
@@ -85,7 +73,7 @@ class Timer {
    * @private
    * @returns {void}
    */
-  _checkTime() {
+  _checkTime = () => {
     const now = new Date();
 
     if (this._cbTriggerTime <= now) {
