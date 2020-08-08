@@ -443,7 +443,6 @@ class FireBaseMessaging extends Component {
       title: data.title || 'Push Notification',
       subtitle: data.subtitle || null,
       data,
-      // iosBadge: prevBadges + 1,
     });
 
     if (isIOS) {
