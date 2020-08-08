@@ -2,12 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
+import { getStore } from '../../store';
 import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import { inProgressSelector, currentAppletResponsesSelector } from '../../state/responses/responses.selectors';
 import { invitesSelector } from '../../state/applets/applets.selectors';
 import { getAppletResponseData } from '../../state/applets/applets.thunks';
-import { setCurrentActivity } from '../../state/app/app.actions';
+import { 
+  setCurrentActivity, 
+  setCurrentApplet,
+  setAppletSelectionDisabled,
+  setActivitySelectionDisabled,
+} from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 import * as firebase from 'react-native-firebase';
 
@@ -22,10 +28,9 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handlePressActivity = (activity) => {
-    const { setCurrentActivity, startResponse } = this.props;
-
-    setCurrentActivity(activity.id);
-    startResponse(activity);
+    this.props.setActivitySelectionDisabled(true);
+    this.props.setCurrentActivity(activity.id);
+    this.props.startResponse(activity);
   }
 
   /**
@@ -38,7 +43,7 @@ class AppletDetails extends Component {
    */
   handleLongPressActivity = async (activity) => {
     if (!__DEV__) {
-      return this.handlePressActivity(activity);
+      return null;
     }
 
     const settings = { showInForeground: true };
@@ -70,6 +75,12 @@ class AppletDetails extends Component {
 
   handleBack = () => {
     Actions.replace('applet_list');
+    this.props.setCurrentApplet(null);
+  }
+
+  componentDidMount() {
+    this.props.setCurrentActivity(null);
+    this.props.setAppletSelectionDisabled(false);
   }
 
   render() {
@@ -120,6 +131,8 @@ AppletDetails.propTypes = {
   initialTab: PropTypes.string,
   appletData: PropTypes.object.isRequired,
   getAppletResponseData: PropTypes.func.isRequired,
+  setAppletSelectionDisabled: PropTypes.func.isRequired,
+  setActivitySelectionDisabled: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -133,8 +146,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
+  setCurrentApplet,
   startResponse,
   getAppletResponseData,
+  setAppletSelectionDisabled,
+  setActivitySelectionDisabled,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppletDetails);

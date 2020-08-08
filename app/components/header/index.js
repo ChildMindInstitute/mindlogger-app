@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import PropTypes from 'prop-types';
-import { getResponseInActivity } from '../../state/responses/responses.actions';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -15,25 +14,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActHeader = ({ getResponseInActivity }) => {
-  const handlePress = () => {
-    getResponseInActivity(false);
-    Actions.pop();
-    // setTimeout(() => Actions.refresh(), 500);
-  };
+const ActHeader = () => {
   return (
-    <TouchableOpacity style={styles.button} onPress={() => handlePress()}>
-      <Icon type="FontAwesome" name="close" style={{ color: colors.tertiary }} />
+    <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
+      <Icon 
+        type="FontAwesome" 
+        name="close" 
+        style={{ color: colors.tertiary }} />
     </TouchableOpacity>
   );
 };
 
 ActHeader.propTypes = {
-  getResponseInActivity: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
-  getResponseInActivity,
 };
 
 export default connect(null, mapDispatchToProps)(ActHeader);

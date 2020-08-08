@@ -35,6 +35,20 @@ export const initialState = {
   currentActivity: null,
 
   /**
+   * Whether the applet cards are disabled.
+   *
+   * @type {boolean}.
+   */
+  appletSelectionDisabled: false,
+
+  /**
+   * Whether the activity cards are disabled.
+   *
+   * @type {boolean}.
+   */
+  activitySelectionDisabled: false,
+
+  /**
    * If false, applet data will only be downloaded using Wi-Fi.
    *
    * @type {boolean}
@@ -92,6 +106,16 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         currentActivity: action.payload,
+      };
+    case APP_CONSTANTS.SET_APPLET_SELECTION_DISABLED:
+      return {
+        ...state,
+        appletSelectionDisabled: action.payload,
+      };
+    case APP_CONSTANTS.SET_ACTIVITY_SELECTION_DISABLED:
+      return {
+        ...state,
+        activitySelectionDisabled: action.payload,
       };
     case APP_CONSTANTS.TOGGLE_MOBILE_DATA_ALLOWED:
       return {

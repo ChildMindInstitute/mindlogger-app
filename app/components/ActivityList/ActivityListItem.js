@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityRow = ({ activity, onPress, onLongPress }) => {
+const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
   if (activity.isHeader === true) {
     return (
       <View style={styles.sectionHeading}>
@@ -66,7 +66,7 @@ const ActivityRow = ({ activity, onPress, onLongPress }) => {
   return (
     <View style={styles.box}>
       <TouchBox 
-        activity={activity} 
+        disabled={disabled}
         onPress={() => onPress(activity)}
         onLongPress={() => onLongPress(activity)}
       >
@@ -110,6 +110,7 @@ const ActivityRow = ({ activity, onPress, onLongPress }) => {
 
 ActivityRow.propTypes = {
   activity: PropTypes.object.isRequired,
+  disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
   onLongPress: PropTypes.func.isRequired,
 };

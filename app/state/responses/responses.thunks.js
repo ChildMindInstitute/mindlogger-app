@@ -178,6 +178,7 @@ export const nextScreen = () => (dispatch, getState) => {
 
   if (next === -1) {
     dispatch(completeResponse());
+    dispatch(setCurrentActivity(null));
     Actions.push('activity_thanks');
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
@@ -194,6 +195,7 @@ export const prevScreen = () => (dispatch, getState) => {
 
   if (prev === -1) {
     Actions.pop();
+    dispatch(setCurrentActivity(null));
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, prev));
   }

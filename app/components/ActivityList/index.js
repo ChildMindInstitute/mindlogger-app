@@ -14,7 +14,7 @@ import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
-  currentAppletSelector,
+  activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { getSchedules } from '../../state/applets/applets.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
@@ -155,6 +155,7 @@ const getActivities = (applet, responseSchedule) => {
 
 const ActivityList = ({
   applet,
+  activitySelectionDisabled,
   appStatus,
   setAppStatus,
   getSchedules,
@@ -275,6 +276,10 @@ const ActivityList = ({
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
         <ActivityListItem
+          disabled={
+            activitySelectionDisabled 
+            || (activity.status === 'scheduled' && !activity.nextAccess)
+          }
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
@@ -308,7 +313,7 @@ const mapStateToProps = (state) => {
     scheduleUpdated: state.applets.scheduleUpdated,
     applet: newAppletSelector(state),
     appletTime: state.applets.currentTime,
-    currentApplet: currentAppletSelector(state),
+    activitySelectionDisabled: activitySelectionDisabledSelector(state),
     responseSchedule: responseScheduleSelector(state),
     inProgress: inProgressSelector(state),
   };
