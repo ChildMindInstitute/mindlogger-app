@@ -11,12 +11,14 @@ import {
   getLast7DaysData,
   postAppletBadge,
   getTargetApplet,
+  getAppletSchedule,
 } from '../../services/network';
 import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
-import { activitiesSelector } from './applets.selectors';
+import { activitiesSelector } from "./applets.selectors";
+import { replaceTargetAppletSchedule } from "./applets.actions";
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import { setCurrentApplet } from '../app/app.actions';
 import {
@@ -50,6 +52,20 @@ export const getInvitations = () => (dispatch, getState) => {
     });
 };
 
+export const getSchedules = appletId => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+
+  return getAppletSchedule(auth.token, appletId)
+    .then((schedule) => {
+      dispatch(replaceTargetAppletSchedule(appletId, schedule));
+      return schedule;
+    })
+    .catch((e) => {
+      console.warn(e);
+    });
+};
+
 export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
@@ -57,6 +73,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
+      console.log('--->', applets);
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets.filter(
@@ -73,8 +90,8 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
     .catch(err => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
-      dispatch(scheduleAndSetNotifications());
-      dispatch(getInvitations());
+      // dispatch(scheduleAndSetNotifications());
+      // dispatch(getInvitations());
     });
 };
 

@@ -2,6 +2,8 @@ import APPLET_CONSTANTS from './applets.constants';
 
 export const initialState = {
   applets: [],
+  scheduleUpdated: false,
+  currentTime: new Date(),
   isDownloadingApplets: false,
   isDownloadingTargetApplet: false,
   downloadProgress: {
@@ -22,16 +24,33 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         applets: action.payload,
+        currentTime: new Date(),
       };
     case APPLET_CONSTANTS.REPLACE_TARGET_APPLET:
       return {
         ...state,
         applets: [
-          ...state.applets.map(
-            applet => (applet.id === action.payload.id ? action.payload : applet),
-          ),
+          ...state.applets.map(applet => (applet.id === action.payload.id ? action.payload : applet)),
         ],
       };
+    case APPLET_CONSTANTS.SET_SCHEDULE_UPDATED:
+      return {
+        ...state,
+        scheduleUpdated: action.payload,
+      };
+    case APPLET_CONSTANTS.REPLACE_TARGET_APPLETSCHEDULE:
+      const newState = {
+        ...state,
+        applets: [
+          ...state.applets.map((applet) =>
+            applet.id === "applet/" + action.payload.appletId
+              ? { ...applet, schedule: action.payload.schedule }
+              : applet
+          ),
+        ],
+        scheduleUpdated: true,
+      };
+      return newState;
     case APPLET_CONSTANTS.SET_DOWNLOADING_APPLETS:
       return {
         ...state,

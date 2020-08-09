@@ -24,18 +24,18 @@ const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
 class FireBaseMessaging extends Component {
-  componentDidMount() {
+  async componentDidMount() {
     this.appState = 'active';
-    fNotifications.getInitialNotification().then((result) => {
-      // eslint-disable-next-line no-console
-      console.log('getInitialNotification, result', { result });
-      if (result) {
-        this.openActivityByEventId(result);
-      }
-    });
+
+    const event = await fNotifications.getInitialNotification();
+    if (event) {
+      this.openActivityByEventId(event);
+    }
 
     AppState.addEventListener('change', this.handleAppStateChange.bind(this));
-    this.initAndroidChannel();
+    if (isAndroid) {
+      this.initAndroidChannel();
+    }
     this.notificationDisplayedListener = fNotifications
       .onNotificationDisplayed(this.onNotificationDisplayed);
     this.notificationListener = fNotifications.onNotification(this.onNotification);
@@ -44,27 +44,18 @@ class FireBaseMessaging extends Component {
     this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
     this.messageListener = fMessaging.onMessage(this.onMessage);
 
-    fMessaging.hasPermission().then((granted) => {
-      if (!granted) {
-        fMessaging.requestPermission()
-          .then(() => this.checkPermissionAgain())
-          .catch(() => this.checkPermissionAgain());
-      }
-    });
+    const permission = await fMessaging.hasPermission();
 
-    fMessaging.getToken().then((fcmToken) => {
-      // eslint-disable-next-line no-console
-      console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
-      this.props.setFCMToken(fcmToken);
-    });
+    if (!permission) {
+      await fMessaging.requestPermission();
+      this.checkPermissionAgain();
+    }
 
+    this.props.setFCMToken(await fMessaging.getToken());
 
     if (isIOS) {
       firebase.messaging().ios.registerForRemoteNotifications();
       // const apns = await firebase.messaging().ios.getAPNSToken();
-
-      // eslint-disable-next-line no-console
-      // console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
     }
   }
 
@@ -88,26 +79,25 @@ class FireBaseMessaging extends Component {
     AppState.removeEventListener('change', this.handleAppStateChange.bind(this));
   }
 
-  checkPermissionAgain = () => {
-    fMessaging.hasPermission().then((granted) => {
-      if (!granted) {
-        Alert.alert(
-          '"MindLogger" would like to send you notifications',
-          'These can be configured in Settings',
-          [
-            {
-              text: 'Dismiss',
-              style: 'cancel',
-            },
-            {
-              text: 'Open Settings',
-              onPress: this.openSettings,
-              style: 'default',
-            },
-          ],
-        );
-      }
-    });
+  checkPermissionAgain = async () => {
+    const permission = await fMessaging.hasPermission();
+    if (!permission) {
+      Alert.alert(
+        '"MindLogger" would like to send you notifications',
+        'These can be configured in Settings',
+        [
+          {
+            text: 'Dismiss',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: this.openSettings,
+            style: 'default',
+          },
+        ],
+      );
+    }
   }
 
   openSettings = () => Linking.openSettings();
@@ -142,33 +132,38 @@ class FireBaseMessaging extends Component {
   }
 
   openActivityByEventId = (notificationObj) => {
-    const eventId = _.get(notificationObj, 'notification._data.event_id', '');
-    const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
-    const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-    // eslint-disable-next-line no-console
-    console.log('openActivityByEventId', { eventId, appletId, activityId });
-
-    if (eventId && appletId && activityId) {
-      const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
-      if (!currentApplet) {
-        Alert.alert('Applet was not found', 'There is no applet for given id.');
-        return;
-      }
-      let currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
-      if (!currentActivity) {
-        if (Actions.currentScene !== 'applet_list') {
-          Actions.push('applet_list');
-        }
-        this.props.syncTargetApplet(appletId, () => {
-          currentActivity = this.findActivityById(eventId, currentApplet, activityId);
-          // eslint-disable-next-line no-console
-          console.log('findActivityById', { currentActivity });
-          this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
-        });
-      } else {
-        this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
-      }
+    if (AppState.currentState === 'active') {
+      Actions.replace('applet_list');
+    } else {
+      Actions.push('applet_list');
     }
+    // const eventId = _.get(notificationObj, 'notification._data.event_id', '');
+    // const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
+    // const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
+    // // eslint-disable-next-line no-console
+    // console.log('openActivityByEventId', { eventId, appletId, activityId });
+
+    // if (eventId && appletId && activityId) {
+    //   const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
+    //   if (!currentApplet) {
+    //     Alert.alert('Applet was not found', 'There is no applet for given id.');
+    //     return;
+    //   }
+    //   let currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
+    //   if (!currentActivity) {
+    //     if (Actions.currentScene !== 'applet_list') {
+    //       Actions.push('applet_list');
+    //     }
+    //     this.props.syncTargetApplet(appletId, () => {
+    //       currentActivity = this.findActivityById(eventId, currentApplet, activityId);
+    //       // eslint-disable-next-line no-console
+    //       console.log('findActivityById', { currentActivity });
+    //       this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
+    //     });
+    //   } else {
+    //     this.prepareAndOpenActivity(currentApplet, currentActivity, appletId);
+    //   }
+    // }
   }
 
   getMilliseconds = date => (date ? moment(date).toDate().getTime() : 0);
@@ -239,7 +234,7 @@ class FireBaseMessaging extends Component {
   };
 
 
-  initAndroidChannel = () => {
+  initAndroidChannel = async () => {
     if (Platform.OS === 'android') {
       const channel = new firebase.notifications.Android.Channel(
         AndroidChannelId,
@@ -248,10 +243,7 @@ class FireBaseMessaging extends Component {
       ).setDescription('MindLogger Channel');
 
       // Create the channel
-      firebase.notifications().android.createChannel(channel).then(() => {
-        // eslint-disable-next-line no-console
-        console.log(`FCM[${Platform.OS}]: Android channel created successful`, channel);
-      });
+      await firebase.notifications().android.createChannel(channel);
     }
   };
 
@@ -347,7 +339,6 @@ class FireBaseMessaging extends Component {
       title: data.title || 'Push Notification',
       subtitle: data.subtitle || null,
       data,
-      // iosBadge: prevBadges + 1,
     });
     if (isIOS) {
       const notificationsCount = await this.generateApplicationIconBadgeNumber();
@@ -383,30 +374,24 @@ class FireBaseMessaging extends Component {
 
   isBackgroundState = state => state?.match(/inactive|background/);
 
-  handleAppStateChange(nextAppState: AppStateStatus) {
+  handleAppStateChange = async (nextAppState: AppStateStatus) => {
     const { setAppStatus } = this.props;
     if (this.isBackgroundState(nextAppState) && this.appState === 'active') {
-      // eslint-disable-next-line no-console
       setAppStatus(false);
       console.log('App is going background');
       if (isIOS) {
-        this.updateApplicationIconBadgeNumber()
-          .then((iconBadgeNumber) => {
-            this.props.updateBadgeNumber(iconBadgeNumber);
-          });
+        const badgeNumber = await this.updateApplicationIconBadgeNumber();
+        updateBadgeNumber(badgeNumber);
       }
     } else if (
       this.isBackgroundState(this.appState)
       && nextAppState === 'active'
     ) {
-      // eslint-disable-next-line no-console
       setAppStatus(true);
       console.log('App is coming to foreground');
       if (isIOS) {
-        this.updateApplicationIconBadgeNumber()
-          .then((iconBadgeNumber) => {
-            this.props.updateBadgeNumber(iconBadgeNumber);
-          });
+        const badgeNumber = await this.updateApplicationIconBadgeNumber();
+        updateBadgeNumber(badgeNumber);
       }
     }
     this.appState = nextAppState;

@@ -10,15 +10,21 @@ test('it has an initial state', () => {
 });
 
 test('it replaces applets', () => {
-  expect(appletReducer(initialState, replaceApplets([
-    'foo',
-    'bar',
-  ]))).toEqual({
+  const newState = appletReducer(
+    initialState,
+    replaceApplets(['foo', 'bar']),
+  );
+
+  const currentTime = new Date();
+  newState.currentTime = currentTime;
+
+  expect(newState).toEqual({
     ...initialState,
     applets: [
       'foo',
       'bar',
     ],
+    currentTime,
   });
 });
 

@@ -12,7 +12,13 @@ import {
 } from '../../services/time';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
-import { newAppletSelector, currentAppletSelector } from '../../state/app/app.selectors';
+import {
+  newAppletSelector,
+  currentAppletSelector,
+} from '../../state/app/app.selectors';
+import { getSchedules } from '../../state/applets/applets.thunks';
+import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
+import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import { responseScheduleSelector, inProgressSelector } from '../../state/responses/responses.selectors';
 
 const dateParser = (schedule) => {
@@ -146,71 +152,122 @@ const getActivities = (applet, responseSchedule) => {
   };
 };
 
-// const useForeJobs = (callback) => {
-//   const savedCallback = useRef();
 
-//   useEffect(() => {
-//     savedCallback.current = callback;
-//   });
-
-//   useEffect(() => {
-//     function tick() {
-//       savedCallback.current();
-//     }
-
-//     const id = setInterval(tick, 1000);
-//     return () => clearInterval(id);
-//   }, []);
-// }
-
-const useInterval = (callback, delay, progress, response) => {
-  const savedCallback = useRef();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  });
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-
-    let id;
-    const leftTime = (60 - new Date().getSeconds()) * 1000;
-    const leftOutId = setTimeout(() => {
-      tick();
-      id = setInterval(tick, delay);
-    }, leftTime);
-
-    return () => {
-      clearTimeout(leftOutId);
-      if (id) {
-        clearInterval(id);
-      }
-    };
-  }, [progress, response]);
-};
-
-const ActivityList = ({ applet, appStatus, currentApplet, responseSchedule, inProgress, onPressActivity }) => {
+const ActivityList = ({
+  applet,
+  appStatus,
+  setAppStatus,
+  getSchedules,
+  scheduleUpdated,
+  setScheduleUpdated,
+  setUpdatedTime,
+  appletTime,
+  lastUpdatedTime,
+  responseSchedule,
+  inProgress,
+  onPressActivity,
+}) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
-  const delay = 60 * 1000;
+  const updateStatusDelay = 60 * 1000;
+  const updateScheduleDelay = 24 * 3600 * 1000;
   const [activities, setActivities] = useState([]);
 
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
-    setActivities(sortActivities(applet.id, newApplet.activities, inProgress, newApplet.schedule));
+    setActivities(
+      sortActivities(
+        applet.id,
+        newApplet.activities,
+        inProgress,
+        newApplet.schedule,
+      ),
+    );
   };
 
-  useInterval(stateUpdate, delay, Object.keys(inProgress).length, responseSchedule);
+  const datesAreOnSameDay = (first, second) => first.getFullYear() === second.getFullYear()
+    && first.getMonth() === second.getMonth()
+    && first.getDate() === second.getDate();
+
+  const scheduleUpdate = () => {
+    const currentTime = new Date();
+    const appletId = applet.id;
+
+    if (lastUpdatedTime[appletId]) {
+      if (
+        !datesAreOnSameDay(new Date(lastUpdatedTime[appletId]), currentTime)
+      ) {
+        const updatedTime = lastUpdatedTime;
+        updatedTime[appletId] = currentTime;
+        getSchedules(appletId.split("/")[1]);
+        setUpdatedTime(updatedTime);
+      } else {
+        const updatedTime = lastUpdatedTime;
+        updatedTime[appletId] = currentTime;
+        setUpdatedTime(updatedTime);
+      }
+    } else if (!datesAreOnSameDay(appletTime, currentTime)) {
+      const updatedTime = lastUpdatedTime;
+      updatedTime[appletId] = appletTime;
+
+      getSchedules(appletId.split("/")[1]);
+      setUpdatedTime(updatedTime);
+    } else {
+      const updatedTime = lastUpdatedTime;
+      updatedTime[appletId] = appletTime;
+
+      setUpdatedTime(updatedTime);
+    }
+  };
+
+  // useInterval(stateUpdate, updateStatusDelay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
-    if (appStatus === true) {
+    let updateId;
+    let intervalId;
+    const leftTime = (60 - new Date().getSeconds()) * 1000;
+    const leftOutId = setTimeout(() => {
       stateUpdate();
+      updateId = setInterval(stateUpdate, updateStatusDelay);
+    }, leftTime);
+
+    const currentTime = new Date();
+    const nextDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() + 1);
+    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+
+    const leftTimeoutId = setTimeout(() => {
+      scheduleUpdate();
+      intervalId = setInterval(scheduleUpdate, updateScheduleDelay);
+    }, leftTimeout);
+
+    return () => {
+      clearTimeout(leftOutId);
+      if (updateId) {
+        clearInterval(updateId);
+      }
+
+      clearTimeout(leftTimeoutId);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  });
+
+  useEffect(() => {
+    if (appStatus) {
+      stateUpdate();
+      setAppStatus(false);
     }
   }, [appStatus]);
 
   useEffect(() => {
-    setActivities(sortActivities(applet.id, currentApplet.activities, inProgress, currentApplet.schedule));
+    if (scheduleUpdated) {
+      stateUpdate();
+      setScheduleUpdated(false);
+    }
+  }, [applet.schedule]);
+
+  useEffect(() => {
+    stateUpdate();
   }, [Object.keys(inProgress).length, responseSchedule]);
 
   return (
@@ -229,19 +286,43 @@ const ActivityList = ({ applet, appStatus, currentApplet, responseSchedule, inPr
 ActivityList.propTypes = {
   applet: PropTypes.object.isRequired,
   appStatus: PropTypes.bool.isRequired,
-  currentApplet: PropTypes.object.isRequired,
+  setAppStatus: PropTypes.func.isRequired,
   responseSchedule: PropTypes.object.isRequired,
+  appletTime: PropTypes.any.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  lastUpdatedTime: PropTypes.object.isRequired,
+  setUpdatedTime: PropTypes.func.isRequired,
+  getSchedules: PropTypes.func.isRequired,
+  setScheduleUpdated: PropTypes.func.isRequired,
+  scheduleUpdated: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
   return {
+    lastUpdatedTime: state.app.lastUpdatedTime,
     appStatus: state.app.appStatus,
+    scheduleUpdated: state.applets.scheduleUpdated,
     applet: newAppletSelector(state),
+    appletTime: state.applets.currentTime,
     currentApplet: currentAppletSelector(state),
     responseSchedule: responseScheduleSelector(state),
     inProgress: inProgressSelector(state),
   };
 };
-export default connect(mapStateToProps)(ActivityList);
+
+// const mapDispatchToProps = dispatch => ({
+//   setUpdatedTime: updatedTime => dispatch(setUpdatedTime(updatedTime)),
+//   getSchedules,
+// });
+const mapDispatchToProps = {
+  setUpdatedTime,
+  getSchedules,
+  setAppStatus,
+  setScheduleUpdated,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ActivityList);
