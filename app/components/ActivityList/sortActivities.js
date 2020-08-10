@@ -31,7 +31,8 @@ export const getUnscheduled = activityList => activityList.filter(
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp
     && (!activity.lastScheduledTimestamp || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
-    && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day')),
+    && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
 export const getPastdue = activityList => activityList.filter(
