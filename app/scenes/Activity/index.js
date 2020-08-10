@@ -36,7 +36,8 @@ import {
   isNextEnabled,
   isPrevEnabled,
 } from '../../services/activityNavigation';
-import { idleTimer } from '../../services/idleTimer';
+import Timer from '../../services/timer';
+
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -54,20 +55,18 @@ class Activity extends React.Component {
   constructor() {
     super();
     this.state = { isContentError: false, idleTime: null };
+    this.idleTimer = new Timer();
   }
 
   componentDidMount() {
     this.setState({ idleTime: this.getIdleTime() }, () => {
       if (this.state.idleTime) {
-        idleTimer.subscribe(this.state.idleTime, this.handleTimeIsUp);
+        this.idleTimer.startCountdown(
+          this.state.idleTime,  // Time in seconds.
+          this.handleTimeIsUp,  // Callback.
+        );
       }
     });
-  }
-
-  componentWillUnmount() {
-    if (this.state.idleTime) {
-      idleTimer.unsubscribe();
-    }
   }
 
   get currentItem() {
@@ -148,10 +147,10 @@ class Activity extends React.Component {
           }}
           authToken={authToken}
           onContentError={() => this.setState({ isContentError: true })}
-          onAnyTouch={idleTimer.resetTimer}
+          onAnyTouch={this.idleTimer.resetCountdown}
         />
         {!fullScreen && (
-          <View onTouchStart={idleTimer.resetTimer} style={styles.buttonArea}>
+          <View onTouchStart={this.idleTimer.resetCountdown} style={styles.buttonArea}>
             {activity.items.length > 1 && (
               <ActProgress
                 index={currentScreen}
