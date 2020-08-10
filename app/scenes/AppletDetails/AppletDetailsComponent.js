@@ -10,7 +10,6 @@ import AppletCalendar from '../../components/AppletCalendar';
 import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
-import { getResponseInApplet } from '../../state/responses/responses.actions';
 
 
 const styles = StyleSheet.create({
@@ -70,6 +69,7 @@ class AppletDetailsComponent extends React.Component {
     const {
       applet,
       onPressActivity,
+      onLongPressActivity,
       // inProgress,
       appletData,
     } = this.props;
@@ -83,6 +83,7 @@ class AppletDetailsComponent extends React.Component {
               <AppletCalendar responseDates={responseDates} />
               <ActivityList
                 onPressActivity={onPressActivity}
+                onLongPressActivity={onLongPressActivity}
               />
             </View>
           </Content>
@@ -109,8 +110,7 @@ class AppletDetailsComponent extends React.Component {
   }
 
   handlePress() {
-    const { onPressBack, getResponseInApplet } = this.props;
-    getResponseInApplet(false);
+    const { onPressBack } = this.props;
     onPressBack();
   }
 
@@ -169,16 +169,15 @@ AppletDetailsComponent.propTypes = {
   appletData: PropTypes.object.isRequired,
   // inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onLongPressActivity: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,
   hasInvites: PropTypes.bool.isRequired,
-  getResponseInApplet: PropTypes.func.isRequired,
   initialTab: PropTypes.string.isRequired,
 };
 
 const mapDispatchToProps = {
-  getResponseInApplet,
 };
 
 export default connect(null, mapDispatchToProps)(AppletDetailsComponent);

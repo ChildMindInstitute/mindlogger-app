@@ -32,16 +32,6 @@ export const setResponsesDownloadProgress = (downloaded, total) => ({
   },
 });
 
-export const getResponseInActivity = response => ({
-  type: RESPONSES_CONSTANTS.GET_RESPONSE_IN_ACTIVITY,
-  payload: response,
-});
-
-export const getResponseInApplet = response => ({
-  type: RESPONSES_CONSTANTS.GET_RESPONSE_IN_APPLET,
-  payload: response,
-});
-
 export const removeResponseInProgress = activityId => ({
   type: RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS,
   payload: activityId,

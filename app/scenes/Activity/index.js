@@ -7,6 +7,7 @@ import * as R from 'ramda';
 import _ from 'lodash';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import { getStore } from '../../store';
 import {
   nextScreen,
   prevScreen,
@@ -18,10 +19,13 @@ import {
   currentScreenSelector,
 } from '../../state/responses/responses.selectors';
 import { currentAppletSelector } from '../../state/app/app.selectors';
+import { 
+  setCurrentActivity,
+  setActivitySelectionDisabled,
+} from '../../state/app/app.actions';
 import {
   setAnswer,
   setSelected,
-  getResponseInActivity,
 } from '../../state/responses/responses.actions';
 
 import { authTokenSelector } from '../../state/user/user.selectors';
@@ -36,7 +40,8 @@ import {
   isNextEnabled,
   isPrevEnabled,
 } from '../../services/activityNavigation';
-import { idleTimer } from '../../services/idleTimer';
+import Timer from '../../services/timer';
+
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -54,20 +59,19 @@ class Activity extends React.Component {
   constructor() {
     super();
     this.state = { isContentError: false, idleTime: null };
+    this.idleTimer = new Timer();
   }
 
   componentDidMount() {
+    this.props.setActivitySelectionDisabled(false);
     this.setState({ idleTime: this.getIdleTime() }, () => {
       if (this.state.idleTime) {
-        idleTimer.subscribe(this.state.idleTime, this.handleTimeIsUp);
+        this.idleTimer.startCountdown(
+          this.state.idleTime,  // Time in seconds.
+          this.handleTimeIsUp,  // Callback.
+        );
       }
     });
-  }
-
-  componentWillUnmount() {
-    if (this.state.idleTime) {
-      idleTimer.unsubscribe();
-    }
   }
 
   get currentItem() {
@@ -112,7 +116,7 @@ class Activity extends React.Component {
       currentApplet,
       setAnswer,
       currentResponse,
-      getResponseInActivity,
+      setCurrentActivity,
       authToken,
       currentScreen,
       nextScreen,
@@ -148,10 +152,10 @@ class Activity extends React.Component {
           }}
           authToken={authToken}
           onContentError={() => this.setState({ isContentError: true })}
-          onAnyTouch={idleTimer.resetTimer}
+          onAnyTouch={this.idleTimer.resetCountdown}
         />
         {!fullScreen && (
-          <View onTouchStart={idleTimer.resetTimer} style={styles.buttonArea}>
+          <View onTouchStart={this.idleTimer.resetCountdown} style={styles.buttonArea}>
             {activity.items.length > 1 && (
               <ActProgress
                 index={currentScreen}
@@ -178,9 +182,10 @@ class Activity extends React.Component {
               prevEnabled={isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
                 if (!currentScreen) {
-                  getResponseInActivity(false);
+                  setCurrentActivity(null);
                 }
                 prevScreen();
+                
                 if (isSelected) {
                   setSelected(false);
                 }
@@ -223,7 +228,8 @@ Activity.propTypes = {
   prevScreen: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
-  getResponseInActivity: PropTypes.func.isRequired,
+  setCurrentActivity: PropTypes.func.isRequired,
+  setActivitySelectionDisabled: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
 
@@ -237,12 +243,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getResponseInActivity,
+  setCurrentActivity,
   setAnswer,
   setSelected,
   nextScreen,
   prevScreen,
   completeResponse,
+  setActivitySelectionDisabled,
 };
 
 export default connect(
