@@ -10,7 +10,7 @@ import {
   getNextScheduled,
   getScheduledNotifications,
 } from '../../services/time';
-import sortActivities from './sortActivities';
+import sortActivities from './sortActivities';  
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
