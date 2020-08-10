@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
 });
 
 const AppletListComponent = ({
+  disabled,
   applets,
   invites,
   isDownloadingApplets,
@@ -99,7 +100,11 @@ const AppletListComponent = ({
         >
           {isDownloadingTargetApplet && <ActivityIndicator size="large" />}
           {applets.map(applet => (
-            <AppletListItem applet={applet} onPress={onPressApplet} key={applet.id} />
+            <AppletListItem 
+              applet={applet} 
+              disabled={disabled}
+              onPress={onPressApplet} 
+              key={applet.id} />
           ))}
           {/* {
             applets.length === 0 && isDownloadingApplets
@@ -141,6 +146,7 @@ const AppletListComponent = ({
 };
 
 AppletListComponent.propTypes = {
+  disabled: PropTypes.bool,
   applets: PropTypes.array.isRequired,
   invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,

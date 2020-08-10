@@ -14,7 +14,7 @@ import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
-  currentAppletSelector,
+  activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { getSchedules } from '../../state/applets/applets.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
@@ -155,6 +155,7 @@ const getActivities = (applet, responseSchedule) => {
 
 const ActivityList = ({
   applet,
+  activitySelectionDisabled,
   appStatus,
   setAppStatus,
   getSchedules,
@@ -166,6 +167,7 @@ const ActivityList = ({
   responseSchedule,
   inProgress,
   onPressActivity,
+  onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const updateStatusDelay = 60 * 1000;
@@ -274,7 +276,12 @@ const ActivityList = ({
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
         <ActivityListItem
+          disabled={
+            activitySelectionDisabled 
+            || (activity.status === 'scheduled' && !activity.nextAccess)
+          }
           onPress={() => onPressActivity(activity)}
+          onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
           key={activity.id || activity.text}
         />
@@ -291,6 +298,7 @@ ActivityList.propTypes = {
   appletTime: PropTypes.any.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
+  onLongPressActivity: PropTypes.func.isRequired,
   lastUpdatedTime: PropTypes.object.isRequired,
   setUpdatedTime: PropTypes.func.isRequired,
   getSchedules: PropTypes.func.isRequired,
@@ -305,7 +313,7 @@ const mapStateToProps = (state) => {
     scheduleUpdated: state.applets.scheduleUpdated,
     applet: newAppletSelector(state),
     appletTime: state.applets.currentTime,
-    currentApplet: currentAppletSelector(state),
+    activitySelectionDisabled: activitySelectionDisabledSelector(state),
     responseSchedule: responseScheduleSelector(state),
     inProgress: inProgressSelector(state),
   };

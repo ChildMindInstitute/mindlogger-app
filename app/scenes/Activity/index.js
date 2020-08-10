@@ -7,6 +7,7 @@ import * as R from 'ramda';
 import _ from 'lodash';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import { getStore } from '../../store';
 import {
   nextScreen,
   prevScreen,
@@ -18,10 +19,13 @@ import {
   currentScreenSelector,
 } from '../../state/responses/responses.selectors';
 import { currentAppletSelector } from '../../state/app/app.selectors';
+import { 
+  setCurrentActivity,
+  setActivitySelectionDisabled,
+} from '../../state/app/app.actions';
 import {
   setAnswer,
   setSelected,
-  getResponseInActivity,
 } from '../../state/responses/responses.actions';
 
 import { authTokenSelector } from '../../state/user/user.selectors';
@@ -59,6 +63,7 @@ class Activity extends React.Component {
   }
 
   componentDidMount() {
+    this.props.setActivitySelectionDisabled(false);
     this.setState({ idleTime: this.getIdleTime() }, () => {
       if (this.state.idleTime) {
         this.idleTimer.startCountdown(
@@ -111,7 +116,7 @@ class Activity extends React.Component {
       currentApplet,
       setAnswer,
       currentResponse,
-      getResponseInActivity,
+      setCurrentActivity,
       authToken,
       currentScreen,
       nextScreen,
@@ -177,9 +182,10 @@ class Activity extends React.Component {
               prevEnabled={isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
                 if (!currentScreen) {
-                  getResponseInActivity(false);
+                  setCurrentActivity(null);
                 }
                 prevScreen();
+                
                 if (isSelected) {
                   setSelected(false);
                 }
@@ -222,7 +228,8 @@ Activity.propTypes = {
   prevScreen: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
-  getResponseInActivity: PropTypes.func.isRequired,
+  setCurrentActivity: PropTypes.func.isRequired,
+  setActivitySelectionDisabled: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
 
@@ -236,12 +243,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  getResponseInActivity,
+  setCurrentActivity,
   setAnswer,
   setSelected,
   nextScreen,
   prevScreen,
   completeResponse,
+  setActivitySelectionDisabled,
 };
 
 export default connect(
