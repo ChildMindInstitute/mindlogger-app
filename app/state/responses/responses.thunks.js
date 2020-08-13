@@ -21,8 +21,10 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setSchedule, replaceAppletResponses,
-} from './responses.actions';
+  setSchedule,
+  replaceAppletResponses,
+  setActivityOpened,
+} from "./responses.actions";
 import {
   setCurrentActivity,
 } from '../app/app.actions';
@@ -80,6 +82,7 @@ export const startResponse = activity => (dispatch, getState) => {
           onPress: () => {
             const itemResponses = R.pathOr([], ['inProgress', applet.id + activity.id, 'responses'], responses);
             cleanFiles(itemResponses);
+            dispatch(setActivityOpened(true));
             dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
             dispatch(setCurrentScreen(applet.id, activity.id, 0));
             dispatch(setCurrentActivity(activity.id));
@@ -89,6 +92,7 @@ export const startResponse = activity => (dispatch, getState) => {
         {
           text: 'Resume',
           onPress: () => {
+            dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(applet.id, activity.id, currentScreen));
             dispatch(setCurrentActivity(activity.id));
             Actions.push('take_act');
@@ -178,6 +182,7 @@ export const nextScreen = () => (dispatch, getState) => {
 
   if (next === -1) {
     dispatch(completeResponse());
+    dispatch(setCurrentActivity(null));
     Actions.push('activity_thanks');
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
@@ -194,6 +199,7 @@ export const prevScreen = () => (dispatch, getState) => {
 
   if (prev === -1) {
     Actions.pop();
+    dispatch(setCurrentActivity(null));
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, prev));
   }

@@ -1,12 +1,14 @@
 {
     "name": "MindLogger",
-    "version": "0.13.5",
+    "version": "0.13.6",
     "private": true,
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
         "server": "node node_modules/.bin/react-native start",
         "ios": "./node_modules/.bin/react-native run-ios",
         "android": "./node_modules/.bin/react-native run-android",
+        "log-ios": "./node_modules/.bin/react-native log-ios",
+        "log-android": "./node_modules/.bin/react-native log-android",
         "lint": "eslint App.js app/**",
         "test": "jest",
         "eject-native-base": "node node_modules/native-base/ejectTheme.js",

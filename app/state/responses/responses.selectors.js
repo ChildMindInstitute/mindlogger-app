@@ -12,6 +12,8 @@ export const downloadProgressSelector = R.path(['responses', 'downloadProgress']
 
 export const inProgressSelector = R.path(['responses', 'inProgress']);
 
+export const activityOpenedSelector = R.path(['responses', 'activityOpened']);
+
 export const responseScheduleSelector = R.path(['responses', 'schedule']);
 
 export const currentAppletResponsesSelector = createSelector(

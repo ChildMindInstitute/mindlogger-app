@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.13.5] - 2020-08-06
+## [0.13.6] - 2020-08-13
 - Fix one-time completion event issue
+- Fix double clicking of applet and activity buttons
+
+## [0.13.5] - 2020-08-10
+- Adds documentation and simplifies code where possible
+- Refactors FireBaseMessaging class
+- Fixes applet/activity cards not working after pressing the back button
+- Fixes white screen issue
+- Fixed idle timer
 
 ## [0.13.4] - 2020-08-04
 - Fix app navigation to be landed on home screen 

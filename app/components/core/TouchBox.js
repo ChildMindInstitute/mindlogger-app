@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Actions } from 'react-native-router-flux';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import {
-  getResponseInActivity,
-  getResponseInApplet,
-} from '../../state/responses/responses.actions';
+import { activityOpenedSelector } from '../../state/responses/responses.selectors';
+import { setActivityOpened } from '../../state/responses/responses.actions';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -28,103 +25,79 @@ const styles = StyleSheet.create({
   },
 });
 
-// const withPreventDoubleClick = (WrappedComponent) => {
-//   class PreventDoubleClick extends React.PureComponent {
-//     onPress = debounce(this.debouncedOnPress, 300, { leading: true, trailing: false });
+class TouchBox extends React.Component {
+  constructor(props) {
+    super(props);
 
-//     debouncedOnPress = () => {
-//       this.props.onPress && this.props.onPress();
-//     }
+    this.timer = null;
+    // this.handlePress = _.debounce(this.handlePress, 750);
+    this.state = {
+      selected: false,
+    };
+  }
 
-//     render() {
-//       return <WrappedComponent {...this.props} onPress={this.onPress} />;
-//     }
-//   }
+  componentDidUpdate() {
+    const { setActivityOpened, activityOpened } = this.props;
 
-//   PreventDoubleClick.displayName = `withPreventDoubleClick(${WrappedComponent.displayName ||WrappedComponent.name})`
-//   return PreventDoubleClick;
-// };
-
-// const TouchableOpacityEx = withPreventDoubleClick(TouchableOpacity);
-
-const TouchBox = ({
-  children,
-  activity,
-  onPress,
-  getResponseInActivity,
-  getResponseInApplet,
-  isActivity,
-  isApplet,
-}) => {
-  const [touched, setTouched] = useState(false);
-  const [appletTouched, setAppletTouched] = useState(false);
-
-  useEffect(() => {
-    if (activity) {
-      getResponseInActivity(false);
-    } else {
-      getResponseInApplet(false);
+    if (activityOpened) {
+      this.timer = setTimeout(() => {
+        this.handleSelected();
+      }, 750);
+      setActivityOpened(false);
     }
-    // setTouched(false);
-  }, []);
+  }
 
-  const handlePress = () => {
+  handleSelected = () => {
+    this.setState({ selected: false });
+    clearTimeout(this.timer);
+  };
 
-    if (activity) {
-      if (!touched || !isActivity) {
-        onPress();
+  onHandlePress = () => {
+    // this.handlePress();
+    const { activityStatus } = this.props;
+    const { selected } = this.state;
+    const { onPress } = this.props;
+
+    if (!selected) {
+      this.setState({ selected: true });
+      onPress();
+      if (activityStatus !== 'in-progress') {
+        this.timer = setTimeout(() => { this.handleSelected(); }, 500);
       }
-      setTouched(true);
-      getResponseInActivity(true);
-    } else {
-      getResponseInApplet(true);
-      if (!appletTouched) {
-        onPress();
-      }
-      setAppletTouched(true);
     }
   };
 
-  useEffect(() => {
-    if (!activity) {
-      setAppletTouched(isApplet);
-    }
-  }, [isApplet]);
+  render() {
+    const { disabled, onLongPress, children } = this.props;
 
-  return (
-    <TouchableOpacity
-      disabled={
-        activity && activity.status === 'scheduled' && !activity.nextAccess
-      }
-      onPress={handlePress}
-    >
-      <View style={styles.box}>{children}</View>
-    </TouchableOpacity>
-  );
-};
+    return (
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={() => this.onHandlePress()}
+        onLongPress={onLongPress}
+      >
+        <View style={styles.box}>{children}</View>
+      </TouchableOpacity>
+    );
+  }
+}
 
 TouchBox.propTypes = {
   children: PropTypes.node.isRequired,
-  activity: PropTypes.object,
+  disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
-  getResponseInActivity: PropTypes.func.isRequired,
-  getResponseInApplet: PropTypes.func.isRequired,
-  isApplet: PropTypes.bool.isRequired,
-  isActivity: PropTypes.bool.isRequired,
-};
-
-TouchBox.defaultProps = {
-  activity: null,
+  onLongPress: PropTypes.func,
+  activityStatus: PropTypes.string,
+  activityOpened: PropTypes.bool.isRequired,
+  setActivityOpened: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({
-  isActivity: state.responses.isActivity,
-  isApplet: state.responses.isApplet,
+  activityOpened: activityOpenedSelector(state),
 });
 
 const mapDispatchToProps = {
-  getResponseInActivity,
-  getResponseInApplet,
+  setActivityOpened,
 };
 
 export default connect(

@@ -1,6 +1,11 @@
 import APPLET_CONSTANTS from './applets.constants';
 
 export const initialState = {
+  /**
+   * List of applets for the current logged in account.
+   *
+   * @type {object}.
+   */
   applets: [],
   scheduleUpdated: false,
   currentTime: new Date(),
@@ -25,6 +30,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         applets: action.payload,
         currentTime: new Date(),
+      };
+    case APPLET_CONSTANTS.SET_SELECTION_DISABLED:
+      return { 
+        ...state, 
+        selectionDisabled: action.payload 
       };
     case APPLET_CONSTANTS.REPLACE_TARGET_APPLET:
       return {
