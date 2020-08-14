@@ -65,8 +65,9 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
   }
   return (
     <View style={styles.box}>
-      <TouchBox 
+      <TouchBox
         disabled={disabled}
+        activityStatus={activity.status}
         onPress={() => onPress(activity)}
         onLongPress={() => onLongPress(activity)}
       >

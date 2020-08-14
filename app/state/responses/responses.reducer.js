@@ -12,6 +12,7 @@ export const initialState = {
   },
   uploadQueue: [],
   schedule: {},
+  activityOpened: false,
 };
 
 const replaceAppletResponses = (state, action) => {
@@ -40,6 +41,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isSelected: action.payload,
+      };
+    case RESPONSES_CONSTANTS.OPEN_ACTIVITY:
+      return {
+        ...state,
+        activityOpened: action.payload,
       };
     case RESPONSES_CONSTANTS.REPLACE_RESPONSES:
       return {

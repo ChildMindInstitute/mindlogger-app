@@ -43,11 +43,13 @@ const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let { lastScheduledTimeout } = output[uri];
+    let { invalid } = output[uri];
     let { completion } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
       completion = e.data.completion;
+      invalid = e.valid;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -57,6 +59,7 @@ const dateParser = (schedule) => {
       );
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
+        invalid = output[uri].valid;
         completion = output[uri].completion;
       }
     }
@@ -81,6 +84,7 @@ const dateParser = (schedule) => {
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      invalid,
       lastScheduledTimeout,
       nextScheduledTimeout,
       completion,
@@ -108,6 +112,7 @@ const getActivities = (applet, responseSchedule) => {
     const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
     const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
     const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
+    const invalid = R.pathOr(null, ['invalid'], scheduledDateTimes);
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
     let nextAccess = false;
     let prevTimeout = null;
@@ -137,6 +142,7 @@ const getActivities = (applet, responseSchedule) => {
       lastTimeout: prevTimeout,
       nextTimeout: scheduledTimeout,
       currentTime: new Date().getTime(),
+      invalid,
       nextAccess,
       isOverdue:
         lastScheduled && moment(lastResponse) < moment(lastScheduled),
@@ -176,6 +182,7 @@ const ActivityList = ({
 
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
+
     setActivities(
       sortActivities(
         applet.id,
@@ -277,8 +284,7 @@ const ActivityList = ({
       {activities.map(activity => (
         <ActivityListItem
           disabled={
-            activitySelectionDisabled 
-            || (activity.status === 'scheduled' && !activity.nextAccess)
+            activity.status === 'scheduled' && !activity.nextAccess
           }
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
