@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.7] - 2020-08-15
+- Disallow double clicking throughout the MindLogger App
+ * Settings screen (After double tapping on the cog icon)
+ * Sign up screen (After double tapping on the "Ne User" link)
+ * Forgot Password screen (After double tapping on the "Forgot password" link)
+ * About MindLogger (After double tapping on the "What is MindLogger?" link)
+ * Change Password screen (After double tapping on the "Change Password" item)
+
 ## [0.13.6] - 2020-08-13
 - Fix one-time completion event issue
 - Fix double clicking of applet and activity buttons

@@ -30,39 +30,32 @@ class TouchBox extends React.Component {
     super(props);
 
     this.timer = null;
+    this.selectedTime = 0;
     // this.handlePress = _.debounce(this.handlePress, 750);
-    this.state = {
-      selected: false,
-    };
+    // this.state = {
+    //   selectedTime: 0,
+    // };
   }
 
   componentDidUpdate() {
     const { setActivityOpened, activityOpened } = this.props;
 
     if (activityOpened) {
-      this.timer = setTimeout(() => {
-        this.handleSelected();
-      }, 750);
+      this.selectedTime = Date.now();
       setActivityOpened(false);
     }
   }
 
-  handleSelected = () => {
-    this.setState({ selected: false });
-    clearTimeout(this.timer);
-  };
-
   onHandlePress = () => {
     // this.handlePress();
     const { activityStatus } = this.props;
-    const { selected } = this.state;
     const { onPress } = this.props;
+    const currentTime = Date.now();
 
-    if (!selected) {
-      this.setState({ selected: true });
+    if (currentTime - this.selectedTime > 1000) {
       onPress();
       if (activityStatus !== 'in-progress') {
-        this.timer = setTimeout(() => { this.handleSelected(); }, 500);
+        this.selectedTime = currentTime;
       }
     }
   };

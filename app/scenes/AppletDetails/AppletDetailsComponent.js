@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
+import _ from 'lodash';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -27,11 +28,13 @@ const styles = StyleSheet.create({
 
 // eslint-disable-next-line
 class AppletDetailsComponent extends React.Component {
-
   constructor(props) {
     super(props);
+    // this.handlePressSettings = _.debounce(this.handlePressSettings, 200);
+    this.onPressTime = 0;
     this.state = {
       selectedTab: props.initialTab,
+      // onSettings: 0,
     };
   }
 
@@ -39,7 +42,7 @@ class AppletDetailsComponent extends React.Component {
     // TODO: a quick hack to add a dot for today's date
     // if the user has responded today. This is instead of
     // refreshing all the applets
-    const { applet/* , appletData */ } = this.props;
+    const { applet /* , appletData */ } = this.props;
     // let allDates = [];
     // const mapper = (resp) => {
     //   const d = resp.map(r => r.date);
@@ -61,6 +64,16 @@ class AppletDetailsComponent extends React.Component {
     // }
 
     return applet.responseDates;
+  }
+
+  handlePressSettings() {
+    const { onPressSettings } = this.props;
+    const currentTime = Date.now();
+
+    if (currentTime - this.onPressTime > 350) {
+      this.onPressTime = currentTime;
+      onPressSettings();
+    }
   }
 
   // eslint-disable-next-line
@@ -111,16 +124,16 @@ class AppletDetailsComponent extends React.Component {
 
   handlePress() {
     const { onPressBack } = this.props;
-    onPressBack();
+    const currentTime = Date.now();
+
+    if (currentTime - this.onPressTime > 250) {
+      this.onPressTime = currentTime;
+      onPressBack();
+    }
   }
 
   render() {
-    const {
-      applet,
-      onPressSettings,
-      hasInvites,
-      primaryColor,
-    } = this.props;
+    const { applet, hasInvites, primaryColor } = this.props;
 
     const { selectedTab } = this.state;
 
@@ -130,10 +143,7 @@ class AppletDetailsComponent extends React.Component {
         <Header style={{ backgroundColor: primaryColor }}>
           <Left>
             <Button transparent onPress={() => this.handlePress()}>
-              <Icon
-                ios="ios-home"
-                android="md-home"
-              />
+              <Icon ios="ios-home" android="md-home" />
               {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>
@@ -141,7 +151,7 @@ class AppletDetailsComponent extends React.Component {
             <Title>{applet.name.en}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
-            <Button transparent onPress={onPressSettings}>
+            <Button transparent onPress={() => { this.handlePressSettings(); }}>
               <Icon type="FontAwesome" name="gear" />
             </Button>
           </Right>
@@ -150,7 +160,8 @@ class AppletDetailsComponent extends React.Component {
           style={{ width: '100%', height: '100%', flex: 1 }}
           source={{
             // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
-            uri: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
+            uri:
+              'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
           }}
         >
           {this.renderActiveTab()}
