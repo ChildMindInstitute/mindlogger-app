@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.8] - 2020-08-17
+- Disallow double clicking throughout the MindLogger App
+ * After logging out and tapping the system "Back" button the app moves to the background mode and the user stays on the log in screen
+ * When the app is launched and the user is logged in after tapping the system "Back" button the app moves to the background mode
+ * After installing an launching the app and tapping the the system "Back" button the app moves to the background mode and the user stays on the log in screen
+
 ## [0.13.7] - 2020-08-15
 - Disallow double clicking throughout the MindLogger App
  * Settings screen (After double tapping on the cog icon)
