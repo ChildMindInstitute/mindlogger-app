@@ -10,13 +10,13 @@ import {
 import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
 import { sync } from '../../state/app/app.thunks';
-import { 
-  setCurrentApplet, 
+import {
+  setCurrentApplet,
   toggleMobileDataAllowed,
   setAppletSelectionDisabled,
 } from '../../state/app/app.actions';
-import { 
-  skinSelector, 
+import {
+  skinSelector,
   mobileDataAllowedSelector,
   appletSelectionDisabledSelector,
 } from '../../state/app/app.selectors';
@@ -59,6 +59,13 @@ class AppletList extends Component {
     this.props.setAppletSelectionDisabled(false);
   }
 
+  componentDidUpdate() {
+    const { user } = this.props;
+    if (!user) {
+      Actions.replace('login');
+    }
+  }
+
   render() {
     const {
       appletSelectionDisabled,
@@ -71,6 +78,7 @@ class AppletList extends Component {
       toggleMobileDataAllowed,
       user,
     } = this.props;
+
     return (
       <AppletListComponent
         disabled={appletSelectionDisabled}
