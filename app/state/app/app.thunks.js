@@ -38,7 +38,7 @@ export const syncTargetApplet = (appletId, cb) => (dispatch, getState) => {
 };
 
 const doLogout = (dispatch, getState) => {
-  Actions.push('login'); // Set screen back to login
+  // Actions.push('login'); // Should use `replace` instead of `push`
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
   const inProgress = inProgressSelector(state);
