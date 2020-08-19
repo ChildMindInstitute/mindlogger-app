@@ -37,7 +37,7 @@ class Login extends Component {
   onRegister = () => {
     const currentTime = Date.now();
 
-    if (currentTime - this.onClickTime > 250) {
+    if (currentTime - this.onClickTime > 350) {
       this.onClickTime = currentTime;
       Actions.sign_up();
     }
@@ -46,7 +46,7 @@ class Login extends Component {
   onChangeStudy = () => {
     const currentTime = Date.now();
 
-    if (currentTime - this.onClickTime > 250) {
+    if (currentTime - this.onClickTime > 350) {
       this.onClickTime = currentTime;
       Actions.change_study();
     }
@@ -55,7 +55,7 @@ class Login extends Component {
   onForgotPassword = () => {
     const currentTime = Date.now();
 
-    if (currentTime - this.onClickTime > 250) {
+    if (currentTime - this.onClickTime > 350) {
       this.onClickTime = currentTime;
       Actions.forgot_password();
     }
@@ -64,7 +64,7 @@ class Login extends Component {
   onAbout = () => {
     const currentTime = Date.now();
 
-    if (currentTime - this.onClickTime > 250) {
+    if (currentTime - this.onClickTime > 350) {
       this.onClickTime = currentTime;
       Actions.about_app();
     }
