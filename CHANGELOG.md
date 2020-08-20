@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.10] - 2020-08-19
+- The App goes to background mode when 'Back' button is tapped on login screen
+- The App goes to background mode and save the logged in status when 'Back' button is tapped on home screen (logged in status)
+- Otherwise, the App goes to the previous scene
+
 ## [0.13.9] - 2020-08-19
 - Disallow double clicking of password_change button
 - Prevent double clicking of `unscheduled` & `past-due` activities

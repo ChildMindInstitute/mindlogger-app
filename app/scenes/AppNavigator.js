@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BackHandler } from 'react-native';
+import { Alert, BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
 import { Router, Scene, Lightbox, Actions, Modal } from 'react-native-router-flux';
 import getTheme from '../../native-base-theme/components';
@@ -67,16 +67,49 @@ const Navigator = Actions.create(
 
 class AppNavigator extends Component {
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      Actions.pop();
-      return true;
-    });
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButton,
+    );
   }
-
 
   componentWillUnmount() {
-    this.backHandler.remove();
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
   }
+
+  handleBackButton = () => {
+    console.log('current route:', Actions.currentScene);
+    if (
+      Actions.currentScene === 'login'
+      || Actions.currentScene === 'applet_list'
+    ) {
+      Alert.alert(
+        'Exit App',
+        'Exiting the application?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => BackHandler.exitApp(),
+          },
+        ],
+        {
+          cancelable: false,
+        },
+      );
+      return true;
+    }
+    if (Actions.currentScene === 'applet_details') {
+      Actions.push('applet_list');
+      return true;
+    }
+    Actions.pop();
+    return true;
+  };
 
   render() {
     return (
