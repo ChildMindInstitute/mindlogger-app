@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.9] - 2020-08-19
+- Disallow double clicking of password_change button
+- Prevent double clicking of `unscheduled` & `past-due` activities
+
 ## [0.13.8] - 2020-08-17
 - Disallow app navigation within the app after logout
  * After logging out and tapping the system "Back" button the app moves to the background mode and the user stays on the log in screen

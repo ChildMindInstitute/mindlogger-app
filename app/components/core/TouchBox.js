@@ -53,10 +53,10 @@ class TouchBox extends React.Component {
     const currentTime = Date.now();
 
     if (currentTime - this.selectedTime > 1000) {
-      onPress();
       if (activityStatus !== 'in-progress') {
         this.selectedTime = currentTime;
       }
+      onPress();
     }
   };
 

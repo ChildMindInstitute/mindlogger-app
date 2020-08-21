@@ -16,7 +16,20 @@ import { colors } from '../../themes/colors';
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showAlert: false };
+
+    this.onPressTime = 0;
+    this.state = {
+      showAlert: false,
+      // onPressTime: 0,
+    };
+  }
+
+  onPressChange = () => {
+    const currentTime = Date.now();
+
+    if (currentTime - this.onPressTime > 350) {
+      Actions.push('change_password');
+    }
   }
 
   showAlert = () => {
@@ -67,7 +80,7 @@ class SettingsScreen extends React.Component {
             <ListItem
               button
               bordered
-              onPress={() => Actions.push('change_password')}
+              onPress={this.onPressChange}
             >
               <Left>
                 <Text>Change Password</Text>
