@@ -103,7 +103,7 @@ class ChangeStudy extends Component {
     const { skin } = this.props;
 
     const header = (
-      <Header style={{ backgroundColor: skin.colors.primary }}>
+      <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
         <Left>
           <Button transparent onPress={() => Actions.pop()}>
             <Icon
@@ -112,7 +112,7 @@ class ChangeStudy extends Component {
             />
           </Button>
         </Left>
-        <Right>
+        <Right style={{ paddingTop: 9 }}>
           <Button transparent block onPress={this.toggleQrScanner}>
             <Text>{ this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR' }</Text>
           </Button>

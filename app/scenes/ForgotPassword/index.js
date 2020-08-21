@@ -45,13 +45,13 @@ class ForgotPassword extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: 8 }}>
             <Title>Forgot password</Title>
           </Body>
           <Right />

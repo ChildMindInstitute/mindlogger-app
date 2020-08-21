@@ -140,14 +140,14 @@ class AppletDetailsComponent extends React.Component {
     return (
       <Container style={[styles.container, { flex: 1 }]}>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: primaryColor }}>
+        <Header style={{ backgroundColor: primaryColor, paddingTop: '3.75%' }}>
           <Left>
             <Button transparent onPress={() => this.handlePress()}>
               <Icon ios="ios-home" android="md-home" />
               {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: 9 }}>
             <Title>{applet.name.en}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>

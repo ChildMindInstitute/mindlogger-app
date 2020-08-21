@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.11] - 2020-08-20
+- Fix header bar to be not close from status bar of the phone
+
 ## [0.13.10] - 2020-08-19
 - The App goes to background mode when 'Back' button is tapped on login screen
 - The App goes to background mode and save the logged in status when 'Back' button is tapped on home screen (logged in status)

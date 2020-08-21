@@ -39,13 +39,13 @@ class SignUp extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: 9 }}>
             <Title>New User</Title>
           </Body>
           <Right />

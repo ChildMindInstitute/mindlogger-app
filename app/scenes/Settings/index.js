@@ -50,7 +50,7 @@ class SettingsScreen extends React.Component {
 
     return (
       <Container>
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
           <Left>
             <Button transparent onPress={Actions.pop}>
               <Icon
@@ -59,7 +59,7 @@ class SettingsScreen extends React.Component {
               />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: 9 }}>
             <Title>User Settings</Title>
           </Body>
           <Right />

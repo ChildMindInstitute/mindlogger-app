@@ -84,13 +84,13 @@ class AboutApp extends Component { // eslint-disable-line
       return (
         <Container style={styles.container}>
           <StatusBar barStyle="light-content" />
-          <Header hasSubtitle style={{ backgroundColor: skin.colors.primary }}>
+          <Header hasSubtitle style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
             <Left>
               <Button transparent onPress={this.onClose}>
                 <Icon name="close" />
               </Button>
             </Left>
-            <Body>
+            <Body style={{ paddingTop: 10 }}>
               <Title>About MindLogger {packageJson.version}</Title>
             </Body>
             <Right />

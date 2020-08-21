@@ -37,7 +37,7 @@ class AppletSettings extends Component {
 
       return (
         <Container>
-          <Header style={{ backgroundColor: skin.colors.primary }}>
+          <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
             <Left>
               <Button transparent onPress={Actions.pop}>
                 <Icon
@@ -46,7 +46,7 @@ class AppletSettings extends Component {
                 />
               </Button>
             </Left>
-            <Body>
+            <Body style={{ paddingTop: 8 }}>
               <Title>Settings</Title>
             </Body>
             <Right />
