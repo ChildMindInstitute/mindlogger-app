@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StyleSheet, StatusBar, View, ImageBackground } from 'react-native';
+import {
+  StyleSheet,
+  StatusBar,
+  View,
+  ImageBackground,
+  Platform,
+} from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import _ from 'lodash';
 import { colors } from '../../theme';
@@ -12,6 +18,8 @@ import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
 
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 const styles = StyleSheet.create({
   container: {
@@ -140,18 +148,28 @@ class AppletDetailsComponent extends React.Component {
     return (
       <Container style={[styles.container, { flex: 1 }]}>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: primaryColor, paddingTop: '3.75%' }}>
+        <Header
+          style={{
+            backgroundColor: primaryColor,
+            paddingTop: IOSHeaderPadding,
+          }}
+        >
           <Left>
             <Button transparent onPress={() => this.handlePress()}>
               <Icon ios="ios-home" android="md-home" />
               {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>
-          <Body style={{ paddingTop: 9 }}>
+          <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title>{applet.name.en}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
-            <Button transparent onPress={() => { this.handlePressSettings(); }}>
+            <Button
+              transparent
+              onPress={() => {
+                this.handlePressSettings();
+              }}
+            >
               <Icon type="FontAwesome" name="gear" />
             </Button>
           </Right>

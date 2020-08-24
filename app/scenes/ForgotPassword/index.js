@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -20,6 +20,9 @@ import { forgotPassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
+
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 8 : 0;
 
 class ForgotPassword extends Component {
   onSubmit = (body) => {
@@ -45,19 +48,32 @@ class ForgotPassword extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
+        <Header
+          style={{
+            backgroundColor: skin.colors.primary,
+            paddingTop: IOSHeaderPadding,
+          }}
+        >
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
             </Button>
           </Left>
-          <Body style={{ paddingTop: 8 }}>
+          <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title>Forgot password</Title>
           </Body>
           <Right />
         </Header>
-        <View style={[styles.container2, { backgroundColor: skin.colors.primary }]}>
-          <ForgotPasswordForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
+        <View
+          style={[
+            styles.container2,
+            { backgroundColor: skin.colors.primary },
+          ]}
+        >
+          <ForgotPasswordForm
+            onSubmit={this.onSubmit}
+            primaryColor={skin.colors.primary}
+          />
         </View>
       </Container>
     );

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, Image, Text } from 'react-native';
+import { StatusBar, Image, Text, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Content, Button, Icon, View, Header, Right, Body, Title, Left } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -10,6 +10,9 @@ import { skinSelector } from '../../state/app/app.selectors';
 import { Markdown } from '../../components/core';
 
 const logoImage = require('../../../img/color_logo.png');
+
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 10 : 0;
 
 const mindloggerAbout = `
 ### What is MindLogger?
@@ -84,31 +87,32 @@ class AboutApp extends Component { // eslint-disable-line
       return (
         <Container style={styles.container}>
           <StatusBar barStyle="light-content" />
-          <Header hasSubtitle style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
+          <Header
+            hasSubtitle
+            style={{
+              backgroundColor: skin.colors.primary,
+              paddingTop: IOSHeaderPadding,
+            }}
+          >
             <Left>
               <Button transparent onPress={this.onClose}>
                 <Icon name="close" />
               </Button>
             </Left>
-            <Body style={{ paddingTop: 10 }}>
+            <Body style={{ paddingTop: IOSBodyPadding }}>
               <Title>About MindLogger {packageJson.version}</Title>
             </Body>
             <Right />
           </Header>
           <Content>
             <View style={styles.content}>
-              <Markdown>
-                {mindloggerAbout}
-              </Markdown>
+              <Markdown>{mindloggerAbout}</Markdown>
               <Text>
-                  Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.
+                Unless stated elsewhere, icons are drawn from OpenMoji and
+                NounProject.
               </Text>
               <View>
-                <Image
-                  square
-                  style={styles.logo}
-                  source={logoImage}
-                />
+                <Image square style={styles.logo} source={logoImage} />
               </View>
             </View>
           </Content>

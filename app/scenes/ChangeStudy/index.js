@@ -23,6 +23,9 @@ import { showToast } from '../../state/app/app.thunks';
 import ChangeStudyForm from './ChangeStudyForm';
 import config from '../../config';
 
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+
 class ChangeStudy extends Component {
   constructor(props) {
     super(props);
@@ -103,18 +106,22 @@ class ChangeStudy extends Component {
     const { skin } = this.props;
 
     const header = (
-      <Header style={{ backgroundColor: skin.colors.primary, paddingTop: '3.5%' }}>
+      <Header
+        style={{
+          backgroundColor: skin.colors.primary,
+          paddingTop: IOSHeaderPadding,
+        }}
+      >
         <Left>
           <Button transparent onPress={() => Actions.pop()}>
-            <Icon
-              ios="ios-arrow-back"
-              android="md-arrow-back"
-            />
+            <Icon ios="ios-arrow-back" android="md-arrow-back" />
           </Button>
         </Left>
-        <Right style={{ paddingTop: 9 }}>
+        <Right style={{ paddingTop: IOSBodyPadding }}>
           <Button transparent block onPress={this.toggleQrScanner}>
-            <Text>{ this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR' }</Text>
+            <Text>
+              {this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR'}
+            </Text>
           </Button>
         </Right>
       </Header>
