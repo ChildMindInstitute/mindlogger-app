@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -21,6 +21,9 @@ import { signUp } from '../../services/network';
 import styles from './styles';
 import SignupForm from './SignupForm';
 
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+
 class SignUp extends Component {
   onSubmit = (body) => {
     const { signUpSuccessful } = this.props;
@@ -39,19 +42,32 @@ class SignUp extends Component {
     return (
       <Container>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header
+          style={{
+            backgroundColor: skin.colors.primary,
+            paddingTop: IOSHeaderPadding,
+          }}
+        >
           <Left>
             <Button transparent onPress={() => Actions.pop()}>
               <Icon name="close" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title>New User</Title>
           </Body>
           <Right />
         </Header>
-        <View style={[styles.container2, { backgroundColor: skin.colors.primary }]}>
-          <SignupForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
+        <View
+          style={[
+            styles.container2,
+            { backgroundColor: skin.colors.primary },
+          ]}
+        >
+          <SignupForm
+            onSubmit={this.onSubmit}
+            primaryColor={skin.colors.primary}
+          />
         </View>
       </Container>
     );
