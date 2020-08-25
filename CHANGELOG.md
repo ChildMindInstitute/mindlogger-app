@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.12] - 2020-08-24
+- Fix race conditions caused by setTimeout and setInterval not working on background state 
+
 ## [0.13.11] - 2020-08-20
 - Fix header bar to be not close from status bar of the phone
 
