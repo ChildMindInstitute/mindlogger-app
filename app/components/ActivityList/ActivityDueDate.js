@@ -38,6 +38,18 @@ const ActivityDueDate = ({ activity }) => {
       </LittleText>
     );
   }
+  if (activity.status === 'pastdue' && activity.extendedTime && activity.extendedTime.allow) {
+    const leftDays = activity.extendedTime.days - Math.floor(Math.abs(new Date() - activity.lastScheduledTimestamp) / (1000 * 60 * 60 * 24));
+    return (
+      <LittleText style={styles.textStyles}>
+        {activity.extendedTime.days > 0
+          ? activity.extendedTime.days === 1
+            ? `Available: ${activity.extendedTime.days} day`
+            : `Available: ${activity.extendedTime.days} days`
+          : `Available: 12:00 AM to ${prevScheduledEndTime}`}
+      </LittleText>
+    );
+  }
   if (
     activity.status === 'pastdue'
     && (activity.lastTimeout === 86340000

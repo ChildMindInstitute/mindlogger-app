@@ -17,17 +17,17 @@ import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
-import { activitiesSelector } from "./applets.selectors";
-import { replaceTargetAppletSchedule } from "./applets.actions";
-import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
-import { setCurrentApplet } from '../app/app.actions';
-import {
+import { activitiesSelector } from './applets.selectors';
+import { replaceTargetAppletSchedule,
   setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
   saveAppletResponseData, replaceTargetApplet, setDownloadingTargetApplet,
 } from './applets.actions';
+import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
+import { setCurrentApplet } from '../app/app.actions';
+
 import { sync } from '../app/app.thunks';
 import { transformApplet } from '../../models/json-ld';
 
@@ -73,7 +73,6 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
-      console.log('--->', applets);
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets.filter(

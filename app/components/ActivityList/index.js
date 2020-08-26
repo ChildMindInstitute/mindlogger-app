@@ -10,7 +10,7 @@ import {
   getNextScheduled,
   getScheduledNotifications,
 } from '../../services/time';
-import sortActivities from './sortActivities';  
+import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
@@ -43,6 +43,7 @@ const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let { lastScheduledTimeout } = output[uri];
+    let { extendedTime } = output[uri];
     let { invalid } = output[uri];
     let { completion } = output[uri];
 
@@ -50,6 +51,7 @@ const dateParser = (schedule) => {
       lastScheduledTimeout = e.data.timeout;
       completion = e.data.completion;
       invalid = e.valid;
+      extendedTime = e.data.extendedTime;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -61,6 +63,7 @@ const dateParser = (schedule) => {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
         invalid = output[uri].valid;
         completion = output[uri].completion;
+        extendedTime = output[uri].extendedTime;
       }
     }
 
@@ -84,6 +87,7 @@ const dateParser = (schedule) => {
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      extendedTime,
       invalid,
       lastScheduledTimeout,
       nextScheduledTimeout,
@@ -113,6 +117,8 @@ const getActivities = (applet, responseSchedule) => {
     const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
     const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
     const invalid = R.pathOr(null, ['invalid'], scheduledDateTimes);
+    const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
+
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
     let nextAccess = false;
     let prevTimeout = null;
@@ -143,6 +149,7 @@ const getActivities = (applet, responseSchedule) => {
       nextTimeout: scheduledTimeout,
       currentTime: new Date().getTime(),
       invalid,
+      extendedTime,
       nextAccess,
       isOverdue:
         lastScheduled && moment(lastResponse) < moment(lastScheduled),
@@ -207,7 +214,7 @@ const ActivityList = ({
       ) {
         const updatedTime = lastUpdatedTime;
         updatedTime[appletId] = currentTime;
-        getSchedules(appletId.split("/")[1]);
+        getSchedules(appletId.split('/')[1]);
         setUpdatedTime(updatedTime);
       } else {
         const updatedTime = lastUpdatedTime;
@@ -218,7 +225,7 @@ const ActivityList = ({
       const updatedTime = lastUpdatedTime;
       updatedTime[appletId] = appletTime;
 
-      getSchedules(appletId.split("/")[1]);
+      getSchedules(appletId.split('/')[1]);
       setUpdatedTime(updatedTime);
     } else {
       const updatedTime = lastUpdatedTime;
