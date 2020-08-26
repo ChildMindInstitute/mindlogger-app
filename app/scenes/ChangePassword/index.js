@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Header, Title, Content, Button, Icon, Text, Left, Body, Right, View } from 'native-base';
@@ -11,6 +11,9 @@ import { updateUserDetails, updatePassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
 import ChangePasswordForm from './ChangePasswordForm';
+
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 class ChangePasswordScreen extends Component {
   updateUser = (firstName, lastName) => {
@@ -49,16 +52,18 @@ class ChangePasswordScreen extends Component {
     return (
       <Container style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header
+          style={{
+            backgroundColor: skin.colors.primary,
+            paddingTop: IOSHeaderPadding,
+          }}
+        >
           <Left>
             <Button transparent onPress={Actions.pop}>
-              <Icon
-                ios="ios-arrow-back"
-                android="md-arrow-back"
-              />
+              <Icon ios="ios-arrow-back" android="md-arrow-back" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title>Change Password</Title>
           </Body>
           <Right />
