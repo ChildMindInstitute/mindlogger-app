@@ -1,3 +1,4 @@
+// Third-party libraries.
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
@@ -5,11 +6,19 @@ import { Parse, Day } from 'dayspan';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+
+// Local.
 import {
   getLastScheduled,
   getNextScheduled,
   getScheduledNotifications,
 } from '../../services/time';
+import { 
+  setTimeout,
+  setInterval,
+  clearTimeout,
+  clearInterval,
+} from '../../services/timing';
 import sortActivities from './sortActivities';  
 import ActivityListItem from './ActivityListItem';
 import {
