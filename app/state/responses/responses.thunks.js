@@ -22,7 +22,9 @@ import {
   shiftUploadQueue,
   setCurrentScreen,
   setSchedule,
-} from './responses.actions';
+  replaceAppletResponses,
+  setActivityOpened,
+} from "./responses.actions";
 import {
   setCurrentActivity,
 } from '../app/app.actions';
@@ -80,6 +82,7 @@ export const startResponse = activity => (dispatch, getState) => {
           onPress: () => {
             const itemResponses = R.pathOr([], ['inProgress', applet.id + activity.id, 'responses'], responses);
             cleanFiles(itemResponses);
+            dispatch(setActivityOpened(true));
             dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
             dispatch(setCurrentScreen(applet.id, activity.id, 0));
             dispatch(setCurrentActivity(activity.id));
@@ -89,6 +92,7 @@ export const startResponse = activity => (dispatch, getState) => {
         {
           text: 'Resume',
           onPress: () => {
+            dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(applet.id, activity.id, currentScreen));
             dispatch(setCurrentActivity(activity.id));
             Actions.push('take_act');
@@ -115,6 +119,25 @@ export const downloadResponses = () => (dispatch, getState) => {
     }
   }).finally(() => {
     dispatch(setDownloadingResponses(false));
+  });
+
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone)
+    .then((schedule) => {
+      dispatch(setSchedule(schedule));
+    });
+};
+
+export const downloadAppletResponses = applet => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+
+  downloadAllResponses(authToken, [applet], (downloaded, total) => {
+    dispatch(setResponsesDownloadProgress(downloaded, total));
+  }).then((responses) => {
+    if (loggedInSelector(getState())) {
+      dispatch(replaceAppletResponses(responses));
+    }
   });
 
   const timezone = RNLocalize.getTimeZone();
@@ -159,6 +182,7 @@ export const nextScreen = () => (dispatch, getState) => {
 
   if (next === -1) {
     dispatch(completeResponse());
+    dispatch(setCurrentActivity(null));
     Actions.push('activity_thanks');
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
@@ -175,6 +199,7 @@ export const prevScreen = () => (dispatch, getState) => {
 
   if (prev === -1) {
     Actions.pop();
+    dispatch(setCurrentActivity(null));
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, prev));
   }

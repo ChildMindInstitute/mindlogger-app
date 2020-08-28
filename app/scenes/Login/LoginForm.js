@@ -28,6 +28,7 @@ const LoginForm = ({
         placeholderTextColor={colors.secondary_50}
         name="user"
         autoCapitalize="none"
+        keyboardType="email-address"
         style={styles.text}
         validate={required}
         errorStyle={{ color: colors.secondary }}

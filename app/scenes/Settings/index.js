@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Header, View, Content, List, ListItem, Text, Title, Icon, Button, Left, Right, Body } from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { Switch } from 'react-native';
+import { Switch, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
@@ -12,11 +12,28 @@ import { userInfoSelector } from '../../state/user/user.selectors';
 
 import { colors } from '../../themes/colors';
 
+const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+
 // eslint-disable-next-line
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showAlert: false };
+
+    this.onPressTime = 0;
+    this.state = {
+      showAlert: false,
+      // onPressTime: 0,
+    };
+  }
+
+  onPressChange = () => {
+    const currentTime = Date.now();
+
+    if (currentTime - this.onPressTime > 750) {
+      Actions.push('change_password');
+      this.onPressTime = currentTime;
+    }
   }
 
   showAlert = () => {
@@ -37,38 +54,54 @@ class SettingsScreen extends React.Component {
 
     return (
       <Container>
-        <Header style={{ backgroundColor: skin.colors.primary }}>
+        <Header
+          style={{
+            backgroundColor: skin.colors.primary,
+            paddingTop: IOSHeaderPadding,
+          }}
+        >
           <Left>
             <Button transparent onPress={Actions.pop}>
-              <Icon
-                ios="ios-arrow-back"
-                android="md-arrow-back"
-              />
+              <Icon ios="ios-arrow-back" android="md-arrow-back" />
             </Button>
           </Left>
-          <Body>
+          <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title>User Settings</Title>
           </Body>
           <Right />
         </Header>
         <Content>
-          { userInfo ? (
-            <View style={{ justifyContent: 'center', alignItems: 'center', alignContent: 'center', padding: 10 }}>
+          {userInfo ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+                padding: 10,
+              }}
+            >
               {/* { userInfo.image ? <Text>{userInfo.image}</Text> :
               <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} /> } */}
-              <Icon type="FontAwesome" name="user-circle" style={{ fontSize: 54, padding: 10, color: colors.tertiary }} />
-              <Text>{userInfo.firstName} {userInfo.lastName}</Text>
+              <Icon
+                type="FontAwesome"
+                name="user-circle"
+                style={{
+                  fontSize: 54,
+                  padding: 10,
+                  color: colors.tertiary,
+                }}
+              />
+              <Text>
+                {userInfo.firstName} {userInfo.lastName}
+              </Text>
               <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
             </View>
-          ) : <Text>You've logged out.</Text>
-          }
+          ) : (
+            <Text>You've logged out.</Text>
+          )}
 
           <List>
-            <ListItem
-              button
-              bordered
-              onPress={() => Actions.push('change_password')}
-            >
+            <ListItem button bordered onPress={this.onPressChange}>
               <Left>
                 <Text>Change Password</Text>
               </Left>
@@ -76,10 +109,7 @@ class SettingsScreen extends React.Component {
                 <Icon name="arrow-forward" />
               </Right>
             </ListItem>
-            <ListItem
-              button
-              bordered
-            >
+            <ListItem button bordered>
               <Left>
                 <Text>Use Cellular Data</Text>
               </Left>
@@ -90,11 +120,7 @@ class SettingsScreen extends React.Component {
                 />
               </Right>
             </ListItem>
-            <ListItem
-              button
-              bordered
-              onPress={() => logout()}
-            >
+            <ListItem button bordered onPress={() => logout()}>
               <Left>
                 <Text>Logout</Text>
               </Left>
@@ -102,11 +128,7 @@ class SettingsScreen extends React.Component {
                 <Icon name="key" />
               </Right>
             </ListItem>
-            <ListItem
-              button
-              bordered
-              onPress={() => this.showAlert()}
-            >
+            <ListItem button bordered onPress={() => this.showAlert()}>
               <Left>
                 <Text>Permanently Delete Account</Text>
               </Left>
@@ -115,7 +137,6 @@ class SettingsScreen extends React.Component {
               </Right>
             </ListItem>
           </List>
-
         </Content>
         <AwesomeAlert
           show={showAlert}

@@ -3,12 +3,95 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
 
-## [0.12.6] - 2020-07-21
+## [0.13.13] - 2020-08-27
 - Implemented Bar chart with token values
 - Fixed fractional issue in barChart
 - Changed format for start and end times
+
+## [0.13.12] - 2020-08-24
+- Fix race conditions caused by setTimeout and setInterval not working on background state 
+
+## [0.13.11] - 2020-08-20
+- Fix header bar to be not close from status bar of the phone
+
+## [0.13.10] - 2020-08-19
+- The App goes to background mode when 'Back' button is tapped on login screen
+- The App goes to background mode and save the logged in status when 'Back' button is tapped on home screen (logged in status)
+- Otherwise, the App goes to the previous scene
+
+## [0.13.9] - 2020-08-19
+- Disallow double clicking of password_change button
+- Prevent double clicking of `unscheduled` & `past-due` activities
+
+## [0.13.8] - 2020-08-17
+- Disallow app navigation within the app after logout
+ * After logging out and tapping the system "Back" button the app moves to the background mode and the user stays on the log in screen
+ * When the app is launched and the user is logged in after tapping the system "Back" button the app moves to the background mode
+ * After installing an launching the app and tapping the the system "Back" button the app moves to the background mode and the user stays on the log in screen
+
+## [0.13.7] - 2020-08-15
+- Disallow double clicking throughout the MindLogger App
+ * Settings screen (After double tapping on the cog icon)
+ * Sign up screen (After double tapping on the "Ne User" link)
+ * Forgot Password screen (After double tapping on the "Forgot password" link)
+ * About MindLogger (After double tapping on the "What is MindLogger?" link)
+ * Change Password screen (After double tapping on the "Change Password" item)
+
+## [0.13.6] - 2020-08-13
+- Fix one-time completion event issue
+- Fix double clicking of applet and activity buttons
+
+## [0.13.5] - 2020-08-10
+- Adds documentation and simplifies code where possible
+- Refactors FireBaseMessaging class
+- Fixes applet/activity cards not working after pressing the back button
+- Fixes white screen issue
+- Fixed idle timer
+
+## [0.13.4] - 2020-08-04
+- Fix app navigation to be landed on home screen 
+
+## [0.13.3] - 2020-08-03
+- Removed openActivityByEvent to fix white screen issue 
+
+## [0.13.2] - 2020-08-03
+- Fixed unscheduled status after timeout
+
+## [0.13.1] - 2020-07-31
+- Filtered only today's schedule
+- Removed unnecessary calls to improve performance
+- Updated activities once schedules are updated
+- Fixed updating schedules in background-mode
+
+## [0.12.11] - 2020-07-27
+- Updated the status of applets after opening the app from the background mode
+- Fixed issue on activityList screen
+- Removed console logs in JSON-LD
+
+## [0.12.10] - 2020-07-25
+- Fixed screenDisplay to work with centered image
+- Add MarkdownScreen component
+- Fixed time stamp from the previous day
+
+## [0.12.9] - 2020-07-25
+- Fixed missing image issue in Android
+
+## [0.12.8] - 2020-07-25
+- Fixed issue: The pop-up "Activity not ready" is displayed after comleting the assessment and then opening the notification
+- Fixed issue: The pop up "Applet was not found" is displayed after tapping the push notification next day
+- Fixed issue: The app doesn't respond on tapping after oppening the push notification next day
+- added new feature to sync badge numbers with backend
+
+## [0.12.7] - 2020-07-23
+- Fixed idleTime issue which cause App crashes
+- Fixed start and end time on activity card
+
+## [0.12.6] - 2020-07-22
+- Added soloader to fix white screen in android
+- Changed rootView to fix white screen in ios
 
 ## [0.12.5] - 2020-07-17
 - Fixed issue: The user has access to the assessment after time out by tapping the push notification

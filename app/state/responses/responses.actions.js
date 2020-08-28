@@ -14,6 +14,16 @@ export const replaceResponses = responses => ({
   payload: responses,
 });
 
+export const replaceAppletResponses = responses => ({
+  type: RESPONSES_CONSTANTS.REPLACE_APPLET_RESPONSES,
+  payload: responses,
+});
+
+export const setActivityOpened = responses => ({
+  type: RESPONSES_CONSTANTS.OPEN_ACTIVITY,
+  payload: responses,
+});
+
 export const setDownloadingResponses = isDownloading => ({
   type: RESPONSES_CONSTANTS.SET_DOWNLOADING_RESPONSES,
   payload: isDownloading,
@@ -25,16 +35,6 @@ export const setResponsesDownloadProgress = (downloaded, total) => ({
     downloaded,
     total,
   },
-});
-
-export const getResponseInActivity = response => ({
-  type: RESPONSES_CONSTANTS.GET_RESPONSE_IN_ACTIVITY,
-  payload: response,
-});
-
-export const getResponseInApplet = response => ({
-  type: RESPONSES_CONSTANTS.GET_RESPONSE_IN_APPLET,
-  payload: response,
 });
 
 export const removeResponseInProgress = activityId => ({

@@ -26,17 +26,23 @@ const ActivityDueDate = ({ activity }) => {
     activity.lastTimeout,
   );
   if (
-    (activity.status === 'scheduled' || activity.status === 'in-progress')
+    (activity.status === 'scheduled')
     && activity.nextScheduledTimestamp
     && nextScheduledTime
   ) {
     return (
       <LittleText style={styles.textStyles}>
-        {activity.nextTimeout === 86340000 ? 'Available: All day' : `Available: ${nextScheduledTime} to ${nextScheduledEndTime}`}
+        {activity.nextTimeout === 86340000
+          ? 'Available: All day'
+          : `Available: ${nextScheduledTime} to ${nextScheduledEndTime}`}
       </LittleText>
     );
   }
-  if (activity.status === 'pastdue') {
+  if (
+    activity.status === 'pastdue'
+    && (activity.lastTimeout === 86340000
+      || (prevScheduledTime && prevScheduledEndTime))
+  ) {
     return (
       <LittleText style={styles.textStyles}>
         {activity.lastTimeout === 86340000

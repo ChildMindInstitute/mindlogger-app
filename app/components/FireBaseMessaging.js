@@ -10,9 +10,11 @@ import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet } from '../state/app/app.actions';
+import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
+import { updateBadgeNumber } from '../state/applets/applets.thunks';
+import { syncTargetApplet, sync } from '../state/app/app.thunks';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -22,211 +24,341 @@ const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
 class FireBaseMessaging extends Component {
-  state = { appState: AppState.currentState };
-
+  /**
+   * Method called when the component is about to be rendered.
+   *
+   * Sets up the notification channels and the handler functions for the
+   * notification events.
+   *
+   * @returns {void}
+   */
   async componentDidMount() {
-    const result = await fNotifications.getInitialNotification();
-    if (result) {
-      this.openActivityByEventId(result);
-    }
+    this.listeners = [
+      fNotifications.onNotification(this.onNotification),
+      fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
+      fNotifications.onNotificationOpened(this.onNotificationOpened),
+      fMessaging.onTokenRefresh(this.onTokenRefresh),
+      fMessaging.onMessage(this.onMessage),
+    ];
+    this.appState = 'active';
 
     AppState.addEventListener('change', this.handleAppStateChange);
-    this.initAndroidChannel();
-    this.notificationDisplayedListener = fNotifications
-      .onNotificationDisplayed(this.onNotificationDisplayed);
-    this.notificationListener = fNotifications.onNotification(this.onNotification);
-    this.notificationOpenedListener = fNotifications
-      .onNotificationOpened(this.onNotificationOpened);
-    this.onTokenRefreshListener = fMessaging.onTokenRefresh(this.onTokenRefresh);
-    this.messageListener = fMessaging.onMessage(this.onMessage);
 
-    fMessaging.hasPermission().then((granted) => {
-      if (!granted) {
-        fMessaging.requestPermission()
-          .then(() => this.checkPermissionAgain())
-          .catch(() => this.checkPermissionAgain());
-      }
-    });
-
-    const fcmToken = await fMessaging.getToken();
-
-    this.props.setFCMToken(fcmToken);
-
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}] fcmToken: ${fcmToken}`);
+    if (isAndroid) {
+      this.initAndroidChannel();
+    }
 
     if (isIOS) {
-      await firebase.messaging().ios.registerForRemoteNotifications();
-      // const apns = await firebase.messaging().ios.getAPNSToken();
+      firebase.messaging().ios.registerForRemoteNotifications();
+    }
 
-      // eslint-disable-next-line no-console
-      // console.log(`FCM[${Platform.OS}] APNSToken: ${apns}`);
+    this.requestPermissions();
+    this.props.setFCMToken(await fMessaging.getToken());
+
+    const event = await fNotifications.getInitialNotification()
+
+    if (event) {
+      this.openActivityByEventId(event);
     }
   }
 
+  /**
+   * Removes all event listeners set on component creation.
+   *
+   * @returns {void}
+   */
   componentWillUnmount() {
-    if (this.notificationDisplayedListener) {
-      this.notificationDisplayedListener();
-    }
-    if (this.notificationListener) {
-      this.notificationListener();
-    }
-    if (this.notificationOpenedListener) {
-      this.notificationOpenedListener();
-    }
-    if (this.onTokenRefreshListener) {
-      this.onTokenRefreshListener();
-    }
-    if (this.messageListener) {
-      this.messageListener();
-    }
-
+    this.listeners.forEach(removeListener => removeListener());
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
-  checkPermissionAgain = () => {
-    fMessaging.hasPermission().then((granted) => {
-      if (!granted) {
-        Alert.alert(
-          '"MindLogger" would like to send you notifications',
-          'These can be configured in Settings',
-          [
-            {
-              text: 'Dismiss',
-              style: 'cancel',
-            },
-            {
-              text: 'Open Settings',
-              onPress: this.openSettings,
-              style: 'default',
-            },
-          ],
-        );
-      }
-    });
+  /**
+   * Checks whether the app has permission to show notifications.
+   *
+   * It asks the user to grant permission if not it wasn't granted already.
+   *
+   * @returns {void}
+   */
+  async requestPermissions() {
+    const permissionGranted = await fMessaging.hasPermission();
+
+    if (permissionGranted) return;
+
+    try {
+      await fMessaging.requestPermission()
+    } catch (error) {
+      // If the user denied permissions.
+      Alert.alert(
+        '"MindLogger" would like to send you notifications',
+        'These can be configured in Settings',
+        [
+          {
+            text: 'Dismiss',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: Linking.openSettings.bind(Linking),
+            style: 'default',
+          },
+        ],
+      );
+    }
   }
 
-  openSettings = () => Linking.openSettings();
-
-  isCompleted = activity => activity.lastResponseTimestamp !== null
-    && activity.nextScheduledTimestamp === null
+  /**
+   * Checks whether an activity should be shown as completed.
+   *
+   * An activity is considered to be completed if a response for this activity 
+   * was created today and there isn't any more scheduled events for this 
+   * activity today.
+   *
+   * @param {obj} activity the activity in question.
+   *
+   * @returns {boolean} whether the activity is completed or not.
+   */
+  isCompleted = activity => activity.lastResponseTimestamp
+    && !activity.nextScheduledTimestamp
     && (moment().isSame(moment(activity.lastResponseTimestamp), 'day'));
 
-  isActivityCompleted = (currentApplet, currentActivity) => {
-    const inProgressKeys = Object.keys(this.props.inProgress);
-    if (inProgressKeys) {
-      const isActivityNotInProgress = !inProgressKeys
-        .includes(currentApplet.id + currentActivity.id);
-      if (isActivityNotInProgress) {
-        return this.isCompleted(currentActivity);
-      }
-      return false;
+  /**
+   * Checks whether an activity is in progress or not.
+   *
+   * @param {object} applet the parent applet for the activity.
+   * @param {object} activity the activity to be checked.
+   *
+   * @returns {boolean} whether the activity is in progress or not.
+   */
+  isActivityCompleted = (applet, activity) => {
+    const inProgress = this.props.inProgress || {};
+    const id = applet.id + activity.id;
+
+    if (id in inProgress) {
+     return false;
     }
-    return this.isCompleted(currentActivity);
+
+    return this.isCompleted(activity);
   };
 
+  /**
+   * Finds an activity.
+   *
+   * It tries to get the activity by ID. If it fails to do that, it tries to get
+   * the event by ID and extract the activity data from it.
+   *
+   * @param {string} eventId the unique ID for the scheduled event.
+   * @param {object} applet the applet instance.
+   * @param {string} activityId the ID for the requested activity.
+   *
+   * @returns {object} the requested activity.
+   */
+  findActivityById(eventId, applet, activityId) {
+    const activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+
+    if (activity) {
+      return activity;
+    }
+
+    const event = applet.schedule.events.find(({ id }) => id === eventId);
+
+    if (!event) {
+      return null;
+    }
+
+    return applet.activities.find(({ schema }) => schema === event.data.URI);
+  }
+
+  /**
+   * Opens the activity corresponding to the given notification.
+   *
+   * If the activity is not found in the applet, synchronize the applet with 
+   * the backend first and then open the activity.
+   *
+   * @param {object} notificationObj the notification data.
+   *
+   * @returns {void}
+   */
   openActivityByEventId = (notificationObj) => {
     const eventId = _.get(notificationObj, 'notification._data.event_id', '');
     const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
     const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-    // eslint-disable-next-line no-console
-    console.log('openActivityByEventId', { eventId, appletId, activityId });
 
-    if (eventId && appletId && activityId) {
-      const currentApplet = this.props.applets.find(applet => applet.id === `applet/${appletId}`);
-      if (!currentApplet) {
-        Alert.alert('Applet was not found', 'There is no applet for given id.');
-        return;
-      }
-      const currentActivity = currentApplet.activities.find(activity => activity.id === `activity/${activityId}`);
-      if (!currentActivity) {
-        Alert.alert('Activity was not found', 'There is no activity for given id.');
-        return;
-      }
-      const isActivityCompleted = this.isActivityCompleted(currentApplet, currentActivity);
-      this.props.setCurrentApplet(`applet/${appletId}`);
+    // Ignore the notification if some data is missing.
+    if (!eventId || !appletId || !activityId) return;
 
-      if (isActivityCompleted) {
-        Actions.push('applet_details', { initialTab: 'data' });
-        Alert.alert('', `You have already completed ‘${currentActivity.name.en}’`);
-        return;
-      }
+    const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+
+    if (!applet) {
+      return Alert.alert(
+        'Applet was not found', 'There is no applet for given id.'
+      );
+    }
+    
+    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+    
+    if (activity) {
+      return this.prepareAndOpenActivity(applet, activity);
+    }
+
+    if (Actions.currentScene !== 'applet_list') {
+      Actions.push('applet_list');
+    }
+
+    // If the activity ID is not found in the applet, that means the applet is 
+    // out of sync.
+    this.props.syncTargetApplet(appletId, () => {
+      activity = this.findActivityById(eventId, applet, activityId);
+      this.prepareAndOpenActivity(applet, activity, appletId);
+    });
+  };
+
+  /**
+   * Returns the given date as the number of miliseconds elapsed since the UNIX
+   * epoch.
+   *
+   * @param {Date} date the date to be converted to miliseconds.
+   *
+   * @returns {number} the corresponding number of miliseconds.
+   */
+  getMilliseconds = date => (date ? moment(date).toDate().getTime() : 0);
+
+  /**
+   *
+   *
+   * @returns {void}
+   */
+  prepareAndOpenActivity = (applet, activity) => {
+    if (!activity) {
+      return Alert.alert(
+        'Activity was not found', 'There is no activity for given id.'
+      );
+    }
+
+    const isActivityCompleted = this.isActivityCompleted(applet, activity);
+
+    this.props.setCurrentApplet(applet.id);
+
+    if (isActivityCompleted) {
+      Actions.push('applet_details', { initialTab: 'data' });
+      return Alert.alert(
+        '', 
+        `You have already completed ‘${activity.name.en}’`,
+      );
+    }
+
+    if (Actions.currentScene === 'applet_details') {
+      Actions.replace('applet_details');
+    } else {
       Actions.push('applet_details');
+    }
 
-      if (currentActivity.lastScheduledTimestamp && currentActivity.lastTimeout) {
-        const deltaTime = new Date().getTime()
-          - (currentActivity.lastScheduledTimestamp.getTime() ?? 0) - currentActivity.lastTimeout;
-        if (deltaTime >= 0) {
-          const time = moment(currentActivity.lastScheduledTimestamp).format('HH:mm');
-          Alert.alert('', `This activity was due at ${time}. If progress was made on the ${currentActivity.name.en}, it was saved but it can no longer be taken today.`);
-          return;
-        }
-      }
+    const currentDate = new Date();
 
-      const deltaTime = new Date().getTime()
-        - (currentActivity.nextScheduledTimestamp?.getTime() ?? 0);
+    if (activity.lastScheduledTimestamp && activity.lastTimeout) {
+      const deltaTime = currentDate.getTime()
+        - this.getMilliseconds(activity.lastScheduledTimestamp)
+        - activity.lastTimeout;
 
-      if (currentActivity.nextAccess || deltaTime >= 0) {
-        this.props.startResponse(currentActivity);
-      } else {
-        const time = moment(currentActivity.nextScheduledTimestamp).format('HH:mm');
-        Alert.alert('Activity not ready', `You’re not able to start activity yet, ‘${currentActivity.name.en}’ is scheduled to start at ${time} today`);
+      if (deltaTime >= 0) {
+        const time = moment(activity.lastScheduledTimestamp).format('HH:mm');
+
+        return Alert.alert(
+          '', 
+          (`This activity was due at ${time}. If progress was made on the ` +
+          `${activity.name.en}, it was saved but it can no longer be taken ` +
+          `today.`)
+        );
       }
     }
-  }
 
-  handleAppStateChange = (nextAppState: AppStateStatus) => {
-    const isAppStateChanged = this.state.appState !== nextAppState;
-    if (isAppStateChanged) {
-      this.setState({ appState: nextAppState });
-      if (isIOS) {
-        this.updateApplicationIconBadgeNumber();
-      }
+    let deltaTime = currentDate.getTime()
+      - this.getMilliseconds(activity.nextScheduledTimestamp);
+
+    if (activity.nextScheduledTimestamp && moment(currentDate).isBefore(moment(activity.nextScheduledTimestamp), 'day')) {
+      deltaTime = 0;
     }
-  }
 
-  initAndroidChannel = () => {
-    if (Platform.OS === 'android') {
-      const channel = new firebase.notifications.Android.Channel(
-        AndroidChannelId,
-        'MindLogger Channel',
-        firebase.notifications.Android.Importance.Max,
-      ).setDescription('MindLogger Channel');
+    if (activity.nextAccess || deltaTime >= 0) {
+      this.props.startResponse(activity);
+    } else {
+      const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
 
-      // Create the channel
-      firebase.notifications().android.createChannel(channel).then(() => {
-        // eslint-disable-next-line no-console
-        console.log(`FCM[${Platform.OS}]: Android channel created successful`, channel);
-      });
+      Alert.alert(
+        'Activity not ready', 
+        (`You’re not able to start activity yet, ‘${activity.name.en}’ is ` +
+        `scheduled to start at ${time} today`)
+      );
     }
   };
 
+
+  /**
+   * Creates the notification channel for android.
+   *
+   * @return {void}
+   */
+  async initAndroidChannel() {
+    const channel = new firebase.notifications.Android.Channel(
+      AndroidChannelId,
+      'MindLogger Channel',
+      firebase.notifications.Android.Importance.Max,
+    ).setDescription('MindLogger Channel');
+
+    // Create the channel
+    await firebase.notifications().android.createChannel(channel)
+  }
+
+  /**
+   * Method called when a notification has been displayed.
+   *
+   * @param {object} notification the notification data.
+   *
+   * @returns {void}
+   */
   onNotificationDisplayed = async (
     notification: firebase.RNFirebase.notifications.Notification,
   ) => {
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}]: onNotificationDisplayed`, notification);
     if (isIOS) {
       await this.updateApplicationIconBadgeNumber();
     }
   };
 
-  getDeliveredNotificationsCount = ():Promise<number> => new Promise((resolve) => {
-    PushNotificationIOS.getDeliveredNotifications((notifications) => {
-      resolve(notifications.length);
-    });
-  });
+  /**
+   * Returns a promise that resolves to the delivered notifications count.
+   *
+   * @returns {Promise} promise that resolves to the notification count.
+   */
+  getDeliveredNotificationsCount() : Promise<number> {
+    return new Promise(resolve =>
+      PushNotificationIOS
+        .getDeliveredNotifications(({ length }) => resolve(length))
+    );
+  }
 
-  getScheduledLocalNotificationsCount = ():Promise<number> => new Promise((resolve) => {
-    PushNotificationIOS.getScheduledLocalNotifications((notifications) => {
-      resolve(notifications.length);
-    });
-  });
+  /**
+   *
+   */
+  getScheduledLocalNotificationsCount() : Promise<number> {
+    return new Promise(resolve =>
+      PushNotificationIOS
+        .getScheduledLocalNotifications(({ length }) => resolve(length))
+    );
+  }
 
+  /**
+   * This method is called when a notification is received while the app is in
+   * the foreground.
+   *
+   * @param {object} notification notification data.
+   * @param {string} notification.notificationId the ID for the notification.
+   * @param {string} notification.title the title for the notification.
+   * @param {string} notification.subtitle the subtitle for the notification.
+   * @param {string} notification.body the main text for the notification.
+   * @param {object} notification.data extra data for the notification.
+   *
+   * @returns {void}
+   */
   onNotification = async (notification: firebase.RNFirebase.notifications.Notification) => {
-    // eslint-disable-next-line no-console
-    console.log('onNotification', { notification });
-
     const localNotification = this.newNotification({
       notificationId: notification.notificationId,
       title: notification.title,
@@ -241,67 +373,104 @@ class FireBaseMessaging extends Component {
       localNotification.ios.setBadge(notificationsCount);
     }
 
-    firebase.notifications().displayNotification(localNotification).catch((error) => {
+    try {
+      await firebase
+        .notifications()
+        .displayNotification(localNotification);
+    } catch(error) {
       // eslint-disable-next-line no-console
       console.warn(`FCM[${Platform.OS}]: error `, error);
-    });
-  };
-
-  onNotificationOpened = async (
-    notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
-  ) => {
-    // eslint-disable-next-line no-console
-    this.openActivityByEventId(notificationOpen);
-
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}]: onNotificationOpened `, notificationOpen);
-    if (isIOS) {
-      await this.updateApplicationIconBadgeNumber();
     }
   };
 
+  /**
+   * Method called when the notification is pressed.
+   *
+   * @param {object} notificationOpen the notification data.
+   *
+   * @returns {void}
+   */
+  onNotificationOpened = async (
+    notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
+  ) => {
+    this.openActivityByEventId(notificationOpen);
+
+    if (isIOS) {
+      const iconBadgeNumber = await this.updateApplicationIconBadgeNumber();
+      this.props.updateBadgeNumber(iconBadgeNumber);
+    }
+  };
+
+  /**
+   * Updates the notifications badge number for iOS.
+   *
+   * @returns {number} the notification count.
+   */
   updateApplicationIconBadgeNumber = async () => {
     const iconBadgeNumber = await this.generateApplicationIconBadgeNumber();
+
     PushNotificationIOS.setApplicationIconBadgeNumber(iconBadgeNumber);
+    return iconBadgeNumber;
   }
 
+  /**
+   * Calculates the total badge number.
+   *
+   * @returns {number} the total notification count.
+   */
   generateApplicationIconBadgeNumber = async () => {
     const deliveredNotificationsCount = await this.getDeliveredNotificationsCount();
     const scheduledLocalNotificationsCount = await this.getScheduledLocalNotificationsCount();
+
     return deliveredNotificationsCount + scheduledLocalNotificationsCount;
   };
 
+  /**
+   * Stores the new FCM token in the app state.
+   *
+   * @param {string} fcmToken a Firebase Cloud Messaging token.
+   * 
+   * @returns {void}
+   */
   onTokenRefresh = (fcmToken: string) => {
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}]: onTokenRefresh: ${fcmToken}`);
-    const { setFCMToken } = this.props;
-    setFCMToken(fcmToken);
+    this.props.setFCMToken(fcmToken);
   };
 
   onMessage = async (message: firebase.RNFirebase.messaging.RemoteMessage) => {
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}]: onMessage: `, message, message.data);
-    // eslint-disable-next-line no-console
-    console.log(`FCM[${Platform.OS}]: message.data: ${message.data}`);
     const { data } = message;
-
     const localNotification = this.newNotification({
       notificationId: message.messageId,
       title: data.title || 'Push Notification',
       subtitle: data.subtitle || null,
       data,
-      // iosBadge: prevBadges + 1,
     });
+
     if (isIOS) {
       const notificationsCount = await this.generateApplicationIconBadgeNumber();
       localNotification.ios.setBadge(notificationsCount + 1);
     }
-    firebase.notifications().displayNotification(localNotification).catch((error) => {
+
+    try {
+      await firebase
+        .notifications()
+        .displayNotification(localNotification);
+    } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(`FCM[${Platform.OS}]: error `, error);
-    });
+    } 
   };
 
+  /**
+   * Creates a new notification with the given data.
+   *
+   * @param {object} notification the notification data.
+   * @param {string} notification.notificationId the notification ID.
+   * @param {string} notification.title a title for the notification.
+   * @param {string} [notification.subtitle] optional notification subtitle.
+   * @param {number} notification.iosBadge the badge count for iOS.
+   *
+   * @return {Notification} a firebase notification instance.
+   */
   newNotification = ({ notificationId, title, subtitle, body, iosBadge = 1, data }) => {
     const localNotification = new firebase.notifications.Notification()
       .setNotificationId(notificationId)
@@ -321,9 +490,52 @@ class FireBaseMessaging extends Component {
     } else if (isIOS) {
       localNotification.ios.setBadge(iosBadge);
     }
+
     return localNotification;
   };
 
+  /**
+   * Checks whether the application is in the background.
+   *
+   * @param {string} state the state of the app.
+   *
+   * @returns {boolean} whether the application is in the background.
+   */
+  isBackgroundState= state => state?.match(/inactive|background/);
+
+  /**
+   * Handles the switching of the app from foreground to background or the other
+   * way around.
+   *
+   * @param {string} nextAppState the state the app is switching to.
+   *
+   * @returns {void}
+   */
+  handleAppStateChange = async (nextAppState: AppStateStatus) => {
+    const { setAppStatus, updateBadgeNumber } = this.props;
+    const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
+    const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
+    const stateChanged = nextAppState !== this.appState;
+
+    if (goingToBackground) {
+      setAppStatus(false);
+    } else if (goingToForeground) {
+      setAppStatus(true);
+    }
+
+    if (stateChanged && isIOS) {
+      const badgeNumber = await this.updateApplicationIconBadgeNumber();
+      updateBadgeNumber(badgeNumber);
+    }
+
+    this.appState = nextAppState;
+  };
+
+  /**
+   * Generates and returns the DOM for this compoent.
+   *
+   * @returns {JSX} the markup for the component.
+   */
   render() {
     const { children } = this.props;
 
@@ -339,9 +551,16 @@ FireBaseMessaging.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
-  inProgress: PropTypes.array.isRequired,
+  setAppStatus: PropTypes.func.isRequired,
+  inProgress: PropTypes.object,
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
+  updateBadgeNumber: PropTypes.func.isRequired,
+  syncTargetApplet: PropTypes.func.isRequired,
+};
+
+FireBaseMessaging.defaultProps = {
+  inProgress: {},
 };
 
 const mapStateToProps = state => ({
@@ -353,8 +572,12 @@ const mapDispatchToProps = dispatch => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
+  setAppStatus: appStatus => dispatch(setAppStatus(appStatus)),
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
+  updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
+  sync: cb => dispatch(sync(cb)),
+  syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);

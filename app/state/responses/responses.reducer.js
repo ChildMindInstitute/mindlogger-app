@@ -6,14 +6,31 @@ export const initialState = {
   inProgress: {},
   isSelected: false,
   isDownloadingResponses: false,
-  isActivity: false,
-  isApplet: false,
   downloadProgress: {
     total: 0,
     downloaded: 0,
   },
   uploadQueue: [],
   schedule: {},
+  activityOpened: false,
+};
+
+const replaceAppletResponses = (state, action) => {
+  const newResponse = action.payload[0];
+  const responseHistory = [];
+  const isExist = state.responseHistory.find(resp => resp.appletId === newResponse.appletId);
+  if (isExist) {
+    responseHistory.push(...state.responseHistory.map(
+      resp => (resp.appletId === newResponse.appletId ? newResponse : resp),
+    ));
+  } else {
+    responseHistory.push(...state.responseHistory);
+    responseHistory.push(...action.payload);
+  }
+  return ({
+    ...state,
+    responseHistory,
+  });
 };
 
 export default (state = initialState, action = {}) => {
@@ -25,30 +42,22 @@ export default (state = initialState, action = {}) => {
         ...state,
         isSelected: action.payload,
       };
+    case RESPONSES_CONSTANTS.OPEN_ACTIVITY:
+      return {
+        ...state,
+        activityOpened: action.payload,
+      };
     case RESPONSES_CONSTANTS.REPLACE_RESPONSES:
       return {
         ...state,
         responseHistory: action.payload,
       };
+    case RESPONSES_CONSTANTS.REPLACE_APPLET_RESPONSES:
+      return replaceAppletResponses(state, action);
     case RESPONSES_CONSTANTS.SET_DOWNLOADING_RESPONSES:
       return {
         ...state,
         isDownloadingResponses: action.payload,
-      };
-    case RESPONSES_CONSTANTS.SET_CURRENT_ACTIVITY:
-      return {
-        ...state,
-        currentActivity: action.payload,
-      };
-    case RESPONSES_CONSTANTS.GET_RESPONSE_IN_ACTIVITY:
-      return {
-        ...state,
-        isActivity: action.payload,
-      };
-    case RESPONSES_CONSTANTS.GET_RESPONSE_IN_APPLET:
-      return {
-        ...state,
-        isApplet: action.payload,
       };
     case RESPONSES_CONSTANTS.REMOVE_RESPONSE_IN_PROGRESS:
       return {

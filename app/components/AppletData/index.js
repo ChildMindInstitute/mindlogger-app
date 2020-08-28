@@ -11,7 +11,7 @@ import SvgGenerator from './SvgGenerator';
 // import ActivityChart from './ActivityChart';
 
 const { width } = Dimensions.get('window');
-const tokenSchema = 'https://raw.githubusercontent.com/ReproNim/reproschema/master/protocols/TokenLogger/TokenLogger_schema';
+// const tokenSchema = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
 const styles = StyleSheet.create({
   container: {
@@ -287,7 +287,7 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === 'ActivityChartItem') {
-      const type = applet.schema === tokenSchema ? 'TokenLogger' : '';
+      const type = applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
       return this.renderActivityChartItem(item, type);
     }
     return null;

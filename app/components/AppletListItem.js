@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppletListItem = ({ applet, onPress }) => {
+const AppletListItem = ({ applet, disabled, onPress }) => {
   const numberOverdue = applet.activities.reduce(
     (accumulator, activity) => (activity.isOverdue ? accumulator + 1 : accumulator),
     0,
@@ -40,7 +40,7 @@ const AppletListItem = ({ applet, onPress }) => {
 
   return (
     <View style={styles.box}>
-      <TouchBox onPress={() => onPress(applet)}>
+      <TouchBox onPress={() => onPress(applet)} disabled={disabled}>
         <View style={styles.inner}>
           <AppletImage applet={applet} />
           <View style={styles.textBlock}>
@@ -66,6 +66,7 @@ const AppletListItem = ({ applet, onPress }) => {
 
 AppletListItem.propTypes = {
   applet: PropTypes.object.isRequired,
+  disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
 };
 

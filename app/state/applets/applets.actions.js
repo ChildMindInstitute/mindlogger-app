@@ -9,11 +9,32 @@ export const replaceApplets = applets => ({
   payload: applets,
 });
 
+export const replaceTargetApplet = applet => ({
+  type: APPLET_CONSTANTS.REPLACE_TARGET_APPLET,
+  payload: applet,
+});
+
+export const setScheduleUpdated = scheduleUpdated => ({
+  type: APPLET_CONSTANTS.SET_SCHEDULE_UPDATED,
+  payload: scheduleUpdated,
+});
+
+export const replaceTargetAppletSchedule = (appletId, schedule) => ({
+  type: APPLET_CONSTANTS.REPLACE_TARGET_APPLETSCHEDULE,
+  payload: { appletId, schedule },
+});
+
 export const setDownloadingApplets = isDownloading => ({
   type: APPLET_CONSTANTS.SET_DOWNLOADING_APPLETS,
   payload: isDownloading,
 });
 
+export const setDownloadingTargetApplet = isDownloading => ({
+  type: APPLET_CONSTANTS.SET_DOWNLOADING_TARGET_APPLET,
+  payload: isDownloading,
+});
+
+/* deprecated */
 export const setNotifications = notifications => ({
   type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
   payload: notifications,

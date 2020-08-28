@@ -14,6 +14,11 @@ export const setSkin = newSkin => ({
   payload: newSkin,
 });
 
+export const setUpdatedTime = updatedTime => ({
+  type: APP_ACTIONS.SET_UPDATED_TIME,
+  payload: updatedTime,
+});
+
 export const setCurrentApplet = appletId => ({
   type: APP_ACTIONS.SET_CURRENT_APPLET,
   payload: appletId,
@@ -22,6 +27,21 @@ export const setCurrentApplet = appletId => ({
 export const setCurrentActivity = activityId => ({
   type: APP_ACTIONS.SET_CURRENT_ACTIVITY,
   payload: activityId,
+});
+
+export const setAppletSelectionDisabled = status => ({
+  type: APP_ACTIONS.SET_APPLET_SELECTION_DISABLED,
+  payload: status,
+});
+
+export const setActivitySelectionDisabled = status => ({
+  type: APP_ACTIONS.SET_ACTIVITY_SELECTION_DISABLED,
+  payload: status,
+});
+
+export const setAppStatus = appStatus => ({
+  type: APP_ACTIONS.SET_APP_STATUS,
+  payload: appStatus,
 });
 
 export const toggleMobileDataAllowed = () => ({

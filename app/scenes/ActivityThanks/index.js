@@ -9,7 +9,6 @@ import {
 } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
-import { getResponseInActivity } from '../../state/responses/responses.actions';
 
 const styles = StyleSheet.create({
   box: {
@@ -17,17 +16,16 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     // backgroundColor: 'white',
     fontFamily: theme.fontFamily,
   },
 });
 
-const ActivityThanks = ({ getResponseInActivity }) => {
-  const onPressStart = () => {
-    getResponseInActivity(false);
+const ActivityThanks = () => {
+  const onClose = () => {
     Actions.replace('applet_details');
   };
+
   return (
     <ImageBackground
       style={{ width: '100%', height: '100%', flex: 1 }}
@@ -36,12 +34,12 @@ const ActivityThanks = ({ getResponseInActivity }) => {
       }}
     >
       <View style={styles.box}>
-        <Heading style={{ fontFamily: theme.fontFamily }}>Thanks!</Heading>
-        <BodyText style={{ fontFamily: theme.fontFamily }}>
+        <Heading style={{ fontFamily: theme.fontFamily, textAlign: 'center' }}>Thanks!</Heading>
+        <BodyText style={{ fontFamily: theme.fontFamily, textAlign: 'center' }}>
           We've saved your answers!
         </BodyText>
   
-        <FunButton onPress={onPressStart}>
+        <FunButton onPress={onClose}>
           Close
         </FunButton>
 
@@ -51,11 +49,9 @@ const ActivityThanks = ({ getResponseInActivity }) => {
 };
 
 ActivityThanks.propTypes = {
-  getResponseInActivity: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
-  getResponseInActivity,
 };
 
 export default connect(null, mapDispatchToProps)(ActivityThanks);

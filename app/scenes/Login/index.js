@@ -25,20 +25,49 @@ import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 const defaultLogo = require('../../../img/CMI_white_logo.png');
 
 class Login extends Component {
+  constructor(props) {
+    super(props);
+    this.onClickTime = 0;
+
+    // this.state({
+    //   onClickTime: 0,
+    // });
+  }
+
   onRegister = () => {
-    Actions.sign_up();
+    const currentTime = Date.now();
+
+    if (currentTime - this.onClickTime > 350) {
+      this.onClickTime = currentTime;
+      Actions.sign_up();
+    }
   }
 
   onChangeStudy = () => {
-    Actions.change_study();
+    const currentTime = Date.now();
+
+    if (currentTime - this.onClickTime > 350) {
+      this.onClickTime = currentTime;
+      Actions.change_study();
+    }
   }
 
   onForgotPassword = () => {
-    Actions.forgot_password();
+    const currentTime = Date.now();
+
+    if (currentTime - this.onClickTime > 350) {
+      this.onClickTime = currentTime;
+      Actions.forgot_password();
+    }
   }
 
   onAbout = () => {
-    Actions.about_app();
+    const currentTime = Date.now();
+
+    if (currentTime - this.onClickTime > 350) {
+      this.onClickTime = currentTime;
+      Actions.about_app();
+    }
   }
 
   onSubmit = async (body) => {

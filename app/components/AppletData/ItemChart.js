@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, View } from 'react-native';
+import moment from 'moment';
 
 import TokenChart from './TokenChart';
 // import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
@@ -81,7 +82,7 @@ class ItemChart extends React.Component {
         return a + b;
       }, 0);
       if (val.date >= newDate) {
-        const currentDay = dayOfWeeks[new Date(val.date).getDay()];
+        const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = sum || 0;
       }
     });

@@ -1,5 +1,5 @@
-import { Actions } from "react-native-router-flux";
-import * as R from "ramda";
+import { Actions } from 'react-native-router-flux';
+import * as R from 'ramda';
 import {
   getApplets,
   registerOpenApplet,
@@ -9,29 +9,29 @@ import {
   removeApplet,
   deleteApplet,
   getLast7DaysData,
+  postAppletBadge,
+  getTargetApplet,
   getAppletSchedule,
-} from "../../services/network";
-import { scheduleNotifications } from "../../services/pushNotifications";
+} from '../../services/network';
+import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
-import { downloadResponses } from "../responses/responses.thunks";
-import { downloadAppletsMedia } from "../media/media.thunks";
+import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
+import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector } from "./applets.selectors";
-import {
-  authSelector,
-  userInfoSelector,
-  loggedInSelector,
-} from "../user/user.selectors";
-import { setCurrentApplet } from "../app/app.actions";
+import { replaceTargetAppletSchedule } from "./applets.actions";
+import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
+import { setCurrentApplet } from '../app/app.actions';
 import {
   setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
-  saveAppletResponseData,
-} from "./applets.actions";
-import { sync } from "../app/app.thunks";
-import { transformApplet } from "../../models/json-ld";
+  saveAppletResponseData, replaceTargetApplet, setDownloadingTargetApplet,
+} from './applets.actions';
+import { sync } from '../app/app.thunks';
+import { transformApplet } from '../../models/json-ld';
 
+/* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
   const state = getState();
   const activities = activitiesSelector(state);
@@ -52,6 +52,20 @@ export const getInvitations = () => (dispatch, getState) => {
     });
 };
 
+export const getSchedules = appletId => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+
+  return getAppletSchedule(auth.token, appletId)
+    .then((schedule) => {
+      dispatch(replaceTargetAppletSchedule(appletId, schedule));
+      return schedule;
+    })
+    .catch((e) => {
+      console.warn(e);
+    });
+};
+
 export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
@@ -59,37 +73,56 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
+      console.log('--->', applets);
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
-        const transformedApplets = applets.filter((applet) => !R.isEmpty(applet.items)).map(transformApplet);
-        const requests = transformedApplets.map((applet) => {
-          const appletId = applet.id.split("/")[1];
-          return getAppletSchedule(auth.token, appletId)
-            .then((response) => ({ ...applet, schedule: response }))
-            .catch((err) => {
-              console.warn(err.message);
-              return applet;
-            })
-        });
-        return Promise.all(requests).then((updatedApplets) => {
-          dispatch(replaceApplets(updatedApplets));
-          dispatch(downloadResponses(updatedApplets));
-          dispatch(downloadAppletsMedia(updatedApplets));
-          if (onAppletsDownloaded) {
-            onAppletsDownloaded();
-          }
-        });
+        const transformedApplets = applets.filter(
+          applet => !R.isEmpty(applet.items),
+        ).map(transformApplet);
+        dispatch(replaceApplets(transformedApplets));
+        dispatch(downloadResponses(transformedApplets));
+        dispatch(downloadAppletsMedia(transformedApplets));
+        if (onAppletsDownloaded) {
+          onAppletsDownloaded();
+        }
       }
     })
-    .catch((err) => console.warn(err.message))
+    .catch(err => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
-      dispatch(scheduleAndSetNotifications());
-      dispatch(getInvitations());
+      // dispatch(scheduleAndSetNotifications());
+      // dispatch(getInvitations());
     });
 };
 
-export const acceptInvitation = (inviteId) => (dispatch, getState) => {
+export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  dispatch(setDownloadingTargetApplet(true));
+  getTargetApplet(auth.token, appletId)
+    .then((applet) => {
+      if (loggedInSelector(getState())) {
+        // Check that we are still logged in when fetch finishes
+        const transformedApplets = [applet]
+          .filter(applet => !R.isEmpty(applet.items)).map(transformApplet);
+        if (transformedApplets && transformedApplets.length > 0) {
+          const transformedApplet = transformedApplets[0];
+          // eslint-disable-next-line no-console
+          console.log('replaceTargetApplet', { applet, transformedApplet });
+          dispatch(replaceTargetApplet(transformedApplet));
+          dispatch(downloadAppletResponses(transformedApplet));
+          dispatch(downloadAppletMedia(transformedApplet));
+        }
+        dispatch(setDownloadingTargetApplet(false));
+        if (cb) {
+          cb();
+        }
+      }
+    })
+    .catch(err => console.warn(err.message));
+};
+
+export const acceptInvitation = inviteId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   return acceptAppletInvite(auth.token, inviteId).then(() => {
@@ -98,7 +131,7 @@ export const acceptInvitation = (inviteId) => (dispatch, getState) => {
   });
 };
 
-export const declineInvitation = (inviteId) => (dispatch, getState) => {
+export const declineInvitation = inviteId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
 
@@ -112,7 +145,7 @@ export const declineInvitation = (inviteId) => (dispatch, getState) => {
     });
 };
 
-export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
+export const joinOpenApplet = appletURI => (dispatch, getState) => {
   dispatch(setDownloadingApplets(true));
   const state = getState();
   const auth = authSelector(state);
@@ -125,27 +158,41 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
     });
 };
 
-export const deactivateApplet = (groupId) => (dispatch, getState) => {
+export const updateBadgeNumber = badgeNumber => (dispatch, getState) => {
+  const state = getState();
+  const token = state.user?.auth?.token;
+  if (token) {
+    postAppletBadge(token, badgeNumber)
+      .then((response) => {
+        console.log('updateBadgeNumber success', response);
+      })
+      .catch((e) => {
+        console.warn(e);
+      });
+  }
+};
+
+export const deactivateApplet = groupId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   removeApplet(auth.token, groupId).then(() => {
     dispatch(setCurrentApplet(null));
     dispatch(sync());
-    Actions.push("applet_list");
+    Actions.push('applet_list');
   });
 };
 
-export const removeAndDeleteApplet = (groupId) => (dispatch, getState) => {
+export const removeAndDeleteApplet = groupId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   deleteApplet(auth.token, groupId).then(() => {
     dispatch(setCurrentApplet(null));
     dispatch(sync());
-    Actions.push("applet_list");
+    Actions.push('applet_list');
   });
 };
 
-export const getAppletResponseData = (appletId) => (dispatch, getState) => {
+export const getAppletResponseData = appletId => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getLast7DaysData({

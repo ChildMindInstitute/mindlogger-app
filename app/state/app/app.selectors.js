@@ -1,10 +1,12 @@
 import * as R from 'ramda';
 import { createSelector } from 'reselect';
-import { activitiesSelector, appletsSelector, allAppletsSelector } from '../applets/applets.selectors';
+import { activitiesSelector, appletsSelector } from '../applets/applets.selectors';
 
 export const apiHostSelector = R.path(['app', 'apiHost']);
 
 export const skinSelector = R.path(['app', 'skin']);
+
+export const appStatusSelector = R.path(['app', 'appStatus']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 
@@ -15,7 +17,9 @@ export const currentAppletSelector = createSelector(
   appletsSelector,
   // TODO: this could return undefined. So do we catch it here, or later on?
   (currentAppletId, applets) => applets.find((applet) => {
-    return applet.id === currentAppletId;
+    if (applet.id === currentAppletId) {
+      return true;
+    }
   }) || null,
 );
 
@@ -33,3 +37,6 @@ export const currentActivitySelector = createSelector(
   activitiesSelector,
   (currentActivityId, activities) => activities.find(activity => activity.id === currentActivityId),
 );
+
+export const appletSelectionDisabledSelector = R.path(['app', 'appletSelectionDisabled']);
+export const activitySelectionDisabledSelector = R.path(['app', 'activitySelectionDisabled']);

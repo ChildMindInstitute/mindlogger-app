@@ -25,7 +25,7 @@ import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
 
-const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ReproNim/reproschema/master/protocols/TokenLogger/TokenLogger_schema';
+const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
 const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
   if (screen.inputType === 'radio'
