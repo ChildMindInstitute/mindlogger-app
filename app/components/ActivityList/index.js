@@ -13,13 +13,13 @@ import {
   getNextScheduled,
   getScheduledNotifications,
 } from '../../services/time';
-import { 
-  setTimeout,
-  setInterval,
-  clearTimeout,
-  clearInterval,
-} from '../../services/timing';
-import sortActivities from './sortActivities';  
+// import { 
+//   setTimeout,
+//   setInterval,
+//   clearTimeout,
+//   clearInterval,
+// } from '../../services/timing';
+import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,

@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.13] - 2020-08-27
+- Implemented Bar chart with token values
+- Fixed fractional issue in barChart
+- Changed format for start and end times
+
 ## [0.13.12] - 2020-08-24
 - Fix race conditions caused by setTimeout and setInterval not working on background state 
 

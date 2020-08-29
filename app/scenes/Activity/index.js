@@ -168,9 +168,13 @@ class Activity extends React.Component {
                 itemVisibility,
                 activity,
                 responses,
-                this.state.isContentError,
+                this.state.isContentError
               )}
-              nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+              nextEnabled={isNextEnabled(
+                currentScreen,
+                activity,
+                responses
+              )}
               onPressNext={() => {
                 this.setState({ isContentError: false });
                 nextScreen();

@@ -11,6 +11,7 @@ import SvgGenerator from './SvgGenerator';
 // import ActivityChart from './ActivityChart';
 
 const { width } = Dimensions.get('window');
+// const tokenSchema = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,19 +41,31 @@ class AppletData extends React.Component {
     ];
     const data = [];
     applet.activities.forEach((activity) => {
-      const itemsFiltered = activity.items.filter(i => itemTypesToIgnore
-        .indexOf(i.inputType) < 0 && i.inputType);
+      const itemsFiltered = activity.items.filter(
+        (i) => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType
+      );
 
       // const { width } = Dimensions.get('window');
       let count = 0;
-      for (let dataIndex = 0; dataIndex < itemsFiltered.length; dataIndex += 1) {
+      for (
+        let dataIndex = 0;
+        dataIndex < itemsFiltered.length;
+        dataIndex += 1
+      ) {
         if (!appletData.responses[itemsFiltered[dataIndex].schema]) {
           break;
         }
-        for (let i = 0; i < appletData.responses[itemsFiltered[dataIndex].schema].length; i += 1) {
-          const differenceTime = new Date().getTime()
-            - moment(appletData.responses[itemsFiltered[dataIndex].schema][i].date)
-              .toDate().getTime();
+        for (
+          let i = 0;
+          i < appletData.responses[itemsFiltered[dataIndex].schema].length;
+          i += 1
+        ) {
+          const differenceTime =
+            new Date().getTime() - moment(
+              appletData.responses[itemsFiltered[dataIndex].schema][i].date
+            )
+              .toDate()
+              .getTime();
           const differenceDay = differenceTime / (1000 * 3600 * 24);
           if (differenceDay < 7) {
             count += 1;
@@ -64,14 +77,18 @@ class AppletData extends React.Component {
         data.push({ type: 'EmptyActivityChart', activity });
       } else {
         data.push({ type: 'ActivityChartHeader', activity });
-        data.push(...itemsFiltered.map((item) => {
-          const itemData = appletData.responses ? (appletData.responses[item.schema] || []) : [];
-          return ({
-            type: 'ActivityChartItem',
-            item: this.doItem(item, itemData),
-            data: itemData,
-          });
-        }));
+        data.push(
+          ...itemsFiltered.map((item) => {
+            const itemData = appletData.responses
+              ? appletData.responses[item.schema] || []
+              : [];
+            return {
+              type: 'ActivityChartItem',
+              item: this.doItem(item, itemData),
+              data: itemData,
+            };
+          })
+        );
         data.push({ type: 'ActivityChartFooter', activity });
       }
     });
@@ -84,7 +101,10 @@ class AppletData extends React.Component {
     return data.map((d) => {
       const dp = {};
       dp.date = d.date;
-      const from = moment(`${d.value.from.hour}:${d.value.from.minute}`, 'h:mm');
+      const from = moment(
+        `${d.value.from.hour}:${d.value.from.minute}`,
+        'h:mm'
+      );
 
       // we need to assume that if from.hour is > 12, then it was the day before.
       // if not, it can stay as is for the current day.
@@ -102,14 +122,19 @@ class AppletData extends React.Component {
   getActiveCount = (data) => {
     let activeCount = 0;
     for (let i = 0; i < data.length; i += 1) {
-      const mondayTime = moment().subtract(new Date().getDay() - 1, 'days').startOf('day').toDate();
-      const thatTime = moment(data[i].date).toDate().getTime();
+      const mondayTime = moment()
+        .subtract(new Date().getDay() - 1, 'days')
+        .startOf('day')
+        .toDate();
+      const thatTime = moment(data[i].date)
+        .toDate()
+        .getTime();
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
     }
     return activeCount;
-  }
+  };
 
   doItem = (item, data) => {
     const activeCount = this.getActiveCount(data);
@@ -117,30 +142,59 @@ class AppletData extends React.Component {
     if (activeCount === 0) {
       return { ...item, additionalParams: { activeCount } };
     }
-    const description = item.description ? item.description.en.slice(item.description.en.indexOf(')') + 1, item.description.en.length).replace(/[**]/gi, '')
-      : item.question.en.slice(item.question.en.indexOf(')') + 1, item.question.en.length).replace(/[**]/gi, '');
+    const description = item.description
+      ? item.description.en
+          .slice(
+            item.description.en.indexOf(')') + 1,
+            item.description.en.length
+          )
+          .replace(/[**]/gi, '')
+      : item.question.en
+          .slice(item.question.en.indexOf(')') + 1, item.question.en.length)
+          .replace(/[**]/gi, '');
 
     if (item.inputType === 'radio') {
-      const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
+      const labels = item.valueConstraints.itemList.map((i) => ({
+        name: i.name.en,
+        value: i.value,
+      }));
       const timelineChart = SvgGenerator.generateTimelineChart(data, labels);
-      return { ...item, additionalParams: { activeCount, labels, description, timelineChart } };
+      return {
+        ...item,
+        additionalParams: { activeCount, labels, description, timelineChart },
+      };
     }
     if (item.inputType === 'slider') {
-      const labels = item.valueConstraints.itemList.map(i => ({ name: i.name.en, value: i.value }));
-      const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
+      const labels = item.valueConstraints.itemList.map((i) => ({
+        name: i.name.en,
+        value: i.value,
+      }));
+      const minMaxLabels = [
+        item.valueConstraints.minValue,
+        item.valueConstraints.maxValue,
+      ];
       const lineChart = SvgGenerator.generateLineChart(data, labels);
       return {
         ...item,
-        additionalParams: { activeCount, labels, description, minMaxLabels, lineChart },
+        additionalParams: {
+          activeCount,
+          labels,
+          description,
+          minMaxLabels,
+          lineChart,
+        },
       };
     }
     if (item.inputType === 'timeRange') {
       const dataFix = this.calcTimeDiff(data);
       const barChart = SvgGenerator.generateBarChart(dataFix);
-      return { ...item, additionalParams: { activeCount, dataFix, description, barChart } };
+      return {
+        ...item,
+        additionalParams: { activeCount, dataFix, description, barChart },
+      };
     }
     return { ...item, additionalParams: { activeCount } };
-  }
+  };
 
   // renderItem = ({ item }) => {
   //   const { appletData } = this.props;
@@ -149,76 +203,81 @@ class AppletData extends React.Component {
 
   renderEmptyActivityChart = (activity) => {
     return (
-      <View style={{
-        width,
-        paddingTop: 10,
-        marginTop: 10,
-        backgroundColor: 'white',
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      <View
+        style={{
+          width,
+          paddingTop: 10,
+          marginTop: 10,
+          backgroundColor: 'white',
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <Text style={{ fontSize: 30, fontWeight: '200' }}>
           {activity.name.en}
         </Text>
         {activity.description && (
-        <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}>
-          { activity.description.en }
-        </Text>
+          <Text
+            style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}
+          >
+            {activity.description.en}
+          </Text>
         )}
         <Text style={{ padding: 20 }}>
           Please take the assessment for data to be displayed.
         </Text>
       </View>
     );
-  }
+  };
 
   renderActivityChartHeader = (activity) => {
     return (
-      <View style={{
-        width,
-        paddingTop: 10,
-        marginTop: 10,
-        backgroundColor: 'white',
-        alignSelf: 'stretch',
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      <View
+        style={{
+          width,
+          paddingTop: 10,
+          marginTop: 10,
+          backgroundColor: 'white',
+          alignSelf: 'stretch',
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
         <Text style={{ fontSize: 30, fontWeight: '200' }}>
           {activity.name.en}
         </Text>
         {activity.description && (
-          <Text style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 0 }}>
-            { activity.description.en }
+          <Text
+            style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 0 }}
+          >
+            {activity.description.en}
           </Text>
         )}
       </View>
     );
-  }
+  };
 
-  renderActivityChartItem = ({ item, data }) => {
+  renderActivityChartItem = ({ item, data }, type) => {
     return (
-      <View style={{
-        width,
-        backgroundColor: 'white',
-        alignSelf: 'stretch',
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
+      <View
+        style={{
+          width,
+          backgroundColor: 'white',
+          alignSelf: 'stretch',
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <ItemChart
-          item={item}
-          data={data}
-        />
+        <ItemChart item={item} data={data} type={type} />
       </View>
     );
-  }
+  };
 
   renderItem = ({ item, index }) => {
+    const { applet } = this.props;
     if (item.type === 'EmptyActivityChart') {
       const { activity } = item;
       return this.renderEmptyActivityChart(activity, index);
@@ -228,7 +287,8 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === 'ActivityChartItem') {
-      return this.renderActivityChartItem(item, index);
+      const type = applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
+      return this.renderActivityChartItem(item, type);
     }
     return null;
     // return <ActivityChart activity={item} appletData={appletData} />;
@@ -236,10 +296,8 @@ class AppletData extends React.Component {
 
   FlatListHeader = () => {
     const { responseDates } = this.props;
-    return (
-      <AppletCalendar responseDates={responseDates} />
-    );
-  }
+    return <AppletCalendar responseDates={responseDates} />;
+  };
 
   render() {
     const { applet } = this.props;
