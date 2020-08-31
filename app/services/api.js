@@ -35,7 +35,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
       if (responses.responses) {
         Object.keys(responses.responses).forEach(item => {
           for (let response of responses.responses[item]) {
-            if (response.value && response.value.src && response.value.ptr) {
+            if (response.value && response.value.src && response.value.ptr !== undefined) {
               response.value = responses.dataSources[response.value.src][response.value.ptr];
             }
           }
