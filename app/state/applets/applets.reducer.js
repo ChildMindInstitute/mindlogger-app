@@ -43,6 +43,13 @@ export default (state = initialState, action = {}) => {
           ...state.applets.map(applet => (applet.id === action.payload.id ? action.payload : applet)),
         ],
       };
+    case APPLET_CONSTANTS.SET_ENCRYPTION_KEY:
+      return {
+        ...state,
+        applets: [
+          ...state.applets.map(applet => (applet.id === action.payload.appletId ? { ...applet, ...action.payload.keys } : applet))
+        ]
+      }
     case APPLET_CONSTANTS.SET_SCHEDULE_UPDATED:
       return {
         ...state,

@@ -108,14 +108,17 @@ export const getTargetApplet = (authToken, appletId) => get(
   { retrieveSchedule: true, role: 'user', getAllApplets: true },
 );
 
-export const postResponse = ({ authToken, response }) => postFormData(
-  `response/${response.applet.id}/${response.activity.id}`,
-  authToken,
-  {
-    metadata: JSON.stringify(response),
-  },
-);
+export const postResponse = ({ authToken, response }) => {
+  console.log('post-response is', response);
 
+  return postFormData(
+    `response/${response.applet.id}/${response.activity.id}`,
+    authToken,
+    {
+      metadata: JSON.stringify(response),
+    },
+  );
+}
 export const postAppletBadge = (authToken, badge) => {
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
   const headers = {

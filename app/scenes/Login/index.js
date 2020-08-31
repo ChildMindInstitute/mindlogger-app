@@ -22,6 +22,8 @@ import LoginForm from './LoginForm';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
+import { getPrivateKey, getPublicKey } from '../../services/encryption'
+
 const defaultLogo = require('../../../img/CMI_white_logo.png');
 
 class Login extends Component {
@@ -79,6 +81,7 @@ class Login extends Component {
         if (typeof response.exception !== 'undefined') {
           throw response.exception;
         } else {
+          response.user.privateKey = getPrivateKey({ userId: response.user._id, email: body.user, password: body.password });
           signInSuccessful(response);
         }
       })

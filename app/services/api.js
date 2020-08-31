@@ -8,6 +8,7 @@ import {
 } from './network';
 import { cleanFiles } from './file';
 import { transformResponses } from '../models/response';
+import { decryptData } from './encryption';
 
 export const downloadAllResponses = (authToken, applets, onProgress) => {
   let numDownloaded = 0;
@@ -18,6 +19,31 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       const appletId = applet.id;
+
+      /** decrypt responses */
+      if (responses.dataSources) {
+        Object.keys(responses.dataSources).forEach(key => {
+          try {
+            responses.dataSources[key] = JSON.parse(decryptData({ key: applet.AESKey, text: responses.dataSources[key] }));
+          } catch {
+            responses.dataSources[key] = {};
+          }
+        });
+      }
+
+      /** replace response to plain format */
+      if (responses.responses) {
+        Object.keys(responses.responses).forEach(item => {
+          for (let response of responses.responses[item]) {
+            if (response.value && response.value.src && response.value.ptr) {
+              response.value = responses.dataSources[response.value.src][response.value.ptr];
+            }
+          }
+        })
+      }
+
+      delete responses.dataSources;
+
       return { ...responses, appletId };
     });
   });

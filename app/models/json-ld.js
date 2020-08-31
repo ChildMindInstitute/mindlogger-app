@@ -293,6 +293,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 export const appletTransformJson = (appletJson) => {
   const res = {
     id: appletJson._id,
+    encryption: appletJson.encryption,
     groupId: appletJson.groups,
     schema: appletJson.url || appletJson[URL],
     name: languageListToObject(appletJson[PREF_LABEL]),
