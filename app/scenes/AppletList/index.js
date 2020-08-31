@@ -21,7 +21,6 @@ import {
   appletSelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 
-
 class AppletList extends Component {
   /**
    * Synchronizes the local data of applet with the backend.
@@ -44,8 +43,9 @@ class AppletList extends Component {
    * @returns {void}
    */
   handlePressApplet = (applet) => {
-    this.props.setCurrentApplet(applet.id);
     this.props.setAppletSelectionDisabled(true);
+    this.props.setCurrentApplet(applet.id);
+
     Actions.push('applet_details');
   }
 

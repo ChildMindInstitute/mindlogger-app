@@ -43,6 +43,39 @@ import {
   getLastPos,
 } from '../../services/activityNavigation';
 
+import {
+  prepareResponseKeys
+} from '../../state/applets/applets.actions';
+
+import { userInfoSelector } from '../../state/user/user.selectors';
+import { getAESKey, getPublicKey } from '../../services/encryption';
+import config from '../../config';
+
+const prepareKeys = (dispatch, applet, userInfo) => {
+  if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    applet.AESKey = getAESKey(
+      userInfo.privateKey, 
+      applet.encryption.appletPublicKey, 
+      applet.encryption.appletPrime, 
+      applet.encryption.base
+    );
+
+    applet.userPublicKey = Array.from(getPublicKey(
+      userInfo.privateKey,
+      applet.encryption.appletPrime,
+      applet.encryption.base
+    ));
+
+    dispatch(prepareResponseKeys(
+      applet.id,
+      {
+        AESKey: applet.AESKey,
+        userPublicKey: applet.userPublicKey
+      }
+    ));
+  }
+}
+
 export const startFreshResponse = activity => (dispatch, getState) => {
   const state = getState();
   const { user } = state;
@@ -109,6 +142,11 @@ export const downloadResponses = () => (dispatch, getState) => {
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
 
+  const userInfo = userInfoSelector(state);
+  for (let applet of applets) {
+    prepareKeys(dispatch, applet, userInfo);
+  }
+
   dispatch(setDownloadingResponses(true));
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
@@ -131,6 +169,8 @@ export const downloadResponses = () => (dispatch, getState) => {
 export const downloadAppletResponses = applet => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
+
+  prepareKeys(dispatch, applet, userInfoSelector(state));
 
   downloadAllResponses(authToken, [applet], (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
@@ -163,7 +203,10 @@ export const completeResponse = () => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
   const inProgressResponse = currentResponsesSelector(state);
-  const preparedResponse = prepareResponseForUpload(inProgressResponse);
+
+  prepareKeys(dispatch, applet, userInfoSelector(state));
+
+  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet);
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList
