@@ -104,6 +104,9 @@ function _set(timerType, fn, time) {
       if (timerType === TIMEOUT) {
         // Timeout is one time only. Clear the timeout.
         _clear(timerType, timerId);
+      } else {
+        // Interval has to repeat, calculate next execution time.
+        dueDate.setTime(now.getTime() + time);
       }
     },
     1000,  // One second.
