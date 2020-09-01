@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.14] - 2020-08-31
+- Update the logic of tokenValue
+
 ## [0.13.13] - 2020-08-27
 - Implemented Bar chart with token values
 - Fixed fractional issue in barChart
