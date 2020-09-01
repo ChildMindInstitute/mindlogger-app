@@ -37,7 +37,7 @@ export class TLMultiSelect extends Component {
         {itemList.map((item, index) => (
           <ListItem
             style={{ width: '90%' }}
-            onPress={() => this.onAnswer(item.value)}
+            onPress={() => this.onAnswer(item.name.en)}
             key={index}
           >
             <View style={{ width: '85%' }}>
@@ -75,8 +75,8 @@ export class TLMultiSelect extends Component {
             </View>
             <View style={{ width: '15%' }}>
               <CheckBox
-                checked={value && Array.isArray(value) && value.includes(item.value)}
-                onPress={() => this.onAnswer(item.value)}
+                checked={value && Array.isArray(value) && value.includes(item.name.en)}
+                onPress={() => this.onAnswer(item.name.en)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
                 checkedColor={colors.primary}
