@@ -108,17 +108,13 @@ export const getTargetApplet = (authToken, appletId) => get(
   { retrieveSchedule: true, role: 'user', getAllApplets: true },
 );
 
-export const postResponse = ({ authToken, response }) => {
-  console.log('post-response is', response);
-
-  return postFormData(
-    `response/${response.applet.id}/${response.activity.id}`,
-    authToken,
-    {
-      metadata: JSON.stringify(response),
-    },
-  );
-}
+export const postResponse = ({ authToken, response }) => postFormData(
+  `response/${response.applet.id}/${response.activity.id}`,
+  authToken,
+  {
+    metadata: JSON.stringify(response),
+  },
+);
 export const postAppletBadge = (authToken, badge) => {
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
   const headers = {
@@ -329,3 +325,22 @@ export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };
+
+export const replaceResponseData = ({ authToken, userPublicKey, appletId, dataSources }) => {
+  let url = `${apiHost()}/response/${appletId}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'put',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      responses: JSON.stringify({ dataSources, userPublicKey })
+    })
+  }).then(res => {
+    console.log('res is', res);
+    return (res.status === 200 ? res.json() : res)
+  });
+}

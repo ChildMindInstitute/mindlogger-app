@@ -31,6 +31,8 @@ class SignUp extends Component {
     return signUp(body)
       .then(response => {
         response.privateKey = getPrivateKey({ userId: response._id, email: body.email, password: body.password });
+        response.email = body.email;
+
         signUpSuccessful(response);
       })
       .catch((e) => {

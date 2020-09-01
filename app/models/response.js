@@ -9,6 +9,7 @@ import { encryptData } from '../services/encryption';
 const trimId = typedId => typedId.split('/').pop();
 
 export const transformResponses = responses => R.unnest(responses);
+export const getEncryptedData = (response, key) => encryptData({ key, text: JSON.stringify(response) });
 
 export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => {
   const languageKey = 'en';
@@ -43,7 +44,7 @@ export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => 
   /** process for encrypting response */
   if (config.encryptResponse) {
     const items = activity.items.reduce((accumulator, item, index) => ({ ...accumulator, [item.schema]: index }), {});
-    const dataSource = encryptData({ key: appletMetaData.AESKey, text: JSON.stringify(responses) });
+    const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
 
     responseData['responses'] = items;
     responseData['dataSource'] = dataSource;

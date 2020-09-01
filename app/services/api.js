@@ -42,8 +42,6 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
         })
       }
 
-      delete responses.dataSources;
-
       return { ...responses, appletId };
     });
   });

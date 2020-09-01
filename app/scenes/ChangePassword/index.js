@@ -10,6 +10,9 @@ import { userInfoSelector, authTokenSelector } from '../../state/user/user.selec
 import { updateUserDetails, updatePassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
+import { replaceReponses } from '../../state/responses/responses.thunks'
+import { getPrivateKey } from '../../services/encryption'
+
 import ChangePasswordForm from './ChangePasswordForm';
 
 const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
@@ -32,9 +35,13 @@ class ChangePasswordScreen extends Component {
   }
 
   onSubmit = ({ oldPassword, password }) => {
-    const { authToken } = this.props;
+    const { authToken, user, updateUserDetailsSuccessful, replaceReponses } = this.props;
+
     return updatePassword(authToken, oldPassword, password)
-      .then(() => {})
+      .then(() => {
+        user.privateKey = getPrivateKey({ userId: user._id, email: user.email, password: password });
+        return replaceReponses(user);
+      }).then( () => updateUserDetailsSuccessful(user) )
       .catch((e) => {
         throw new SubmissionError({
           _error: 'The current password you entered was incorrect.',
@@ -88,10 +95,12 @@ ChangePasswordScreen.propTypes = {
   authToken: PropTypes.string.isRequired,
   updateUserDetailsSuccessful: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  replaceReponses: PropTypes.func.isRequired
 };
 
 const bindAction = {
   updateUserDetailsSuccessful,
+  replaceReponses,
 };
 
 const mapStateToProps = state => ({
