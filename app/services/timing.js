@@ -1,86 +1,90 @@
-const INTERVAL = 'interval';
-const TIMEOUT = 'timeout';
-
 /**
- *  Object that keeps a registry of all running timeouts and intervals.
+ *  Object that keeps a registry of all running timers.
  *
  *  @type {object}
- *  @param {object} timeout object where each property is a timeout id.
- *  @param {object} interval object where each property is a interval id. 
  */
-const IDENTIFIERS = {
-  timeout: {},
-  interval: {},
-};
+const IDENTIFIERS = {};
 
 /**
- * Object that keeps a counter for each timing function: intervals and timouts.
+ * Counter for the timer ID sequence.
  *
- * @type {object}
- * @param {number} timeout The current timeout counter.
- * @param {number} interval The current interval counter.
+ * @type {number}
  */
-const COUNTERS = {
-  timeout: 0,
-  interval: 0,
-};
+let COUNTER = 0;
 
 
 /**
- * Returns the next ID in the sequence for the given timer type.
+ * Returns the next ID in the sequence.
  *
- * @param {string} timerType either 'interval' or 'timeout'
- *
- * @returns {number} the next ID in the sequence for the given timer type.
+ * @returns {number} the next ID in the sequence.
  */
-function _nextId(timerType) {
-  COUNTERS[timerType] += 1;
-  return COUNTERS[timerType];
+function _nextId() {
+  return ++COUNTER;
 }
 
 
 /**
  * Stops a timer by its ID.
  *
- * @param {string} timerType either 'interval' or 'timeout'
- *
  * @returns {void}
  */
-function _clear(timerType, timerId) {
-  clearInterval(IDENTIFIERS[timerType][timerId]);
-  delete IDENTIFIERS[timerType][timerId];
+export function clearExec(timerId) {
+  clearInterval(IDENTIFIERS[timerId]);
+  delete IDENTIFIERS[timerId];
 }
 
 
 /**
- * Sets a timer of the given type.
+ * Executes the given function after the given time.
  *
- * When the time has elapsed, the given function will be executed. Unless the
- * timer is cleared before that happens.
+ * @example <caption>Clock that prints the time every second</caption>
  *
- * @param {string}   timerType either 'interval' or 'timeout'.
+ * delayedExec(() => {
+ *   const now = new Date();
+ *   console.log(now.toTimeString());
+ * }, { every: 1000 });
+ *
+ * @example <caption>Run a function after five seconds</caption>
+ *
+ * delayedExec(fn, { after: 5000 });
+ *
  * @param {function} fn the function to be executed after the timer is done.
- * @param {number}   time number of milliseconds for the timer.
+ * @param {object} options object with options for the timef.
+ * @param {number} [options.after] the number of ms to wait before executing.
+ * @param {number} [options.every] the number of ms between executions.
  *
  * @returns {number} the ID for the new timer.
  */
-function _set(timerType, fn, time) {
+export function delayedExec(fn, options) {
+  if (!('after' in options) && !('every' in options)) {
+    throw new Exception('You must provide the "after" or "every" option');
+  }
+
+  if ('after' in options && Number.isNaN(options.after)) {
+    throw new Exception('Expected options.after to be a number');
+  }
+
+  if ('every' in options && Number.isNaN(options.every)) {
+    throw new Exception('Expected options.every to be a number');
+  }
+  
   /**
    * Date on which the function should run.
    * @type {Date}
    */
   const dueDate = new Date();
 
+  dueDate.setTime(dueDate.getTime() + (options.after || options.every));
+
   /**
    * Unique identifier for this timeout/interval.
    * @type {number}
    */
-  const timerId = _nextId(timerType);
+  const timerId = _nextId();
 
-  dueDate.setTime(dueDate.getTime() + time);
 
   // Run each second and check if the function should run.
-  IDENTIFIERS[timerType][timerId] = setInterval(
+  IDENTIFIERS[timerId] = setInterval(
     () => {
       /**
        * Current time.
@@ -88,7 +92,7 @@ function _set(timerType, fn, time) {
        */
       const now = new Date();
 
-      if (IDENTIFIERS[timerType][timerId] === undefined) {
+      if (IDENTIFIERS[timerId] === undefined) {
         // Timer was cleared. Skip.
         return;
       }
@@ -101,63 +105,16 @@ function _set(timerType, fn, time) {
       // Due date reached. Execute.
       fn();
 
-      if (timerType === TIMEOUT) {
+      if ('after' in options) {
         // Timeout is one time only. Clear the timeout.
-        _clear(timerType, timerId);
+        clearExec(timerId);
       } else {
         // Interval has to repeat, calculate next execution time.
-        dueDate.setTime(now.getTime() + time);
+        dueDate.setTime(now.getTime() + options.every);
       }
     },
-    1000,  // One second.
+    500,  // One second.
   );
 
   return timerId;
-}
-
-
-/**
- * Identical to Javascript's setTimeout but it works on Android.
- *
- * @param {function} fn the callback function.
- * @param {number} time the number of miliseconds to wait.
- *
- * @returns {number} the timeout ID.
- */
-export function setTimeout(fn, time) {
-  return _set(TIMEOUT, fn, time);
-}
-
-/**
- * Identical to Javascript's setInterval but it works on Android.
- *
- * @param {function} fn the callback function.
- * @param {number} time the number of miliseconds to wait.
- *
- * @returns {number} the interval ID.
- */
-export function setInterval(fn, time) {
-  return _set(INTERVAL, fn, time);
-}
-
-/**
- * Removes the timeout.
- *
- * @param {number} id the id of the timeout to be cleared.
- *
- * @returns {void}
- */
-export function clearTimeout(id) {
-  _clear(TIMEOUT, id);
-}
-
-/**
- * Removes the interval.
- *
- * @param {number} id the id of the interval to be cleared.
- *
- * @returns {void}
- */
-export function clearInterval(id) {
-  _clear(INTERVAL, id);
 }
