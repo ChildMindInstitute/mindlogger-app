@@ -22,7 +22,7 @@ import LoginForm from './LoginForm';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
-import { getPrivateKey, getPublicKey } from '../../services/encryption'
+import { getPrivateKey } from '../../services/encryption'
 
 const defaultLogo = require('../../../img/CMI_white_logo.png');
 
