@@ -1,3 +1,4 @@
+// Third-party libraries.
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
@@ -5,11 +6,17 @@ import { Parse, Day } from 'dayspan';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+
+// Local.
 import {
   getLastScheduled,
   getNextScheduled,
   getScheduledNotifications,
 } from '../../services/time';
+import { 
+  delayedExec,
+  clearExec,
+} from '../../services/timing';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
@@ -241,29 +248,29 @@ const ActivityList = ({
     let updateId;
     let intervalId;
     const leftTime = (60 - new Date().getSeconds()) * 1000;
-    const leftOutId = setTimeout(() => {
+    const leftOutId = delayedExec(() => {
       stateUpdate();
-      updateId = setInterval(stateUpdate, updateStatusDelay);
-    }, leftTime);
+      updateId = delayedExec(stateUpdate, { every: updateStatusDelay });
+    }, { after: leftTime });
 
     const currentTime = new Date();
     const nextDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() + 1);
     const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
 
-    const leftTimeoutId = setTimeout(() => {
+    const leftTimeoutId = delayedExec(() => {
       scheduleUpdate();
-      intervalId = setInterval(scheduleUpdate, updateScheduleDelay);
-    }, leftTimeout);
+      intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
+    }, { after: leftTimeout });
 
     return () => {
-      clearTimeout(leftOutId);
+      clearExec(leftOutId);
       if (updateId) {
-        clearInterval(updateId);
+        clearExec(updateId);
       }
 
-      clearTimeout(leftTimeoutId);
+      clearExec(leftTimeoutId);
       if (intervalId) {
-        clearInterval(intervalId);
+        clearExec(intervalId);
       }
     };
   });

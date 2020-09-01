@@ -93,7 +93,7 @@ export const markdownStyle = {
     fontFamily: theme.fontFamily,
   },
   paragraph: {
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     fontSize: 22,
     fontWeight: '300',
     color: '#000000',

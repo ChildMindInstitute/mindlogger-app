@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, StatusBar, Text, View } from 'react-native';
-import { Markdown } from './core/Markdown';
+import { AboutView } from './core/AboutView';
 
 // eslint-disable-next-line
 class AppletAbout extends React.Component {
@@ -41,9 +41,9 @@ The authors of this applet have not provided any information!
     const { markdown } = this.state;
     return (
       <View style={{ padding: 10, backgroundColor: 'white' }}>
-        <Markdown>
+        <AboutView>
           {markdown}
-        </Markdown>
+        </AboutView>
       </View>
     );
   }

@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, View } from 'react-native';
+import moment from 'moment';
 
+import TokenChart from './TokenChart';
 // import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
-// import TimelineChart from './TimelineChart';
 // import LineChart from './LineChart';
 // import BarChart from './BarChart';
 
@@ -30,27 +31,100 @@ const styles = {
 class ItemChart extends React.Component {
   // eslint-disable-next-line
   renderTimelinePlot() {
-    const { item/* , data */ } = this.props;
+    const { item /* , data */ } = this.props;
 
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
     return (
       <View style={styles.plotView}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            paddingBottom: 20,
+            paddingTop: 20,
+            paddingHorizontal: 20,
+          }}
+        >
           {item.additionalParams.description}
         </Text>
-        {
-          item.additionalParams.timelineChart
-        }
+        {item.additionalParams.timelineChart}
         {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
+      </View>
+    );
+  }
+
+  renderTokenPlot() {
+    const values = {};
+    const { item, data } = this.props;
+
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - currentDate.getDay());
+    const dayOfWeeks = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+    const month = currentDate.getUTCMonth() + 1;
+    const day = currentDate.getUTCDate();
+    const year = currentDate.getUTCFullYear();
+    const newDate = `${year
+    }-${
+      month < 10 ? '0' : ''
+    }${month
+    }-${
+      day < 10 ? '0' : ''
+    }${day}`;
+
+    if (item.additionalParams.activeCount === 0) {
+      return null;
+    }
+
+    data.forEach((val) => {
+      const sum = val.value.reduce((a, b) => {
+        return a + b;
+      }, 0);
+      if (val.date >= newDate) {
+        const currentDay = dayOfWeeks[moment(val.date).day()];
+        values[currentDay] = sum || 0;
+      }
+    });
+
+    const dataValues = dayOfWeeks.map((dayOfWeek) => {
+      if (Object.keys(values).includes(dayOfWeek)) {
+        return {
+          name: dayOfWeek,
+          value: values[dayOfWeek],
+        };
+      }
+      return {
+        name: dayOfWeek,
+        value: 0,
+      };
+    });
+
+    return (
+      <View style={styles.plotView}>
+        <Text
+          style={{
+            fontWeight: "bold",
+            paddingBottom: 20,
+            paddingTop: 20,
+            paddingHorizontal: 20,
+          }}
+        >
+          {item.additionalParams.description}
+        </Text>
+        {/* {item.additionalParams.timelineChart} */}
+        <TokenChart
+          item={item}
+          data={dataValues}
+          labels={item.additionalParams.labels}
+        />
       </View>
     );
   }
 
   // eslint-disable-next-line
   renderLinePlot() {
-    const { item/* , data */ } = this.props;
+    const { item /* , data */ } = this.props;
 
     if (item.additionalParams.activeCount === 0) {
       return null;
@@ -63,9 +137,7 @@ class ItemChart extends React.Component {
         <Text style={styles.linePlotLabel}>
           {item.additionalParams.minMaxLabels[1]}
         </Text>
-        {
-          item.additionalParams.lineChart
-        }
+        {item.additionalParams.lineChart}
         {/* <LineChart data={data} labels={item.additionalParams.labels} /> */}
         <Text style={styles.linePlotLabel}>
           {item.additionalParams.minMaxLabels[0]}
@@ -74,7 +146,6 @@ class ItemChart extends React.Component {
     );
   }
 
-  // eslint-disable-next-line
   renderBarPlot() {
     const { item } = this.props;
 
@@ -83,7 +154,14 @@ class ItemChart extends React.Component {
     }
     return (
       <View style={styles.plotView}>
-        <Text style={{ fontWeight: 'bold', paddingBottom: 20, paddingTop: 20, paddingHorizontal: 20 }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            paddingBottom: 20,
+            paddingTop: 20,
+            paddingHorizontal: 20,
+          }}
+        >
           {item.additionalParams.description}
         </Text>
         {/* <BarChart data={item.additionalParams.dataFix} /> */}
@@ -92,10 +170,13 @@ class ItemChart extends React.Component {
   }
 
   render() {
-    const { item } = this.props;
-
+    const { item, type } = this.props;
+    // console.log('inputype', item.inputType, type);
     switch (item.inputType) {
       case 'radio':
+        if (type === 'TokenLogger') {
+          return this.renderTokenPlot();
+        }
         return this.renderTimelinePlot();
       case 'slider':
         return this.renderLinePlot();
@@ -109,7 +190,8 @@ class ItemChart extends React.Component {
 
 ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
-  // data: PropTypes.array.isRequired,
+  type: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired,
 };
 
 export default ItemChart;

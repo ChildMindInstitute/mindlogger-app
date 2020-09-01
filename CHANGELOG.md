@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.13.14] - 2020-08-31
+- Fix unintended recursion in timer service
+- Redesign timer API
+- Refactored ActivityList to reflect timer name change
+- Fixed crash when opening activity
+
+## [0.13.13] - 2020-08-27
+- Implemented Bar chart with token values
+- Fixed fractional issue in barChart
+- Changed format for start and end times
+
+## [0.13.12] - 2020-08-24
+- Fix race conditions caused by setTimeout and setInterval not working on background state 
 
 ## [0.13.12] - 2020-08-25
 - Implement extendedTime for past-due activities
