@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.13.15] - 2020-09-02
+- Implement extendedTime for past-due activities
+- Fix header bar on change password screen to be not close from status bar of the phone
+
 ## [0.13.14] - 2020-08-31
 - Fix unintended recursion in timer service
 - Redesign timer API
