@@ -6,8 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.13.14] - 2020-08-31
+## [0.13.16] - 2020-08-31
 - Update the logic of tokenValue
+
+## [0.13.15] - 2020-09-02
+- Implement extendedTime for past-due activities
+- Fix header bar on change password screen to be not close from status bar of the phone
+
+## [0.13.14] - 2020-08-31
+- Fix unintended recursion in timer service
+- Redesign timer API
+- Refactored ActivityList to reflect timer name change
+- Fixed crash when opening activity
 
 ## [0.13.13] - 2020-08-27
 - Implemented Bar chart with token values

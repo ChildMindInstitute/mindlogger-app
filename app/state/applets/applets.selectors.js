@@ -30,6 +30,7 @@ export const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let { lastScheduledTimeout } = output[uri];
+    let { extendedTime } = output[uri];
     let { invalid } = output[uri];
     let { completion } = output[uri];
 
@@ -37,6 +38,7 @@ export const dateParser = (schedule) => {
       lastScheduledTimeout = e.data.timeout;
       completion = e.data.completion;
       invalid = e.valid;
+      extendedTime = e.data.extendedTime;
     }
 
     if (output[uri].lastScheduledResponse && lastScheduled) {
@@ -48,6 +50,7 @@ export const dateParser = (schedule) => {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
         invalid = output[uri].valid;
         completion = output[uri].completion;
+        extendedTime = output[uri].extendedTime;
       }
     }
 
@@ -71,6 +74,7 @@ export const dateParser = (schedule) => {
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      extendedTime,
       invalid,
       lastScheduledTimeout,
       nextScheduledTimeout,
@@ -105,6 +109,7 @@ export const appletsSelector = createSelector(
       const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
       const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
       const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+      const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
       let nextAccess = false;
       let prevTimeout = null;
       let scheduledTimeout = null;
@@ -132,6 +137,7 @@ export const appletsSelector = createSelector(
         oneTimeCompletion: oneTimeCompletion || false,
         lastTimeout: prevTimeout,
         nextTimeout: scheduledTimeout,
+        extendedTime,
         nextAccess,
         isOverdue:
           lastScheduled && moment(lastResponse) < moment(lastScheduled),
