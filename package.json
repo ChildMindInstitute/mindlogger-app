@@ -17,7 +17,8 @@
     "prod-bundle": "react-native bundle --platform android --dev false --entry-file ./index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res",
     "prod-build": "cd android && ./gradlew bundleRelease",
     "postinstall": "jetify",
-    "ios-build": "cd ios && fastlane ios beta"
+    "ios-build": "cd ios && fastlane ios beta",
+    "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
   "dependencies": {
     "@react-native-community/art": "^1.1.2",
