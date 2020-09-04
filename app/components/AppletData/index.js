@@ -261,29 +261,31 @@ class AppletData extends React.Component {
 
   renderActivityChartItem = ({ item, data }, type) => {
     const dataObj = data;
-    data.forEach((itemData, itemIndex) => {
-      if (Array.isArray(itemData.value)) {
-        const newData = [];
-        itemData.value.forEach((valueData) => {
+    if (type === 'TokenLogger') {
+      data.forEach((itemData, itemIndex) => {
+        if (Array.isArray(itemData.value)) {
+          const newData = [];
+          itemData.value.forEach((valueData) => {
+            item.valueConstraints.itemList.forEach((option) => {
+              if (option.name.en === valueData) {
+                newData.push(option.value);
+              }
+            });
+          });
+          if (newData.length) {
+            dataObj[itemIndex].value = newData;
+          }
+        } else {
+          let newValue = itemData.value;
           item.valueConstraints.itemList.forEach((option) => {
-            if (option.name.en === valueData) {
-              newData.push(option.value);
+            if (option.name.en === newValue) {
+              newValue = option.value;
             }
           });
-        });
-        if (newData.length) {
-          dataObj[itemIndex].value = newData;
+          dataObj[itemIndex].value = newValue;
         }
-      } else {
-        let newValue = itemData.value;
-        item.valueConstraints.itemList.forEach((option) => {
-          if (option.name.en === newValue) {
-            newValue = option.value;
-          }
-        });
-        dataObj[itemIndex].value = newValue;
-      }
-    });
+      });
+    }
     return (
       <View
         style={{
