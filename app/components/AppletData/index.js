@@ -313,7 +313,7 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === 'ActivityChartItem') {
-      const type = applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
+      const type = applet.schema && applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
       return this.renderActivityChartItem(item, type);
     }
     return null;
