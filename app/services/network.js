@@ -339,8 +339,5 @@ export const replaceResponseData = ({ authToken, userPublicKey, appletId, dataSo
     body: objectToFormData({
       responses: JSON.stringify({ dataSources, userPublicKey })
     })
-  }).then(res => {
-    console.log('res is', res);
-    return (res.status === 200 ? res.json() : res)
-  });
+  }).then(res => (res.status === 200 ? res.json() : res));
 }

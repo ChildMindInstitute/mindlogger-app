@@ -21,12 +21,13 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
       const appletId = applet.id;
 
       /** decrypt responses */
-      if (responses.dataSources) {
+      if (responses.dataSources && applet.encryption) {
         Object.keys(responses.dataSources).forEach(key => {
           try {
             responses.dataSources[key] = JSON.parse(decryptData({ key: applet.AESKey, text: responses.dataSources[key] }));
           } catch {
             responses.dataSources[key] = {};
+            responses.hasDecryptionError = true;
           }
         });
       }

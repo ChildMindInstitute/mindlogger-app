@@ -293,7 +293,6 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 export const appletTransformJson = (appletJson) => {
   const res = {
     id: appletJson._id,
-    encryption: appletJson.encryption,
     groupId: appletJson.groups,
     schema: appletJson.url || appletJson[URL],
     name: languageListToObject(appletJson[PREF_LABEL]),
@@ -309,6 +308,9 @@ export const appletTransformJson = (appletJson) => {
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
   };
+  if (appletJson.encryption && Object.keys(appletJson.encryption).length) {
+    res.encryption = appletJson.encryption;
+  }
   return res;
 };
 

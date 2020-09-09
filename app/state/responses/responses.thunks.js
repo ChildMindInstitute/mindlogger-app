@@ -53,6 +53,8 @@ import { getAESKey, getPublicKey } from '../../services/encryption';
 import config from '../../config';
 
 export const updateKeys = (applet, userInfo) => dispatch => {
+  if (!applet.encryption) return ;
+
   applet.AESKey = getAESKey(
     userInfo.privateKey, 
     applet.encryption.appletPublicKey, 
