@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.13.17] - 2020-09-09
+- Fixed available time to be displayed correctly
+- Fixed extended time events to disappear after completing it 
+
+## [0.13.16] - 2020-08-31
+- Update the logic of tokenValue
+
 ## [0.13.15] - 2020-09-02
 - Implement extendedTime for past-due activities
 - Fix header bar on change password screen to be not close from status bar of the phone

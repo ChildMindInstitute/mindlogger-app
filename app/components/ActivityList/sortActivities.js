@@ -68,15 +68,18 @@ export const getPastdue = activityList => activityList.filter(
       && (!activity.lastResponseTimestamp
         || moment(activity.lastResponseTimestamp)
           < activity.lastScheduledTimestamp
-        || new Date(activity.lastResponseTimestamp).getTime()
+        || ((!activity.extendedTime || !activity.extendedTime.allow) && new Date(activity.lastResponseTimestamp).getTime()
           - activity.lastScheduledTimestamp
-          > activity.lastTimeout)
+      > activity.lastTimeout)
+          || ((activity.extendedTime
+        && activity.extendedTime.allow) && new Date(activity.lastResponseTimestamp).getTime()
+          - activity.lastScheduledTimestamp > activity.extendedTime.days * 86400000))
       && ((activity.extendedTime
         && activity.extendedTime.allow
         && new Date().getTime() - activity.lastScheduledTimestamp
           <= activity.lastTimeout + activity.extendedTime.days * 86400000)
         || ((!activity.extendedTime || !activity.extendedTime.allow)
-          && new Date().getTime() - activity.lastScheduledTimestamp
+    && new Date().getTime() - activity.lastScheduledTimestamp
             <= activity.lastTimeout)),
 );
 

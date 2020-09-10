@@ -42,10 +42,10 @@ const ActivityDueDate = ({ activity }) => {
     const leftDays = activity.extendedTime.days - Math.floor(Math.abs(new Date() - activity.lastScheduledTimestamp) / (1000 * 60 * 60 * 24));
     return (
       <LittleText style={styles.textStyles}>
-        {activity.extendedTime.days > 0
-          ? activity.extendedTime.days === 1
-            ? `Available: ${activity.extendedTime.days} day`
-            : `Available: ${activity.extendedTime.days} days`
+        {leftDays > 0
+          ? leftDays === 1
+            ? `Available: ${leftDays} day`
+            : `Available: ${leftDays} days`
           : `Available: 12:00 AM to ${prevScheduledEndTime}`}
       </LittleText>
     );
