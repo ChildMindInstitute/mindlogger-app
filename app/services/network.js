@@ -341,3 +341,34 @@ export const replaceResponseData = ({ authToken, userPublicKey, appletId, dataSo
     })
   }).then(res => (res.status === 200 ? res.json() : res));
 }
+
+export const sendResponseReuploadRequest = ({ authToken, userPublicKeys }) => {
+  let url = `${apiHost()}/user/responseUpdateRequest`;
+
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      userPublicKeys: JSON.stringify(userPublicKeys)
+    })
+  }).then(res => (res.status === 200 ? res.json() : res));
+}
+
+export const getUserUpdates = ({ authToken }) => {
+  let url = `${apiHost()}/user/updates`;
+
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : res));
+}

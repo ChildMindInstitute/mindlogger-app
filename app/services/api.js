@@ -40,6 +40,11 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
               response.value = responses.dataSources[response.value.src][response.value.ptr];
             }
           }
+
+          responses.responses[item] = responses.responses[item].filter((response) => response.value);
+          if (responses.responses[item].length === 0) {
+            delete responses.responses[item];
+          }
         })
       }
 
