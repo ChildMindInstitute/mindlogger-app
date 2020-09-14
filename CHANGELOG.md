@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.13.18] - 2020-09-14
-- Updated TokenLogger applets
+- Assume that TokenLogger applets contain `TokenLogger` string.
 
 ## [0.13.17] - 2020-09-09
 - Fixed available time to be displayed correctly
@@ -51,9 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  * After logging out and tapping the system "Back" button the app moves to the background mode and the user stays on the log in screen
  * When the app is launched and the user is logged in after tapping the system "Back" button the app moves to the background mode
  * After installing an launching the app and tapping the the system "Back" button the app moves to the background mode and the user stays on the log in screen
-
-## [0.13.8] - 2020-09-14
-- Assume that TokenLogger applets contain `TokenLogger` string.
 
 ## [0.13.7] - 2020-08-15
 - Disallow double clicking throughout the MindLogger App
