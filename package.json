@@ -1,5 +1,5 @@
 {
-  "version": "0.13.17",
+  "version": "0.13.18",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
