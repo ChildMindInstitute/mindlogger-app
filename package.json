@@ -1,4 +1,5 @@
 {
+  "name": "MindLogger",
   "version": "0.13.18",
   "private": true,
   "scripts": {
