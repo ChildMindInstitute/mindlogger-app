@@ -7,4 +7,6 @@ export default {
       secondary: '#FFFFFF',
     },
   },
+  encryptResponse: true,
+  IV_LENGTH: 16,
 };

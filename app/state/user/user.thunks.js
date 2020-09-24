@@ -6,10 +6,16 @@ import {
   setAuth,
 } from './user.actions';
 
+import {
+  getUserUpdates
+} from '../../services/network'
+
 export const signInSuccessful = response => (dispatch) => {
   dispatch(setInfo(response.user));
   dispatch(setAuth(response.authToken));
-  dispatch(sync());
+  dispatch(sync(() => getUserUpdates({
+      authToken: response.authToken.token
+  })));
   Actions.replace('applet_list');
 };
 

@@ -115,7 +115,6 @@ export const postResponse = ({ authToken, response }) => postFormData(
     metadata: JSON.stringify(response),
   },
 );
-
 export const postAppletBadge = (authToken, badge) => {
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
   const headers = {
@@ -326,3 +325,50 @@ export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
     headers,
   }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };
+
+export const replaceResponseData = ({ authToken, userPublicKey, appletId, dataSources }) => {
+  let url = `${apiHost()}/response/${appletId}`;
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'put',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      responses: JSON.stringify({ dataSources, userPublicKey })
+    })
+  }).then(res => (res.status === 200 ? res.json() : res));
+}
+
+export const sendResponseReuploadRequest = ({ authToken, userPublicKeys }) => {
+  let url = `${apiHost()}/user/responseUpdateRequest`;
+
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'post',
+    mode: 'cors',
+    headers,
+    body: objectToFormData({
+      userPublicKeys: JSON.stringify(userPublicKeys)
+    })
+  }).then(res => (res.status === 200 ? res.json() : res));
+}
+
+export const getUserUpdates = ({ authToken }) => {
+  let url = `${apiHost()}/user/updates`;
+
+  const headers = {
+    'Girder-Token': authToken,
+  };
+
+  return fetch(url, {
+    method: 'get',
+    mode: 'cors',
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : res));
+}

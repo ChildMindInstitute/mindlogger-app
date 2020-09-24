@@ -1,3 +1,5 @@
+import './shim.js'
+
 import {
   AppRegistry,
 } from 'react-native';

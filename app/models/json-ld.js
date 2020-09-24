@@ -308,6 +308,9 @@ export const appletTransformJson = (appletJson) => {
     responseDates: appletJson.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
   };
+  if (appletJson.encryption && Object.keys(appletJson.encryption).length) {
+    res.encryption = appletJson.encryption;
+  }
   return res;
 };
 
