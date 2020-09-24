@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.18] - 2020-09-15
+- encrypt/decrypt users' response
+- updated forgot password functionality
+- handle notification for refresh response
+- update change password
+
 ## [0.13.17] - 2020-09-09
 - Fixed available time to be displayed correctly
 - Fixed extended time events to disappear after completing it 

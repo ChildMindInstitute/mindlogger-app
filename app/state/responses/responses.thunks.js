@@ -2,12 +2,13 @@ import * as R from 'ramda';
 import { Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import * as RNLocalize from 'react-native-localize';
-import { getSchedule } from '../../services/network';
+import { getSchedule, replaceResponseData } from '../../services/network';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { cleanFiles } from '../../services/file';
-import { prepareResponseForUpload } from '../../models/response';
+import { prepareResponseForUpload, getEncryptedData } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
+import { responsesSelector } from '../responses/responses.selectors'
 import {
   authTokenSelector,
   loggedInSelector,
@@ -42,6 +43,39 @@ import {
   getNextPos,
   getLastPos,
 } from '../../services/activityNavigation';
+
+import {
+  prepareResponseKeys
+} from '../../state/applets/applets.actions';
+
+import { userInfoSelector } from '../../state/user/user.selectors';
+import { getAESKey, getPublicKey } from '../../services/encryption';
+import config from '../../config';
+
+export const updateKeys = (applet, userInfo) => dispatch => {
+  if (!applet.encryption) return ;
+
+  applet.AESKey = getAESKey(
+    userInfo.privateKey, 
+    applet.encryption.appletPublicKey, 
+    applet.encryption.appletPrime, 
+    applet.encryption.base
+  );
+
+  applet.userPublicKey = Array.from(getPublicKey(
+    userInfo.privateKey,
+    applet.encryption.appletPrime,
+    applet.encryption.base
+  ));
+
+  dispatch(prepareResponseKeys(
+    applet.id,
+    {
+      AESKey: applet.AESKey,
+      userPublicKey: applet.userPublicKey
+    }
+  ));
+}
 
 export const startFreshResponse = activity => (dispatch, getState) => {
   const state = getState();
@@ -109,6 +143,13 @@ export const downloadResponses = () => (dispatch, getState) => {
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
 
+  const userInfo = userInfoSelector(state);
+  for (let applet of applets) {
+    if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+      dispatch(updateKeys(applet, userInfo));
+    }
+  }
+
   dispatch(setDownloadingResponses(true));
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
@@ -128,9 +169,47 @@ export const downloadResponses = () => (dispatch, getState) => {
     });
 };
 
+export const replaceReponses = (user) => (dispatch, getState) => {
+  const state = getState();
+  const applets = appletsSelector(state);
+  const responses = responsesSelector(state);
+  const authToken = authTokenSelector(state);
+
+  for (let applet of applets) {
+    dispatch(updateKeys(applet, user));
+  }
+
+  const uploadData = [];
+  for (let response of responses) {
+    let dataSources = {};
+    const applet = applets.find(applet => applet.id === response.appletId);
+
+    for (let responseId in response.dataSources) {
+      if (Object.keys(response).length) {
+        dataSources[responseId] = getEncryptedData(response.dataSources[responseId], applet.AESKey)
+      }
+    }
+
+    uploadData.push({
+      userPublicKey: applet.userPublicKey,
+      appletId: applet.id.split('/').pop(),
+      dataSources
+    })
+  }
+
+  return Promise.all(uploadData.map(data => replaceResponseData({ 
+    authToken, 
+    ...data
+  })));
+}
+
 export const downloadAppletResponses = applet => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
+
+  if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    dispatch(updateKeys(applet, userInfoSelector(state)));
+  }
 
   downloadAllResponses(authToken, [applet], (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
@@ -163,7 +242,12 @@ export const completeResponse = () => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
   const inProgressResponse = currentResponsesSelector(state);
-  const preparedResponse = prepareResponseForUpload(inProgressResponse);
+
+  if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    dispatch(updateKeys(applet, userInfoSelector(state)));
+  }
+
+  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet);
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList

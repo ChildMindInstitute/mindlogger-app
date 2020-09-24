@@ -9,6 +9,11 @@ export const replaceApplets = applets => ({
   payload: applets,
 });
 
+export const prepareResponseKeys = (appletId, keys) => ({
+  type: APPLET_CONSTANTS.SET_ENCRYPTION_KEY,
+  payload: { appletId, keys }
+})
+
 export const replaceTargetApplet = applet => ({
   type: APPLET_CONSTANTS.REPLACE_TARGET_APPLET,
   payload: applet,

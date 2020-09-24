@@ -2,24 +2,20 @@ import * as R from 'ramda';
 import { Dimensions } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
+import config from '../config';
+import { encryptData } from '../services/encryption';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = typedId => typedId.split('/').pop();
 
 export const transformResponses = responses => R.unnest(responses);
+export const getEncryptedData = (response, key) => encryptData({ key, text: JSON.stringify(response) });
 
-export const prepareResponseForUpload = (inProgressResponse) => {
+export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => {
   const languageKey = 'en';
   const { activity, responses, subjectId } = inProgressResponse;
 
-  const formattedResponses = activity.items.reduce((accumulator, item, index) => {
-    return {
-      ...accumulator,
-      [item.schema]: responses[index],
-    };
-  }, {});
-
-  return {
+  const responseData = {
     activity: {
       id: trimId(activity.id),
       schema: activity.schema,
@@ -30,7 +26,6 @@ export const prepareResponseForUpload = (inProgressResponse) => {
       schema: activity.appletSchema,
       schemaVersion: activity.appletSchemaVersion[languageKey],
     },
-    responses: formattedResponses,
     subject: subjectId,
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
@@ -45,4 +40,24 @@ export const prepareResponseForUpload = (inProgressResponse) => {
     },
     languageCode: languageKey,
   };
+
+  /** process for encrypting response */
+  if (config.encryptResponse && appletMetaData.encryption) {
+    const items = activity.items.reduce((accumulator, item, index) => ({ ...accumulator, [item.schema]: index }), {});
+    const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
+
+    responseData['responses'] = items;
+    responseData['dataSource'] = dataSource;
+    responseData['userPublicKey'] = appletMetaData.userPublicKey;
+  } else {
+    const formattedResponses = activity.items.reduce((accumulator, item, index) => {
+      return {
+        ...accumulator,
+        [item.schema]: responses[index],
+      };
+    }, {});
+    responseData['responses'] = formattedResponses;
+  }
+
+  return responseData;
 };

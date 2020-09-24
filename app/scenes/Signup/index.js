@@ -20,6 +20,7 @@ import { signUpSuccessful } from '../../state/user/user.thunks';
 import { signUp } from '../../services/network';
 import styles from './styles';
 import SignupForm from './SignupForm';
+import { getPrivateKey } from '../../services/encryption'
 
 const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
@@ -28,7 +29,12 @@ class SignUp extends Component {
   onSubmit = (body) => {
     const { signUpSuccessful } = this.props;
     return signUp(body)
-      .then(signUpSuccessful)
+      .then(response => {
+        response.privateKey = getPrivateKey({ userId: response._id, email: body.email, password: body.password });
+        response.email = body.email;
+
+        signUpSuccessful(response);
+      })
       .catch((e) => {
         throw new SubmissionError({
           _error: e.message,

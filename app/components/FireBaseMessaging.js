@@ -15,6 +15,12 @@ import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { updateBadgeNumber } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync } from '../state/app/app.thunks';
+import { showToast } from '../state/app/app.thunks';
+import { sendResponseReuploadRequest } from '../services/network';
+
+import {
+  authTokenSelector,
+} from '../state/user/user.selectors';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -179,37 +185,73 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   openActivityByEventId = (notificationObj) => {
-    const eventId = _.get(notificationObj, 'notification._data.event_id', '');
-    const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
-    const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-
-    // Ignore the notification if some data is missing.
-    if (!eventId || !appletId || !activityId) return;
-
-    const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
-
-    if (!applet) {
-      return Alert.alert(
-        'Applet was not found', 'There is no applet for given id.'
+    const type = _.get(notificationObj, 'notification._data.type');
+    if (type == 'response-data-alert') {
+      Alert.alert(
+        'Response Refresh Request',
+        'Since your password has been reset, your past responses need to be refreshed. Do you want to request this?',
+        [
+          {
+            text: 'Request Refresh',
+            onPress: () => {
+              sendResponseReuploadRequest({
+                authToken: this.props.authToken,
+                userPublicKeys: this.props.applets.reduce((previousValue, applet) => {
+                  if (applet.userPublicKey) {
+                    previousValue[applet.id.split('/')[1]] = applet.userPublicKey;
+                  }
+                  return previousValue;
+                }, {})
+              }).then(() => {
+                this.props.showToast({
+                  text: 'Your managers will initiate the refresh shortly.',
+                  position: 'bottom',
+                  type: 'success',
+                  duration: 1000,
+                })
+              });
+            },
+          },
+          {
+            text: 'No',
+            onPress: () => {},
+          },
+        ],
+        { cancelable: false },
       );
+    } else {
+      const eventId = _.get(notificationObj, 'notification._data.event_id', '');
+      const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
+      const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
+  
+      // Ignore the notification if some data is missing.
+      if (!eventId || !appletId || !activityId) return;
+  
+      const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+  
+      if (!applet) {
+        return Alert.alert(
+          'Applet was not found', 'There is no applet for given id.'
+        );
+      }
+      
+      let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+      
+      if (activity) {
+        return this.prepareAndOpenActivity(applet, activity);
+      }
+  
+      if (Actions.currentScene !== 'applet_list') {
+        Actions.push('applet_list');
+      }
+  
+      // If the activity ID is not found in the applet, that means the applet is 
+      // out of sync.
+      this.props.syncTargetApplet(appletId, () => {
+        activity = this.findActivityById(eventId, applet, activityId);
+        this.prepareAndOpenActivity(applet, activity, appletId);
+      });
     }
-    
-    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
-    
-    if (activity) {
-      return this.prepareAndOpenActivity(applet, activity);
-    }
-
-    if (Actions.currentScene !== 'applet_list') {
-      Actions.push('applet_list');
-    }
-
-    // If the activity ID is not found in the applet, that means the applet is 
-    // out of sync.
-    this.props.syncTargetApplet(appletId, () => {
-      activity = this.findActivityById(eventId, applet, activityId);
-      this.prepareAndOpenActivity(applet, activity, appletId);
-    });
   };
 
   /**
@@ -566,6 +608,7 @@ FireBaseMessaging.defaultProps = {
 const mapStateToProps = state => ({
   applets: appletsSelector(state),
   inProgress: inProgressSelector(state),
+  authToken: authTokenSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -578,6 +621,7 @@ const mapDispatchToProps = dispatch => ({
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
+  showToast: (toast) => dispatch(showToast(toast)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
