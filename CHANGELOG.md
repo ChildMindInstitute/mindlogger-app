@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.19] - 2020-09-14
+- Assume that TokenLogger applets contain `TokenLogger` string
+
 ## [0.13.18] - 2020-09-15
 - encrypt/decrypt users' response
 - updated forgot password functionality
