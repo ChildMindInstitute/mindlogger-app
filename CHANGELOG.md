@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.20] - 2020-09-30
+- Fixed hiding textInput field by native keyboard
+
 ## [0.13.19] - 2020-09-14
 - Assume that TokenLogger applets contain `TokenLogger` string
 
