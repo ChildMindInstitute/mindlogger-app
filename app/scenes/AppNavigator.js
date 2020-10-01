@@ -9,6 +9,7 @@ import AboutApp from './AboutApp';
 import Activity from './Activity';
 import ActivityDetails from './ActivityDetails';
 import ActivityThanks from './ActivityThanks';
+import ActivitySummary from './ActivitySummary';
 import AppletDetails from './AppletDetails';
 import AppletList from './AppletList';
 import ChangeStudy from './ChangeStudy';
@@ -59,6 +60,7 @@ const Navigator = Actions.create(
       </Scene>
       <Scene key="take_act" component={Activity} />
       <Scene key="invite" component={AppletInviteFlow} />
+      <Scene key="activity_summary" component={ActivitySummary} />
       <Scene key="activity_thanks" component={ActivityThanks} />
     </Modal>
   </Lightbox>

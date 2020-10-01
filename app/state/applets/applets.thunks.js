@@ -78,6 +78,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
         const transformedApplets = applets.filter(
           applet => !R.isEmpty(applet.items),
         ).map(transformApplet);
+        console.log('applets---->', transformedApplets);
         dispatch(replaceApplets(transformedApplets));
         dispatch(downloadResponses(transformedApplets));
         dispatch(downloadAppletsMedia(transformedApplets));

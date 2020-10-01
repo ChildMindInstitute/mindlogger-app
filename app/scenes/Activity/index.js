@@ -30,10 +30,12 @@ import {
 
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
+import ActivitySummary from '../ActivitySummary';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import ActivityButtons from '../../components/ActivityButtons';
 import {
+  getNextPos,
   getNextLabel,
   getPrevLabel,
   getActionLabel,
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
 class Activity extends React.Component {
   constructor() {
     super();
-    this.state = { isContentError: false, idleTime: null };
+    this.state = { isContentError: false, idleTime: null, isSummaryScreen: false };
     this.idleTimer = new Timer();
   }
 
@@ -126,6 +128,8 @@ class Activity extends React.Component {
       isSelected,
     } = this.props;
 
+    const { isSummaryScreen } = this.state;
+
     if (!currentResponse) {
       return <View />;
     }
@@ -139,21 +143,26 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        <ActivityScreens
-          activity={activity}
-          answers={responses}
-          currentScreen={currentScreen}
-          onChange={(answer, goToNext = false) => {
-            setAnswer(currentApplet.id, activity.id, currentScreen, answer);
-            if (goToNext || autoAdvance || fullScreen) {
-              nextScreen();
-              setSelected(false);
-            }
-          }}
-          authToken={authToken}
-          onContentError={() => this.setState({ isContentError: true })}
-          onAnyTouch={this.idleTimer.resetCountdown}
-        />
+        {!isSummaryScreen ? (
+          <ActivityScreens
+            activity={activity}
+            answers={responses}
+            currentScreen={currentScreen}
+            onChange={(answer, goToNext = false) => {
+              setAnswer(currentApplet.id, activity.id, currentScreen, answer);
+              if (goToNext || autoAdvance || fullScreen) {
+                nextScreen();
+                setSelected(false);
+              }
+            }}
+            authToken={authToken}
+            onContentError={() => this.setState({ isContentError: true })}
+            onAnyTouch={this.idleTimer.resetCountdown}
+          />
+        ) : (
+          <ActivitySummary />
+        )
+        }
         {!fullScreen && (
           <View onTouchStart={this.idleTimer.resetCountdown} style={styles.buttonArea}>
             {activity.items.length > 1 && (
@@ -177,9 +186,18 @@ class Activity extends React.Component {
               )}
               onPressNext={() => {
                 this.setState({ isContentError: false });
-                nextScreen();
-                if (isSelected) {
-                  setSelected(false);
+                if (getNextPos(currentScreen, itemVisibility) === -1
+                  && activity.compute
+                  && !isSummaryScreen
+                ) {
+                  console.log('111111111111');
+                  this.setState({ isSummaryScreen: true });
+                } else {
+                  console.log('000000000000');
+                  nextScreen();
+                  if (isSelected) {
+                    setSelected(false);
+                  }
                 }
               }}
               prevLabel={prevLabel}
