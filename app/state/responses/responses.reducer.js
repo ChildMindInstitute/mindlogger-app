@@ -6,6 +6,7 @@ export const initialState = {
   inProgress: {},
   isSelected: false,
   isDownloadingResponses: false,
+  isSummaryScreen: false,
   downloadProgress: {
     total: 0,
     downloaded: 0,
@@ -41,6 +42,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isSelected: action.payload,
+      };
+    case RESPONSES_CONSTANTS.SET_SUMMARYSCREEN:
+      return {
+        ...state,
+        isSummaryScreen: action.payload,
       };
     case RESPONSES_CONSTANTS.OPEN_ACTIVITY:
       return {
