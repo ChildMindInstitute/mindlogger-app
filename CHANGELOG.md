@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.20] - 2020-10-02
+- Implement scoring logic and embed summary screen
+
 ## [0.13.19] - 2020-09-14
 - Assume that TokenLogger applets contain `TokenLogger` string
 
