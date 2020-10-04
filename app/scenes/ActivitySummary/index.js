@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Parser } from 'expr-eval';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, Dimensions, StatusBar, ImageBackground } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { colors } from '../../themes/colors';
@@ -20,13 +21,18 @@ const styles = StyleSheet.create({
     padding: 0,
     backgroundColor: 'rgba(202, 202, 202, 0.2)'
   },
+  headerContainer: {
+    alignItems: 'center',
+    paddingTop: 30,
+    paddingBottom: 15,
+  },
   itemContainer: {
     width,
     paddingTop: 20,
     paddingRight: 35,
     paddingLeft: 35,
     paddingBottom: 20,
-    marginBottom: 20,
+    marginBottom: 2,
     backgroundColor: 'white',
     alignContent: 'center',
     alignItems: 'flex-start',
@@ -52,7 +58,49 @@ const DATA = [
   },
 ];
 
-const ActivitySummary = () => {
+const ActivitySummary = ({ responses, activity }) => {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const activityResponses = [];
+    for (let index = 0; index < responses.length; index += 1) {
+      activityResponses.push(responses[index] || 0);
+    }
+    const items = activityResponses.reduce((accumulator, response, index) => {
+      return {
+        ...accumulator,
+        [activity.items[index].variableName]: response || 0,
+      }
+    }, {});
+    const parser = new Parser({
+      logical: true,
+      comparison: true,
+    });
+
+    const itemScores = activity.compute.reduce((accumulator, itemCompute) => {
+      let expr = parser.parse(itemCompute.jsExpression);
+      return {
+        ...accumulator,
+        [itemCompute.variableName]: expr.evaluate(items)
+      }
+    }, {})
+
+    const reportMessages = [];
+    activity.messages.forEach(msg => {
+      const { jsExpression, message } = msg;
+      const expr = parser.parse(jsExpression);
+      const category = jsExpression.split(' ')[0];
+      if (expr.evaluate(itemScores)) {
+        reportMessages.push({
+          category,
+          message,
+          score: itemScores[category]
+        })
+      }
+    })
+    setMessages(reportMessages);
+  }, [responses])
+
   const onClose = () => {
     console.log('closed');
     Actions.push('activity_thanks');
@@ -64,9 +112,7 @@ const ActivitySummary = () => {
         <Text style={{ fontSize: 20, fontWeight: '200' }}>
           {item.category}
         </Text>
-        <Text
-          style={{ fontSize: 22, color: colors.tertiary, paddingBottom: 20 }}
-        >
+        <Text style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }} >
           {item.score}
         </Text>
         <Text style={{ fontSize: 15 }}>
@@ -78,8 +124,13 @@ const ActivitySummary = () => {
 
   return (
     <>
+      <View style={styles.headerContainer}>
+        <Text style={{ fontSize: 25, fontWeight: '500' }}>
+          Summary
+        </Text>
+      </View>
       <FlatList
-        data={DATA}
+        data={messages}
         renderItem={renderItem}
         contentContainerStyle={styles.container}
         keyExtractor={item => item.category}
@@ -89,6 +140,8 @@ const ActivitySummary = () => {
 };
 
 ActivitySummary.propTypes = {
+  responses: PropTypes.array.isRequired,
+  activity: PropTypes.object.isRequired,
 };
 
 const mapDispatchToProps = {
