@@ -31,7 +31,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'radio'
     // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
-    if (applet.schema.includes('TokenLogger')) {
+    if (applet.schema && applet.schema.includes('TokenLogger')) {
       return (
         <TLMultiSelect
           config={screen.valueConstraints}
