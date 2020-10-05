@@ -38,9 +38,13 @@ const URL = "schema:url";
 const VALUE = "schema:value";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
+const JS_EXPRESSION = "reprolib:terms/jsExpression";
 const VERSION = "schema:version";
 const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
+const COMPUTE = "reprolib:terms/compute";
+const MESSAGES = "reprolib:terms/messages";
+const MESSAGE = "reprolib:terms/message";
 
 export const languageListToObject = (list) => {
   if (
@@ -269,6 +273,19 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   });
   const items = attachPreamble(preamble, mapItems(order));
 
+  const compute = activityJson[COMPUTE] && R.map((item) => { 
+    return {
+      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
+      variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
+    }
+  }, activityJson[COMPUTE]);
+  const messages = activityJson[MESSAGES] && R.map((item) => {
+    return {
+      message: R.path([MESSAGE, 0, "@value"], item),
+      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item)
+    }
+  }, activityJson[MESSAGES]);
+
   return {
     id: activityJson._id,
     name: languageListToObject(activityJson[PREF_LABEL]),
@@ -282,6 +299,8 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     backDisabled: allowList.includes(BACK_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
+    compute,
+    messages,
     preamble,
     scoringLogic,
     notification,
@@ -327,6 +346,6 @@ export const transformApplet = (payload) => {
   // Add the items and activities to the applet object
   applet.activities = activities;
   applet.groupId = payload.groups;
-
+  console.log('app---->', applet);
   return applet;
 };

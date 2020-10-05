@@ -223,20 +223,20 @@ class ActivityScreen extends Component {
                 </View>
               </View>
             ) : (
-                <Widget
-                  answer={answer}
-                  onChange={onChange}
-                  isCurrent={isCurrent}
-                  screen={screen}
-                  onPress={() => {
-                    this.setState({ scrollEnabled: false });
-                  }}
-                  onRelease={() => {
-                    this.setState({ scrollEnabled: true });
-                  }}
-                  onContentError={onContentError}
-                />
-              )}
+              <Widget
+                answer={answer}
+                onChange={onChange}
+                isCurrent={isCurrent}
+                screen={screen}
+                onPress={() => {
+                  this.setState({ scrollEnabled: false });
+                }}
+                onRelease={() => {
+                  this.setState({ scrollEnabled: true });
+                }}
+                onContentError={onContentError}
+              />
+            )}
           </ScrollView>
         </KeyboardAvoidingView>
         {timerActive && (

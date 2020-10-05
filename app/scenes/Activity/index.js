@@ -16,24 +16,30 @@ import {
 import {
   currentResponsesSelector,
   itemVisiblitySelector,
+  isSummaryScreenSelector,
   currentScreenSelector,
+
 } from '../../state/responses/responses.selectors';
 import { currentAppletSelector } from '../../state/app/app.selectors';
-import { 
+import { testVisibility } from '../../services/visibility';
+import {
   setCurrentActivity,
   setActivitySelectionDisabled,
 } from '../../state/app/app.actions';
 import {
   setAnswer,
+  setSummaryScreen,
   setSelected,
 } from '../../state/responses/responses.actions';
 
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
+import ActivitySummary from '../ActivitySummary';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
 import ActivityButtons from '../../components/ActivityButtons';
 import {
+  getNextPos,
   getNextLabel,
   getPrevLabel,
   getActionLabel,
@@ -58,13 +64,14 @@ const styles = StyleSheet.create({
 class Activity extends React.Component {
   constructor() {
     super();
-    this.state = { isContentError: false, idleTime: null };
+    this.state = { isContentError: false, idleTime: null, isSummaryScreen: false };
     this.idleTimer = new Timer();
   }
 
   componentDidMount() {
+    const { isSummaryScreen } = this.props;
     this.props.setActivitySelectionDisabled(false);
-    this.setState({ idleTime: this.getIdleTime() }, () => {
+    this.setState({ isSummaryScreen, idleTime: this.getIdleTime() }, () => {
       if (this.state.idleTime) {
         this.idleTimer.startCountdown(
           this.state.idleTime,  // Time in seconds.
@@ -72,6 +79,41 @@ class Activity extends React.Component {
         );
       }
     });
+  }
+
+  handleChange(answer, goToNext) {
+    const { isSummaryScreen } = this.state;
+    const {
+      currentApplet,
+      currentResponse,
+      currentScreen,
+      nextScreen,
+      isSelected,
+      setSummaryScreen,
+      setSelected
+    } = this.props;
+    const { activity, responses } = currentResponse;
+    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
+    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+
+    responses[currentScreen] = answer;
+    const visibility = activity.items.map(item => testVisibility(item.visibility, activity.items, responses));
+    const next = getNextPos(currentScreen, visibility);
+    if (goToNext || autoAdvance || fullScreen) {
+      if (next === -1
+        && activity.compute
+        && !isSummaryScreen
+      ) {
+        this.setState({ isSummaryScreen: true });
+        setSummaryScreen(true);
+      } else {
+        if (isSummaryScreen) {
+          this.setState({ isSummaryScreen: false });
+        }
+        nextScreen();
+        setSelected(false);
+      }
+    }
   }
 
   get currentItem() {
@@ -116,6 +158,7 @@ class Activity extends React.Component {
       currentApplet,
       setAnswer,
       currentResponse,
+      setSummaryScreen,
       setCurrentActivity,
       authToken,
       currentScreen,
@@ -126,6 +169,8 @@ class Activity extends React.Component {
       isSelected,
     } = this.props;
 
+    const { isSummaryScreen } = this.state;
+
     if (!currentResponse) {
       return <View />;
     }
@@ -134,26 +179,46 @@ class Activity extends React.Component {
 
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-    const prevLabel = getPrevLabel(currentScreen, itemVisibility);
+    const prevLabel = isSummaryScreen
+      ? "Back"
+      : getPrevLabel(currentScreen, itemVisibility);
+    const nextLabel = isSummaryScreen
+      ? "Next"
+      : getNextLabel(
+        currentScreen,
+        itemVisibility,
+        activity,
+        responses,
+        this.state.isContentError
+      );
+    const actionLabel = isSummaryScreen
+      ? ""
+      : getActionLabel(
+        currentScreen,
+        responses,
+        activity.items,
+      );
 
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        <ActivityScreens
-          activity={activity}
-          answers={responses}
-          currentScreen={currentScreen}
-          onChange={(answer, goToNext = false) => {
-            setAnswer(currentApplet.id, activity.id, currentScreen, answer);
-            if (goToNext || autoAdvance || fullScreen) {
-              nextScreen();
-              setSelected(false);
-            }
-          }}
-          authToken={authToken}
-          onContentError={() => this.setState({ isContentError: true })}
-          onAnyTouch={this.idleTimer.resetCountdown}
-        />
+        {!isSummaryScreen ? (
+          <ActivityScreens
+            activity={activity}
+            answers={responses}
+            currentScreen={currentScreen}
+            onChange={(answer, goToNext = false) => {
+              setAnswer(currentApplet.id, activity.id, currentScreen, answer);
+              this.handleChange(answer, goToNext);
+            }}
+            authToken={authToken}
+            onContentError={() => this.setState({ isContentError: true })}
+            onAnyTouch={this.idleTimer.resetCountdown}
+          />
+        ) : (
+            <ActivitySummary responses={responses} activity={activity} />
+          )
+        }
         {!fullScreen && (
           <View onTouchStart={this.idleTimer.resetCountdown} style={styles.buttonArea}>
             {activity.items.length > 1 && (
@@ -163,13 +228,7 @@ class Activity extends React.Component {
               />
             )}
             <ActivityButtons
-              nextLabel={getNextLabel(
-                currentScreen,
-                itemVisibility,
-                activity,
-                responses,
-                this.state.isContentError
-              )}
+              nextLabel={nextLabel}
               nextEnabled={isNextEnabled(
                 currentScreen,
                 activity,
@@ -177,28 +236,40 @@ class Activity extends React.Component {
               )}
               onPressNext={() => {
                 this.setState({ isContentError: false });
-                nextScreen();
-                if (isSelected) {
+                if (getNextPos(currentScreen, itemVisibility) === -1
+                  && activity.compute
+                  && !isSummaryScreen
+                ) {
+                  this.setState({ isSummaryScreen: true });
+                  setSummaryScreen(true);
+                } else {
+                  if (isSummaryScreen) {
+                    this.setState({ isSummaryScreen: false });
+                    setSummaryScreen(false);
+                  }
+                  nextScreen();
                   setSelected(false);
                 }
               }}
               prevLabel={prevLabel}
               prevEnabled={isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
-                if (!currentScreen) {
-                  setCurrentActivity(null);
-                }
-                prevScreen();
-                
-                if (isSelected) {
+                const { isSummaryScreen } = this.state;
+                if (isSummaryScreen) {
+                  this.setState({ isSummaryScreen: false });
+                  setSummaryScreen(false);
                   setSelected(false);
+                } else {
+                  if (!currentScreen) {
+                    setCurrentActivity(null);
+                  }
+                  prevScreen();
+                  if (isSelected) {
+                    setSelected(false);
+                  }
                 }
               }}
-              actionLabel={getActionLabel(
-                currentScreen,
-                responses,
-                activity.items,
-              )}
+              actionLabel={actionLabel}
               onPressAction={() => {
                 setAnswer(
                   currentApplet.id,
@@ -243,6 +314,7 @@ const mapStateToProps = state => ({
   authToken: authTokenSelector(state),
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
+  isSummaryScreen: isSummaryScreenSelector(state),
   isSelected: state.responses.isSelected,
 });
 
@@ -253,6 +325,7 @@ const mapDispatchToProps = {
   nextScreen,
   prevScreen,
   completeResponse,
+  setSummaryScreen,
   setActivitySelectionDisabled,
 };
 

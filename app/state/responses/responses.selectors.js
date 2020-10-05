@@ -8,6 +8,8 @@ export const uploadQueueSelector = R.path(['responses', 'uploadQueue']);
 
 export const isDownloadingResponsesSelector = R.path(['responses', 'isDownloadingResponses']);
 
+export const isSummaryScreenSelector = R.path(['responses', 'isSummaryScreen']);
+
 export const downloadProgressSelector = R.path(['responses', 'downloadProgress']);
 
 export const inProgressSelector = R.path(['responses', 'inProgress']);
