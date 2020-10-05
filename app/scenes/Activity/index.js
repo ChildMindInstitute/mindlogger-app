@@ -99,7 +99,7 @@ class Activity extends React.Component {
     responses[currentScreen] = answer;
     const visibility = activity.items.map(item => testVisibility(item.visibility, activity.items, responses));
     const next = getNextPos(currentScreen, visibility);
-    if (goToNext || autoAdvance || fullScreen) {
+    if (autoAdvance || fullScreen) {
       if (next === -1
         && activity.compute
         && !isSummaryScreen
