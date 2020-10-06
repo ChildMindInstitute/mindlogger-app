@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.23] - 2020-10-05
+- Fix auto advance for select widget
+
 ## [0.13.22] - 2020-10-02
 - Implement scoring logic and embed summary screen
 
