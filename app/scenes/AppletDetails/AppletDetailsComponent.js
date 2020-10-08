@@ -122,7 +122,7 @@ class AppletDetailsComponent extends React.Component {
       case 'about':
         return (
           <Content>
-            <AppletAbout about={applet.about ? applet.about.en : ''} />
+            <AppletAbout applet={applet} /> 
           </Content>
         );
       default:

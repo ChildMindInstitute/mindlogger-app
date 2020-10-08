@@ -78,7 +78,6 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
         const transformedApplets = applets.filter(
           applet => !R.isEmpty(applet.items),
         ).map(transformApplet);
-        console.log('applets---->', transformedApplets);
         dispatch(replaceApplets(transformedApplets));
         dispatch(downloadResponses(transformedApplets));
         dispatch(downloadAppletsMedia(transformedApplets));
@@ -108,7 +107,6 @@ export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState
         if (transformedApplets && transformedApplets.length > 0) {
           const transformedApplet = transformedApplets[0];
           // eslint-disable-next-line no-console
-          console.log('replaceTargetApplet', { applet, transformedApplet });
           dispatch(replaceTargetApplet(transformedApplet));
           dispatch(downloadAppletResponses(transformedApplet));
           dispatch(downloadAppletMedia(transformedApplet));
