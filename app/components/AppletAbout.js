@@ -5,7 +5,7 @@ import { AboutView } from './core/AboutView';
 
 // eslint-disable-next-line
 class AppletAbout extends React.Component {
-
+ 
   constructor() {
     super();
     this.state = {
@@ -14,9 +14,13 @@ class AppletAbout extends React.Component {
   }
 
   async componentDidMount() {
-    const { about } = this.props;
-    if (about) {
-      await this.getMD(about);
+    const { about, aboutContent } = this.props.applet;
+    if (about && about.en) {
+      await this.getMD(about.en);
+    } else if (aboutContent && aboutContent.en) {
+      this.setState({
+        markdown: aboutContent.en
+      })
     } else {
       this.setState({
         markdown: `# ¯\\\\_(ツ)_/¯
@@ -50,7 +54,7 @@ The authors of this applet have not provided any information!
 }
 
 AppletAbout.propTypes = {
-  about: PropTypes.string.isRequired,
+  applet: PropTypes.object.isRequired,
 };
 
 export default AppletAbout;
