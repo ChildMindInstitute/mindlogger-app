@@ -23,8 +23,9 @@ import {
   shiftUploadQueue,
   setCurrentScreen,
   setSchedule,
+  setSummaryScreen,
   replaceAppletResponses,
-  setActivityOpened,
+  setActivityOpened, 
 } from "./responses.actions";
 import {
   setCurrentActivity,
@@ -116,6 +117,7 @@ export const startResponse = activity => (dispatch, getState) => {
           onPress: () => {
             const itemResponses = R.pathOr([], ['inProgress', applet.id + activity.id, 'responses'], responses);
             cleanFiles(itemResponses);
+            dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
             dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
             dispatch(setCurrentScreen(applet.id, activity.id, 0));
