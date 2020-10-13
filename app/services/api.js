@@ -15,7 +15,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   onProgress(numDownloaded, applets.length);
   const requests = applets.map((applet) => {
     const appletId = applet.id.split('/').pop();
-    return getLast7DaysData({ authToken, appletId }).then((responses) => {
+    return getLast7DaysData({ authToken, appletId, groupByDateActivity: false }).then((responses) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       const appletId = applet.id;
