@@ -25,7 +25,7 @@ class TokenChart extends React.Component {
 
     // Y scale linear
     const maxValue = d3.max(data, d => Math.abs(d.value));
-    const topValue = maxValue < 5 ? 5 : Math.ceil(maxValue / 5 + 1) * 5;
+    const topValue = maxValue < 5 ? 5 : Math.floor(maxValue / 5 + 1) * 5;
     const yDomain = [0, topValue * 2];
     const yRange = [0, graphHeight];
     const y = d3

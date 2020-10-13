@@ -28,24 +28,18 @@ import { currentAppletSelector } from '../../state/app/app.selectors';
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
 const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
+  const valueType = R.path(['valueConstraints', 'valueType'], screen);
+
   if (screen.inputType === 'radio'
     // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
-    if (applet.schema && applet.schema.includes('TokenLogger')) {
-      return (
-        <TLMultiSelect
-          config={screen.valueConstraints}
-          onChange={onChange}
-          value={answer}
-        />
-      );
-    }
     const screenValue = (typeof answer === 'object') ? answer : undefined;
     return (
       <MultiSelect
         config={screen.valueConstraints}
         onChange={onChange}
         value={screenValue}
+        token={valueType.includes("token")}
       />
     );
   }
@@ -59,6 +53,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
+        token={valueType.includes("token")}
       />
     );
   }

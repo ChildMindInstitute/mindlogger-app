@@ -83,7 +83,7 @@ class ItemChart extends React.Component {
       }, 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
-        values[currentDay] = sum || 0;
+        values[currentDay] = values[currentDay] === undefined ? sum : (values[currentDay] + sum);
       }
     });
 
