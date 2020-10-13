@@ -24,7 +24,6 @@ const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const NAME = "schema:name";
-const ORDER = "reprolib:terms/order";
 const PREAMBLE = "reprolib:terms/preamble";
 const PREF_LABEL = "http://www.w3.org/2004/02/skos/core#prefLabel";
 const QUESTION = "schema:question";
@@ -46,6 +45,7 @@ const ADD_PROPERTIES = "reprolib:terms/addProperties";
 const COMPUTE = "reprolib:terms/compute";
 const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
+export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
   if (
@@ -204,6 +204,7 @@ export const itemTransformJson = (itemJson) => {
   const media = transformMedia(R.path([MEDIA, 0], itemJson));
 
   const res = {
+    id: itemJson._id,
     description: languageListToObject(itemJson[DESCRIPTION]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
@@ -264,7 +265,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const addProperties = activityJson[ADD_PROPERTIES];
 
   const preamble = languageListToObject(activityJson[PREAMBLE]);
-  const order = flattenIdList(activityJson[ORDER][0]["@list"]);
+  const order = (activityJson[ORDER] && flattenIdList(activityJson[ORDER][0]["@list"])) || [];
   let itemIndex = -1;
 
   const mapItems = R.map((itemKey) => {

@@ -9,6 +9,7 @@ import {
 import { cleanFiles } from './file';
 import { transformResponses } from '../models/response';
 import { decryptData } from './encryption';
+import { activityTransformJson, itemTransformJson, itemAttachExtras, ORDER } from '../models/json-ld';
 
 export const downloadAllResponses = (authToken, applets, onProgress) => {
   let numDownloaded = 0;
@@ -46,6 +47,43 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
             delete responses.responses[item];
           }
         })
+      }
+
+      if (responses.items) {
+        for (let itemId in responses.items) {
+          const item = responses.items[itemId];
+          responses.items[itemId] = {
+            ...itemAttachExtras(itemTransformJson(item), itemId),
+            original: item.original,
+            activityId: item.activityId
+          }
+        }
+      }
+
+      if (responses.itemReferences) {
+        for (let version in responses.itemReferences) {
+          for (let itemId in responses.itemReferences[version]) {
+            const id = responses.itemReferences[version][itemId];
+            if (id) {
+              const item = responses.items[id];
+              responses.itemReferences[version][itemId] = item;
+            }
+          }
+        }
+      }
+
+      if (responses.activities) {
+        for (let activityId in responses.activities) {
+          const activity = responses.activities[activityId];
+          if (activity[ORDER]) {
+              delete activity[ORDER];
+          }
+
+          responses.activities[activityId] = {
+            ...activityTransformJson(activity, []),
+            original: activity.original
+          }
+        }
       }
 
       return { ...responses, appletId };

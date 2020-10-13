@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove underscore character in ped screener
 - Fix unnecessary readMore button
 
+## [0.13.24] - 2020-10-08
+- show responses with old versions
+
 ## [0.13.23] - 2020-10-05
 - Fix auto advance for select widget
 
