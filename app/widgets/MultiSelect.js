@@ -30,6 +30,7 @@ export class MultiSelect extends Component {
   render() {
     const {
       config: { itemList },
+      token,
       value = [],
     } = this.props;
     return (
@@ -37,7 +38,7 @@ export class MultiSelect extends Component {
         {itemList.map((item, index) => (
           <ListItem
             style={{ width: '90%' }}
-            onPress={() => this.onAnswer(item.value)}
+            onPress={() => this.onAnswer(item.name.en)}
             key={index}
           >
             <View style={{ width: '85%' }}>
@@ -58,7 +59,7 @@ export class MultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <Text>{item.name.en}</Text>
+                    <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
                   </View>
                 ) : (
                   <View
@@ -68,15 +69,15 @@ export class MultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <Text>{item.name.en}</Text>
+                      <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
                   </View>
                 )}
               </View>
             </View>
             <View style={{ width: '15%' }}>
               <CheckBox
-                checked={value && Array.isArray(value) && value.includes(item.value)}
-                onPress={() => this.onAnswer(item.value)}
+                checked={value && Array.isArray(value) && value.includes(item.name.en)}
+                onPress={() => this.onAnswer(item.name.en)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
                 checkedColor={colors.primary}
@@ -100,6 +101,7 @@ MultiSelect.propTypes = {
     minValue: PropTypes.number,
     maxValue: PropTypes.number,
   }).isRequired,
+  token: PropTypes.bool,
   value: PropTypes.array,
   onChange: PropTypes.func.isRequired,
 };

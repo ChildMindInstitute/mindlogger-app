@@ -23,6 +23,7 @@ const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
+const VALUE_TYPE = "reprolib:terms/valueType";
 const NAME = "schema:name";
 const ORDER = "reprolib:terms/order";
 const PREAMBLE = "reprolib:terms/preamble";
@@ -109,6 +110,12 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
+      };
+    }
+    if (key === VALUE_TYPE) {
+      return {
+        ...accumulator,
+        valueType: R.path([key, 0, "@id"], vcObj),
       };
     }
     if (key === ITEM_LIST_ELEMENT) {
@@ -336,6 +343,7 @@ export const appletTransformJson = (appletJson) => {
 };
 
 export const transformApplet = (payload) => {
+  console.log('applet--------->', payload)
   const activities = Object.keys(payload.activities).map((key) => {
     const activity = activityTransformJson(
       payload.activities[key],
