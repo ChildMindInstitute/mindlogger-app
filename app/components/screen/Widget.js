@@ -39,7 +39,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         config={screen.valueConstraints}
         onChange={onChange}
         value={screenValue}
-        token={valueType.includes("token")}
+        token={valueType && valueType.includes("token")}
       />
     );
   }
@@ -53,7 +53,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        token={valueType.includes("token")}
+        token={ valueType && valueType.includes("token")}
       />
     );
   }
