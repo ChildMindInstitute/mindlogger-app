@@ -252,6 +252,7 @@ test('itemTransformJson', () => {
     autoAdvance: false,
     backDisabled: false,
     fullScreen: false,
+    id: "screen/5cbf991e86fafd5189aee252",
     timer: undefined,
     delay: undefined,
     media: undefined,

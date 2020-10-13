@@ -40,10 +40,139 @@ class AppletData extends React.Component {
       '',
     ];
     const data = [];
-    applet.activities.forEach((activity) => {
+    const activities = [...applet.activities];
+    const appletVersion = Object.values(applet.version)[0];
+
+    /** show deleted activites for one weeek */
+    Object.values(appletData.activities).forEach(activity => {
+      if (!activities.some(existing => existing.id.split('/').pop() === activity.original.activityId)) {
+        activities.push({
+          ...activity,
+          id: `activity/${activity.original.activityId}`
+        })
+      }
+    })
+
+    const activityIDToItemList = {};
+    const itemSchemaToVersion = {};
+    for (let version in appletData.itemReferences) {
+      for (let itemId in appletData.itemReferences[version]) {
+        const item = appletData.itemReferences[version][itemId];
+        if (!item) {
+          /** handle items without changes in the schema across several versions */
+          itemSchemaToVersion[itemId] = itemSchemaToVersion[itemId] || [];
+          itemSchemaToVersion[itemId].push(version);
+
+          continue;
+        }
+
+        const activity = appletData.activities[item.activityId];
+        const activityId = `activity/${activity.original.activityId}`
+
+        activityIDToItemList[activityId] = activityIDToItemList[activityId] || [];
+        activityIDToItemList[activityId].push({
+          version,
+          itemId
+        });
+      }
+    }
+
+    activities.forEach((activity) => {
       const itemsFiltered = activity.items.filter(
         (i) => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType
-      );
+      ).map(item => JSON.parse(JSON.stringify(item)));
+
+      itemsFiltered.forEach(item => {
+        item.schemas = [item.schema];
+        item.appletVersions = [appletVersion];
+
+        if (itemSchemaToVersion[item.schema]) {
+          item.appletVersions.push(...itemSchemaToVersion[item.schema]);
+        }
+      });
+
+      /** insert deleted/updated items (merge items with same input type)*/
+      if (activityIDToItemList[activity.id]) {
+        for (let itemData of activityIDToItemList[activity.id]) {
+          const oldItem = {
+            ...appletData.itemReferences[itemData.version][itemData.itemId],
+            appletVersion: itemData.version,
+          }
+
+          oldItem.schemas = [itemData.itemId];
+
+          const currentItem = itemsFiltered.find(item => item.id.split('/').pop() === oldItem.original.screenId && item.inputType === oldItem.inputType);
+
+          if (currentItem) {
+            if (currentItem.inputType === 'radio') {
+              currentItem.valueMapping = currentItem.valueMapping || {};
+              currentItem.valueMapping[oldItem.appletVersion] = [];
+
+              const options = currentItem.valueConstraints.itemList;
+
+              /** merge two option lists */
+              oldItem.valueConstraints.itemList.forEach((oldOption) => {
+                let newId = options.findIndex(option => Object.values(option.name)[0] === Object.values(oldOption.name)[0]);
+                if (newId < 0) {
+                  newId = options.length;
+                  options.push({
+                    name: oldOption.name,
+                    value: newId + 1
+                  });
+                }
+
+                if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) { /** in case of tokenlogger item */
+                  currentItem.valueMapping[oldItem.appletVersion][Object.values(oldOption.name)[0]] = newId + 1;
+                } else {
+                  currentItem.valueMapping[oldItem.appletVersion][oldOption.value] = newId + 1;
+                }
+              })
+            } else if (currentItem.inputType == 'slider') {
+              const currentContraint = currentItem.valueConstraints;
+              const oldConstraint = oldItem.valueConstraints;
+
+              currentContraint.minValue = min(oldConstraint.minValue, currentContraint.minValue);
+              currentContraint.maxValue = max(oldConstraint.maxValue, currentContraint.maxValue);
+
+              const lang = currentContraint.itemList && Object.keys(currentContraint.itemList[0].name)[0]
+                        || oldConstraint.itemList && Object.keys(oldConstraint.itemList[0].name)[0];
+
+              currentContraint.itemList = [];
+              /** generate itemList */
+              for (let i = currentContraint.minValue; i < currentContraint.maxValue; i++) {
+                currentContraint.itemList.push({
+                  value: i,
+                  name: {
+                    [lang]: `${value}`
+                  }
+                })
+              }
+            }
+
+            currentItem.appletVersions.push(oldItem.appletVersion);
+
+            currentItem.schemas.push(itemData.itemId);
+          } else {
+            itemsFiltered.push(oldItem);
+
+            oldItem.id = `screen/${oldItem.original.screenId}`;
+            oldItem.appletVersions = [oldItem.appletVersion];
+
+            if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) { /** convert string to integer for tokenlogger */
+              oldItem.valueMapping = {
+                [oldItem.appletVersion]: oldItem.valueConstraints.itemList.reduce((valueMapping, option) => {
+                  valueMapping[Object.values(option.name)[0]] = option.value;
+                  return valueMapping;
+                }, {})
+              }
+            }
+          }
+        }
+      }
+
+      if (activity.original && !itemsFiltered.length) {
+        return;
+      }
 
       // const { width } = Dimensions.get('window');
       let count = 0;
@@ -52,36 +181,63 @@ class AppletData extends React.Component {
         dataIndex < itemsFiltered.length;
         dataIndex += 1
       ) {
-        if (!appletData.responses[itemsFiltered[dataIndex].schema]) {
-          break;
-        }
-        for (
-          let i = 0;
-          i < appletData.responses[itemsFiltered[dataIndex].schema].length;
-          i += 1
-        ) {
-          const differenceTime =
-            new Date().getTime() - moment(
-              appletData.responses[itemsFiltered[dataIndex].schema][i].date
-            )
-              .toDate()
-              .getTime();
-          const differenceDay = differenceTime / (1000 * 3600 * 24);
-          if (differenceDay < 7) {
-            count += 1;
-            break;
+        itemsFiltered[dataIndex].schemas.forEach(schema => {
+          if (!appletData.responses[schema]) {
+            return ;
           }
-        }
+
+          for (
+            let i = 0;
+            i < appletData.responses[schema].length;
+            i += 1
+          ) {
+            const differenceTime =
+              new Date().getTime() - moment(
+                appletData.responses[schema][i].date
+              )
+                .toDate()
+                .getTime();
+            const differenceDay = differenceTime / (1000 * 3600 * 24);
+            if (differenceDay < 7) {
+              count += 1;
+              break;
+            }
+          }
+        })
       }
+
       if (count === 0) {
         data.push({ type: 'EmptyActivityChart', activity });
       } else {
         data.push({ type: 'ActivityChartHeader', activity });
         data.push(
           ...itemsFiltered.map((item) => {
-            const itemData = appletData.responses
-              ? appletData.responses[item.schema] || []
-              : [];
+            const responses = [];
+            if (appletData.responses) {
+              item.schemas.forEach(schema => {
+                if (appletData.responses[schema]) {
+                  responses.push(...appletData.responses[schema]);
+                }
+              })
+            }
+
+            const itemData = [];
+            responses.forEach(response => {
+              if (!item.appletVersions || !Object.keys(appletData.items).length) {
+                itemData.push(response);
+              } else if (item.appletVersions && item.appletVersions.indexOf(response.version) >= 0) {
+                if (item.inputType === 'radio' && item.valueMapping && item.valueMapping[response.version]) {
+                  /** handle merged items */
+                  itemData.push({
+                    ...response,
+                    value: response.value.map(value => item.valueMapping[response.version][value])
+                  })
+                } else {
+                  itemData.push(response);
+                }
+              }
+            })
+
             return {
               type: 'ActivityChartItem',
               item: this.doItem(item, itemData),
