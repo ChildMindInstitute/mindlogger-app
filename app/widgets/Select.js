@@ -46,7 +46,7 @@ export class Select extends React.Component {
 
     const selectedItem = config.itemList.find(item => item.value === value);
     return (
-      <View style={{ marginBottom: 20 }}>
+      <View style={{ marginBottom: 0, height: 350 }}>
         {this.state.modalVisible ? (
           <Container style={styles.paddingContent}>
             <Picker

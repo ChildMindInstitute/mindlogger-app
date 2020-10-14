@@ -2,6 +2,7 @@ import * as R from "ramda";
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
+const ABOUT_CONTENT = "reprolib:terms/landingPageContent";
 const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
@@ -318,6 +319,7 @@ export const appletTransformJson = (appletJson) => {
     name: languageListToObject(appletJson[PREF_LABEL]),
     description: languageListToObject(appletJson[DESCRIPTION]),
     about: languageListToObject(appletJson[ABOUT]),
+    aboutContent: languageListToObject(appletJson[ABOUT_CONTENT]),
     schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
     version: languageListToObject(appletJson[VERSION]),
     altLabel: languageListToObject(appletJson[ALT_LABEL]),
@@ -347,6 +349,5 @@ export const transformApplet = (payload) => {
   // Add the items and activities to the applet object
   applet.activities = activities;
   applet.groupId = payload.groups;
-  console.log('app---->', applet);
   return applet;
 };

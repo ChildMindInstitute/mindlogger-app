@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.25] - 2020-10-07
+- Implement adding/editing about page
+- Remove underscore character in ped screener
+- Fix unnecessary readMore button
+
 ## [0.13.24] - 2020-10-08
 - show responses with old versions
 

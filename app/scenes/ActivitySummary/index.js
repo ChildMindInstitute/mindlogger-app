@@ -110,7 +110,7 @@ const ActivitySummary = ({ responses, activity }) => {
     return (
       <View style={styles.itemContainer}>
         <Text style={{ fontSize: 20, fontWeight: '200' }}>
-          {item.category}
+          {item.category.replace(/_/g, " ")}
         </Text>
         <Text style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }} >
           {item.score}
