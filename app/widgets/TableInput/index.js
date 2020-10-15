@@ -33,6 +33,9 @@ export class TableInput extends Component {
       alignContent: 'center',
       justifyContent: 'center',
     };
+    const infoStyle = {
+      paddingTop: 20,
+    };
     const rowStyle = {
       height: cellHeight,
     };
@@ -71,6 +74,10 @@ export class TableInput extends Component {
             ))}
           </Row>
         ))}
+        <View style={infoStyle}>
+          <Text style={styles.cellTextStyle}> * A short-press increases the counter</Text>
+          <Text style={styles.cellTextStyle}> * A long-press decreases the counter</Text>
+        </View>
       </View>
     );
   }

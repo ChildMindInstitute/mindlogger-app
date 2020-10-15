@@ -6,7 +6,7 @@ import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 
-export const Radio = ({ value, config, onChange, selected, onSelected }) => {
+export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
   const handlePress = (itemValue) => {
     if (!selected) {
@@ -20,7 +20,7 @@ export const Radio = ({ value, config, onChange, selected, onSelected }) => {
       {config.itemList.map((item, index) => (
         <ListItem
           style={{ width: '90%' }}
-          onPress={() => handlePress(item.value)}
+          onPress={() => handlePress(item.name.en)}
           key={index}
         >
           <View style={{ width: '85%' }}>
@@ -41,7 +41,7 @@ export const Radio = ({ value, config, onChange, selected, onSelected }) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               ) : (
                 <View
@@ -51,15 +51,15 @@ export const Radio = ({ value, config, onChange, selected, onSelected }) => {
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               )}
             </View>
           </View>
           <View style={{ width: '15%' }}>
             <CheckBox
-              checked={value === item.value}
-              onPress={() => handlePress(item.value)}
+              checked={value === item.name.en}
+              onPress={() => handlePress(item.name.en)}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
               checkedColor={colors.primary}
@@ -87,6 +87,7 @@ Radio.propTypes = {
     ).isRequired,
   }).isRequired,
   onSelected: PropTypes.func.isRequired,
+  token: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
 };

@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.13.26] - 2020-10-12
+- Update TokenLogger Data Tab with cumulative values
+- Add instruction for table counter widget
+- Implement value type for TokenLogger activity builder
 
 ## [0.13.25] - 2020-10-07
 - Implement adding/editing about page

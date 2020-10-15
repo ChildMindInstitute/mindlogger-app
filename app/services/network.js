@@ -311,10 +311,13 @@ export const deleteUserAccount = (authToken, userId) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const getLast7DaysData = ({ authToken, appletId, referenceDate }) => {
+export const getLast7DaysData = ({ authToken, appletId, referenceDate, groupByDateActivity }) => {
   let url = `${apiHost()}/response/last7Days/${appletId}`;
   if (referenceDate) {
     url += `?referenceDate=${referenceDate}`;
+  }
+  if (!groupByDateActivity) {
+    url += `?groupByDateActivity=${groupByDateActivity}`;
   }
   const headers = {
     'Girder-Token': authToken,

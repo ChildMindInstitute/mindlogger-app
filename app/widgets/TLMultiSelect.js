@@ -58,7 +58,7 @@ export class TLMultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <Text>{item.name.en} ({item.value < 0 ? '' : '+'}{item.value})</Text>
+                    <Text>{item.name.en} ({item.value < 0 ? '-' : '+'}{item.value})</Text>
                   </View>
                 ) : (
                   <View
@@ -68,7 +68,7 @@ export class TLMultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <Text>{item.name.en} ({item.value < 0 ? '' : '+'}{item.value})</Text>
+                    <Text>{item.name.en} ({item.value < 0 ? '-' : '+'}{item.value})</Text>
                   </View>
                 )}
               </View>
