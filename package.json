@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.13.26",
+  "version": "0.13.27",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -103,6 +103,7 @@
     "rn-fetch-blob": "^0.12.0",
     "stream-browserify": "^1.0.0",
     "string-hash": "^1.1.3",
+    "string_decoder": "^0.10.31",
     "styled-components": "^4.1.1",
     "timers-browserify": "^1.4.2",
     "tty-browserify": "0.0.0",
