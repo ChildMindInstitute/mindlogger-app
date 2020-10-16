@@ -229,6 +229,7 @@ export const itemTransformJson = (itemJson) => {
     inputs: inputsObj,
     media,
   };
+
   return res;
 };
 
@@ -274,14 +275,24 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const preamble = languageListToObject(activityJson[PREAMBLE]);
   const order = (activityJson[ORDER] && flattenIdList(activityJson[ORDER][0]["@list"])) || [];
   let itemIndex = -1;
+  let itemData;
 
   const mapItems = R.map((itemKey) => {
     itemIndex += 1;
+    itemData = itemsJson[itemKey];
+
+    if (!itemData) {
+      console.warn(
+        `Item ID "${itemKey}" defined in 'reprolib:terms/order' was not found`
+      );
+      return null;
+    }
+
     const item = itemTransformJson(itemsJson[itemKey]);
     return itemAttachExtras(item, itemKey, addProperties[itemIndex]);
   });
-  const items = attachPreamble(preamble, mapItems(order));
-
+  const nonEmptyItems = R.filter(item => item, mapItems(order));
+  const items = attachPreamble(preamble, nonEmptyItems);
   const compute = activityJson[COMPUTE] && R.map((item) => { 
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
