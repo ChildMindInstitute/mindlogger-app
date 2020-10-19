@@ -76,8 +76,8 @@ export class MultiSelect extends Component {
             </View>
             <View style={{ width: '15%' }}>
               <CheckBox
-                checked={value && Array.isArray(value) && value.includes(item.name.en)}
-                onPress={() => this.onAnswer(item.name.en)}
+                checked={value && Array.isArray(value) && value.includes(token ? item.name.en : item.value)}
+                onPress={() => this.onAnswer(token ? item.name.en : item.value)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
                 checkedColor={colors.primary}

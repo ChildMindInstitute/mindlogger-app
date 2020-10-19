@@ -16,8 +16,8 @@ class TokenChart extends React.Component {
 
   render() {
     const { data } = this.props;
-    const SVGHeight = Math.round(Dimensions.get('window').width * 0.9);
-    const SVGWidth = Math.round(Dimensions.get('window').height * 0.5);
+    const SVGHeight = Math.round(Dimensions.get('window').width * 0.95);
+    const SVGWidth = Math.round(Dimensions.get('window').height * 0.6);
     const GRAPH_MARGIN = 5;
     const GRAPH_BAR_WIDTH = 25;
     const graphHeight = SVGHeight - 2 * GRAPH_MARGIN;
@@ -25,6 +25,7 @@ class TokenChart extends React.Component {
 
     // Y scale linear
     const maxValue = d3.max(data, d => Math.abs(d.value));
+    console.log('max', data)
     const topValue = maxValue < 5 ? 5 : Math.floor(maxValue / 5 + 1) * 5;
     const yDomain = [0, topValue * 2];
     const yRange = [0, graphHeight];

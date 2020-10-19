@@ -91,7 +91,7 @@ class ItemChart extends React.Component {
       if (Object.keys(values).includes(dayOfWeek)) {
         return {
           name: dayOfWeek,
-          value: values[dayOfWeek],
+          value: parseInt(values[dayOfWeek]),
         };
       }
       return {
@@ -171,7 +171,6 @@ class ItemChart extends React.Component {
 
   render() {
     const { item, type } = this.props;
-    // console.log('inputype', item.inputType, type);
     switch (item.inputType) {
       case 'radio':
         if (type === 'TokenLogger') {

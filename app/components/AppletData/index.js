@@ -460,6 +460,7 @@ class AppletData extends React.Component {
 
   renderItem = ({ item, index }) => {
     const { applet } = this.props;
+    
     if (item.type === 'EmptyActivityChart') {
       const { activity } = item;
       return this.renderEmptyActivityChart(activity, index);
@@ -469,7 +470,8 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === 'ActivityChartItem') {
-      const type = applet.schema && applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
+      const { valueType } = item.item.valueConstraints;
+      const type = (valueType && valueType.includes('token')) ? 'TokenLogger' : '';
       return this.renderActivityChartItem(item, type);
     }
     return null;
