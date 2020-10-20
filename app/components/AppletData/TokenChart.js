@@ -18,15 +18,15 @@ class TokenChart extends React.Component {
     const { data } = this.props;
     const SVGHeight = Math.round(Dimensions.get('window').width * 0.95);
     const SVGWidth = Math.round(Dimensions.get('window').height * 0.6);
-    const GRAPH_MARGIN = 5;
+    const GRAPH_MARGIN = 15;
     const GRAPH_BAR_WIDTH = 25;
     const graphHeight = SVGHeight - 2 * GRAPH_MARGIN;
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
     const maxValue = d3.max(data, d => Math.abs(d.value));
-    console.log('max', data)
-    const topValue = maxValue < 5 ? 5 : Math.floor(maxValue / 5 + 1) * 5;
+    const topValue = maxValue < 5 ? 5 : Math.ceil(maxValue / 5) * 5;
+    console.log('max', data, topValue)
     const yDomain = [0, topValue * 2];
     const yRange = [0, graphHeight];
     const y = d3
@@ -175,6 +175,8 @@ class TokenChart extends React.Component {
                   x={x(item.name) - GRAPH_BAR_WIDTH / 3 + 27}
                   y={y(topValue + Math.abs(item.value)) * -1 - 2}
                   textAnchor="middle"
+                  fill="black"
+                  fillOpacity={1}
                 >
                   {item.value ? item.value : ''}
                 </Text>
@@ -190,6 +192,8 @@ class TokenChart extends React.Component {
               x={x(item.name) + 20}
               y={y(topValue) * -1 + 10}
               textAnchor="middle"
+              fill="black"
+              fillOpacity={1}
             >
               {item.name}
             </Text>
