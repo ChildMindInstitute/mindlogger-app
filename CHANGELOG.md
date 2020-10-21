@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.13.28] - 2020-10-19
 - Fixed an issue related to token value type
 
+## [0.13.27] - 2020-10-16
+- Fix app crashing when an incorrect item ID is included in the order of the activity.
+
 ## [0.13.26] - 2020-10-12
 - Update TokenLogger Data Tab with cumulative values
 - Add instruction for table counter widget
