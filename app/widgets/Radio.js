@@ -41,7 +41,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               ) : (
                 <View
@@ -51,7 +51,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               )}
             </View>
