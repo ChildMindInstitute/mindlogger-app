@@ -79,7 +79,8 @@ class ItemChart extends React.Component {
 
     data.forEach((val) => {
       const sum = val.value.reduce((a, b) => {
-        return a + b;
+        if (!b) return a
+        return a + parseInt(b);
       }, 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
