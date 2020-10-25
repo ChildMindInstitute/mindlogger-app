@@ -25,8 +25,16 @@ class TokenChart extends React.Component {
 
     // Y scale linear
     const maxValue = d3.max(data, d => Math.abs(d.value));
-    const topValue = maxValue < 5 ? 5 : Math.ceil(maxValue / 5) * 5;
-    console.log('max', data, topValue)
+    const ticks = Array.from(Array(6).keys()).slice(1)
+
+    let tickSize = 1
+    if (maxValue > 5) {
+      tickSize = 5;
+      while (tickSize * ticks.length < maxValue) {
+        tickSize += 5
+      }
+    }
+    const topValue = tickSize * ticks.length;
     const yDomain = [0, topValue * 2];
     const yRange = [0, graphHeight];
     const y = d3
@@ -42,10 +50,6 @@ class TokenChart extends React.Component {
       .domain(xDomain)
       .range(xRange)
       .padding(2);
-
-    const tickSize = (topValue > 9) ? (topValue > 24 ? 10 : 5) : 5;
-    const ticks = Array.from(Array(Math.ceil(topValue / tickSize) + 1).keys()).slice(1);
-
     // top axis and middle axis
 
     return (
@@ -85,18 +89,18 @@ class TokenChart extends React.Component {
             <>
               <Line
                 x1="50"
-                y1={y(topValue + tick * 5) * -1}
+                y1={y(topValue + tick * tickSize) * -1}
                 x2={graphWidth - 20}
-                y2={y(topValue + tick * 5) * -1}
+                y2={y(topValue + tick * tickSize) * -1}
                 stroke={colors.tickLine}
                 strokeDasharray={[3, 3]}
                 strokeWidth="1.5"
               />
               <Line
                 x1="50"
-                y1={y(topValue - tick * 5) * -1}
+                y1={y(topValue - tick * tickSize) * -1}
                 x2={graphWidth - 20}
-                y2={y(topValue - tick * 5) * -1}
+                y2={y(topValue - tick * tickSize) * -1}
                 stroke={colors.tickLine}
                 strokeDasharray={[3, 3]}
                 strokeWidth="1.5"
@@ -104,7 +108,7 @@ class TokenChart extends React.Component {
               <Text
                 x="40"
                 textAnchor="end"
-                y={y(topValue + tick * 5) * -1 + 3}
+                y={y(topValue + tick * tickSize) * -1 + 3}
                 fontSize={10}
                 fill="black"
                 fillOpacity={1}
@@ -113,16 +117,16 @@ class TokenChart extends React.Component {
               </Text>
               <Line
                 x1="45"
-                y1={y(topValue + tick * 5) * -1}
+                y1={y(topValue + tick * tickSize) * -1}
                 x2="50"
-                y2={y(topValue + tick * 5) * -1}
+                y2={y(topValue + tick * tickSize) * -1}
                 stroke={colors.axis}
                 strokeWidth="1.5"
               />
               <Text
                 x="40"
                 textAnchor="end"
-                y={y(topValue - tick * 5) * -1 + 3}
+                y={y(topValue - tick * tickSize) * -1 + 3}
                 fontSize={10}
                 fill="black"
                 fillOpacity={1}
@@ -131,9 +135,9 @@ class TokenChart extends React.Component {
               </Text>
               <Line
                 x1="45"
-                y1={y(topValue - tick * 5) * -1}
+                y1={y(topValue - tick * tickSize) * -1}
                 x2="50"
-                y2={y(topValue - tick * 5) * -1}
+                y2={y(topValue - tick * tickSize) * -1}
                 stroke={colors.axis}
                 strokeWidth="1.5"
               />
@@ -173,7 +177,7 @@ class TokenChart extends React.Component {
                   key={`label${item.name}`}
                   fontSize="10"
                   x={x(item.name) - GRAPH_BAR_WIDTH / 3 + 27}
-                  y={y(topValue + Math.abs(item.value)) * -1 - 2}
+                  y={y(topValue + item.value) * -1 - (item.value > 0 ? 2 : -8)}
                   textAnchor="middle"
                   fill="black"
                   fillOpacity={1}

@@ -286,12 +286,14 @@ class AppletData extends React.Component {
     let activeCount = 0;
     for (let i = 0; i < data.length; i += 1) {
       const mondayTime = moment()
-        .subtract(new Date().getDay() - 1, 'days')
+        .subtract(new Date().getDay(), 'days')
         .startOf('day')
         .toDate();
       const thatTime = moment(data[i].date)
         .toDate()
         .getTime();
+      console.log('mondayTime', mondayTime);
+      console.log('thattime', thatTime)
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }

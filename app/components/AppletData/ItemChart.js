@@ -72,16 +72,15 @@ class ItemChart extends React.Component {
     }-${
       day < 10 ? '0' : ''
     }${day}`;
-
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
 
     data.forEach((val) => {
-      const sum = val.value.reduce((a, b) => {
+      const sum = Array.isArray(val.value) ? val.value.reduce((a, b) => {
         if (!b) return a
         return a + parseInt(b);
-      }, 0);
+      }, 0) : val.value;
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = values[currentDay] === undefined ? sum : (values[currentDay] + sum);
