@@ -25,7 +25,7 @@ const TableInputCell = ({ freeEntry = false, value = '', onChange }) => {
       style={{ width: '100%' }}
       delayLongPress={600}
       onPress={() => { onNumberAdd(1, value, onChange); }}
-      onLongPress={() => { onNumberAdd(-1, value, onChange); }}
+      onLongPress={() => { if(value) onNumberAdd(-1, value, onChange); }}
     >
       <Text style={styles.cellTextStyle}>{value}</Text>
     </Button>
