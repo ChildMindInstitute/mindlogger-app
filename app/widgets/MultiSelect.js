@@ -38,7 +38,7 @@ export class MultiSelect extends Component {
         {itemList.map((item, index) => (
           <ListItem
             style={{ width: '90%' }}
-            onPress={() => this.onAnswer(item.name.en)}
+            onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
             <View style={{ width: '85%' }}>
