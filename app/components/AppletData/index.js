@@ -228,10 +228,17 @@ class AppletData extends React.Component {
               } else if (item.appletVersions && item.appletVersions.indexOf(response.version) >= 0) {
                 if (item.inputType === 'radio' && item.valueMapping && item.valueMapping[response.version]) {
                   /** handle merged items */
-                  itemData.push({
-                    ...response,
-                    value: response.value.map(value => item.valueMapping[response.version][value])
-                  })
+                  if (Array.isArray(response.value)) {
+                    itemData.push({
+                      ...response,
+                      value: response.value.map(value => item.valueMapping[response.version][value])
+                    })
+                  } else {
+                    itemData.push({
+                      ...response,
+                      value: item.valueMapping[response.version][response.value]
+                    });
+                  }
                 } else {
                   itemData.push(response);
                 }

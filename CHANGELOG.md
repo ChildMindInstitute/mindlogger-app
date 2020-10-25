@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.13.28] - 2020-10-19
+## [0.13.30] - 2020-10-19
 - Fixed an issue related to token value type
+
+## [0.13.29] - 2020-10-19
+- Fix activities with "allow access before scheduled time" when opened from notifications
+
+## [0.13.28] - 2020-10-20
+- handle single-select radio-item response
 
 ## [0.13.27] - 2020-10-16
 - Fix app crashing when an incorrect item ID is included in the order of the activity.

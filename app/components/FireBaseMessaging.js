@@ -186,6 +186,7 @@ class FireBaseMessaging extends Component {
    */
   openActivityByEventId = (notificationObj) => {
     const type = _.get(notificationObj, 'notification._data.type');
+
     if (type == 'response-data-alert') {
       Alert.alert(
         'Response Refresh Request',
@@ -236,9 +237,10 @@ class FireBaseMessaging extends Component {
       }
       
       let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+      const event = applet.schedule.events.find(({ id }) => id.endsWith(eventId));
       
       if (activity) {
-        return this.prepareAndOpenActivity(applet, activity);
+        return this.prepareAndOpenActivity(applet, activity, event);
       }
   
       if (Actions.currentScene !== 'applet_list') {
@@ -249,7 +251,7 @@ class FireBaseMessaging extends Component {
       // out of sync.
       this.props.syncTargetApplet(appletId, () => {
         activity = this.findActivityById(eventId, applet, activityId);
-        this.prepareAndOpenActivity(applet, activity, appletId);
+        this.prepareAndOpenActivity(applet, activity, event);
       });
     }
   };
@@ -269,7 +271,7 @@ class FireBaseMessaging extends Component {
    *
    * @returns {void}
    */
-  prepareAndOpenActivity = (applet, activity) => {
+  prepareAndOpenActivity = (applet, activity, event) => {
     if (!activity) {
       return Alert.alert(
         'Activity was not found', 'There is no activity for given id.'
@@ -320,7 +322,9 @@ class FireBaseMessaging extends Component {
       deltaTime = 0;
     }
 
-    if (activity.nextAccess || deltaTime >= 0) {
+    const allowAccessBefore = event.data.timeout && event.data.timeout.access;
+
+    if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
       this.props.startResponse(activity);
     } else {
       const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
