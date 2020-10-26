@@ -27,8 +27,6 @@ const logoImage = require('../../../img/color_logo.png');
 const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 10 : 0;
 
-const mindloggerAbout = i18n.t('about_app:mindlogger_about');
-
 class AboutApp extends Component {
   // eslint-disable-line
 
@@ -39,6 +37,7 @@ class AboutApp extends Component {
   render() {
     const { skin } = this.props;
     const title = skin ? skin.name : 'MindLogger';
+    const mindloggerAbout = i18n.t('about_app:mindlogger_about');
     if (typeof skin.about === 'string') {
       if (skin.about.replace(/\s/g, '').length) {
         return (
