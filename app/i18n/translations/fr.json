@@ -59,7 +59,7 @@
     "remove": "Retirer",
     "want_delete": "Si vous souhaitez supprimer vos données de cette applet, et la retirer, cliquez ci-dessous.",
     "remove_delete": "Retirer et supprimer les données",
-    "alert_title": "Are you sure you want to delete your data?",
+    "alert_title": "Êtes-vous sûr de vouloir supprimer vos données?",
     "alert_message": "Vous ne pourrez pas les récupérer",
     "cancel_text": "Non, annuler",
     "confirm_text": "Oui, effacer"
@@ -78,7 +78,7 @@
     "enter_url_manually":"Saisir une URL manuellement",
     "scan_qr": "Scanner un QR code",
     "successfully_changed": "Etude modifiée",
-    "successfully_reset": "Study successfully reset.",
+    "successfully_reset": "Réinitialisation réussie de l'étude.",
     "set_by_qr": "L'étude a été établie par QR."
   },
   "consent": {
@@ -253,12 +253,12 @@
     "library": "Veuiller saisir du texte"
   },
   "text_entry": {
-    "type_placeholder": "Please type text"
+    "type_placeholder": "Veuiller saisir du texte"
   },
   "language_screen": {
-    "app_language": "Application language",
-    "change_app_language": "Change Language",
+    "app_language": " Langue de l'application",
+    "change_app_language": "Changer la langue",
     "en": "English",
     "fr": "Français"
-  },
+  }
 }
