@@ -20,7 +20,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
       {config.itemList.map((item, index) => (
         <ListItem
           style={{ width: '90%' }}
-          onPress={() => handlePress(item.name.en)}
+          onPress={() => handlePress(token ? item.name.en : item.value)}
           key={index}
         >
           <View style={{ width: '85%' }}>
@@ -41,7 +41,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               ) : (
                 <View
@@ -51,15 +51,15 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
                     justifyContent: 'center',
                   }}
                 >
-                  <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                  <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                 </View>
               )}
             </View>
           </View>
           <View style={{ width: '15%' }}>
             <CheckBox
-              checked={value === item.name.en}
-              onPress={() => handlePress(item.name.en)}
+              checked={value === (token ? item.name.en : item.value)}
+              onPress={() => handlePress(token ? item.name.en : item.value)}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
               checkedColor={colors.primary}

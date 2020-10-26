@@ -284,12 +284,14 @@ class AppletData extends React.Component {
     let activeCount = 0;
     for (let i = 0; i < data.length; i += 1) {
       const mondayTime = moment()
-        .subtract(new Date().getDay() - 1, 'days')
+        .subtract(new Date().getDay(), 'days')
         .startOf('day')
         .toDate();
       const thatTime = moment(data[i].date)
         .toDate()
         .getTime();
+      console.log('mondayTime', mondayTime);
+      console.log('thattime', thatTime);
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
@@ -451,6 +453,7 @@ class AppletData extends React.Component {
 
   renderItem = ({ item, index }) => {
     const { applet } = this.props;
+
     if (item.type === 'EmptyActivityChart') {
       const { activity } = item;
       return this.renderEmptyActivityChart(activity, index);
@@ -460,7 +463,8 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === 'ActivityChartItem') {
-      const type = applet.schema && applet.schema.includes('TokenLogger') ? 'TokenLogger' : '';
+      const { valueType } = item.item.valueConstraints;
+      const type = valueType && valueType.includes('token') ? 'TokenLogger' : '';
       return this.renderActivityChartItem(item, type);
     }
     return null;

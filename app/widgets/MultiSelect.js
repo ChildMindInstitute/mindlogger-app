@@ -38,7 +38,7 @@ export class MultiSelect extends Component {
         {itemList.map((item, index) => (
           <ListItem
             style={{ width: '90%' }}
-            onPress={() => this.onAnswer(item.name.en)}
+            onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
             <View style={{ width: '85%' }}>
@@ -59,7 +59,7 @@ export class MultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                    <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                    <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                   </View>
                 ) : (
                   <View
@@ -69,15 +69,15 @@ export class MultiSelect extends Component {
                       justifyContent: 'center',
                     }}
                   >
-                      <Text>{item.name.en} {token ? (item.value < 0 ? '(-' : '(+' + item.value + ')') : ""}</Text>
+                      <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
                   </View>
                 )}
               </View>
             </View>
             <View style={{ width: '15%' }}>
               <CheckBox
-                checked={value && Array.isArray(value) && value.includes(item.name.en)}
-                onPress={() => this.onAnswer(item.name.en)}
+                checked={value && Array.isArray(value) && value.includes(token ? item.name.en : item.value)}
+                onPress={() => this.onAnswer(token ? item.name.en : item.value)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
                 checkedColor={colors.primary}
