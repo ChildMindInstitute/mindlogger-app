@@ -72,15 +72,15 @@ class ItemChart extends React.Component {
     }-${
       day < 10 ? '0' : ''
     }${day}`;
-
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
 
     data.forEach((val) => {
-      const sum = val.value.reduce((a, b) => {
-        return a + b;
-      }, 0);
+      const sum = Array.isArray(val.value) ? val.value.reduce((a, b) => {
+        if (!b) return a
+        return a + parseInt(b);
+      }, 0) : val.value;
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = values[currentDay] === undefined ? sum : (values[currentDay] + sum);
@@ -91,7 +91,7 @@ class ItemChart extends React.Component {
       if (Object.keys(values).includes(dayOfWeek)) {
         return {
           name: dayOfWeek,
-          value: values[dayOfWeek],
+          value: parseInt(values[dayOfWeek]),
         };
       }
       return {
@@ -171,7 +171,6 @@ class ItemChart extends React.Component {
 
   render() {
     const { item, type } = this.props;
-    // console.log('inputype', item.inputType, type);
     switch (item.inputType) {
       case 'radio':
         if (type === 'TokenLogger') {

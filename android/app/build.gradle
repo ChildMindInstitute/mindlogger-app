@@ -131,8 +131,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 216
-        versionName "0.13.29"
+        versionCode 218
+        versionName "0.13.31"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
