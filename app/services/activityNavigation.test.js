@@ -74,6 +74,7 @@ test('getLastPos returns -1 if it is the first index', () => {
 //   expect(getPrevLabel(i, ar)).toBe('Return');
 // });
 
+// need to fix test
 // test('getPrevLabel returns Back if it is not on the first page', () => {
 //   const i = 1;
 //   const ar = [true, true, true, true, true];
