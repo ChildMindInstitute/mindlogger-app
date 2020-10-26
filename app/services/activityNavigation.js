@@ -47,17 +47,17 @@ export const getNextLabel = (index, visibility, activity, responses, isContentEr
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index]);
   if (!isValid || isContentError) {
-    return SKIP;
+    return i18n.t('activity_navigation:skip');
   }
 
   // If there are visible items after this one, then label is Next
   const nextPos = getNextPos(index, visibility);
   if (nextPos !== -1) {
-    return NEXT;
+    return i18n.t('activity_navigation:next');
   }
 
   // If this is the last visible item, then label is Done
-  return DONE;
+  return i18n.t('activity_navigation:done');
 };
 
 // If item has a valid response, or is skippable, then next is enabled
@@ -81,11 +81,11 @@ export const getPrevLabel = (index, visibility) => {
   // If there are visible items before this one, then label is Back
   const lastPos = getLastPos(index, visibility);
   if (lastPos !== -1) {
-    return BACK;
+    return i18n.t('activity_navigation:back');
   }
 
   // If this is the first visible item, then label is Done
-  return RETURN;
+  return i18n.t('activity_navigation:return');
 };
 
 export const getActionLabel = (index, responses, items) => {
@@ -96,5 +96,5 @@ export const getActionLabel = (index, responses, items) => {
   if (items[index].inputType === 'audioStimulus') {
     return undefined;
   }
-  return UNDO;
+  return i18n.t('activity_navigation:undo');
 };
