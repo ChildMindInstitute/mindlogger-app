@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Image, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-native';
 import { View, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
+import i18n from 'i18next';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 
@@ -72,11 +73,11 @@ const styles = StyleSheet.create({
 export class Camera extends Component {
   libraryAlert = (options, callback) => {
     Alert.alert(
-      `Choose ${options.mediaType}`,
-      `Take a new ${options.mediaType} or choose one from your library.`,
+      `${i18n.t('camera:choose')} ${options.mediaType}`,
+      `${i18n.t('camera:take_a_new')} ${options.mediaType} ${i18n.t('camera:or_choose')}`,
       [
         {
-          text: 'Camera',
+          text: i18n.t('camera:camera'),
           onPress: () => {
             ImagePicker.launchCamera(options, (response) => {
               response.choice = 'camera';
@@ -85,7 +86,7 @@ export class Camera extends Component {
           },
         },
         {
-          text: 'Library',
+          text: i18n.t('camera:library'),
           onPress: () => {
             ImagePicker.launchImageLibrary(options, (response) => {
               response.choice = 'library';
@@ -96,7 +97,7 @@ export class Camera extends Component {
       ],
       { cancelable: true },
     );
-  }
+  };
 
   take = () => {
     const { video, onChange, config } = this.props;
@@ -113,9 +114,7 @@ export class Camera extends Component {
       maxHeight: 2048,
     };
 
-    const pickerFunc = config.allowLibrary
-      ? this.libraryAlert
-      : ImagePicker.launchCamera;
+    const pickerFunc = config.allowLibrary ? this.libraryAlert : ImagePicker.launchCamera;
 
     pickerFunc(options, (response) => {
       if (!response.didCancel && !response.error) {
@@ -130,7 +129,7 @@ export class Camera extends Component {
         onChange(picSource);
       }
     });
-  }
+  };
 
   render() {
     const { value, video } = this.props;
@@ -139,25 +138,13 @@ export class Camera extends Component {
       <View style={styles.body}>
         {value && video && (
           <View style={styles.videoConfirmed}>
-            <Icon
-              type="Entypo"
-              name="check"
-              style={styles.greenIcon}
-            />
+            <Icon type="Entypo" name="check" style={styles.greenIcon} />
           </View>
         )}
-        {value && !video && (
-          <Image
-            source={value}
-            style={styles.image}
-          />
-        )}
+        {value && !video && <Image source={value} style={styles.image} />}
         {!value && (
           <View>
-            <TouchableOpacity
-              onPress={this.take}
-              style={styles.takeButton}
-            >
+            <TouchableOpacity onPress={this.take} style={styles.takeButton}>
               <Icon type="Entypo" name={iconName} style={styles.redIcon} />
             </TouchableOpacity>
           </View>

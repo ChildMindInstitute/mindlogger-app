@@ -47,3 +47,12 @@ export const setAppStatus = appStatus => ({
 export const toggleMobileDataAllowed = () => ({
   type: APP_ACTIONS.TOGGLE_MOBILE_DATA_ALLOWED,
 });
+
+export const setAppLanguage = () => ({
+  type: APP_ACTIONS.SET_APP_LANGUAGE,
+});
+
+export const setLanguage = language => ({
+  type: APP_ACTIONS.SET_APP_LANGUAGE,
+  payload: language,
+});

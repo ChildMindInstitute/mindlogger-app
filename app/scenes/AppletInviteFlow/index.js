@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Container, Header, Button } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 // import { invitesSelector } from '../../state/applets/applets.selectors';
@@ -14,7 +14,7 @@ import DataInvite from './DataInvite';
 import JoinInvite from './JoinInvite';
 import { acceptInvitation, declineInvitation } from '../../state/applets/applets.thunks';
 import { currentInviteSelector } from '../../state/applets/applets.selectors';
-
+import BaseText from '../../components/base_text/base_text';
 
 const calcPosition = (currentScreen, index) => {
   if (currentScreen < index) {
@@ -104,10 +104,11 @@ class AppletInviteFlow extends Component {
               position={calcPosition(currentScreen, index)}
               slideInFrom={direction}
             >
-              <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+              <View
+                style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}
+              >
                 {step}
               </View>
-
             </SlideInView>
           ))}
         </View>
@@ -122,12 +123,13 @@ class AppletInviteFlow extends Component {
                 onPress={() => {
                   this.setState({
                     currentScreen: currentScreen - 1,
-                    direction: calcPosition(currentScreen, currentScreen - 1) });
+                    direction: calcPosition(currentScreen, currentScreen - 1),
+                  });
                 }}
               >
-                <Text style={styles.buttonText}>Back</Text>
+                <BaseText style={styles.buttonText} textKey="applet_invite_flow:back" />
               </Button>
-            ) : null }
+            ) : null}
             {currentScreen < steps.length - 1 ? (
               <Button
                 transparent
@@ -135,12 +137,13 @@ class AppletInviteFlow extends Component {
                 onPress={() => {
                   this.setState({
                     currentScreen: currentScreen + 1,
-                    direction: calcPosition(currentScreen, currentScreen + 1) });
+                    direction: calcPosition(currentScreen, currentScreen + 1),
+                  });
                 }}
               >
-                <Text style={styles.buttonText}>Next</Text>
+                <BaseText style={styles.buttonText} textKey="applet_invite_flow:next" />
               </Button>
-            ) : null }
+            ) : null}
           </View>
         </View>
       </Container>
@@ -164,4 +167,7 @@ const mapDispatchToProps = {
   declineInvitation,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppletInviteFlow);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletInviteFlow);

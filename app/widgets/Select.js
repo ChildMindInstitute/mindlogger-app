@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, Container, ListItem, Left, Right, Icon } from 'native-base';
 import { Picker, Modal, StyleSheet, View } from 'react-native';
+import i18n from 'i18next';
+
 import { colors } from '../theme';
 
 const styles = StyleSheet.create({
@@ -22,7 +24,6 @@ export class Select extends React.Component {
     modalVisible: false,
   };
 
-
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
       this.setState({ modalVisible: false });
@@ -39,7 +40,7 @@ export class Select extends React.Component {
     if (typeof config.itemList === 'undefined') {
       return (
         <View>
-          <Text>No items</Text>
+          <Text>{i18n.t('select:no_items')}</Text>
         </View>
       );
     }
@@ -49,23 +50,11 @@ export class Select extends React.Component {
       <View style={{ marginBottom: 0, height: 350 }}>
         {this.state.modalVisible ? (
           <Container style={styles.paddingContent}>
-            <Picker
-              selectedValue={value}
-              onValueChange={onChange}
-            >
-              <Picker.Item
-                label="Select one"
-                value={config.itemList[0].value}
-              />
-              {
-                config.itemList.map((item, index) => (
-                  <Picker.Item
-                    label={item.name.en}
-                    value={item.value}
-                    key={index}
-                  />
-                ))
-              }
+            <Picker selectedValue={value} onValueChange={onChange}>
+              <Picker.Item label="Select one" value={config.itemList[0].value} />
+              {config.itemList.map((item, index) => (
+                <Picker.Item label={item.name.en} value={item.value} key={index} />
+              ))}
             </Picker>
           </Container>
         ) : (
@@ -75,7 +64,7 @@ export class Select extends React.Component {
             }}
           >
             <Left>
-              <Text>{selectedItem ? selectedItem.name.en : 'Select one'}</Text>
+              <Text>{selectedItem ? selectedItem.name.en : i18n.t('select:select_one')}</Text>
             </Left>
             <Right>
               <Icon name="arrow-forward" />

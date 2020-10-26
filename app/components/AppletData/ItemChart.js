@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import moment from 'moment';
 
 import TokenChart from './TokenChart';
+import BaseText from '../base_text/base_text';
 // import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
 // import { colors } from '../../themes/colors';
 // import LineChart from './LineChart';
@@ -38,16 +39,15 @@ class ItemChart extends React.Component {
     }
     return (
       <View style={styles.plotView}>
-        <Text
+        <BaseText
           style={{
             fontWeight: 'bold',
             paddingBottom: 20,
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-        >
-          {item.additionalParams.description}
-        </Text>
+          value={item.additionalParams.description}
+        />
         {item.additionalParams.timelineChart}
         {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
       </View>
@@ -65,13 +65,7 @@ class ItemChart extends React.Component {
     const month = currentDate.getUTCMonth() + 1;
     const day = currentDate.getUTCDate();
     const year = currentDate.getUTCFullYear();
-    const newDate = `${year
-    }-${
-      month < 10 ? '0' : ''
-    }${month
-    }-${
-      day < 10 ? '0' : ''
-    }${day}`;
+    const newDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 
     if (item.additionalParams.activeCount === 0) {
       return null;
@@ -83,7 +77,7 @@ class ItemChart extends React.Component {
       }, 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
-        values[currentDay] = values[currentDay] === undefined ? sum : (values[currentDay] + sum);
+        values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
       }
     });
 
@@ -102,22 +96,17 @@ class ItemChart extends React.Component {
 
     return (
       <View style={styles.plotView}>
-        <Text
+        <BaseText
           style={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             paddingBottom: 20,
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-        >
-          {item.additionalParams.description}
-        </Text>
-        {/* {item.additionalParams.timelineChart} */}
-        <TokenChart
-          item={item}
-          data={dataValues}
-          labels={item.additionalParams.labels}
+          value={item.additionalParams.description}
         />
+        {/* {item.additionalParams.timelineChart} */}
+        <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} />
       </View>
     );
   }
@@ -131,17 +120,11 @@ class ItemChart extends React.Component {
     }
     return (
       <View style={styles.plotView}>
-        <Text style={styles.linePlotTitle}>
-          {item.additionalParams.description}
-        </Text>
-        <Text style={styles.linePlotLabel}>
-          {item.additionalParams.minMaxLabels[1]}
-        </Text>
+        <BaseText style={styles.linePlotTitle} value={item.additionalParams.description} />
+        <BaseText style={styles.linePlotLabel} value={item.additionalParams.minMaxLabels[1]} />
         {item.additionalParams.lineChart}
         {/* <LineChart data={data} labels={item.additionalParams.labels} /> */}
-        <Text style={styles.linePlotLabel}>
-          {item.additionalParams.minMaxLabels[0]}
-        </Text>
+        <BaseText style={styles.linePlotLabel} value={item.additionalParams.minMaxLabels[0]} />
       </View>
     );
   }
@@ -154,16 +137,15 @@ class ItemChart extends React.Component {
     }
     return (
       <View style={styles.plotView}>
-        <Text
+        <BaseText
           style={{
             fontWeight: 'bold',
             paddingBottom: 20,
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-        >
-          {item.additionalParams.description}
-        </Text>
+          value={item.additionalParams.description}
+        />
         {/* <BarChart data={item.additionalParams.dataFix} /> */}
       </View>
     );

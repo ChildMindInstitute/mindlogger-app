@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Text, Row, Col, View } from 'native-base';
+import i18n from 'i18next';
 import styles from './styles';
 import TableInputCell from './TableInputCell';
 
@@ -15,13 +16,11 @@ export class TableInput extends Component {
   updateCells = (newVal, row, col) => {
     const { value, onChange, config, freeEntry } = this.props;
 
-    const newValue = config.rows.map((row, i) => config.cols.map(
-      (col, j) => safeValue(value, i, j, freeEntry),
-    ));
+    const newValue = config.rows.map((row, i) => config.cols.map((col, j) => safeValue(value, i, j, freeEntry)));
     newValue[row][col] = newVal;
 
     onChange(newValue);
-  }
+  };
 
   render() {
     const { config, value, freeEntry } = this.props;
@@ -40,21 +39,21 @@ export class TableInput extends Component {
       height: cellHeight,
     };
     this.imageStyle = {
-      width: (cellHeight - 3),
-      height: (cellHeight - 3),
+      width: cellHeight - 3,
+      height: cellHeight - 3,
       padding: 3,
     };
     return (
       <View>
         <Row style={styles.rowStyle}>
-          <Col style={cellStyle}><Text style={styles.cellTextStyle}>{' '}</Text></Col>
-          {config.cols.map(
-            (col, idx) => (
-              <Col key={idx} style={styles.cellStyle}>
-                <Text style={styles.cellTextStyle}>{col.value}</Text>
-              </Col>
-            ),
-          )}
+          <Col style={cellStyle}>
+            <Text style={styles.cellTextStyle}> </Text>
+          </Col>
+          {config.cols.map((col, idx) => (
+            <Col key={idx} style={styles.cellStyle}>
+              <Text style={styles.cellTextStyle}>{col.value}</Text>
+            </Col>
+          ))}
         </Row>
         {config.rows.map((row, rowIdx) => (
           <Row style={rowStyle} key={rowIdx}>
@@ -75,8 +74,8 @@ export class TableInput extends Component {
           </Row>
         ))}
         <View style={infoStyle}>
-          <Text style={styles.cellTextStyle}> * A short-press increases the counter</Text>
-          <Text style={styles.cellTextStyle}> * A long-press decreases the counter</Text>
+          <Text style={styles.cellTextStyle}> {i18n.t('table_input:short_press_detail')}</Text>
+          <Text style={styles.cellTextStyle}> {i18n.t('table_input:long_press_detail')}</Text>
         </View>
       </View>
     );

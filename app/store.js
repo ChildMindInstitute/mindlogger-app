@@ -19,16 +19,14 @@ export default function configureStore(onCompletion) {
 
   // eslint-disable-next-line no-undef
   const composeEnhancers = (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-  // eslint-disable-next-line no-undef
+      // eslint-disable-next-line no-undef
       && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
         trace: true,
         traceLimit: 25,
       }))
     || compose;
 
-  const middlewares = [
-    thunk,
-  ];
+  const middlewares = [thunk];
   if (__DEV__) {
     middlewares.push(
       createLogger({
@@ -39,9 +37,7 @@ export default function configureStore(onCompletion) {
     );
   }
 
-  store = createStore(persistedReducer, {}, composeEnhancers(
-    applyMiddleware(...middlewares),
-  ));
+  store = createStore(persistedReducer, {}, composeEnhancers(applyMiddleware(...middlewares)));
 
   persistStore(store, null, onCompletion);
 

@@ -2,19 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  Container,
-  Button,
-  View,
-  Header,
-  Left,
-  Right,
-  Icon,
-  Title,
-  Body,
-} from 'native-base';
+import { Container, Button, View, Header, Left, Right, Icon, Title, Body } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
+import i18n from 'i18next';
 import styles from './styles';
 import { forgotPassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
@@ -30,18 +21,19 @@ class ForgotPassword extends Component {
     return forgotPassword(body.email)
       .then(() => {
         showToast({
-          text: 'Reset email has been sent',
+          text: i18n.t('forgot_pass_form:email_sent'),
           position: 'top',
           type: 'success',
           duration: 2000,
         });
         Actions.replace('login');
-      }).catch(() => {
+      })
+      .catch(() => {
         throw new SubmissionError({
-          _error: 'That email does not exist in the system.',
+          _error: i18n.t('forgot_pass_form:email_send_error'),
         });
       });
-  }
+  };
 
   render() {
     const { skin } = this.props;
@@ -60,20 +52,12 @@ class ForgotPassword extends Component {
             </Button>
           </Left>
           <Body style={{ paddingTop: IOSBodyPadding }}>
-            <Title>Forgot password</Title>
+            <Title>{i18n.t('forgot_pass_form:forgot_password')}</Title>
           </Body>
           <Right />
         </Header>
-        <View
-          style={[
-            styles.container2,
-            { backgroundColor: skin.colors.primary },
-          ]}
-        >
-          <ForgotPasswordForm
-            onSubmit={this.onSubmit}
-            primaryColor={skin.colors.primary}
-          />
+        <View style={[styles.container2, { backgroundColor: skin.colors.primary }]}>
+          <ForgotPasswordForm onSubmit={this.onSubmit} primaryColor={skin.colors.primary} />
         </View>
       </Container>
     );
@@ -93,4 +77,7 @@ const mapDispatchToProps = {
   showToast,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ForgotPassword);

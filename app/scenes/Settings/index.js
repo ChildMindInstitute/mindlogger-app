@@ -1,16 +1,36 @@
 import React from 'react';
-import { Container, Header, View, Content, List, ListItem, Text, Title, Icon, Button, Left, Right, Body } from 'native-base';
+import {
+  Container,
+  Header,
+  View,
+  Content,
+  List,
+  ListItem,
+  Text,
+  Title,
+  Icon,
+  Button,
+  Left,
+  Right,
+  Body,
+} from 'native-base';
 import { Actions } from 'react-native-router-flux';
-import { Switch, Platform } from 'react-native';
+import { Switch, Platform, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import i18n from 'i18next';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
-import { toggleMobileDataAllowed } from '../../state/app/app.actions';
+import { toggleMobileDataAllowed, setLanguage } from '../../state/app/app.actions';
 import { logout, removeAccount } from '../../state/app/app.thunks';
 import { userInfoSelector } from '../../state/user/user.selectors';
 
+import { setApplicationLanguage } from '../../i18n/i18n';
+
 import { colors } from '../../themes/colors';
+
+/* STYLES */
+import styles from './styles';
 
 const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
@@ -34,22 +54,29 @@ class SettingsScreen extends React.Component {
       Actions.push('change_password');
       this.onPressTime = currentTime;
     }
-  }
+  };
 
   showAlert = () => {
     this.setState({
       showAlert: true,
     });
-  }
+  };
 
   hideAlert = () => {
     this.setState({
       showAlert: false,
     });
-  }
+  };
 
   render() {
-    const { skin, mobileDataAllowed, toggleMobileDataAllowed, logout, userInfo, removeAccount } = this.props;
+    const {
+      skin,
+      mobileDataAllowed,
+      toggleMobileDataAllowed,
+      logout,
+      userInfo,
+      removeAccount,
+    } = this.props;
     const { showAlert } = this.state;
 
     return (
@@ -66,7 +93,7 @@ class SettingsScreen extends React.Component {
             </Button>
           </Left>
           <Body style={{ paddingTop: IOSBodyPadding }}>
-            <Title>User Settings</Title>
+            <Title>{i18n.t('settings:user_settings')}</Title>
           </Body>
           <Right />
         </Header>
@@ -97,32 +124,39 @@ class SettingsScreen extends React.Component {
               <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
             </View>
           ) : (
-            <Text>You've logged out.</Text>
+            <Text>{i18n.t('settings:logged_out')}</Text>
           )}
 
           <List>
             <ListItem button bordered onPress={this.onPressChange}>
               <Left>
-                <Text>Change Password</Text>
+                <Text>{i18n.t('settings:change_pass')}</Text>
               </Left>
               <Right>
                 <Icon name="arrow-forward" />
               </Right>
             </ListItem>
-            <ListItem button bordered>
+
+            <ListItem button bordered onPress={() => Actions.app_language()}>
               <Left>
-                <Text>Use Cellular Data</Text>
+                <Text>{i18n.t('language_screen:change_app_language')}</Text>
               </Left>
               <Right>
-                <Switch
-                  onValueChange={toggleMobileDataAllowed}
-                  value={mobileDataAllowed}
-                />
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+
+            <ListItem button bordered>
+              <Left>
+                <Text>{i18n.t('settings:use_cellular_data')}</Text>
+              </Left>
+              <Right>
+                <Switch onValueChange={toggleMobileDataAllowed} value={mobileDataAllowed} />
               </Right>
             </ListItem>
             <ListItem button bordered onPress={() => logout()}>
               <Left>
-                <Text>Logout</Text>
+                <Text>{i18n.t('settings:logout')}</Text>
               </Left>
               <Right>
                 <Icon name="key" />
@@ -130,7 +164,7 @@ class SettingsScreen extends React.Component {
             </ListItem>
             <ListItem button bordered onPress={() => this.showAlert()}>
               <Left>
-                <Text>Permanently Delete Account</Text>
+                <Text>{i18n.t('settings:permanently_delete_account')}</Text>
               </Left>
               <Right>
                 <Icon name="trash" />
@@ -177,12 +211,17 @@ const mapStateToProps = state => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   userInfo: userInfoSelector(state),
+  appLanguage: state.app.appLanguage,
 });
 
 const mapDispatchToProps = dispatch => ({
   toggleMobileDataAllowed,
   logout: () => dispatch(logout()),
   removeAccount: () => dispatch(removeAccount()),
+  setAppLanguage: lng => dispatch(setLanguage(lng)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SettingsScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SettingsScreen);

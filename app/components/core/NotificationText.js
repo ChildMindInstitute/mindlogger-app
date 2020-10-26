@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { colors } from '../../theme';
+import BaseText from '../base_text/base_text';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,9 +23,7 @@ const styles = StyleSheet.create({
 
 export const NotificationText = ({ children }) => (
   <View style={styles.container}>
-    <Text style={styles.text}>
-      {children}
-    </Text>
+    <BaseText style={styles.text}>{children}</BaseText>
   </View>
 );
 

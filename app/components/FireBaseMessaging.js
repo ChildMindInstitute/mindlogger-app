@@ -8,19 +8,18 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { updateBadgeNumber } from '../state/applets/applets.thunks';
-import { syncTargetApplet, sync } from '../state/app/app.thunks';
-import { showToast } from '../state/app/app.thunks';
+import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
+
 import { sendResponseReuploadRequest } from '../services/network';
 
-import {
-  authTokenSelector,
-} from '../state/user/user.selectors';
+import { authTokenSelector } from '../state/user/user.selectors';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -61,7 +60,7 @@ class FireBaseMessaging extends Component {
     this.requestPermissions();
     this.props.setFCMToken(await fMessaging.getToken());
 
-    const event = await fNotifications.getInitialNotification()
+    const event = await fNotifications.getInitialNotification();
 
     if (event) {
       this.openActivityByEventId(event);
@@ -91,19 +90,19 @@ class FireBaseMessaging extends Component {
     if (permissionGranted) return;
 
     try {
-      await fMessaging.requestPermission()
+      await fMessaging.requestPermission();
     } catch (error) {
       // If the user denied permissions.
       Alert.alert(
-        '"MindLogger" would like to send you notifications',
-        'These can be configured in Settings',
+        i18n.t('firebase_messaging:alert_title'),
+        i18n.t('firebase_messaging:alert_message'),
         [
           {
             text: 'Dismiss',
             style: 'cancel',
           },
           {
-            text: 'Open Settings',
+            text: i18n.t('firebase_messaging:alert_text'),
             onPress: Linking.openSettings.bind(Linking),
             style: 'default',
           },
@@ -115,8 +114,8 @@ class FireBaseMessaging extends Component {
   /**
    * Checks whether an activity should be shown as completed.
    *
-   * An activity is considered to be completed if a response for this activity 
-   * was created today and there isn't any more scheduled events for this 
+   * An activity is considered to be completed if a response for this activity
+   * was created today and there isn't any more scheduled events for this
    * activity today.
    *
    * @param {obj} activity the activity in question.
@@ -125,7 +124,7 @@ class FireBaseMessaging extends Component {
    */
   isCompleted = activity => activity.lastResponseTimestamp
     && !activity.nextScheduledTimestamp
-    && (moment().isSame(moment(activity.lastResponseTimestamp), 'day'));
+    && moment().isSame(moment(activity.lastResponseTimestamp), 'day');
 
   /**
    * Checks whether an activity is in progress or not.
@@ -140,7 +139,7 @@ class FireBaseMessaging extends Component {
     const id = applet.id + activity.id;
 
     if (id in inProgress) {
-     return false;
+      return false;
     }
 
     return this.isCompleted(activity);
@@ -177,7 +176,7 @@ class FireBaseMessaging extends Component {
   /**
    * Opens the activity corresponding to the given notification.
    *
-   * If the activity is not found in the applet, synchronize the applet with 
+   * If the activity is not found in the applet, synchronize the applet with
    * the backend first and then open the activity.
    *
    * @param {object} notificationObj the notification data.
@@ -188,8 +187,8 @@ class FireBaseMessaging extends Component {
     const type = _.get(notificationObj, 'notification._data.type');
     if (type == 'response-data-alert') {
       Alert.alert(
-        'Response Refresh Request',
-        'Since your password has been reset, your past responses need to be refreshed. Do you want to request this?',
+        i18n.t('firebase_messaging:response_refresh_request'),
+        i18n.t('firebase_messaging:refresh_request_details'),
         [
           {
             text: 'Request Refresh',
@@ -201,14 +200,14 @@ class FireBaseMessaging extends Component {
                     previousValue[applet.id.split('/')[1]] = applet.userPublicKey;
                   }
                   return previousValue;
-                }, {})
+                }, {}),
               }).then(() => {
                 this.props.showToast({
-                  text: 'Your managers will initiate the refresh shortly.',
+                  text: i18n.t('firebase_messaging:refresh_request_text'),
                   position: 'bottom',
                   type: 'success',
                   duration: 1000,
-                })
+                });
               });
             },
           },
@@ -223,29 +222,30 @@ class FireBaseMessaging extends Component {
       const eventId = _.get(notificationObj, 'notification._data.event_id', '');
       const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
       const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-  
+
       // Ignore the notification if some data is missing.
       if (!eventId || !appletId || !activityId) return;
-  
+
       const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
-  
+
       if (!applet) {
         return Alert.alert(
-          'Applet was not found', 'There is no applet for given id.'
+          i18n.t('firebase_messaging:applet_not_found_1'),
+          i18n.t('firebase_messaging:applet_not_found_2'),
         );
       }
-      
+
       let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
-      
+
       if (activity) {
         return this.prepareAndOpenActivity(applet, activity);
       }
-  
+
       if (Actions.currentScene !== 'applet_list') {
         Actions.push('applet_list');
       }
-  
-      // If the activity ID is not found in the applet, that means the applet is 
+
+      // If the activity ID is not found in the applet, that means the applet is
       // out of sync.
       this.props.syncTargetApplet(appletId, () => {
         activity = this.findActivityById(eventId, applet, activityId);
@@ -262,7 +262,11 @@ class FireBaseMessaging extends Component {
    *
    * @returns {number} the corresponding number of miliseconds.
    */
-  getMilliseconds = date => (date ? moment(date).toDate().getTime() : 0);
+  getMilliseconds = date => (date
+    ? moment(date)
+      .toDate()
+      .getTime()
+    : 0);
 
   /**
    *
@@ -271,9 +275,7 @@ class FireBaseMessaging extends Component {
    */
   prepareAndOpenActivity = (applet, activity) => {
     if (!activity) {
-      return Alert.alert(
-        'Activity was not found', 'There is no activity for given id.'
-      );
+      return Alert.alert(i18n.t('firebase_messaging:activity_not_found'));
     }
 
     const isActivityCompleted = this.isActivityCompleted(applet, activity);
@@ -283,8 +285,8 @@ class FireBaseMessaging extends Component {
     if (isActivityCompleted) {
       Actions.push('applet_details', { initialTab: 'data' });
       return Alert.alert(
-        '', 
-        `You have already completed ‘${activity.name.en}’`,
+        '',
+        `${i18n.t('firebase_messaging:already_completed')} ‘${activity.name.en}’`,
       );
     }
 
@@ -305,18 +307,23 @@ class FireBaseMessaging extends Component {
         const time = moment(activity.lastScheduledTimestamp).format('HH:mm');
 
         return Alert.alert(
-          '', 
-          (`This activity was due at ${time}. If progress was made on the ` +
-          `${activity.name.en}, it was saved but it can no longer be taken ` +
-          `today.`)
+          '',
+          `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${time}. ${i18n.t(
+            'firebase_messaging:if_progress_was_made_on_the',
+          )} `
+            + `${activity.name.en}, ${i18n.t(
+              'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
+            )} `}${i18n.t('firebase_messaging:today')}`,
         );
       }
     }
 
-    let deltaTime = currentDate.getTime()
-      - this.getMilliseconds(activity.nextScheduledTimestamp);
+    let deltaTime = currentDate.getTime() - this.getMilliseconds(activity.nextScheduledTimestamp);
 
-    if (activity.nextScheduledTimestamp && moment(currentDate).isBefore(moment(activity.nextScheduledTimestamp), 'day')) {
+    if (
+      activity.nextScheduledTimestamp
+      && moment(currentDate).isBefore(moment(activity.nextScheduledTimestamp), 'day')
+    ) {
       deltaTime = 0;
     }
 
@@ -326,13 +333,16 @@ class FireBaseMessaging extends Component {
       const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
 
       Alert.alert(
-        'Activity not ready', 
-        (`You’re not able to start activity yet, ‘${activity.name.en}’ is ` +
-        `scheduled to start at ${time} today`)
+        i18n.t('firebase_messaging:today'),
+        `${i18n.t('firebase_messaging:not_able_to_start')}, ‘${activity.name.en}’ ${i18n.t(
+          'firebase_messaging:is',
+        )} `
+          + `${i18n.t('firebase_messaging:scheduled_to_start_at')} ${time} ${i18n.t(
+            'firebase_messaging:today',
+          )}`,
       );
     }
   };
-
 
   /**
    * Creates the notification channel for android.
@@ -347,7 +357,7 @@ class FireBaseMessaging extends Component {
     ).setDescription('MindLogger Channel');
 
     // Create the channel
-    await firebase.notifications().android.createChannel(channel)
+    await firebase.notifications().android.createChannel(channel);
   }
 
   /**
@@ -370,21 +380,15 @@ class FireBaseMessaging extends Component {
    *
    * @returns {Promise} promise that resolves to the notification count.
    */
-  getDeliveredNotificationsCount() : Promise<number> {
-    return new Promise(resolve =>
-      PushNotificationIOS
-        .getDeliveredNotifications(({ length }) => resolve(length))
-    );
+  getDeliveredNotificationsCount(): Promise<number> {
+    return new Promise(resolve => PushNotificationIOS.getDeliveredNotifications(({ length }) => resolve(length)));
   }
 
   /**
    *
    */
-  getScheduledLocalNotificationsCount() : Promise<number> {
-    return new Promise(resolve =>
-      PushNotificationIOS
-        .getScheduledLocalNotifications(({ length }) => resolve(length))
-    );
+  getScheduledLocalNotificationsCount(): Promise<number> {
+    return new Promise(resolve => PushNotificationIOS.getScheduledLocalNotifications(({ length }) => resolve(length)));
   }
 
   /**
@@ -416,10 +420,8 @@ class FireBaseMessaging extends Component {
     }
 
     try {
-      await firebase
-        .notifications()
-        .displayNotification(localNotification);
-    } catch(error) {
+      await firebase.notifications().displayNotification(localNotification);
+    } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(`FCM[${Platform.OS}]: error `, error);
     }
@@ -453,7 +455,7 @@ class FireBaseMessaging extends Component {
 
     PushNotificationIOS.setApplicationIconBadgeNumber(iconBadgeNumber);
     return iconBadgeNumber;
-  }
+  };
 
   /**
    * Calculates the total badge number.
@@ -471,7 +473,7 @@ class FireBaseMessaging extends Component {
    * Stores the new FCM token in the app state.
    *
    * @param {string} fcmToken a Firebase Cloud Messaging token.
-   * 
+   *
    * @returns {void}
    */
   onTokenRefresh = (fcmToken: string) => {
@@ -493,13 +495,11 @@ class FireBaseMessaging extends Component {
     }
 
     try {
-      await firebase
-        .notifications()
-        .displayNotification(localNotification);
+      await firebase.notifications().displayNotification(localNotification);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.warn(`FCM[${Platform.OS}]: error `, error);
-    } 
+    }
   };
 
   /**
@@ -543,7 +543,7 @@ class FireBaseMessaging extends Component {
    *
    * @returns {boolean} whether the application is in the background.
    */
-  isBackgroundState= state => state?.match(/inactive|background/);
+  isBackgroundState = state => state?.match(/inactive|background/);
 
   /**
    * Handles the switching of the app from foreground to background or the other
@@ -581,11 +581,7 @@ class FireBaseMessaging extends Component {
   render() {
     const { children } = this.props;
 
-    return (
-      <Fragment>
-        {children}
-      </Fragment>
-    );
+    return <Fragment>{children}</Fragment>;
   }
 }
 
@@ -621,7 +617,10 @@ const mapDispatchToProps = dispatch => ({
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
-  showToast: (toast) => dispatch(showToast(toast)),
+  showToast: toast => dispatch(showToast(toast)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(FireBaseMessaging);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(FireBaseMessaging);
