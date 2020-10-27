@@ -138,21 +138,42 @@ class AppletData extends React.Component {
               const currentContraint = currentItem.valueConstraints;
               const oldConstraint = oldItem.valueConstraints;
 
-              currentContraint.minValue = min(oldConstraint.minValue, currentContraint.minValue);
-              currentContraint.maxValue = max(oldConstraint.maxValue, currentContraint.maxValue);
+              const lang = currentContraint.itemList && Object.keys(currentContraint.itemList[0].name)[0]
+                        || oldConstraint.itemList && Object.keys(oldConstraint.itemList[0].name)[0]
+                        || 'en';
 
-              const lang = (currentContraint.itemList && Object.keys(currentContraint.itemList[0].name)[0])
-                || (oldConstraint.itemList && Object.keys(oldConstraint.itemList[0].name)[0]);
+              /** merge two sliders */
+              let currentRange = [0, 0];
+              let oldRange = [0, 0];
+
+              if (currentContraint.itemList.length) {
+                currentRange = [
+                  currentContraint.itemList[0].value, 
+                  currentContraint.itemList[currentContraint.itemList.length-1].value + 1
+                ];
+              }
+
+              if (oldConstraint.itemList.length) {
+                oldRange = [
+                  oldConstraint.itemList[0].value, 
+                  oldConstraint.itemList[oldConstraint.itemList.length-1].value + 1
+                ];
+              }
+
+              const range = [
+                currentRange[0] < oldRange[0] ? currentRange[0] : oldRange[0],
+                currentRange[1] > oldRange[1] ? currentRange[1] : oldRange[1]
+              ];
 
               currentContraint.itemList = [];
               /** generate itemList */
-              for (let i = currentContraint.minValue; i < currentContraint.maxValue; i++) {
+              for (let i = range[0]; i < range[1]; i++) {
                 currentContraint.itemList.push({
                   value: i,
                   name: {
-                    [lang]: `${value}`,
-                  },
-                });
+                    [lang]: `${i}`
+                  }
+                })
               }
             }
 
@@ -211,6 +232,7 @@ class AppletData extends React.Component {
         data.push({ type: 'EmptyActivityChart', activity });
       } else {
         data.push({ type: 'ActivityChartHeader', activity });
+
         data.push(
           ...itemsFiltered.map((item) => {
             const responses = [];
@@ -290,8 +312,6 @@ class AppletData extends React.Component {
       const thatTime = moment(data[i].date)
         .toDate()
         .getTime();
-      console.log('mondayTime', mondayTime);
-      console.log('thattime', thatTime);
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
