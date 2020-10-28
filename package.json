@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.13.31",
+  "version": "0.13.32",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -17,6 +17,7 @@
     "prod-bundle": "react-native bundle --platform android --dev false --entry-file ./index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res",
     "prod-build": "cd android && ./gradlew bundleRelease",
     "postinstall": "jetify",
+    "patchinstall": "npx patch-package",
     "ios-build": "cd ios && fastlane ios beta",
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
