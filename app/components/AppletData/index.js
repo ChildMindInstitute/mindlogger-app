@@ -160,12 +160,16 @@ class AppletData extends React.Component {
                 ];
               }
 
+              /** For slider items, we need following to merge old version of item with new version
+               *  if user selected value 10 on v0.0.1, but range is updated to [0, 9] on v0.0.2, then we need to show range as [0, 10] to represent old responses
+               */
               const range = [
-                currentRange[0] < oldRange[0] ? currentRange[0] : oldRange[0],
-                currentRange[1] > oldRange[1] ? currentRange[1] : oldRange[1]
+                Math.min(currentRange[0], oldRange[0]),
+                Math.max(currentRange[1], oldRange[1])
               ];
 
               currentContraint.itemList = [];
+
               /** generate itemList */
               for (let i = range[0]; i < range[1]; i++) {
                 currentContraint.itemList.push({
