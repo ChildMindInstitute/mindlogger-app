@@ -252,7 +252,7 @@ class AppletData extends React.Component {
             responses.forEach(response => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
                 itemData.push(response);
-              } else if (item.appletVersions && item.appletVersions.indexOf(response.version) >= 0) {
+              } else if (item.appletVersions?.indexOf(response.version) >= 0) {
                 if (
                   item.inputType === 'radio' && 
                   item.valueMapping && item.valueMapping[response.version]) {
