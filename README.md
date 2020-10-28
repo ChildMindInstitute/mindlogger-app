@@ -1,4 +1,4 @@
-# MindLogger 0.13.32
+# MindLogger 0.14.1
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -125,26 +125,6 @@ See [:link: CONTRIBUTING#Versioning](./CONTRIBUTING.md#Versioning).
 
 See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 
-### ERRORS AND FIXES
-
-- fix bug with BackgroundImage on main screen with RN 0.61
-
-in file react-native/Libraries/Image/RCTUIImageViewAnimated.m
-
-change
-if (\_currentFrame) {
-layer.contentsScale = self.animatedImageScale;
-layer.contents = (\_\_bridge id)\_currentFrame.CGImage;
-}
-
-to
-
-if (\_currentFrame) {
-layer.contentsScale = self.animatedImageScale;
-layer.contents = (\_\_bridge id)\_currentFrame.CGImage;
-} else {
-[super displayLayer:layer];
-}
 
 ## Authors
 
