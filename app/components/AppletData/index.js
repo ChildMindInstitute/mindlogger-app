@@ -249,28 +249,30 @@ class AppletData extends React.Component {
             }
 
             const itemData = [];
-            responses.forEach((response) => {
+            responses.forEach(response => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
                 itemData.push(response);
-              } else if (
-                item.appletVersions
-                && item.appletVersions.indexOf(response.version) >= 0
-              ) {
+              } else if (item.appletVersions && item.appletVersions.indexOf(response.version) >= 0) {
                 if (
-                  item.inputType === 'radio'
-                  && item.valueMapping
-                  && item.valueMapping[response.version]
-                ) {
+                  item.inputType === 'radio' && 
+                  item.valueMapping && item.valueMapping[response.version]) {
                   /** handle merged items */
-                  itemData.push({
-                    ...response,
-                    value: response.value.map(value => item.valueMapping[response.version][value]),
-                  });
+                  if (Array.isArray(response.value)) {
+                    itemData.push({
+                      ...response,
+                      value: response.value.map(value => item.valueMapping[response.version][value])
+                    })
+                  } else {
+                    itemData.push({
+                      ...response,
+                      value: item.valueMapping[response.version][response.value]
+                    });
+                  }
                 } else {
                   itemData.push(response);
                 }
               }
-            });
+            })
 
             return {
               type: 'ActivityChartItem',
