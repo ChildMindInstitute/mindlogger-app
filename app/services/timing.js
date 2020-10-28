@@ -1,3 +1,4 @@
+import i18n from 'i18next';
 /**
  *  Object that keeps a registry of all running timers.
  *
@@ -12,7 +13,6 @@ const IDENTIFIERS = {};
  */
 let COUNTER = 0;
 
-
 /**
  * Returns the next ID in the sequence.
  *
@@ -21,7 +21,6 @@ let COUNTER = 0;
 function _nextId() {
   return ++COUNTER;
 }
-
 
 /**
  * Stops a timer by its ID.
@@ -32,7 +31,6 @@ export function clearExec(timerId) {
   clearInterval(IDENTIFIERS[timerId]);
   delete IDENTIFIERS[timerId];
 }
-
 
 /**
  * Executes the given function after the given time.
@@ -57,17 +55,17 @@ export function clearExec(timerId) {
  */
 export function delayedExec(fn, options) {
   if (!('after' in options) && !('every' in options)) {
-    throw new Exception('You must provide the "after" or "every" option');
+    throw new Exception(i18n.t('timing:provide_option'));
   }
 
   if ('after' in options && Number.isNaN(options.after)) {
-    throw new Exception('Expected options.after to be a number');
+    throw new Exception(i18n.t('timing:to_be_number'));
   }
 
   if ('every' in options && Number.isNaN(options.every)) {
-    throw new Exception('Expected options.every to be a number');
+    throw new Exception(i18n.t('timing:every_number'));
   }
-  
+
   /**
    * Date on which the function should run.
    * @type {Date}
@@ -81,7 +79,6 @@ export function delayedExec(fn, options) {
    * @type {number}
    */
   const timerId = _nextId();
-
 
   // Run each second and check if the function should run.
   IDENTIFIERS[timerId] = setInterval(
@@ -113,7 +110,7 @@ export function delayedExec(fn, options) {
         dueDate.setTime(now.getTime() + options.every);
       }
     },
-    500,  // One second.
+    500, // One second.
   );
 
   return timerId;

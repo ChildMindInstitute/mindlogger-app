@@ -1,4 +1,4 @@
-# MindLogger 0.13.32
+# MindLogger 0.14.1
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -20,6 +20,7 @@ You need to have your own Girder instance running or leave your `defaultApiHost`
 
 You need [Node ≤10.11.0, npm ≥4.3.0 & ≤6.4.1](https://github.com/creationix/nvm#user-content-usage), [yarn ≥1.3.2](https://yarnpkg.com) and [React Native ≥0.49.3](https://facebook.github.io/react-native/) to be installed.
 For example
+
 ```
 npm -v
 4.3.0
@@ -28,6 +29,7 @@ yarn -v
 react-native -v
 react-native: 0.49.3
 ```
+
 You also need to have [Xcode](https://developer.apple.com/xcode/) and [Android Studio](https://developer.android.com/studio/) to be installed.
 
 ### Installing
@@ -47,11 +49,13 @@ react-native link
 ## Development
 
 iOS:
+
 ```
 yarn ios
 ```
 
 Android:
+
 ```
 yarn android
 ```
@@ -82,10 +86,12 @@ iOS:
 
 You can use [fastlane](https://fastlane.tools/)
 From root directory of repository
+
 ```
 cd ios
 fastlane beta
 ```
+
 It will archive release build for iOS and push to appstore. It will take several minutes.
 
 ### Xcode (iOS)
@@ -100,11 +106,12 @@ Android:
 yarn prod-bundle
 yarn prod-build
 ```
+
 It will create app-release.apk in android/app/build/outputs folder
 
 ## Built With
 
-* [React Native](https://facebook.github.io/react-native/docs/getting-started.html) - React Native framework
+- [React Native](https://facebook.github.io/react-native/docs/getting-started.html) - React Native framework
 
 ## Contributing
 
@@ -118,11 +125,12 @@ See [:link: CONTRIBUTING#Versioning](./CONTRIBUTING.md#Versioning).
 
 See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 
+
 ## Authors
 
-* [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
-* [**Stuart Freen**](https://github.com/stufreen) - *Rangle.io developer: code refactoring, pilot version*
-* [**Erik Ilyin**](https://github.com/erik-ilyin) - *Independent developer: initial prototype*
+- [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
+- [**Stuart Freen**](https://github.com/stufreen) - _Rangle.io developer: code refactoring, pilot version_
+- [**Erik Ilyin**](https://github.com/erik-ilyin) - _Independent developer: initial prototype_
 
 See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
 

@@ -1,30 +1,28 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
-import {
-  Button,
-  Text,
-  Form,
-} from 'native-base';
+import { Button, Text, Form } from 'native-base';
 import { reduxForm, Field, propTypes } from 'redux-form';
+import i18n from 'i18next';
+
 import { FormInputItem, required } from '../../components/form/FormItem';
 import styles from './styles';
 import { colors } from '../../theme';
 
 const login = value => (value && !RegExp('^[a-z][\\da-z\\-\\.]{3,}$').test(value)
-  ? 'Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.' : undefined);
+  ? i18n.t('sign_up_form:username_validation_error')
+  : undefined);
 
 const email = value => (value && !RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$').test(value)
-  ? 'Looks like this email is incomplete' : undefined);
+  ? i18n.t('sign_up_form:email_validation_error')
+  : undefined);
 
-const password = value => (value && !RegExp('.{6}.*').test(value)
-  ? 'Password must be at least 6 characters' : undefined);
-
+const password = value => (value && !RegExp('.{6}.*').test(value) ? 'Password must be at least 6 characters' : undefined);
 
 const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
-      placeholder="Email"
+      placeholder={i18n.t('sign_up_form:email_placeholder')}
       name="email"
       style={styles.text}
       placeholderTextColor={colors.secondary_50}
@@ -34,7 +32,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
     />
     <Field
       component={FormInputItem}
-      placeholder="Display name"
+      placeholder={i18n.t('sign_up_form:display_name_placeholder')}
       name="displayName"
       style={styles.text}
       placeholderTextColor={colors.secondary_50}
@@ -44,7 +42,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
     />
     <Field
       component={FormInputItem}
-      placeholder="Password"
+      placeholder={i18n.t('sign_up_form:password_placeholder')}
       name="password"
       style={styles.text}
       placeholderTextColor={colors.secondary_50}
@@ -54,16 +52,14 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
       autoCapitalize="none"
       validate={[required, password]}
     />
-    <Button
-      warning
-      style={styles.button}
-      block
-      onPress={handleSubmit}
-      disabled={submitting}
-    >
-      {submitting
-        ? <ActivityIndicator color={primaryColor} />
-        : <Text style={[styles.buttonText, { color: primaryColor }]}>Sign Up</Text>}
+    <Button warning style={styles.button} block onPress={handleSubmit} disabled={submitting}>
+      {submitting ? (
+        <ActivityIndicator color={primaryColor} />
+      ) : (
+        <Text style={[styles.buttonText, { color: primaryColor }]}>
+          {i18n.t('sign_up_form:sign_up')}
+        </Text>
+      )}
     </Button>
   </Form>
 );

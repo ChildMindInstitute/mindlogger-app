@@ -4,7 +4,21 @@ import { Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { Container, Header, Title, Button, Icon, Body, Right, Left, Content, Text, View } from 'native-base';
+import i18n from 'i18next';
+
+import {
+  Container,
+  Header,
+  Title,
+  Button,
+  Icon,
+  Body,
+  Right,
+  Left,
+  Content,
+  Text,
+  View,
+} from 'native-base';
 import { skinSelector, currentAppletSelector } from '../../state/app/app.selectors';
 import { deactivateApplet, removeAndDeleteApplet } from '../../state/applets/applets.thunks';
 
@@ -59,10 +73,7 @@ class AppletSettings extends Component {
           </Header>
           <Content>
             <View style={{ padding: 10 }}>
-              <Text style={{ margin: 20 }}>
-                If you want to remove this applet, but keep your data,
-                click below
-              </Text>
+              <Text style={{ margin: 20 }}>{i18n.t('applet_settings:want_remove')}</Text>
               <Button
                 rounded
                 full
@@ -73,15 +84,12 @@ class AppletSettings extends Component {
                   deactivateApplet(groupId);
                 }}
               >
-                <Text style={{ fontWeight: 'bold' }}>Remove</Text>
+                <Text style={{ fontWeight: 'bold' }}>{i18n.t('applet_settings:remove')}</Text>
               </Button>
             </View>
 
             <View style={{ padding: 10 }}>
-              <Text style={{ margin: 20 }}>
-                If you want to delete your data from this applet and
-                remove it, click below.
-              </Text>
+              <Text style={{ margin: 20 }}>{i18n.t('applet_settings:want_delete')}</Text>
               <Button
                 rounded
                 full
@@ -90,7 +98,7 @@ class AppletSettings extends Component {
                 onPress={() => this.showAlert()}
               >
                 <Text style={{ fontWeight: 'bold' }}>
-                  Remove and Delete Data
+                  {i18n.t('applet_settings:remove_delete')}
                 </Text>
               </Button>
             </View>
@@ -98,13 +106,13 @@ class AppletSettings extends Component {
           <AwesomeAlert
             show={showAlert}
             showProgress={false}
-            title="Are you sure you want to delete your data?"
-            message="You won't be able to recover it"
+            title={i18n.t('applet_settings:alert_title')}
+            message={i18n.t('applet_settings:alert_message')}
             closeOnHardwareBackPress={false}
             showCancelButton
             showConfirmButton
-            cancelText="No, cancel"
-            confirmText="Yes, delete it"
+            cancelText={i18n.t('applet_settings:cancel_text')}
+            confirmText={i18n.t('applet_settings:confirm_text')}
             confirmButtonColor="#DD6B55"
             onCancelPressed={() => {
               this.hideAlert();
@@ -120,7 +128,7 @@ class AppletSettings extends Component {
       );
     }
     // there isn't an applet defined so
-    return (<Text>There isn't an applet defined.</Text>);
+    return <Text>{i18n.t('applet_settings:applet_not_defined')}</Text>;
   }
 }
 
@@ -145,4 +153,7 @@ const mapDispatchToProps = {
   removeAndDeleteApplet,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppletSettings);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletSettings);

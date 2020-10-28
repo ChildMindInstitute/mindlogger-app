@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { H3, Text, Button } from 'native-base';
 import { colors } from '../../theme';
+import i18n from '../../i18n/i18n';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,15 +42,16 @@ const styles = StyleSheet.create({
 const LogoutWarning = ({ onCancel, onLogout }) => (
   <View style={styles.container}>
     <View style={styles.modal}>
-      <H3 style={styles.header}>Uploads in progress</H3>
-      <Text style={styles.bodyCopy}>
-        You have responses that are currently uploading. If you log out now your
-        responses will be lost.
-      </Text>
-      <Text style={styles.bodyCopy}>Are you sure that you want to log out?</Text>
+      <H3 style={styles.header}>{i18n.t('logout_warning:uploads_in_progress')}</H3>
+      <Text style={styles.bodyCopy}>{i18n.t('logout_warning:currently_uploading')}</Text>
+      <Text style={styles.bodyCopy}>{i18n.t('logout_warning:sure_logout')}</Text>
       <View style={styles.buttonArea}>
-        <Button bordered style={styles.button} onPress={onCancel}><Text>Cancel</Text></Button>
-        <Button style={styles.button} onPress={onLogout}><Text>Logout</Text></Button>
+        <Button bordered style={styles.button} onPress={onCancel}>
+          <Text>{i18n.t('logout_warning:cancel')}</Text>
+        </Button>
+        <Button style={styles.button} onPress={onLogout}>
+          <Text>{i18n.t('logout_warning:logout')}</Text>
+        </Button>
       </View>
     </View>
   </View>

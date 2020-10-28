@@ -4,6 +4,9 @@ import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import { I18nextProvider } from 'react-i18next';
+
+import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
 // import { initializePushNotifications } from './services/pushNotifications';
@@ -65,7 +68,7 @@ const setup = () => {
     //     resp(store.dispatch, store.getState);
     //   }
     // });
-
+    setApplicationLanguage(store.getState().app.appLanguage);
     setInitialScreen(authOk, store.getState());
   });
 
@@ -78,11 +81,13 @@ const setup = () => {
     }
     return (
       <Provider store={store}>
-        <Root>
-          <FireBaseMessaging>
-            <AppNavigator />
-          </FireBaseMessaging>
-        </Root>
+        <I18nextProvider i18n={i18n}>
+          <Root>
+            <FireBaseMessaging>
+              <AppNavigator />
+            </FireBaseMessaging>
+          </Root>
+        </I18nextProvider>
       </Provider>
     );
   };

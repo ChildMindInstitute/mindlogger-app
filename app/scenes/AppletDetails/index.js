@@ -2,21 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
+import * as firebase from 'react-native-firebase';
 import { getStore } from '../../store';
 import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
-import { inProgressSelector, currentAppletResponsesSelector } from '../../state/responses/responses.selectors';
+import {
+  inProgressSelector,
+  currentAppletResponsesSelector,
+} from '../../state/responses/responses.selectors';
 import { invitesSelector } from '../../state/applets/applets.selectors';
 import { getAppletResponseData } from '../../state/applets/applets.thunks';
-import { 
-  setCurrentActivity, 
+import {
+  setCurrentActivity,
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
 } from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
-import * as firebase from 'react-native-firebase';
-
 
 class AppletDetails extends Component {
   /**
@@ -31,7 +33,7 @@ class AppletDetails extends Component {
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
-  }
+  };
 
   /**
    * Method called when the activity is pressed for a few seconds.
@@ -51,7 +53,7 @@ class AppletDetails extends Component {
       .setNotificationId(`${activity.id}-${Math.random()}`)
       .setTitle(activity.name.en)
       .setBody('Test notification')
-      //.setSound('default')
+      // .setSound('default')
       .setData({
         event_id: 1,
         applet_id: this.props.currentApplet.id.split('/').pop(),
@@ -64,19 +66,17 @@ class AppletDetails extends Component {
 
     try {
       console.log('Displaying notification');
-      await firebase
-        .notifications()
-        .displayNotification(notification);
-    } catch(error) {
+      await firebase.notifications().displayNotification(notification);
+    } catch (error) {
       // eslint-disable-next-line no-console
-      console.warn(`Failed to display the notification`, error);
+      console.warn('Failed to display the notification', error);
     }
-  }
+  };
 
   handleBack = () => {
     Actions.replace('applet_list');
     this.props.setCurrentApplet(null);
-  }
+  };
 
   componentDidMount() {
     this.props.setCurrentActivity(null);
@@ -153,4 +153,7 @@ const mapDispatchToProps = {
   setActivitySelectionDisabled,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppletDetails);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletDetails);

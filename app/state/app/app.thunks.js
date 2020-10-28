@@ -4,10 +4,7 @@ import * as R from 'ramda';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
 import { clearApplets } from '../applets/applets.actions';
-import {
-  downloadApplets,
-  downloadTargetApplet,
-} from '../applets/applets.thunks';
+import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
@@ -16,7 +13,6 @@ import { signOut, deleteUserAccount, postAppletBadge } from '../../services/netw
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
-
 
 export const showToast = toast => () => {
   Toast.show(toast);
@@ -75,7 +71,9 @@ export const logout = () => (dispatch, getState) => {
 
   if (uploadQueue.length > 0) {
     Actions.push('logout_warning', {
-      onCancel: () => { Actions.pop(); },
+      onCancel: () => {
+        Actions.pop();
+      },
       onLogout: () => {
         Actions.push('login');
         doLogout(dispatch, getState);

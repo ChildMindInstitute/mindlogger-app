@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Platform, Text, StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Recorder } from '@react-native-community/audio-toolkit';
 import randomString from 'random-string';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import RNFetchBlob from 'rn-fetch-blob';
 import RecordButton from './RecordButton';
+import BaseText from '../../components/base_text/base_text';
 import { colors } from '../../theme';
 
 let intervalId = null;
@@ -95,7 +96,7 @@ export default class AudioRecorder extends Component {
         }, 100);
       });
     });
-  }
+  };
 
   startRecording = () => {
     const permission = Platform.select({
@@ -115,7 +116,7 @@ export default class AudioRecorder extends Component {
         this.record();
       }
     });
-  }
+  };
 
   stopRecording = () => {
     const { onStop } = this.props;
@@ -134,7 +135,7 @@ export default class AudioRecorder extends Component {
         onStop(path);
       });
     }
-  }
+  };
 
   reset = () => {
     const { path } = this.props;
@@ -153,18 +154,14 @@ export default class AudioRecorder extends Component {
       elapsed: null,
       path,
     });
-  }
+  };
 
   render() {
     const { recorderState, elapsed, permission, path } = this.state;
     const { allowRetry } = this.props;
 
     if (permission !== 'authorized' && permission !== 'undetermined') {
-      return (
-        <Text style={styles.infoText}>
-          You must grant permission to use your microphone to complete this task.
-        </Text>
-      );
+      return <BaseText style={styles.infoText} textKey="audio_recorder:permission" />;
     }
 
     return (

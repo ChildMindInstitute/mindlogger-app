@@ -1,15 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, StatusBar, Text, View } from 'react-native';
+import { View } from 'react-native';
+import i18n from 'i18next';
 import { AboutView } from './core/AboutView';
 
 // eslint-disable-next-line
 class AppletAbout extends React.Component {
- 
   constructor() {
     super();
     this.state = {
-      markdown: 'loading',
+      markdown: i18n.t('applet_about:loading'),
     };
   }
 
@@ -19,13 +19,13 @@ class AppletAbout extends React.Component {
       await this.getMD(about.en);
     } else if (aboutContent && aboutContent.en) {
       this.setState({
-        markdown: aboutContent.en
-      })
+        markdown: aboutContent.en,
+      });
     } else {
       this.setState({
         markdown: `# ¯\\\\_(ツ)_/¯
         ‍
-The authors of this applet have not provided any information!
+${i18n.t('applet_about:no_info')}
 
         `,
       });
@@ -45,9 +45,7 @@ The authors of this applet have not provided any information!
     const { markdown } = this.state;
     return (
       <View style={{ padding: 10, backgroundColor: 'white' }}>
-        <AboutView>
-          {markdown}
-        </AboutView>
+        <AboutView>{markdown}</AboutView>
       </View>
     );
   }

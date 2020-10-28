@@ -2,16 +2,29 @@ import React, { Component } from 'react';
 import { StatusBar, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Container, Header, Title, Content, Button, Icon, Text, Left, Body, Right, View } from 'native-base';
+import {
+  Container,
+  Header,
+  Title,
+  Content,
+  Button,
+  Icon,
+  Text,
+  Left,
+  Body,
+  Right,
+  View,
+} from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import { SubmissionError } from 'redux-form';
+import i18n from 'i18next';
 import styles from './styles';
 import { userInfoSelector, authTokenSelector } from '../../state/user/user.selectors';
 import { updateUserDetails, updatePassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
-import { replaceReponses } from '../../state/responses/responses.thunks'
-import { getPrivateKey } from '../../services/encryption'
+import { replaceReponses } from '../../state/responses/responses.thunks';
+import { getPrivateKey } from '../../services/encryption';
 
 import ChangePasswordForm from './ChangePasswordForm';
 
@@ -29,26 +42,31 @@ class ChangePasswordScreen extends Component {
       })
       .catch(() => {
         throw new SubmissionError({
-          _error: 'Unable to update user details.',
+          _error: i18n.t('change_pass_form:error'),
         });
       });
-  }
+  };
 
   onSubmit = ({ oldPassword, password }) => {
     const { authToken, user, updateUserDetailsSuccessful, replaceReponses } = this.props;
 
     return updatePassword(authToken, oldPassword, password)
       .then(() => {
-        user.privateKey = getPrivateKey({ userId: user._id, email: user.email, password: password });
+        user.privateKey = getPrivateKey({
+          userId: user._id,
+          email: user.email,
+          password,
+        });
         return replaceReponses(user);
-      }).then( () => updateUserDetailsSuccessful(user) )
+      })
+      .then(() => updateUserDetailsSuccessful(user))
       .catch((e) => {
         throw new SubmissionError({
-          _error: 'The current password you entered was incorrect.',
+          _error: i18n.t('change_pass_form:submission_error'),
         });
       });
-  // No update password - just update the first name and last name
-  }
+    // No update password - just update the first name and last name
+  };
 
   popRoute = () => {
     Actions.pop();
@@ -71,7 +89,7 @@ class ChangePasswordScreen extends Component {
             </Button>
           </Left>
           <Body style={{ paddingTop: IOSBodyPadding }}>
-            <Title>Change Password</Title>
+            <Title>{i18n.t('change_pass_form:change_pass')}</Title>
           </Body>
           <Right />
         </Header>
@@ -95,7 +113,7 @@ ChangePasswordScreen.propTypes = {
   authToken: PropTypes.string.isRequired,
   updateUserDetailsSuccessful: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
-  replaceReponses: PropTypes.func.isRequired
+  replaceReponses: PropTypes.func.isRequired,
 };
 
 const bindAction = {
@@ -109,4 +127,7 @@ const mapStateToProps = state => ({
   skin: skinSelector(state),
 });
 
-export default connect(mapStateToProps, bindAction)(ChangePasswordScreen);
+export default connect(
+  mapStateToProps,
+  bindAction,
+)(ChangePasswordScreen);

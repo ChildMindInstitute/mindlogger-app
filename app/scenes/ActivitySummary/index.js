@@ -2,13 +2,20 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Parser } from 'expr-eval';
-import { SafeAreaView, View, FlatList, StyleSheet, Text, Dimensions, StatusBar, ImageBackground } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { colors } from '../../themes/colors';
 import {
-  BodyText,
-  Heading,
-} from '../../components/core';
+  SafeAreaView,
+  View,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+  StatusBar,
+  ImageBackground,
+} from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import i18n from 'i18next';
+import { colors } from '../../themes/colors';
+import BaseText from '../../components/base_text/base_text';
+import { BodyText, Heading } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
 
@@ -19,7 +26,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 0,
-    backgroundColor: 'rgba(202, 202, 202, 0.2)'
+    backgroundColor: 'rgba(202, 202, 202, 0.2)',
   },
   headerContainer: {
     alignItems: 'center',
@@ -37,23 +44,23 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'flex-start',
     justifyContent: 'center',
-  }
+  },
 });
 
 const DATA = [
   {
-    category: 'Suicide',
-    message: 'Critical Level: Parent indicated possible bullying. Bring to immediate attention of clinician due to potential emergency situation.',
+    category: i18n.t('activity_summary:category_suicide'),
+    message: i18n.t('activity_summary:category_suicide_message'),
     score: '2.00',
   },
   {
-    category: 'Emotional',
-    message: 'Within normal limits: No further screening or assessment required',
+    category: i18n.t('activity_summary:category_emotional'),
+    message: i18n.t('activity_summary:category_emotional_message'),
     score: '10.00',
   },
   {
-    category: 'Sport',
-    message: 'Clinical Range: Make clinician aware; Perform follow up assessment (Recommended); Generate referral',
+    category: i18n.t('activity_summary:sport'),
+    message: i18n.t('activity_summary:category_sport_message'),
     score: '4.00',
   },
 ];
@@ -70,7 +77,7 @@ const ActivitySummary = ({ responses, activity }) => {
       return {
         ...accumulator,
         [activity.items[index].variableName]: response || 0,
-      }
+      };
     }, {});
     const parser = new Parser({
       logical: true,
@@ -78,15 +85,15 @@ const ActivitySummary = ({ responses, activity }) => {
     });
 
     const itemScores = activity.compute.reduce((accumulator, itemCompute) => {
-      let expr = parser.parse(itemCompute.jsExpression);
+      const expr = parser.parse(itemCompute.jsExpression);
       return {
         ...accumulator,
-        [itemCompute.variableName]: expr.evaluate(items)
-      }
-    }, {})
+        [itemCompute.variableName]: expr.evaluate(items),
+      };
+    }, {});
 
     const reportMessages = [];
-    activity.messages.forEach(msg => {
+    activity.messages.forEach((msg) => {
       const { jsExpression, message } = msg;
       const expr = parser.parse(jsExpression);
       const category = jsExpression.split(' ')[0];
@@ -94,12 +101,12 @@ const ActivitySummary = ({ responses, activity }) => {
         reportMessages.push({
           category,
           message,
-          score: itemScores[category]
-        })
+          score: itemScores[category],
+        });
       }
-    })
+    });
     setMessages(reportMessages);
-  }, [responses])
+  }, [responses]);
 
   const onClose = () => {
     console.log('closed');
@@ -109,25 +116,21 @@ const ActivitySummary = ({ responses, activity }) => {
   const renderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
-        <Text style={{ fontSize: 20, fontWeight: '200' }}>
-          {item.category.replace(/_/g, " ")}
-        </Text>
-        <Text style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }} >
+        <BaseText style={{ fontSize: 20, fontWeight: '200' }}>
+          {item.category.replace(/_/g, ' ')}
+        </BaseText>
+        <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>
           {item.score}
-        </Text>
-        <Text style={{ fontSize: 15 }}>
-          {item.message}
-        </Text>
+        </BaseText>
+        <BaseText style={{ fontSize: 15 }}>{item.message}</BaseText>
       </View>
     );
-  }
+  };
 
   return (
     <>
       <View style={styles.headerContainer}>
-        <Text style={{ fontSize: 25, fontWeight: '500' }}>
-          Summary
-        </Text>
+        <BaseText style={{ fontSize: 25, fontWeight: '500' }} textKey="activity_summary:summary" />
       </View>
       <FlatList
         data={messages}
@@ -144,7 +147,9 @@ ActivitySummary.propTypes = {
   activity: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
-export default connect(null, mapDispatchToProps)(ActivitySummary);
+export default connect(
+  null,
+  mapDispatchToProps,
+)(ActivitySummary);

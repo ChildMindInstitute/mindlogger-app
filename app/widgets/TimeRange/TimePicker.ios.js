@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Text, Container, ListItem, Left, Right, Icon } from 'native-base';
 import { DatePickerIOS, Modal, StyleSheet, View } from 'react-native';
 import moment from 'moment';
+import i18n from 'i18next';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -52,14 +53,14 @@ class TimePicker extends React.Component {
             <Text>{moment(date).format('h:mm a')}</Text>
           </Left>
           <Right>
-            {label === 'From' ? <Icon type="FontAwesome" name="bed" /> : <Icon type="Ionicons" name="ios-alarm" />}
+            {label === 'From' ? (
+              <Icon type="FontAwesome" name="bed" />
+            ) : (
+              <Icon type="Ionicons" name="ios-alarm" />
+            )}
           </Right>
         </ListItem>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-        >
+        <Modal animationType="slide" transparent={false} visible={this.state.modalVisible}>
           <Container style={styles.paddingContent}>
             <Container style={styles.datePickerContainer}>
               <DatePickerIOS
@@ -84,7 +85,7 @@ class TimePicker extends React.Component {
                 this.setModalVisible(false);
               }}
             >
-              <Text>OK</Text>
+              <Text>{i18n.t('date_picker:ok')}</Text>
             </Button>
           </Container>
         </Modal>

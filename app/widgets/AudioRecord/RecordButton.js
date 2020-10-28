@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Icon } from 'native-base';
+import i18n from 'i18next';
+import BaseText from '../../components/base_text/base_text';
 import { colors } from '../../themes/colors';
 
 const styles = StyleSheet.create({
@@ -58,7 +60,7 @@ const renderButton = (recording, onPress, disabled) => {
     return (
       <TouchableOpacity onPress={onPress}>
         <View style={styles.stopButton}>
-          <Text style={styles.recordText}>STOP</Text>
+          <BaseText style={styles.recordText} textKey="record_button:stop" />
           <Icon style={styles.recordText} type="FontAwesome" name="stop" />
         </View>
       </TouchableOpacity>
@@ -69,7 +71,7 @@ const renderButton = (recording, onPress, disabled) => {
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
       <View style={[styles.recordButton, disabled ? { opacity: 0.2 } : { opacity: 1 }]}>
-        <Text style={styles.recordText}>RECORD</Text>
+        <BaseText style={styles.recordText} textKey="record_button:record" />
         <Icon style={styles.recordText} type="FontAwesome" name="microphone" />
       </View>
     </TouchableOpacity>
@@ -80,15 +82,18 @@ const renderInfo = (recording, elapsed, fileSaved) => {
   if (recording) {
     return (
       <View>
-        <Text style={styles.infoText}>Recording...</Text>
-        <Text style={styles.infoText}>{Math.round(elapsed / 1000)} seconds</Text>
+        <BaseText style={styles.infoText} textKey="record_button:recording" />
+        <BaseText
+          style={styles.infoText}
+          value={`${Math.round(elapsed / 1000)} ${i18n.t('record_button:seconds')}`}
+        />
       </View>
     );
   }
   if (fileSaved) {
     return (
       <View>
-        <Text style={styles.infoText}>File saved.</Text>
+        <BaseText style={styles.infoText} textKey="record_button:file_saved" />
       </View>
     );
   }

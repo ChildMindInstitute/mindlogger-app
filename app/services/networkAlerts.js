@@ -1,11 +1,12 @@
+import i18n from 'i18next';
 import { Alert } from 'react-native';
 
 export const connectionAlert = () => Alert.alert(
-  'No Internet Connection',
-  'Please connect to the internet',
+  i18n.t('network_alerts:no_internet_title'),
+  i18n.t('network_alerts:no_internet_subtitle'),
   [
     {
-      text: 'Dismiss',
+      text: i18n.t('network_alerts:no_internet_text'),
       style: 'cancel',
     },
   ],
@@ -13,15 +14,15 @@ export const connectionAlert = () => Alert.alert(
 
 export const mobileDataAlert = (toggleMobileDataAllowed) => {
   Alert.alert(
-    'Cellular Data is Disabled',
-    'Please connect to wi-fi or allow cellular data',
+    i18n.t('network_alerts:cellular_data_title'),
+    i18n.t('network_alerts:cellular_data_subtitle'),
     [
       {
-        text: 'Dismiss',
+        text: i18n.t('network_alerts:cellular_data_text'),
         style: 'cancel',
       },
       {
-        text: 'Use Cellular Data',
+        text: i18n.t('network_alerts:use_cellular_data'),
         onPress: toggleMobileDataAllowed,
         style: 'default',
       },

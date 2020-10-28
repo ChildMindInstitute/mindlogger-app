@@ -2,16 +2,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Image, StatusBar } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  Container,
-  Content,
-  Text,
-  View,
-  Icon,
-  Footer,
-  Right,
-} from 'native-base';
+import { Container, Content, Text, View, Icon, Footer, Right } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import i18n from 'i18next';
 import { SubmissionError } from 'redux-form';
 import moment from 'moment';
 import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
@@ -22,7 +15,7 @@ import LoginForm from './LoginForm';
 import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
 import { toggleMobileDataAllowed } from '../../state/app/app.actions';
 
-import { getPrivateKey } from '../../services/encryption'
+import { getPrivateKey } from '../../services/encryption';
 
 const defaultLogo = require('../../../img/CMI_white_logo.png');
 
@@ -43,7 +36,7 @@ class Login extends Component {
       this.onClickTime = currentTime;
       Actions.sign_up();
     }
-  }
+  };
 
   onChangeStudy = () => {
     const currentTime = Date.now();
@@ -52,7 +45,7 @@ class Login extends Component {
       this.onClickTime = currentTime;
       Actions.change_study();
     }
-  }
+  };
 
   onForgotPassword = () => {
     const currentTime = Date.now();
@@ -61,7 +54,7 @@ class Login extends Component {
       this.onClickTime = currentTime;
       Actions.forgot_password();
     }
-  }
+  };
 
   onAbout = () => {
     const currentTime = Date.now();
@@ -70,7 +63,7 @@ class Login extends Component {
       this.onClickTime = currentTime;
       Actions.about_app();
     }
-  }
+  };
 
   onSubmit = async (body) => {
     const { signInSuccessful, fcmToken } = this.props;
@@ -81,7 +74,11 @@ class Login extends Component {
         if (typeof response.exception !== 'undefined') {
           throw response.exception;
         } else {
-          response.user.privateKey = getPrivateKey({ userId: response.user._id, email: body.user, password: body.password });
+          response.user.privateKey = getPrivateKey({
+            userId: response.user._id,
+            email: body.user,
+            password: body.password,
+          });
           response.user.email = body.user;
 
           signInSuccessful(response);
@@ -90,24 +87,24 @@ class Login extends Component {
       .catch((e) => {
         if (typeof e.status !== 'undefined') {
           throw new SubmissionError({
-            password: 'Login failed.',
+            password: i18n.t('login:login_error'),
           });
         } else {
           throw new SubmissionError({
-            password: 'Login failed.',
+            password: i18n.t('login:login_error'),
           });
         }
       });
-  }
+  };
 
   getTimezone = () => {
     return moment().utcOffset() / 60;
-  }
+  };
 
   render() {
     const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin.name;
-    const logo = (typeof skin.logo !== 'undefined') ? { uri: skin.logo } : defaultLogo;
+    const logo = typeof skin.logo !== 'undefined' ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
@@ -124,22 +121,23 @@ class Login extends Component {
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
-              <Text style={styles.whiteText}>New User</Text>
+              <Text style={styles.whiteText}>{i18n.t('login:new_user')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.forgotPassword} onPress={this.onForgotPassword}>
-              <Text style={styles.whiteText}>Forgot Password</Text>
+              <Text style={styles.whiteText}>{i18n.t('login:forgot_password')}</Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>{`What is ${title}?`}</Text>
+              <Text style={styles.whiteText}>{`${i18n.t('login:what_is')} ${title}?`}</Text>
             </TouchableOpacity>
           </View>
-          <Image
-            square
-            style={styles.logo}
-            source={logo}
-          />
+          <View>
+            <TouchableOpacity onPress={() => Actions.app_language()}>
+              <Text style={styles.whiteText}>{i18n.t('language_screen:change_app_language')}</Text>
+            </TouchableOpacity>
+          </View>
+          <Image square style={styles.logo} source={logo} />
         </Content>
         <Footer style={styles.footer}>
           <Right>
@@ -174,4 +172,7 @@ const mapDispatchToProps = {
   toggleMobileDataAllowed,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Login);

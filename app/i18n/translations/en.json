@@ -1,0 +1,266 @@
+{
+  "activity_summary": {
+    "save": "Save",
+    "summary": "Summary",
+    "not_yet_completed":"Not yet completed",
+    "last_completed":"Last completed",
+    "unscheduled": "Unscheduled",
+    "due": "Due",
+    "scheduled_for": "Scheduled for",
+    "category_suicide": "Suicide",
+    "category_suicide_message": "Critical Level: Parent indicated possible bullying. Bring to immediate attention of clinician due to potential emergency situation.",
+    "category_emotional": "Emotional",
+    "category_emotional_message": "Within normal limits: No further screening or assessment required.",
+    "category_sport": "Sport",
+    "category_sport_message": "Clinical Range: Make clinician aware; Perform follow up assessment (Recommended); Generate referral."
+  },
+  "activity_chart": {
+    "title": "Please take the assessment for data to be displayed."
+  },
+  "applet_data": {
+    "title": "Please take the assessment for data to be displayed."
+  },
+  "widget_error": {
+    "error_text": "There was a problem loading this screen.",
+    "error_description": "Please ensure you have the latest version of MindLogger installed, then contact your activity administrator if the problem still occurs."
+  },
+  "about": {
+    "about": "About",
+    "applets_title": "Find out more about each of your applets and about the MindLogger platform.",
+    "data_title": "Find out more about the MindLogger data collection platform by tapping 'About\nMindLogger' below.",
+    "about_mindLogger": "About MindLogger",
+    "icons_title":"NounProject icons were created by Alina Oleynik (survey), beth bolton (book), and\nShakeel (chart)"
+  },
+  "about_app": {
+    "title":"Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.",
+    "subtitle": "Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.",
+    "mindlogger_about": "### What is MindLogger?\n\nThis app is part of the open source MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (https://matter.childmind.org).\n\n### What can MindLogger do?\n\nMindLogger's feature set is growing, and currently supports a wide variety of input types. Each screen in a MindLogger activity can include any of the following:\n  - Text, picture, and audio\n  - Question followed by image and/or text response options\n  - Slider bar\n  - Text entry\n  - Table entry\n  - Audio record\n  - Photo/video capture\n  - Drawing or tapping\n  - Current geolocation\n  - Simple cognitive task\n  - Delay before response\n  - Timer\n  - Conditional logic to determine where to go next\n\n### Where can I learn more?\n\nPlease visit https://mindlogger.org for more information.\n\nCheers,\nMindLogger Team\nChild Mind Institute"
+  },
+  "applet_footer": {
+    "surveys": "Surveys",
+    "data": "Data",
+    "about": "about"
+  },
+  "applet_invite_flow": {
+    "back": "Back",
+    "next": "Next"
+  },
+  "join_invite": {
+    "click_below": "Click below if you are ready to join this study. You can remove yourself from this study and/or delete your data at any time with no consequences.",
+    "decline": "If you do not feel comfortable with sharing your data from this study, you may decline this invitation. ",
+    "decline_title": "Decline"
+  },
+  "applet_list_component": {
+    "about_title":"About MindLogger"
+  },
+  "applet_settings": {
+    "applet_not_defined": "There isn't an applet defined.",
+    "want_remove": "If you want to remove this applet, but keep your data, click below",
+    "remove": "Remove",
+    "want_delete": "If you want to delete your data from this applet and remove it, click below.",
+    "remove_delete": "Remove and Delete Data",
+    "alert_title": "Are you sure you want to delete your data?",
+    "alert_message": "You won't be able to recover it",
+    "cancel_text": "No, cancel",
+    "confirm_text": "Yes, delete it"
+  },
+  "change_pass_form": {
+    "update":"Update",
+    "cur_pass_placeholder": "Current password",
+    "new_pass_placeholder": "New password",
+    "error": "Unable to update user details.",
+    "submission_error": "The current password you entered was incorrect.",
+    "change_pass": "hange Password"
+  },
+  "change_study": {
+    "reset": "Reset",
+    "submit": "Submit",
+    "enter_url_manually":"Enter URL Manually",
+    "scan_qr": "Scan QR",
+    "successfully_changed": "Study successfully changed.",
+    "successfully_reset": "Study successfully reset.",
+    "set_by_qr": "Study has been set by QR."
+  },
+  "consent": {
+    "this_app_provides":"This app provides a easy way to collect survey, voice, drawing activities.",
+    "i_understand":"I understand that viewing certain images can be uncomfortable while using this app",
+    "i_will_allow":"I will allow the Child Mind Institute to store data from use of this app on a secure\ncloud server, and to access this information for clinical and research purposes",
+    "i_premit": "I permit the Child Mind Institute to contact me regarding information gathered from\nthis app for clinical or research purposes.",
+    "next": "Next"
+  },
+  "forgot_pass_form": {
+    "reset_pass": "Reset Password",
+    "enter_email_mess": "Please enter your email address",
+    "invalid_email": "Invalid email address",
+    "email_address": "Email address",
+    "email_sent": "Reset email has been sent",
+    "email_send_error": "That email does not exist in the system.",
+    "forgot_password": "Forgot password"
+  },
+  "login": {
+    "new_user": "New User",
+    "forgot_password": "Forgot Password",
+    "what_is": "What is",
+    "login_error": "Login failed."
+  },
+  "login_form": {
+    "login": "LOGIN",
+    "email_placeholder": "Email",
+    "password": "Password"
+  },
+  "logout_warning": {
+    "uploads_in_progress": "Uploads in progress",
+    "currently_uploading": "You have responses that are currently uploading. If you log out now your responses will be lost.",
+    "sure_logout":"Are you sure that you want to log out?",
+    "cancel": "Cancel",
+    "logout": "Logout"
+  },
+  "settings": {
+    "logged_out":"You've logged out.",
+    "change_pass": "Change Password",
+    "use_cellular_data":"Use Cellular Data",
+    "logout": "Logout",
+    "permanently_delete_account": "Permanently Delete Account",
+    "user_settings": "User Settings"    
+  },
+  "language_screen": {
+    "app_language": "Application language",
+    "change_app_language": "Change Language",
+    "en": "English",
+    "fr": "Français"
+  },
+  "sign_up_form": {
+    "sign_up": "Sign Up",
+    "error": "Sign up failed: username may already be in use.",
+    "new_user": "New User",
+    "username_validation_error": "Username must be at least 4 characters, start with a letter, and may only contain letters, numbers, dashes, and dots.",
+    "email_validation_error": "Looks like this email is incomplete",
+    "email_placeholder": "Email",
+    "display_name_placeholder": "Display name",
+    "password_placeholder": "Password"
+  },
+  "geolocation": {
+    "get_location": "GET LOCATION",
+    "must_enable_location": "You must enable Location services to complete this task. Please grant MindLogger permission in your iOS Settings and press the button again.",
+    "must_enable_location_subtitle": "You must enable Location services to complete this task. Please press the button again and grant MindLogger permission to use your location.",
+    "location_saved": "Location saved."
+  },
+  "select": {
+    "select_one": "Select one",
+    "no_items": "No items"
+  },
+  "audio_recorder": {
+    "permission": "You must grant permission to use your microphone to complete this task."
+  },
+  "record_button": {
+    "stop": "STOP",
+    "record":"RECORD",
+    "recording": "Recording...",
+    "seconds": "seconds",
+    "file_saved": "File saved."
+  },
+  "audio_player": {
+    "stop": "STOP",
+    "playing":"PLAYING...",
+    "play": "PLAY",
+    "done": "DONE"
+  },
+  "date_picker": {
+    "ok": "OK"
+  },
+  "table_input": {
+    "short_press_detail":"* A short-press increases the counter",
+    "long_press_detail": "* A long-press decreases the counter"
+  },
+  "activity_due_date": {
+    "available_all_day":"Available: All day",
+    "available": "Available",
+    "to": "to",
+    "day": "day",
+    "days": "days",
+    "am": "AM"
+  },
+  "form_item": {
+    "required": "Required",
+    "must_be": "Must be",
+    "characters_or_less": "characters or less",
+    "must_be_a_number": "Must be a number"
+  },
+  "applet_about": {
+    "loading": "loading",
+    "no_info": "The authors of this applet have not provided any information!"
+  },
+  "firebase_messaging": {
+    "alert_title":"\"MindLogger\" would like to send you notifications",
+    "alert_message": "These can be configured in Settings",
+    "alert_text": "Open Settings",
+    "response_refresh_request": "Response Refresh Request",
+    "refresh_request_details": "Since your password has been reset, your past responses need to be refreshed. Do you want to request this?",
+    "refresh_request_text": "Your managers will initiate the refresh shortly.",
+    "applet_not_found_1": "Applet was not found",
+    "applet_not_found_2": "There is no applet for given id.",
+    "activity_not_found": "Activity was not found', 'There is no activity for given id.",
+    "already_completed": "You have already completed",
+    "activity_was_due_at": "This activity was due at",
+    "if_progress_was_made_on_the": "If progress was made on the",
+    "it_was_saved_but_it_can_no_longer_be_taken": "it was saved but it can no longer be taken",
+    "today": "today.",
+    "activity_not_ready": "Activity not ready",
+    "not_able_to_start": "You’re not able to start activity yet",
+    "is": "is",
+    "scheduled_to_start_at": "scheduled to start at"
+  },
+  "join_demo_applets": {
+    "healthy_brain_network": "Healthy Brain Network: EMA",
+    "cognitive_tasks": "Cognitive Tasks",
+    "mind_logger_demos": "MindLogger Demos"
+  },
+  "data_invite": {
+    "message": "We think its important for you to know who has access to your data if you accept this invitation.\n\nThe following people will have acccess to your data if you accept this invitation:"
+  },
+  "sidebar": {
+    "home": "Home",
+    "settings": "Settings",
+    "about": "About",
+    "logout": "Logout"
+  },
+  "navigator": {
+    "exit_title": "Exit App",
+    "exit_subtitle": "Exiting the application?",
+    "cancel": "Cancel"
+  },
+  "activity_navigation": {
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "back": "Back",
+    "return": "Return",
+    "undo": "Undo"
+  },
+  "network_alerts": {
+    "no_internet_title": "No Internet Connection",
+    "no_internet_subtitle": "Please connect to the internet",
+    "no_internet_text": "Dismiss",
+    "cellular_data_title": "Cellular Data is Disabled",
+    "cellular_data_subtitle": "Please connect to wi-fi or allow cellular data",
+    "cellular_data_text": "Dismiss",
+    "use_cellular_data": "Use Cellular Data"
+  },
+  "timing": {
+    "provide_option": "You must provide the \"after\" or \"every\" option",
+    "to_be_number": "Expected options.after to be a number",
+    "every_number":"Expected options.every to be a number"
+  },
+  "camera": {
+    "choose":"Choose",
+    "take_a_new":"Take a new",
+    "or_choose": "or choose one from your library.",
+    "camera": "Camera",
+    "library": "Library"
+  },
+  "text_entry": {
+    "type_placeholder": "Please type text"
+  }
+  
+  
+}

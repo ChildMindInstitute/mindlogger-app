@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Alert, BackHandler } from 'react-native';
 import { StyleProvider } from 'native-base';
 import { Router, Scene, Lightbox, Actions, Modal } from 'react-native-router-flux';
+import i18n from 'i18next';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 // Scenes
@@ -27,6 +28,7 @@ import VolumeInfo from './VolumeInfo';
 // import { colors } from '../themes/colors';
 import AppletInviteFlow from './AppletInviteFlow';
 import AppletSettings from './AppletSettings';
+import AppLanguage from './AppLanguage';
 
 const theme = getTheme(platform);
 theme['NativeBase.Footer'].height = 80;
@@ -55,6 +57,7 @@ const Navigator = Actions.create(
           <Scene key="change_password" component={ChangePassword} />
           <Scene key="sign_up" component={Signup} />
           <Scene key="applet_settings" component={AppletSettings} />
+          <Scene key="app_language" component={AppLanguage} />
         </Scene>
         {/* </Drawer> */}
       </Scene>
@@ -63,16 +66,12 @@ const Navigator = Actions.create(
       <Scene key="activity_summary" component={ActivitySummary} />
       <Scene key="activity_thanks" component={ActivityThanks} />
     </Modal>
-  </Lightbox>
-  ,
+  </Lightbox>,
 );
 
 class AppNavigator extends Component {
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      this.handleBackButton,
-    );
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
   }
 
   componentWillUnmount() {
@@ -81,16 +80,13 @@ class AppNavigator extends Component {
 
   handleBackButton = () => {
     console.log('current route:', Actions.currentScene);
-    if (
-      Actions.currentScene === 'login'
-      || Actions.currentScene === 'applet_list'
-    ) {
+    if (Actions.currentScene === 'login' || Actions.currentScene === 'applet_list') {
       Alert.alert(
-        'Exit App',
-        'Exiting the application?',
+        i18n.t('navigator:exit_title'),
+        i18n.t('navigator:exit_subtitle'),
         [
           {
-            text: 'Cancel',
+            text: i18n.t('navigator:cancel'),
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
@@ -121,6 +117,5 @@ class AppNavigator extends Component {
     );
   }
 }
-
 
 export default AppNavigator;

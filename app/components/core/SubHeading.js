@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
+import BaseText from '../base_text/base_text';
 
 const styles = StyleSheet.create({
   subHeading: {
@@ -15,9 +16,7 @@ const styles = StyleSheet.create({
 });
 
 export const SubHeading = ({ children, style }) => (
-  <Text style={{...styles.subHeading, ...style}}>
-    {children}
-  </Text>
+  <BaseText style={{ ...styles.subHeading, ...style }}>{children}</BaseText>
 );
 
 SubHeading.defaultProps = {

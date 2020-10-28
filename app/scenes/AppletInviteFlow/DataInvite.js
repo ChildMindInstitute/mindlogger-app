@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import R from 'ramda';
 // import _ from 'lodash';
 import { Text, View } from 'native-base';
+import i18n from 'i18next';
 import { SubHeading } from '../../components/core/SubHeading';
 import DataIcon from '../../components/Icons/Data';
 import { colors } from '../../themes/colors';
@@ -52,14 +53,10 @@ class DataInvite extends Component {
         <SubHeading>Access to your Data</SubHeading>
         <Text style={{ color: colors.tertiary, textAlign: 'justify' }}>
           {`
-We think its important for you to know who has access to your data if you accept this invitation.
-
-The following people will have acccess to your data if you accept this invitation:
+${i18n.t('data_invite:message')}
 `}
         </Text>
-        {
-          this.renderPeople(applet)
-        }
+        {this.renderPeople(applet)}
       </ScrollView>
     );
   }

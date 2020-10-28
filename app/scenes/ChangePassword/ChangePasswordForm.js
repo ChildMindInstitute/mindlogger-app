@@ -3,6 +3,7 @@ import { ActivityIndicator } from 'react-native';
 import { propTypes } from 'react-redux';
 import { Button, Form, Text } from 'native-base';
 import { reduxForm, Field } from 'redux-form';
+import i18n from 'i18next';
 import { FormInputItem } from '../../components/form/FormItem';
 import styles from './styles';
 
@@ -23,7 +24,7 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
     <Field
       component={FormInputItem}
-      placeholder="Current password"
+      placeholder={i18n.t('change_pass_form:cur_pass_placeholder')}
       name="oldPassword"
       style={styles.text}
       secureTextEntry
@@ -33,7 +34,7 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
     />
     <Field
       component={FormInputItem}
-      placeholder="New password"
+      placeholder={i18n.t('change_pass_form:new_pass_placeholder')}
       name="password"
       style={styles.text}
       secureTextEntry
@@ -48,9 +49,11 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       onPress={handleSubmit}
       disabled={submitting}
     >
-      {submitting
-        ? <ActivityIndicator color={primaryColor} />
-        : <Text style={styles.buttonText}>Update</Text>}
+      {submitting ? (
+        <ActivityIndicator color={primaryColor} />
+      ) : (
+        <Text style={styles.buttonText}>{i18n.t('change_pass_form:update')}</Text>
+      )}
     </Button>
     {error && <Text style={styles.errorText}>{error}</Text>}
   </Form>

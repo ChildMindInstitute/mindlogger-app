@@ -1,0 +1,264 @@
+{
+  "activity_summary": {
+    "save": "Sauvegarder",
+    "summary": "Résumé",
+    "not_yet_completed":"Pas encore terminé",
+    "last_completed":"Dernier en date terminé",
+    "unscheduled": "Unscheduled",
+    "due": "À faire",
+    "scheduled_for": "Prévu pour",
+    "category_suicide": "Suicide",
+    "category_suicide_message": "Niveau critique : un parent a indiqué la possibilité d'un harcèlement scolaire. Porter immédiatement à l'attention d'un clinicien en raison d'une situation d'urgence potentielle.",
+    "category_emotional": "Emotionnel",
+    "category_emotional_message": "Dans les limites normales : Aucun autre examen ou évaluation n'est nécessaire.",
+    "category_sport": "Sport",
+    "category_sport_message": "Dans le domaine clinique : Mettre au courant un clinicien ; Effectuer une évaluation de suivi (recommandé) ; Générer une recommandation."
+  },
+  "activity_chart": {
+    "title": "Veuillez passer l'évaluation pour que les données soient affichées."
+  },
+  "applet_data": {
+    "title": "Veuillez passer l'évaluation pour que les données soient affichées."
+  },
+  "widget_error": {
+    "error_text": "Il y a eu un problème de chargement de cet écran.",
+    "error_description": "Veuillez vous assurer que vous avez la dernière version de MindLogger installée, puis contactez votre administrateur d'activité si le problème persiste."
+  },
+  "about": {
+    "about": "À propos",
+    "applets_title": "En savoir plus sur chacune de vos applets et sur la plateforme MindLogger.",
+    "data_title": "Pour en savoir plus sur la plate-forme de collecte de données MindLogger, cliquez sur 'À propos\nde MindLogger' ci-dessous.",
+    "about_mindLogger": "À propos de MindLogger",
+    "icons_title":"Les icônes NounProject ont été créées par Alina Oleynik (enquête), Beth Bolton (livre), et\nShakeel (graphique)"
+  },
+  "about_app": {
+    "title":"Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
+    "subtitle": "Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
+    "mindlogger_about": "### Qu'est-ce que MindLogger?\n\nCette application fait partie de la plateforme open source de collecte et d'analyse de données MindLogger conçue par le MATTER Lab du Child Mind Institute (https://matter.childmind.org).\n### Que peut faire MindLogger ? L'ensemble des fonctionnalités de MindLogger se développe, et prend actuellement en charge une grande variété de types d'entrées. Chaque écran d'une activité de MindLogger peut comprendre l'un des éléments suivants :\n - Texte, image et audio\n - Question suivie d'une option de répose en image et/ou textuelle\n -Curseur\n - Entrée textuelle\n - Saisie sous forme de tableau\n - Enregistrement audio\n - Capture photo/vidéo\n - Dessin ou tapotement\n - Géolocalisation\n - Tâche cognitive simple\n - Délai avant réponse\n - Minuterie\n - Logique conditionnelle pour déterminer la suite\n\n### Où puis-je en apprendre davantage ? \n\nVeuillez consulter le site https://mindlogger.org pour plus d'informations. \n\n Santé, \nMindLogger Team, \n Child Mind Institute"
+  },
+  "applet_footer": {
+    "surveys": "Enquêtes",
+    "data": "Données",
+    "about": "À propos"
+  },
+  "applet_invite_flow": {
+    "back": "Retour",
+    "next": "Suivant"
+  },
+  "join_invite": {
+    "click_below": "Cliquez ci-dessous si vous êtes prêt à participer à cette étude. Vous pouvez vous retirer de cette étude et/ou supprimer vos données à tout moment sans conséquences.",
+    "decline": "Si vous ne vous sentez pas disposé à partager vos données issues de cette étude, vous pouvez décliner cette invitation.",
+    "decline_title": "Refuser"
+  },
+  "applet_list_component": {
+    "about_title":"À propos de MindLogger"
+  },
+  "applet_settings": {
+    "applet_not_defined": "Aucune applet n'est définie.",
+    "want_remove": "Si vous souhaitez retirer cette applet, mais conserver vos données, cliquez ci-dessous",
+    "remove": "Retirer",
+    "want_delete": "Si vous souhaitez supprimer vos données de cette applet, et la retirer, cliquez ci-dessous.",
+    "remove_delete": "Retirer et supprimer les données",
+    "alert_title": "Êtes-vous sûr de vouloir supprimer vos données?",
+    "alert_message": "Vous ne pourrez pas les récupérer",
+    "cancel_text": "Non, annuler",
+    "confirm_text": "Oui, effacer"
+  },
+  "change_pass_form": {
+    "update":"Mettre à jour",
+    "cur_pass_placeholder": "Mot de passe actuel",
+    "new_pass_placeholder": "Nouveau mot de passe",
+    "error": "Impossible de mettre à jour les données de l'utilisateur.",
+    "submission_error": "Le mot de passe actuel que vous avez saisi était incorrect.",
+    "change_pass": "Changer le mot de passe"
+  },
+  "change_study": {
+    "reset": "Reinitialiser",
+    "submit": "Soumettre",
+    "enter_url_manually":"Saisir une URL manuellement",
+    "scan_qr": "Scanner un QR code",
+    "successfully_changed": "Etude modifiée",
+    "successfully_reset": "Réinitialisation réussie de l'étude.",
+    "set_by_qr": "L'étude a été établie par QR."
+  },
+  "consent": {
+    "this_app_provides":"Cette application fournit un moyen simple de collecter des données sous forme de questionnaire, d'enregistrement de la voix ou de dessin",
+    "i_understand":"Je comprends que je risque de voir des images dérangeantes lors de l'utilisation de cette application",
+    "i_will_allow":"J'autorise le Child Mind Institute à stocker les données provenant de l'utilisation de cette application sur un serveu rcloud sécurisé, et à accéder à ces informations à des fins cliniques et de recherche",
+    "i_premit": "J'autorise le Child Mind Institute à me contacter au sujet des informations recueillies à partir de cette application à des fins cliniques ou de recherche.",
+    "next": "Suivant"
+  },
+  "forgot_pass_form": {
+    "reset_pass": "Reset Password",
+    "enter_email_mess": "Veuillez saisir votre adresse e-mail",
+    "invalid_email": "Adresse e-mail invalide",
+    "email_address": "Adresse e-mail",
+    "email_sent": "L'e-mail de réinitialisation a été envoyé",
+    "email_send_error": "Cette adresse e-mail n'existe pas dans le système.",
+    "forgot_password": "Mot de passe oublié"
+  },
+  "login": {
+    "new_user": "Nouvel utilisateur",
+    "forgot_password": "Mot de passe oublié",
+    "what_is": "C'est quoi",
+    "login_error": "La connexion a échoué."
+  },
+  "login_form": {
+    "login": "Connexion",
+    "email_placeholder": "E-mail",
+    "password": "Mot de passe"
+  },
+  "logout_warning": {
+    "uploads_in_progress": "Téléchargements en cours",
+    "currently_uploading": "Vous avez des réponses en cours de téléchargement. Si vous vous déconnectez maintenant, vos réponses seront perdues.",
+    "sure_logout":"Êtes-vous sûr de vouloir vous déconnecter?",
+    "cancel": "Annuler",
+    "logout": "Logout"
+  },
+  "settings": {
+    "logged_out":"Vous vous êtes déconnecté.",
+    "change_pass": "Changer le mot de passe",
+    "use_cellular_data":"Utiliser les données mobiles",
+    "logout": "Déconnexion",
+    "permanently_delete_account": "Supprimer définitivement mon compte",
+    "user_settings": "Paramètres utilisateur"
+  },
+  "sign_up_form": {
+    "sign_up": "S'inscrire",
+    "error": "L'inscription a échoué : le nom d'utilisateur est peut-être déjà utilisé.",
+    "new_user": "Nouvel utilisateur",
+    "username_validation_error": "Le nom d'utilisateur doit comporter au moins 4 caractères, commencer par une lettre et ne peut contenir que des lettres, des chiffres, des tirets et des points.",
+    "email_validation_error": "Il semble que cet e-mail soit incomplet",
+    "email_placeholder": "E-mail",
+    "display_name_placeholder": "Afficher le nom",
+    "password_placeholder": "Mot de passe"
+  },
+  "geolocation": {
+    "get_location": "LOCALISATION",
+    "must_enable_location": "Vous devez permettre aux services de localisation d'accomplir cette tâche. Veuillez autoriser MindLogger dans les paramètres iOS et appuyez à nouveau sur le bouton.",
+    "must_enable_location_subtitle": "Vous devez permettre aux services de localisation d'accomplir cette tâche. Veuillez appuyer à nouveau sur le bouton et autoriser MindLogger à utiliser votre localisation.",
+    "location_saved": "Localisation sauvegardée."
+  },
+  "select": {
+    "select_one": "Sélectionnez une option",
+    "no_items": "Aucun élément"
+  },
+  "audio_recorder": {
+    "permission": "Vous devez accorder la permission d'utiliser votre microphone pour accomplir cette tâche."
+  },
+  "record_button": {
+    "stop": "STOP",
+    "record":"ENREGISTREMENT",
+    "recording": "Enregistrement en cours...",
+    "seconds": "secondes",
+    "file_saved": "Fichier sauvegardé."
+  },
+  "audio_player": {
+    "stop": "STOP",
+    "playing":"LECTURE...",
+    "play": "Lecture",
+    "done": "Fait"
+  },
+  "date_picker": {
+    "ok": "OK"
+  },
+  "table_input": {
+    "short_press_detail":"* Une pression courte augmente le compteur",
+    "long_press_detail": "* Une pression longue diminue le compteur"
+  },
+  "activity_due_date": {
+    "available_all_day":"MindLogger Text - Google Sheets",
+    "available": "Disponible",
+    "to": "à",
+    "day": "jour",
+    "days": "jours",
+    "am": "AM"
+  },
+  "form_item": {
+    "required": "Obligatoire",
+    "must_be": "Doit être",
+    "characters_or_less": "caractères ou moins",
+    "must_be_a_number": "Doit être un nombre"
+  },
+  "applet_about": {
+    "loading": "chargement",
+    "no_info": "Les auteurs de cet applet n'ont fourni aucune information!"
+  },
+  "firebase_messaging": {
+    "alert_title":"\"MindLogger\" aimerait vous envoyer des notifications",
+    "alert_message": "Ceci peut être configuré dans les paramètres",
+    "alert_text": "Ouvrir les paramètres",
+    "response_refresh_request": "Demande de réactualisation de la réponse",
+    "refresh_request_details": "Comme votre mot de passe a été réinitialisé, vos réponses antérieures doivent être actualisées. Voulez-vous en faire la demande?",
+    "refresh_request_text": "Vos managers lanceront bientôt la mise à jour.",
+    "applet_not_found_1": "L'applet n'a pas été trouvé",
+    "applet_not_found_2": "Il n'y a pas d'applet pour cet identifiant.",
+    "activity_not_found": "L'activité n'a pas été trouvée', 'Il n'y a pas d'activité pour cet identifiant.",
+    "already_completed": "Vous avez déjà terminé",
+    "activity_was_due_at": "Cette activité était prévue à",
+    "if_progress_was_made_on_the": "Si des progrès ont été réalisés sur le",
+    "it_was_saved_but_it_can_no_longer_be_taken": "cela a été sauvegardé et vous ne pouvez plus y répondre",
+    "today": "aujourd'hui",
+    "activity_not_ready": "Activité non prête",
+    "not_able_to_start": "Vous n'êtes pas encore en mesure de démarrer cette activité",
+    "is": "est",
+    "scheduled_to_start_at": "devrait commencer à"
+  },
+  "join_demo_applets": {
+    "healthy_brain_network": "Healthy Brain Network: EMA",
+    "cognitive_tasks": "Tâches cognitives",
+    "mind_logger_demos": "Démo de Mindlogger"
+  },
+  "data_invite": {
+    "message": "Nous pensons qu'il est important que vous sachiez qui a accès à vos données si vous acceptez cette invitation. Les personnes suivantes auront accès à vos données si vous acceptez cette invitation :"
+  },
+  "sidebar": {
+    "home": "Accueil",
+    "settings": "Paramètres",
+    "about": "À propos",
+    "logout": "Déconnexion"
+  },
+  "navigator": {
+    "exit_title": "Sortir de l'application",
+    "exit_subtitle": "Sortir de l'application?",
+    "cancel": "Annuler"
+  },
+  "activity_navigation": {
+    "next": "Suivant",
+    "skip": "Passer",
+    "done": "Fait",
+    "back": "Retour",
+    "return": "Retourner",
+    "undo": "Défaire"
+  },
+  "network_alerts": {
+    "no_internet_title": "Pas de connexion internet",
+    "no_internet_subtitle": "Merci de vous connecter à internet",
+    "no_internet_text": "Masquer",
+    "cellular_data_title": "Les données cellulaires sont désactivées",
+    "cellular_data_subtitle": "Veuillez vous connecter au wi-fi ou autoriser les données mobiles.",
+    "cellular_data_text": "Masquer",
+    "use_cellular_data": "Utiliser les données mobiles"
+  },
+  "timing": {
+    "provide_option": "Vous devez fournir l'option \"aprèz\" ou \"tout\".",
+    "to_be_number": "Expected options.after to be a number",
+    "every_number":"Expected options.every to be a number"
+  },
+  "camera": {
+    "choose":"Choisir",
+    "take_a_new":"Take a new",
+    "or_choose": "ou en choisir un dans votre bibliothèque.",
+    "camera": "Appareil photo",
+    "library": "Veuiller saisir du texte"
+  },
+  "text_entry": {
+    "type_placeholder": "Veuiller saisir du texte"
+  },
+  "language_screen": {
+    "app_language": " Langue de l'application",
+    "change_app_language": "Changer la langue",
+    "en": "English",
+    "fr": "Français"
+  }
+}
