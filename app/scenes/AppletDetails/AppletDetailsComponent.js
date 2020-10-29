@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  StyleSheet,
-  StatusBar,
-  View,
-  ImageBackground,
-  Platform,
-} from 'react-native';
+import { StyleSheet, StatusBar, View, ImageBackground, Platform } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import _ from 'lodash';
 import { colors } from '../../theme';
@@ -101,7 +95,7 @@ class AppletDetailsComponent extends React.Component {
         return (
           <Content>
             <View style={{ flex: 1 }}>
-              <AppletCalendar responseDates={responseDates} />
+              <AppletCalendar responseDates={responseDates} appLanguage={this.props.appLanguage} />
               <ActivityList
                 onPressActivity={onPressActivity}
                 onLongPressActivity={onLongPressActivity}
@@ -112,17 +106,13 @@ class AppletDetailsComponent extends React.Component {
       case 'data':
         return (
           <View style={{ flex: 1 }}>
-            <AppletData
-              responseDates={responseDates}
-              applet={applet}
-              appletData={appletData}
-            />
+            <AppletData responseDates={responseDates} applet={applet} appletData={appletData} />
           </View>
         );
       case 'about':
         return (
           <Content>
-            <AppletAbout applet={applet} /> 
+            <AppletAbout applet={applet} />
           </Content>
         );
       default:
@@ -206,7 +196,13 @@ AppletDetailsComponent.propTypes = {
   initialTab: PropTypes.string.isRequired,
 };
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
-export default connect(null, mapDispatchToProps)(AppletDetailsComponent);
+const mapStateToProps = state => ({
+  appLanguage: state.app.appLanguage,
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletDetailsComponent);

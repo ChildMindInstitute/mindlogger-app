@@ -63,6 +63,13 @@ export const initialState = {
   appStatus: false,
 
   /**
+   * app language code
+   *
+   * @type {string}
+   */
+  appLanguage: 'en',
+
+  /**
    * Maps applet IDs to the last time the schedule was fetched for that applet.
    *
    * @type {object}
@@ -122,6 +129,12 @@ export default (state = initialState, action = {}) => {
         ...state,
         mobileDataAllowed: !state.mobileDataAllowed,
       };
+    case APP_CONSTANTS.SET_APP_LANGUAGE:
+      return {
+        ...state,
+        appLanguage: action.payload,
+      };
+
     default:
       return state;
   }

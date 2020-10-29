@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Text, Container, ListItem, Left, Right, Icon } from 'native-base';
 import { DatePickerIOS, Modal, StyleSheet, View } from 'react-native';
 import moment from 'moment';
+import i18n from 'i18next';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -46,11 +47,7 @@ export class DatePicker extends React.Component {
             <Icon name="arrow-forward" />
           </Right>
         </ListItem>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-        >
+        <Modal animationType="slide" transparent={false} visible={this.state.modalVisible}>
           <Container style={styles.paddingContent}>
             <Container style={styles.datePickerContainer}>
               <DatePickerIOS
@@ -69,15 +66,18 @@ export class DatePicker extends React.Component {
               full
               style={styles.okButton}
               onPress={() => {
-                onChange({
-                  year: date.getFullYear(),
-                  month: date.getMonth(),
-                  day: date.getDate(),
-                }, true);
+                onChange(
+                  {
+                    year: date.getFullYear(),
+                    month: date.getMonth(),
+                    day: date.getDate(),
+                  },
+                  true,
+                );
                 this.setModalVisible(false);
               }}
             >
-              <Text>OK</Text>
+              <Text>{i18n.t('date_picker:ok')}</Text>
             </Button>
           </Container>
         </Modal>

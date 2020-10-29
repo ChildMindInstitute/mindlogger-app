@@ -2,37 +2,48 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Image } from 'react-native';
 import { connect } from 'react-redux';
-import { Content, Text, List, ListItem, Container, Left, Header, Body, Title, Icon } from 'native-base';
+import {
+  Content,
+  Text,
+  List,
+  ListItem,
+  Container,
+  Left,
+  Header,
+  Body,
+  Title,
+  Icon,
+} from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import i18n from 'i18next';
 import styles from './style';
 import { logout } from '../../state/app/app.thunks';
 import { skinSelector } from '../../state/app/app.selectors';
 
-
 const sidebarData = [
   {
-    name: 'Home',
+    name: i18n.t('sidebar:home'),
     route: 'applet_list',
     icon: 'home',
     type: 'FontAwesome',
     image: require('../../../img/menu/diagram.png'),
   },
   {
-    name: 'Settings',
+    name: i18n.t('sidebar:settings'),
     route: 'settings',
     icon: 'gear',
     type: 'FontAwesome',
     image: require('../../../img/menu/settings.png'),
   },
   {
-    name: 'About',
+    name: i18n.t('sidebar:about'),
     route: 'about',
     icon: 'question',
     type: 'FontAwesome',
     image: require('../../../img/menu/info.png'),
   },
   {
-    name: 'Logout',
+    name: i18n.t('sidebar:logout'),
     route: 'logout',
     icon: 'sign-out',
     type: 'FontAwesome',
@@ -51,18 +62,15 @@ class SideBar extends Component {
       Actions.replace(route);
     }
     Actions.drawerClose();
-  }
+  };
 
   render() {
     const { skin } = this.props;
     const title = skin.name;
-    const logo = (typeof skin.logo !== 'undefined') ? { uri: skin.logo } : defaultLogo;
+    const logo = typeof skin.logo !== 'undefined' ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
-        <Content
-          bounces={false}
-          style={styles.content}
-        >
+        <Content bounces={false} style={styles.content}>
           <Header style={{ backgroundColor: skin.colors.primary }}>
             <Body>
               <Title>{title}</Title>
@@ -80,11 +88,7 @@ class SideBar extends Component {
               </ListItem>
             )}
           />
-          <Image
-            square
-            style={styles.drawerLogo}
-            source={logo}
-          />
+          <Image square style={styles.drawerLogo} source={logo} />
         </Content>
       </Container>
     );
@@ -104,4 +108,7 @@ const mapStateToProps = state => ({
   skin: skinSelector(state),
 });
 
-export default connect(mapStateToProps, bindAction)(SideBar);
+export default connect(
+  mapStateToProps,
+  bindAction,
+)(SideBar);

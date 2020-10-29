@@ -1,14 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { Button, Text, Icon } from 'native-base';
-import {
-  BodyText,
-  SubHeading,
-} from './core';
+import { Button, Icon } from 'native-base';
+import i18n from 'i18next';
+import { BodyText, SubHeading } from './core';
 import { colors } from '../themes/colors';
 import theme from '../themes/base-theme';
 import { formatTime } from '../services/time';
+import BaseText from './base_text/base_text';
 
 const styles = StyleSheet.create({
   box: {
@@ -37,27 +36,27 @@ const styles = StyleSheet.create({
 
 const lastCompletedString = (timestamp) => {
   if (!timestamp) {
-    return 'Not yet completed';
+    return i18n.t('activity_summary:not_yet_completed');
   }
-  return `Last completed ${formatTime(timestamp)}`;
+  return `${i18n.t('activity_summary:last_completed')} ${formatTime(timestamp)}`;
 };
 
 const nextScheduledString = (activity) => {
   if (!activity.nextScheduledTimestamp) {
-    return 'Unscheduled';
+    return i18n.t('activity_summary:unscheduled');
   }
   if (activity.isOverdue) {
-    return `Due ${formatTime(activity.lastScheduledTimestamp)}`;
+    return `${i18n.t('activity_summary:due')} ${formatTime(activity.lastScheduledTimestamp)}`;
   }
-  return `Scheduled for ${formatTime(activity.nextScheduledTimestamp)}`;
+  return `${i18n.t('activity_summary:scheduled_for')} ${formatTime(
+    activity.nextScheduledTimestamp,
+  )}`;
 };
 
 const ActivitySummary = ({ activity, onPressStart, primaryColor }) => (
   <View style={styles.box}>
     <SubHeading>{activity.name.en}</SubHeading>
-    <BodyText style={styles.description}>
-      {activity.description.en}
-    </BodyText>
+    <BodyText style={styles.description}>{activity.description.en}</BodyText>
     <View style={styles.lockup}>
       <Icon type="FontAwesome" name="calendar" style={styles.icon} />
       <BodyText>{nextScheduledString(activity)}</BodyText>
@@ -67,7 +66,7 @@ const ActivitySummary = ({ activity, onPressStart, primaryColor }) => (
       <BodyText>{lastCompletedString(activity.lastResponseTimestamp)}</BodyText>
     </View>
     <Button onPress={onPressStart} full rounded style={{ backgroundColor: primaryColor }}>
-      <Text>Start</Text>
+      <BaseText textKey="activity_summary:save" />
     </Button>
   </View>
 );

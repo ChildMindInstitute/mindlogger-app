@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Item, Input, Label, Text } from 'native-base';
+import i18n from 'i18next';
 import { colors } from '../../theme';
 
 const styles = StyleSheet.create({
@@ -41,7 +42,9 @@ export const FormInputItem = ({
   </View>
 );
 
-export const required = value => (value ? undefined : 'Required');
-export const maxLength = max => value => (value && value.length > max ? `Must be ${max} characters or less` : undefined);
+export const required = value => (value ? undefined : i18n.t('form_item:required'));
+export const maxLength = max => value => (value && value.length > max
+  ? `${i18n.t('form_item:must_be')} ${max} ${i18n.t('form_item:characters_or_less')}`
+  : undefined);
 export const maxLength15 = maxLength(15);
-export const isNumber = value => (value && isNaN(Number(value)) ? 'Must be a number' : undefined);
+export const isNumber = value => (value && isNaN(Number(value)) ? i18n.t('form_item:must_be_a_number') : undefined);

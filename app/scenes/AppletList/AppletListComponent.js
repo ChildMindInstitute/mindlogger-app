@@ -3,7 +3,6 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  Text,
   ImageBackground,
   RefreshControl,
   StatusBar,
@@ -18,6 +17,7 @@ import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
+import BaseText from '../../components/base_text/base_text';
 
 const styles = StyleSheet.create({
   container: {
@@ -88,9 +88,7 @@ const AppletListComponent = ({
         }}
       >
         <SafeAreaView />
-        <Header
-          style={{ backgroundColor: 'transparent', borderBottomWidth: 0 }}
-        >
+        <Header style={{ backgroundColor: 'transparent', borderBottomWidth: 0 }}>
           <Left />
           <Body>
             <Title>{title}</Title>
@@ -112,10 +110,7 @@ const AppletListComponent = ({
               onRefresh={() => {
                 if (!netInfo.isConnected) {
                   connectionAlert();
-                } else if (
-                  netInfo.type === 'cellular'
-                  && !mobileDataAllowed
-                ) {
+                } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
                   mobileDataAlert(toggleMobileDataAllowed);
                 } else {
                   onPressRefresh();
@@ -151,15 +146,14 @@ const AppletListComponent = ({
             }}
           >
             <TouchableOpacity onPress={onHandleAbout}>
-              <Text
+              <BaseText
                 style={{
                   color: colors.primary,
                   fontSize: 16,
                   fontWeight: 'bold',
                 }}
-              >
-                About MindLogger
-              </Text>
+                textKey="applet_list_component:about_title"
+              />
             </TouchableOpacity>
           </View>
         </ScrollView>

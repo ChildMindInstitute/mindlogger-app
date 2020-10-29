@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { Icon } from 'native-base';
 import { Player } from '@react-native-community/audio-toolkit';
 import { colors } from '../../themes/colors';
+import BaseText from '../../components/base_text/base_text';
 
 const styles = StyleSheet.create({
   playButton: {
@@ -64,7 +65,7 @@ export class AudioPlayer extends React.Component {
       this.setState({ playing: false });
       onEnd();
     });
-  }
+  };
 
   stop = () => {
     const { player } = this.state;
@@ -72,7 +73,7 @@ export class AudioPlayer extends React.Component {
     if (player) {
       player.stop();
     }
-  }
+  };
 
   reset = () => {
     const { player, playing } = this.state;
@@ -84,7 +85,7 @@ export class AudioPlayer extends React.Component {
       playing: false,
       playbackCount: 0,
     });
-  }
+  };
 
   render() {
     const { allowReplay } = this.props;
@@ -94,7 +95,7 @@ export class AudioPlayer extends React.Component {
       return (
         <TouchableOpacity onPress={this.stop}>
           <View style={styles.playButton}>
-            <Text style={styles.buttonText}>STOP</Text>
+            <BaseText style={styles.buttonText} textKey="audio_player:stop" />
             <Icon style={styles.buttonText} type="FontAwesome" name="stop" />
             {/* <Text>{elapsed}</Text> */}
           </View>
@@ -106,7 +107,7 @@ export class AudioPlayer extends React.Component {
       return (
         <TouchableOpacity disabled>
           <View style={[styles.playButton, { opacity: 0.5 }]}>
-            <Text style={styles.buttonText}>PLAYING...</Text>
+            <BaseText style={styles.buttonText} textKey="audio_player:playing" />
             <Icon style={styles.buttonText} type="FontAwesome" name="volume-up" />
           </View>
         </TouchableOpacity>
@@ -117,7 +118,7 @@ export class AudioPlayer extends React.Component {
       return (
         <TouchableOpacity onPress={this.play}>
           <View style={styles.playButton}>
-            <Text style={styles.buttonText}>PLAY</Text>
+            <BaseText style={styles.buttonText} textKey="audio_player:play" />
             <Icon style={styles.buttonText} type="FontAwesome" name="play" />
           </View>
         </TouchableOpacity>
@@ -127,7 +128,7 @@ export class AudioPlayer extends React.Component {
     return (
       <TouchableOpacity disabled>
         <View style={[styles.playButton, { opacity: 0.5 }]}>
-          <Text style={styles.buttonText}>DONE</Text>
+          <BaseText style={styles.buttonText} textKey="audio_player:play" />
           <Icon style={styles.buttonText} type="FontAwesome" name="check" />
         </View>
       </TouchableOpacity>

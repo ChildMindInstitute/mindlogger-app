@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Platform, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Platform, TouchableOpacity, StyleSheet } from 'react-native';
 import NativeGeolocation from '@react-native-community/geolocation';
 import { Icon } from 'native-base';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { colors } from '../theme';
+import BaseText from '../components/base_text/base_text';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -72,41 +73,25 @@ export const Geolocation = ({ value, onChange }) => {
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
         <View style={styles.locationButton}>
-          <Text style={styles.buttonText}>GET LOCATION</Text>
+          <BaseText style={styles.buttonText} textKey="geolocation:get_location" />
           <Icon style={styles.buttonText} type="FontAwesome" name="map-marker" />
         </View>
       </TouchableOpacity>
-      {
-        locationPermission === 'denied' && Platform.OS === 'ios' && (
-          <View>
-            <Text style={styles.infoText}>
-              You must enable Location services to complete this task. Please
-              grant MindLogger permission in your iOS Settings and press the
-              button again.
-            </Text>
-          </View>
-        )
-      }
-      {
-        locationPermission === 'denied' && Platform.OS === 'android' && (
-          <View>
-            <Text style={styles.infoText}>
-              You must enable Location services to complete this task. Please
-              press the button again and grant MindLogger permission to use your
-              location.
-            </Text>
-          </View>
-        )
-      }
-      {
-        locationPermission !== 'denied' && typeof value.latitude !== 'undefined' && (
-          <View>
-            <Text style={styles.infoText}>
-              Location saved.
-            </Text>
-          </View>
-        )
-      }
+      {locationPermission === 'denied' && Platform.OS === 'ios' && (
+        <View>
+          <BaseText style={styles.infoText} textKey="geolocation:must_enable_location" />
+        </View>
+      )}
+      {locationPermission === 'denied' && Platform.OS === 'android' && (
+        <View>
+          <BaseText style={styles.infoText} textKey="geolocation:must_enable_location_subtitle" />
+        </View>
+      )}
+      {locationPermission !== 'denied' && typeof value.latitude !== 'undefined' && (
+        <View>
+          <BaseText style={styles.infoText} textKey="geolocation:location_saved" />
+        </View>
+      )}
     </View>
   );
 };

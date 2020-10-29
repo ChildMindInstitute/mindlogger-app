@@ -1,19 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  Container,
-  Button,
-  View,
-  Header,
-  Left,
-  Right,
-  Icon,
-  Text,
-} from 'native-base';
+import { Container, Button, View, Header, Left, Right, Icon, Text } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { Platform } from 'react-native';
+import i18n from 'i18next';
+
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import styles from './styles';
 import { getSkin } from '../../services/network';
@@ -42,25 +35,25 @@ class ChangeStudy extends Component {
     });
     Actions.replace('login');
     showToast({
-      text: 'Study successfully changed.',
+      text: i18n.t('change_study:successfully_changed'),
       position: 'top',
       type: 'success',
       duration: 2000,
     });
-  }
+  };
 
   onReset = () => {
     const { showToast, resetApiHost, setSkin } = this.props;
     setSkin(config.defaultSkin);
     Actions.replace('login');
     showToast({
-      text: 'Study successfully reset.',
+      text: i18n.t('change_study:successfully_reset'),
       position: 'top',
       type: 'success',
       duration: 2000,
     });
     resetApiHost();
-  }
+  };
 
   onScan = (body) => {
     const { showToast, setApiHost, setSkin } = this.props;
@@ -70,12 +63,12 @@ class ChangeStudy extends Component {
     });
     Actions.replace('login');
     showToast({
-      text: 'Study has been set by QR.',
+      text: i18n.t('change_study:set_by_qr'),
       position: 'top',
       type: 'success',
       duration: 4000,
     });
-  }
+  };
 
   toggleQrScanner = () => {
     const { scanOpen } = this.state;
@@ -99,7 +92,7 @@ class ChangeStudy extends Component {
     } else {
       this.setState({ scanOpen: !scanOpen });
     }
-  }
+  };
 
   render() {
     const { apiHost } = this.props;
@@ -120,28 +113,26 @@ class ChangeStudy extends Component {
         <Right style={{ paddingTop: IOSBodyPadding }}>
           <Button transparent block onPress={this.toggleQrScanner}>
             <Text>
-              {this.state.scanOpen ? 'Enter URL Manually' : 'Scan QR'}
+              {this.state.scanOpen
+                ? i18n.t('change_study:enter_url_manually')
+                : i18n.t('change_study:scan_qr')}
             </Text>
           </Button>
         </Right>
       </Header>
     );
 
-
     if (this.state.scanOpen) {
       return (
         <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
-          { header }
-          <QRCodeScanner
-            fadeIn
-            showMarker
-            onRead={this.onScan}
-          />
+          {header}
+          <QRCodeScanner fadeIn showMarker onRead={this.onScan} />
         </Container>
       );
-    } return (
+    }
+    return (
       <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
-        { header }
+        {header}
         <View style={styles.formContainer}>
           <ChangeStudyForm
             onSubmit={this.onSubmit}
@@ -176,4 +167,7 @@ const mapDispatchToProps = {
   setSkin,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChangeStudy);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ChangeStudy);

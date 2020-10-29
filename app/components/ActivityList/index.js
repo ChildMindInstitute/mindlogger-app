@@ -8,15 +8,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Local.
-import {
-  getLastScheduled,
-  getNextScheduled,
-  getScheduledNotifications,
-} from '../../services/time';
-import { 
-  delayedExec,
-  clearExec,
-} from '../../services/timing';
+import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../../services/time';
+import { delayedExec, clearExec } from '../../services/timing';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
@@ -26,7 +19,10 @@ import {
 import { getSchedules } from '../../state/applets/applets.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
-import { responseScheduleSelector, inProgressSelector } from '../../state/responses/responses.selectors';
+import {
+  responseScheduleSelector,
+  inProgressSelector,
+} from '../../state/responses/responses.selectors';
 
 const dateParser = (schedule) => {
   const output = {};
@@ -136,9 +132,7 @@ const getActivities = (applet, responseSchedule) => {
     }
     if (nextTimeout) {
       nextAccess = nextTimeout.access;
-      scheduledTimeout = ((nextTimeout.day * 24 + nextTimeout.hour) * 60
-          + nextTimeout.minute)
-        * 60000;
+      scheduledTimeout = ((nextTimeout.day * 24 + nextTimeout.hour) * 60 + nextTimeout.minute) * 60000;
     }
 
     return {
@@ -158,8 +152,7 @@ const getActivities = (applet, responseSchedule) => {
       invalid,
       extendedTime,
       nextAccess,
-      isOverdue:
-        lastScheduled && moment(lastResponse) < moment(lastScheduled),
+      isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
 
       // also add in our parsed notifications...
       notification: R.prop('notificationDateTimes', scheduledDateTimes),
@@ -171,7 +164,6 @@ const getActivities = (applet, responseSchedule) => {
     activities: extraInfoActivities,
   };
 };
-
 
 const ActivityList = ({
   applet,
@@ -197,14 +189,7 @@ const ActivityList = ({
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
 
-    setActivities(
-      sortActivities(
-        applet.id,
-        newApplet.activities,
-        inProgress,
-        newApplet.schedule,
-      ),
-    );
+    setActivities(sortActivities(applet.id, newApplet.activities, inProgress, newApplet.schedule));
   };
 
   const datesAreOnSameDay = (first, second) => first.getFullYear() === second.getFullYear()
@@ -216,9 +201,7 @@ const ActivityList = ({
     const appletId = applet.id;
 
     if (lastUpdatedTime[appletId]) {
-      if (
-        !datesAreOnSameDay(new Date(lastUpdatedTime[appletId]), currentTime)
-      ) {
+      if (!datesAreOnSameDay(new Date(lastUpdatedTime[appletId]), currentTime)) {
         const updatedTime = lastUpdatedTime;
         updatedTime[appletId] = currentTime;
         getSchedules(appletId.split('/')[1]);
@@ -248,19 +231,29 @@ const ActivityList = ({
     let updateId;
     let intervalId;
     const leftTime = (60 - new Date().getSeconds()) * 1000;
-    const leftOutId = delayedExec(() => {
-      stateUpdate();
-      updateId = delayedExec(stateUpdate, { every: updateStatusDelay });
-    }, { after: leftTime });
+    const leftOutId = delayedExec(
+      () => {
+        stateUpdate();
+        updateId = delayedExec(stateUpdate, { every: updateStatusDelay });
+      },
+      { after: leftTime },
+    );
 
     const currentTime = new Date();
-    const nextDay = new Date(currentTime.getFullYear(), currentTime.getMonth(), currentTime.getDate() + 1);
+    const nextDay = new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate() + 1,
+    );
     const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
 
-    const leftTimeoutId = delayedExec(() => {
-      scheduleUpdate();
-      intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
-    }, { after: leftTimeout });
+    const leftTimeoutId = delayedExec(
+      () => {
+        scheduleUpdate();
+        intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
+      },
+      { after: leftTimeout },
+    );
 
     return () => {
       clearExec(leftOutId);
@@ -297,9 +290,7 @@ const ActivityList = ({
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
         <ActivityListItem
-          disabled={
-            activity.status === 'scheduled' && !activity.nextAccess
-          }
+          disabled={activity.status === 'scheduled' && !activity.nextAccess}
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}

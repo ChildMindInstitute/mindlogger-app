@@ -1,12 +1,10 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
-import {
-  Button,
-  Text,
-  Form,
-} from 'native-base';
+import { Button, Text, Form } from 'native-base';
 import { reduxForm, Field, propTypes } from 'redux-form';
 import { useNetInfo } from '@react-native-community/netinfo';
+import i18n from 'i18next';
+
 import { colors } from '../../theme';
 import { FormInputItem, required } from '../../components/form/FormItem';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
@@ -24,7 +22,7 @@ const LoginForm = ({
     <Form>
       <Field
         component={FormInputItem}
-        placeholder="Email"
+        placeholder={i18n.t('login_form:email_placeholder')}
         placeholderTextColor={colors.secondary_50}
         name="user"
         autoCapitalize="none"
@@ -35,7 +33,7 @@ const LoginForm = ({
       />
       <Field
         component={FormInputItem}
-        placeholder="Password"
+        placeholder={i18n.t('login_form:password')}
         placeholderTextColor={colors.secondary_50}
         name="password"
         autoCapitalize="none"
@@ -58,9 +56,13 @@ const LoginForm = ({
         }}
         disabled={submitting}
       >
-        {submitting
-          ? <ActivityIndicator color={primaryColor} />
-          : <Text style={[styles.buttonText, { color: primaryColor }]}>LOGIN</Text>}
+        {submitting ? (
+          <ActivityIndicator color={primaryColor} />
+        ) : (
+          <Text style={[styles.buttonText, { color: primaryColor }]}>
+            {i18n.t('login_form:login')}
+          </Text>
+        )}
       </Button>
     </Form>
   );

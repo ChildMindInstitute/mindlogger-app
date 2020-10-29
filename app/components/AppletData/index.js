@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, FlatList, Dimensions, Text, View } from 'react-native';
+import { StyleSheet, FlatList, Dimensions, View } from 'react-native';
 // import { VictoryBar, VictoryChart,
 // VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import ItemChart from './ItemChart';
 import { colors } from '../../themes/colors';
 import AppletCalendar from '../AppletCalendar';
 import SvgGenerator from './SvgGenerator';
+import BaseText from '../base_text/base_text';
 // import ActivityChart from './ActivityChart';
 
 const { width } = Dimensions.get('window');
@@ -32,31 +33,29 @@ class AppletData extends React.Component {
 
   componentDidMount() {
     const { applet, appletData } = this.props;
-    const itemTypesToIgnore = [
-      'markdown-message',
-      'audioRecord',
-      'audioStimulus',
-      'text',
-      '',
-    ];
+    const itemTypesToIgnore = ['markdown-message', 'audioRecord', 'audioStimulus', 'text', ''];
     const data = [];
     const activities = [...applet.activities];
     const appletVersion = Object.values(applet.version)[0];
 
     /** show deleted activites for one weeek */
-    Object.values(appletData.activities).forEach(activity => {
-      if (!activities.some(existing => existing.id.split('/').pop() === activity.original.activityId)) {
+    // TODO sometimes no activities property in appletData object
+    // crash reproduce
+    Object.values(appletData.activities).forEach((activity) => {
+      if (
+        !activities.some(existing => existing.id.split('/').pop() === activity.original.activityId)
+      ) {
         activities.push({
           ...activity,
-          id: `activity/${activity.original.activityId}`
-        })
+          id: `activity/${activity.original.activityId}`,
+        });
       }
-    })
+    });
 
     const activityIDToItemList = {};
     const itemSchemaToVersion = {};
-    for (let version in appletData.itemReferences) {
-      for (let itemId in appletData.itemReferences[version]) {
+    for (const version in appletData.itemReferences) {
+      for (const itemId in appletData.itemReferences[version]) {
         const item = appletData.itemReferences[version][itemId];
         if (!item) {
           /** handle items without changes in the schema across several versions */
@@ -67,22 +66,22 @@ class AppletData extends React.Component {
         }
 
         const activity = appletData.activities[item.activityId];
-        const activityId = `activity/${activity.original.activityId}`
+        const activityId = `activity/${activity.original.activityId}`;
 
         activityIDToItemList[activityId] = activityIDToItemList[activityId] || [];
         activityIDToItemList[activityId].push({
           version,
-          itemId
+          itemId,
         });
       }
     }
 
     activities.forEach((activity) => {
-      const itemsFiltered = activity.items.filter(
-        (i) => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType
-      ).map(item => JSON.parse(JSON.stringify(item)));
+      const itemsFiltered = activity.items
+        .filter(i => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType)
+        .map(item => JSON.parse(JSON.stringify(item)));
 
-      itemsFiltered.forEach(item => {
+      itemsFiltered.forEach((item) => {
         item.schemas = [item.schema];
         item.appletVersions = [appletVersion];
 
@@ -91,17 +90,20 @@ class AppletData extends React.Component {
         }
       });
 
-      /** insert deleted/updated items (merge items with same input type)*/
+      /** insert deleted/updated items (merge items with same input type) */
       if (activityIDToItemList[activity.id]) {
-        for (let itemData of activityIDToItemList[activity.id]) {
+        for (const itemData of activityIDToItemList[activity.id]) {
           const oldItem = {
             ...appletData.itemReferences[itemData.version][itemData.itemId],
             appletVersion: itemData.version,
-          }
+          };
 
           oldItem.schemas = [itemData.itemId];
 
-          const currentItem = itemsFiltered.find(item => item.id.split('/').pop() === oldItem.original.screenId && item.inputType === oldItem.inputType);
+          const currentItem = itemsFiltered.find(
+            item => item.id.split('/').pop() === oldItem.original.screenId
+              && item.inputType === oldItem.inputType,
+          );
 
           if (currentItem) {
             if (currentItem.inputType === 'radio') {
@@ -112,21 +114,26 @@ class AppletData extends React.Component {
 
               /** merge two option lists */
               oldItem.valueConstraints.itemList.forEach((oldOption) => {
-                let newId = options.findIndex(option => Object.values(option.name)[0] === Object.values(oldOption.name)[0]);
+                let newId = options.findIndex(
+                  option => Object.values(option.name)[0] === Object.values(oldOption.name)[0],
+                );
                 if (newId < 0) {
                   newId = options.length;
                   options.push({
                     name: oldOption.name,
-                    value: newId + 1
+                    value: newId + 1,
                   });
                 }
 
-                if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) { /** in case of tokenlogger item */
-                  currentItem.valueMapping[oldItem.appletVersion][Object.values(oldOption.name)[0]] = newId + 1;
+                if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) {
+                  /** in case of tokenlogger item */
+                  currentItem.valueMapping[oldItem.appletVersion][
+                    Object.values(oldOption.name)[0]
+                  ] = newId + 1;
                 } else {
                   currentItem.valueMapping[oldItem.appletVersion][oldOption.value] = newId + 1;
                 }
-              })
+              });
             } else if (currentItem.inputType == 'slider') {
               const currentContraint = currentItem.valueConstraints;
               const oldConstraint = oldItem.valueConstraints;
@@ -134,8 +141,8 @@ class AppletData extends React.Component {
               currentContraint.minValue = min(oldConstraint.minValue, currentContraint.minValue);
               currentContraint.maxValue = max(oldConstraint.maxValue, currentContraint.maxValue);
 
-              const lang = currentContraint.itemList && Object.keys(currentContraint.itemList[0].name)[0]
-                        || oldConstraint.itemList && Object.keys(oldConstraint.itemList[0].name)[0];
+              const lang = (currentContraint.itemList && Object.keys(currentContraint.itemList[0].name)[0])
+                || (oldConstraint.itemList && Object.keys(oldConstraint.itemList[0].name)[0]);
 
               currentContraint.itemList = [];
               /** generate itemList */
@@ -143,9 +150,9 @@ class AppletData extends React.Component {
                 currentContraint.itemList.push({
                   value: i,
                   name: {
-                    [lang]: `${value}`
-                  }
-                })
+                    [lang]: `${value}`,
+                  },
+                });
               }
             }
 
@@ -158,13 +165,17 @@ class AppletData extends React.Component {
             oldItem.id = `screen/${oldItem.original.screenId}`;
             oldItem.appletVersions = [oldItem.appletVersion];
 
-            if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) { /** convert string to integer for tokenlogger */
+            if (itemData.itemId.endsWith('TokenActivity/items/token_screen')) {
+              /** convert string to integer for tokenlogger */
               oldItem.valueMapping = {
-                [oldItem.appletVersion]: oldItem.valueConstraints.itemList.reduce((valueMapping, option) => {
-                  valueMapping[Object.values(option.name)[0]] = option.value;
-                  return valueMapping;
-                }, {})
-              }
+                [oldItem.appletVersion]: oldItem.valueConstraints.itemList.reduce(
+                  (valueMapping, option) => {
+                    valueMapping[Object.values(option.name)[0]] = option.value;
+                    return valueMapping;
+                  },
+                  {},
+                ),
+              };
             }
           }
         }
@@ -176,25 +187,15 @@ class AppletData extends React.Component {
 
       // const { width } = Dimensions.get('window');
       let count = 0;
-      for (
-        let dataIndex = 0;
-        dataIndex < itemsFiltered.length;
-        dataIndex += 1
-      ) {
-        itemsFiltered[dataIndex].schemas.forEach(schema => {
+      for (let dataIndex = 0; dataIndex < itemsFiltered.length; dataIndex += 1) {
+        itemsFiltered[dataIndex].schemas.forEach((schema) => {
           if (!appletData.responses[schema]) {
-            return ;
+            return;
           }
 
-          for (
-            let i = 0;
-            i < appletData.responses[schema].length;
-            i += 1
-          ) {
-            const differenceTime =
-              new Date().getTime() - moment(
-                appletData.responses[schema][i].date
-              )
+          for (let i = 0; i < appletData.responses[schema].length; i += 1) {
+            const differenceTime = new Date().getTime()
+              - moment(appletData.responses[schema][i].date)
                 .toDate()
                 .getTime();
             const differenceDay = differenceTime / (1000 * 3600 * 24);
@@ -203,7 +204,7 @@ class AppletData extends React.Component {
               break;
             }
           }
-        })
+        });
       }
 
       if (count === 0) {
@@ -214,43 +215,43 @@ class AppletData extends React.Component {
           ...itemsFiltered.map((item) => {
             const responses = [];
             if (appletData.responses) {
-              item.schemas.forEach(schema => {
+              item.schemas.forEach((schema) => {
                 if (appletData.responses[schema]) {
                   responses.push(...appletData.responses[schema]);
                 }
-              })
+              });
             }
 
             const itemData = [];
-            responses.forEach(response => {
+            responses.forEach((response) => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
                 itemData.push(response);
-              } else if (item.appletVersions && item.appletVersions.indexOf(response.version) >= 0) {
-                if (item.inputType === 'radio' && item.valueMapping && item.valueMapping[response.version]) {
+              } else if (
+                item.appletVersions
+                && item.appletVersions.indexOf(response.version) >= 0
+              ) {
+                if (
+                  item.inputType === 'radio'
+                  && item.valueMapping
+                  && item.valueMapping[response.version]
+                ) {
                   /** handle merged items */
-                  if (Array.isArray(response.value)) {
-                    itemData.push({
-                      ...response,
-                      value: response.value.map(value => item.valueMapping[response.version][value])
-                    })
-                  } else {
-                    itemData.push({
-                      ...response,
-                      value: item.valueMapping[response.version][response.value]
-                    });
-                  }
+                  itemData.push({
+                    ...response,
+                    value: response.value.map(value => item.valueMapping[response.version][value]),
+                  });
                 } else {
                   itemData.push(response);
                 }
               }
-            })
+            });
 
             return {
               type: 'ActivityChartItem',
               item: this.doItem(item, itemData),
               data: itemData,
             };
-          })
+          }),
         );
         data.push({ type: 'ActivityChartFooter', activity });
       }
@@ -264,10 +265,7 @@ class AppletData extends React.Component {
     return data.map((d) => {
       const dp = {};
       dp.date = d.date;
-      const from = moment(
-        `${d.value.from.hour}:${d.value.from.minute}`,
-        'h:mm'
-      );
+      const from = moment(`${d.value.from.hour}:${d.value.from.minute}`, 'h:mm');
 
       // we need to assume that if from.hour is > 12, then it was the day before.
       // if not, it can stay as is for the current day.
@@ -293,7 +291,7 @@ class AppletData extends React.Component {
         .toDate()
         .getTime();
       console.log('mondayTime', mondayTime);
-      console.log('thattime', thatTime)
+      console.log('thattime', thatTime);
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
@@ -309,17 +307,14 @@ class AppletData extends React.Component {
     }
     const description = item.description
       ? item.description.en
-          .slice(
-            item.description.en.indexOf(')') + 1,
-            item.description.en.length
-          )
-          .replace(/[**]/gi, '')
+        .slice(item.description.en.indexOf(')') + 1, item.description.en.length)
+        .replace(/[**]/gi, '')
       : item.question.en
-          .slice(item.question.en.indexOf(')') + 1, item.question.en.length)
-          .replace(/[**]/gi, '');
+        .slice(item.question.en.indexOf(')') + 1, item.question.en.length)
+        .replace(/[**]/gi, '');
 
     if (item.inputType === 'radio') {
-      const labels = item.valueConstraints.itemList.map((i) => ({
+      const labels = item.valueConstraints.itemList.map(i => ({
         name: i.name.en,
         value: i.value,
       }));
@@ -330,14 +325,11 @@ class AppletData extends React.Component {
       };
     }
     if (item.inputType === 'slider') {
-      const labels = item.valueConstraints.itemList.map((i) => ({
+      const labels = item.valueConstraints.itemList.map(i => ({
         name: i.name.en,
         value: i.value,
       }));
-      const minMaxLabels = [
-        item.valueConstraints.minValue,
-        item.valueConstraints.maxValue,
-      ];
+      const minMaxLabels = [item.valueConstraints.minValue, item.valueConstraints.maxValue];
       const lineChart = SvgGenerator.generateLineChart(data, labels);
       return {
         ...item,
@@ -379,19 +371,14 @@ class AppletData extends React.Component {
           justifyContent: 'center',
         }}
       >
-        <Text style={{ fontSize: 30, fontWeight: '200' }}>
-          {activity.name.en}
-        </Text>
+        <BaseText style={{ fontSize: 30, fontWeight: '200' }} value={activity.name.en} />
         {activity.description && (
-          <Text
+          <BaseText
             style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 20 }}
-          >
-            {activity.description.en}
-          </Text>
+            value={activity.description.en}
+          />
         )}
-        <Text style={{ padding: 20 }}>
-          Please take the assessment for data to be displayed.
-        </Text>
+        <BaseText style={{ padding: 20 }} textKey="applet_data:title" />
       </View>
     );
   };
@@ -410,15 +397,12 @@ class AppletData extends React.Component {
           justifyContent: 'center',
         }}
       >
-        <Text style={{ fontSize: 30, fontWeight: '200' }}>
-          {activity.name.en}
-        </Text>
+        <BaseText style={{ fontSize: 30, fontWeight: '200' }} value={activity.name.en} />
         {activity.description && (
-          <Text
+          <BaseText
             style={{ fontSize: 15, color: colors.tertiary, paddingBottom: 0 }}
-          >
-            {activity.description.en}
-          </Text>
+            value={activity.description.en}
+          />
         )}
       </View>
     );
@@ -469,7 +453,7 @@ class AppletData extends React.Component {
 
   renderItem = ({ item, index }) => {
     const { applet } = this.props;
-    
+
     if (item.type === 'EmptyActivityChart') {
       const { activity } = item;
       return this.renderEmptyActivityChart(activity, index);
@@ -480,7 +464,7 @@ class AppletData extends React.Component {
     }
     if (item.type === 'ActivityChartItem') {
       const { valueType } = item.item.valueConstraints;
-      const type = (valueType && valueType.includes('token')) ? 'TokenLogger' : '';
+      const type = valueType && valueType.includes('token') ? 'TokenLogger' : '';
       return this.renderActivityChartItem(item, type);
     }
     return null;
@@ -516,9 +500,7 @@ class AppletData extends React.Component {
   }
 }
 
-AppletData.defaultProps = {
-
-};
+AppletData.defaultProps = {};
 
 AppletData.propTypes = {
   applet: PropTypes.object.isRequired,

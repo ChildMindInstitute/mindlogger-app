@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [0.13.33] - 2020-10-26
+
+## [0.14.2] - 2020-10-26
 - Install React-native-markdown-renderer
 - Fixed issue for inline text image on android devices
+
+## [0.14.1] - 2020-10-27
+- Introduce Localizations (French)
 
 ## [0.13.32] - 2020-10-25
 - Created patch files to fix image uploading issue (tracked for git)

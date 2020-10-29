@@ -1,13 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { CachedImage } from 'react-native-img-cache';
-import Svg, {
-  Circle,
-  Defs,
-  LinearGradient,
-  Stop,
-} from 'react-native-svg';
+import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+
+import BaseText from './base_text/base_text';
 
 const getURL = (url) => {
   if (url.endsWith('.svg')) {
@@ -49,15 +46,14 @@ const AppletImage = ({ applet, size = 64 }) => {
         <Circle cx={size / 2} cy={size / 2} r={size / 2} fill="url(#grad)" />
       </Svg>
 
-      <Text
+      <BaseText
         style={{
           fontSize: size / 2,
           color: 'rgba(255, 255, 255, 0.8)',
           fontWeight: 'bold',
         }}
-      >
-        {firstLetter}
-      </Text>
+        value={firstLetter}
+      />
     </View>
   );
 };
