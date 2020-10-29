@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -80,6 +80,7 @@
     "react-native-img-cache": "^1.6.0",
     "react-native-level-fs": "^3.0.1",
     "react-native-localize": "^1.3.3",
+    "react-native-markdown-renderer": "^3.2.8",
     "react-native-markdown-view": "https://github.com/shnizzedy/react-native-markdown-view.git",
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^2.2.2",
