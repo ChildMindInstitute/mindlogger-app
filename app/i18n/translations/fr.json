@@ -261,5 +261,24 @@
     "change_app_language": "Changer la langue",
     "en": "English",
     "fr": "Français"
+  },
+  "additional": {
+    "thanks": "Merci!",
+    "saved_answers": "Réponses sauvegardées !",
+    "close": "Fermer",
+    "resume_activity": "Reprendre l'activité",
+    "activity_resume_restart":"Souhaitez-vous reprendre cette activité en cours ou la recommencer?",
+    "restart": "Recommencer",
+    "resume": "Reprendre",
+    "in_progress": "En cours",
+    "unscheduled":"Non programmé",
+    "scheduled": "Programmé",
+    "past_due": "En retard",
+    "sure_delete_account_data": "Êtes-vous sûr de vouloir supprimer votre compte et vos données?",
+    "no_cancel": "Non, annuler",
+    "yes_delete": "Oui, effacer",
+    "hi": "Bonjour",
+    "enter_old_password": "Veuillez saisir votre ancien mot de passe",
+    "enter_new_password": "Veuillez saisir un nouveau mot de passe"
   }
 }
