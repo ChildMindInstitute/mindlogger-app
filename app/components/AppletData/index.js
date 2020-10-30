@@ -121,7 +121,7 @@ class AppletData extends React.Component {
                   newId = options.length;
                   options.push({
                     name: oldOption.name,
-                    value: newId + 1,
+                    value: newId,
                   });
                 }
 
@@ -129,9 +129,9 @@ class AppletData extends React.Component {
                   /** in case of tokenlogger item */
                   currentItem.valueMapping[oldItem.appletVersion][
                     Object.values(oldOption.name)[0]
-                  ] = newId + 1;
+                  ] = newId;
                 } else {
-                  currentItem.valueMapping[oldItem.appletVersion][oldOption.value] = newId + 1;
+                  currentItem.valueMapping[oldItem.appletVersion][Object.values(oldOption.name)[0]] = newId;
                 }
               });
             } else if (currentItem.inputType == 'slider') {
@@ -215,13 +215,13 @@ class AppletData extends React.Component {
           ...itemsFiltered.map((item) => {
             const responses = [];
             if (appletData.responses) {
-              item.schemas.forEach((schema) => {
+              const schemas = [...new Set(item.schemas)]
+              schemas.forEach((schema) => {
                 if (appletData.responses[schema]) {
                   responses.push(...appletData.responses[schema]);
                 }
               });
             }
-
             const itemData = [];
             responses.forEach((response) => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
@@ -290,8 +290,6 @@ class AppletData extends React.Component {
       const thatTime = moment(data[i].date)
         .toDate()
         .getTime();
-      console.log('mondayTime', mondayTime);
-      console.log('thattime', thatTime);
       if (mondayTime.getTime() <= thatTime) {
         activeCount += 1;
       }
