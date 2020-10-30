@@ -11,10 +11,10 @@ const validate = ({ oldPassword, password }) => {
   const errors = {};
 
   if (password && (!oldPassword || oldPassword.length === 0)) {
-    errors.oldPassword = 'Please enter your old password';
+    errors.oldPassword = i18n.t('additional:enter_old_password');
   }
   if (oldPassword && (!password || password.length === 0)) {
-    errors.password = 'Please enter a new password';
+    errors.password = i18n.t('additional:enter_new_password');
   }
 
   return errors;

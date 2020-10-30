@@ -18,12 +18,15 @@ import { scheduleNotifications } from '../../services/pushNotifications';
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector } from './applets.selectors';
-import { replaceTargetAppletSchedule,
+import {
+  replaceTargetAppletSchedule,
   setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
-  saveAppletResponseData, replaceTargetApplet, setDownloadingTargetApplet,
+  saveAppletResponseData,
+  replaceTargetApplet,
+  setDownloadingTargetApplet,
 } from './applets.actions';
 import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
 import { setCurrentApplet } from '../app/app.actions';
@@ -75,9 +78,9 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
     .then((applets) => {
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
-        const transformedApplets = applets.filter(
-          applet => !R.isEmpty(applet.items),
-        ).map(transformApplet);
+        const transformedApplets = applets
+          .filter(applet => !R.isEmpty(applet.items))
+          .map(transformApplet);
         dispatch(replaceApplets(transformedApplets));
         dispatch(downloadResponses(transformedApplets));
         dispatch(downloadAppletsMedia(transformedApplets));
@@ -103,7 +106,8 @@ export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = [applet]
-          .filter(applet => !R.isEmpty(applet.items)).map(transformApplet);
+          .filter(applet => !R.isEmpty(applet.items))
+          .map(transformApplet);
         if (transformedApplets && transformedApplets.length > 0) {
           const transformedApplet = transformedApplets[0];
           // eslint-disable-next-line no-console

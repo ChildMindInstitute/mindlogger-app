@@ -50,7 +50,9 @@ class AboutApp extends Component {
                 </Button>
               </Left>
               <Body>
-                <Title>About {title}</Title>
+                <Title>
+                  {i18n.t('about_app:about')} {title}
+                </Title>
               </Body>
               <Right />
             </Header>
@@ -74,17 +76,17 @@ class AboutApp extends Component {
             paddingTop: IOSHeaderPadding,
           }}
         >
-          <Left>
+          <Left style={{ flex: 0.5 }}>
             <Button transparent onPress={this.onClose}>
               <Icon name="close" />
             </Button>
           </Left>
-          <Body style={{ paddingTop: IOSBodyPadding }}>
+          <Body style={{ paddingTop: IOSBodyPadding, flex: 3 }}>
             <Title>
-              {mindloggerAbout} {packageJson.version}
+              {packageJson.version} {i18n.t('about_app:title_with_version')}
             </Title>
           </Body>
-          <Right />
+          <Right style={{ flex: 0.5 }} />
         </Header>
         <Content>
           <View style={styles.content}>
