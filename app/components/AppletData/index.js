@@ -80,7 +80,6 @@ class AppletData extends React.Component {
       const itemsFiltered = activity.items
         .filter(i => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType)
         .map(item => JSON.parse(JSON.stringify(item)));
-
       itemsFiltered.forEach((item) => {
         item.schemas = [item.schema];
         item.appletVersions = [appletVersion];
@@ -113,7 +112,7 @@ class AppletData extends React.Component {
               const options = currentItem.valueConstraints.itemList;
 
               /** merge two option lists */
-              oldItem.valueConstraints.itemList.forEach((oldOption) => {
+              oldItem.valueConstraints.itemList.forEach((oldOption, index) => {
                 let newId = options.findIndex(
                   option => Object.values(option.name)[0] === Object.values(oldOption.name)[0],
                 );
@@ -121,7 +120,7 @@ class AppletData extends React.Component {
                   newId = options.length;
                   options.push({
                     name: oldOption.name,
-                    value: newId + 1,
+                    value: newId,
                   });
                 }
 
@@ -129,9 +128,9 @@ class AppletData extends React.Component {
                   /** in case of tokenlogger item */
                   currentItem.valueMapping[oldItem.appletVersion][
                     Object.values(oldOption.name)[0]
-                  ] = newId + 1;
+                  ] = oldOption.value;
                 } else {
-                  currentItem.valueMapping[oldItem.appletVersion][oldOption.value] = newId + 1;
+                  currentItem.valueMapping[oldItem.appletVersion][Object.values(oldOption.name)[0]] = oldOption.value;
                 }
               });
             } else if (currentItem.inputType == 'slider') {
@@ -236,18 +235,17 @@ class AppletData extends React.Component {
         data.push({ type: 'EmptyActivityChart', activity });
       } else {
         data.push({ type: 'ActivityChartHeader', activity });
-
         data.push(
           ...itemsFiltered.map((item) => {
             const responses = [];
             if (appletData.responses) {
-              item.schemas.forEach((schema) => {
+              const schemas = [...new Set(item.schemas)]
+              schemas.forEach((schema) => {
                 if (appletData.responses[schema]) {
                   responses.push(...appletData.responses[schema]);
                 }
               });
             }
-
             const itemData = [];
             responses.forEach(response => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
@@ -260,7 +258,7 @@ class AppletData extends React.Component {
                   if (Array.isArray(response.value)) {
                     itemData.push({
                       ...response,
-                      value: response.value.map(value => item.valueMapping[response.version][value])
+                      value: response.value.map(value => item.valueMapping[response.version][value] || value)
                     })
                   } else {
                     itemData.push({
