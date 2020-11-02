@@ -175,13 +175,13 @@ class SettingsScreen extends React.Component {
         <AwesomeAlert
           show={showAlert}
           showProgress={false}
-          title="Are you sure you want to delete your account and data?"
-          message="You won't be able to recover it"
+          title={i18n.t('additional:sure_delete_account_data')}
+          message={i18n.t('applet_settings:alert_message')}
           closeOnHardwareBackPress={false}
           showCancelButton
           showConfirmButton
-          cancelText="No, cancel"
-          confirmText="Yes, delete it"
+          cancelText={i18n.t('additional:no_cancel')}
+          confirmText={i18n.t('additional:yes_delete')}
           confirmButtonColor="#DD6B55"
           onCancelPressed={() => {
             this.hideAlert();

@@ -37,7 +37,7 @@ const ForgotPasswordForm = ({ error, handleSubmit, submitting, primaryColor }) =
         <ActivityIndicator color={colors.primary} />
       ) : (
         <Text style={[styles.buttonText, { color: primaryColor }]}>
-          {i18n.t('forgot_pass:reset_pass')}
+          {i18n.t('forgot_pass_form:reset_pass')}
         </Text>
       )}
     </Button>

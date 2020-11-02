@@ -2,17 +2,21 @@ import * as R from 'ramda';
 import { Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import * as RNLocalize from 'react-native-localize';
+import i18n from 'i18next';
 import { getSchedule, replaceResponseData } from '../../services/network';
 import { downloadAllResponses, uploadResponseQueue } from '../../services/api';
 import { cleanFiles } from '../../services/file';
 import { prepareResponseForUpload, getEncryptedData } from '../../models/response';
 import { scheduleAndSetNotifications } from '../applets/applets.thunks';
 import { appletsSelector } from '../applets/applets.selectors';
-import { responsesSelector } from '../responses/responses.selectors'
 import {
-  authTokenSelector,
-  loggedInSelector,
-} from '../user/user.selectors';
+  responsesSelector,
+  uploadQueueSelector,
+  currentResponsesSelector,
+  currentScreenSelector,
+  itemVisiblitySelector,
+} from './responses.selectors';
+import { authTokenSelector, loggedInSelector, userInfoSelector } from '../user/user.selectors';
 import {
   createResponseInProgress,
   setDownloadingResponses,
@@ -25,58 +29,39 @@ import {
   setSchedule,
   setSummaryScreen,
   replaceAppletResponses,
-  setActivityOpened, 
-} from "./responses.actions";
-import {
-  setCurrentActivity,
-} from '../app/app.actions';
-import {
-  uploadQueueSelector,
-  currentResponsesSelector,
-  currentScreenSelector,
-  itemVisiblitySelector,
-} from './responses.selectors';
-import {
-  currentActivityIdSelector,
-  currentAppletSelector,
-} from '../app/app.selectors';
-import {
-  getNextPos,
-  getLastPos,
-} from '../../services/activityNavigation';
+  setActivityOpened,
+} from './responses.actions';
+import { setCurrentActivity } from '../app/app.actions';
 
-import {
-  prepareResponseKeys
-} from '../../state/applets/applets.actions';
+import { currentActivityIdSelector, currentAppletSelector } from '../app/app.selectors';
+import { getNextPos, getLastPos } from '../../services/activityNavigation';
 
-import { userInfoSelector } from '../../state/user/user.selectors';
+import { prepareResponseKeys } from '../applets/applets.actions';
+
 import { getAESKey, getPublicKey } from '../../services/encryption';
 import config from '../../config';
 
-export const updateKeys = (applet, userInfo) => dispatch => {
-  if (!applet.encryption) return ;
+export const updateKeys = (applet, userInfo) => (dispatch) => {
+  if (!applet.encryption) return;
 
   applet.AESKey = getAESKey(
-    userInfo.privateKey, 
-    applet.encryption.appletPublicKey, 
-    applet.encryption.appletPrime, 
-    applet.encryption.base
+    userInfo.privateKey,
+    applet.encryption.appletPublicKey,
+    applet.encryption.appletPrime,
+    applet.encryption.base,
   );
 
-  applet.userPublicKey = Array.from(getPublicKey(
-    userInfo.privateKey,
-    applet.encryption.appletPrime,
-    applet.encryption.base
-  ));
+  applet.userPublicKey = Array.from(
+    getPublicKey(userInfo.privateKey, applet.encryption.appletPrime, applet.encryption.base),
+  );
 
-  dispatch(prepareResponseKeys(
-    applet.id,
-    {
+  dispatch(
+    prepareResponseKeys(applet.id, {
       AESKey: applet.AESKey,
-      userPublicKey: applet.userPublicKey
-    }
-  ));
-}
+      userPublicKey: applet.userPublicKey,
+    }),
+  );
+};
 
 export const startFreshResponse = activity => (dispatch, getState) => {
   const state = getState();
@@ -109,13 +94,17 @@ export const startResponse = activity => (dispatch, getState) => {
     Actions.push('take_act');
   } else {
     Alert.alert(
-      'Resume activity',
-      'Would you like to resume this activity in progress or restart?',
+      i18n.t('additional:resume_activity'),
+      i18n.t('additional:activity_resume_restart'),
       [
         {
-          text: 'Restart',
+          text: i18n.t('additional:restart'),
           onPress: () => {
-            const itemResponses = R.pathOr([], ['inProgress', applet.id + activity.id, 'responses'], responses);
+            const itemResponses = R.pathOr(
+              [],
+              ['inProgress', applet.id + activity.id, 'responses'],
+              responses,
+            );
             cleanFiles(itemResponses);
             dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
@@ -126,7 +115,7 @@ export const startResponse = activity => (dispatch, getState) => {
           },
         },
         {
-          text: 'Resume',
+          text: i18n.t('additional:resume'),
           onPress: () => {
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(applet.id, activity.id, currentScreen));
@@ -146,7 +135,7 @@ export const downloadResponses = () => (dispatch, getState) => {
   const applets = appletsSelector(state);
 
   const userInfo = userInfoSelector(state);
-  for (let applet of applets) {
+  for (const applet of applets) {
     if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
       dispatch(updateKeys(applet, userInfo));
     }
@@ -155,55 +144,58 @@ export const downloadResponses = () => (dispatch, getState) => {
   dispatch(setDownloadingResponses(true));
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
-  }).then((responses) => {
-    if (loggedInSelector(getState())) {
-      dispatch(replaceResponses(responses));
-      dispatch(scheduleAndSetNotifications());
-    }
-  }).finally(() => {
-    dispatch(setDownloadingResponses(false));
-  });
+  })
+    .then((responses) => {
+      if (loggedInSelector(getState())) {
+        dispatch(replaceResponses(responses));
+        dispatch(scheduleAndSetNotifications());
+      }
+    })
+    .finally(() => {
+      dispatch(setDownloadingResponses(false));
+    });
 
   const timezone = RNLocalize.getTimeZone();
-  getSchedule(authToken, timezone)
-    .then((schedule) => {
-      dispatch(setSchedule(schedule));
-    });
+  getSchedule(authToken, timezone).then((schedule) => {
+    dispatch(setSchedule(schedule));
+  });
 };
 
-export const replaceReponses = (user) => (dispatch, getState) => {
+export const replaceReponses = user => (dispatch, getState) => {
   const state = getState();
   const applets = appletsSelector(state);
   const responses = responsesSelector(state);
   const authToken = authTokenSelector(state);
 
-  for (let applet of applets) {
+  for (const applet of applets) {
     dispatch(updateKeys(applet, user));
   }
 
   const uploadData = [];
-  for (let response of responses) {
-    let dataSources = {};
+  for (const response of responses) {
+    const dataSources = {};
     const applet = applets.find(applet => applet.id === response.appletId);
 
-    for (let responseId in response.dataSources) {
+    for (const responseId in response.dataSources) {
       if (Object.keys(response).length) {
-        dataSources[responseId] = getEncryptedData(response.dataSources[responseId], applet.AESKey)
+        dataSources[responseId] = getEncryptedData(response.dataSources[responseId], applet.AESKey);
       }
     }
 
     uploadData.push({
       userPublicKey: applet.userPublicKey,
       appletId: applet.id.split('/').pop(),
-      dataSources
-    })
+      dataSources,
+    });
   }
 
-  return Promise.all(uploadData.map(data => replaceResponseData({ 
-    authToken, 
-    ...data
-  })));
-}
+  return Promise.all(
+    uploadData.map(data => replaceResponseData({
+      authToken,
+      ...data,
+    })),
+  );
+};
 
 export const downloadAppletResponses = applet => (dispatch, getState) => {
   const state = getState();
@@ -222,10 +214,9 @@ export const downloadAppletResponses = applet => (dispatch, getState) => {
   });
 
   const timezone = RNLocalize.getTimeZone();
-  getSchedule(authToken, timezone)
-    .then((schedule) => {
-      dispatch(setSchedule(schedule));
-    });
+  getSchedule(authToken, timezone).then((schedule) => {
+    dispatch(setSchedule(schedule));
+  });
 };
 
 export const startUploadQueue = () => (dispatch, getState) => {
