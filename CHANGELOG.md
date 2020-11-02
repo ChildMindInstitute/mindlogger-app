@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.4] - 2020-11-01
+- Fix versioning issue on TL data tab
+
 ## [0.14.3] - 2020-10-29
 - Fixed doubled token value in data tab
 
