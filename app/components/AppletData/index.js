@@ -250,7 +250,7 @@ class AppletData extends React.Component {
             responses.forEach(response => {
               if (!item.appletVersions || !Object.keys(appletData.items).length) {
                 itemData.push(response);
-              } else if (item.appletVersions?.indexOf(response.version) >= 0) {
+              } else {
                 if (
                   item.inputType === 'radio' && 
                   item.valueMapping && item.valueMapping[response.version]) {
@@ -258,12 +258,16 @@ class AppletData extends React.Component {
                   if (Array.isArray(response.value)) {
                     itemData.push({
                       ...response,
-                      value: response.value.map(value => item.valueMapping[response.version][value] || value)
+                      value: response.value.map(value => {
+                        const itemValue = item.valueMapping[response.version][value];
+                        return itemValue === "undefined" ? value : itemValue
+                      })
                     })
                   } else {
+                    const itemValue = item.valueMapping[response.version][response.value];
                     itemData.push({
                       ...response,
-                      value: item.valueMapping[response.version][response.value]
+                      value: itemValue === "undefined" ? response.value : itemValue
                     });
                   }
                 } else {
