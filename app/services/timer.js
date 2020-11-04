@@ -74,12 +74,10 @@ class Timer {
    * @returns {void}
    */
   _checkTime = () => {
-    const now = new Date();
-
-    if (this._cbTriggerTime <= now) {
+    if (this._cbTriggerTime <= Date.now()) {
       clearInterval(this._subscription);
 
-      if (this._callback) {
+      if (typeof this._callback === 'function') {
         this._callback();
       }
     }
