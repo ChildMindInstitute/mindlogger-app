@@ -32,6 +32,7 @@
     "icons_title":"NounProject icons were created by Alina Oleynik (survey), beth bolton (book), and\nShakeel (chart)"
   },
   "about_app": {
+    "title_with_version": "What is MindLogger?",
     "title":"Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.",
     "subtitle": "Unless stated elsewhere, icons are drawn from OpenMoji and NounProject.",
     "mindlogger_about": "### What is MindLogger?\n\nThis app is part of the open source MindLogger data collection and analysis platform designed by the MATTER Lab at the Child Mind Institute (https://matter.childmind.org).\n\n### What can MindLogger do?\n\nMindLogger's feature set is growing, and currently supports a wide variety of input types. Each screen in a MindLogger activity can include any of the following:\n  - Text, picture, and audio\n  - Question followed by image and/or text response options\n  - Slider bar\n  - Text entry\n  - Table entry\n  - Audio record\n  - Photo/video capture\n  - Drawing or tapping\n  - Current geolocation\n  - Simple cognitive task\n  - Delay before response\n  - Timer\n  - Conditional logic to determine where to go next\n\n### Where can I learn more?\n\nPlease visit https://mindlogger.org for more information.\n\nCheers,\nMindLogger Team\nChild Mind Institute"
@@ -70,7 +71,7 @@
     "new_pass_placeholder": "New password",
     "error": "Unable to update user details.",
     "submission_error": "The current password you entered was incorrect.",
-    "change_pass": "hange Password"
+    "change_pass": "Change Password"
   },
   "change_study": {
     "reset": "Reset",
@@ -260,6 +261,25 @@
   },
   "text_entry": {
     "type_placeholder": "Please type text"
+  },
+  "additional": {
+    "thanks": "Thanks!",
+    "saved_answers": "We've saved your answers!",
+    "close": "Close",
+    "resume_activity": "Resume activity",
+    "activity_resume_restart":"Would you like to resume this activity in progress or restart?",
+    "restart": "Restart",
+    "resume": "Resume",
+    "in_progress": "In Progress",
+    "unscheduled":"Unscheduled",
+    "scheduled": "Scheduled",
+    "past_due": "Past Due",
+    "sure_delete_account_data": "Are you sure you want to delete your account and data?",
+    "no_cancel": "No, cancel",
+    "yes_delete": "Yes, delete it",
+    "hi": "Hi",
+    "enter_old_password": "Please enter your old password",
+    "enter_new_password": "Please enter a new password"
   }
   
   

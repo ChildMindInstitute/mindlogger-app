@@ -32,6 +32,7 @@
     "icons_title":"Les icônes NounProject ont été créées par Alina Oleynik (enquête), Beth Bolton (livre), et\nShakeel (graphique)"
   },
   "about_app": {
+    "title_with_version": "Qu'est-ce que MindLogger?",
     "title":"Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
     "subtitle": "Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
     "mindlogger_about": "### Qu'est-ce que MindLogger?\n\nCette application fait partie de la plateforme open source de collecte et d'analyse de données MindLogger conçue par le MATTER Lab du Child Mind Institute (https://matter.childmind.org).\n### Que peut faire MindLogger ? L'ensemble des fonctionnalités de MindLogger se développe, et prend actuellement en charge une grande variété de types d'entrées. Chaque écran d'une activité de MindLogger peut comprendre l'un des éléments suivants :\n - Texte, image et audio\n - Question suivie d'une option de répose en image et/ou textuelle\n -Curseur\n - Entrée textuelle\n - Saisie sous forme de tableau\n - Enregistrement audio\n - Capture photo/vidéo\n - Dessin ou tapotement\n - Géolocalisation\n - Tâche cognitive simple\n - Délai avant réponse\n - Minuterie\n - Logique conditionnelle pour déterminer la suite\n\n### Où puis-je en apprendre davantage ? \n\nVeuillez consulter le site https://mindlogger.org pour plus d'informations. \n\n Santé, \nMindLogger Team, \n Child Mind Institute"
@@ -260,5 +261,24 @@
     "change_app_language": "Changer la langue",
     "en": "English",
     "fr": "Français"
+  },
+  "additional": {
+    "thanks": "Merci!",
+    "saved_answers": "Réponses sauvegardées !",
+    "close": "Fermer",
+    "resume_activity": "Reprendre l'activité",
+    "activity_resume_restart":"Souhaitez-vous reprendre cette activité en cours ou la recommencer?",
+    "restart": "Recommencer",
+    "resume": "Reprendre",
+    "in_progress": "En cours",
+    "unscheduled":"Non programmé",
+    "scheduled": "Programmé",
+    "past_due": "En retard",
+    "sure_delete_account_data": "Êtes-vous sûr de vouloir supprimer votre compte et vos données?",
+    "no_cancel": "Non, annuler",
+    "yes_delete": "Oui, effacer",
+    "hi": "Bonjour",
+    "enter_old_password": "Veuillez saisir votre ancien mot de passe",
+    "enter_new_password": "Veuillez saisir un nouveau mot de passe"
   }
 }

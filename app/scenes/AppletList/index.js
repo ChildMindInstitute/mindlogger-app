@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
+import i18n from 'i18next';
 import {
   appletsSelector,
   invitesSelector,
-  isDownloadingAppletsSelector, isDownloadingTargetAppletSelector,
+  isDownloadingAppletsSelector,
+  isDownloadingTargetAppletSelector,
 } from '../../state/applets/applets.selectors';
 import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
@@ -31,7 +33,7 @@ class AppletList extends Component {
     const { sync } = this.props;
 
     sync();
-  }
+  };
 
   /**
    * Method called when an applet card is pressed
@@ -47,7 +49,7 @@ class AppletList extends Component {
     this.props.setCurrentApplet(applet.id);
 
     Actions.push('applet_details');
-  }
+  };
 
   /**
    * Method called after this component is appended to the DOM.
@@ -86,11 +88,13 @@ class AppletList extends Component {
         invites={invites}
         isDownloadingApplets={isDownloadingApplets}
         isDownloadingTargetApplet={isDownloadingTargetApplet}
-        title={`Hi ${user ? user.firstName : ''}!`}
+        title={`${i18n.t('additional:hi')} ${user ? user.firstName : ''}!`}
         primaryColor={skin.colors.primary}
         onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
-        onPressAbout={() => { Actions.push('about_app'); }}
+        onPressAbout={() => {
+          Actions.push('about_app');
+        }}
         onPressApplet={this.handlePressApplet}
         mobileDataAllowed={mobileDataAllowed}
         toggleMobileDataAllowed={toggleMobileDataAllowed}
@@ -131,4 +135,7 @@ const mapDispatchToProps = {
   setAppletSelectionDisabled,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppletList);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletList);

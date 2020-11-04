@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.6] - 2020-11-04
+- Fix idle timer
+
+## [0.14.5] - 2020-11-01
+- Updated missing Frech texts
+- Fix minor bugs regarding showing app version and password reset form text
+
 ## [0.14.4] - 2020-11-01
 - Fix versioning issue on TL data tab
 
