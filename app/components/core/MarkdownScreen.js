@@ -32,7 +32,7 @@ export const MarkdownScreen = ({ mstyle, children }) => {
           Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
         }}
       >
-        {children}
+        {'#'} {children}
       </MarkdownView>
     </View>
   );
