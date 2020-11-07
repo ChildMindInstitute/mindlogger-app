@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.11] - 2020-11-07
+- send lang param to backend in forgot-password functionality
+
 ## [0.14.6] - 2020-11-04
 - Fix idle timer
 
