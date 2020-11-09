@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.9] - 2020-11-05
+- Add definition for the default notification icon
+
 ## [0.14.8] - 2020-11-05
 - Fixed padding (whitespace) added when opening the keyboard
 
