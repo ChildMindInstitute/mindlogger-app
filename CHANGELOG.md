@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.14] - 2020-11-09
+- Fix app icon badge count (iOS)
+
 ## [0.14.1] - 2020-10-27
 - Introduce Localizations (French)
 
@@ -65,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.13.17] - 2020-09-09
 - Fixed available time to be displayed correctly
-- Fixed extended time events to disappear after completing it 
+- Fixed extended time events to disappear after completing it
 
 ## [0.13.16] - 2020-08-31
 - Update the logic of tokenValue
@@ -86,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed format for start and end times
 
 ## [0.13.12] - 2020-08-24
-- Fix race conditions caused by setTimeout and setInterval not working on background state 
+- Fix race conditions caused by setTimeout and setInterval not working on background state
 
 ## [0.13.11] - 2020-08-20
 - Fix header bar to be not close from status bar of the phone
@@ -126,10 +129,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed idle timer
 
 ## [0.13.4] - 2020-08-04
-- Fix app navigation to be landed on home screen 
+- Fix app navigation to be landed on home screen
 
 ## [0.13.3] - 2020-08-03
-- Removed openActivityByEvent to fix white screen issue 
+- Removed openActivityByEvent to fix white screen issue
 
 ## [0.13.2] - 2020-08-03
 - Fixed unscheduled status after timeout
