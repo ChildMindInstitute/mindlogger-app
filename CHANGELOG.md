@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.13] - 2020-11-08
+- Upgrade ```PushNotificationiOS``` to 1.7.1
+
 ## [0.14.6] - 2020-11-04
 - Fix idle timer
 
