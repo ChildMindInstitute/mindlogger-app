@@ -708,7 +708,7 @@
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.14.6;
+				MARKETING_VERSION = 0.14.9;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
