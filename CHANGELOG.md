@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.8] - 2020-11-05
+- Fixed padding (whitespace) added when opening the keyboard
+
 ## [0.14.7] - 2020-11-04
 - Checking correct answer in text widget
 - Displaying error msgs for wrong answers
