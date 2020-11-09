@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### [Unreleased]
+## [0.14.10] - 2020-11-05
+- Add minor fixes on Table widget
 
 ## [0.14.9] - 2020-11-05
 - Add definition for the default notification icon
