@@ -437,7 +437,7 @@ class FireBaseMessaging extends Component {
     this.notificationsCount -= 1;
 
     if (isIOS) {
-      await this.updateApplicationIconBadgeNumber();
+      this.updateApplicationIconBadgeNumber();
       this.props.updateBadgeNumber(this.notificationsCount);
     }
   };
@@ -448,7 +448,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   updateApplicationIconBadgeNumber = () => {
-    console.log('notifications', this.notificationsCount);
     PushNotificationIOS.setApplicationIconBadgeNumber(this.notificationsCount);
   };
 
