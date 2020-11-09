@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Container, Button, View, Header, Left, Right, Icon, Text } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import i18n from 'i18next';
 
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
@@ -29,17 +29,40 @@ class ChangeStudy extends Component {
 
   onSubmit = (body) => {
     const { showToast, setApiHost, setSkin } = this.props;
-    setApiHost(body.apiHost);
-    getSkin().then((response) => {
-      setSkin(response);
-    });
-    Actions.replace('login');
-    showToast({
-      text: i18n.t('change_study:successfully_changed'),
-      position: 'top',
-      type: 'success',
-      duration: 2000,
-    });
+
+    const switchServer = () => {
+      setApiHost(body.apiHost);
+      getSkin().then((response) => {
+        setSkin(response);
+      });
+      Actions.replace('login');
+      showToast({
+        text: i18n.t('change_study:successfully_changed'),
+        position: 'top',
+        type: 'success',
+        duration: 2000,
+      });
+    };
+
+    if (!body.apiHost.includes('https')) {
+      Alert.alert(
+        i18n.t('change_study:change_server'),
+        i18n.t('change_study:http_confirm'),
+        [
+          {
+            text: i18n.t('change_study:yes'),
+            onPress: switchServer,
+          },
+          {
+            text: i18n.t('change_study:no'),
+            onPress: () => {},
+          },
+        ],
+        { cancelable: false },
+      );
+    } else {
+      switchServer();
+    }
   };
 
   onReset = () => {
