@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import moment from 'moment';
+import i18n from 'i18next';
 
 const compareByNameAlpha = (a, b) => {
   const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
@@ -20,19 +21,15 @@ export const getUnscheduled = activityList => activityList.filter(
         || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
       && (!activity.oneTimeCompletion
         || !activity.lastResponseTimestamp
-        || moment(activity.lastResponseTimestamp)
-          < activity.lastScheduledTimestamp)
+        || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
       && (!activity.lastResponseTimestamp
         || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
-        || new Date(activity.lastResponseTimestamp).getTime()
-          - activity.lastScheduledTimestamp
+        || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
           > activity.lastTimeout
-        || new Date(activity.lastResponseTimestamp).getTime()
-          < activity.lastScheduledTimestamp)
+        || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
       && (!activity.lastScheduledTimestamp
         || ((((!activity.extendedTime || !activity.extendedTime.allow)
-          && new Date().getTime() - activity.lastScheduledTimestamp
-            > activity.lastTimeout)
+          && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
           || (activity.extendedTime
             && activity.extendedTime.allow
             && new Date().getTime() - activity.lastScheduledTimestamp
@@ -50,37 +47,30 @@ export const getUnscheduled = activityList => activityList.filter(
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp
       && (!activity.lastScheduledTimestamp
-        || new Date().getTime() - activity.lastScheduledTimestamp
-          > activity.lastTimeout
-        || moment(activity.lastResponseTimestamp)
-          > activity.lastScheduledTimestamp)
-      && (activity.nextAccess
-        || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-      && !(
-        activity.nextAccess
-        && moment().isSame(moment(activity.lastResponseTimestamp), 'day')
-      ),
+        || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
+        || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
+      && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+      && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
 export const getPastdue = activityList => activityList.filter(
   activity => activity.lastScheduledTimestamp
       && activity.lastTimeout
       && (!activity.lastResponseTimestamp
-        || moment(activity.lastResponseTimestamp)
-          < activity.lastScheduledTimestamp
-        || ((!activity.extendedTime || !activity.extendedTime.allow) && new Date(activity.lastResponseTimestamp).getTime()
-          - activity.lastScheduledTimestamp
-      > activity.lastTimeout)
-          || ((activity.extendedTime
-        && activity.extendedTime.allow) && new Date(activity.lastResponseTimestamp).getTime()
-          - activity.lastScheduledTimestamp > activity.extendedTime.days * 86400000))
+        || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp
+        || ((!activity.extendedTime || !activity.extendedTime.allow)
+          && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+            > activity.lastTimeout)
+        || (activity.extendedTime
+          && activity.extendedTime.allow
+          && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+            > activity.extendedTime.days * 86400000))
       && ((activity.extendedTime
         && activity.extendedTime.allow
         && new Date().getTime() - activity.lastScheduledTimestamp
           <= activity.lastTimeout + activity.extendedTime.days * 86400000)
         || ((!activity.extendedTime || !activity.extendedTime.allow)
-    && new Date().getTime() - activity.lastScheduledTimestamp
-            <= activity.lastTimeout)),
+          && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0 ? [{ isHeader: true, text: headerText }, ...array] : []);
@@ -93,9 +83,7 @@ export default (appletId, activityList, inProgress) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
   const notInProgress = inProgressKeys
-    ? activityList.filter(
-      activity => !inProgressKeys.includes(appletId + activity.id),
-    )
+    ? activityList.filter(activity => !inProgressKeys.includes(appletId + activity.id))
     : activityList;
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
@@ -104,9 +92,7 @@ export default (appletId, activityList, inProgress) => {
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
-  const scheduled = getScheduled(notInProgress).sort(
-    compareByTimestamp('nextScheduledTimestamp'),
-  );
+  const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
@@ -115,16 +101,16 @@ export default (appletId, activityList, inProgress) => {
   // const completed = getCompleted(notInProgress).reverse();
 
   return [
-    ...addSectionHeader(addProp('status', 'pastdue', pastdue), 'Past Due'),
+    ...addSectionHeader(addProp('status', 'pastdue', pastdue), i18n.t('additional:past_due')),
     ...addSectionHeader(
       addProp('status', 'in-progress', inProgressActivities),
-      'In Progress',
+      i18n.t('additional:in_progress'),
     ),
     ...addSectionHeader(
       addProp('status', 'unscheduled', unscheduled),
-      'Unscheduled',
+      i18n.t('additional:unscheduled'),
     ),
     // ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
-    ...addSectionHeader(addProp('status', 'scheduled', scheduled), 'Scheduled'),
+    ...addSectionHeader(addProp('status', 'scheduled', scheduled), i18n.t('additional:scheduled')),
   ];
 };

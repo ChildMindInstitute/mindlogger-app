@@ -125,7 +125,6 @@ See [:link: CONTRIBUTING#Versioning](./CONTRIBUTING.md#Versioning).
 
 See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 
-
 ## Authors
 
 - [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)

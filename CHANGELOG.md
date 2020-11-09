@@ -4,10 +4,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ### [Unreleased]
 
 ## [0.14.14] - 2020-11-09
 - Fix app icon badge count (iOS)
+
+## [0.14.10] - 2020-11-05
+- Add minor fixes on Table widget
+
+## [0.14.9] - 2020-11-05
+- Add definition for the default notification icon
+
+## [0.14.8] - 2020-11-05
+- Fixed padding (whitespace) added when opening the keyboard
+
+## [0.14.7] - 2020-11-04
+- Checking correct answer in text widget
+- Displaying error msgs for wrong answers
+
+## [0.14.6] - 2020-11-04
+- Fix idle timer
+
+## [0.14.5] - 2020-11-01
+- Updated missing Frech texts
+- Fix minor bugs regarding showing app version and password reset form text
+
+## [0.14.4] - 2020-11-01
+- Fix versioning issue on TL data tab
+
+## [0.14.3] - 2020-10-29
+- Fixed doubled token value in data tab
+
+## [0.14.2] - 2020-10-28
+- Fix slider item merging
+- Install React-native-markdown-renderer
+- Fixed issue for inline text image on android devices
 
 ## [0.14.1] - 2020-10-27
 - Introduce Localizations (French)
