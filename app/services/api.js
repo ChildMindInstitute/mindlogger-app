@@ -122,7 +122,10 @@ const uploadFiles = (authToken, response, item) => {
         },
         parentType: 'item',
         parentId: item._id,
-      }));
+      })).then(() => {
+        /** delete file from local storage after uploading */
+        RNFetchBlob.fs.unlink(file.uri.split('///').pop())
+      });
 
     return [...accumulator, request];
   }, []);

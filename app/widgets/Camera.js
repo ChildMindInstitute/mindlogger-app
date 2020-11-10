@@ -4,6 +4,7 @@ import { Image, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-nati
 import { View, Icon } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
 import i18n from 'i18next';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 
@@ -118,15 +119,29 @@ export class Camera extends Component {
 
     pickerFunc(options, (response) => {
       if (!response.didCancel && !response.error) {
-        const uri = Platform.OS === 'ios' ? response.uri.replace('file://', '') : response.uri;
-        const filename = response.uri.split('/').pop();
+        const filename = response.path.split('/').pop();
+
+        const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+
         const picSource = {
-          uri,
+          uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
           fromLibrary: response.choice === 'library',
         };
-        onChange(picSource);
+
+        let fileManager = RNFetchBlob.fs.cp(response.path, picSource.uri.split('///').pop());
+
+        if (response.choice !== 'library') {
+          fileManager = fileManager.then(() => RNFetchBlob.fs.unlink(response.path));
+        }
+
+        fileManager.then(() => {
+          onChange(picSource);
+        }).catch(e => {
+          console.error(e);
+        });
+
       }
     });
   };
