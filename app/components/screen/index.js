@@ -178,7 +178,6 @@ class ActivityScreen extends Component {
       <View style={styles.outer}>
         <KeyboardAvoidingView
           style={styles.keyboardContainer}
-          behavior="padding"
           enabled
           keyboardVerticalOffset={2}
         >

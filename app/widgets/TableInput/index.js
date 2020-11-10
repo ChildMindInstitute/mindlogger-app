@@ -77,7 +77,6 @@ export class TableInput extends Component {
           <Text style={styles.cellTextStyle}> {i18n.t('table_input:short_press_detail')}</Text>
           <Text style={styles.cellTextStyle}> {i18n.t('table_input:long_press_detail')}</Text>
         </View>
-        )}
       </View>
     );
   }
