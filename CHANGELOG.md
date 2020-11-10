@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.15] - 2020-11-10
+- disable screenshot on android, show alert when user tries to switch http, save image/video in app storage
+
 ## [0.14.11] - 2020-11-07
 - Fix markdown issue
 
