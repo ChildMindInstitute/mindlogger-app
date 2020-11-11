@@ -4,11 +4,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ### [Unreleased]
-
 ## [0.14.13] - 2020-11-08
 - Upgrade ```PushNotificationiOS``` to 1.7.1
+
+## [0.14.12] - 2020-11-07
+- send lang param to backend in forgot-password functionality
+
+## [0.14.11] - 2020-11-07
+- Fix markdown issue
+
+## [0.14.10] - 2020-11-05
+- Add minor fixes on Table widget
+
+## [0.14.9] - 2020-11-05
+- Add definition for the default notification icon
+
+## [0.14.8] - 2020-11-05
+- Fixed padding (whitespace) added when opening the keyboard
+
+## [0.14.7] - 2020-11-04
+- Checking correct answer in text widget
+- Displaying error msgs for wrong answers
 
 ## [0.14.6] - 2020-11-04
 - Fix idle timer

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, View, StyleSheet } from 'react-native';
+import { StatusBar, View, StyleSheet, Alert } from 'react-native';
 import { Container } from 'native-base';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -235,6 +235,20 @@ class Activity extends React.Component {
                 responses
               )}
               onPressNext={() => {
+                if (activity.items[currentScreen].correctAnswer && activity.items[currentScreen].correctAnswer['en']) {
+                  const correctAnswer = activity.items[currentScreen].correctAnswer['en'];
+                  if (responses[currentScreen] !== correctAnswer) {
+                    Alert.alert(
+                      'Failed',
+                      'Incorrect answer. Please try again',
+                      [{
+                        text: 'OK',
+                        onPress: () => console.log('Incorrect!')
+                      }]
+                    );
+                    return;
+                  }
+                }
                 this.setState({ isContentError: false });
                 if (getNextPos(currentScreen, itemVisibility) === -1
                   && activity.compute
