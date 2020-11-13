@@ -8,7 +8,7 @@ import { SubmissionError } from 'redux-form';
 import i18n from 'i18next';
 import styles from './styles';
 import { forgotPassword } from '../../services/network';
-import { skinSelector } from '../../state/app/app.selectors';
+import { skinSelector, languageSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
@@ -17,8 +17,8 @@ const IOSBodyPadding = Platform.OS === 'ios' ? 8 : 0;
 
 class ForgotPassword extends Component {
   onSubmit = (body) => {
-    const { showToast } = this.props;
-    return forgotPassword(body.email)
+    const { showToast, lang } = this.props;
+    return forgotPassword(body.email, lang)
       .then(() => {
         showToast({
           text: i18n.t('forgot_pass_form:email_sent'),
@@ -71,6 +71,7 @@ ForgotPassword.propTypes = {
 
 const mapStateToProps = state => ({
   skin: skinSelector(state),
+  lang: languageSelector(state)
 });
 
 const mapDispatchToProps = {

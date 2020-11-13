@@ -110,7 +110,7 @@ export const markdownStyle = {
     fontFamily: theme.fontFamily,
   },
   list: {
-    fontSize: 18,
+    fontSize: 22,
     color: '#000000',
     fontFamily: theme.fontFamily,
   },
@@ -126,6 +126,12 @@ export const markdownStyle = {
   link: {
     alignSelf: 'flex-start',
     textDecorationLine: 'underline',
+    fontFamily: theme.fontFamily,
+  },
+  text: {
+    fontSize: 22,
+    fontWeight: '300',
+    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   image: {

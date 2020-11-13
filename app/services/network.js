@@ -150,8 +150,8 @@ export const signOut = (authToken) => {
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const forgotPassword = (email) => {
-  const queryParams = objectToQueryParams({ email });
+export const forgotPassword = (email, lang) => {
+  const queryParams = objectToQueryParams({ email, lang });
   const url = `${apiHost()}/user/password/temporary?${queryParams}`;
   return fetch(url, {
     method: 'put',

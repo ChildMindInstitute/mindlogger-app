@@ -37,6 +37,7 @@ const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
+const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
 const JS_EXPRESSION = "reprolib:terms/jsExpression";
@@ -213,6 +214,7 @@ export const itemTransformJson = (itemJson) => {
   const res = {
     id: itemJson._id,
     description: languageListToObject(itemJson[DESCRIPTION]),
+    correctAnswer: languageListToObject(itemJson[CORRECT_ANSWER]),
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
     altLabel: languageListToObject(itemJson[ALT_LABEL]),

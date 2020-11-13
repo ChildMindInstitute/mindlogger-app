@@ -11,6 +11,7 @@ export const appStatusSelector = R.path(['app', 'appStatus']);
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 
 export const mobileDataAllowedSelector = R.path(['app', 'mobileDataAllowed']);
+export const languageSelector = R.path(['app', 'appLanguage']);
 
 export const currentAppletSelector = createSelector(
   R.path(['app', 'currentApplet']),
