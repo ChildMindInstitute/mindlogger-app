@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.16] - 2020-11-15
+- Added android settings in AndroidManifest to fix notification issues
+
 ## [0.14.13] - 2020-11-08
 - Upgrade ```PushNotificationiOS``` to 1.7.1
 
