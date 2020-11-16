@@ -131,8 +131,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 231
-        versionName "0.14.12"
+        versionCode 232
+        versionName "0.14.13"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
@@ -211,6 +211,16 @@ configurations.all {
     resolutionStrategy {
         force "com.facebook.soloader:soloader:0.8.2"
     }
+}
+
+buildscript {
+  repositories {
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+  }
+}
+
+repositories {
+  maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 // Run this once to be able to run the application with BUCK
