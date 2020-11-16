@@ -496,6 +496,16 @@ class FireBaseMessaging extends Component {
     if (isIOS) {
       const notificationsCount = await this.generateApplicationIconBadgeNumber();
       localNotification.ios.setBadge(notificationsCount + 1);
+    } else {
+      // Build a channel
+      //   const channelId = new firebase.notifications.Android.Channel(
+      //     AndroidChannelId,
+      //     'MindLogger Channel',
+      //     firebase.notifications.Android.Importance.Max
+      //   ).setDescription('MindLogger Channel');
+
+      // // Create the channel
+      //   firebase.notifications().android.createChannel(channelId);
     }
 
     try {
@@ -518,7 +528,10 @@ class FireBaseMessaging extends Component {
    * @return {Notification} a firebase notification instance.
    */
   newNotification = ({ notificationId, title, subtitle, body, iosBadge = 1, data }) => {
-    const localNotification = new firebase.notifications.Notification()
+    const localNotification = new firebase.notifications.Notification({
+      sound: 'default',
+      show_in_foreground: true,
+    })
       .setNotificationId(notificationId)
       .setTitle(title)
       .setBody(body)
