@@ -78,9 +78,13 @@
     "submit": "Submit",
     "enter_url_manually":"Enter URL Manually",
     "scan_qr": "Scan QR",
-    "successfully_changed": "Study successfully changed.",
-    "successfully_reset": "Study successfully reset.",
-    "set_by_qr": "Study has been set by QR."
+    "successfully_changed": "Server Url was changed successfully.",
+    "successfully_reset": "Server Url was reset successfully.",
+    "change_server": "Change Server",
+    "http_confirm": "Are you sure you want to connect to server which doesn't support ssl?",
+    "set_by_qr": "Study has been set by QR.",
+    "yes": "Yes",
+    "no": "No"
   },
   "consent": {
     "this_app_provides":"This app provides a easy way to collect survey, voice, drawing activities.",

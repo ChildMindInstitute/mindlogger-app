@@ -78,9 +78,13 @@
     "submit": "Soumettre",
     "enter_url_manually":"Saisir une URL manuellement",
     "scan_qr": "Scanner un QR code",
-    "successfully_changed": "Etude modifiée",
-    "successfully_reset": "Réinitialisation réussie de l'étude.",
-    "set_by_qr": "L'étude a été établie par QR."
+    "successfully_changed": "L'URL du serveur a été modifiée avec succès",
+    "successfully_reset": "L'URL du serveur a été réinitialisée avec succès",
+    "change_server": "Changer de serveur",
+    "http_confirm": "Etes-vous sûr de vouloir vous connecter à un serveur qui ne prend pas en charge le SSL ?",
+    "set_by_qr": "L'étude a été établie par QR.",
+    "yes": "Oui",
+    "no": "Non"
   },
   "consent": {
     "this_app_provides":"Cette application fournit un moyen simple de collecter des données sous forme de questionnaire, d'enregistrement de la voix ou de dessin",
