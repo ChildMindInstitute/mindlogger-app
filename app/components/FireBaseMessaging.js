@@ -46,6 +46,7 @@ class FireBaseMessaging extends Component {
       fMessaging.onMessage(this.onMessage),
     ];
     this.appState = 'active';
+    this.notificationsCount = 0;
 
     AppState.addEventListener('change', this.handleAppStateChange);
 
@@ -54,6 +55,7 @@ class FireBaseMessaging extends Component {
     }
 
     if (isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
       firebase.messaging().ios.registerForRemoteNotifications();
     }
 
@@ -374,8 +376,10 @@ class FireBaseMessaging extends Component {
   onNotificationDisplayed = async (
     notification: firebase.RNFirebase.notifications.Notification,
   ) => {
+    this.notificationsCount += 1;
+
     if (isIOS) {
-      await this.updateApplicationIconBadgeNumber();
+      this.updateApplicationIconBadgeNumber();
     }
   };
 
@@ -386,13 +390,6 @@ class FireBaseMessaging extends Component {
    */
   getDeliveredNotificationsCount(): Promise<number> {
     return new Promise(resolve => PushNotificationIOS.getDeliveredNotifications(({ length }) => resolve(length)));
-  }
-
-  /**
-   *
-   */
-  getScheduledLocalNotificationsCount(): Promise<number> {
-    return new Promise(resolve => PushNotificationIOS.getScheduledLocalNotifications(({ length }) => resolve(length)));
   }
 
   /**
@@ -418,11 +415,6 @@ class FireBaseMessaging extends Component {
       // iosBadge: notification.ios.badge,
     });
 
-    if (isIOS) {
-      const notificationsCount = await this.generateApplicationIconBadgeNumber();
-      localNotification.ios.setBadge(notificationsCount);
-    }
-
     try {
       await firebase.notifications().displayNotification(localNotification);
     } catch (error) {
@@ -442,35 +434,21 @@ class FireBaseMessaging extends Component {
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
     this.openActivityByEventId(notificationOpen);
+    this.notificationsCount -= 1;
 
     if (isIOS) {
-      const iconBadgeNumber = await this.updateApplicationIconBadgeNumber();
-      this.props.updateBadgeNumber(iconBadgeNumber);
+      this.updateApplicationIconBadgeNumber();
+      this.props.updateBadgeNumber(this.notificationsCount);
     }
   };
 
   /**
    * Updates the notifications badge number for iOS.
    *
-   * @returns {number} the notification count.
+   * @returns {void}
    */
-  updateApplicationIconBadgeNumber = async () => {
-    const iconBadgeNumber = await this.generateApplicationIconBadgeNumber();
-
-    PushNotificationIOS.setApplicationIconBadgeNumber(iconBadgeNumber);
-    return iconBadgeNumber;
-  };
-
-  /**
-   * Calculates the total badge number.
-   *
-   * @returns {number} the total notification count.
-   */
-  generateApplicationIconBadgeNumber = async () => {
-    const deliveredNotificationsCount = await this.getDeliveredNotificationsCount();
-    const scheduledLocalNotificationsCount = await this.getScheduledLocalNotificationsCount();
-
-    return deliveredNotificationsCount + scheduledLocalNotificationsCount;
+  updateApplicationIconBadgeNumber = () => {
+    PushNotificationIOS.setApplicationIconBadgeNumber(this.notificationsCount);
   };
 
   /**
@@ -492,11 +470,6 @@ class FireBaseMessaging extends Component {
       subtitle: data.subtitle || null,
       data,
     });
-
-    if (isIOS) {
-      const notificationsCount = await this.generateApplicationIconBadgeNumber();
-      localNotification.ios.setBadge(notificationsCount + 1);
-    }
 
     try {
       await firebase.notifications().displayNotification(localNotification);
@@ -570,8 +543,8 @@ class FireBaseMessaging extends Component {
     }
 
     if (stateChanged && isIOS) {
-      const badgeNumber = await this.updateApplicationIconBadgeNumber();
-      updateBadgeNumber(badgeNumber);
+      this.updateApplicationIconBadgeNumber();
+      updateBadgeNumber(this.notificationsCount);
     }
 
     this.appState = nextAppState;
