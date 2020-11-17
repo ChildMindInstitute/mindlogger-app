@@ -51,14 +51,6 @@ class ChangePasswordScreen extends Component {
     const { authToken, user, updateUserDetailsSuccessful, replaceReponses } = this.props;
 
     return updatePassword(authToken, oldPassword, password)
-      .then(() => {
-        user.privateKey = getPrivateKey({
-          userId: user._id,
-          email: user.email,
-          password,
-        });
-        return replaceReponses(user);
-      })
       .then(() => updateUserDetailsSuccessful(user))
       .catch((e) => {
         throw new SubmissionError({
