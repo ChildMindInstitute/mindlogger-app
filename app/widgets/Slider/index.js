@@ -41,9 +41,8 @@ const styles = StyleSheet.create({
     borderRadius: 26 / 2,
     backgroundColor: 'transparent',
     borderColor: '#919191',
-    borderWidth: 2,
+    borderWidth: 0,
     elevation: 2,
-    borderStyle: 'dotted',
   },
   thumb: {
     width: 26,
@@ -163,8 +162,8 @@ class Slider extends Component {
 
   static defaultProps = {
     value: undefined,
-    onPress: () => {},
-    onRelease: () => {},
+    onPress: () => { },
+    onRelease: () => { },
   };
 
   state = {
@@ -249,9 +248,9 @@ class Slider extends Component {
     if (sliderWidth) {
       const calculatedValue = Math.ceil(
         Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1)
-          * itemList.length
-          + minimumValue
-          - 1,
+        * itemList.length
+        + minimumValue
+        - 1,
       );
       onChange(calculatedValue);
       this.setState({ currentValue: calculatedValue });
@@ -330,7 +329,7 @@ class Slider extends Component {
           {tickMarks.map(tickMark => (
             <View key={tickMark.value} style={[styles.tickMark, { left: tickMark.left }]}>
               <Text style={styles.tickLabel}> l </Text>
-              <Text> { tickMark.value } </Text>
+              <Text> {tickMark.value} </Text>
             </View>
           ))}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
