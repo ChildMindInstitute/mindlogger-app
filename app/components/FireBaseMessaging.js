@@ -38,8 +38,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-    console.log('component did mount -------------------->', AppState.currentState)
-
     if (AppState.currentState === 'background' && isAndroid) {
       NativeModules.DevSettings.reload();
     }
