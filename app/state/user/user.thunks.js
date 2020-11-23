@@ -27,7 +27,7 @@ export const updateUserDetailsSuccessful = response => (dispatch) => {
   dispatch(setInfo(response));
   dispatch(
     showToast({
-      text: 'User updated',
+      text: 'Password updated',
       position: 'bottom',
       duration: 2000,
     }),
