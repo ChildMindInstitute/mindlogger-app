@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.17] - 2020-11-21
 - Disabled NDK integration for fix sentry issue on Android 11
 
+## [0.14.16] - 2020-11-17
+- Remove knob on initial slider widget
+
 ## [0.14.15] - 2020-11-10
 - disable screenshot on android, show alert when user tries to switch http, save image/video in app storage
 
