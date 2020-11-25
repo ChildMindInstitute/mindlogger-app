@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.14.18] - 2020-11-24
 - Removed slider knob in Android
+- Fixed loading issue on Android background mode
+- Enabled/removed messaging services in android devices
 
 ## [0.14.17] - 2020-11-21
 - Disabled NDK integration for fix sentry issue on Android 11
