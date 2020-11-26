@@ -36,13 +36,8 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   thumbUnselected: {
-    width: 26,
-    height: 26,
-    borderRadius: 26 / 2,
-    backgroundColor: 'transparent',
-    borderColor: '#919191',
-    borderWidth: 0,
-    elevation: 2,
+    width: 0,
+    height: 0,
   },
   thumb: {
     width: 26,
