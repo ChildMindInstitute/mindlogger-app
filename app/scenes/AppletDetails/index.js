@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import { getStore } from '../../store';
-import { currentAppletSelector, skinSelector } from '../../state/app/app.selectors';
+import {
+  currentAppletSelector, skinSelector, startedTimesSelector
+} from '../../state/app/app.selectors';
 import AppletDetailsComponent from './AppletDetailsComponent';
 import {
-  inProgressSelector,
-  currentAppletResponsesSelector,
+  inProgressSelector, currentAppletResponsesSelector,
 } from '../../state/responses/responses.selectors';
 import { invitesSelector } from '../../state/applets/applets.selectors';
 import { getAppletResponseData } from '../../state/applets/applets.thunks';
@@ -17,6 +18,7 @@ import {
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
+  setActivityStartTime,
 } from '../../state/app/app.actions';
 import { startResponse } from '../../state/responses/responses.thunks';
 
@@ -30,6 +32,11 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handlePressActivity = (activity) => {
+    const { startedTimes } = this.props;
+    if (!startedTimes[activity.id]) {
+      this.props.setActivityStartTime(activity.id);
+    }
+
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
@@ -125,7 +132,9 @@ AppletDetails.propTypes = {
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
+  setActivityStartTime: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
+  startedTimes: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
   hasInvites: PropTypes.bool.isRequired,
   initialTab: PropTypes.string,
@@ -139,6 +148,7 @@ const mapStateToProps = state => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
+  startedTimes: startedTimesSelector(state),
   hasInvites: invitesSelector(state).length > 0,
   appletData: currentAppletResponsesSelector(state),
   // responsesSelector(state), // appletDataSelector(state) || {},
@@ -146,6 +156,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
+  setActivityStartTime,
   setCurrentApplet,
   startResponse,
   getAppletResponseData,

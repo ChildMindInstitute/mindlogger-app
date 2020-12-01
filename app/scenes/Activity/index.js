@@ -34,6 +34,7 @@ import {
 
 import { authTokenSelector } from '../../state/user/user.selectors';
 import ActivityScreens from '../../components/ActivityScreens';
+import ActivityTime from './ActivityTime';
 import ActivitySummary from '../ActivitySummary';
 import ActHeader from '../../components/header';
 import ActProgress from '../../components/progress';
@@ -202,6 +203,9 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
+        {activity.lastTimedActivity && (
+          <ActivityTime activity={activity} />
+        )}
         {!isSummaryScreen ? (
           <ActivityScreens
             activity={activity}
