@@ -32,7 +32,7 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
   if (activity.status === 'in-progress' && activity.lastScheduledTimestamp && lastTimedActivity) {
     let { hour, minute, second } = activity.lastTimedActivity;
 
-    const startedTime = startedTimes[activity.id];
+    const startedTime = startedTimes ? startedTimes[activity.id] : null;
 
     if (startedTime) {
       const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
@@ -49,7 +49,7 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
 
     return (
       <LittleText style={styles.textStyles}>
-        {hour !== null ? `Time to Complete: ${ hour } hours and ${ minute } minutes` : ``}
+        {(!startedTime || hour !== null) ? `Time to Complete: ${ hour } hours and ${ minute } minutes` : ``}
       </LittleText>
     )
   }

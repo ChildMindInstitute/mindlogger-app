@@ -33,7 +33,7 @@ class AppletDetails extends Component {
    */
   handlePressActivity = (activity) => {
     const { startedTimes } = this.props;
-    if (!startedTimes[activity.id]) {
+    if (startedTimes && !startedTimes[activity.id]) {
       this.props.setActivityStartTime(activity.id);
     }
 
