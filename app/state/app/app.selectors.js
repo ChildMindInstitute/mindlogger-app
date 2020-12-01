@@ -6,6 +6,8 @@ export const apiHostSelector = R.path(['app', 'apiHost']);
 
 export const skinSelector = R.path(['app', 'skin']);
 
+export const startedTimesSelector = R.path(['app', 'startedTimes']);
+
 export const appStatusSelector = R.path(['app', 'appStatus']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);

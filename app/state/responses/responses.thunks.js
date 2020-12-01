@@ -31,7 +31,7 @@ import {
   replaceAppletResponses,
   setActivityOpened,
 } from './responses.actions';
-import { setCurrentActivity } from '../app/app.actions';
+import { setCurrentActivity, clearActivityStartTime } from '../app/app.actions';
 
 import { currentActivityIdSelector, currentAppletSelector } from '../app/app.selectors';
 import { getNextPos, getLastPos } from '../../services/activityNavigation';
@@ -264,6 +264,20 @@ export const nextScreen = () => (dispatch, getState) => {
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
   }
+};
+
+export const finishActivity = (activity) => (dispatch) => {
+  dispatch(clearActivityStartTime(activity.id));
+  dispatch(completeResponse());
+  dispatch(setCurrentActivity(null));
+  Actions.push('activity_end');
+};
+
+export const endActivity = (activity) => (dispatch) => {
+  dispatch(clearActivityStartTime(activity.id));
+  dispatch(setCurrentActivity(activity.id));
+  dispatch(completeResponse());
+  dispatch(setCurrentActivity(null));
 };
 
 export const prevScreen = () => (dispatch, getState) => {
