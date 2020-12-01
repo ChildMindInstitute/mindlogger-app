@@ -38,9 +38,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-    if (AppState.currentState === 'background' && isAndroid) {
-      NativeModules.DevSettings.reload();
-    }
     this.listeners = [
       fNotifications.onNotification(this.onNotification),
       fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
