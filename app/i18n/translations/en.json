@@ -267,6 +267,7 @@
     "type_placeholder": "Please type text"
   },
   "additional": {
+    "end": "Time is up!",
     "thanks": "Thanks!",
     "saved_answers": "We've saved your answers!",
     "close": "Close",
