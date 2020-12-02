@@ -29,13 +29,13 @@ export const dateParser = (schedule) => {
     const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
 
     let lastScheduledResponse = lastScheduled;
-    let { lastScheduledTimeout } = output[uri];
-    let { extendedTime } = output[uri];
-    let { invalid } = output[uri];
-    let { completion } = output[uri];
+    let {
+      lastScheduledTimeout, lastTimedActivity, extendedTime, invalid, completion
+    } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
+      lastTimedActivity = e.data.timedActivity;
       completion = e.data.completion;
       invalid = e.valid;
       extendedTime = e.data.extendedTime;
@@ -48,6 +48,7 @@ export const dateParser = (schedule) => {
       );
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
+        lastTimedActivity = output[uri].lastTimedActivity;
         invalid = output[uri].valid;
         completion = output[uri].completion;
         extendedTime = output[uri].extendedTime;
@@ -55,10 +56,11 @@ export const dateParser = (schedule) => {
     }
 
     let nextScheduledResponse = nextScheduled;
-    let { nextScheduledTimeout } = output[uri];
+    let { nextScheduledTimeout, nextTimedActivity } = output[uri];
 
     if (nextScheduledResponse) {
       nextScheduledTimeout = e.data.timeout;
+      nextTimedActivity = e.data.timedActivity;
     }
 
     if (output[uri].nextScheduledResponse && nextScheduled) {
@@ -68,12 +70,15 @@ export const dateParser = (schedule) => {
       );
       if (nextScheduledResponse === output[uri].nextScheduledResponse) {
         nextScheduledTimeout = output[uri].nextScheduledTimeout;
+        nextTimedActivity = output[uri].nextTimedActivity;
       }
     }
 
     output[uri] = {
       lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
       nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      lastTimedActivity,
+      nextTimedActivity,
       extendedTime,
       invalid,
       lastScheduledTimeout,
@@ -105,6 +110,8 @@ export const appletsSelector = createSelector(
       const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
       const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
       const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
+      const nextTimedActivity = R.pathOr(null, ['nextTimedActivity'], scheduledDateTimes);
+      const lastTimedActivity = R.pathOr(null, ['lastTimedActivity'], scheduledDateTimes);
       const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
       const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
       const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
@@ -137,6 +144,8 @@ export const appletsSelector = createSelector(
         oneTimeCompletion: oneTimeCompletion || false,
         lastTimeout: prevTimeout,
         nextTimeout: scheduledTimeout,
+        nextTimedActivity,
+        lastTimedActivity,
         extendedTime,
         nextAccess,
         isOverdue:
