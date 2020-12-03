@@ -1,10 +1,13 @@
 import React from 'react';
-import { Text, TextInput } from 'react-native';
+import {
+  Text, TextInput, AppState, Platform
+} from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { I18nextProvider } from 'react-i18next';
+import RNRestart from 'react-native-restart';
 
 import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
@@ -17,6 +20,7 @@ import { clearUser } from './state/user/user.actions';
 import { currentAppletSelector } from './state/app/app.selectors';
 import FireBaseMessaging from './components/FireBaseMessaging';
 
+const isAndroid = Platform.OS === 'android';
 const checkAuthToken = (store) => {
   const state = store.getState();
   if (state.user.auth === null) {
@@ -44,6 +48,9 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
+  if (AppState.currentState === 'background' && isAndroid) {
+    RNRestart.Restart();
+  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {

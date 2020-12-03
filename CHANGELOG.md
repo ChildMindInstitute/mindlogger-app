@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.21] - 2020-12-3
+- Update Push-notification-ios library to 1.8.0
+
+## [0.14.20] - 2020-11-30
+- Removed NativeMmodule DevSettings as react-native version is less than 62.0
+
+## [0.14.19] - 2020-11-25
+- Added activity end screen
+- Built activity timer
+- Implemnet timed activity
+
+## [0.14.18] - 2020-11-24
+- Removed slider knob in Android
+- Fixed loading issue on Android background mode
+- Enabled/removed messaging services in android devices
+
+## [0.14.17] - 2020-11-21
+- Disabled NDK integration for fix sentry issue on Android 11
+
 ## [0.14.16] - 2020-11-17
 - Remove knob on initial slider widget
 

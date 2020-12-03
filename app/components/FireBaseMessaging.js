@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus, Linking } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
@@ -66,6 +66,7 @@ class FireBaseMessaging extends Component {
 
     if (event) {
       this.openActivityByEventId(event);
+      // if (isAndroid) NativeModules.DevSettings.reload();
     }
   }
 

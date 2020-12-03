@@ -5,6 +5,7 @@ import { Icon } from 'native-base';
 import TouchBox from '../core/TouchBox';
 import { SubHeading, NotificationDot, BodyText, LittleHeading } from '../core';
 import ActivityDueDate from './ActivityDueDate';
+import TimedActivity from './TimedActivity';
 import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
 
@@ -90,6 +91,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
               </BodyText>
             )}
             <ActivityDueDate activity={activity} />
+            <TimedActivity activity={activity} />
             {/* <Hyperlink
               style={styles.moreInfo}
               onPress={() => Actions.push('activity_details')}

@@ -15,6 +15,7 @@
     <application
         android:name=".MainApplication"
         android:allowBackup="false"
+        android:allowNativeHeapPointerTagging="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -31,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-
+        <meta-data android:name="io.sentry.ndk.enable" android:value="false" />
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_channel_id"
                 android:value="@string/default_notification_channel_id"/>
@@ -40,14 +41,13 @@
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:value="@mipmap/ic_launcher"/>
 
-        <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+        <service 
+            android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true"
+        >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" />
