@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 ## [0.14.20] - 2020-11-30
+- Update Push-notification-ios library to 1.8.0
+
+## [0.14.20] - 2020-11-30
 - Removed NativeMmodule DevSettings as react-native version is less than 62.0
 
 ## [0.14.19] - 2020-11-25
