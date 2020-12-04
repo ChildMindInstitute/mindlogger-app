@@ -17,7 +17,7 @@ class TokenChart extends React.Component {
   render() {
     const { data } = this.props;
     const SVGHeight = Math.round(Dimensions.get('window').width * 0.95);
-    const SVGWidth = Math.round(Dimensions.get('window').height * 0.6);
+    const SVGWidth = Math.round(Dimensions.get('window').height * 0.5);
     const GRAPH_MARGIN = 15;
     const GRAPH_BAR_WIDTH = 25;
     const graphHeight = SVGHeight - 2 * GRAPH_MARGIN;
