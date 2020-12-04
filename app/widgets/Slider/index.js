@@ -330,8 +330,11 @@ class Slider extends Component {
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
             <View ref={this.sliderRef} onLayout={this.measureSliderWidth}>
               <SliderComponent
-                value={currentVal >= minimumValue
-                  ? currentVal : (minimumValue + maximumValue) / 2}
+                value={currentVal < minimumValue
+                  ? minimumValue
+                  : currentVal > maximumValue
+                    ? maximumValue
+                    : currentVal }
                 onValueChange={value => this.handleValue(value)}
                 minimumValue={minimumValue}
                 maximumValue={maximumValue}
