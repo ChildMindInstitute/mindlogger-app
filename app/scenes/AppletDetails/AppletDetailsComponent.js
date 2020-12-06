@@ -95,7 +95,7 @@ class AppletDetailsComponent extends React.Component {
         return (
           <Content>
             <View style={{ flex: 1 }}>
-              <AppletCalendar responseDates={responseDates} appLanguage={this.props.appLanguage} />
+              <AppletCalendar responseDates={responseDates} />
               <ActivityList
                 onPressActivity={onPressActivity}
                 onLongPressActivity={onLongPressActivity}
@@ -196,13 +196,4 @@ AppletDetailsComponent.propTypes = {
   initialTab: PropTypes.string.isRequired,
 };
 
-const mapDispatchToProps = {};
-
-const mapStateToProps = state => ({
-  appLanguage: state.app.appLanguage,
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AppletDetailsComponent);
+export default AppletDetailsComponent;

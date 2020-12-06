@@ -67,7 +67,7 @@ class AppletSettings extends Component {
               </Button>
             </Left>
             <Body style={{ paddingTop: IOSBodyPadding }}>
-              <Title>Settings</Title>
+              <Title>{i18n.t('sidebar:settings')}</Title>
             </Body>
             <Right />
           </Header>
@@ -97,7 +97,7 @@ class AppletSettings extends Component {
                 style={{ borderRadius: 50 }}
                 onPress={() => this.showAlert()}
               >
-                <Text style={{ fontWeight: 'bold' }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 19 }}>
                   {i18n.t('applet_settings:remove_delete')}
                 </Text>
               </Button>

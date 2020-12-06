@@ -1,4 +1,8 @@
 {
+  "activity": {
+    "incorrect_answer": "Réponse incorrecte. Veuillez réessayer",
+    "failed": "Échoué"
+  },
   "activity_summary": {
     "save": "Sauvegarder",
     "summary": "Résumé",
@@ -16,6 +20,11 @@
   },
   "activity_chart": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
+  },
+  "calendar": {
+    "months": "Janvier_Février_Mars_Avril_Mai_Juin_Juillet_Août_Septembre_Octobre_Novembre_Décembre",
+    "weekdays": "Dim_Lun_Mar_Mer_Jeu_Ven_Sam",
+    "x_days": "L_M_M_J_V_S_D"
   },
   "applet_data": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
@@ -94,7 +103,7 @@
     "next": "Suivant"
   },
   "forgot_pass_form": {
-    "reset_pass": "Reset Password",
+    "reset_pass": "Réinitialiser le mot de passe",
     "enter_email_mess": "Veuillez saisir votre adresse e-mail",
     "invalid_email": "Adresse e-mail invalide",
     "email_address": "Adresse e-mail",
@@ -172,7 +181,7 @@
     "long_press_detail": "* Une pression longue diminue le compteur"
   },
   "activity_due_date": {
-    "available_all_day":"MindLogger Text - Google Sheets",
+    "available_all_day": "Disponible : Toute la journée",
     "available": "Disponible",
     "to": "à",
     "day": "jour",
