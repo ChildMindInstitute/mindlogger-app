@@ -12,6 +12,7 @@ import {
 import { min, max } from 'd3-array';
 import { scaleTime, scaleLinear } from 'd3-scale';
 import { line } from 'd3-shape';
+import i18n from 'i18next';
 
 import { colors } from '../../themes/colors';
 
@@ -76,7 +77,7 @@ class LineChart extends React.Component {
 
     // 5. put through mapper
     const xTicks = dateTicks.map(xMapper);
-    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const xDays = i18n.t('calendar:x_days').split('_');
 
     // 6. calculate min and max label values.
     const labelMin = min(labels, l => l.value);

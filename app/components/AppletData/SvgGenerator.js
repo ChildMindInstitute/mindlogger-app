@@ -5,6 +5,7 @@ import { Dimensions } from 'react-native';
 import { Svg, Text, Line, Circle, Path } from 'react-native-svg';
 import React from 'react';
 import { line } from 'd3-shape';
+import i18n from 'i18next';
 import { colors } from '../../themes/colors';
 
 const { width } = Dimensions.get('window');
@@ -14,7 +15,8 @@ const barChartItemHeight = Math.round(width * (2 / 3));
 
 const generateTimelineChart = (data, labels) => {
   const renderSingle = (label, data, xTicks, xMapper) => {
-    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const xDays = i18n.t('calendar:x_days').split('_');
+    
     return (
       <Svg width={chartItemWidth} height={65} key={label.name}>
         <Text x="0" y="10">{label.name}</Text>
@@ -131,7 +133,7 @@ const generateLineChart = (data, labels) => {
 
   // 5. put through mapper
   const xTicks = dateTicks.map(xMapper);
-  const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const xDays = i18n.t('calendar:x_days').split('_');
 
   // 6. calculate min and max label values.
   const labelMin = min(labels, l => l.value);

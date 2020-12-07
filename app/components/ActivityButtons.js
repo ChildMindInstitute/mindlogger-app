@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 5,
     backgroundColor: colors.secondary,
   },
 });

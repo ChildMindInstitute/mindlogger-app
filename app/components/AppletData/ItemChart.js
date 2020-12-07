@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import moment from 'moment';
+import i18n from 'i18next';
 
 import TokenChart from './TokenChart';
 import BaseText from '../base_text/base_text';
@@ -60,7 +61,7 @@ class ItemChart extends React.Component {
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
-    const dayOfWeeks = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const dayOfWeeks = i18n.t('calendar:weekdays').split('_');
 
     const month = currentDate.getUTCMonth() + 1;
     const day = currentDate.getUTCDate();

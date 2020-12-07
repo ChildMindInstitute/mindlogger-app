@@ -10,6 +10,7 @@ import {
 } from 'react-native-svg';
 import { min, max } from 'd3-array';
 import { scaleTime } from 'd3-scale';
+import i18n from 'i18next';
 
 import { colors } from '../../themes/colors';
 
@@ -21,7 +22,7 @@ class TimelineChart extends React.Component {
 
   // eslint-disable-next-line
   renderSingle(label, data, xTicks, xMapper) {
-    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const xDays = i18n.t('calendar:x_days').split('_');
     return (
       <Svg width={width} height={65} key={label.name}>
         <Text x="0" y="10">{label.name}</Text>
