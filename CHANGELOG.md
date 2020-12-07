@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.23] - 2020-12-6
+- Fixed navigation issue on restart
+
 ## [0.14.21] - 2020-12-3
 - Update Push-notification-ios library to 1.8.0
 
