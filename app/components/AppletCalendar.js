@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
 // import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import moment from 'moment';
-import frLocale from 'moment/locale/fr'; // language must match config
-import enLocale from 'moment/locale/en-ca'; // language must match config
+import { connect } from 'react-redux';
+import i18n from 'i18next';
 
 import CalendarStrip from 'react-native-calendar-strip';
 import { colors } from '../themes/colors';
@@ -16,11 +16,13 @@ const { width } = Dimensions.get('window');
 const ActCalendar = ({ responseDates, appLanguage }) => {
   return (
     <CalendarStrip
-      locale={
-        appLanguage === 'fr'
-          ? { name: 'fr', config: frLocale }
-          : { name: 'en-ca', config: enLocale }
-      }
+      locale={{
+        name: appLanguage,
+        config: {
+          months: i18n.t('calendar:months').split('_'),
+          weekdaysShort: i18n.t('calendar:weekdays').split('_'),
+        },
+      }}
       style={{ height: 90, width, paddingTop: 10, paddingBottom: 5 }}
       // selectedDate={new Date()}
       startingDate={moment().subtract(6, 'days')}
@@ -63,6 +65,13 @@ const ActCalendar = ({ responseDates, appLanguage }) => {
 
 ActCalendar.propTypes = {
   responseDates: PropTypes.array.isRequired,
+  appLanguage: PropTypes.string.isRequired,
 };
 
-export default ActCalendar;
+const mapStateToProps = ({ app }) => ({
+  appLanguage: app.appLanguage,
+});
+
+export default connect(
+  mapStateToProps,
+)(ActCalendar);

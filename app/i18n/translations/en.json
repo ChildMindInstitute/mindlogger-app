@@ -1,4 +1,8 @@
 {
+  "activity": {
+    "incorrect_answer": "Incorrect answer. Please try again",
+    "failed": "Failed"
+  },
   "activity_summary": {
     "save": "Save",
     "summary": "Summary",
@@ -16,6 +20,11 @@
   },
   "activity_chart": {
     "title": "Please take the assessment for data to be displayed."
+  },
+  "calendar": {
+    "months": "January_February_March_April_May_June_July_August_September_October_November_December",
+    "weekdays": "Sun_Mon_Tue_Wed_Thu_Fri_Sat",
+    "x_days": "M_T_W_T_F_S_S"
   },
   "applet_data": {
     "title": "Please take the assessment for data to be displayed."

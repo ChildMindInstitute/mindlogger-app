@@ -8,6 +8,7 @@ import {
   Text,
   Circle,
 } from 'react-native-svg';
+import i18n from 'i18next';
 import { min, max } from 'd3-array';
 import { scaleTime, scaleLinear } from 'd3-scale';
 
@@ -67,7 +68,7 @@ class BarChart extends React.Component {
 
     // 5. put through mapper
     const xTicks = dateTicks.map(xMapper);
-    const xDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const xDays = i18n.t('calendar:x_days').split('_');
 
     // 6. calculate max data value.
     // bar plots should have 0 as the min.
