@@ -39,10 +39,7 @@ class FireBaseMessaging extends Component {
    */
   async componentDidMount() {
     if (AppState.currentState === 'background' && isAndroid) {
-      Actions.splash();
-      setTimeout(() => {
-        RNRestart.Restart();
-      }, 1000);
+      RNRestart.Restart();
     } else {
       this.listeners = [
         fNotifications.onNotification(this.onNotification),
@@ -87,7 +84,9 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   componentWillUnmount() {
-    this.listeners.forEach(removeListener => removeListener());
+    if (this.listeners) {
+      this.listeners.forEach(removeListener => removeListener());
+    }
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
