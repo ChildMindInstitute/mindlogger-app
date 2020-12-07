@@ -39,7 +39,10 @@ class FireBaseMessaging extends Component {
    */
   async componentDidMount() {
     if (AppState.currentState === 'background' && isAndroid) {
-      RNRestart.Restart();
+      Actions.splash();
+      setTimeout(() => {
+        RNRestart.Restart();
+      }, 1000);
     } else {
       this.listeners = [
         fNotifications.onNotification(this.onNotification),
