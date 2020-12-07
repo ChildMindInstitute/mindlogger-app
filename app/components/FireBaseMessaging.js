@@ -5,7 +5,7 @@ import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-
+import RNRestart from 'react-native-restart';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import i18n from 'i18next';
@@ -38,35 +38,43 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-    this.listeners = [
-      fNotifications.onNotification(this.onNotification),
-      fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
-      fNotifications.onNotificationOpened(this.onNotificationOpened),
-      fMessaging.onTokenRefresh(this.onTokenRefresh),
-      fMessaging.onMessage(this.onMessage),
-    ];
-    this.appState = 'active';
-    this.notificationsCount = 0;
+    if (AppState.currentState === 'background' && isAndroid) {
+      RNRestart.Restart();
+    } else {
+      this.listeners = [
+        fNotifications.onNotification(this.onNotification),
+        fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
+        fNotifications.onNotificationOpened(this.onNotificationOpened),
+        fMessaging.onTokenRefresh(this.onTokenRefresh),
+        fMessaging.onMessage(this.onMessage),
+      ];
+      this.appState = 'active';
+      this.notificationsCount = 0;
 
-    AppState.addEventListener('change', this.handleAppStateChange);
+      AppState.addEventListener('change', this.handleAppStateChange);
 
-    if (isAndroid) {
-      this.initAndroidChannel();
-    }
+      if (isAndroid) {
+        this.initAndroidChannel();
+      }
 
-    if (isIOS) {
+      if (isIOS) {
+        this.notificationsCount = await this.getDeliveredNotificationsCount();
+        firebase.messaging().ios.registerForRemoteNotifications();
+      }
+
       this.notificationsCount = await this.getDeliveredNotificationsCount();
-      firebase.messaging().ios.registerForRemoteNotifications();
-    }
 
-    this.requestPermissions();
-    this.props.setFCMToken(await fMessaging.getToken());
 
-    const event = await fNotifications.getInitialNotification();
+      this.requestPermissions();
+      this.props.setFCMToken(await fMessaging.getToken());
 
-    if (event) {
-      this.openActivityByEventId(event);
-      // if (isAndroid) NativeModules.DevSettings.reload();
+      const event = await fNotifications.getInitialNotification();
+
+      if (event) {
+        this.openActivityByEventId(event);
+        // if (isAndroid) NativeModules.DevSettings.reload();
+
+      }
     }
   }
 

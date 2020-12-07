@@ -39,6 +39,7 @@ class SettingsScreen extends React.Component {
     if (prevProps.appLanguage !== this.props.appLanguage) {
       Actions.splash();
       setTimeout(() => {
+        console.log('RESTART---------------------------------------111111111111111');
         RNRestart.Restart();
       }, 1000);
     }
