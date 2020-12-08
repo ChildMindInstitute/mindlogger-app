@@ -7,6 +7,7 @@ import * as R from 'ramda';
 import _ from 'lodash';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
+import i18n from 'i18next';
 import { getStore } from '../../store';
 import {
   nextScreen,
@@ -243,8 +244,8 @@ class Activity extends React.Component {
                   const correctAnswer = activity.items[currentScreen].correctAnswer['en'];
                   if (responses[currentScreen] !== correctAnswer) {
                     Alert.alert(
-                      'Failed',
-                      'Incorrect answer. Please try again',
+                      i18n.t('activity:failed'),
+                      i18n.t('activity:incorrect_answer'),
                       [{
                         text: 'OK',
                         onPress: () => console.log('Incorrect!')

@@ -7,8 +7,6 @@ import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { I18nextProvider } from 'react-i18next';
-import RNRestart from 'react-native-restart';
-
 import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
@@ -48,9 +46,6 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  if (AppState.currentState === 'background' && isAndroid) {
-    RNRestart.Restart();
-  }
   const store = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {
