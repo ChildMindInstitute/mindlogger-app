@@ -1,5 +1,6 @@
 // Third-party libraries.
 import React, { useState, useEffect, useRef } from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import * as R from 'ramda';
 import { Parse, Day } from 'dayspan';
@@ -17,6 +18,7 @@ import {
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { getSchedules } from '../../state/applets/applets.thunks';
+import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
@@ -176,7 +178,7 @@ const getActivities = (applet, responseSchedule) => {
 
 const ActivityList = ({
   applet,
-  activitySelectionDisabled,
+  syncUploadQueue,
   appStatus,
   setAppStatus,
   getSchedules,
@@ -191,9 +193,11 @@ const ActivityList = ({
   onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
+  const [activities, setActivities] = useState([]);
+  const [isConnected, setIsConnected] = useState(true);
+
   const updateStatusDelay = 60 * 1000;
   const updateScheduleDelay = 24 * 3600 * 1000;
-  const [activities, setActivities] = useState([]);
 
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
@@ -234,6 +238,15 @@ const ActivityList = ({
     }
   };
 
+  const handleConnectivityChange = (connection) => {
+    if (connection.isConnected) {
+      syncUploadQueue();
+      setIsConnected(true);
+    } else {
+      setIsConnected(false);
+    }
+  }
+
   // useInterval(stateUpdate, updateStatusDelay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
@@ -264,7 +277,13 @@ const ActivityList = ({
       { after: leftTimeout },
     );
 
+    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+
     return () => {
+      if (netInfoUnsubscribe) {
+        netInfoUnsubscribe();
+      }
+
       clearExec(leftOutId);
       if (updateId) {
         clearExec(updateId);
@@ -275,7 +294,7 @@ const ActivityList = ({
         clearExec(intervalId);
       }
     };
-  });
+  }, []);
 
   useEffect(() => {
     if (appStatus) {
@@ -324,6 +343,7 @@ ActivityList.propTypes = {
   getSchedules: PropTypes.func.isRequired,
   setScheduleUpdated: PropTypes.func.isRequired,
   scheduleUpdated: PropTypes.bool.isRequired,
+  syncUploadQueue: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -348,6 +368,7 @@ const mapDispatchToProps = {
   getSchedules,
   setAppStatus,
   setScheduleUpdated,
+  syncUploadQueue,
 };
 
 export default connect(

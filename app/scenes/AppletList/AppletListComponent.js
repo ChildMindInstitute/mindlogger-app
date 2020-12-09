@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
-import { useNetInfo } from '@react-native-community/netinfo';
+import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
@@ -50,6 +50,7 @@ const AppletListComponent = ({
   primaryColor,
   onPressDrawer,
   onPressRefresh,
+  onUploadQueue,
   onPressAbout,
   onPressApplet,
   mobileDataAllowed,
@@ -57,6 +58,7 @@ const AppletListComponent = ({
 }) => {
   const [onSettings, setOnSettings] = useState(0);
   const [onAboutTime, setOnAboutTime] = useState(0);
+  const [isConnected, setIsConnected] = useState(true);
   const netInfo = useNetInfo();
 
   const onPressSettings = () => {
@@ -76,6 +78,27 @@ const AppletListComponent = ({
       onPressAbout();
     }
   };
+
+  const handleConnectivityChange = (connection) => {
+    if (connection.isConnected) {
+      if (!isConnected) {
+        onUploadQueue();
+        setIsConnected(true);
+      }
+    } else {
+      setIsConnected(false);
+    }
+  }
+
+  useEffect(() => {
+    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+
+    return () => {
+      if (netInfoUnsubscribe) {
+        netInfoUnsubscribe();
+      }
+    }
+  }, [])
 
   return (
     <Container style={styles.container}>
@@ -171,6 +194,7 @@ AppletListComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
+  onUploadQueue: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   primaryColor: PropTypes.string.isRequired,
