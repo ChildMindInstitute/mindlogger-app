@@ -43,3 +43,5 @@ export const currentActivitySelector = createSelector(
 
 export const appletSelectionDisabledSelector = R.path(['app', 'appletSelectionDisabled']);
 export const activitySelectionDisabledSelector = R.path(['app', 'activitySelectionDisabled']);
+
+export const currentPrizesActivitySelector = R.path(['app', 'currentPrizesActivity']);

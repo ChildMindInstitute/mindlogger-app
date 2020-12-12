@@ -20,6 +20,7 @@ import {
   TextEntry,
   TimeRange,
   VisualStimulusResponse,
+  RadioPrizes,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -212,6 +213,21 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'markdown-message') {
     return null;
   }
+
+  if (screen.inputType === 'radio_prizes'
+  // && Array.isArray(answer)
+  && R.path(['valueConstraints', 'itemList'], screen)) {
+  return (
+    <RadioPrizes
+      config={screen.valueConstraints}
+      onChange={onChange}
+      onSelected={setSelected}
+      value={answer}
+      selected={isSelected}
+      token={ valueType && valueType.includes("token")}
+    />
+  );
+}
 
   onContentError();
   return <WidgetError />;

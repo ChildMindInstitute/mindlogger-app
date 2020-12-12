@@ -41,6 +41,11 @@ class AppletDetails extends Component {
     this.props.startResponse(activity);
   };
 
+  handlePressPrize = (prizesActivity) => {
+    this.props.setCurrentPrizesActivity(prizesActivity);
+    Actions.push('take_prizes');
+  }
+
   /**
    * Method called when the activity is pressed for a few seconds.
    *
@@ -114,6 +119,8 @@ class AppletDetails extends Component {
         onPressDrawer={Actions.drawerOpen}
         onPressActivity={this.handlePressActivity}
         onLongPressActivity={this.handleLongPressActivity}
+        onPressPrize={this.handlePressPrize}
+        onLongPressPrize={this.handleLongPressActivity}
         onPressBack={this.handleBack}
         onPressSettings={() => Actions.push("applet_settings")}
         primaryColor={skin.colors.primary}
@@ -142,6 +149,7 @@ AppletDetails.propTypes = {
   getAppletResponseData: PropTypes.func.isRequired,
   setAppletSelectionDisabled: PropTypes.func.isRequired,
   setActivitySelectionDisabled: PropTypes.func.isRequired,
+  setCurrentPrizesActivity: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -161,6 +169,7 @@ const mapDispatchToProps = {
   getAppletResponseData,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
+  setCurrentPrizesActivity,
 };
 
 export default connect(

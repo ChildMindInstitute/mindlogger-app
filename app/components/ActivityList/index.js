@@ -13,6 +13,7 @@ import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '.
 import { delayedExec, clearExec } from '../../services/timing';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
+import TokenPrizesActivity from '../TokenPrizesActivity';
 import {
   newAppletSelector,
   activitySelectionDisabledSelector,
@@ -25,6 +26,8 @@ import {
   responseScheduleSelector,
   inProgressSelector,
 } from '../../state/responses/responses.selectors';
+
+import { prizesActivity } from './prizesActivity';
 
 const dateParser = (schedule) => {
   const output = {};
@@ -195,6 +198,8 @@ const ActivityList = ({
   inProgress,
   onPressActivity,
   onLongPressActivity,
+  onPressPrize,
+  onLongPressPrize,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
@@ -330,6 +335,11 @@ const ActivityList = ({
           key={activity.id || activity.text}
         />
       ))}
+      <TokenPrizesActivity
+        prizesActivity={prizesActivity}
+        onPress={onPressPrize}
+        onLongPress={onLongPressPrize}
+      />
     </View>
   );
 };
@@ -343,6 +353,8 @@ ActivityList.propTypes = {
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onLongPressActivity: PropTypes.func.isRequired,
+  onPressPrize: PropTypes.func.isRequired,
+  onLongPressPrize: PropTypes.func.isRequired,
   lastUpdatedTime: PropTypes.object.isRequired,
   activityEndTimes: PropTypes.object.isRequired,
   setUpdatedTime: PropTypes.func.isRequired,
