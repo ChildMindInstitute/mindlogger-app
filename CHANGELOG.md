@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.27] - 2020-12-13
+- Fixed default activity time
+
 ## [0.14.24] - 2020-12-7
 - Changed token chart width
 - Fixed maximum value on slider widget
