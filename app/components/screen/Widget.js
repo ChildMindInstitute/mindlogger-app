@@ -100,6 +100,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <TextEntry
         onChange={onChange}
         value={answer}
+        valueType={screen.valueConstraints.valueType}
       />
     );
   }
