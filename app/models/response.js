@@ -4,6 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
+import { getSubScaleScore, getScoreFromResponse } from '../services/subScaleScoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = typedId => typedId.split('/').pop();
@@ -41,6 +42,18 @@ export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => 
     languageCode: languageKey,
   };
 
+  let scores = [];
+  for (let i = 0; i < responses.length; i++) {
+    scores.push(getScoreFromResponse(activity.items[i], responses[i]));
+  }
+
+  let subScaleScores = [];
+  if (activity.subScales) {
+    for (let subScale of activity.subScales) {
+      subScaleScores.push(getSubScaleScore(subScale.jsExpression, activity.items, scores));
+    }
+  }
+
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const items = activity.items.reduce((accumulator, item, index) => ({ ...accumulator, [item.schema]: index }), {});
@@ -48,6 +61,12 @@ export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => 
 
     responseData['responses'] = items;
     responseData['dataSource'] = dataSource;
+
+    if (activity.subScales) {
+      responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
+      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+    }
+
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
@@ -57,6 +76,15 @@ export const prepareResponseForUpload = (inProgressResponse, appletMetaData) => 
       };
     }, {});
     responseData['responses'] = formattedResponses;
+
+    if (activity.subScales) {
+      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
+        return {
+          ...accumulator,
+          [subScale.variableName]: subScaleScores[index],
+        }
+      });
+    }
   }
 
   return responseData;
