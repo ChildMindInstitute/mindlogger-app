@@ -50,6 +50,12 @@ const COMPUTE = "reprolib:terms/compute";
 const SUBSCALES = "reprolib:terms/subScales";
 const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
+const LOOKUP_TABLE = "reprolib:terms/lookupTable";
+const AGE = "reprolib:terms/age";
+const RAW_SCORE = "reprolib:terms/rawScore";
+const SEX = "reprolib:terms/sex";
+const T_SCORE = "reprolib:terms/tScore";
+
 export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
@@ -181,6 +187,26 @@ export const transformVariableMap = (variableAr) =>
     };
   }, {});
 
+export const flattenLookupTable = (lookupTable) => {
+  if (!Array.isArray(lookupTable)) {
+    return undefined;
+  }
+
+  const references = {
+    [AGE]: 'age',
+    [RAW_SCORE]: 'rawScore',
+    [SEX]: 'sex',
+    [T_SCORE]: 'tScore'
+  };
+
+  return R.map(row => Object.keys(references).reduce((previousValue, key) => {
+    return {
+      ...previousValue,
+      [references[key]]: R.path([key, 0, "@value"], row)
+    }
+  }, {}), lookupTable)
+}
+
 export const transformMedia = (mediaObj) => {
   if (typeof mediaObj === "undefined") {
     return undefined;
@@ -311,10 +337,11 @@ export const activityTransformJson = (activityJson, itemsJson) => {
       variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
     }
   }, activityJson[COMPUTE]);
-  const subScales = activityJson[SUBSCALES] && R.map((item) => {
+  const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
     return {
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
-      variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
+      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
+      variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE])
     }
   }, activityJson[SUBSCALES])
   const messages = activityJson[MESSAGES] && R.map((item) => {
