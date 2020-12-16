@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   ScrollView,
@@ -12,10 +13,13 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
+// import PushNotification from "react-native-push-notification";
 import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
+import { setReminder } from '../../state/applets/applets.thunks';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
+// import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
 
@@ -47,7 +51,7 @@ const AppletListComponent = ({
   isDownloadingApplets,
   isDownloadingTargetApplet,
   title,
-  primaryColor,
+  setReminder,
   onPressDrawer,
   onPressRefresh,
   onUploadQueue,
@@ -80,18 +84,36 @@ const AppletListComponent = ({
   };
 
   const handleConnectivityChange = (connection) => {
+    console.log('network status is changed!!!!!!!!!!!')
     if (connection.isConnected) {
+      console.log('00000000000000000000000000000000000000000000000000');
       if (!isConnected) {
         onUploadQueue();
         setIsConnected(true);
       }
     } else {
+      console.log('111111111111111111111111111111111111111111111111');
       setIsConnected(false);
+      setReminder();
     }
   }
 
   useEffect(() => {
     const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    // console.log('scheduled notification time', Date.now());
+    // // PushNotification.localNotificationSchedule({
+    // //   //... You can use all the options from localNotifications
+    // //   message: "", // (required)
+    // //   date: new Date(Date.now() + 10 * 1000), // in 60 secs
+    // //   allowWhileIdle: true, // (optional) set notification to work while on doze, default: false
+    // // });
+
+    // const notificationService = new NotificationService(
+    //   () => { console.log('registered') },
+    //   () => { console.log('opened') },
+    // )
+    // const date = new Date(Date.now() + 10 * 1000) // adjust according to your use case
+    // notificationService.scheduleNotif();
 
     return () => {
       if (netInfoUnsubscribe) {
@@ -192,6 +214,7 @@ AppletListComponent.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
+  setReminder: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onUploadQueue: PropTypes.func.isRequired,
@@ -202,4 +225,11 @@ AppletListComponent.propTypes = {
   toggleMobileDataAllowed: PropTypes.func.isRequired,
 };
 
-export default AppletListComponent;
+const mapDispatchToProps = {
+  setReminder,
+};
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(AppletListComponent);

@@ -1,4 +1,5 @@
 import { Actions } from 'react-native-router-flux';
+import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
 import {
   getApplets,
@@ -17,7 +18,7 @@ import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
-import { activitiesSelector } from './applets.selectors';
+import { activitiesSelector, notificationsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
   setNotifications,
@@ -68,6 +69,69 @@ export const getSchedules = appletId => (dispatch, getState) => {
       console.warn(e);
     });
 };
+
+export const setReminder = () => async (dispatch, getState) => {
+  const state = getState();
+  const activities = activitiesSelector(state);
+  const notifications = notificationsSelector(state);
+  const activity = activities[0];
+  const date = new Date();
+  date.setSeconds(date.getSeconds() + 5);
+
+  const title = Platform.OS === "android" ? "Daily Reminder" : "";
+  const AndroidChannelId = 'MindLoggerChannelId';
+  const notificationData = {
+    event_id: 1,
+    applet_id: activity.appletId.split('/').pop(),
+    activity_id: activity.id.split('/').pop(),
+    type: "event-alert"
+  }
+  const settings = { showInForeground: true };
+  const localNotification = new firebase.notifications.Notification(settings)
+    .setNotificationId(`${activity.id}-${Math.random()}`) // Any random ID
+    .setTitle(title) // Title of the notification
+    .setBody("This is a notification") // body of notification
+    .setData(notificationData)
+    .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+    .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+    .android.setAutoCancel(true); // To remove notification when tapped on it
+
+
+  // return false;
+  // const { notificationTime, enableNotification } = this.state;
+  // if (enableNotification) {
+  firebase.notifications()
+    .scheduleNotification(localNotification, {
+      fireDate: date.getTime(),
+      repeatInterval: 'day',
+      exact: true,
+    })
+    .catch(err => console.error(err));
+};
+
+// const buildNotification = async (activity) => {
+//   const title = Platform.OS === "android" ? "Daily Reminder" : "";
+//   const AndroidChannelId = 'MindLoggerChannelId';
+//   const notificationData = {
+//     event_id: 1,
+//     applet_id: activity.appletId.split('/').pop(),
+//     activity_id: activity.id.split('/').pop(),
+//     type: "event-alert"
+//   }
+//   const settings = { showInForeground: true };
+//   const notification = new firebase.notifications.Notification(settings)
+//     .setNotificationId(`${activity.id}-${Math.random()}`) // Any random ID
+//     .setTitle(title) // Title of the notification
+//     .setBody("This is a notification") // body of notification
+//     .setData(notificationData);
+  
+  
+//   notification.android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+//   notification.android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+//   notification.android.setAutoCancel(true); // To remove notification when tapped on it
+
+//   return notification;
+// };
 
 export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
