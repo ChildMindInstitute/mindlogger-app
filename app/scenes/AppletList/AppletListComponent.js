@@ -84,15 +84,12 @@ const AppletListComponent = ({
   };
 
   const handleConnectivityChange = (connection) => {
-    console.log('network status is changed!!!!!!!!!!!')
     if (connection.isConnected) {
-      console.log('00000000000000000000000000000000000000000000000000');
       if (!isConnected) {
         onUploadQueue();
         setIsConnected(true);
       }
     } else {
-      console.log('111111111111111111111111111111111111111111111111');
       setIsConnected(false);
       setReminder();
     }
@@ -100,21 +97,6 @@ const AppletListComponent = ({
 
   useEffect(() => {
     const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
-    // console.log('scheduled notification time', Date.now());
-    // // PushNotification.localNotificationSchedule({
-    // //   //... You can use all the options from localNotifications
-    // //   message: "", // (required)
-    // //   date: new Date(Date.now() + 10 * 1000), // in 60 secs
-    // //   allowWhileIdle: true, // (optional) set notification to work while on doze, default: false
-    // // });
-
-    // const notificationService = new NotificationService(
-    //   () => { console.log('registered') },
-    //   () => { console.log('opened') },
-    // )
-    // const date = new Date(Date.now() + 10 * 1000) // adjust according to your use case
-    // notificationService.scheduleNotif();
-
     return () => {
       if (netInfoUnsubscribe) {
         netInfoUnsubscribe();

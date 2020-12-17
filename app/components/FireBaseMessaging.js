@@ -413,7 +413,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   onNotification = async (notification) => {
-    console.log(')----------------)', notification);
     const localNotification = this.newNotification({
       notificationId: notification.notificationId,
       title: notification.title,
