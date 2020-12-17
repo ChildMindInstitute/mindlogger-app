@@ -18,7 +18,7 @@ import { scheduleNotifications } from '../../services/pushNotifications';
 // eslint-disable-next-line
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
-import { activitiesSelector, notificationsSelector } from './applets.selectors';
+import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
   setNotifications,
@@ -72,42 +72,62 @@ export const getSchedules = appletId => (dispatch, getState) => {
 
 export const setReminder = () => async (dispatch, getState) => {
   const state = getState();
-  const activities = activitiesSelector(state);
-  const notifications = notificationsSelector(state);
-  const activity = activities[0];
-  const date = new Date();
-  date.setSeconds(date.getSeconds() + 5);
+  const applets = allAppletsSelector(state);
+  const notifications = [];
+  
+  closeExistingNotifications();
+  applets.forEach(applet => {
+    const validEvents = applet.schedule.events.filter(event => event.valid);
 
-  const title = Platform.OS === "android" ? "Daily Reminder" : "";
-  const AndroidChannelId = 'MindLoggerChannelId';
-  const notificationData = {
-    event_id: 1,
-    applet_id: activity.appletId.split('/').pop(),
-    activity_id: activity.id.split('/').pop(),
-    type: "event-alert"
-  }
-  const settings = { showInForeground: true };
-  const localNotification = new firebase.notifications.Notification(settings)
-    .setNotificationId(`${activity.id}-${Math.random()}`) // Any random ID
-    .setTitle(title) // Title of the notification
-    .setBody("This is a notification") // body of notification
-    .setData(notificationData)
-    .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
-    .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
-    .android.setAutoCancel(true); // To remove notification when tapped on it
+    validEvents.forEach(event => {
+      event.data.notifications.forEach(notification => {
+        const values = notification.start.split(':');
+        const date = new Date();
 
-
-  // return false;
-  // const { notificationTime, enableNotification } = this.state;
-  // if (enableNotification) {
-  firebase.notifications()
-    .scheduleNotification(localNotification, {
-      fireDate: date.getTime(),
-      repeatInterval: 'day',
-      exact: true,
+        date.setHours(values[0]);
+        date.setMinutes(values[1]);
+        if (date.getTime() > Date.now()) {
+          notifications.push({
+            eventId: event.id,
+            appletId: applet.id.split('/').pop(),
+            activityId: event.data.activity_id,
+            activityName: event.data.title,
+            date: date.getTime()
+          });
+        }
+      })
     })
-    .catch(err => console.error(err));
+  });
+  
+  notifications.forEach(notification => {
+    const settings = { showInForeground: true };
+    const AndroidChannelId = 'MindLoggerChannelId';
+    const localNotification = new firebase.notifications.Notification(settings)
+      .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
+      .setTitle(notification.activityName) // Title of the notification
+      .setData({
+        event_id: notification.eventId,
+        applet_id: notification.appletId,
+        activity_id: notification.activityId,
+        type: "event-alert"
+      })
+      .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+      .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+      .android.setAutoCancel(true); // To remove notification when tapped on it
+
+    firebase.notifications()
+      .scheduleNotification(localNotification, {
+        fireDate: notification.date,
+        repeatInterval: 'day',
+        exact: true,
+      })
+      .catch(err => console.error(err));
+  })
 };
+
+const closeExistingNotifications = () => {
+  firebase.notifications().cancelAllNotifications();
+}
 
 // const buildNotification = async (activity) => {
 //   const title = Platform.OS === "android" ? "Daily Reminder" : "";
@@ -124,8 +144,8 @@ export const setReminder = () => async (dispatch, getState) => {
 //     .setTitle(title) // Title of the notification
 //     .setBody("This is a notification") // body of notification
 //     .setData(notificationData);
-  
-  
+
+
 //   notification.android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
 //   notification.android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
 //   notification.android.setAutoCancel(true); // To remove notification when tapped on it
