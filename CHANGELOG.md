@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.28] - 2020-12-17
+- Implemented offline notification
+
+## [0.14.27] - 2020-12-13
+- Fixed default activity time
+
 ## [0.14.26] - 2020-12-8
 - Implemented offline scheduling 
 

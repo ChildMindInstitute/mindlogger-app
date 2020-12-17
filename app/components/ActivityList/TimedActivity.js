@@ -18,23 +18,22 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
   if (activity.status === 'scheduled' && activity.nextScheduledTimestamp && nextTimedActivity) {
     return (
       <LittleText style={styles.textStyles}>
-        {` Time to Complete: ${ nextTimedActivity.hour } hours and ${ nextTimedActivity.minute } minutes `}
+        {(nextTimedActivity && nextTimedActivity.allow) ? ` Time to Complete: ${ nextTimedActivity.hour } hours and ${ nextTimedActivity.minute } minutes ` : ``}
       </LittleText>
     );
   }
   if (activity.status === 'pastdue' && activity.lastScheduledTimestamp && lastTimedActivity) {
     return (
       <LittleText style={styles.textStyles}>
-        {` Time to Complete: ${ lastTimedActivity.hour } hours and ${ lastTimedActivity.minute } minutes `}
+        {(lastTimedActivity && lastTimedActivity.allow) ? ` Time to Complete: ${ lastTimedActivity.hour } hours and ${ lastTimedActivity.minute } minutes ` : ``}
       </LittleText>
     );
   }
   if (activity.status === 'in-progress' && activity.lastScheduledTimestamp && lastTimedActivity) {
     let { hour, minute, second } = activity.lastTimedActivity;
-
     const startedTime = startedTimes ? startedTimes[activity.id] : null;
 
-    if (startedTime) {
+    if (startedTime && activity.lastTimedActivity.allow) {
       const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
       const difference = Math.abs(Date.now() - startedTime);
 
@@ -45,6 +44,8 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
         hour = null;
         endActivity(activity);
       }
+    } else {
+      hour = null;
     }
 
     return (
