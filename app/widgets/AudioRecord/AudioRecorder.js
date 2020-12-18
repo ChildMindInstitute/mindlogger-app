@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
-import { Platform, StyleSheet } from 'react-native';
-import PropTypes from 'prop-types';
-import { Recorder } from '@react-native-community/audio-toolkit';
-import randomString from 'random-string';
-import Permissions, { PERMISSIONS } from 'react-native-permissions';
-import RNFetchBlob from 'rn-fetch-blob';
-import RecordButton from './RecordButton';
-import BaseText from '../../components/base_text/base_text';
-import { colors } from '../../theme';
+import React, { Component } from "react";
+import { Platform, StyleSheet } from "react-native";
+import PropTypes from "prop-types";
+import { Recorder } from "@react-native-community/audio-toolkit";
+import randomString from "random-string";
+import Permissions, { PERMISSIONS } from "react-native-permissions";
+import RNFetchBlob from "rn-fetch-blob";
+import RecordButton from "./RecordButton";
+import BaseText from "../../components/base_text/base_text";
+import { colors } from "../../theme";
 
 let intervalId = null;
 let recorder = null;
@@ -23,10 +23,10 @@ export default class AudioRecorder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      recorderState: 'ready',
+      recorderState: "ready",
       elapsed: null,
       path: props.path,
-      permission: 'undetermined',
+      permission: "",
     };
   }
 
@@ -52,9 +52,10 @@ export default class AudioRecorder extends Component {
   }
 
   record = () => {
-    const filename = Platform.OS === 'android'
-      ? `${randomString({ length: 20 })}.mp4`
-      : `${randomString({ length: 20 })}.aac`;
+    const filename =
+      Platform.OS === "android"
+        ? `${randomString({ length: 20 })}.mp4`
+        : `${randomString({ length: 20 })}.aac`;
     recorder = new Recorder(filename, {
       bitrate: 128000,
       channels: 1,
@@ -63,7 +64,7 @@ export default class AudioRecorder extends Component {
 
     // Delete old recording if there is one
     if (this.state.path !== null) {
-      RNFetchBlob.fs.unlink(this.state.path.replace('file://', ''));
+      RNFetchBlob.fs.unlink(this.state.path.replace("file://", ""));
     }
 
     recorder.prepare((prepareErr, fsPath) => {
@@ -71,7 +72,7 @@ export default class AudioRecorder extends Component {
       if (prepareErr) {
         const { err, message } = prepareErr;
         console.warn(err, message);
-        this.setState({ recorderState: 'error' });
+        this.setState({ recorderState: "error" });
       }
 
       // Check if there was an error starting recording
@@ -79,10 +80,10 @@ export default class AudioRecorder extends Component {
         if (recordErr) {
           const { err, message } = recordErr;
           console.warn(err, message);
-          this.setState({ recorderState: 'error' });
+          this.setState({ recorderState: "error" });
         }
         this.setState({
-          recorderState: 'recording',
+          recorderState: "recording",
           elapsed: 0,
           path: fsPath,
         });
@@ -104,7 +105,7 @@ export default class AudioRecorder extends Component {
       ios: PERMISSIONS.IOS.MICROPHONE,
     });
     Permissions.check(permission).then((response) => {
-      if (response !== Permissions.RESULTS.GRANTED) {
+      if (response == Permissions.RESULTS.GRANTED) {
         Permissions.request(permission).then((response) => {
           this.setState({ permission: response });
           if (response === Permissions.RESULTS.GRANTED) {
@@ -121,6 +122,7 @@ export default class AudioRecorder extends Component {
   stopRecording = () => {
     const { onStop } = this.props;
     const { path } = this.state;
+    console.log({ path });
     if (recorder.isRecording) {
       recorder.stop((e) => {
         if (e) {
@@ -130,7 +132,7 @@ export default class AudioRecorder extends Component {
         clearInterval(intervalId);
         intervalId = null;
         this.setState({
-          recorderState: 'stopped',
+          recorderState: "stopped",
         });
         onStop(path);
       });
@@ -150,7 +152,7 @@ export default class AudioRecorder extends Component {
     clearInterval(intervalId);
     intervalId = null;
     this.setState({
-      recorderState: 'ready',
+      recorderState: "ready",
       elapsed: null,
       path,
     });
@@ -160,16 +162,24 @@ export default class AudioRecorder extends Component {
     const { recorderState, elapsed, permission, path } = this.state;
     const { allowRetry } = this.props;
 
-    if (permission !== 'authorized' && permission !== 'undetermined') {
-      return <BaseText style={styles.infoText} textKey="audio_recorder:permission" />;
+    if (permission !== "authorized" && permission === "undetermined") {
+      return (
+        <BaseText style={styles.infoText} textKey="audio_recorder:permission" />
+      );
     }
 
     return (
       <RecordButton
-        onPress={recorderState === 'recording' ? this.stopRecording : this.startRecording}
+        onPress={
+          recorderState === "recording"
+            ? this.stopRecording
+            : this.startRecording
+        }
         elapsed={elapsed}
-        disabled={recorderState !== 'recording' && allowRetry === false && path !== null}
-        recording={recorderState === 'recording'}
+        disabled={
+          recorderState !== "recording" && allowRetry === false && path !== null
+        }
+        recording={recorderState === "recording"}
         fileSaved={path !== null}
       />
     );
