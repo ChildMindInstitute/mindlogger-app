@@ -8,6 +8,7 @@ import RNFetchBlob from "rn-fetch-blob";
 import RecordButton from "./RecordButton";
 import BaseText from "../../components/base_text/base_text";
 import { colors } from "../../theme";
+import { PermissionsAndroid } from "react-native";
 
 let intervalId = null;
 let recorder = null;
@@ -26,8 +27,39 @@ export default class AudioRecorder extends Component {
       recorderState: "ready",
       elapsed: null,
       path: props.path,
-      permission: "",
+      permission: "undetermined",
     };
+  }
+
+  async checkPermission() {
+    if (Platform.OS !== "android") {
+      return Promise.resolve(true);
+    }
+
+    let result;
+    try {
+      result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+        {
+          title: "Microphone Permission",
+          message:
+            "This app needs access to your microphone so you can search with voice.",
+        }
+      );
+    } catch (error) {
+      console.error("failed getting permission, result:", result);
+    }
+    console.log("permission result:", result);
+    if (result === "granted") {
+      this.setState({ permission: result });
+    } else {
+      this.setState({ permission: result });
+    }
+    return result === true || result === PermissionsAndroid.RESULTS.GRANTED;
+  }
+
+  componentWillMount() {
+    this.checkPermission();
   }
 
   componentDidUpdate(prevProps) {
@@ -105,8 +137,10 @@ export default class AudioRecorder extends Component {
       ios: PERMISSIONS.IOS.MICROPHONE,
     });
     Permissions.check(permission).then((response) => {
+      console.log(permission, "per");
       if (response == Permissions.RESULTS.GRANTED) {
         Permissions.request(permission).then((response) => {
+          console.log(permission, "missoin");
           this.setState({ permission: response });
           if (response === Permissions.RESULTS.GRANTED) {
             this.record();
@@ -162,7 +196,11 @@ export default class AudioRecorder extends Component {
     const { recorderState, elapsed, permission, path } = this.state;
     const { allowRetry } = this.props;
 
-    if (permission !== "authorized" && permission === "undetermined") {
+    if (
+      permission !== "authorized" &&
+      permission === "undetermined" &&
+      permission === "denied"
+    ) {
       return (
         <BaseText style={styles.infoText} textKey="audio_recorder:permission" />
       );

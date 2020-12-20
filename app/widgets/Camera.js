@@ -147,7 +147,7 @@ export class Camera extends Component {
         const filename = this.isIos
           ? response.uri.split("/").pop()
           : response.path.split("/").pop();
-        // console.log({ filename });
+        console.log({ response });
         const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
         console.log({ path: toPath });
         const picSource = {

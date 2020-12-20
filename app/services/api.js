@@ -115,6 +115,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
 };
 
 const uploadFiles = (authToken, response, item) => {
+  console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
 
   // Each "response" has number of "answers", each of which may have a file
@@ -164,6 +165,8 @@ const uploadFiles = (authToken, response, item) => {
         RNFetchBlob.fs.unlink(file.uri.split("///").pop());
       });
 
+    console.log({ request });
+
     return [...accumulator, request];
   }, []);
 
@@ -178,6 +181,8 @@ const uploadResponse = (authToken, response) =>
     .then((item) => uploadFiles(authToken, response, item))
     .then(() => {
       const responses = R.pathOr([], ["payload", "responses"], response);
+      console.log({ apiRes: responses });
+      console.log({ resss: response });
       cleanFiles(responses);
     });
 
