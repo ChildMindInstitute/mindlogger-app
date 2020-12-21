@@ -105,6 +105,9 @@ export const flattenItemList = (list = []) =>
 
 export const flattenValueConstraints = (vcObj) =>
   Object.keys(vcObj).reduce((accumulator, key) => {
+    if (key === '@type') {
+      return { ...accumulator, valueType: R.path([key, 0], vcObj) };
+    }
     if (key === MAX_VALUE) {
       return { ...accumulator, maxValue: R.path([key, 0, "@value"], vcObj) };
     }
