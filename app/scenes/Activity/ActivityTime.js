@@ -17,9 +17,10 @@ const styles = StyleSheet.create({
 });
 
 const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
-  let { hour, minute, second } = activity.lastTimedActivity;
+  let { hour, minute, second, allow } = activity.lastTimedActivity;
   const startedTime = startedTimes ? startedTimes[activity.id] : null;
-  if (startedTime) {
+  
+  if (startedTime && allow) {
     const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
     const difference = Math.abs(Date.now() - startedTime);
     if (activityTime > difference) {
@@ -29,6 +30,8 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
     } else {
       hour = null;
     }
+  } else {
+    hour = null;
   }
   const initialState = (!startedTime || hour !== null) ? {
     eventDate: moment.duration().add({

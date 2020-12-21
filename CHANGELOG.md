@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-## [0.14.28] - 2020-12-15
+## [0.14.29] - 2020-12-21
 - use lookup table for calculating sub-scaled scores
+
+## [0.14.28] - 2020-12-20
+- Add minor fix on activity timer
+
+## [0.14.27] - 2020-12-15
+- Added numeric input widget
+
+## [0.14.26] - 2020-12-13
+- Fixed default activity time
 
 ## [0.14.25] - 2020-12-8
 - send sub-scaled scores to backend
