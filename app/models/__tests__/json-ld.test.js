@@ -65,6 +65,7 @@ test('flattenValueConstraints', () => {
   const valueConstraints = item['reprolib:terms/responseOptions'][0];
   expect(flattenValueConstraints(valueConstraints)).toEqual({
     multipleChoice: false,
+    valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     maxValue: 1,
     minValue: 0,
     valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
@@ -74,14 +75,18 @@ test('flattenValueConstraints', () => {
         name: {
           en: 'No',
         },
+        score: undefined,
         value: 0,
+        valueConstraints: undefined,
       },
       {
         image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
         name: {
           en: 'Yes',
         },
+        score: undefined,
         value: 1,
+        valueConstraints: undefined,
       },
     ],
   });

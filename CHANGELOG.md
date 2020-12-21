@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.28] - 2020-12-20
+- Add minor fix on activity timer
+
 ## [0.14.27] - 2020-12-15
 - Added numeric input widget
 
