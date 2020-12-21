@@ -65,6 +65,7 @@ test('flattenValueConstraints', () => {
   const valueConstraints = item['reprolib:terms/responseOptions'][0];
   expect(flattenValueConstraints(valueConstraints)).toEqual({
     multipleChoice: false,
+    valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     maxValue: 1,
     minValue: 0,
     itemList: [
@@ -73,14 +74,18 @@ test('flattenValueConstraints', () => {
         name: {
           en: 'No',
         },
+        score: undefined,
         value: 0,
+        valueConstraints: undefined,
       },
       {
         image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
         name: {
           en: 'Yes',
         },
+        score: undefined,
         value: 1,
+        valueConstraints: undefined,
       },
     ],
   });
@@ -227,6 +232,7 @@ test('itemTransformJson', () => {
     inputs: {},
     valueConstraints: {
       multipleChoice: false,
+      valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
       maxValue: 1,
       minValue: 0,
       itemList: [
@@ -235,6 +241,7 @@ test('itemTransformJson', () => {
           name: {
             en: 'No',
           },
+          score: undefined,
           value: 0,
           valueConstraints: undefined,
         },
@@ -243,6 +250,7 @@ test('itemTransformJson', () => {
           name: {
             en: 'Yes',
           },
+          score: undefined,
           value: 1,
           valueConstraints: undefined,
         },
@@ -251,6 +259,7 @@ test('itemTransformJson', () => {
     skippable: undefined,
     autoAdvance: false,
     backDisabled: false,
+    correctAnswer: undefined,
     fullScreen: false,
     id: "screen/5cbf991e86fafd5189aee252",
     timer: undefined,
