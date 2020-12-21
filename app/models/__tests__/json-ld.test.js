@@ -68,6 +68,7 @@ test('flattenValueConstraints', () => {
     valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     maxValue: 1,
     minValue: 0,
+    valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     itemList: [
       {
         image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
