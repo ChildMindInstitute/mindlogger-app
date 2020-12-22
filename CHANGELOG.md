@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.30] - 2020-12-22
+- Wrapped completionHandler in the try/catch block 
+
 ## [0.14.28] - 2020-12-20
 - Add minor fix on activity timer
 
