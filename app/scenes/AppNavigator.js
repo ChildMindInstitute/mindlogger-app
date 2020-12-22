@@ -1,39 +1,46 @@
-import React, { Component } from 'react';
-import { Alert, BackHandler } from 'react-native';
-import { StyleProvider } from 'native-base';
-import { Router, Scene, Lightbox, Actions, Modal } from 'react-native-router-flux';
-import i18n from 'i18next';
-import getTheme from '../../native-base-theme/components';
-import platform from '../../native-base-theme/variables/platform';
+import React, { Component } from "react";
+import { Alert, BackHandler } from "react-native";
+import { StyleProvider } from "native-base";
+import {
+  Router,
+  Scene,
+  Lightbox,
+  Actions,
+  Modal,
+} from "react-native-router-flux";
+import i18n from "i18next";
+import getTheme from "../../native-base-theme/components";
+import platform from "../../native-base-theme/variables/platform";
 // Scenes
-import AboutApp from './AboutApp';
-import Activity from './Activity';
-import ActivityDetails from './ActivityDetails';
-import ActivityThanks from './ActivityThanks';
-import ActivityEnd from './ActivityEnd';
-import ActivitySummary from './ActivitySummary';
-import AppletDetails from './AppletDetails';
-import AppletList from './AppletList';
-import ChangeStudy from './ChangeStudy';
-import Consent from './Consent';
-import ForgotPassword from './ForgotPassword';
-import InfoAct from './InfoAct';
-import Login from './Login';
-import LogoutWarning from './LogoutWarning';
-import Settings from './Settings';
-import ChangePassword from './ChangePassword';
+import AboutApp from "./AboutApp";
+import Activity from "./Activity";
+import ActivityDetails from "./ActivityDetails";
+import ActivityThanks from "./ActivityThanks";
+import ActivityEnd from "./ActivityEnd";
+import ActivitySummary from "./ActivitySummary";
+import AppletDetails from "./AppletDetails";
+import AppletList from "./AppletList";
+import ChangeStudy from "./ChangeStudy";
+import Consent from "./Consent";
+import ForgotPassword from "./ForgotPassword";
+import InfoAct from "./InfoAct";
+import Login from "./Login";
+import LogoutWarning from "./LogoutWarning";
+import Settings from "./Settings";
+import ChangePassword from "./ChangePassword";
 // import SideBar from './Sidebar';
-import Signup from './Signup';
-import Splash from './Splash';
-import VolumeInfo from './VolumeInfo';
+import Signup from "./Signup";
+import Splash from "./Splash";
+import VolumeInfo from "./VolumeInfo";
 // import { colors } from '../themes/colors';
-import AppletInviteFlow from './AppletInviteFlow';
-import AppletSettings from './AppletSettings';
-import AppLanguage from './AppLanguage';
+import AppletInviteFlow from "./AppletInviteFlow";
+import AppletSettings from "./AppletSettings";
+import AppLanguage from "./AppLanguage";
 
 const theme = getTheme(platform);
-theme['NativeBase.Footer'].height = 80;
-theme['NativeBase.FooterTab']['NativeBase.Button']['.active'].backgroundColor = 'transparent';
+theme["NativeBase.Footer"].height = 80;
+theme["NativeBase.FooterTab"]["NativeBase.Button"][".active"].backgroundColor =
+  "transparent";
 
 // eslint-disable-next-line
 const Navigator = Actions.create(
@@ -68,43 +75,49 @@ const Navigator = Actions.create(
       <Scene key="activity_thanks" component={ActivityThanks} />
       <Scene key="activity_end" component={ActivityEnd} />
     </Modal>
-  </Lightbox>,
+  </Lightbox>
 );
 
 class AppNavigator extends Component {
   componentDidMount() {
-    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    this.backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      this.handleBackButton
+    );
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    BackHandler.removeEventListener("hardwareBackPress", this.handleBackButton);
   }
 
   handleBackButton = () => {
-    console.log('current route:', Actions.currentScene);
-    if (Actions.currentScene === 'login' || Actions.currentScene === 'applet_list') {
+    console.log("current route:", Actions.currentScene);
+    if (
+      Actions.currentScene === "login" ||
+      Actions.currentScene === "applet_list"
+    ) {
       Alert.alert(
-        i18n.t('navigator:exit_title'),
-        i18n.t('navigator:exit_subtitle'),
+        i18n.t("navigator:exit_title"),
+        i18n.t("navigator:exit_subtitle"),
         [
           {
-            text: i18n.t('navigator:cancel'),
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
+            text: i18n.t("navigator:cancel"),
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
           },
           {
-            text: 'OK',
+            text: "OK",
             onPress: () => BackHandler.exitApp(),
           },
         ],
         {
           cancelable: false,
-        },
+        }
       );
       return true;
     }
-    if (Actions.currentScene === 'applet_details') {
-      Actions.push('applet_list');
+    if (Actions.currentScene === "applet_details") {
+      Actions.push("applet_list");
       return true;
     }
     Actions.pop();

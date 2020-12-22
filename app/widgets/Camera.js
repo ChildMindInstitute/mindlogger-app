@@ -1,13 +1,18 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-native';
+import {
+  Image,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import { View, Icon } from 'native-base';
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker, { ImagePickerOptions } from 'react-native-image-picker';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
-
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -70,85 +75,179 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-
 export class Camera extends Component {
-  libraryAlert = (options, callback) => {
+  isIos = Platform.OS === 'ios';
+
+  libraryAlert = () => {
+    const { video } = this.props;
+    const mediaType = video ? 'video' : 'photo';
+
     Alert.alert(
-      `${i18n.t('camera:choose')} ${options.mediaType}`,
-      `${i18n.t('camera:take_a_new')} ${options.mediaType} ${i18n.t('camera:or_choose')}`,
+      `${i18n.t('camera:choose')} ${mediaType}`,
+      `${i18n.t('camera:take_a_new')} ${mediaType} ${i18n.t(
+        'camera:or_choose',
+      )}`,
       [
         {
           text: i18n.t('camera:camera'),
-          onPress: () => {
-            ImagePicker.launchCamera(options, (response) => {
-              response.choice = 'camera';
-              callback(response);
-            });
-          },
+          onPress: video ? this.take : this.launchCamForCam,
         },
         {
           text: i18n.t('camera:library'),
-          onPress: () => {
-            ImagePicker.launchImageLibrary(options, (response) => {
-              response.choice = 'library';
-              callback(response);
-            });
-          },
+          onPress: this.launchImageLibrary,
         },
       ],
       { cancelable: true },
     );
   };
 
-  take = () => {
-    const { video, onChange, config } = this.props;
-    const options = {
+  launchImageLibrary = () => {
+    const { video } = this.props;
+    const options: ImagePickerOptions = {
+      noData: true,
       mediaType: video ? 'video' : 'photo',
       storageOptions: {
-        cameraRoll: true,
-        waitUntilSaved: true,
+        skipBackup: true,
+        path: video ? 'video' : 'photo',
       },
-      quality: 0.5,
-      cameraType: 'front',
       videoQuality: 'low',
-      maxWidth: 2048,
-      maxHeight: 2048,
+      quality: 0.1,
+      durationLimit: 5,
+      saveToPhotos: false,
+      maxWidth: 800,
+      maxHeight: 800,
     };
-
-    const pickerFunc = config.allowLibrary ? this.libraryAlert : ImagePicker.launchCamera;
-
-    pickerFunc(options, (response) => {
+    ImagePicker.launchImageLibrary(options, (response) => {
+      console.log('launchImageLibrary', { response });
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+      }
       if (!response.didCancel && !response.error) {
-        const filename = response.path.split('/').pop();
-
+        const { onChange } = this.props;
+        const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
+        const filename = filePath.split('/').pop();
         const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
-
         const picSource = {
           uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
-          fromLibrary: response.choice === 'library',
+          fromLibrary: true,
         };
-
-        let fileManager = RNFetchBlob.fs.cp(response.path, picSource.uri.split('///').pop());
-
-        if (response.choice !== 'library') {
-          fileManager = fileManager.then(() => RNFetchBlob.fs.unlink(response.path));
-        }
-
-        fileManager.then(() => {
+        console.log({ picSource });
+        RNFetchBlob.fs.cp(
+          filePath,
+          picSource.uri.split('///').pop(),
+        ).then(() => {
           onChange(picSource);
-        }).catch(e => {
-          console.error(e);
-        });
-
+        })
+          .catch((e) => {
+            console.error(e);
+          });
       }
     });
   };
 
+  launchCamForCam = () => {
+    const options: ImagePickerOptions = {
+      noData: true,
+      mediaType: 'photo',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+        waitUntilSaved: true,
+      },
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      const { onChange } = this.props;
+      if (!response.didCancel && !response.error) {
+        const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
+        const filename = filePath.split('/').pop();
+        const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+        const picSource = {
+          uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
+          filename,
+          type: response.type || VIDEO_MIME_TYPE,
+          fromLibrary: false,
+        };
+
+        RNFetchBlob.fs.cp(
+          filePath,
+          picSource.uri.split('///').pop(),
+        )
+          .then(() => RNFetchBlob.fs.unlink(filePath))
+          .then(() => {
+            onChange(picSource);
+          })
+          .catch((e) => {
+            console.error(e);
+          });
+      }
+    });
+  };
+
+  take = () => {
+    try {
+      const { video, onChange, config } = this.props;
+      console.log({ video });
+      const options: ImagePickerOptions = {
+        mediaType: 'video',
+        storageOptions: {
+          cameraRoll: true,
+          waitUntilSaved: true,
+        },
+        videoQuality: 'low',
+        quality: 0.5,
+      };
+      if (config.allowLibrary) {
+        this.launchImageLibrary();
+      } else {
+        ImagePicker.launchCamera(options, (response) => {
+          console.log(response, 'video response');
+          if (response.error) {
+            alert(response.error);
+          }
+          if (!response.didCancel && !response.error) {
+            const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
+            const filename = filePath.split('/').pop();
+            const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+            const picSource = {
+              uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
+              filename,
+              type: response.type || VIDEO_MIME_TYPE,
+              fromLibrary: false,
+            };
+            if (filePath === toPath) {
+              onChange(picSource);
+            } else {
+              RNFetchBlob.fs.cp(
+                filePath,
+                picSource.uri.split('///').pop(),
+              ).then(() => RNFetchBlob.fs.unlink(filePath)).then(() => {
+                onChange(picSource);
+              })
+                .catch((e) => {
+                  console.log({ e });
+                  alert(e?.message);
+                });
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   render() {
     const { value, video } = this.props;
+    // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
+    // this.getImageFromCamera();
     return (
       <View style={styles.body}>
         {value && video && (
@@ -159,7 +258,10 @@ export class Camera extends Component {
         {value && !video && <Image source={value} style={styles.image} />}
         {!value && (
           <View>
-            <TouchableOpacity onPress={this.take} style={styles.takeButton}>
+            <TouchableOpacity
+              onPress={this.libraryAlert}
+              style={styles.takeButton}
+            >
               <Icon type="Entypo" name={iconName} style={styles.redIcon} />
             </TouchableOpacity>
           </View>
@@ -168,7 +270,6 @@ export class Camera extends Component {
     );
   }
 }
-
 Camera.defaultProps = {
   value: undefined,
   video: false,
@@ -176,7 +277,6 @@ Camera.defaultProps = {
     allowLibrary: true,
   },
 };
-
 Camera.propTypes = {
   video: PropTypes.bool,
   value: PropTypes.shape({
