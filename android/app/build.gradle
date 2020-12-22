@@ -131,8 +131,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 248
-        versionName "0.14.28"
+        versionCode 249
+        versionName "0.14.29"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
@@ -199,6 +199,8 @@ dependencies {
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
+    // implementation project(':@react-native-community_audio-toolkit')
+
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
