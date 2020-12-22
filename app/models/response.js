@@ -1,9 +1,10 @@
-import * as R from "ramda";
-import { Dimensions } from "react-native";
-import DeviceInfo from "react-native-device-info";
-import packageJson from "../../package.json";
-import config from "../config";
-import { encryptData } from "../services/encryption";
+import * as R from 'ramda';
+import { Dimensions } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import packageJson from '../../package.json';
+import config from '../config';
+import { encryptData } from '../services/encryption';
+import { getSubScaleScore, getScoreFromResponse } from '../services/subScaleScoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
@@ -47,6 +48,18 @@ export const prepareResponseForUpload = (
     languageCode: languageKey,
   };
 
+  let scores = [];
+  for (let i = 0; i < responses.length; i++) {
+    scores.push(getScoreFromResponse(activity.items[i], responses[i]));
+  }
+
+  let subScaleScores = [];
+  if (activity.subScales) {
+    for (let subScale of activity.subScales) {
+      subScaleScores.push(getSubScaleScore(subScale.jsExpression, activity.items, scores));
+    }
+  }
+
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const items = activity.items.reduce(
@@ -55,20 +68,32 @@ export const prepareResponseForUpload = (
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
 
-    responseData["responses"] = items;
-    responseData["dataSource"] = dataSource;
-    responseData["userPublicKey"] = appletMetaData.userPublicKey;
+    responseData['responses'] = items;
+    responseData['dataSource'] = dataSource;
+
+    if (activity.subScales) {
+      responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
+      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+    }
+
+    responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
-    const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => {
+    const formattedResponses = activity.items.reduce((accumulator, item, index) => {
+      return {
+        ...accumulator,
+        [item.schema]: responses[index],
+      };
+    }, {});
+    responseData['responses'] = formattedResponses;
+
+    if (activity.subScales) {
+      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
         return {
           ...accumulator,
-          [item.schema]: responses[index],
-        };
-      },
-      {}
-    );
-    responseData["responses"] = formattedResponses;
+          [subScale.variableName]: subScaleScores[index],
+        }
+      });
+    }
   }
   console.log({ responseData });
 
