@@ -33,7 +33,8 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
   } else {
     hour = null;
   }
-  const initialState = (!startedTime || hour !== null) ? {
+
+  const initialState = (hour !== null) ? {
     eventDate: moment.duration().add({
       hours: hour,
       minutes: minute,
