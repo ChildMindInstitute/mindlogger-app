@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.33] - 2020-12-23
+- use lookup table for calculating sub-scaled scores
+
 ## [0.14.31] - 2020-12-22
 - Fix activity timer on notification
 
@@ -13,9 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.14.29] - 2020-12-21
 - Fixed media items not working
-
-## [0.14.29] - 2020-12-21
-- use lookup table for calculating sub-scaled scores
 
 ## [0.14.28] - 2020-12-20
 - Add minor fix on activity timer
