@@ -38,9 +38,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-    if (AppState.currentState === 'background' && isAndroid) {
-      RNRestart.Restart();
-    } else {
       this.listeners = [
         fNotifications.onNotification(this.onNotification),
         fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
@@ -75,7 +72,6 @@ class FireBaseMessaging extends Component {
         // if (isAndroid) NativeModules.DevSettings.reload();
 
       }
-    }
   }
 
   /**
@@ -416,7 +412,7 @@ class FireBaseMessaging extends Component {
    *
    * @returns {void}
    */
-  onNotification = async (notification: firebase.RNFirebase.notifications.Notification) => {
+  onNotification = async (notification) => {
     const localNotification = this.newNotification({
       notificationId: notification.notificationId,
       title: notification.title,
@@ -425,6 +421,7 @@ class FireBaseMessaging extends Component {
       data: notification.data,
       // iosBadge: notification.ios.badge,
     });
+
 
     try {
       await firebase.notifications().displayNotification(localNotification);

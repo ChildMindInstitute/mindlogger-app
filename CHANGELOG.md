@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.33] - 2020-12-23
 - use lookup table for calculating sub-scaled scores
 
+## [0.14.32] - 2020-12-22
+- Implemented offline scheduling 
+
 ## [0.14.31] - 2020-12-22
 - Fix activity timer on notification
 
