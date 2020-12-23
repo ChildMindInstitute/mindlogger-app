@@ -1,6 +1,6 @@
 import { Parser } from 'expr-eval';
 
-export const getScoreFromResponse = (item, value) => {
+const getScoreFromResponse = (item, value) => {
   if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
     return 0;
   }
@@ -34,7 +34,7 @@ export const getScoreFromResponse = (item, value) => {
 }
 
 
-export const getSubScaleScore = (testExpression, items = [], scores = []) => {
+const getSubScaleScore = (testExpression, items = [], scores = []) => {
   const parser = new Parser();
 
   try {
@@ -53,3 +53,45 @@ export const getSubScaleScore = (testExpression, items = [], scores = []) => {
     return 0;
   }
 };
+
+export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
+  let scores = [];
+  for (let i = 0; i < responses.length; i++) {
+    scores.push(getScoreFromResponse(items[i], responses[i]));
+  }
+
+  let subScaleScore = getSubScaleScore(jsExpression, items, scores);
+  if (!lookupTable) {
+    return subScaleScore;
+  }
+
+  const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
+  const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')] ? 'F' : 'M';
+
+  const isValueInRange = (value, lookupInfo) => {
+    if (!lookupInfo || lookupInfo == value) {
+      return true;
+    }
+
+    const matched = lookupInfo.match(/^(\d+)\s*[-~]\s*(\d+)$/);
+
+    if (matched) {
+      value = parseInt(value);
+
+      return !isNaN(value) && value >= parseInt(matched[1]) && value <= parseInt(matched[2]);
+    }
+    return false;
+  };
+
+  for (let row of lookupTable) {
+    if ( 
+      isValueInRange(subScaleScore, row.rawScore) && 
+      isValueInRange(age, row.age) &&
+      isValueInRange(gender, row.gender)
+    ) {
+      return parseInt(row.tScore);
+    }
+  }
+
+  return subScaleScore;
+}

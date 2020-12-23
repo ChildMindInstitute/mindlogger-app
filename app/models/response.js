@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleScore, getScoreFromResponse } from '../services/subScaleScoring';
+import { getScoreFromLookupTable } from '../services/subScaleScoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
@@ -48,15 +48,12 @@ export const prepareResponseForUpload = (
     languageCode: languageKey,
   };
 
-  let scores = [];
-  for (let i = 0; i < responses.length; i++) {
-    scores.push(getScoreFromResponse(activity.items[i], responses[i]));
-  }
-
   let subScaleScores = [];
   if (activity.subScales) {
     for (let subScale of activity.subScales) {
-      subScaleScores.push(getSubScaleScore(subScale.jsExpression, activity.items, scores));
+      subScaleScores.push(
+        getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
+      );
     }
   }
 
