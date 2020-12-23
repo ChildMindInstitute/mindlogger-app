@@ -1,0 +1,34 @@
+diff --git a/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m b/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m
+index d3aa1e3..ed674f1 100644
+--- a/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m
++++ b/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m
+@@ -105,12 +105,22 @@ - (void)didReceiveLocalNotification:(nonnull UILocalNotification *)localNotifica
+         void (^fetchCompletionHandler)(UIBackgroundFetchResult) = fetchCompletionHandlers[handlerKey];
+         if (fetchCompletionHandler != nil) {
+             fetchCompletionHandlers[handlerKey] = nil;
+-            fetchCompletionHandler(fetchResult);
++            @try {
++                fetchCompletionHandler(fetchResult);
++            } 
++            @catch (NSException * e) {
++                NSLog(@"Exception fetchCompletionHandler: %@", e);
++            };
+         } else {
+             void(^completionHandler)(void) = completionHandlers[handlerKey];
+             if (completionHandler != nil) {
+                 completionHandlers[handlerKey] = nil;
+-                completionHandler();
++                @try {
++                    completionHandler();
++                }
++                @catch (NSException * e) {
++                    NSLog(@"Exception completionHandler: %@", e);
++                };
+             }
+         }
+     }
+@@ -796,3 +806,4 @@ + (BOOL)requiresMainQueueSetup
+ @implementation RNFirebaseNotifications
+ @end
+ #endif
++
