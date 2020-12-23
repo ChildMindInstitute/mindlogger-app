@@ -17,7 +17,7 @@ const ActCalendar = ({ responseDates, appLanguage }) => {
   return (
     <CalendarStrip
       locale={{
-        name: 'en',
+        name: appLanguage,
         config: {
           months: i18n.t('calendar:months').split('_'),
           weekdaysShort: i18n.t('calendar:weekdays').split('_'),
