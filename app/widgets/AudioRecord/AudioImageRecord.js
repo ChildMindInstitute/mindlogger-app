@@ -1,27 +1,30 @@
-import React, { Component } from 'react';
-import { View, Image } from 'react-native';
-import PropTypes from 'prop-types';
-import AudioRecorder from './AudioRecorder';
-import { getURL } from '../../services/helper';
+import React, { Component } from "react";
+import { View, Image } from "react-native";
+import PropTypes from "prop-types";
+import AudioRecorder from "./AudioRecorder";
+import { getURL } from "../../services/helper";
 
 export class AudioImageRecord extends Component {
   onRecord = (filePath) => {
-    const filename = (filePath && filePath.length > 0) && filePath.split('/').pop();
+    const filename =
+      filePath && filePath.length > 0 && filePath.split("/").pop();
     this.props.onChange({ uri: filePath, filename });
-  }
+  };
 
   render() {
     const { value, config } = this.props;
     return (
       <View style={{ paddingBottom: 16 }}>
         <Image
-          style={{ width: '100%', height: 260, resizeMode: 'contain', marginBottom: 16 }}
+          style={{
+            width: "100%",
+            height: 260,
+            resizeMode: "contain",
+            marginBottom: 16,
+          }}
           source={{ uri: getURL(config.image) }}
         />
-        <AudioRecorder
-          onStop={this.onRecord}
-          path={value && value.uri}
-        />
+        <AudioRecorder onStop={this.onRecord} path={value && value.uri} />
       </View>
     );
   }

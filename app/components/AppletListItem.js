@@ -1,23 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
-import TouchBox from './core/TouchBox';
-import {
-  SubHeading,
-  BodyText,
-  NotificationText,
-} from './core';
-import AppletImage from './AppletImage';
-import theme from '../themes/variables';
+import React from "react";
+import PropTypes from "prop-types";
+import { View, StyleSheet } from "react-native";
+import TouchBox from "./core/TouchBox";
+import { SubHeading, BodyText, NotificationText } from "./core";
+import AppletImage from "./AppletImage";
+import theme from "../themes/variables";
 
 const styles = StyleSheet.create({
   box: {
-    position: 'relative',
+    position: "relative",
     fontFamily: theme.fontFamily,
   },
   inner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     fontFamily: theme.fontFamily,
   },
   textBlock: {
@@ -26,7 +22,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.fontFamily,
   },
   notification: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 10,
   },
@@ -34,8 +30,9 @@ const styles = StyleSheet.create({
 
 const AppletListItem = ({ applet, disabled, onPress }) => {
   const numberOverdue = applet.activities.reduce(
-    (accumulator, activity) => (activity.isOverdue ? accumulator + 1 : accumulator),
-    0,
+    (accumulator, activity) =>
+      activity.isOverdue ? accumulator + 1 : accumulator,
+    0
   );
 
   return (

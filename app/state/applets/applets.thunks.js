@@ -13,8 +13,8 @@ import {
   postAppletBadge,
   getTargetApplet,
   getAppletSchedule,
-} from '../../services/network';
-import { scheduleNotifications } from '../../services/pushNotifications';
+} from "../../services/network";
+import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
@@ -28,12 +28,16 @@ import {
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
-} from './applets.actions';
-import { authSelector, userInfoSelector, loggedInSelector } from '../user/user.selectors';
-import { setCurrentApplet } from '../app/app.actions';
+} from "./applets.actions";
+import {
+  authSelector,
+  userInfoSelector,
+  loggedInSelector,
+} from "../user/user.selectors";
+import { setCurrentApplet } from "../app/app.actions";
 
-import { sync } from '../app/app.thunks';
-import { transformApplet } from '../../models/json-ld';
+import { sync } from "../app/app.thunks";
+import { transformApplet } from "../../models/json-ld";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -56,7 +60,7 @@ export const getInvitations = () => (dispatch, getState) => {
     });
 };
 
-export const getSchedules = appletId => (dispatch, getState) => {
+export const getSchedules = (appletId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
 
@@ -163,7 +167,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
-          .filter(applet => !R.isEmpty(applet.items))
+          .filter((applet) => !R.isEmpty(applet.items))
           .map(transformApplet);
         dispatch(replaceApplets(transformedApplets));
         dispatch(downloadResponses(transformedApplets));
@@ -173,7 +177,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
         }
       }
     })
-    .catch(err => console.warn(err.message))
+    .catch((err) => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
       // dispatch(scheduleAndSetNotifications());
@@ -181,7 +185,10 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
     });
 };
 
-export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState) => {
+export const downloadTargetApplet = (appletId, cb = null) => (
+  dispatch,
+  getState
+) => {
   const state = getState();
   const auth = authSelector(state);
   dispatch(setDownloadingTargetApplet(true));
@@ -190,7 +197,7 @@ export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = [applet]
-          .filter(applet => !R.isEmpty(applet.items))
+          .filter((applet) => !R.isEmpty(applet.items))
           .map(transformApplet);
         if (transformedApplets && transformedApplets.length > 0) {
           const transformedApplet = transformedApplets[0];
@@ -205,10 +212,10 @@ export const downloadTargetApplet = (appletId, cb = null) => (dispatch, getState
         }
       }
     })
-    .catch(err => console.warn(err.message));
+    .catch((err) => console.warn(err.message));
 };
 
-export const acceptInvitation = inviteId => (dispatch, getState) => {
+export const acceptInvitation = (inviteId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   return acceptAppletInvite(auth.token, inviteId).then(() => {
@@ -217,7 +224,7 @@ export const acceptInvitation = inviteId => (dispatch, getState) => {
   });
 };
 
-export const declineInvitation = inviteId => (dispatch, getState) => {
+export const declineInvitation = (inviteId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
 
@@ -231,7 +238,7 @@ export const declineInvitation = inviteId => (dispatch, getState) => {
     });
 };
 
-export const joinOpenApplet = appletURI => (dispatch, getState) => {
+export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
   dispatch(setDownloadingApplets(true));
   const state = getState();
   const auth = authSelector(state);
@@ -244,13 +251,13 @@ export const joinOpenApplet = appletURI => (dispatch, getState) => {
     });
 };
 
-export const updateBadgeNumber = badgeNumber => (dispatch, getState) => {
+export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
   const token = state.user?.auth?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
       .then((response) => {
-        console.log('updateBadgeNumber success', response);
+        console.log("updateBadgeNumber success", response);
       })
       .catch((e) => {
         console.warn(e);
@@ -258,34 +265,34 @@ export const updateBadgeNumber = badgeNumber => (dispatch, getState) => {
   }
 };
 
-export const deactivateApplet = groupId => (dispatch, getState) => {
+export const deactivateApplet = (groupId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   removeApplet(auth.token, groupId).then(() => {
     dispatch(setCurrentApplet(null));
     dispatch(sync());
-    Actions.push('applet_list');
+    Actions.push("applet_list");
   });
 };
 
-export const removeAndDeleteApplet = groupId => (dispatch, getState) => {
+export const removeAndDeleteApplet = (groupId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   deleteApplet(auth.token, groupId).then(() => {
     dispatch(setCurrentApplet(null));
     dispatch(sync());
-    Actions.push('applet_list');
+    Actions.push("applet_list");
   });
 };
 
-export const getAppletResponseData = appletId => (dispatch, getState) => {
+export const getAppletResponseData = (appletId) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   getLast7DaysData({
     authToken: auth.token,
     appletId,
   }).then((resp) => {
-    // console.log('response is', resp);
+    console.log("response is", resp);
     dispatch(saveAppletResponseData(appletId, resp));
   });
 };

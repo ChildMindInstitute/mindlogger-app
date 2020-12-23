@@ -1,33 +1,39 @@
-import React, { Component } from 'react';
-import { Dimensions, StyleSheet, ScrollView, View, KeyboardAvoidingView } from 'react-native';
-import PropTypes from 'prop-types';
-import { Icon, Button } from 'native-base';
-import ScreenDisplay from './ScreenDisplay';
-import Widget from './Widget';
-import Timer from '../Timer';
-import { colors } from '../../theme';
+import React, { Component } from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  ScrollView,
+  View,
+  KeyboardAvoidingView,
+} from "react-native";
+import PropTypes from "prop-types";
+import { Icon, Button } from "native-base";
+import ScreenDisplay from "./ScreenDisplay";
+import Widget from "./Widget";
+import Timer from "../Timer";
+import { colors } from "../../theme";
 
 const styles = StyleSheet.create({
   outer: {
-    width: '100%',
+    width: "100%",
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    position: 'relative',
+    backgroundColor: "white",
+    position: "relative",
   },
   keyboardContainer: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
   contentContainer: {
     padding: 20,
     paddingTop: 60,
-    minHeight: '100%',
-    justifyContent: 'center',
+    minHeight: "100%",
+    justifyContent: "center",
     flexGrow: 1,
   },
   text: {
@@ -35,20 +41,20 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   delayView: {
-    position: 'relative',
+    position: "relative",
     minHeight: 100,
   },
   timerView: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     top: 60,
   },
   delayTimerView: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     opacity: 0.5,
   },
   button: {
@@ -68,18 +74,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === 'markdown-message') {
+    if (screen.inputType === "markdown-message") {
       return true;
     }
     if (Array.isArray(answer)) {
       return answer.length !== 0;
     }
 
-    return answer !== null && typeof answer !== 'undefined';
+    return answer !== null && typeof answer !== "undefined";
   }
 
   constructor() {
@@ -151,9 +157,9 @@ class ActivityScreen extends Component {
       const safeDelay = delay || 0;
       const timerEnd = safeDelay + timer;
       if (
-        timeElapsed > safeDelay
-        && timeElapsed < timerEnd
-        && timerActive === false
+        timeElapsed > safeDelay &&
+        timeElapsed < timerEnd &&
+        timerActive === false
       ) {
         this.setState({ timerActive: true });
       } else if (timeElapsed >= timerEnd) {
@@ -187,7 +193,7 @@ class ActivityScreen extends Component {
             contentContainerStyle={styles.contentContainer}
             scrollEnabled={scrollEnabled}
             // eslint-disable-next-line no-return-assign
-            ref={scrollView => (this.scrollView = scrollView)}
+            ref={(scrollView) => (this.scrollView = scrollView)}
             onContentSizeChange={this.onContentSizeChange}
             onScroll={({ nativeEvent }) => {
               if (this.isCloseToBottom(nativeEvent)) {
@@ -246,16 +252,16 @@ class ActivityScreen extends Component {
         {this.state.screenHeight > height ? (
           <View
             style={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 7,
-              alignSelf: 'center',
-              shadowColor: '#000',
+              alignSelf: "center",
+              shadowColor: "#000",
               shadowOffset: {
                 width: 0,
                 height: 2,
               },
               shadowOpacity: 0.5,
-              shadowRadius: 7.50,
+              shadowRadius: 7.5,
               elevation: 4,
               flex: 1,
             }}
