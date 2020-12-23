@@ -8,9 +8,8 @@ import {
   Alert,
 } from 'react-native';
 import { View, Icon } from 'native-base';
-import ImagePicker, { ImagePickerOptions } from 'react-native-image-picker';
+import * as ImagePicker from 'react-native-image-picker';
 import i18n from 'i18next';
-import RNFetchBlob from 'rn-fetch-blob';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 const styles = StyleSheet.create({
@@ -103,17 +102,10 @@ export class Camera extends Component {
 
   launchImageLibrary = () => {
     const { video } = this.props;
-    const options: ImagePickerOptions = {
-      noData: true,
+    const options = {
       mediaType: video ? 'video' : 'photo',
-      storageOptions: {
-        skipBackup: true,
-        path: video ? 'video' : 'photo',
-      },
       videoQuality: 'low',
       quality: 0.1,
-      durationLimit: 5,
-      saveToPhotos: false,
       maxWidth: 800,
       maxHeight: 800,
     };
@@ -121,71 +113,51 @@ export class Camera extends Component {
       console.log('launchImageLibrary', { response });
       if (response.didCancel) {
         console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-        alert(response.customButton);
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorCode);
       }
-      if (!response.didCancel && !response.error) {
+      if (!response.didCancel && !response.errorCode) {
         const { onChange } = this.props;
-        const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
-        const filename = filePath.split('/').pop();
-        const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+        const uri = response.uri.replace('file://', '');
+        const filename = response.fileName;
+
         const picSource = {
-          uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
+          uri,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
           fromLibrary: true,
         };
         console.log({ picSource });
-        RNFetchBlob.fs.cp(
-          filePath,
-          picSource.uri.split('///').pop(),
-        ).then(() => {
-          onChange(picSource);
-        })
-          .catch((e) => {
-            console.error(e);
-          });
+        onChange(picSource);
       }
     });
   };
 
   launchCamForCam = () => {
-    const options: ImagePickerOptions = {
-      noData: true,
+    const options = {
       mediaType: 'photo',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-        waitUntilSaved: true,
-      },
+      // saveToPhotos: true,
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 0.5,
     };
     ImagePicker.launchCamera(options, (response) => {
       const { onChange } = this.props;
-      if (!response.didCancel && !response.error) {
-        const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
-        const filename = filePath.split('/').pop();
-        const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+      console.log('launchCamForCam', { options, response });
+      if (response.errorCode) {
+        alert(response.errorCode === 'other' ? response.errorMessage : response.errorCode);
+      }
+      if (!response.didCancel && !response.errorCode) {
+        const uri = response.uri.replace('file://', '');
+        const filename = response.fileName;
         const picSource = {
-          uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
+          uri,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
           fromLibrary: false,
         };
-
-        RNFetchBlob.fs.cp(
-          filePath,
-          picSource.uri.split('///').pop(),
-        )
-          .then(() => RNFetchBlob.fs.unlink(filePath))
-          .then(() => {
-            onChange(picSource);
-          })
-          .catch((e) => {
-            console.error(e);
-          });
+        console.log('launchCamForCam', { picSource });
+        onChange(picSource);
       }
     });
   };
@@ -194,47 +166,31 @@ export class Camera extends Component {
     try {
       const { video, onChange, config } = this.props;
       console.log({ video });
-      const options: ImagePickerOptions = {
+      const options = {
         mediaType: 'video',
-        storageOptions: {
-          cameraRoll: true,
-          waitUntilSaved: true,
-        },
         videoQuality: 'low',
-        quality: 0.5,
+        durationLimit: 5,
+        // saveToPhotos: true,
       };
       if (config.allowLibrary) {
         this.launchImageLibrary();
       } else {
         ImagePicker.launchCamera(options, (response) => {
           console.log(response, 'video response');
-          if (response.error) {
-            alert(response.error);
+          if (response.errorCode) {
+            alert(response.errorCode === 'other' ? response.errorMessage : response.errorCode);
           }
-          if (!response.didCancel && !response.error) {
-            const filePath = this.isIos ? response.uri.replace('file://', '') : response.path;
-            const filename = filePath.split('/').pop();
-            const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
+          if (!response.didCancel && !response.errorCode) {
+            const uri = response.uri.replace('file://', '');
+            const filename = response.fileName;
             const picSource = {
-              uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
+              uri,
               filename,
               type: response.type || VIDEO_MIME_TYPE,
               fromLibrary: false,
             };
-            if (filePath === toPath) {
-              onChange(picSource);
-            } else {
-              RNFetchBlob.fs.cp(
-                filePath,
-                picSource.uri.split('///').pop(),
-              ).then(() => RNFetchBlob.fs.unlink(filePath)).then(() => {
-                onChange(picSource);
-              })
-                .catch((e) => {
-                  console.log({ e });
-                  alert(e?.message);
-                });
-            }
+            console.log('take', { picSource });
+            onChange(picSource);
           }
         });
       }
