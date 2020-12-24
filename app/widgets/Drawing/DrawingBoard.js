@@ -54,7 +54,13 @@ export default class DrawingBoard extends Component {
       onPanResponderRelease: () => {
         this.props.onRelease();
         const result = this.save();
-        this.props.onResult(result);
+        if (this.svgRef) {
+          this.svgRef.toDataURL((base64) => {
+            this.props.onResult({ ...result, base64 });
+          });
+        } else {
+          this.props.onResult(result);
+        }
       },
     });
     this.allowed = true;
@@ -174,6 +180,7 @@ export default class DrawingBoard extends Component {
         <View style={styles.blank}>
           {dimensions && (
             <Svg
+              ref={(ref) => { this.svgRef = ref; }}
               height={width}
               width={width}
             >

@@ -1,5 +1,6 @@
 import * as R from "ramda";
 import RNFetchBlob from "rn-fetch-blob";
+import randomString from "random-string";
 import {
   // getResponses,
   getLast7DaysData,
@@ -114,6 +115,15 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   return Promise.all(requests).then(transformResponses);
 };
 
+const calculateImageSizeFromBase64 = (base64String) => {
+  let padding;
+  if (base64String.endsWith('==')) { padding = 2; } else if (base64String.endsWith('=')) { padding = 1; } else { padding = 0; }
+  const base64StringLength = base64String.length;
+  const inBytes = parseInt((base64StringLength / 4) * 3 - padding);
+  console.log('calculateImageSizeFromBase64', inBytes);
+  return inBytes;
+};
+
 const uploadFiles = (authToken, response, item) => {
   console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
@@ -142,7 +152,16 @@ const uploadFiles = (authToken, response, item) => {
         uri: answer.uri,
         filename: answer.filename,
         size: answer.size,
-        type: "application/octet",
+        type: 'application/octet',
+      };
+    } else if (answer && answer.lines && answer.base64) {
+      const filename = `${randomString({ length: 20 })}.png`;
+      file = {
+        base64: answer.base64,
+        filename,
+        size: calculateImageSizeFromBase64(answer.base64),
+        type: 'application/octet',
+        uri: `${RNFetchBlob.fs.dirs.CacheDir}/${filename}`,
       };
     } else {
       console.log('uploadFiles', 'Break early');
@@ -150,7 +169,8 @@ const uploadFiles = (authToken, response, item) => {
     }
     console.log('uploadFiles file', { file });
 
-    const request = (file.size
+    const request = (file.base64 ? RNFetchBlob.fs.writeFile(file.uri, file.base64, 'base64')
+      .then(() => Promise.resolve(file)) : file.size
       ? Promise.resolve(file)
       : RNFetchBlob.fs.stat(file.uri)
         .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size })))
