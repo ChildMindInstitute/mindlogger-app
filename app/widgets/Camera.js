@@ -10,6 +10,7 @@ import {
 import { View, Icon } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import i18n from 'i18next';
+import RNFetchBlob from 'rn-fetch-blob';
 import permissions from '../permissions';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
@@ -130,16 +131,34 @@ export class Camera extends Component {
       if (!response.didCancel && !response.errorCode) {
         const { onChange } = this.props;
         const uri = response.uri.replace('file://', '');
-        const filename = response.fileName;
+        let filename = response.fileName;
+        if (!filename) {
+          filename = uri.split('/').pop();
+        }
 
-        const picSource = {
-          uri,
-          filename,
-          type: response.type || VIDEO_MIME_TYPE,
-          fromLibrary: true,
-        };
-        console.log({ picSource });
-        onChange(picSource);
+        if (!response.fileSize && uri.indexOf('content://') === -1) {
+          RNFetchBlob.fs.stat(uri).then((fileInfo) => {
+            const picSource = {
+              uri,
+              filename,
+              size: fileInfo.size,
+              type: response.type || VIDEO_MIME_TYPE,
+              fromLibrary: false,
+            };
+            console.log('launchImageLibrary', { picSource });
+            onChange(picSource);
+          });
+        } else {
+          const picSource = {
+            uri,
+            filename,
+            size: response.fileSize,
+            type: response.type || VIDEO_MIME_TYPE,
+            fromLibrary: true,
+          };
+          console.log('launchImageLibrary', { picSource });
+          onChange(picSource);
+        }
       }
     });
   };
@@ -165,6 +184,7 @@ export class Camera extends Component {
           uri,
           filename,
           type: response.type || VIDEO_MIME_TYPE,
+          size: response.fileSize,
           fromLibrary: false,
         };
         console.log('launchCamForCam', { picSource });
@@ -193,15 +213,33 @@ export class Camera extends Component {
           }
           if (!response.didCancel && !response.errorCode) {
             const uri = response.uri.replace('file://', '');
-            const filename = response.fileName;
-            const picSource = {
-              uri,
-              filename,
-              type: response.type || VIDEO_MIME_TYPE,
-              fromLibrary: false,
-            };
-            console.log('take', { picSource });
-            onChange(picSource);
+            let filename = response.fileName;
+            if (!filename) {
+              filename = uri.split('/').pop();
+            }
+            if (!response.fileSize && uri.indexOf('content://') === -1) {
+              RNFetchBlob.fs.stat(uri).then((fileInfo) => {
+                const picSource = {
+                  uri,
+                  filename,
+                  size: fileInfo.size,
+                  type: response.type || VIDEO_MIME_TYPE,
+                  fromLibrary: false,
+                };
+                console.log('take', { picSource });
+                onChange(picSource);
+              });
+            } else {
+              const picSource = {
+                uri,
+                filename,
+                size: response.fileSize,
+                type: response.type || VIDEO_MIME_TYPE,
+                fromLibrary: false,
+              };
+              console.log('take', { picSource });
+              onChange(picSource);
+            }
           }
         });
       }
