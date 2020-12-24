@@ -55,6 +55,7 @@ const AGE = "reprolib:terms/age";
 const RAW_SCORE = "reprolib:terms/rawScore";
 const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
+const OUTPUT_TYPE = "reprolib:terms/outputType";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -350,7 +351,8 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   const messages = activityJson[MESSAGES] && R.map((item) => {
     return {
       message: R.path([MESSAGE, 0, "@value"], item),
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item)
+      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
+      outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
     }
   }, activityJson[MESSAGES]);
 
