@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
@@ -12,7 +12,6 @@ import {
   Drawing,
   Geolocation,
   MultiSelect,
-  TLMultiSelect,
   Radio,
   Select,
   Slider,
@@ -27,7 +26,18 @@ import { currentAppletSelector } from '../../state/app/app.selectors';
 
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
+const Widget = ({
+  screen,
+  answer,
+  onChange,
+  applet,
+  isCurrent,
+  isSelected,
+  setSelected,
+  onPress,
+  onRelease,
+  onContentError,
+}) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
   if (screen.inputType === 'radio'
@@ -39,7 +49,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         config={screen.valueConstraints}
         onChange={onChange}
         value={screenValue}
-        token={valueType && valueType.includes("token")}
+        token={valueType && valueType.includes('token')}
       />
     );
   }
@@ -53,7 +63,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        token={ valueType && valueType.includes("token")}
+        token={valueType && valueType.includes('token')}
       />
     );
   }
@@ -212,8 +222,13 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'markdown-message') {
     return null;
   }
-
-  onContentError();
+  const [oneShot, setOneShot] = useState(false);
+  useEffect(() => {
+    if (onContentError && !oneShot) {
+      setOneShot(true);
+      onContentError();
+    }
+  });
   return <WidgetError />;
 };
 
