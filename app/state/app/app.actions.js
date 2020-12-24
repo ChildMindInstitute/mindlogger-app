@@ -29,11 +29,6 @@ export const setCurrentActivity = activityId => ({
   payload: activityId,
 });
 
-export const setCurrentPrizesActivity = prizesActivity => ({
-  type: APP_ACTIONS.SET_CURRENT_PRIZES_ACTIVITY,
-  payload: prizesActivity,
-});
-
 export const setAppletSelectionDisabled = status => ({
   type: APP_ACTIONS.SET_APPLET_SELECTION_DISABLED,
   payload: status,

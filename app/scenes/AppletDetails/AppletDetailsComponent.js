@@ -85,8 +85,6 @@ class AppletDetailsComponent extends React.Component {
       applet,
       onPressActivity,
       onLongPressActivity,
-      onPressPrize,
-      onLongPressPrize,
       // inProgress,
       appletData,
     } = this.props;
@@ -101,8 +99,6 @@ class AppletDetailsComponent extends React.Component {
               <ActivityList
                 onPressActivity={onPressActivity}
                 onLongPressActivity={onLongPressActivity}
-                onPressPrize={onPressPrize}
-                onLongPressPrize={onLongPressPrize}
               />
             </View>
           </Content>
@@ -194,8 +190,6 @@ AppletDetailsComponent.propTypes = {
   // inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
   onLongPressActivity: PropTypes.func.isRequired,
-  onPressPrize: PropTypes.func.isRequired,
-  onLongPressPrize: PropTypes.func.isRequired,
   onPressBack: PropTypes.func.isRequired,
   onPressSettings: PropTypes.func.isRequired,
   primaryColor: PropTypes.string.isRequired,

@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image, StyleSheet } from 'react-native';
+import i18n from 'i18next';
+import { View, Image, StyleSheet, Alert } from 'react-native';
 import { ListItem, Text } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
@@ -12,11 +13,25 @@ const styles = StyleSheet.create({
   },
 });
 
-export const RadioPrizes = ({ value, config, onChange, token ,selected, onSelected }) => {
-  const handlePress = (itemValue) => {
+export const RadioPrizes = ({ value, config, onChange, selected, onSelected, tokenBalance }) => {
+  const handlePress = (item) => {
+    const { value, price } = item;
+    if (price > tokenBalance) {
+      Alert.alert(
+        i18n.t('prize:lack_tokens_title'),
+        i18n.t('prize:lack_tokens_subtitle'),
+        [
+          {
+            text: 'OK',
+            style: 'Ok',
+          },
+        ],
+      );
+      return;
+    }
     if (!selected) {
       onSelected(true);
-      onChange(itemValue);
+      onChange(value);
     }
   };
 
@@ -32,7 +47,7 @@ export const RadioPrizes = ({ value, config, onChange, token ,selected, onSelect
       </ListItem>
       {config.itemList.map((item, index) => (
         <ListItem
-          onPress={() => handlePress(token ? item.name.en : item.value)}
+          onPress={() => handlePress(item)}
           key={index}
         >
           <View style={{ width: '80%' }}>
@@ -46,8 +61,8 @@ export const RadioPrizes = ({ value, config, onChange, token ,selected, onSelect
                 <View />
               )}
               <CheckBox
-                checked={value === (token ? item.name.en : item.value)}
-                onPress={() => handlePress(token ? item.name.en : item.value)}
+                checked={value === (item.value)}
+                onPress={() => handlePress(item)}
                 checkedIcon="dot-circle-o"
                 uncheckedIcon="circle-o"
                 checkedColor={colors.primary}
@@ -74,7 +89,7 @@ export const RadioPrizes = ({ value, config, onChange, token ,selected, onSelect
             </View>
           </View>
           <View style={{ width: '20%' }}>
-            <Text>{item.value}</Text>
+            <Text>{item.price}</Text>
           </View>
         </ListItem>
       ))}
@@ -98,7 +113,7 @@ RadioPrizes.propTypes = {
     ).isRequired,
   }).isRequired,
   onSelected: PropTypes.func.isRequired,
-  token: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
+  tokenBalance: PropTypes.number.isRequired,
 };

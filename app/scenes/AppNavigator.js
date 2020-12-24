@@ -74,7 +74,6 @@ const Navigator = Actions.create(
       <Scene key="activity_summary" component={ActivitySummary} />
       <Scene key="activity_thanks" component={ActivityThanks} />
       <Scene key="activity_end" component={ActivityEnd} />
-      <Scene key="take_prizes" component={TokenPrizesActivity} />
     </Modal>
   </Lightbox>
 );
