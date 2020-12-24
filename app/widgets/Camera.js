@@ -10,6 +10,7 @@ import {
 import { View, Icon } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import i18n from 'i18next';
+import permissions from '../permissions';
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 const styles = StyleSheet.create({
@@ -89,11 +90,21 @@ export class Camera extends Component {
       [
         {
           text: i18n.t('camera:camera'),
-          onPress: video ? this.take : this.launchCamForCam,
+          onPress: () => {
+            permissions.checkCameraPermission().then(() => {
+              if (video) {
+                this.take();
+              } else {
+                this.launchCamForCam();
+              }
+            });
+          },
         },
         {
           text: i18n.t('camera:library'),
-          onPress: this.launchImageLibrary,
+          onPress: () => {
+            permissions.checkGalleryPermission().then(() => { this.launchImageLibrary(); });
+          },
         },
       ],
       { cancelable: true },
@@ -145,7 +156,7 @@ export class Camera extends Component {
       const { onChange } = this.props;
       console.log('launchCamForCam', { options, response });
       if (response.errorCode) {
-        alert(response.errorCode === 'other' ? response.errorMessage : response.errorCode);
+        Alert.alert(response.errorCode.indexOf('other') > -1 ? response.errorMessage : response.errorCode);
       }
       if (!response.didCancel && !response.errorCode) {
         const uri = response.uri.replace('file://', '');
@@ -173,12 +184,12 @@ export class Camera extends Component {
         // saveToPhotos: true,
       };
       if (config.allowLibrary) {
-        this.launchImageLibrary();
+        permissions.checkGalleryPermission().then(() => { this.launchImageLibrary(); });
       } else {
         ImagePicker.launchCamera(options, (response) => {
           console.log(response, 'video response');
           if (response.errorCode) {
-            alert(response.errorCode === 'other' ? response.errorMessage : response.errorCode);
+            Alert.alert(response.errorCode.indexOf('other') > -1 ? response.errorMessage : response.errorCode);
           }
           if (!response.didCancel && !response.errorCode) {
             const uri = response.uri.replace('file://', '');
