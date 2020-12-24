@@ -117,12 +117,12 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
 const uploadFiles = (authToken, response, item) => {
   console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
-
+  console.log('uploadFiles', { response, item, answers });
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
     const answer = answers[key];
-
+    console.log('uploadFiles init uploadRequests answer', { answer });
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
     if (R.path(["survey", "uri"], answer)) {
@@ -141,25 +141,25 @@ const uploadFiles = (authToken, response, item) => {
       file = {
         uri: answer.uri,
         filename: answer.filename,
+        size: answer.size,
         type: "application/octet",
       };
     } else {
+      console.log('uploadFiles', 'Break early');
       return accumulator; // Break early
     }
+    console.log('uploadFiles file', { file });
 
-    const request = RNFetchBlob.fs
-      .stat(file.uri)
-      .then((fileInfo) =>
-        postFile({
-          authToken,
-          file: {
-            ...file,
-            size: fileInfo.size,
-          },
-          parentType: "item",
-          parentId: item._id,
-        })
-      )
+    const request = (file.size
+      ? Promise.resolve(file)
+      : RNFetchBlob.fs.stat(file.uri)
+        .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size })))
+      .then(file => postFile({
+        authToken,
+        file,
+        parentType: 'item',
+        parentId: item._id,
+      }))
       .then(() => {
         /** delete file from local storage after uploading */
         RNFetchBlob.fs.unlink(file.uri.split("///").pop());
@@ -169,7 +169,7 @@ const uploadFiles = (authToken, response, item) => {
 
     return [...accumulator, request];
   }, []);
-
+  console.log('uploadFiles uploadRequests', { uploadRequests });
   return Promise.all(uploadRequests);
 };
 
@@ -191,18 +191,19 @@ const uploadResponse = (authToken, response) =>
 export const uploadResponseQueue = (
   authToken,
   responseQueue,
-  progressCallback
+  progressCallback,
 ) => {
   if (responseQueue.length === 0) {
     return Promise.resolve();
   }
+  console.log('uploadResponseQueue', { authToken, responseQueueItem: responseQueue[0] });
   return uploadResponse(authToken, responseQueue[0])
     .then(() => {
       progressCallback();
       return uploadResponseQueue(
         authToken,
         R.remove(0, 1, responseQueue),
-        progressCallback
+        progressCallback,
       );
     })
     .catch((e) => console.warn(e));
