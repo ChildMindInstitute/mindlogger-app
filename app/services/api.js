@@ -117,9 +117,9 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
 
 const prepareFile = (file): Promise => {
   console.log('prepareFile', { file });
-  if (file.base64 && file.uri) {
+  if (file.svgString && file.uri) {
     console.log('RNFetchBlob.fs.writeFile', { file });
-    return RNFetchBlob.fs.writeFile(file.uri, file.base64, 'base64')
+    return RNFetchBlob.fs.writeFile(file.uri, file.svgString)
       .then((result) => {
         console.log('RNFetchBlob.fs.writeFile result', { result, file });
         return Promise.resolve(file);
@@ -162,12 +162,12 @@ const uploadFiles = (authToken, response, item) => {
         size: answer.size,
         type: 'application/octet',
       };
-    } else if (answer && answer.lines && answer.base64) {
-      const filename = `${randomString({ length: 20 })}.png`;
+    } else if (answer && answer.lines && answer.svgString) {
+      const filename = `${randomString({ length: 20 })}.svg`;
       file = {
-        base64: answer.base64,
+        svgString: answer.svgString,
         filename,
-        type: 'application/png',
+        type: 'application/svg',
         uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
       };
     } else {

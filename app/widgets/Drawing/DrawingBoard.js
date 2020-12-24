@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
-import Svg, { Polyline } from 'react-native-svg';
+import Svg, { Polyline, Rect } from 'react-native-svg';
+import ReactDOMServer from 'react-dom/server';
 
 const SENSITIVITY = 30; // Milliseconds between line points (lower is more sensitive)
 
@@ -54,13 +55,15 @@ export default class DrawingBoard extends Component {
       onPanResponderRelease: () => {
         this.props.onRelease();
         const result = this.save();
-        if (this.svgRef) {
-          this.svgRef.toDataURL((base64) => {
-            this.props.onResult({ ...result, base64 });
-          });
-        } else {
-          this.props.onResult(result);
-        }
+        const svgString = this.serialize();
+        // if (this.svgRef) {
+        //   this.svgRef.toDataURL((base64) => {
+        //     this.props.onResult({ ...result, base64 });
+        //   });
+        // } else {
+        //
+        // }
+        this.props.onResult({ ...result, svgString });
       },
     });
     this.allowed = true;
@@ -155,11 +158,39 @@ export default class DrawingBoard extends Component {
     />
   );
 
-  render() {
+  childToWeb = (child) => {
+    const { type, props } = child;
+    const name = type && (type.displayName || type.name);
+    const Tag = name && name[0].toLowerCase() + name.slice(1);
+    return <Tag {...props}>{this.toWeb(props.children)}</Tag>;
+  };
+
+  toWeb = children => React.Children.map(children, this.childToWeb);
+
+  serialize = () => {
+    const element = this.renderSvg();
+    const webJsx = this.toWeb(element);
+    return ReactDOMServer.renderToStaticMarkup(webJsx);
+  };
+
+  renderSvg() {
     const { lines, dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
     const strArray = chunkedPointStr(lines, 50);
+    return (
+      <Svg
+        ref={(ref) => { this.svgRef = ref; }}
+        height={width}
+        width={width}
+      >
+        {strArray.map(this.renderLine)}
+      </Svg>
+    );
+  }
 
+  render() {
+    const { dimensions } = this.state;
+    const width = dimensions ? dimensions.width : 300;
     return (
       <View
         style={{
@@ -178,15 +209,7 @@ export default class DrawingBoard extends Component {
           />
         )}
         <View style={styles.blank}>
-          {dimensions && (
-            <Svg
-              ref={(ref) => { this.svgRef = ref; }}
-              height={width}
-              width={width}
-            >
-              {strArray.map(this.renderLine)}
-            </Svg>
-          )}
+          {dimensions && this.renderSvg()}
         </View>
       </View>
     );
