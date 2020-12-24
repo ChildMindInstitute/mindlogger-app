@@ -115,13 +115,22 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   return Promise.all(requests).then(transformResponses);
 };
 
-const calculateImageSizeFromBase64 = (base64String) => {
-  let padding;
-  if (base64String.endsWith('==')) { padding = 2; } else if (base64String.endsWith('=')) { padding = 1; } else { padding = 0; }
-  const base64StringLength = base64String.length;
-  const inBytes = parseInt((base64StringLength / 4) * 3 - padding);
-  console.log('calculateImageSizeFromBase64', inBytes);
-  return inBytes;
+const prepareFile = (file): Promise => {
+  console.log('prepareFile', { file });
+  if (file.base64 && file.uri) {
+    console.log('RNFetchBlob.fs.writeFile', { file });
+    return RNFetchBlob.fs.writeFile(file.uri, file.base64, 'base64')
+      .then((result) => {
+        console.log('RNFetchBlob.fs.writeFile result', { result, file });
+        return Promise.resolve(file);
+      }).then(file => RNFetchBlob.fs.stat(file.uri))
+      .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+  }
+  if (file.size) {
+    return Promise.resolve(file);
+  }
+  return RNFetchBlob.fs.stat(file.uri)
+    .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
 };
 
 const uploadFiles = (authToken, response, item) => {
@@ -132,7 +141,6 @@ const uploadFiles = (authToken, response, item) => {
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
     const answer = answers[key];
-    console.log('uploadFiles init uploadRequests answer', { answer });
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
     if (R.path(["survey", "uri"], answer)) {
@@ -159,33 +167,30 @@ const uploadFiles = (authToken, response, item) => {
       file = {
         base64: answer.base64,
         filename,
-        size: calculateImageSizeFromBase64(answer.base64),
-        type: 'application/octet',
-        uri: `${RNFetchBlob.fs.dirs.CacheDir}/${filename}`,
+        type: 'application/png',
+        uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
       };
     } else {
-      console.log('uploadFiles', 'Break early');
       return accumulator; // Break early
     }
-    console.log('uploadFiles file', { file });
+    console.log('uploadFiles, file', { file, answer });
 
-    const request = (file.base64 ? RNFetchBlob.fs.writeFile(file.uri, file.base64, 'base64')
-      .then(() => Promise.resolve(file)) : file.size
-      ? Promise.resolve(file)
-      : RNFetchBlob.fs.stat(file.uri)
-        .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size })))
+    const request = prepareFile(file)
       .then(file => postFile({
         authToken,
         file,
         parentType: 'item',
         parentId: item._id,
       }))
-      .then(() => {
+      .then((res) => {
+        console.log('uploadFiles, response:', { res });
         /** delete file from local storage after uploading */
         RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+      }).catch((err) => {
+        console.log('uploadFiles error', err.message, { err });
       });
 
-    console.log({ request });
+    console.log('uploadFiles, request', { request });
 
     return [...accumulator, request];
   }, []);
