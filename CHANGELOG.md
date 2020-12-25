@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+
+## [0.14.34] - 2020-12-24
+- Fixed notification issue when tapping resume button
+
 ## [0.14.33] - 2020-12-23
 - use lookup table for calculating sub-scaled scores
 
