@@ -99,7 +99,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const { responses, user } = state;
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
-  const currentScreen = currentScreenSelector(getState());
+  const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
 
   if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
@@ -143,7 +143,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
           text: i18n.t("additional:resume"),
           onPress: () => {
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen));
+            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
