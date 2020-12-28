@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.35] - 2020-12-28
+- use scores for calculating expression in activity summary page
+
 ## [0.14.34] - 2020-12-24
 - Fixed notification issue when tapping resume button
 
