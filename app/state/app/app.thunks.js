@@ -26,6 +26,13 @@ export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   }
 };
 
+export const syncUploadQueue = () => (dispatch, getState) => {
+  const state = getState();
+  if (state.user.auth !== null) {
+    dispatch(startUploadQueue());
+  }
+};
+
 export const syncTargetApplet = (appletId, cb) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
