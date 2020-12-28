@@ -271,7 +271,7 @@ class Activity extends React.Component {
                 }
               }}
               prevLabel={prevLabel}
-              prevEnabled={isPrevEnabled(currentScreen, activity)}
+              prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
               onPressPrev={() => {
                 const { isSummaryScreen } = this.state;
                 if (isSummaryScreen) {
