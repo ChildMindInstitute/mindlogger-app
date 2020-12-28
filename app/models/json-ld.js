@@ -23,6 +23,7 @@ const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
+const SCORING = "reprolib:terms/scoring";
 const VALUE_TYPE = "reprolib:terms/valueType";
 const NAME = "schema:name";
 const PREAMBLE = "reprolib:terms/preamble";
@@ -37,6 +38,7 @@ const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
+const SCORE = "schema:score";
 const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
@@ -45,8 +47,15 @@ const VERSION = "schema:version";
 const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
 const COMPUTE = "reprolib:terms/compute";
+const SUBSCALES = "reprolib:terms/subScales";
 const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
+const LOOKUP_TABLE = "reprolib:terms/lookupTable";
+const AGE = "reprolib:terms/age";
+const RAW_SCORE = "reprolib:terms/rawScore";
+const SEX = "reprolib:terms/sex";
+const T_SCORE = "reprolib:terms/tScore";
+
 export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
@@ -93,6 +102,7 @@ export const flattenItemList = (list = []) =>
   list.map((item) => ({
     name: languageListToObject(item[NAME]),
     value: R.path([VALUE, 0, "@value"], item),
+    score: R.path([SCORE, 0, "@value"], item),
     image: item[IMAGE],
     valueConstraints: item[RESPONSE_OPTIONS]
       ? flattenValueConstraints(R.path([RESPONSE_OPTIONS, 0], item))
@@ -101,6 +111,9 @@ export const flattenItemList = (list = []) =>
 
 export const flattenValueConstraints = (vcObj) =>
   Object.keys(vcObj).reduce((accumulator, key) => {
+    if (key === '@type') {
+      return { ...accumulator, valueType: R.path([key, 0], vcObj) };
+    }
     if (key === MAX_VALUE) {
       return { ...accumulator, maxValue: R.path([key, 0, "@value"], vcObj) };
     }
@@ -111,6 +124,12 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
+      };
+    }
+    if (key == SCORING) {
+      return {
+        ...accumulator,
+        scoring: R.path([key, 0, "@value"], vcObj),
       };
     }
     if (key === VALUE_TYPE) {
@@ -170,6 +189,26 @@ export const transformVariableMap = (variableAr) =>
       [key]: val,
     };
   }, {});
+
+export const flattenLookupTable = (lookupTable) => {
+  if (!Array.isArray(lookupTable)) {
+    return undefined;
+  }
+
+  const references = {
+    [AGE]: 'age',
+    [RAW_SCORE]: 'rawScore',
+    [SEX]: 'sex',
+    [T_SCORE]: 'tScore'
+  };
+
+  return R.map(row => Object.keys(references).reduce((previousValue, key) => {
+    return {
+      ...previousValue,
+      [references[key]]: R.path([key, 0, "@value"], row)
+    }
+  }, {}), lookupTable)
+}
 
 export const transformMedia = (mediaObj) => {
   if (typeof mediaObj === "undefined") {
@@ -301,6 +340,13 @@ export const activityTransformJson = (activityJson, itemsJson) => {
       variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
     }
   }, activityJson[COMPUTE]);
+  const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
+    return {
+      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
+      variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE])
+    }
+  }, activityJson[SUBSCALES])
   const messages = activityJson[MESSAGES] && R.map((item) => {
     return {
       message: R.path([MESSAGE, 0, "@value"], item),
@@ -322,6 +368,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     compute,
+    subScales,
     messages,
     preamble,
     scoringLogic,

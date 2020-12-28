@@ -5,6 +5,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.33] - 2020-12-23
+- use lookup table for calculating sub-scaled scores
+
+## [0.14.32] - 2020-12-22
+- Implemented offline scheduling 
+
+## [0.14.31] - 2020-12-22
+- Fix activity timer on notification
+
+## [0.14.30] - 2020-12-22
+- Wrapped completionHandler in the try/catch block 
+
+## [0.14.29] - 2020-12-21
+- Fixed media items not working
+
+## [0.14.28] - 2020-12-20
+- Add minor fix on activity timer
+
+## [0.14.27] - 2020-12-15
+- Added numeric input widget
+
+## [0.14.26] - 2020-12-13
+- Fixed default activity time
+
+## [0.14.25] - 2020-12-8
+- send sub-scaled scores to backend
 
 ## [0.14.24] - 2020-12-7
 - Changed token chart width

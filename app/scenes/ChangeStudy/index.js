@@ -1,23 +1,32 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Container, Button, View, Header, Left, Right, Icon, Text } from 'native-base';
-import { Actions } from 'react-native-router-flux';
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { Platform, Alert } from 'react-native';
-import i18n from 'i18next';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import {
+  Container,
+  Button,
+  View,
+  Header,
+  Left,
+  Right,
+  Icon,
+  Text,
+} from "native-base";
+import { Actions } from "react-native-router-flux";
+import QRCodeScanner from "react-native-qrcode-scanner";
+import { Platform, Alert } from "react-native";
+import i18n from "i18next";
 
-import Permissions, { PERMISSIONS } from 'react-native-permissions';
-import styles from './styles';
-import { getSkin } from '../../services/network';
-import { setApiHost, resetApiHost, setSkin } from '../../state/app/app.actions';
-import { apiHostSelector, skinSelector } from '../../state/app/app.selectors';
-import { showToast } from '../../state/app/app.thunks';
-import ChangeStudyForm from './ChangeStudyForm';
-import config from '../../config';
+import Permissions, { PERMISSIONS } from "react-native-permissions";
+import styles from "./styles";
+import { getSkin } from "../../services/network";
+import { setApiHost, resetApiHost, setSkin } from "../../state/app/app.actions";
+import { apiHostSelector, skinSelector } from "../../state/app/app.selectors";
+import { showToast } from "../../state/app/app.thunks";
+import ChangeStudyForm from "./ChangeStudyForm";
+import config from "../../config";
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+const IOSHeaderPadding = Platform.OS === "ios" ? "3.5%" : 0;
+const IOSBodyPadding = Platform.OS === "ios" ? 9 : 0;
 
 class ChangeStudy extends Component {
   constructor(props) {
@@ -35,30 +44,30 @@ class ChangeStudy extends Component {
       getSkin().then((response) => {
         setSkin(response);
       });
-      Actions.replace('login');
+      Actions.replace("login");
       showToast({
-        text: i18n.t('change_study:successfully_changed'),
-        position: 'top',
-        type: 'success',
+        text: i18n.t("change_study:successfully_changed"),
+        position: "top",
+        type: "success",
         duration: 2000,
       });
     };
 
-    if (!body.apiHost.includes('https')) {
+    if (!body.apiHost.includes("https")) {
       Alert.alert(
-        i18n.t('change_study:change_server'),
-        i18n.t('change_study:http_confirm'),
+        i18n.t("change_study:change_server"),
+        i18n.t("change_study:http_confirm"),
         [
           {
-            text: i18n.t('change_study:yes'),
+            text: i18n.t("change_study:yes"),
             onPress: switchServer,
           },
           {
-            text: i18n.t('change_study:no'),
+            text: i18n.t("change_study:no"),
             onPress: () => {},
           },
         ],
-        { cancelable: false },
+        { cancelable: false }
       );
     } else {
       switchServer();
@@ -68,11 +77,11 @@ class ChangeStudy extends Component {
   onReset = () => {
     const { showToast, resetApiHost, setSkin } = this.props;
     setSkin(config.defaultSkin);
-    Actions.replace('login');
+    Actions.replace("login");
     showToast({
-      text: i18n.t('change_study:successfully_reset'),
-      position: 'top',
-      type: 'success',
+      text: i18n.t("change_study:successfully_reset"),
+      position: "top",
+      type: "success",
       duration: 2000,
     });
     resetApiHost();
@@ -84,11 +93,11 @@ class ChangeStudy extends Component {
     getSkin().then((response) => {
       setSkin(response);
     });
-    Actions.replace('login');
+    Actions.replace("login");
     showToast({
-      text: i18n.t('change_study:set_by_qr'),
-      position: 'top',
-      type: 'success',
+      text: i18n.t("change_study:set_by_qr"),
+      position: "top",
+      type: "success",
       duration: 4000,
     });
   };
@@ -137,8 +146,8 @@ class ChangeStudy extends Component {
           <Button transparent block onPress={this.toggleQrScanner}>
             <Text>
               {this.state.scanOpen
-                ? i18n.t('change_study:enter_url_manually')
-                : i18n.t('change_study:scan_qr')}
+                ? i18n.t("change_study:enter_url_manually")
+                : i18n.t("change_study:scan_qr")}
             </Text>
           </Button>
         </Right>
@@ -147,14 +156,18 @@ class ChangeStudy extends Component {
 
     if (this.state.scanOpen) {
       return (
-        <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
+        <Container
+          style={[styles.container, { backgroundColor: skin.colors.primary }]}
+        >
           {header}
           <QRCodeScanner fadeIn showMarker onRead={this.onScan} />
         </Container>
       );
     }
     return (
-      <Container style={[styles.container, { backgroundColor: skin.colors.primary }]}>
+      <Container
+        style={[styles.container, { backgroundColor: skin.colors.primary }]}
+      >
         {header}
         <View style={styles.formContainer}>
           <ChangeStudyForm
@@ -178,7 +191,7 @@ ChangeStudy.propTypes = {
   setSkin: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   apiHost: apiHostSelector(state),
   skin: skinSelector(state),
 });
@@ -192,5 +205,5 @@ const mapDispatchToProps = {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ChangeStudy);

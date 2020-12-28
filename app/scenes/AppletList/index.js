@@ -11,7 +11,7 @@ import {
 } from '../../state/applets/applets.selectors';
 import { userInfoSelector } from '../../state/user/user.selectors';
 import AppletListComponent from './AppletListComponent';
-import { sync } from '../../state/app/app.thunks';
+import { sync, syncUploadQueue } from '../../state/app/app.thunks';
 import {
   setCurrentApplet,
   toggleMobileDataAllowed,
@@ -34,6 +34,11 @@ class AppletList extends Component {
 
     sync();
   };
+
+  uploadQueue = () => {
+    const { syncUploadQueue } = this.props;
+    syncUploadQueue();
+  }
 
   /**
    * Method called when an applet card is pressed
@@ -92,6 +97,7 @@ class AppletList extends Component {
         primaryColor={skin.colors.primary}
         onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
+        onUploadQueue={this.uploadQueue}
         onPressAbout={() => {
           Actions.push('about_app');
         }}
@@ -109,6 +115,7 @@ AppletList.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
   sync: PropTypes.func.isRequired,
+  syncUploadQueue: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
@@ -130,6 +137,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   sync,
+  syncUploadQueue,
   setCurrentApplet,
   toggleMobileDataAllowed,
   setAppletSelectionDisabled,
