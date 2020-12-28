@@ -5,6 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.37] - 2020-12-28
+- Fixed localization issue with CalendarStrip
+
+## [0.14.36] - 2020-12-24
+- Condition check of freeEntry for TableInput
+
+## [0.14.35] - 2020-12-28
+- use scores for calculating expression in activity summary page
+
+## [0.14.34] - 2020-12-24
+- Fixed notification issue when tapping resume button
+
+## [0.14.33] - 2020-12-23
+- use lookup table for calculating sub-scaled scores
+
+## [0.14.32] - 2020-12-22
+- Implemented offline scheduling 
+
+## [0.14.31] - 2020-12-22
+- Fix activity timer on notification
+
 ## [0.14.30] - 2020-12-22
 - Wrapped completionHandler in the try/catch block 
 
