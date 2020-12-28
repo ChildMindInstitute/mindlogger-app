@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 import { Parser } from 'expr-eval';
+
 import {
   SafeAreaView,
   View,
@@ -69,42 +71,50 @@ const ActivitySummary = ({ responses, activity }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const activityResponses = [];
-    for (let index = 0; index < responses.length; index += 1) {
-      activityResponses.push(responses[index] || 0);
-    }
-    const items = activityResponses.reduce((accumulator, response, index) => {
-      return {
-        ...accumulator,
-        [activity.items[index].variableName]: response || 0,
-      };
-    }, {});
     const parser = new Parser({
       logical: true,
       comparison: true,
     });
 
-    const itemScores = activity.compute.reduce((accumulator, itemCompute) => {
-      const expr = parser.parse(itemCompute.jsExpression);
+    let scores = [], maxScores = [];
+    for (let i = 0; i < activity.items.length; i++) {
+      let score = getScoreFromResponse(activity.items[i], responses[i]);
+  
+      scores.push(score);
+
+      maxScores.push(getMaxScore(activity.items[i]))
+    }
+
+    const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
       return {
         ...accumulator,
-        [itemCompute.variableName]: expr.evaluate(items),
+        [itemCompute.variableName]: evaluateScore(itemCompute.jsExpression, activity.items, scores),
+      };
+    }, {});
+
+    const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
+      return {
+        ...accumulator,
+        [itemCompute.variableName]: evaluateScore(itemCompute.jsExpression, activity.items, maxScores),
       };
     }, {});
 
     const reportMessages = [];
     activity.messages.forEach((msg) => {
-      const { jsExpression, message } = msg;
+      const { jsExpression, message, outputType } = msg;
+
       const expr = parser.parse(jsExpression);
       const category = jsExpression.split(' ')[0];
-      if (expr.evaluate(itemScores)) {
+
+      if (expr.evaluate(cumulativeScores)) {
         reportMessages.push({
           category,
           message,
-          score: itemScores[category],
+          score: (outputType == 'percentage' ? (cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0).toFixed(2) : cumulativeScores[category]),
         });
       }
     });
+
     setMessages(reportMessages);
   }, [responses]);
 
