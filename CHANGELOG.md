@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.38] - 2020-12-28
+- Accumulation of Tokens on Graph
+
+## [0.14.37] - 2020-12-28
+- Fixed localization issue with CalendarStrip
+- AudioRecord Item Fix
+
 ## [0.14.36] - 2020-12-24
 - Condition check of freeEntry for TableInput
 
