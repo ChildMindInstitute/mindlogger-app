@@ -158,7 +158,11 @@
     "no_items": "Aucun élément"
   },
   "audio_recorder": {
-    "permission": "Vous devez accorder la permission d'utiliser votre microphone pour accomplir cette tâche."
+    "permission": "Vous devez accorder la permission d'utiliser votre microphone pour accomplir cette tâche.",
+    "alert_title":"\"MindLogger\" souhaite utiliser votre microphone pour effectuer cette tâche.",
+    "alert_message": "Ceux-ci peuvent être configurés dans les paramètres.",
+    "alert_button_ok": "Ouvrir les paramètres",
+    "alert_button_cancel": "Rejeter"
   },
   "record_button": {
     "stop": "STOP",
