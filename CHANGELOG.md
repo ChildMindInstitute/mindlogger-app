@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.40] - 2020-12-29
 - fix only scheduled day option
 
+## [0.14.39] - 2020-12-28
+- Temporarily hide Data App/ Data Removal Options
+
 ## [0.14.38] - 2020-12-28
 - Accumulation of Tokens on Graph
 
