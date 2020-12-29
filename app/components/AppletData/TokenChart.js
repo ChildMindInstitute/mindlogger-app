@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
-import { Svg, G, Line, Text, Rect } from 'react-native-svg';
+import { Svg, G, Line, Text, Rect, Path, Defs, Marker } from 'react-native-svg';
 import * as d3 from 'd3';
 
 const colors = {
@@ -15,7 +15,7 @@ const colors = {
 class TokenChart extends React.Component {
 
   render() {
-    const { data } = this.props;
+    const { data, acc } = this.props;
     const SVGHeight = Math.round(Dimensions.get('window').width * 0.95);
     const SVGWidth = Math.round(Dimensions.get('window').height * 0.5);
     const GRAPH_MARGIN = 15;
@@ -24,7 +24,9 @@ class TokenChart extends React.Component {
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
-    const maxValue = d3.max(data, d => Math.abs(d.value));
+    let totalValue = 0;
+    acc.forEach(d => totalValue = d.value > 0 ? totalValue + d.value : totalValue)
+    const maxValue = d3.max(data, d => totalValue);
     const ticks = Array.from(Array(6).keys()).slice(1)
 
     let tickSize = 1
@@ -52,6 +54,29 @@ class TokenChart extends React.Component {
       .padding(2);
     // top axis and middle axis
 
+    if (acc.length < 1) {
+      return;
+    }
+    let normalisedx = x(acc[0].name) - GRAPH_BAR_WIDTH / 3 + 15
+    let normalisedy = y(topValue + (acc[0].value < 0 ? -0.01 * tickSize : acc[0].value + 0.01 * tickSize),) * -1
+    let yValue = 0
+    let pathString = `M ${normalisedx} ${normalisedy}`;
+    for (let i = 1; i <= acc.length - 1; i++) {
+      const step = acc[i]
+      normalisedx = x(step.name) - GRAPH_BAR_WIDTH / 3 + 15
+      normalisedy = y(topValue + yValue) * -1
+      pathString += ` L ${normalisedx} ${normalisedy}`
+      yValue = step.value > 0 ? yValue + step.value : yValue
+      normalisedy = y(topValue + yValue) * -1
+      pathString += ` L ${normalisedx} ${normalisedy}`
+
+      if (i === acc.length - 1) {
+        normalisedx = x(step.name) + GRAPH_BAR_WIDTH / 3 + 15
+        pathString += ` L ${normalisedx} ${normalisedy}`
+      }
+    }
+    let barXValue = 0;
+    let barYValue = 0;
     return (
       <Svg width={SVGWidth} height={SVGHeight}>
         <G y={graphHeight + GRAPH_MARGIN}>
@@ -163,9 +188,9 @@ class TokenChart extends React.Component {
                   y={
                     y(
                       topValue
-                        + (item.value < 0
-                          ? -0.01 * tickSize
-                          : item.value + 0.01 * tickSize),
+                      + (item.value < 0
+                      ? -0.01 * tickSize
+                      : item.value + 0.01 * tickSize),
                     ) * -1
                   }
                   rx={0}
@@ -177,12 +202,41 @@ class TokenChart extends React.Component {
                   key={`label${item.name}`}
                   fontSize="10"
                   x={x(item.name) - GRAPH_BAR_WIDTH / 3 + 27}
-                  y={y(topValue + item.value) * -1 - (item.value > 0 ? 2 : -8)}
+                  y={y(topValue + item.value) * -1 - (item.value > 0 ? 4 : -8)}
                   textAnchor="middle"
                   fill="black"
                   fillOpacity={1}
                 >
                   {item.value ? item.value : ''}
+                </Text>
+              </>
+            );
+          })}
+
+          {acc.map((item) => {
+            const r = item.value < 0
+              ? 250
+              : 207 - Math.floor((207 / maxValue) * item.value);
+            const g = item.value < 0
+              ? 250 + Math.floor((150 / maxValue) * item.value)
+              : 220;
+            const b = item.value < 0
+              ? 250 + Math.floor((150 / maxValue) * item.value)
+              : 228 - Math.floor((118 / maxValue) * item.value);
+            barXValue += item.value
+            barYValue += item.value
+            return (
+              <>
+                <Text
+                  key={`label${barYValue}`}
+                  fontSize="10"
+                  x={x(item.name) - GRAPH_BAR_WIDTH / 3 + 27}
+                  y={y(topValue + barXValue) * -1 - (item.value > 0 ? 4 : -8)}
+                  textAnchor="middle"
+                  fill="black"
+                  fillOpacity={1}
+                >
+                  {item.value ? barYValue : ''}
                 </Text>
               </>
             );
@@ -202,6 +256,29 @@ class TokenChart extends React.Component {
               {item.name}
             </Text>
           ))}
+
+          {/* arrow */}
+          <Defs>
+            <Marker
+              id="Triangle"
+              viewBox="0 0 10 10"
+              refX="0"
+              refY="5"
+              markerUnits="strokeWidth"
+              markerWidth={8}
+              markerHeight={6}
+              orient="auto"
+            >
+              <Path d="M 0 0 L 10 5 L 0 10 z" stroke="black" fill="black" />
+            </Marker>
+          </Defs>
+          <Path
+            d={pathString}
+            stroke="black"
+            fill="none"
+            strokeWidth="1"
+            markerEnd="url(#Triangle)"
+          />
         </G>
       </Svg>
     );

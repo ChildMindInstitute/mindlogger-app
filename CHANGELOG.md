@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.39] - 2020-12-28
 - Temporarily hide Data App/ Data Removal Options
 
+## [0.14.38] - 2020-12-28
+- Accumulation of Tokens on Graph
+
 ## [0.14.37] - 2020-12-28
 - Fixed localization issue with CalendarStrip
 - AudioRecord Item Fix
