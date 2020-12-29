@@ -146,14 +146,14 @@ class SettingsScreen extends React.Component {
               </Right>
             </ListItem>
 
-            <ListItem button bordered>
-              <Left>
-                <Text>{i18n.t('settings:use_cellular_data')}</Text>
-              </Left>
-              <Right>
-                <Switch onValueChange={toggleMobileDataAllowed} value={mobileDataAllowed} />
-              </Right>
-            </ListItem>
+            {/* <ListItem button bordered> */}
+            {/*  <Left> */}
+            {/*    <Text>{i18n.t('settings:use_cellular_data')}</Text> */}
+            {/*  </Left> */}
+            {/*  <Right> */}
+            {/*    <Switch onValueChange={toggleMobileDataAllowed} value={mobileDataAllowed} /> */}
+            {/*  </Right> */}
+            {/* </ListItem> */}
             <ListItem button bordered onPress={() => logout()}>
               <Left>
                 <Text>{i18n.t('settings:logout')}</Text>
