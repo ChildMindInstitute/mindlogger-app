@@ -127,21 +127,26 @@ class Activity extends React.Component {
   }
 
   getIdleTime = () => {
-    const currentEvent = this.props.currentApplet.schedule.events.find(
-      ({ schedule }) => {
-        if (schedule.dayOfMonth && schedule.month && schedule.year) {
-          const [dayOfMonth] = schedule.dayOfMonth;
-          const [month] = schedule.month;
-          const [year] = schedule.year;
-          return (
-            dayOfMonth === moment().date() &&
-            month === moment().month() &&
-            year === moment().year()
-          );
+    let currentEvent = {};
+
+    Object.keys(this.props.currentApplet.schedule.events).forEach(key => {
+      const event = this.props.currentApplet.schedule.events[key];
+      const schedule = event.schedule;
+
+      if (schedule.dayOfMonth && schedule.month && schedule.year) {
+        const [dayOfMonth] = schedule.dayOfMonth;
+        const [month] = schedule.month;
+        const [year] = schedule.year;
+
+        if (
+          dayOfMonth === moment().date() &&
+          month === moment().month() &&
+          year === moment().year()
+        ) {
+          currentEvent = event;
         }
-        return true;
       }
-    );
+    });
 
     const allow = _.get(currentEvent, "data.idleTime.allow", false);
     if (allow) {
