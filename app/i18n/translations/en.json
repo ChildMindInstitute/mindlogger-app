@@ -135,7 +135,7 @@
     "use_cellular_data":"Use Cellular Data",
     "logout": "Logout",
     "permanently_delete_account": "Permanently Delete Account",
-    "user_settings": "User Settings"    
+    "user_settings": "User Settings"
   },
   "language_screen": {
     "app_language": "Application language",
@@ -164,7 +164,11 @@
     "no_items": "No items"
   },
   "audio_recorder": {
-    "permission": "You must grant permission to use your microphone to complete this task."
+    "permission": "You must grant permission to use your microphone to complete this task.",
+    "alert_title":"\"MindLogger\" would like to use your microphone to complete this task.",
+    "alert_message": "These can be configured in Settings.",
+    "alert_button_ok": "Open Settings",
+    "alert_button_cancel": "Dismiss"
   },
   "record_button": {
     "stop": "STOP",
@@ -295,6 +299,6 @@
     "enter_old_password": "Please enter your old password",
     "enter_new_password": "Please enter a new password"
   }
-  
-  
+
+
 }

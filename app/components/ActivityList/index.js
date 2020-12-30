@@ -35,6 +35,7 @@ const dateParser = (schedule) => {
     if (!output[uri]) {
       output[uri] = {
         notificationDateTimes: [],
+        invalid: e.valid,
       };
     }
 
