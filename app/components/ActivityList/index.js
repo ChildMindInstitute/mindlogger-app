@@ -28,7 +28,8 @@ import {
 
 const dateParser = (schedule) => {
   const output = {};
-  schedule.events.forEach((e) => {
+  Object.keys(schedule.events).forEach(key => {
+    const e = schedule.events[key];
     const uri = e.data.URI;
 
     if (!output[uri]) {
