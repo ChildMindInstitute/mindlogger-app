@@ -110,7 +110,7 @@ const ActivitySummary = ({ responses, activity }) => {
         reportMessages.push({
           category,
           message,
-          score: (outputType == 'percentage' ? (cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0).toFixed(2) : cumulativeScores[category]),
+          score: (outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) + '%' : cumulativeScores[category]),
         });
       }
     });
