@@ -406,7 +406,6 @@ export const appletTransformJson = (appletJson) => {
 };
 
 export const transformApplet = (payload) => {
-  console.log('applet--------->', payload)
   const activities = Object.keys(payload.activities).map((key) => {
     const activity = activityTransformJson(
       payload.activities[key],

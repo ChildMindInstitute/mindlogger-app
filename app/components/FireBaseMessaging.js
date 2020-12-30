@@ -173,7 +173,14 @@ class FireBaseMessaging extends Component {
       return activity;
     }
 
-    const event = applet.schedule.events.find(({ id }) => id === eventId);
+    let event = {};
+
+    Object.keys(applet.schedule.events).forEach(key => {
+      const e = applet.schedule.events[key];
+      if (e.id === eventId) {
+        event = e;
+      }
+    });
 
     if (!event) {
       return null;
@@ -246,7 +253,14 @@ class FireBaseMessaging extends Component {
       }
 
       let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
-      const event = applet.schedule.events.find(({ id }) => id.endsWith(eventId));
+      let event = {};
+
+      Object.keys(applet.schedule.events).forEach(key => {
+        const e = applet.schedule.events[key];
+        if (e.id.endsWith(eventId)) {
+          event = e;
+        }
+      });
 
       if (activity) {
         return this.prepareAndOpenActivity(applet, activity, event);
