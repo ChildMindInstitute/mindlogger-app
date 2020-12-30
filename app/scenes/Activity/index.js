@@ -127,19 +127,23 @@ class Activity extends React.Component {
   }
 
   getIdleTime = () => {
-    const currentEvent = this.props.currentApplet.schedule.events.find(
-      ({ schedule }) => {
+    let currentEvent = {};
+    Object.keys(this.props.currentApplet.schedule.events).forEach(
+      (event) => {
+        const schedule = event.schedule;
         if (schedule.dayOfMonth && schedule.month && schedule.year) {
           const [dayOfMonth] = schedule.dayOfMonth;
           const [month] = schedule.month;
           const [year] = schedule.year;
-          return (
+
+          if (
             dayOfMonth === moment().date() &&
             month === moment().month() &&
             year === moment().year()
-          );
+          ) {
+            currentEvent = event;
+          }
         }
-        return true;
       }
     );
 
