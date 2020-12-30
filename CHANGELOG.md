@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.43] - 2020-12-30
+- Hide permanently delete account in setting
+
 ## [0.14.42] - 2020-12-30
 - Fixed T-scale value issue
 
