@@ -88,14 +88,14 @@ const ActivitySummary = ({ responses, activity }) => {
     const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
       return {
         ...accumulator,
-        [itemCompute.variableName]: evaluateScore(itemCompute.jsExpression, activity.items, scores),
+        [itemCompute.variableName.trim().replace(/\s/g, '__')]: evaluateScore(itemCompute.jsExpression, activity.items, scores),
       };
     }, {});
 
     const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
       return {
         ...accumulator,
-        [itemCompute.variableName]: evaluateScore(itemCompute.jsExpression, activity.items, maxScores),
+        [itemCompute.variableName.trim().replace(/\s/g, '__')]: evaluateScore(itemCompute.jsExpression, activity.items, maxScores),
       };
     }, {});
 
@@ -103,8 +103,9 @@ const ActivitySummary = ({ responses, activity }) => {
     activity.messages.forEach((msg) => {
       const { jsExpression, message, outputType } = msg;
 
-      const expr = parser.parse(jsExpression);
-      const category = jsExpression.split(' ')[0];
+      const variableName = jsExpression.split(/[><]/g)[0];
+      const category = variableName.trim().replace(/\s/g, '__');
+      const expr = parser.parse(category + jsExpression.substr(variableName.length));
 
       if (expr.evaluate(cumulativeScores)) {
         reportMessages.push({
