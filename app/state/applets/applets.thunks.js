@@ -81,7 +81,18 @@ export const setReminder = () => async (dispatch, getState) => {
   
   closeExistingNotifications();
   applets.forEach(applet => {
-    const validEvents = applet.schedule.events.filter(event => event.valid);
+    const validEvents = [];
+    Object.keys(applet.schedule.events).forEach(key => {
+      const event = applet.schedule.events[key];
+
+      Object.keys(applet.schedule.data).forEach(date => {
+        const data = applet.schedule.data[date];
+        const isValid = data.find(d => d.id === key && d.valid);
+        if (isValid) {
+          validEvents.push(event);
+        }
+      })
+    });
 
     validEvents.forEach(event => {
       event.data.notifications.forEach(notification => {
@@ -164,6 +175,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
+      console.log(applets)
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
