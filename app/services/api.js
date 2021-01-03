@@ -109,6 +109,34 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
         }
       }
 
+      if (responses.cumulatives) {
+        Object.keys(responses.cumulatives).forEach((itemIRI) => {
+          const cumulative = responses.cumulatives[itemIRI];
+          if (
+            cumulative.src &&
+            cumulative.ptr !== undefined
+          ) {
+            cumulative.value = responses.dataSources[cumulative.src][cumulative.ptr];
+          }
+
+          const oldItem = responses.itemReferences[cumulative.version] && 
+                          responses.itemReferences[cumulative.version][itemIRI];
+          if ( oldItem ) {
+            const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
+
+            if (currentActivity) {
+              const currentItem = activity.items.find(item => item.id.split('/').pop() === oldItem.original.screenId);
+
+              if (currentItem && currentItem.schema !== itemIRI) {
+                responses.cumulatives[currentItem.schema] = responses.cumulatives[itemIRI];
+
+                delete responses.cumulatives[itemIRI];
+              }
+            }
+          }
+        })
+      }
+
       return { ...responses, appletId };
     });
   });

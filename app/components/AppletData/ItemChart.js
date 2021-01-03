@@ -58,7 +58,7 @@ class ItemChart extends React.Component {
   renderTokenPlot() {
     const values = {};
     const accValues = {}
-    const { item, data } = this.props;
+    const { item, data, cumulative } = this.props;
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
@@ -132,7 +132,7 @@ class ItemChart extends React.Component {
           value={item.additionalParams.description}
         />
         {/* {item.additionalParams.timelineChart} */}
-        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} />
+        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} cumulative={cumulative}/>
       </View>
     );
   }
@@ -199,6 +199,7 @@ ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
+  cumulative: PropTypes.number.isRequired,
 };
 
 export default ItemChart;
