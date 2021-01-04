@@ -7,7 +7,6 @@ import { getStore } from "../../store";
 import {
   currentAppletSelector,
   skinSelector,
-  startedTimesSelector,
 } from "../../state/app/app.selectors";
 import AppletDetailsComponent from "./AppletDetailsComponent";
 import {
@@ -21,7 +20,6 @@ import {
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
-  setActivityStartTime,
 } from "../../state/app/app.actions";
 import { startResponse } from "../../state/responses/responses.thunks";
 
@@ -35,11 +33,6 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handlePressActivity = (activity) => {
-    const { startedTimes } = this.props;
-    if (startedTimes && !startedTimes[activity.id]) {
-      this.props.setActivityStartTime(activity.id);
-    }
-
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
@@ -137,9 +130,7 @@ AppletDetails.propTypes = {
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
-  setActivityStartTime: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
-  startedTimes: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
   hasInvites: PropTypes.bool.isRequired,
   initialTab: PropTypes.string,
@@ -153,7 +144,6 @@ const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
-  startedTimes: startedTimesSelector(state),
   hasInvites: invitesSelector(state).length > 0,
   appletData: currentAppletResponsesSelector(state),
   // responsesSelector(state), // appletDataSelector(state) || {},
@@ -161,7 +151,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
-  setActivityStartTime,
   setCurrentApplet,
   startResponse,
   getAppletResponseData,

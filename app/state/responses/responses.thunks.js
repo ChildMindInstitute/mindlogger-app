@@ -39,9 +39,15 @@ import {
   replaceAppletResponses,
   setActivityOpened,
 } from "./responses.actions";
-import { setCurrentActivity, clearActivityStartTime } from "../app/app.actions";
+import {
+  setActivityStartTime,
+  setCurrentActivity,
+  clearActivityStartTime,
+  setActivityEndTime,
+} from "../app/app.actions";
 
 import {
+  startedTimesSelector,
   currentActivityIdSelector,
   currentAppletSelector,
 } from "../app/app.selectors";
@@ -97,6 +103,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
 
 export const startResponse = (activity) => (dispatch, getState) => {
   const state = getState();
+  const startedTimes = startedTimesSelector(state);
   const { responses, user } = state;
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
@@ -105,6 +112,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
 
   if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
     // There is no response in progress, so start a new one
+    if (startedTimes && !startedTimes[activity.id]) {
+      dispatch(setActivityStartTime(activity.id));
+    }
     dispatch(
       createResponseInProgress(applet.id, activity, subjectId, timeStarted)
     );
@@ -299,6 +309,7 @@ export const nextScreen = () => (dispatch, getState) => {
   if (next === -1) {
     dispatch(completeResponse());
     dispatch(setCurrentActivity(null));
+    dispatch(setActivityEndTime(applet.id + activityId));
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
@@ -313,7 +324,6 @@ export const finishActivity = (activity) => (dispatch) => {
 };
 
 export const endActivity = (activity) => (dispatch) => {
-  console.log({ activity });
   dispatch(clearActivityStartTime(activity.id));
   dispatch(setCurrentActivity(activity.id));
   dispatch(completeResponse());
