@@ -92,7 +92,7 @@ export const getApplets = (authToken) =>
     getAllApplets: true,
     retrieveSchedule: true,
     retrieveAllEvents: false,
-    getTodayEvents: true,
+    numberOfDays: 7,
   });
 
 // export const getTargetApplet = (authToken, appletId) => get(

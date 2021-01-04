@@ -667,7 +667,14 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.10.1", "@babel/runtime@^7.3.1":
+"@babel/runtime@^7.12.0":
+  version "7.12.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
+  integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
+"@babel/runtime@^7.3.1":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.1.tgz#b4116a6b6711d010b2dad3b7b6e43bf1b9954740"
   integrity sha512-J5AIf3vPj3UwXaAzb5j1xM4WAQDX3EMgemF8rjCP3SoW09LfRKAXQKt6CoVYl230P6iWdRcBbnLDDdnqWxZSCA==
@@ -5077,12 +5084,12 @@ human-signals@^1.1.1:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-1.1.1.tgz#c5b1cd14f50aeae09ab6c59fe63ba3395fe4dfa3"
   integrity sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==
 
-i18next@^19.8.2:
-  version "19.8.2"
-  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.8.2.tgz#8a20ee098c4702f14aae6dee3ecc39245a6a161e"
-  integrity sha512-YWqkUpwnmeZxbNxhQ4BENC27BlXnq4kD6NlqMUwX7T6ZN3alNnBXsWrh/8mJ37BL5cKMZaqA0k/YUo4o6rLfpA==
+i18next@^19.8.4:
+  version "19.8.4"
+  resolved "https://registry.yarnpkg.com/i18next/-/i18next-19.8.4.tgz#447718f2a26319b8debdbcc6fbc1a9761be7316b"
+  integrity sha512-FfVPNWv+felJObeZ6DSXZkj9QM1Ivvh7NcFCgA8XPtJWHz0iXVa9BUy+QY8EPrCLE+vWgDfV/sc96BgXVo6HAA==
   dependencies:
-    "@babel/runtime" "^7.10.1"
+    "@babel/runtime" "^7.12.0"
 
 iconv-lite@0.4, iconv-lite@0.4.24, iconv-lite@^0.4.11, iconv-lite@^0.4.17, iconv-lite@^0.4.24, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.24"
@@ -7272,10 +7279,15 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@^0.5.4, mkdirp@^0.5.5, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-moment@>=2.0.0, moment@^2.24.0:
+moment@>=2.0.0:
   version "2.25.3"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.25.3.tgz#252ff41319cf41e47761a1a88cab30edfe9808c0"
   integrity sha512-PuYv0PHxZvzc15Sp8ybUCoQ+xpyPWvjOuK72a5ovzp2LI32rJXOiIfyoFoYvG3s6EwwrdkMyWuRiEHSZRLJNdg==
+
+moment@^2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
+  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
 
 morgan@^1.9.0:
   version "1.10.0"
@@ -8498,10 +8510,10 @@ react-dom@^16.9.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-i18next@^11.7.3:
-  version "11.7.3"
-  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.7.3.tgz#256461c46baf5b3208c3c6860ca4e569fc7ed053"
-  integrity sha512-7sYZqVZgdaS9Z0ZH6nuJFErCD0zz5wK3jR4/xCrWjZcxHHF3GRu7BXdicbSPprZV4ZYz7LJzxxMHO7dg5Qb70A==
+react-i18next@^11.8.4:
+  version "11.8.4"
+  resolved "https://registry.yarnpkg.com/react-i18next/-/react-i18next-11.8.4.tgz#5407d2edcaa704c38e4034e7ac06413914ed6e6d"
+  integrity sha512-QlPJfX+Roi+jEQ6frBSsLHHH+VWbUoCl6wZDT8XHMd6PsSgepjgD2sZf/h7F46JnHeuy0U+SxY3TtrJF+aDIyg==
   dependencies:
     "@babel/runtime" "^7.3.1"
     html-parse-stringify2 "2.0.1"

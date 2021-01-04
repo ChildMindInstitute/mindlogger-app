@@ -1,6 +1,6 @@
 import { Parser } from 'expr-eval';
 
-const getScoreFromResponse = (item, value) => {
+export const getScoreFromResponse = (item, value) => {
   if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
     return 0;
   }
@@ -34,7 +34,7 @@ const getScoreFromResponse = (item, value) => {
 }
 
 
-const getSubScaleScore = (testExpression, items = [], scores = []) => {
+export const evaluateScore = (testExpression, items = [], scores = []) => {
   const parser = new Parser();
 
   try {
@@ -50,9 +50,27 @@ const getSubScaleScore = (testExpression, items = [], scores = []) => {
     const result = expr.evaluate(inputs);
     return result;
   } catch (error) {
-    return 0;
+    return null;
   }
 };
+
+export const getMaxScore = (item) => {
+  if (item.inputType !== 'radio' && item.inputType !== 'slider') {
+    return 0;
+  }
+
+  const valueConstraints = item.valueConstraints || {};
+  const itemList = valueConstraints.itemList || [];
+
+  if (!valueConstraints.scoring) {
+    return 0;
+  }
+
+  const oo = 1e6;
+  return itemList.reduce((previousValue, currentOption) => {
+    return valueConstraints.multipleChoice ? Math.max(currentOption.score + previousValue, previousValue) : Math.max(currentOption.score, previousValue)
+  }, valueConstraints.multipleChoice ? 0 : -oo);
+}
 
 export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
   let scores = [];
@@ -60,7 +78,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     scores.push(getScoreFromResponse(items[i], responses[i]));
   }
 
-  let subScaleScore = getSubScaleScore(jsExpression, items, scores);
+  let subScaleScore = evaluateScore(jsExpression, items, scores);
   if (!lookupTable) {
     return subScaleScore;
   }
@@ -87,7 +105,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     if ( 
       isValueInRange(subScaleScore, row.rawScore) && 
       isValueInRange(age, row.age) &&
-      isValueInRange(gender, row.gender)
+      isValueInRange(gender, row.sex)
     ) {
       return parseInt(row.tScore);
     }

@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable } from '../services/subScaleScoring';
+import { getScoreFromLookupTable } from '../services/scoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();

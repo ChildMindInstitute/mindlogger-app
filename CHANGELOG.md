@@ -5,6 +5,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.46] - 2020-1-3
+- Fixed iOs/Android version specific issue of react-native-image-picker
+- Fixed uploading response images of media items
+
+## [0.14.45] - 2020-12-31
+- Allow multiple words in Cumulative Score Title field
+
+## [0.14.44] - 2020-12-30
+- Fixed object iteration issue
+
+## [0.14.43] - 2020-12-30
+- Hide permanently delete account in setting
+
+## [0.14.42] - 2020-12-30
+- Fixed T-scale value issue
+
+## [0.14.41] - 2020-12-29
+- Fixed duplicated notification issue
+
+## [0.14.40] - 2020-12-29
+- fix only scheduled day option
+
+## [0.14.39] - 2020-12-28
+- Temporarily hide Data App/ Data Removal Options
+
+## [0.14.38] - 2020-12-28
+- Accumulation of Tokens on Graph
+
+## [0.14.37] - 2020-12-28
+- Fixed localization issue with CalendarStrip
+- AudioRecord Item Fix
+
+## [0.14.36] - 2020-12-24
+- Condition check of freeEntry for TableInput
+
+## [0.14.35] - 2020-12-28
+- use scores for calculating expression in activity summary page
+
+## [0.14.34] - 2020-12-24
+- Fixed notification issue when tapping resume button
+
 ## [0.14.33] - 2020-12-23
 - use lookup table for calculating sub-scaled scores
 
