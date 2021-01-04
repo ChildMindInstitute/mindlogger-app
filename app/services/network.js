@@ -53,7 +53,7 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
 };
 
 export const postFile = ({ authToken, file, parentType, parentId }) => {
-  console.log("post file");
+  console.log('postFile', { file, parentType, parentId });
   const queryParams = objectToQueryParams({
     parentType,
     parentId,
@@ -65,15 +65,17 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
     "Girder-Token": authToken,
     "Content-Type": file.type,
   };
-
+  console.log('postFile', { queryParams, url, headers });
   return RNFetchBlob.fetch(
     "POST",
     url,
     headers,
-    RNFetchBlob.wrap(file.uri)
-  ).then((res) =>
-    res.info().status === 200 ? res.json() : Promise.reject(res)
-  );
+    RNFetchBlob.wrap(file.uri),
+  ).then((res) => {
+    const responseInfo = res.info();
+    console.log('postFile response', { res, responseInfo });
+    return responseInfo.status === 200 ? res.json() : Promise.reject(res);
+  });
 };
 
 export const getSkin = () => get("context/skin", null, null);

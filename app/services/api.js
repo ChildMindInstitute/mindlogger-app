@@ -1,5 +1,6 @@
 import * as R from "ramda";
 import RNFetchBlob from "rn-fetch-blob";
+import randomString from "random-string";
 import {
   // getResponses,
   getLast7DaysData,
@@ -114,15 +115,32 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   return Promise.all(requests).then(transformResponses);
 };
 
+const prepareFile = (file): Promise => {
+  console.log('prepareFile', { file });
+  if (file.svgString && file.uri) {
+    console.log('RNFetchBlob.fs.writeFile', { file });
+    return RNFetchBlob.fs.writeFile(file.uri, file.svgString)
+      .then((result) => {
+        console.log('RNFetchBlob.fs.writeFile result', { result, file });
+        return Promise.resolve(file);
+      }).then(file => RNFetchBlob.fs.stat(file.uri))
+      .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+  }
+  if (file.size) {
+    return Promise.resolve(file);
+  }
+  return RNFetchBlob.fs.stat(file.uri)
+    .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+};
+
 const uploadFiles = (authToken, response, item) => {
   console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
-
+  console.log('uploadFiles', { response, item, answers });
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
     const answer = answers[key];
-
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
     if (R.path(["survey", "uri"], answer)) {
@@ -141,35 +159,42 @@ const uploadFiles = (authToken, response, item) => {
       file = {
         uri: answer.uri,
         filename: answer.filename,
-        type: "application/octet",
+        size: answer.size,
+        type: 'application/octet',
+      };
+    } else if (answer && answer.lines && answer.svgString) {
+      const filename = `${randomString({ length: 20 })}.svg`;
+      file = {
+        svgString: answer.svgString,
+        filename,
+        type: 'application/svg',
+        uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
       };
     } else {
       return accumulator; // Break early
     }
+    console.log('uploadFiles, file', { file, answer });
 
-    const request = RNFetchBlob.fs
-      .stat(file.uri)
-      .then((fileInfo) =>
-        postFile({
-          authToken,
-          file: {
-            ...file,
-            size: fileInfo.size,
-          },
-          parentType: "item",
-          parentId: item._id,
-        })
-      )
-      .then(() => {
+    const request = prepareFile(file)
+      .then(file => postFile({
+        authToken,
+        file,
+        parentType: 'item',
+        parentId: item._id,
+      }))
+      .then((res) => {
+        console.log('uploadFiles, response:', { res });
         /** delete file from local storage after uploading */
         RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+      }).catch((err) => {
+        console.log('uploadFiles error', err.message, { err });
       });
 
-    console.log({ request });
+    console.log('uploadFiles, request', { request });
 
     return [...accumulator, request];
   }, []);
-
+  console.log('uploadFiles uploadRequests', { uploadRequests });
   return Promise.all(uploadRequests);
 };
 
@@ -191,18 +216,19 @@ const uploadResponse = (authToken, response) =>
 export const uploadResponseQueue = (
   authToken,
   responseQueue,
-  progressCallback
+  progressCallback,
 ) => {
   if (responseQueue.length === 0) {
     return Promise.resolve();
   }
+  console.log('uploadResponseQueue', { authToken, responseQueueItem: responseQueue[0] });
   return uploadResponse(authToken, responseQueue[0])
     .then(() => {
       progressCallback();
       return uploadResponseQueue(
         authToken,
         R.remove(0, 1, responseQueue),
-        progressCallback
+        progressCallback,
       );
     })
     .catch((e) => console.warn(e));

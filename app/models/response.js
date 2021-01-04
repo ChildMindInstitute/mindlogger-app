@@ -59,13 +59,13 @@ export const prepareResponseForUpload = (
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
-    const items = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
-      {}
+    const formattedResponses = activity.items.reduce(
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] }),
+      {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
 
-    responseData['responses'] = items;
+    responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
     if (activity.subScales) {
