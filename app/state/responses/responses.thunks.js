@@ -38,7 +38,11 @@ import {
   replaceAppletResponses,
   setActivityOpened,
 } from "./responses.actions";
-import { setCurrentActivity, clearActivityStartTime } from "../app/app.actions";
+import {
+  setCurrentActivity,
+  clearActivityStartTime,
+  setActivityEndTime,
+} from "../app/app.actions";
 
 import {
   currentActivityIdSelector,
@@ -296,6 +300,7 @@ export const nextScreen = () => (dispatch, getState) => {
   if (next === -1) {
     dispatch(completeResponse());
     dispatch(setCurrentActivity(null));
+    dispatch(setActivityEndTime(applet.id + activityId));
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
@@ -310,7 +315,6 @@ export const finishActivity = (activity) => (dispatch) => {
 };
 
 export const endActivity = (activity) => (dispatch) => {
-  console.log({ activity });
   dispatch(clearActivityStartTime(activity.id));
   dispatch(setCurrentActivity(activity.id));
   dispatch(completeResponse());
