@@ -2,14 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
-import * as R from 'ramda';
-import { Parse, Day } from 'dayspan';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 // Local.
-import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../../services/time';
 import { delayedExec, clearExec } from '../../services/timing';
 import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';

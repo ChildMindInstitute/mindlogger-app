@@ -1,11 +1,5 @@
 import { createSelector } from 'reselect';
 import * as R from 'ramda';
-import { Parse, Day } from 'dayspan';
-import {
-  getLastScheduled,
-  getNextScheduled,
-  getScheduledNotifications,
-} from '../../services/time';
 import { responseScheduleSelector } from '../responses/responses.selectors';
 import { parseAppletActivities } from '../../models/json-ld';
 
