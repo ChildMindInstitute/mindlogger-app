@@ -298,7 +298,6 @@ export const completeResponse = () => (dispatch, getState) => {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  dispatch(addToUploadQueue(preparedResponse));
   if (activity.isPrize === true) {
     const authToken = authTokenSelector(state);
     const selectedPrizeIndex = inProgressResponse["responses"][0];
