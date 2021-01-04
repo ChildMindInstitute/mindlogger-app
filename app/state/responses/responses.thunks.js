@@ -16,6 +16,7 @@ import {
   responsesSelector,
   uploadQueueSelector,
   currentResponsesSelector,
+  currentAppletResponsesSelector,
   currentScreenSelector,
   itemVisiblitySelector,
 } from "./responses.selectors";
@@ -267,13 +268,15 @@ export const completeResponse = () => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   // console.log({ applet });
   const inProgressResponse = currentResponsesSelector(state);
+  const responseHistory = currentAppletResponsesSelector(state);
+
   console.log({ inProgressResponse });
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet);
+  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
   // console.log({ preparedResponse });
   dispatch(addToUploadQueue(preparedResponse));
   setTimeout(() => {
