@@ -33,6 +33,36 @@ export const getScoreFromResponse = (item, value) => {
   return totalScore;
 }
 
+export const getValuesFromResponse = (item, value) => {
+  if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
+    return null;
+  }
+
+  const valueConstraints = item.valueConstraints || {};
+  const itemList = valueConstraints.itemList || [];
+
+  let response = value;
+  if (typeof response == 'number' || typeof response == 'string') {
+    response = [response];
+  }
+
+  const tokenValues = [];
+
+  for (let value of response) {
+    let option = itemList.find(option => 
+      typeof value == 'number' && option.value === value || 
+      typeof value == 'string' && Object.values(option.name)[0] === value
+    );
+
+    if (option && option.value) {
+      tokenValues.push(option.value);
+    } else {
+      tokenValues.push(0);
+    }
+  }
+
+  return tokenValues;
+}
 
 export const evaluateScore = (testExpression, items = [], scores = []) => {
   const parser = new Parser();

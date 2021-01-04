@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable } from '../services/scoring';
+import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
@@ -15,12 +15,35 @@ export const getEncryptedData = (response, key) =>
 
 export const prepareResponseForUpload = (
   inProgressResponse,
-  appletMetaData
+  appletMetaData,
+  responseHistory,
 ) => {
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
+  const appletVersion = activity.appletSchemaVersion[languageKey];
+  const cumulatives = { ...(responseHistory.cumulatives || {}) };
 
-  console.log({ activity, responses, subjectId });
+  for (let i = 0; i < responses.length; i++) {
+    const item = activity.items[i];
+
+    if (item.valueConstraints) {
+      const { valueType } = item.valueConstraints;
+
+      if (
+        valueType && 
+        valueType.includes('token')
+      ) {
+        cumulatives[item.schema] = {
+          value: (getValuesFromResponse(item, responses[i]) || []).reduce(
+            (cumulative, current) => {
+              return current >= 0 ? cumulative + current : cumulative;
+            }, responseHistory.cumulatives && responseHistory.cumulatives[item.schema] && responseHistory.cumulatives[item.schema].value || 0
+          ),
+          version: appletVersion,
+        }
+      }
+    }
+  }
 
   const responseData = {
     activity: {
@@ -31,7 +54,7 @@ export const prepareResponseForUpload = (
     applet: {
       id: trimId(activity.appletId),
       schema: activity.appletSchema,
-      schemaVersion: activity.appletSchemaVersion[languageKey],
+      schemaVersion: appletVersion,
     },
     subject: subjectId,
     responseStarted: inProgressResponse.timeStarted,
@@ -59,19 +82,28 @@ export const prepareResponseForUpload = (
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
-    const items = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
-      {}
+    const formattedResponses = activity.items.reduce(
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] }),
+      {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
 
-    responseData['responses'] = items;
+    responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
     if (activity.subScales) {
       responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
     }
+
+    responseData['tokenCumulationSource'] = getEncryptedData(Object.values(cumulatives).map(cumulative => cumulative.value), appletMetaData.AESKey);
+    responseData['tokenCumulations'] = Object.keys(cumulatives).reduce((accumulator, itemIRI, index) => ({
+      ...accumulator,
+      [itemIRI]: {
+        ptr: index,
+        version: cumulatives[itemIRI].version,
+      }
+    }), {});
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
@@ -91,8 +123,12 @@ export const prepareResponseForUpload = (
         }
       });
     }
+
+    responseData['tokenCumulations'] = cumulatives;
   }
-  console.log({ responseData });
+
+  console.log('response data is', responseData)
+  console.log('cumulative is', cumulatives)
 
   return responseData;
 };
