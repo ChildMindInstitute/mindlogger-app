@@ -34,8 +34,6 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
 };
 
 export const postFormData = (route, authToken, body, extraHeaders = {}) => {
-  console.log("post form data");
-  console.log({ route, authToken, body, extraHeaders });
   const url = `${apiHost()}/${route}`;
   const headers = {
     "Girder-Token": authToken,
