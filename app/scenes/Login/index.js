@@ -23,7 +23,6 @@ import LoginForm from "./LoginForm";
 import {
   skinSelector,
   mobileDataAllowedSelector,
-  apiHostSelector,
 } from "../../state/app/app.selectors";
 import { toggleMobileDataAllowed } from "../../state/app/app.actions";
 
@@ -114,7 +113,7 @@ class Login extends Component {
   };
 
   render() {
-    const { skin, mobileDataAllowed, toggleMobileDataAllowed, apiHost } = this.props;
+    const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin.name;
     const logo =
       typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
@@ -191,7 +190,6 @@ const mapStateToProps = (state) => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   fcmToken: fcmFcmTokenSelector(state),
-  apiHost: apiHostSelector(state),
 });
 
 const mapDispatchToProps = {
