@@ -40,6 +40,7 @@ import {
   setActivityOpened,
 } from "./responses.actions";
 import {
+  setActivityStartTime,
   setCurrentActivity,
   clearActivityStartTime,
   setActivityEndTime,
@@ -48,6 +49,7 @@ import {
 import {
   currentActivityIdSelector,
   currentAppletSelector,
+  startedTimesSelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 
@@ -102,6 +104,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
 export const startResponse = (activity) => (dispatch, getState) => {
   const state = getState();
   const { responses, user } = state;
+  const startedTimes = startedTimesSelector(state);
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
   const currentScreen = currentScreenSelector(state);
@@ -109,6 +112,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
 
   if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
     // There is no response in progress, so start a new one
+    if (startedTimes && !startedTimes[activity.id]) {
+      dispatch(setActivityStartTime(activity.id));
+    }
     dispatch(
       createResponseInProgress(applet.id, activity, subjectId, timeStarted)
     );
