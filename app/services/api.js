@@ -31,7 +31,6 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       const appletId = applet.id;
-
       /** decrypt responses */
       if (responses.dataSources && applet.encryption) {
         Object.keys(responses.dataSources).forEach((key) => {
@@ -48,7 +47,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
           }
         });
       }
-
+      
       /** replace response to plain format */
       if (responses.responses) {
         Object.keys(responses.responses).forEach((item) => {
@@ -59,7 +58,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
               response.value.ptr !== undefined
             ) {
               response.value =
-                responses.dataSources[response.value.src][response.value.ptr];
+                responses.dataSources[response.value.src][0];
             }
           }
 
