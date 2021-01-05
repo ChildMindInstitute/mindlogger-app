@@ -53,9 +53,10 @@ export const getScheduled = activityList => activityList.filter(
       && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
-export const getPastdue = activityList => activityList.filter(
+export const getPastdue = (activityList, endTimes, appletId) => activityList.filter(
   activity => activity.lastScheduledTimestamp
       && activity.lastTimeout
+      && (!endTimes || !endTimes[appletId + activity.id] || !moment().isSame(moment(endTimes[appletId + activity.id]), 'day'))
       && (!activity.lastResponseTimestamp
         || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp
         || ((!activity.extendedTime || !activity.extendedTime.allow)
@@ -79,7 +80,7 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (appletId, activityList, inProgress) => {
+export default (appletId, activityList, inProgress, activityEndTimes) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
   const notInProgress = inProgressKeys
@@ -88,7 +89,7 @@ export default (appletId, activityList, inProgress) => {
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
   // Activities scheduled some time in the future.
-  const pastdue = getPastdue(notInProgress)
+  const pastdue = getPastdue(notInProgress, activityEndTimes, appletId)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 

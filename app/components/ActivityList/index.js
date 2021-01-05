@@ -190,6 +190,7 @@ const ActivityList = ({
   setUpdatedTime,
   appletTime,
   lastUpdatedTime,
+  activityEndTimes,
   responseSchedule,
   inProgress,
   onPressActivity,
@@ -205,7 +206,7 @@ const ActivityList = ({
   const stateUpdate = () => {
     const newApplet = getActivities(applet, responseSchedule);
 
-    setActivities(sortActivities(applet.id, newApplet.activities, inProgress, newApplet.schedule));
+    setActivities(sortActivities(applet.id, newApplet.activities, inProgress, activityEndTimes));
   };
 
   const datesAreOnSameDay = (first, second) => first.getFullYear() === second.getFullYear()
@@ -343,6 +344,7 @@ ActivityList.propTypes = {
   onPressActivity: PropTypes.func.isRequired,
   onLongPressActivity: PropTypes.func.isRequired,
   lastUpdatedTime: PropTypes.object.isRequired,
+  activityEndTimes: PropTypes.object.isRequired,
   setUpdatedTime: PropTypes.func.isRequired,
   getSchedules: PropTypes.func.isRequired,
   setScheduleUpdated: PropTypes.func.isRequired,
@@ -354,6 +356,7 @@ ActivityList.propTypes = {
 const mapStateToProps = (state) => {
   return {
     lastUpdatedTime: state.app.lastUpdatedTime,
+    activityEndTimes: state.app.finishedTimes,
     appStatus: state.app.appStatus,
     scheduleUpdated: state.applets.scheduleUpdated,
     applet: newAppletSelector(state),
