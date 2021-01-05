@@ -39,6 +39,11 @@ export const setActivitySelectionDisabled = status => ({
   payload: status,
 });
 
+export const setActivityEndTime = status => ({
+  type: APP_ACTIONS.SET_ACTIVITY_END_TIME,
+  payload: status,
+});
+
 export const setActivityStartTime = status => ({
   type: APP_ACTIONS.SET_ACTIVITY_START_TIME,
   payload: status,
