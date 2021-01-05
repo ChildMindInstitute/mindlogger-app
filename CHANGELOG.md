@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.49] - 2021-01-04
+- Fixed activity timer after notification
+
 ## [0.14.48] - 2021-01-03
 - Fixed offline schedule in past due
 
