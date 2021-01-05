@@ -31,14 +31,14 @@ export const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let {
-      lastScheduledTimeout, lastTimedActivity, extendedTime, invalid, completion
+      lastScheduledTimeout, lastTimedActivity, extendedTime, id, completion
     } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
       lastTimedActivity = e.data.timedActivity;
       completion = e.data.completion;
-      invalid = e.valid;
+      id = e.id;
       extendedTime = e.data.extendedTime;
     }
 
@@ -50,7 +50,7 @@ export const dateParser = (schedule) => {
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
         lastTimedActivity = output[uri].lastTimedActivity;
-        invalid = output[uri].valid;
+        id = output[uri].id;
         completion = output[uri].completion;
         extendedTime = output[uri].extendedTime;
       }
@@ -81,7 +81,7 @@ export const dateParser = (schedule) => {
       lastTimedActivity,
       nextTimedActivity,
       extendedTime,
-      invalid,
+      id,
       lastScheduledTimeout,
       nextScheduledTimeout,
       completion,
@@ -117,10 +117,19 @@ export const appletsSelector = createSelector(
       const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
       const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
       const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+      const id = R.pathOr(null, ['id'], scheduledDateTimes);
       const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
       let nextAccess = false;
       let prevTimeout = null;
       let scheduledTimeout = null;
+      let invalid = true;
+
+      Object.keys(applet.schedule.data).forEach(date => {
+        const data = applet.schedule.data[date];
+        if (moment().isSame(moment(date), 'day') && data.id === id) {
+          invalid = data.valid;
+        }
+      })
 
       if (lastTimeout) {
         prevTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
@@ -147,10 +156,11 @@ export const appletsSelector = createSelector(
         nextTimeout: scheduledTimeout,
         nextTimedActivity,
         lastTimedActivity,
+        invalid,
         extendedTime,
         nextAccess,
         isOverdue:
-          lastScheduled && moment(lastResponse) < moment(lastScheduled),
+        lastScheduled && moment(lastResponse) < moment(lastScheduled),
 
         // also add in our parsed notifications...
         notification: R.prop('notificationDateTimes', scheduledDateTimes),
