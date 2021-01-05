@@ -33,10 +33,6 @@ class AppletData extends React.Component {
 
   componentDidMount() {
     const { applet, appletData } = this.props;
-
-    console.log({ applet });
-    console.log({ appletData });
-
     const itemTypesToIgnore = [
       "markdown-message",
       "audioRecord",
