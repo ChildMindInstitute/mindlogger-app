@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.52] - 2021-01-05
+- Fixed `scheduled day only` option
+
 ## [0.14.50] - 2021-01-05
 - Removed console logs
 - Fixed response data issue
