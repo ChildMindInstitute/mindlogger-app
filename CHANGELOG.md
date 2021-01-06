@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.51] - 2021-01-05
+- Fixed notification time
+
 ## [0.14.50] - 2021-01-05
 - Removed console logs
 - Fixed response data issue
