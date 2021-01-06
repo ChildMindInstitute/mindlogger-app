@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
-import { getSchedule, replaceResponseData } from "../../services/network";
+import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
 import {
@@ -24,7 +24,9 @@ import {
   authTokenSelector,
   loggedInSelector,
   userInfoSelector,
+  userTokenBalanceSelector,
 } from "../user/user.selectors";
+import { setTokenBalance } from "../user/user.actions";
 import {
   createResponseInProgress,
   setDownloadingResponses,
@@ -50,6 +52,7 @@ import {
   currentActivityIdSelector,
   currentAppletSelector,
   startedTimesSelector,
+  currentActivitySelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 
@@ -110,7 +113,16 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
 
-  if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
+  if (activity.isPrize === true) {
+    const tokenBalance = userTokenBalanceSelector(state);
+    const prizesActivity = R.assocPath(['items', 0, 'info', 'en'],
+      `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
+      activity);
+    dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
+    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(setCurrentActivity(activity.id));
+    Actions.push('take_act');
+  } else if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
     // There is no response in progress, so start a new one
     if (startedTimes && !startedTimes[activity.id]) {
       dispatch(setActivityStartTime(activity.id));
@@ -278,24 +290,39 @@ export const completeResponse = () => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   // console.log({ applet });
   const inProgressResponse = currentResponsesSelector(state);
-  const responseHistory = currentAppletResponsesSelector(state);
 
   console.log({ inProgressResponse });
+  const activity = currentActivitySelector(state);
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
-  // console.log({ preparedResponse });
-  dispatch(addToUploadQueue(preparedResponse));
+  if (activity.isPrize === true) {
+    const authToken = authTokenSelector(state);
+    const selectedPrizeIndex = inProgressResponse["responses"][0];
+    const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
+    updateUserTokenBalance(authToken, -selectedPrize.price)
+      .then((res) => {
+        const newBalance = res["tokenBalance"];
+        dispatch(setTokenBalance(newBalance));
+      })
+      .catch((e) => {
+        console.warn(e.json());
+      });
+  } else {
+    const responseHistory = currentAppletResponsesSelector(state);
+    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+    dispatch(addToUploadQueue(preparedResponse));
+    dispatch(startUploadQueue());
+  }
+
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList
     dispatch(
       removeResponseInProgress(applet.id + inProgressResponse.activity.id)
     );
   }, 300);
-  dispatch(startUploadQueue());
 };
 
 export const nextScreen = () => (dispatch, getState) => {
