@@ -20,14 +20,16 @@ import {
   TextEntry,
   TimeRange,
   VisualStimulusResponse,
+  RadioPrizes,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
+import { userTokenBalanceSelector } from '../../state/user/user.selectors';
 
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
+const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, userTokenBalance }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
   if (screen.inputType === 'radio'
@@ -53,7 +55,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        token={ valueType && valueType.includes("token")}
+        token={valueType && valueType.includes("token")}
       />
     );
   }
@@ -213,6 +215,20 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     return null;
   }
 
+  if (screen.inputType === 'prize'
+    && R.path(['valueConstraints', 'itemList'], screen)) {
+    return (
+      <RadioPrizes
+        config={screen.valueConstraints}
+        onChange={onChange}
+        onSelected={setSelected}
+        value={answer}
+        selected={isSelected}
+        tokenBalance={userTokenBalance}
+      />
+    );
+  }
+
   onContentError();
   return <WidgetError />;
 };
@@ -234,11 +250,13 @@ Widget.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
+  userTokenBalance: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
   applet: currentAppletSelector(state),
   isSelected: state.responses.isSelected,
+  userTokenBalance: userTokenBalanceSelector(state),
 });
 
 const mapDispatchToProps = {

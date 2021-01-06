@@ -98,9 +98,7 @@ class AppletList extends Component {
         onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
         onUploadQueue={this.uploadQueue}
-        onPressAbout={() => {
-          Actions.push('about_app');
-        }}
+        onPressAbout={() => Actions.push('about_app')}
         onPressApplet={this.handlePressApplet}
         mobileDataAllowed={mobileDataAllowed}
         toggleMobileDataAllowed={toggleMobileDataAllowed}
@@ -114,6 +112,7 @@ AppletList.propTypes = {
   invites: PropTypes.array.isRequired,
   isDownloadingApplets: PropTypes.bool.isRequired,
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
+  appletSelectionDisabled: PropTypes.bool.isRequired,
   sync: PropTypes.func.isRequired,
   syncUploadQueue: PropTypes.func.isRequired,
   setCurrentApplet: PropTypes.func.isRequired,
