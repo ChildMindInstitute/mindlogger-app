@@ -78,7 +78,7 @@ export const setReminder = () => async (dispatch, getState) => {
   const state = getState();
   const applets = allAppletsSelector(state);
   const notifications = [];
-  
+
   closeExistingNotifications();
   applets.forEach(applet => {
     const validEvents = [];
@@ -89,15 +89,20 @@ export const setReminder = () => async (dispatch, getState) => {
         const data = applet.schedule.data[date];
         const isValid = data.find(d => d.id === key && d.valid);
         if (isValid) {
-          validEvents.push(event);
+          const validEvent = {
+            ...event,
+            date,
+          }
+          validEvents.push(validEvent);
         }
       })
     });
 
+
     validEvents.forEach(event => {
       event.data.notifications.forEach(notification => {
         const values = notification.start.split(':');
-        const date = new Date();
+        const date = new Date(event.date);
 
         date.setHours(values[0]);
         date.setMinutes(values[1]);
@@ -113,7 +118,7 @@ export const setReminder = () => async (dispatch, getState) => {
       })
     })
   });
-  
+
   notifications.forEach(notification => {
     const settings = { showInForeground: true };
     const AndroidChannelId = 'MindLoggerChannelId';

@@ -63,16 +63,13 @@ const ActivityList = ({
     }
   };
 
-  const datesAreOnSameDay = (first, second) => first.getFullYear() === second.getFullYear()
-    && first.getMonth() === second.getMonth()
-    && first.getDate() === second.getDate();
-
   const scheduleUpdate = () => {
     const currentTime = new Date();
     const appletId = applet.id;
 
     if (lastUpdatedTime[appletId]) {
-      if (!datesAreOnSameDay(new Date(lastUpdatedTime[appletId]), currentTime)) {
+
+      if (!moment().isSame(moment(new Date(lastUpdatedTime[appletId])), 'day')) {
         const updatedTime = lastUpdatedTime;
         updatedTime[appletId] = currentTime;
         getSchedules(appletId.split('/')[1]);
@@ -82,7 +79,7 @@ const ActivityList = ({
         updatedTime[appletId] = currentTime;
         setUpdatedTime(updatedTime);
       }
-    } else if (!datesAreOnSameDay(appletTime, currentTime)) {
+    } else if (!moment().isSame(moment(appletTime), 'day')) {
       const updatedTime = lastUpdatedTime;
       updatedTime[appletId] = appletTime;
 
