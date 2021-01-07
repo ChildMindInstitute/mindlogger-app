@@ -83,7 +83,7 @@ export const prepareResponseForUpload = (
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
@@ -126,9 +126,6 @@ export const prepareResponseForUpload = (
 
     responseData['tokenCumulations'] = cumulatives;
   }
-
-  console.log('response data is', responseData)
-  console.log('cumulative is', cumulatives)
 
   return responseData;
 };
