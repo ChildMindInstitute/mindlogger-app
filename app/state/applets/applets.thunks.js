@@ -16,8 +16,8 @@ import {
 } from "../../services/network";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
-import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
-import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
+import { downloadAppletResponses } from '../responses/responses.thunks';
+import { downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
@@ -178,9 +178,10 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   const auth = authSelector(state);
   const userInfo = userInfoSelector(state);
   dispatch(setDownloadingApplets(true));
+  console.log('3333333333333333333333333333333333333333333333333333333')
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
-      console.log(applets)
+      console.log("**********************************************************")
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
@@ -219,7 +220,6 @@ export const downloadTargetApplet = (appletId, cb = null) => (
           // eslint-disable-next-line no-console
           dispatch(replaceTargetApplet(transformedApplet));
           dispatch(downloadAppletResponses(transformedApplet));
-          dispatch(downloadAppletMedia(transformedApplet));
         }
         dispatch(setDownloadingTargetApplet(false));
         if (cb) {

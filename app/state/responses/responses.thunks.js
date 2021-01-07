@@ -178,22 +178,25 @@ export const startResponse = (activity) => (dispatch, getState) => {
 };
 
 export const downloadResponses = () => (dispatch, getState) => {
+  console.log('%%%%%%%%%%%0');
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
 
   const userInfo = userInfoSelector(state);
-  for (const applet of applets) {
-    if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-      dispatch(updateKeys(applet, userInfo));
-    }
-  }
+  // for (const applet of applets) {
+  //   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+  //     dispatch(updateKeys(applet, userInfo));
+  //   }
+  // }
 
   dispatch(setDownloadingResponses(true));
+  console.log('%%%%%%%%%%%1');
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   })
     .then((responses) => {
+      console.log('%%%%%%%%%%%2', responses);
       if (loggedInSelector(getState())) {
         dispatch(replaceResponses(responses));
         dispatch(scheduleAndSetNotifications());
@@ -280,7 +283,9 @@ export const startUploadQueue = () => (dispatch, getState) => {
     // Progress - a response was uploaded
     dispatch(shiftUploadQueue());
   }).finally(() => {
+    console.log('111111111111111111111111111111111111111111111111111111111111');
     dispatch(downloadResponses());
+    console.log('222222222222222222222222222222222222222222222222222222222222');
   });
 };
 

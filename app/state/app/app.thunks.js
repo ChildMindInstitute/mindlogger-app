@@ -21,6 +21,7 @@ export const showToast = toast => () => {
 export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
+    console.log('0000000000000000000000000000000000000000000000000000000');
     dispatch(downloadApplets(onAppletsDownloaded));
     dispatch(startUploadQueue());
 
