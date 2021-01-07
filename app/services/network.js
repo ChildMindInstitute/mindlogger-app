@@ -390,5 +390,30 @@ export const getUserUpdates = ({ authToken }) => {
     method: "get",
     mode: "cors",
     headers,
-  }).then((res) => (res.status === 200 ? res.json() : res));
+  }).then(res => (res.status === 200 ? res.json() : res));
+};
+
+export const getUserTokenBalance = (authToken) => {
+  const url = `${apiHost()}/user/getTokenBalance`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "GET",
+    mode: "cors",
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const updateUserTokenBalance = (authToken, offset) => {
+  const queryParams = objectToQueryParams({ offset });
+  const url = `${apiHost()}/user/updateTokenBalance?${queryParams}`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "put",
+    mode: "cors",
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

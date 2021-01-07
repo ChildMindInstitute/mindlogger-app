@@ -8,8 +8,8 @@ import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
-import { clearUser } from '../user/user.actions';
-import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
+import { clearUser, setTokenBalance } from '../user/user.actions';
+import { signOut, deleteUserAccount, postAppletBadge, getUserTokenBalance } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
@@ -23,6 +23,9 @@ export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   if (state.user.auth !== null) {
     dispatch(downloadApplets(onAppletsDownloaded));
     dispatch(startUploadQueue());
+
+    const authToken = authTokenSelector(state);
+    getUserTokenBalance(authToken).then(balance => dispatch(setTokenBalance(balance)));
   }
 };
 

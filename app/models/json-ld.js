@@ -1,4 +1,7 @@
 import * as R from "ramda";
+import moment from 'moment';
+import { Parse, Day } from 'dayspan';
+import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../services/time';
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -34,10 +37,12 @@ const REQUIRED_VALUE = "reprolib:terms/required";
 const SCHEMA_VERSION = "schema:schemaVersion";
 const SCORING_LOGIC = "reprolib:terms/scoringLogic";
 const SHUFFLE = "reprolib:terms/shuffle";
+const ISPRIZE = "reprolib:terms/isPrize";
 const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
+const PRICE = "schema:price";
 const SCORE = "schema:score";
 const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
@@ -103,6 +108,7 @@ export const flattenItemList = (list = []) =>
   list.map((item) => ({
     name: languageListToObject(item[NAME]),
     value: R.path([VALUE, 0, "@value"], item),
+    price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
     image: item[IMAGE],
     valueConstraints: item[RESPONSE_OPTIONS]
@@ -369,6 +375,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     backDisabled: allowList.includes(BACK_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
+    isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     compute,
     subScales,
     messages,
@@ -419,4 +426,164 @@ export const transformApplet = (payload) => {
   applet.activities = activities;
   applet.groupId = payload.groups;
   return applet;
+};
+
+export const dateParser = (schedule) => {
+  const output = {};
+  Object.keys(schedule.events).forEach(key => {
+    const e = schedule.events[key];
+    const uri = e.data.URI;
+
+    if (!output[uri]) {
+      output[uri] = {
+        notificationDateTimes: [],
+        id: e.id,
+      };
+    }
+
+    const eventSchedule = Parse.schedule(e.schedule);
+    const now = Day.fromDate(new Date());
+
+    const lastScheduled = getLastScheduled(eventSchedule, now);
+    const nextScheduled = getNextScheduled(eventSchedule, now);
+    const notifications = R.pathOr([], ['data', 'notifications'], e);
+    const dateTimes = getScheduledNotifications(eventSchedule, now, notifications);
+
+    let lastScheduledResponse = lastScheduled;
+    let {
+      lastScheduledTimeout, lastTimedActivity, extendedTime, id, completion
+    } = output[uri];
+
+    if (lastScheduledResponse) {
+      lastScheduledTimeout = e.data.timeout;
+      lastTimedActivity = e.data.timedActivity;
+      completion = e.data.completion;
+      id = e.id;
+      extendedTime = e.data.extendedTime;
+    }
+
+    if (output[uri].lastScheduledResponse && lastScheduled) {
+      lastScheduledResponse = moment.max(
+        moment(output[uri].lastScheduledResponse),
+        moment(lastScheduled),
+      );
+      if (lastScheduledResponse === output[uri].lastScheduledResponse) {
+        lastScheduledTimeout = output[uri].lastScheduledTimeout;
+        lastTimedActivity = output[uri].lastTimedActivity;
+        id = output[uri].id;
+        completion = output[uri].completion;
+        extendedTime = output[uri].extendedTime;
+      }
+    }
+
+    let nextScheduledResponse = nextScheduled;
+    let { nextScheduledTimeout, nextTimedActivity } = output[uri];
+
+    if (nextScheduledResponse) {
+      nextScheduledTimeout = e.data.timeout;
+      nextTimedActivity = e.data.timedActivity;
+    }
+
+    if (output[uri].nextScheduledResponse && nextScheduled) {
+      nextScheduledResponse = moment.min(
+        moment(output[uri].nextScheduledResponse),
+        moment(nextScheduled),
+      );
+      if (nextScheduledResponse === output[uri].nextScheduledResponse) {
+        nextScheduledTimeout = output[uri].nextScheduledTimeout;
+        nextTimedActivity = output[uri].nextTimedActivity;
+      }
+    }
+
+    output[uri] = {
+      lastScheduledResponse: lastScheduledResponse || output[uri].lastScheduledResponse,
+      nextScheduledResponse: nextScheduledResponse || output[uri].nextScheduledResponse,
+      lastTimedActivity,
+      nextTimedActivity,
+      extendedTime,
+      id,
+      lastScheduledTimeout,
+      nextScheduledTimeout,
+      completion,
+      // TODO: only append unique datetimes when multiple events scheduled for same activity/URI
+      notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
+    };
+  });
+
+  return output;
+};
+
+export const parseAppletActivities = (applet, responseSchedule) => {
+  let scheduledDateTimesByActivity = {};
+  // applet.schedule, if defined, has an events key.
+  // events is a list of objects.
+  // the events[idx].data.URI points to the specific activity's schema.
+  if (applet.schedule) {
+    scheduledDateTimesByActivity = dateParser(applet.schedule);
+  }
+
+  const extraInfoActivities = applet.activities.map((act) => {
+    const scheduledDateTimes = scheduledDateTimesByActivity[act.schema];
+    const nextScheduled = R.pathOr(null, ['nextScheduledResponse'], scheduledDateTimes);
+    const lastScheduled = R.pathOr(null, ['lastScheduledResponse'], scheduledDateTimes);
+    const nextTimedActivity = R.pathOr(null, ['nextTimedActivity'], scheduledDateTimes);
+    const lastTimedActivity = R.pathOr(null, ['lastTimedActivity'], scheduledDateTimes);
+    const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
+    const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
+    const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
+    const id = R.pathOr(null, ['id'], scheduledDateTimes);
+    const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
+    const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+
+    let nextAccess = false;
+    let prevTimeout = null;
+    let scheduledTimeout = null;
+    let invalid = true;
+
+    Object.keys(applet.schedule.data).forEach(date => {
+      const event = applet.schedule.data[date].find(ele => ele.id === id);
+
+      if (moment().isSame(moment(date), 'day') && event) {
+        invalid = event.valid;
+      }
+    })
+
+    if (lastTimeout) {
+      prevTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
+    }
+    if (nextTimeout) {
+      nextAccess = nextTimeout.access;
+      scheduledTimeout = ((nextTimeout.day * 24 + nextTimeout.hour) * 60 + nextTimeout.minute) * 60000;
+    }
+
+    return {
+      ...act,
+      appletId: applet.id,
+      appletShortName: applet.name,
+      appletName: applet.name,
+      appletSchema: applet.schema,
+      appletSchemaVersion: applet.schemaVersion,
+      lastScheduledTimestamp: lastScheduled,
+      lastResponseTimestamp: lastResponse,
+      nextScheduledTimestamp: nextScheduled,
+      oneTimeCompletion: oneTimeCompletion || false,
+      lastTimeout: prevTimeout,
+      nextTimeout: scheduledTimeout,
+      nextTimedActivity,
+      lastTimedActivity,
+      currentTime: new Date().getTime(),
+      invalid,
+      extendedTime,
+      nextAccess,
+      isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
+
+      // also add in our parsed notifications...
+      notification: R.prop('notificationDateTimes', scheduledDateTimes),
+    };
+  });
+
+  return {
+    ...applet,
+    activities: extraInfoActivities,
+  };
 };
