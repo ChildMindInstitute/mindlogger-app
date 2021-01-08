@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-## [0.14.53] - 2021-01-07
+## [0.14.54] - 2021-01-07
 - Fix timed activity status
+
+## [0.14.53] - 2021-01-05
+- Fixed `scheduled day only` option
 
 ## [0.14.52] - 2021-01-07
 - Fix response submit
