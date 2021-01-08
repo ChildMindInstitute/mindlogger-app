@@ -83,6 +83,7 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 export default (appletId, activityList, inProgress, activityEndTimes) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
+
   const notInProgress = inProgressKeys
     ? activityList.filter(activity => !inProgressKeys.includes(appletId + activity.id))
     : activityList;
