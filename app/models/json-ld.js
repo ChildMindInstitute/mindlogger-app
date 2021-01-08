@@ -437,6 +437,7 @@ export const dateParser = (schedule) => {
     if (!output[uri]) {
       output[uri] = {
         notificationDateTimes: [],
+        id: e.id,
       };
     }
 
@@ -450,14 +451,14 @@ export const dateParser = (schedule) => {
 
     let lastScheduledResponse = lastScheduled;
     let {
-      lastScheduledTimeout, lastTimedActivity, extendedTime, invalid, completion
+      lastScheduledTimeout, lastTimedActivity, extendedTime, id, completion
     } = output[uri];
 
     if (lastScheduledResponse) {
       lastScheduledTimeout = e.data.timeout;
       lastTimedActivity = e.data.timedActivity;
       completion = e.data.completion;
-      invalid = e.valid;
+      id = e.id;
       extendedTime = e.data.extendedTime;
     }
 
@@ -469,7 +470,7 @@ export const dateParser = (schedule) => {
       if (lastScheduledResponse === output[uri].lastScheduledResponse) {
         lastScheduledTimeout = output[uri].lastScheduledTimeout;
         lastTimedActivity = output[uri].lastTimedActivity;
-        invalid = output[uri].valid;
+        id = output[uri].id;
         completion = output[uri].completion;
         extendedTime = output[uri].extendedTime;
       }
@@ -500,7 +501,7 @@ export const dateParser = (schedule) => {
       lastTimedActivity,
       nextTimedActivity,
       extendedTime,
-      invalid,
+      id,
       lastScheduledTimeout,
       nextScheduledTimeout,
       completion,
@@ -530,13 +531,22 @@ export const parseAppletActivities = (applet, responseSchedule) => {
     const oneTimeCompletion = R.pathOr(null, ['completion'], scheduledDateTimes);
     const lastTimeout = R.pathOr(null, ['lastScheduledTimeout'], scheduledDateTimes);
     const nextTimeout = R.pathOr(null, ['nextScheduledTimeout'], scheduledDateTimes);
-    const invalid = R.pathOr(null, ['invalid'], scheduledDateTimes);
+    const id = R.pathOr(null, ['id'], scheduledDateTimes);
     const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
-
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+
     let nextAccess = false;
     let prevTimeout = null;
     let scheduledTimeout = null;
+    let invalid = true;
+
+    Object.keys(applet.schedule.data).forEach(date => {
+      const event = applet.schedule.data[date].find(ele => ele.id === id);
+
+      if (moment().isSame(moment(date), 'day') && event) {
+        invalid = event.valid;
+      }
+    })
 
     if (lastTimeout) {
       prevTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
