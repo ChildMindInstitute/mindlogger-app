@@ -22,6 +22,7 @@ export const prepareResponseForUpload = (
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = activity.appletSchemaVersion[languageKey];
   const cumulatives = { ...(responseHistory.cumulatives || {}) };
+  let additionalTokens = 0;
 
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
@@ -36,7 +37,11 @@ export const prepareResponseForUpload = (
         cumulatives[item.schema] = {
           value: (getValuesFromResponse(item, responses[i]) || []).reduce(
             (cumulative, current) => {
-              return current >= 0 ? cumulative + current : cumulative;
+              if (current >= 0) {
+                additionalTokens += current;
+                return cumulative + current;
+              }
+              cumulative;
             }, responseHistory.cumulatives && responseHistory.cumulatives[item.schema] && responseHistory.cumulatives[item.schema].value || 0
           ),
           version: appletVersion,
@@ -127,5 +132,8 @@ export const prepareResponseForUpload = (
     responseData['tokenCumulations'] = cumulatives;
   }
 
-  return responseData;
+  return {
+    responseData,
+    additionalTokens
+  };
 };
