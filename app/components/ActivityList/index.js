@@ -54,7 +54,6 @@ const ActivityList = ({
     const newApplet = parseAppletActivities(applet, responseSchedule);
 
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
-
     setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes));
 
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
@@ -107,7 +106,8 @@ const ActivityList = ({
 
   useEffect(() => {
     let updateId;
-    let intervalId;
+
+    stateUpdate();
     const leftTime = (60 - new Date().getSeconds()) * 1000;
     const leftOutId = delayedExec(
       () => {
@@ -117,6 +117,16 @@ const ActivityList = ({
       { after: leftTime },
     );
 
+    return () => {
+      clearExec(leftOutId);
+      if (updateId) {
+        clearExec(updateId);
+      }
+    }
+  }, [Object.keys(inProgress).length, responseSchedule]);
+
+  useEffect(() => {
+    let intervalId;
     const currentTime = new Date();
     const nextDay = new Date(
       currentTime.getFullYear(),
@@ -140,11 +150,6 @@ const ActivityList = ({
         netInfoUnsubscribe();
       }
 
-      clearExec(leftOutId);
-      if (updateId) {
-        clearExec(updateId);
-      }
-
       clearExec(leftTimeoutId);
       if (intervalId) {
         clearExec(intervalId);
@@ -165,10 +170,6 @@ const ActivityList = ({
       setScheduleUpdated(false);
     }
   }, [applet.schedule]);
-
-  useEffect(() => {
-    stateUpdate();
-  }, [Object.keys(inProgress).length, responseSchedule]);
 
   return (
     <View style={{ paddingBottom: 30 }}>
