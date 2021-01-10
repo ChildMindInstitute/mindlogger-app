@@ -287,6 +287,7 @@ export const startUploadQueue = () => (dispatch, getState) => {
 export const completeResponse = () => (dispatch, getState) => {
   const state = getState();
   // console.log({ state });
+  const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
   // console.log({ applet });
   const inProgressResponse = currentResponsesSelector(state);
@@ -298,24 +299,27 @@ export const completeResponse = () => (dispatch, getState) => {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
+  let tokenCumulation = 0;
   if (activity.isPrize === true) {
-    const authToken = authTokenSelector(state);
     const selectedPrizeIndex = inProgressResponse["responses"][0];
     const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
-    updateUserTokenBalance(authToken, -selectedPrize.price)
-      .then((res) => {
-        const newBalance = res["tokenBalance"];
-        dispatch(setTokenBalance(newBalance));
-      })
-      .catch((e) => {
-        console.warn(e.json());
-      });
+    tokenCumulation = -selectedPrize.price;
   } else {
     const responseHistory = currentAppletResponsesSelector(state);
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+    const { responseData: preparedResponse, additionalTokens } = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+    tokenCumulation = additionalTokens;
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
+
+  updateUserTokenBalance(authToken, tokenCumulation)
+  .then((res) => {
+    const newBalance = res["tokenBalance"];
+    dispatch(setTokenBalance(newBalance));
+  })
+  .catch((e) => {
+    console.warn(e.json());
+  });
 
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList
