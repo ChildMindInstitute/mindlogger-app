@@ -58,7 +58,7 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
               response.value.ptr !== undefined
             ) {
               response.value =
-                responses.dataSources[response.value.src][0];
+                responses.dataSources[response.value.src][response.value.ptr];
             }
           }
 
