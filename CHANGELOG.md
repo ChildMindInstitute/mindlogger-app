@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.56] - 2021-01-11
+- Fix accumulated tokens registeration
+
 ## [0.14.55] - 2021-01-10
 - Fix accumulated tokens registeration
 
