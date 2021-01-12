@@ -10,10 +10,6 @@ export const setAuth = auth => ({
   payload: auth,
 });
 
-export const setTokenBalance = balance => ({
-  type: USER_CONSTANTS.SET_TOKEN_BALANCE,
-  payload: balance,
-});
 
 export const clearUser = () => ({
   type: USER_CONSTANTS.CLEAR,

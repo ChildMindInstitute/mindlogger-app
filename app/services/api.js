@@ -47,6 +47,42 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
           }
         });
       }
+
+      responses.tokens = responses.tokens || {};
+      if (applet.encryption) {
+        if (responses.tokens.cumulativeToken) {
+          try {
+            const cumulative = typeof responses.tokens.cumulativeToken.data !== 'object' ? JSON.parse(
+              decryptData({
+                key: applet.AESKey,
+                text: responses.tokens.cumulativeToken.data,
+              })
+            ) : responses.tokens.cumulativeToken.data;
+
+            responses.tokens.cumulativeToken = cumulative.value || 0;
+          } catch {
+            responses.tokens.cumulativeToken = 0;
+          }
+        } else {
+          responses.tokens.cumulativeToken = 0;
+        }
+
+        responses.tokens.tokenUpdates = responses.tokens.tokenUpdates || [];
+        responses.tokens.tokenUpdates.forEach(tokenUse => {
+          try {
+            const tokenUpdate = typeof tokenUse.data !== 'object' ? JSON.parse(
+              decryptData({
+                key: applet.AESKey,
+                text: tokenUse.data,
+              })
+            ) : tokenUse.data;
+
+            tokenUse.value = tokenUpdate.value || 0;
+          } catch {
+            tokenUse.value = 0;
+          }
+        })
+      }
       
       /** replace response to plain format */
       if (responses.responses) {

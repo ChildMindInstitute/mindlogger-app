@@ -42,6 +42,13 @@ export const currentAppletResponsesSelector = createSelector(
   }
 );
 
+export const currentAppletTokenBalanceSelector = createSelector(
+  currentAppletResponsesSelector,
+  (responseHistory) => {
+    return responseHistory.tokens;
+  }
+)
+
 export const currentResponsesSelector = createSelector(
   R.path(["app", "currentActivity"]),
   R.path(["app", "currentApplet"]),

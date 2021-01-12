@@ -25,11 +25,13 @@ import {
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
-import { userTokenBalanceSelector } from '../../state/user/user.selectors';
+import {
+  currentAppletTokenBalanceSelector,
+} from "../../state/responses/responses.selectors";
 
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, userTokenBalance }) => {
+const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, appletTokenBalance }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
   if (screen.inputType === 'radio'
@@ -224,7 +226,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        tokenBalance={userTokenBalance}
+        tokenBalance={appletTokenBalance.cumulativeToken}
       />
     );
   }
@@ -250,13 +252,13 @@ Widget.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
-  userTokenBalance: PropTypes.number.isRequired,
+  appletTokenBalance: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   applet: currentAppletSelector(state),
   isSelected: state.responses.isSelected,
-  userTokenBalance: userTokenBalanceSelector(state),
+  appletTokenBalance: currentAppletTokenBalanceSelector(state),
 });
 
 const mapDispatchToProps = {

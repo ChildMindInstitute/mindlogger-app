@@ -9,6 +9,7 @@ import { cleanFiles } from "../../services/file";
 import {
   prepareResponseForUpload,
   getEncryptedData,
+  getTokenUpdateInfo,
 } from "../../models/response";
 import { scheduleAndSetNotifications } from "../applets/applets.thunks";
 import { appletsSelector } from "../applets/applets.selectors";
@@ -19,14 +20,13 @@ import {
   currentAppletResponsesSelector,
   currentScreenSelector,
   itemVisiblitySelector,
+  currentAppletTokenBalanceSelector,
 } from "./responses.selectors";
 import {
   authTokenSelector,
   loggedInSelector,
   userInfoSelector,
-  userTokenBalanceSelector,
 } from "../user/user.selectors";
-import { setTokenBalance } from "../user/user.actions";
 import {
   createResponseInProgress,
   setDownloadingResponses,
@@ -114,7 +114,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
 
   if (activity.isPrize === true) {
-    const tokenBalance = userTokenBalanceSelector(state);
+    const tokenBalance = currentAppletTokenBalanceSelector(state).cumulativeToken;
     const prizesActivity = R.assocPath(['items', 0, 'info', 'en'],
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
@@ -299,27 +299,34 @@ export const completeResponse = () => (dispatch, getState) => {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  let tokenCumulation = 0;
+  const responseHistory = currentAppletResponsesSelector(state);
+
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
+    const version = inProgressResponse["activity"].appletSchemaVersion['en'];
     const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
-    tokenCumulation = -selectedPrize.price;
+
+    const updates = getTokenUpdateInfo(
+      -selectedPrize.price,
+      responseHistory,
+      applet,
+    );
+
+    updateUserTokenBalance(
+      authToken,
+      applet.id.split('/').pop(),
+      updates.offset,
+      updates.cumulative,
+      version,
+      updates.userPublicKey || null
+    ).then(() => {
+      dispatch(downloadResponses())
+    })
   } else {
-    const responseHistory = currentAppletResponsesSelector(state);
-    const { responseData: preparedResponse, additionalTokens } = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
-    tokenCumulation = additionalTokens;
+    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
-
-  updateUserTokenBalance(authToken, tokenCumulation)
-  .then((res) => {
-    const newBalance = res["tokenBalance"];
-    dispatch(setTokenBalance(newBalance));
-  })
-  .catch((err) => {
-    console.warn(err);
-  });
 
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList

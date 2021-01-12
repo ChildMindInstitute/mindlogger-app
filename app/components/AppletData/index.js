@@ -511,10 +511,7 @@ class AppletData extends React.Component {
   renderActivityChartItem = ({ item, data }, type) => {
     const dataObj = data;
     const { appletData } = this.props;
-    const cumulative = appletData.cumulatives && 
-                        appletData.cumulatives[item.schema] && 
-                        appletData.cumulatives[item.schema].value 
-                      || 0;
+    const cumulative = appletData.tokens.cumulativeToken;
 
     if (type === "TokenLogger") {
       data.forEach((itemData, itemIndex) => {
