@@ -24,7 +24,7 @@ class TokenChart extends React.Component {
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
-    const maxValue = Math.max(...data.map(ele => ele.value));
+    const maxValue = Math.max(...data.map(ele => ele.value), cumulative);
     const ticks = Array.from(Array(6).keys()).slice(1)
 
     let tickSize = 1
@@ -68,6 +68,10 @@ class TokenChart extends React.Component {
     let normalisedx = x(acc[0].name) - GRAPH_BAR_WIDTH / 3 + 15
     let normalisedy = y(topValue + yValue + (acc[0].value < 0 ? -0.01 * tickSize : acc[0].value + 0.01 * tickSize),) * -1
     let pathString = `M ${normalisedx} ${normalisedy}`;
+
+    if (acc[0].value > 0) {
+      yValue += acc[0].value;
+    }
 
     for (let i = 1; i <= acc.length - 1; i++) {
       const step = acc[i]
