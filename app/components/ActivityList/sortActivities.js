@@ -56,7 +56,6 @@ export const getScheduled = activityList => activityList.filter(
 export const getPastdue = (activityList, endTimes, appletId) => activityList.filter(
   activity => activity.lastScheduledTimestamp
       && activity.lastTimeout
-      && (!endTimes || !endTimes[appletId + activity.id] || !moment().isSame(moment(endTimes[appletId + activity.id]), 'day'))
       && (!activity.lastResponseTimestamp
         || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp
         || ((!activity.extendedTime || !activity.extendedTime.allow)

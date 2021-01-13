@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.58] - 2021-01-12
+- Fix activity availability
+
 ## [0.14.57] - 2021-01-12
 - Fix calcTimeDiff function
 
