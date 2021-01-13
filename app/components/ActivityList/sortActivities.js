@@ -80,7 +80,6 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
 export default (appletId, activityList, inProgress, activityEndTimes) => {
-  console.log('activity list----->', activityList);
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
 
