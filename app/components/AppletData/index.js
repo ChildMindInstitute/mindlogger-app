@@ -332,7 +332,26 @@ class AppletData extends React.Component {
     // data = {from: {hour: h, minute:mm}, to: {hour:h, minute: mm}}
     return data.map((d) => {
       const dp = {};
+
       dp.date = d.date;
+      if (!d.value.from || !d.value.to) {
+        const from = {
+          hour: 0,
+          minute: 0,
+        }
+        const to = {
+          hour: 0,
+          minute: 0,
+        }
+        d = {
+          ...d,
+          value: {
+            to,
+            from,
+          }
+        }
+      }
+
       const from = moment(
         `${d.value.from.hour}:${d.value.from.minute}`,
         "h:mm"
