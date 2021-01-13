@@ -18,59 +18,54 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = activityList => activityList.filter(
   activity => (!activity.nextScheduledTimestamp
-        || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-      && (!activity.oneTimeCompletion
-        || !activity.lastResponseTimestamp
-        || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
-      && (!activity.lastResponseTimestamp
-        || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
-        || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-          > activity.lastTimeout
-        || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
-      && (!activity.lastScheduledTimestamp
-        || ((((!activity.extendedTime || !activity.extendedTime.allow)
-          && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
-          || (activity.extendedTime
-            && activity.extendedTime.allow
-            && new Date().getTime() - activity.lastScheduledTimestamp
-              > activity.lastTimeout + activity.extendedTime.days * 86400000))
-          && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
-      && activity.invalid !== false,
+    || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && (!activity.oneTimeCompletion
+      || !activity.lastResponseTimestamp
+      || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
+    && (!activity.lastResponseTimestamp
+      || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
+      || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+      > activity.lastTimeout
+      || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
+    && (!activity.lastScheduledTimestamp
+      || ((((!activity.extendedTime || !activity.extendedTime.allow)
+        && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
+        || (activity.extendedTime
+          && activity.extendedTime.allow
+          && new Date().getTime() - activity.lastScheduledTimestamp
+          > activity.lastTimeout + activity.extendedTime.days * 86400000))
+        && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
+    && activity.invalid !== false,
 );
-
-// export const getCompleted = activityList => activityList.filter(
-//   activity => activity.lastResponseTimestamp !== null
-//     && activity.nextScheduledTimestamp === null
-//     && (!moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
-// );
 
 export const getScheduled = activityList => activityList.filter(
   activity => activity.nextScheduledTimestamp
-      && (!activity.lastScheduledTimestamp
-        || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
-        || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
-      && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-      && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
+    && (!activity.lastScheduledTimestamp
+      || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
+      || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
+    && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+    && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
 
 export const getPastdue = (activityList, endTimes, appletId) => activityList.filter(
   activity => activity.lastScheduledTimestamp
-      && activity.lastTimeout
-      && (!activity.lastResponseTimestamp
-        || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp
-        || ((!activity.extendedTime || !activity.extendedTime.allow)
-          && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-            > activity.lastTimeout)
-        || (activity.extendedTime
-          && activity.extendedTime.allow
-          && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-            > activity.extendedTime.days * 86400000))
-      && ((activity.extendedTime
+    && activity.lastTimeout
+    && (!endTimes || !endTimes[appletId + activity.id] || endTimes[appletId + activity.id] < activity.lastScheduledTimestamp)
+    && (!activity.lastResponseTimestamp
+      || moment(activity.lastResponseTimestamp) <= activity.lastScheduledTimestamp
+      || ((!activity.extendedTime || !activity.extendedTime.allow)
+        && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+        > activity.lastTimeout)
+      || (activity.extendedTime
         && activity.extendedTime.allow
-        && new Date().getTime() - activity.lastScheduledTimestamp
-          <= activity.lastTimeout + activity.extendedTime.days * 86400000)
-        || ((!activity.extendedTime || !activity.extendedTime.allow)
-          && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
+        && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+        > activity.extendedTime.days * 86400000))
+    && ((activity.extendedTime
+      && activity.extendedTime.allow
+      && new Date().getTime() - activity.lastScheduledTimestamp
+      <= activity.lastTimeout + activity.extendedTime.days * 86400000)
+      || ((!activity.extendedTime || !activity.extendedTime.allow)
+        && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
 );
 
 const addSectionHeader = (array, headerText) => (array.length > 0 ? [{ isHeader: true, text: headerText }, ...array] : []);
