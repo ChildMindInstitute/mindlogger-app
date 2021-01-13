@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.58] - 2021-01-12
 - Fix activity availability
 
+## [0.14.57] - 2021-01-12
+- Fix calcTimeDiff function
+
 ## [0.14.56] - 2021-01-11
 - Fix accumulated tokens registeration
 - Fix token accumulation
