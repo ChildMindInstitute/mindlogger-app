@@ -317,8 +317,8 @@ export const completeResponse = () => (dispatch, getState) => {
     const newBalance = res["tokenBalance"];
     dispatch(setTokenBalance(newBalance));
   })
-  .catch((e) => {
-    console.warn(e.json());
+  .catch((err) => {
+    console.warn(err);
   });
 
   setTimeout(() => {
