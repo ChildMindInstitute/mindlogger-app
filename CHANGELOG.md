@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.62] - 2021-01-14
+- Add clear notification function
+
 ## [0.14.60] - 2021-01-13
 - Fix error handling
 
