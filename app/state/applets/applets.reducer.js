@@ -7,6 +7,7 @@ export const initialState = {
    * @type {object}.
    */
   applets: [],
+  isReminderSet: false,
   scheduleUpdated: false,
   currentTime: new Date(),
   isDownloadingApplets: false,
@@ -35,6 +36,16 @@ export default (state = initialState, action = {}) => {
       return { 
         ...state, 
         selectionDisabled: action.payload 
+      };
+    case APPLET_CONSTANTS.SET_REMINDER:
+      return {
+        ...state,
+        isReminderSet: true,
+      };
+    case APPLET_CONSTANTS.CLEAR_REMINDER:
+      return {
+        ...state,
+        isReminderSet: false,
       };
     case APPLET_CONSTANTS.REPLACE_TARGET_APPLET:
       return {

@@ -25,6 +25,8 @@ import {
   setDownloadingApplets,
   replaceApplets,
   setInvites,
+  setNotificationReminder,
+  clearNotificationReminder,
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
@@ -34,6 +36,7 @@ import {
   userInfoSelector,
   loggedInSelector,
 } from "../user/user.selectors";
+import { isReminderSetSelector } from "./applets.selectors";
 import { setCurrentApplet } from "../app/app.actions";
 
 import { sync } from "../app/app.thunks";
@@ -79,7 +82,7 @@ export const setReminder = () => async (dispatch, getState) => {
   const applets = allAppletsSelector(state);
   const notifications = [];
 
-  closeExistingNotifications();
+  cancelReminder();
   applets.forEach(applet => {
     const validEvents = [];
     Object.keys(applet.schedule.events).forEach(key => {
@@ -120,6 +123,10 @@ export const setReminder = () => async (dispatch, getState) => {
     })
   });
 
+  if (notifications.length) {
+    dispatch(setNotificationReminder());
+  }
+
   notifications.forEach(notification => {
     const settings = { showInForeground: true };
     const AndroidChannelId = 'MindLoggerChannelId';
@@ -146,8 +153,14 @@ export const setReminder = () => async (dispatch, getState) => {
   })
 };
 
-const closeExistingNotifications = () => {
-  firebase.notifications().cancelAllNotifications();
+export const cancelReminder = () => (dispatch, getState) => {
+  const state = getState();
+  const isReminderSet = isReminderSetSelector(state);
+  
+  if (isReminderSet) {
+    firebase.notifications().cancelAllNotifications();
+    dispatch(clearNotificationReminder());
+  }
 }
 
 // const buildNotification = async (activity) => {
