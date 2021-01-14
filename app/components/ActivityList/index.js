@@ -145,12 +145,12 @@ const ActivityList = ({
       { after: leftTimeout },
     );
 
-    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    // const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
 
     return () => {
-      if (netInfoUnsubscribe) {
-        netInfoUnsubscribe();
-      }
+      // if (netInfoUnsubscribe) {
+      //   netInfoUnsubscribe();
+      // }
 
       clearExec(leftTimeoutId);
       if (intervalId) {

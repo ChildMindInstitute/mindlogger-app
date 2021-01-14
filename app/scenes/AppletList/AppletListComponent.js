@@ -96,12 +96,12 @@ const AppletListComponent = ({
   }
 
   useEffect(() => {
-    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
-    return () => {
-      if (netInfoUnsubscribe) {
-        netInfoUnsubscribe();
-      }
-    }
+    // const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    // return () => {
+    //   if (netInfoUnsubscribe) {
+    //     netInfoUnsubscribe();
+    //   }
+    // }
   }, [])
 
   return (
