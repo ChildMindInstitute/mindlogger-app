@@ -94,8 +94,10 @@ const ActivityList = ({
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
-      syncUploadQueue();
-      setIsConnected(true);
+      if (!isConnected) {
+        syncUploadQueue();
+        setIsConnected(true);
+      }
     } else {
       setIsConnected(false);
       setReminder();
