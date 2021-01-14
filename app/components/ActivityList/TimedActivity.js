@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import i18n from 'i18next';
 import { LittleText } from '../core';
+import { Actions } from "react-native-router-flux";
 import { startedTimesSelector } from '../../state/app/app.selectors';
 import { endActivity } from '../../state/responses/responses.thunks';
 
@@ -42,7 +43,10 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
         minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
       } else {
         hour = null;
-        endActivity(activity);
+
+        if (Actions.currentScene == 'applet_details') {
+          endActivity(activity);
+        }
       }
     } else {
       hour = null;
