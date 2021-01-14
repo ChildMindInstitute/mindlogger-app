@@ -98,22 +98,23 @@ export const setReminder = () => async (dispatch, getState) => {
       })
     });
 
-
     validEvents.forEach(event => {
       event.data.notifications.forEach(notification => {
-        const values = notification.start.split(':');
-        const date = new Date(event.date);
+        if (notification.start) {
+          const values = notification.start.split(':');
+          const date = new Date(event.date);
 
-        date.setHours(values[0]);
-        date.setMinutes(values[1]);
-        if (date.getTime() > Date.now()) {
-          notifications.push({
-            eventId: event.id,
-            appletId: applet.id.split('/').pop(),
-            activityId: event.data.activity_id,
-            activityName: event.data.title,
-            date: date.getTime()
-          });
+          date.setHours(values[0]);
+          date.setMinutes(values[1]);
+          if (date.getTime() > Date.now()) {
+            notifications.push({
+              eventId: event.id,
+              appletId: applet.id.split('/').pop(),
+              activityId: event.data.activity_id,
+              activityName: event.data.title,
+              date: date.getTime()
+            });
+          }
         }
       })
     })

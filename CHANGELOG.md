@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.14.60] - 2021-01-13
 - Fix error handling
 
+## [0.14.59] - 2021-01-13
+- Fix notification start_time
+- Fixed offline past-due activity
+
 ## [0.14.58] - 2021-01-12
 - Fix activity availability
 
