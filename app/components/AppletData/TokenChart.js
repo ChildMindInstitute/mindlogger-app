@@ -24,7 +24,24 @@ class TokenChart extends React.Component {
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
-    const maxValue = Math.max(...data.map(ele => ele.value));
+    let maxValue = Math.max(...data.map(ele => ele.value), tokens.currentBalance);
+
+    if (acc.length < 1) {
+      return;
+    }
+
+    let yValue = tokens.currentBalance;
+
+    for (let i = acc.length-1; i >= 0; i--) {
+      yValue -= tokens.tokenUpdates[i].value;
+
+      if (acc[i].value >= 0) {
+        yValue = Math.max(0, yValue - acc[i].value);
+      }
+
+      maxValue = Math.max(maxValue, yValue);
+    }
+
     const ticks = Array.from(Array(6).keys()).slice(1)
 
     let tickSize = 1
@@ -51,20 +68,6 @@ class TokenChart extends React.Component {
       .range(xRange)
       .padding(2);
     // top axis and middle axis
-
-    if (acc.length < 1) {
-      return;
-    }
-
-    let yValue = tokens.currentBalance;
-
-    for (let i = acc.length-1; i >= 0; i--) {
-      yValue -= tokens.tokenUpdates[i].value;
-
-      if (acc[i].value >= 0) {
-        yValue = Math.max(0, yValue - acc[i].value);
-      }
-    }
 
     let barYValue = yValue;
 
