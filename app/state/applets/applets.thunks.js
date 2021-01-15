@@ -80,6 +80,7 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
 export const setReminder = () => async (dispatch, getState) => {
   const state = getState();
   const applets = allAppletsSelector(state);
+  const isReminderSet = isReminderSetSelector(state);
   const notifications = [];
 
   cancelReminder();
@@ -123,34 +124,36 @@ export const setReminder = () => async (dispatch, getState) => {
     })
   });
 
-  if (notifications.length) {
-    dispatch(setNotificationReminder());
+  if (!isReminderSet) {
+    if (notifications.length) {
+      dispatch(setNotificationReminder());
+    }
+
+    notifications.forEach(notification => {
+      const settings = { showInForeground: true };
+      const AndroidChannelId = 'MindLoggerChannelId';
+      const localNotification = new firebase.notifications.Notification(settings)
+        .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
+        .setTitle(notification.activityName) // Title of the notification
+        .setData({
+          event_id: notification.eventId,
+          applet_id: notification.appletId,
+          activity_id: notification.activityId,
+          type: "event-alert"
+        })
+        .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+        .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+        .android.setAutoCancel(true); // To remove notification when tapped on it
+
+      firebase.notifications()
+        .scheduleNotification(localNotification, {
+          fireDate: notification.date,
+          repeatInterval: 'day',
+          exact: true,
+        })
+        .catch(err => console.error(err));
+    })
   }
-
-  notifications.forEach(notification => {
-    const settings = { showInForeground: true };
-    const AndroidChannelId = 'MindLoggerChannelId';
-    const localNotification = new firebase.notifications.Notification(settings)
-      .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
-      .setTitle(notification.activityName) // Title of the notification
-      .setData({
-        event_id: notification.eventId,
-        applet_id: notification.appletId,
-        activity_id: notification.activityId,
-        type: "event-alert"
-      })
-      .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
-      .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
-      .android.setAutoCancel(true); // To remove notification when tapped on it
-
-    firebase.notifications()
-      .scheduleNotification(localNotification, {
-        fireDate: notification.date,
-        repeatInterval: 'day',
-        exact: true,
-      })
-      .catch(err => console.error(err));
-  })
 };
 
 export const cancelReminder = () => (dispatch, getState) => {
@@ -284,7 +287,7 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user?.auth?.token;
+  const token = state.user ?.auth ?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
       .then((response) => {
