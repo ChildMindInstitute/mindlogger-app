@@ -13,7 +13,7 @@ import {
   newAppletSelector,
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
-import { getSchedules, setReminder } from '../../state/applets/applets.thunks';
+import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
@@ -31,6 +31,7 @@ const ActivityList = ({
   setAppStatus,
   getSchedules,
   setReminder,
+  cancelReminder,
   scheduleUpdated,
   setScheduleUpdated,
   setUpdatedTime,
@@ -94,6 +95,8 @@ const ActivityList = ({
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
+      cancelReminder();
+
       if (!isConnected) {
         syncUploadQueue();
         setIsConnected(true);
@@ -212,6 +215,7 @@ ActivityList.propTypes = {
   scheduleUpdated: PropTypes.bool.isRequired,
   syncUploadQueue: PropTypes.func.isRequired,
   setReminder: PropTypes.func.isRequired,
+  cancelReminder: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -239,6 +243,7 @@ const mapDispatchToProps = {
   setScheduleUpdated,
   syncUploadQueue,
   setReminder,
+  cancelReminder,
 };
 
 export default connect(

@@ -16,7 +16,7 @@ import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'nativ
 // import PushNotification from "react-native-push-notification";
 import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
-import { setReminder } from '../../state/applets/applets.thunks';
+import { setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
@@ -52,6 +52,7 @@ const AppletListComponent = ({
   isDownloadingTargetApplet,
   title,
   setReminder,
+  cancelReminder,
   onPressDrawer,
   onPressRefresh,
   onUploadQueue,
@@ -85,6 +86,8 @@ const AppletListComponent = ({
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
+      cancelReminder();
+
       if (!isConnected) {
         onUploadQueue();
         setIsConnected(true);
@@ -197,6 +200,7 @@ AppletListComponent.propTypes = {
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
   setReminder: PropTypes.func.isRequired,
+  cancelReminder: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onUploadQueue: PropTypes.func.isRequired,
@@ -209,6 +213,7 @@ AppletListComponent.propTypes = {
 
 const mapDispatchToProps = {
   setReminder,
+  cancelReminder,
 };
 
 export default connect(
