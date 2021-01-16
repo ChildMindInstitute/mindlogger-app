@@ -347,10 +347,14 @@ export const nextScreen = () => (dispatch, getState) => {
   }
 };
 
-export const finishActivity = (activity) => (dispatch) => {
+export const finishActivity = (activity) => (dispatch, getState) => {
+  const state = getState();
+  const applet = currentAppletSelector(state);
+
   dispatch(clearActivityStartTime(activity.id));
   dispatch(completeResponse());
   dispatch(setCurrentActivity(null));
+  dispatch(setActivityEndTime(applet.id + activity.id));
   Actions.push("activity_end");
 };
 
