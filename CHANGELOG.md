@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.67] - 2021-01-18
+- update survey to activity
+
 ## [0.14.66] - 2021-01-16
 - Fix timer
 - Fixed delivered notification count
