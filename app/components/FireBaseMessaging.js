@@ -38,40 +38,35 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-      this.listeners = [
-        fNotifications.onNotification(this.onNotification),
-        fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
-        fNotifications.onNotificationOpened(this.onNotificationOpened),
-        fMessaging.onTokenRefresh(this.onTokenRefresh),
-        fMessaging.onMessage(this.onMessage),
-      ];
-      this.appState = 'active';
-      this.notificationsCount = 0;
+    this.listeners = [
+      fNotifications.onNotification(this.onNotification),
+      fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
+      fNotifications.onNotificationOpened(this.onNotificationOpened),
+      fMessaging.onTokenRefresh(this.onTokenRefresh),
+      fMessaging.onMessage(this.onMessage),
+    ];
+    this.appState = 'active';
+    this.notificationsCount = 0;
+    AppState.addEventListener('change', this.handleAppStateChange);
 
-      AppState.addEventListener('change', this.handleAppStateChange);
-
-      if (isAndroid) {
-        this.initAndroidChannel();
-      }
-
-      if (isIOS) {
-        this.notificationsCount = await this.getDeliveredNotificationsCount();
-        firebase.messaging().ios.registerForRemoteNotifications();
-      }
-
+    if (isAndroid) {
+      this.initAndroidChannel();
+    }
+    if (isIOS) {
       this.notificationsCount = await this.getDeliveredNotificationsCount();
+      firebase.messaging().ios.registerForRemoteNotifications();
+    }
+    // this.notificationsCount = await this.getDeliveredNotificationsCount();
 
+    this.requestPermissions();
+    this.props.setFCMToken(await fMessaging.getToken());
 
-      this.requestPermissions();
-      this.props.setFCMToken(await fMessaging.getToken());
+    const event = await fNotifications.getInitialNotification();
 
-      const event = await fNotifications.getInitialNotification();
-
-      if (event) {
-        this.openActivityByEventId(event);
-        // if (isAndroid) NativeModules.DevSettings.reload();
-
-      }
+    if (event) {
+      this.openActivityByEventId(event);
+      // if (isAndroid) NativeModules.DevSettings.reload();
+    }
   }
 
   /**
@@ -239,7 +234,6 @@ class FireBaseMessaging extends Component {
       const eventId = _.get(notificationObj, 'notification._data.event_id', '');
       const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
       const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-
       // Ignore the notification if some data is missing.
       if (!eventId || !appletId || !activityId) return;
 
