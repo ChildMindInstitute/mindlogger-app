@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.14.66] - 2021-01-16
 - Fix timer
+- Fixed delivered notification count
 
 ## [0.14.65] - 2021-01-15
 - Fixed activity status on offline mode
