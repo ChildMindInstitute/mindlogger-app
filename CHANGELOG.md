@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.68] - 2021-01-18
+- fix negative tokens in token-chart
+
 ## [0.14.66] - 2021-01-16
 - Fix timer
 - Fixed delivered notification count
