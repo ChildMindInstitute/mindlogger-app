@@ -126,7 +126,7 @@ class AppletDetails extends Component {
 
 AppletDetails.defaultProps = {
   currentApplet: null,
-  initialTab: "survey",
+  initialTab: "activity",
 };
 
 AppletDetails.propTypes = {

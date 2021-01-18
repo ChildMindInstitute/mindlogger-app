@@ -91,7 +91,7 @@ class AppletDetailsComponent extends React.Component {
 
     const responseDates = this.getResponseDates() || [];
     switch (selectedTab) {
-      case 'survey':
+      case 'activity':
         return (
           <Content>
             <View style={{ flex: 1 }}>
