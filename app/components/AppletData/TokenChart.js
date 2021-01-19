@@ -24,7 +24,7 @@ class TokenChart extends React.Component {
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
-    let maxValue = Math.max(...data.map(ele => ele.value), tokens.currentBalance);
+    let maxValue = Math.max(...data.map(ele => Math.abs(ele.value)), tokens.currentBalance, 1);
 
     if (acc.length < 1) {
       return;

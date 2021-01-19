@@ -23,11 +23,19 @@ export const prepareResponseForUpload = (
   const appletVersion = activity.appletSchemaVersion[languageKey];
   let cumulative = responseHistory.tokens.cumulativeToken;
 
+  const alerts = [];
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
 
     if (item.valueConstraints) {
-      const { valueType } = item.valueConstraints;
+      const { valueType, responseAlert } = item.valueConstraints;
+
+      if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
+        alerts.push({
+          id: activity.items[i].id.split('/')[1],
+          schema: activity.items[i].schema
+        });
+      }
 
       if (
         valueType && 
@@ -69,6 +77,7 @@ export const prepareResponseForUpload = (
       height: Dimensions.get("screen").height,
     },
     languageCode: languageKey,
+    alerts,
   };
 
   let subScaleScores = [];
