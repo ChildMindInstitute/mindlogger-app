@@ -58,7 +58,7 @@ class ItemChart extends React.Component {
   renderTokenPlot() {
     const values = {};
     const accValues = {}
-    const { item, data, cumulative } = this.props;
+    const { item, data, tokens } = this.props;
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
@@ -120,6 +120,24 @@ class ItemChart extends React.Component {
         value: 0,
       };
     });
+
+    const tokenUpdates = tokens.tokenUpdates.filter(tokenUpdate => tokenUpdate.created >= newDate).reduce((usedTokens, tokenUpdate) => {
+      const day = dayOfWeeks[moment(tokenUpdate.created).day()];
+
+      usedTokens[day] = usedTokens[day] || 0;
+      usedTokens[day] += tokenUpdate.value;
+
+      return usedTokens;
+    }, {})
+
+    const tokenHistory = {
+      tokenUpdates: dayOfWeeks.map(day => ({
+        name: day,
+        value: (tokenUpdates[day] || 0)
+      })),
+      currentBalance: tokens.cumulativeToken,
+    };
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -132,7 +150,7 @@ class ItemChart extends React.Component {
           value={item.additionalParams.description}
         />
         {/* {item.additionalParams.timelineChart} */}
-        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} cumulative={cumulative}/>
+        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
       </View>
     );
   }
@@ -199,7 +217,7 @@ ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
-  cumulative: PropTypes.number.isRequired,
+  tokens: PropTypes.object.isRequired,
 };
 
 export default ItemChart;

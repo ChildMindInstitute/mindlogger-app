@@ -362,7 +362,6 @@ export const replaceResponseData = ({
 };
 
 export const sendResponseReuploadRequest = ({ authToken, userPublicKeys }) => {
-  console.log("send response reupload request");
   let url = `${apiHost()}/user/responseUpdateRequest`;
 
   const headers = {
@@ -393,27 +392,22 @@ export const getUserUpdates = ({ authToken }) => {
   }).then(res => (res.status === 200 ? res.json() : res));
 };
 
-export const getUserTokenBalance = (authToken) => {
-  const url = `${apiHost()}/user/getTokenBalance`;
+export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey) => {
+  const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
   const headers = {
     "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: "GET",
+    method: "post",
     mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
-};
-
-export const updateUserTokenBalance = (authToken, offset) => {
-  const queryParams = objectToQueryParams({ offset });
-  const url = `${apiHost()}/user/updateTokenBalance?${queryParams}`;
-  const headers = {
-    "Girder-Token": authToken,
-  };
-  return fetch(url, {
-    method: "put",
-    mode: "cors",
-    headers,
+    body: objectToFormData({
+      updateInfo: JSON.stringify({
+        tokenUpdate,
+        cumulative,
+        version,
+        userPublicKey,
+      })
+    })
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

@@ -21,8 +21,7 @@ export const prepareResponseForUpload = (
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = activity.appletSchemaVersion[languageKey];
-  const cumulatives = { ...(responseHistory.cumulatives || {}) };
-  let additionalTokens = 0;
+  let cumulative = responseHistory.tokens.cumulativeToken;
 
   const alerts = [];
   for (let i = 0; i < responses.length; i++) {
@@ -42,18 +41,14 @@ export const prepareResponseForUpload = (
         valueType && 
         valueType.includes('token')
       ) {
-        cumulatives[item.schema] = {
-          value: (getValuesFromResponse(item, responses[i]) || []).reduce(
-            (cumulative, current) => {
-              if (current >= 0) {
-                additionalTokens += current;
-                return cumulative + current;
-              }
-              cumulative;
-            }, responseHistory.cumulatives && responseHistory.cumulatives[item.schema] && responseHistory.cumulatives[item.schema].value || 0
-          ),
-          version: appletVersion,
-        }
+        cumulative += (getValuesFromResponse(item, responses[i]) || []).reduce(
+          (cumulative, current) => {
+            if (current >= 0) {
+              return cumulative + current;
+            }
+            return cumulative
+          }, 0
+        )
       }
     }
   }
@@ -110,14 +105,9 @@ export const prepareResponseForUpload = (
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
     }
 
-    responseData['tokenCumulationSource'] = getEncryptedData(Object.values(cumulatives).map(cumulative => cumulative.value), appletMetaData.AESKey);
-    responseData['tokenCumulations'] = Object.keys(cumulatives).reduce((accumulator, itemIRI, index) => ({
-      ...accumulator,
-      [itemIRI]: {
-        ptr: index,
-        version: cumulatives[itemIRI].version,
-      }
-    }), {});
+    responseData['tokenCumulation'] = getEncryptedData({
+      value: cumulative
+    }, appletMetaData.AESKey);
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
@@ -138,11 +128,41 @@ export const prepareResponseForUpload = (
       });
     }
 
-    responseData['tokenCumulations'] = cumulatives;
+    responseData['tokenCumulation'] = {
+      value: cumulative
+    };
+  }
+
+  return responseData;
+};
+
+export const getTokenUpdateInfo = (
+  offset,
+  responseHistory,
+  appletMetaData
+) => {
+  const cumulative = responseHistory.tokens.cumulativeToken + offset;
+
+  if (config.encryptResponse && appletMetaData.encryption) {
+    return {
+      offset: getEncryptedData(
+        {
+          value: offset
+        },
+        appletMetaData.AESKey
+      ),
+      cumulative: getEncryptedData(
+        {
+          value: cumulative
+        },
+        appletMetaData.AESKey
+      ),
+      userPublicKey: appletMetaData['userPublicKey']
+    }      
   }
 
   return {
-    responseData,
-    additionalTokens
-  };
+    offset: { value: offset },
+    cumulative: { value: cumulative }
+  }
 };

@@ -15,7 +15,7 @@ const colors = {
 class TokenChart extends React.Component {
 
   render() {
-    const { data, acc, cumulative } = this.props;
+    const { data, acc, tokens } = this.props;
     const SVGHeight = Math.round(Dimensions.get('window').width * 0.95);
     const SVGWidth = Math.round(Dimensions.get('window').height * 0.5);
     const GRAPH_MARGIN = 15;
@@ -24,7 +24,24 @@ class TokenChart extends React.Component {
     const graphWidth = SVGWidth - 2 * GRAPH_MARGIN;
 
     // Y scale linear
-    const maxValue = Math.max(...data.map(ele => Math.abs(ele.value)), cumulative, 1);
+    let maxValue = Math.max(...data.map(ele => Math.abs(ele.value)), tokens.currentBalance, 1);
+
+    if (acc.length < 1) {
+      return;
+    }
+
+    let yValue = tokens.currentBalance;
+
+    for (let i = acc.length-1; i >= 0; i--) {
+      yValue -= tokens.tokenUpdates[i].value;
+
+      if (acc[i].value >= 0) {
+        yValue = Math.max(0, yValue - acc[i].value);
+      }
+
+      maxValue = Math.max(maxValue, yValue);
+    }
+
     const ticks = Array.from(Array(6).keys()).slice(1)
 
     let tickSize = 1
@@ -52,33 +69,25 @@ class TokenChart extends React.Component {
       .padding(2);
     // top axis and middle axis
 
-    if (acc.length < 1) {
-      return;
-    }
-
-    let yValue = cumulative
-
-    for (let i = 0; i <= acc.length - 1; i++) {
-      if (acc[i].value >= 0) {
-        yValue = Math.max(0, yValue - acc[i].value);
-      }
-    }
-
     let barYValue = yValue;
-    let normalisedx = x(acc[0].name) - GRAPH_BAR_WIDTH / 3 + 15
-    let normalisedy = y(topValue + yValue + (acc[0].value < 0 ? -0.01 * tickSize : acc[0].value + 0.01 * tickSize),) * -1
-    let pathString = `M ${normalisedx} ${normalisedy}`;
 
     if (acc[0].value > 0) {
       yValue += acc[0].value;
     }
+    yValue += tokens.tokenUpdates[0].value;
 
-    for (let i = 1; i <= acc.length - 1; i++) {
+    let normalisedx = x(acc[0].name) - GRAPH_BAR_WIDTH / 3 + 15
+    let normalisedy = y(topValue + yValue + (acc[0].value < 0 ? -0.01 * tickSize : 0.01 * tickSize),) * -1
+    let pathString = `M ${normalisedx} ${normalisedy}`;
+
+    for (let i = 1; i < acc.length; i++) {
       const step = acc[i]
       normalisedx = x(step.name) - GRAPH_BAR_WIDTH / 3 + 15
       normalisedy = y(topValue + yValue) * -1
       pathString += ` L ${normalisedx} ${normalisedy}`
+
       yValue = step.value > 0 ? yValue + step.value : yValue
+      yValue += tokens.tokenUpdates[i].value;
 
       normalisedy = y(topValue + yValue) * -1
       pathString += ` L ${normalisedx} ${normalisedy}`
@@ -225,17 +234,9 @@ class TokenChart extends React.Component {
             );
           })}
 
-          {acc.map((item) => {
-            const r = item.value < 0
-              ? 250
-              : 207 - Math.floor((207 / maxValue) * item.value);
-            const g = item.value < 0
-              ? 250 + Math.floor((150 / maxValue) * item.value)
-              : 220;
-            const b = item.value < 0
-              ? 250 + Math.floor((150 / maxValue) * item.value)
-              : 228 - Math.floor((118 / maxValue) * item.value);
+          {acc.map((item, index) => {
             barYValue += Math.max(0, item.value)
+            barYValue += tokens.tokenUpdates[index].value;
             return (
               <>
                 <Text
@@ -298,7 +299,7 @@ class TokenChart extends React.Component {
 
 TokenChart.propTypes = {
   data: PropTypes.array.isRequired,
-  cumulative: PropTypes.number.isRequired,
+  tokens: PropTypes.object.isRequired,
 };
 
 export default TokenChart;

@@ -20,11 +20,6 @@ export default (state = initialState, action = {}) => {
         ...state,
         info: action.payload,
       };
-    case USER_CONSTANTS.SET_TOKEN_BALANCE:
-      return {
-        ...state,
-        tokenBalance: action.payload,
-      };
     default:
       return state;
   }
