@@ -112,6 +112,7 @@ export const flattenItemList = (list = []) =>
     value: R.path([VALUE, 0, "@value"], item),
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
+    description: R.path([DESCRIPTION, 0, "@value"], item),
     image: item[IMAGE],
     valueConstraints: item[RESPONSE_OPTIONS]
       ? flattenValueConstraints(R.path([RESPONSE_OPTIONS, 0], item))
