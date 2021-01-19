@@ -38,11 +38,12 @@ export const getUnscheduled = activityList => activityList.filter(
     && activity.invalid !== false,
 );
 
-export const getScheduled = activityList => activityList.filter(
+export const getScheduled = (activityList, endTimes, appletId) => activityList.filter(
   activity => activity.nextScheduledTimestamp
     && (!activity.lastScheduledTimestamp
       || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
-      || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp)
+      || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp
+      || (endTimes && endTimes[appletId + activity.id] > activity.lastScheduledTimestamp))
     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
     && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
 );
@@ -88,7 +89,7 @@ export default (appletId, activityList, inProgress, activityEndTimes) => {
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
-  const scheduled = getScheduled(notInProgress).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const scheduled = getScheduled(notInProgress, activityEndTimes, appletId).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);

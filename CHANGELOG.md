@@ -5,6 +5,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.14.69] - 2020-01-18
+- Send alerts to backend
+
+## [0.14.68] - 2021-01-18
+- fix negative tokens in token-chart
+
+## [0.14.67] - 2021-01-18
+- update survey to activity
+
+## [0.14.66] - 2021-01-16
+- Fix timer
+- Fixed delivered notification count
+
+## [0.14.65] - 2021-01-15
+- Fixed activity status on offline mode
+
+## [0.14.64] - 2021-01-15
+- Add clear notification function
+
+## [0.14.62] - 2021-01-14
+- Add clear notification function
+
+## [0.14.61] - 2021-01-14
+- Fix timer
+
+## [0.14.60] - 2021-01-13
+- Fix error handling
 
 ## [0.14.62] - 2020-01-14
 - Send alerts to backend

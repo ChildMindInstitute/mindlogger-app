@@ -25,6 +25,8 @@ import {
   setDownloadingApplets,
   replaceApplets,
   setInvites,
+  setNotificationReminder,
+  clearNotificationReminder,
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
@@ -34,6 +36,7 @@ import {
   userInfoSelector,
   loggedInSelector,
 } from "../user/user.selectors";
+import { isReminderSetSelector } from "./applets.selectors";
 import { setCurrentApplet } from "../app/app.actions";
 
 import { sync } from "../app/app.thunks";
@@ -77,9 +80,10 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
 export const setReminder = () => async (dispatch, getState) => {
   const state = getState();
   const applets = allAppletsSelector(state);
+  const isReminderSet = isReminderSetSelector(state);
   const notifications = [];
 
-  closeExistingNotifications();
+  cancelReminder();
   applets.forEach(applet => {
     const validEvents = [];
     Object.keys(applet.schedule.events).forEach(key => {
@@ -120,34 +124,46 @@ export const setReminder = () => async (dispatch, getState) => {
     })
   });
 
-  notifications.forEach(notification => {
-    const settings = { showInForeground: true };
-    const AndroidChannelId = 'MindLoggerChannelId';
-    const localNotification = new firebase.notifications.Notification(settings)
-      .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
-      .setTitle(notification.activityName) // Title of the notification
-      .setData({
-        event_id: notification.eventId,
-        applet_id: notification.appletId,
-        activity_id: notification.activityId,
-        type: "event-alert"
-      })
-      .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
-      .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
-      .android.setAutoCancel(true); // To remove notification when tapped on it
+  if (!isReminderSet) {
+    if (notifications.length) {
+      dispatch(setNotificationReminder());
+    }
 
-    firebase.notifications()
-      .scheduleNotification(localNotification, {
-        fireDate: notification.date,
-        repeatInterval: 'day',
-        exact: true,
-      })
-      .catch(err => console.error(err));
-  })
+    notifications.forEach(notification => {
+      const settings = { showInForeground: true };
+      const AndroidChannelId = 'MindLoggerChannelId';
+      const localNotification = new firebase.notifications.Notification(settings)
+        .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
+        .setTitle(notification.activityName) // Title of the notification
+        .setData({
+          event_id: notification.eventId,
+          applet_id: notification.appletId,
+          activity_id: notification.activityId,
+          type: "event-alert"
+        })
+        .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+        .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+        .android.setAutoCancel(true); // To remove notification when tapped on it
+
+      firebase.notifications()
+        .scheduleNotification(localNotification, {
+          fireDate: notification.date,
+          repeatInterval: 'day',
+          exact: true,
+        })
+        .catch(err => console.error(err));
+    })
+  }
 };
 
-const closeExistingNotifications = () => {
-  firebase.notifications().cancelAllNotifications();
+export const cancelReminder = () => (dispatch, getState) => {
+  const state = getState();
+  const isReminderSet = isReminderSetSelector(state);
+  
+  if (isReminderSet) {
+    firebase.notifications().cancelAllNotifications();
+    dispatch(clearNotificationReminder());
+  }
 }
 
 // const buildNotification = async (activity) => {
@@ -271,7 +287,7 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user?.auth?.token;
+  const token = state.user ?.auth ?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
       .then((response) => {
