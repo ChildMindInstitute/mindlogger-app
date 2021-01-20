@@ -131,7 +131,7 @@ export default (state = initialState, action = {}) => {
         ...state,
         startedTimes: {
           ...state.startedTimes,
-          [action.payload]: null,
+          [action.payload]: "",
         },
       }
     case APP_CONSTANTS.SET_APP_STATUS:

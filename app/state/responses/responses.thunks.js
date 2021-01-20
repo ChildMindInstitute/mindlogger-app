@@ -124,7 +124,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
     Actions.push('take_act');
   } else if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
     // There is no response in progress, so start a new one
-    if (startedTimes && !startedTimes[activity.id]) {
+    if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
       dispatch(setActivityStartTime(activity.id));
     }
     dispatch(
@@ -146,6 +146,11 @@ export const startResponse = (activity) => (dispatch, getState) => {
               ["inProgress", applet.id + activity.id, "responses"],
               responses
             );
+
+            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+              dispatch(setActivityStartTime(activity.id));
+            }
+
             cleanFiles(itemResponses);
             dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
@@ -165,6 +170,10 @@ export const startResponse = (activity) => (dispatch, getState) => {
         {
           text: i18n.t("additional:resume"),
           onPress: () => {
+            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+              dispatch(setActivityStartTime(activity.id));
+            }
+            
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(applet.id, activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
