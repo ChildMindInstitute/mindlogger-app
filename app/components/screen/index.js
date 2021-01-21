@@ -78,7 +78,7 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdown-message") {
+    if (screen.inputType === "markdownMessage") {
       return true;
     }
     if (Array.isArray(answer)) {

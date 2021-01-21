@@ -18,7 +18,7 @@ class ActivityChart extends React.Component {
   render() {
     const { activity, appletData } = this.props;
     // console.log('activity items', activity.items);
-    const itemTypesToIgnore = ['markdown-message', 'audioRecord', 'audioStimulus', ''];
+    const itemTypesToIgnore = ['markdownMessage', 'audioRecord', 'audioStimulus', ''];
     const itemsFiltered = activity.items.filter(
       i => itemTypesToIgnore.indexOf(i.inputType) < 0 && i.inputType,
     );

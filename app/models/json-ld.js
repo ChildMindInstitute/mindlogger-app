@@ -314,7 +314,7 @@ export const attachPreamble = (preamble, items) => {
   if (text && text.length > SHORT_PREAMBLE_LENGTH) {
     return R.prepend(
       {
-        inputType: "markdown-message",
+        inputType: "markdownMessage",
         preamble,
       },
       items
