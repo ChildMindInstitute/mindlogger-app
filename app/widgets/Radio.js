@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image } from 'react-native';
-import { ListItem, Text } from 'native-base';
-import { CheckBox } from 'react-native-elements';
+import { ListItem, Text, Icon } from 'native-base';
+import { CheckBox, Tooltip } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 
@@ -23,6 +23,19 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
           onPress={() => handlePress(token ? item.name.en : item.value)}
           key={index}
         >
+          <View style={{ width: '8%' }}>
+            {item.description ? (
+              <Tooltip
+                popover={
+                  <Text>{item.description}</Text>
+                }
+              >
+                <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
+              </Tooltip>
+            ) : (
+              <View />
+            )}
+          </View>
           <View style={{ width: '85%' }}>
             <View style={{ width: '100%', flexDirection: 'row' }}>
               {item.image ? (
