@@ -6,8 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-## [0.14.72] - 2020-01-20
+## [0.14.74] - 2020-01-20
 - Fix activity start time
+
+## [0.14.73] - 2020-01-21
+- Fixed undeinfed object
+- Fix about button text
+
+## [0.14.72] - 2020-01-21
+- Add description field for choice
 
 ## [0.14.71] - 2020-01-19
 - Fix activity end times
