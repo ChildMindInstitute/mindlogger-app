@@ -356,7 +356,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
   });
   const nonEmptyItems = R.filter(item => item, mapItems(order));
   const items = attachPreamble(preamble, nonEmptyItems);
-  const compute = activityJson[COMPUTE] && R.map((item) => { 
+  const compute = activityJson[COMPUTE] && R.map((item) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
       variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
@@ -555,13 +555,17 @@ export const parseAppletActivities = (applet, responseSchedule) => {
     let scheduledTimeout = null;
     let invalid = true;
 
-    Object.keys(applet.schedule.data).forEach(date => {
-      const event = applet.schedule.data[date].find(ele => ele.id === id);
+    if (applet.schedule.data) {
+      Object.keys(applet.schedule.data).forEach(date => {
+        const event = applet.schedule.data[date].find(ele => ele.id === id);
 
-      if (moment().isSame(moment(date), 'day') && event) {
-        invalid = event.valid;
-      }
-    })
+        if (moment().isSame(moment(date), 'day') && event) {
+          invalid = event.valid;
+        }
+      })
+    } else if (applet.schedule.valid !== undefined) {
+      invalid = applet.schedule.valid;
+    }
 
     if (lastTimeout) {
       prevTimeout = ((lastTimeout.day * 24 + lastTimeout.hour) * 60 + lastTimeout.minute) * 60000;
