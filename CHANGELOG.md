@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 ## [0.14.73] - 2020-01-21
 - Fixed undeinfed object
+- Fix about button text
 
 ## [0.14.72] - 2020-01-21
 - Add description field for choice
