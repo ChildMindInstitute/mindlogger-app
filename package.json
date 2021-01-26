@@ -95,6 +95,7 @@
     "react-native-router-flux": "4.2.0",
     "react-native-screens": "^1.0.0-alpha.23",
     "react-native-slider": "^0.11.0",
+    "react-native-sound-player": "^0.10.5",
     "react-native-svg": "^12.1.0",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.7.0",

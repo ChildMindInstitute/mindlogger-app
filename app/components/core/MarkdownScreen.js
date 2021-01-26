@@ -4,7 +4,8 @@ import * as R from 'ramda';
 import { View, Linking, Dimensions, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
-import Markdown, { MarkdownIt, stringToTokens, tokensToAST } from 'react-native-markdown-display';
+import AudioPlayer from './AudioPlayer';
+import Markdown, { MarkdownIt } from 'react-native-markdown-display';
 import { html5Media } from 'markdown-it-html5-media';
 
 const { width } = Dimensions.get('window');
@@ -19,6 +20,18 @@ const rules = {
         height={250}
       />
     );
+  },
+  audio: (node, children, parent, styles) => {
+    console.log('node is', node)
+    return (
+      <AudioPlayer
+        uri={node.attributes.src}
+        key={node.key}
+        content={node.content}
+        width={width - 50}
+        height={50}
+      />
+    )
   }
 }
 

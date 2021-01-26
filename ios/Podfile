@@ -61,6 +61,8 @@ target 'MDCApp' do
 
   pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
 
+  pod 'RNSoundPlayer', :path => '../node_modules/react-native-sound-player'
+
   target 'MDCAppTests' do
     inherit! :search_paths
     # Pods for testing

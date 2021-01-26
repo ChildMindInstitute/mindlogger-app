@@ -8882,6 +8882,11 @@ react-native-slider@^0.11.0:
   dependencies:
     prop-types "^15.5.6"
 
+react-native-sound-player@^0.10.5:
+  version "0.10.5"
+  resolved "https://registry.yarnpkg.com/react-native-sound-player/-/react-native-sound-player-0.10.5.tgz#a770d963b8ee4cc4f9d4531ff799e693fb96f101"
+  integrity sha512-dMb9iSJigSAulvw0vTFW1Wsq6rWwuv7OQQDWVLwFazk/+X6C0Kbx6QjdBLeMX/hWFTVCFEPzQNp2y+9LcHuorw==
+
 react-native-status-bar-height@^2.2.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/react-native-status-bar-height/-/react-native-status-bar-height-2.5.0.tgz#bc0fb85230603850aab9667ee8111a62954de90c"
