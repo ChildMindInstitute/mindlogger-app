@@ -65,7 +65,7 @@ export const VideoPlayer = ({ uri, width, height }) => {
           uri
         }}
         style={styles.mediaPlayer}
-        volume={0.0}
+        volume={1.0}
       />
       <MediaControls
         isFullScreen={isFullScreen}
