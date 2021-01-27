@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.75] - 2020-01-24
+- Fix notification count
+
 ## [0.14.74] - 2020-01-20
 - Fix activity start time
 

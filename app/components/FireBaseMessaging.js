@@ -47,7 +47,7 @@ class FireBaseMessaging extends Component {
     ];
     this.appState = 'active';
     this.notificationsCount = 0;
-    AppState.addEventListener('change', this.handleAppStateChange);
+    // AppState.addEventListener('change', this.handleAppStateChange);
 
     if (isAndroid) {
       this.initAndroidChannel();
@@ -57,6 +57,8 @@ class FireBaseMessaging extends Component {
       firebase.messaging().ios.registerForRemoteNotifications();
     }
     // this.notificationsCount = await this.getDeliveredNotificationsCount();
+    AppState.addEventListener('change', this.handleAppStateChange);
+
 
     this.requestPermissions();
     this.props.setFCMToken(await fMessaging.getToken());
