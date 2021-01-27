@@ -213,7 +213,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     );
   }
   // markdown items are rendered in ScreenDisplay
-  if (screen.inputType === 'markdown-message') {
+  if (screen.inputType === 'markdownMessage') {
     return null;
   }
 

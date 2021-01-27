@@ -1,39 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { View, Linking } from 'react-native';
-import { MarkdownView } from 'react-native-markdown-view';
+import { View, Linking, Dimensions, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
-import { getURL } from '../../services/helper';
+import { VideoPlayer } from './VideoPlayer';
+import AudioPlayer from './AudioPlayer';
+import Markdown, { MarkdownIt } from 'react-native-markdown-display';
+import { html5Media } from 'markdown-it-html5-media';
 
-const unescapeUrl = url => url.replace(/\\([^0-9A-Za-z\s])/g, '$1');
+const { width } = Dimensions.get('window');
 
-// We add a custom parse function so that we can grab preloaded images locally
 const rules = {
-  image: {
-    parse: capture => ({
-      alt: capture[1],
-      target: getURL(unescapeUrl(capture[2])),
-      title: capture[3],
-      width: capture[4] ? parseInt(capture[4], 10) : undefined,
-      height: capture[5] ? parseInt(capture[5], 10) : undefined,
-    }),
+  video: (node, children, parent, styles) => {
+    return (
+      <VideoPlayer
+        uri={node.attributes.src}
+        key={node.key}
+        width={width - 50}
+        height={250}
+      />
+    );
   },
-};
+  audio: (node, children, parent, styles) => {
+    console.log('node is', node)
+    return (
+      <AudioPlayer
+        uri={node.attributes.src}
+        key={node.key}
+        content={node.content}
+        width={width - 50}
+        height={50}
+      />
+    )
+  }
+}
 
 export const MarkdownScreen = ({ mstyle, children }) => {
   return (
-    <View>
-      <MarkdownView
-        style={{ justifyContent: 'center', alignItems: 'center' }}
-        styles={R.merge(markdownStyle, mstyle)}
-        rules={rules}
+    <View
+      style={{ justifyContent: 'center', alignItems: 'center' }}
+    >
+      <Markdown
+        style={{ ...markdownStyle}}
+        mergeStyle={ true }
         onLinkPress={(url) => {
           Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
         }}
+        markdownit={
+          MarkdownIt({typographer: true}).use(html5Media)
+        }
+        rules={rules}
       >
-        {'#'} {children}
-      </MarkdownView>
+        {children}
+      </Markdown>
     </View>
   );
 };
