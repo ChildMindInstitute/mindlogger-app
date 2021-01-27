@@ -81,3 +81,7 @@ export const getURL = (url) => {
 
   return transformedUrl;
 };
+
+export const truncateString = (str, len, dots = true) => {
+  return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
+};
