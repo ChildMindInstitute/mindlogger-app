@@ -1,36 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { View, Linking, Dimensions, Text } from 'react-native';
+import { View, Linking, Dimensions, Image } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
 import AudioPlayer from './AudioPlayer';
-import Markdown, { MarkdownIt } from 'react-native-markdown-display';
-import { html5Media } from 'markdown-it-html5-media';
+import Markdown from 'react-native-markdown-display';
+import Mimoza from 'mimoza';
 
 const { width } = Dimensions.get('window');
 
 const rules = {
-  video: (node, children, parent, styles) => {
-    return (
-      <VideoPlayer
-        uri={node.attributes.src}
-        key={node.key}
-        width={width - 50}
-        height={250}
-      />
-    );
-  },
-  audio: (node, children, parent, styles) => {
-    return (
-      <AudioPlayer
-        uri={node.attributes.src}
-        key={node.key}
-        content={node.content}
-        width={width - 50}
-        height={50}
-      />
-    )
+  image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
+    const mimeType = Mimoza.getMimeType(node.attributes.src);
+    if (mimeType.startsWith('audio/')) {
+      return (
+        <AudioPlayer
+          uri={node.attributes.src}
+          key={node.key}
+          content={node.content}
+          width={width - 50}
+          height={50}
+        />
+      );
+    } else if (mimeType.startsWith('video/')) {
+      return (
+        <VideoPlayer
+          uri={node.attributes.src}
+          key={node.key}
+          width={width}
+          height={250}
+        />
+      );
+    }
+
+    return (<Image
+      style={{
+        resizeMode: "center",
+        height: 200,
+        width: width-50
+      }}
+      source={{
+        uri: node.attributes.src
+      }}
+    />);
   }
 }
 
@@ -45,9 +58,6 @@ export const MarkdownScreen = ({ mstyle, children }) => {
         onLinkPress={(url) => {
           Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
         }}
-        markdownit={
-          MarkdownIt({typographer: true}).use(html5Media)
-        }
         rules={rules}
       >
         {children}
