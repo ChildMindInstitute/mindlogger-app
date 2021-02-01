@@ -3,6 +3,7 @@ import * as R from 'ramda';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { MarkdownScreen } from '../core';
+import { Markdown } from '../core';
 import { markdownStyle } from '../../themes/activityTheme';
 
 const styleLens = R.lensPath(['paragraph', 'fontWeight']);
@@ -15,18 +16,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const ScreenDisplay = ({ screen }) => (
+const ScreenDisplay = ({ screen }) => {
+  return (
   <View style={{ marginBottom: 18 }}>
     {screen.preamble && (
       <MarkdownScreen mstyle={preambleStyle}>
         {screen.preamble.en}
       </MarkdownScreen>
     )}
-    {screen.question && (
+    {screen.question && (screen.inputType === 'markdownMessage' && (
       <MarkdownScreen>
         {screen.question.en}
       </MarkdownScreen>
-    )}
+    ) || (
+      <Markdown>{screen.question.en}</Markdown>
+    ))}
     {screen.info && (
       <View style={styles.infoTitle}>
         <MarkdownScreen>
@@ -34,8 +38,8 @@ const ScreenDisplay = ({ screen }) => (
         </MarkdownScreen>
       </View>
     )}
-  </View>
-);
+  </View>)
+};
 
 ScreenDisplay.propTypes = {
   screen: PropTypes.object.isRequired,

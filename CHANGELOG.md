@@ -6,7 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
-## [0.14.75] - 2020-01-24
+## [0.14.77] - 2020-01-29
+- Fix markdown rendering
+
+## [0.14.76] - 2020-01-27
+- insert video/audio player, update informational page
+
+## [0.14.75] - 2020-01-26
+- Fixed offline activity status
 - Fix notification count
 
 ## [0.14.74] - 2020-01-20

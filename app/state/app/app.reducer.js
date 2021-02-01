@@ -109,8 +109,6 @@ export default (state = initialState, action = {}) => {
         apiHost: initialState.apiHost,
       };
     case APP_CONSTANTS.SET_ACTIVITY_END_TIME:
-      if (state.finishedTimes[action.payload]) return state;
-
       return {
         ...state,
         finishedTimes: {

@@ -8,6 +8,13 @@ export const addMediaFile = (uri, filePath) => ({
   },
 });
 
+export const setCurrentMedia = (uri) => ({
+  type: MEDIA_CONSTANTS.SET_CURRENT_MEDIA,
+  payload: {
+    uri
+  }
+});
+
 export const removeMediaFile = uri => ({
   type: MEDIA_CONSTANTS.REMOVE_MEDIA_FILE,
   payload: uri,

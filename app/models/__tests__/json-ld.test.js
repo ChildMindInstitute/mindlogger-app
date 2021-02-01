@@ -291,7 +291,7 @@ test('attachPreamble', () => {
   };
 
   expect(attachPreamble(longPreamble, [{}, {}])).toEqual([{
-    inputType: 'markdown-message',
+    inputType: 'markdownMessage',
     preamble: longPreamble,
   }, {}, {}]);
 
