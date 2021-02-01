@@ -170,7 +170,7 @@ Attribution URL: https://matter.childmind.org
 
 Graphic Image as provided in the Covered Code: 
 
-![CMI logo](https://github.com/ChildMindInstitute/mindlogger-app/blob/master/CMI_logo.jpg)
+<img width="200" src="https://github.com/ChildMindInstitute/mindlogger-app/blob/master/CMI_logo.jpg" class="img-responsive img-centered" alt="CMI logo">
 
 Display of Attribution Information is required in Larger Works which are defined in the CPAL as a work which combines Covered Code or portions thereof with code not governed by the terms of the CPAL.
 
