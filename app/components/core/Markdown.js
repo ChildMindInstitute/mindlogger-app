@@ -25,7 +25,7 @@ export const Markdown = ({ mstyle, children }) => {
   return (
     <View>
       <MarkdownView
-        style={{ justifyContent: 'center' }}
+        style={{ justifyContent: 'center', alignItems: 'center' }}
         styles={R.merge(markdownStyle, mstyle)}
         rules={rules}
         onLinkPress={(url) => {

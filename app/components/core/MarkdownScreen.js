@@ -22,7 +22,6 @@ const rules = {
     );
   },
   audio: (node, children, parent, styles) => {
-    console.log('node is', node)
     return (
       <AudioPlayer
         uri={node.attributes.src}
