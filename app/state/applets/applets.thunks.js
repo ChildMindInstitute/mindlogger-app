@@ -1,5 +1,6 @@
-import { Actions } from "react-native-router-flux";
-import * as R from "ramda";
+import { Actions } from 'react-native-router-flux';
+import * as firebase from 'react-native-firebase';
+import * as R from 'ramda';
 import {
   getApplets,
   registerOpenApplet,
@@ -15,21 +16,17 @@ import {
 } from "../../services/network";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
-import {
-  downloadResponses,
-  downloadAppletResponses,
-} from "../responses/responses.thunks";
-import {
-  downloadAppletsMedia,
-  downloadAppletMedia,
-} from "../media/media.thunks";
-import { activitiesSelector } from "./applets.selectors";
+import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
+import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
+import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
   setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
+  setNotificationReminder,
+  clearNotificationReminder,
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
@@ -39,6 +36,7 @@ import {
   userInfoSelector,
   loggedInSelector,
 } from "../user/user.selectors";
+import { isReminderSetSelector } from "./applets.selectors";
 import { setCurrentApplet } from "../app/app.actions";
 
 import { sync } from "../app/app.thunks";
@@ -79,16 +77,127 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
     });
 };
 
-export const downloadApplets = (onAppletsDownloaded = null) => (
-  dispatch,
-  getState
-) => {
+export const setReminder = () => async (dispatch, getState) => {
+  const state = getState();
+  const applets = allAppletsSelector(state);
+  const isReminderSet = isReminderSetSelector(state);
+  const notifications = [];
+
+  cancelReminder();
+  applets.forEach(applet => {
+    const validEvents = [];
+    Object.keys(applet.schedule.events).forEach(key => {
+      const event = applet.schedule.events[key];
+
+      Object.keys(applet.schedule.data).forEach(date => {
+        const data = applet.schedule.data[date];
+        const isValid = data.find(d => d.id === key && d.valid);
+        if (isValid) {
+          const validEvent = {
+            ...event,
+            date,
+          }
+          validEvents.push(validEvent);
+        }
+      })
+    });
+
+    validEvents.forEach(event => {
+      event.data.notifications.forEach(notification => {
+        if (notification.start) {
+          const values = notification.start.split(':');
+          const date = new Date(event.date);
+
+          date.setHours(values[0]);
+          date.setMinutes(values[1]);
+          if (date.getTime() > Date.now()) {
+            notifications.push({
+              eventId: event.id,
+              appletId: applet.id.split('/').pop(),
+              activityId: event.data.activity_id,
+              activityName: event.data.title,
+              date: date.getTime()
+            });
+          }
+        }
+      })
+    })
+  });
+
+  if (!isReminderSet) {
+    if (notifications.length) {
+      dispatch(setNotificationReminder());
+    }
+
+    notifications.forEach(notification => {
+      const settings = { showInForeground: true };
+      const AndroidChannelId = 'MindLoggerChannelId';
+      const localNotification = new firebase.notifications.Notification(settings)
+        .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
+        .setTitle(notification.activityName) // Title of the notification
+        .setData({
+          event_id: notification.eventId,
+          applet_id: notification.appletId,
+          activity_id: notification.activityId,
+          type: "event-alert"
+        })
+        .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+        .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+        .android.setAutoCancel(true); // To remove notification when tapped on it
+
+      firebase.notifications()
+        .scheduleNotification(localNotification, {
+          fireDate: notification.date,
+          repeatInterval: 'day',
+          exact: true,
+        })
+        .catch(err => console.error(err));
+    })
+  }
+};
+
+export const cancelReminder = () => (dispatch, getState) => {
+  const state = getState();
+  const isReminderSet = isReminderSetSelector(state);
+  
+  if (isReminderSet) {
+    firebase.notifications().cancelAllNotifications();
+    dispatch(clearNotificationReminder());
+  }
+}
+
+// const buildNotification = async (activity) => {
+//   const title = Platform.OS === "android" ? "Daily Reminder" : "";
+//   const AndroidChannelId = 'MindLoggerChannelId';
+//   const notificationData = {
+//     event_id: 1,
+//     applet_id: activity.appletId.split('/').pop(),
+//     activity_id: activity.id.split('/').pop(),
+//     type: "event-alert"
+//   }
+//   const settings = { showInForeground: true };
+//   const notification = new firebase.notifications.Notification(settings)
+//     .setNotificationId(`${activity.id}-${Math.random()}`) // Any random ID
+//     .setTitle(title) // Title of the notification
+//     .setBody("This is a notification") // body of notification
+//     .setData(notificationData);
+
+
+//   notification.android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
+//   notification.android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
+//   notification.android.setAutoCancel(true); // To remove notification when tapped on it
+
+//   return notification;
+// };
+
+export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const userInfo = userInfoSelector(state);
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
+      console.log(applets)
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
@@ -178,7 +287,7 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user?.auth?.token;
+  const token = state.user ?.auth ?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
       .then((response) => {

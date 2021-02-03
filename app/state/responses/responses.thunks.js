@@ -3,12 +3,13 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
-import { getSchedule, replaceResponseData } from "../../services/network";
+import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
 import {
   prepareResponseForUpload,
   getEncryptedData,
+  getTokenUpdateInfo,
 } from "../../models/response";
 import { scheduleAndSetNotifications } from "../applets/applets.thunks";
 import { appletsSelector } from "../applets/applets.selectors";
@@ -16,8 +17,10 @@ import {
   responsesSelector,
   uploadQueueSelector,
   currentResponsesSelector,
+  currentAppletResponsesSelector,
   currentScreenSelector,
   itemVisiblitySelector,
+  currentAppletTokenBalanceSelector,
 } from "./responses.selectors";
 import {
   authTokenSelector,
@@ -38,11 +41,18 @@ import {
   replaceAppletResponses,
   setActivityOpened,
 } from "./responses.actions";
-import { setCurrentActivity, clearActivityStartTime } from "../app/app.actions";
+import {
+  setActivityStartTime,
+  setCurrentActivity,
+  clearActivityStartTime,
+  setActivityEndTime,
+} from "../app/app.actions";
 
 import {
   currentActivityIdSelector,
   currentAppletSelector,
+  startedTimesSelector,
+  currentActivitySelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 
@@ -97,13 +107,26 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
 export const startResponse = (activity) => (dispatch, getState) => {
   const state = getState();
   const { responses, user } = state;
+  const startedTimes = startedTimesSelector(state);
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
-  const currentScreen = currentScreenSelector(getState());
+  const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
 
-  if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
+  if (activity.isPrize === true) {
+    const tokenBalance = currentAppletTokenBalanceSelector(state).cumulativeToken;
+    const prizesActivity = R.assocPath(['items', 0, 'info', 'en'],
+      `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
+      activity);
+    dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
+    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(setCurrentActivity(activity.id));
+    Actions.push('take_act');
+  } else if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
     // There is no response in progress, so start a new one
+    if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+      dispatch(setActivityStartTime(activity.id));
+    }
     dispatch(
       createResponseInProgress(applet.id, activity, subjectId, timeStarted)
     );
@@ -123,6 +146,11 @@ export const startResponse = (activity) => (dispatch, getState) => {
               ["inProgress", applet.id + activity.id, "responses"],
               responses
             );
+
+            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+              dispatch(setActivityStartTime(activity.id));
+            }
+
             cleanFiles(itemResponses);
             dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
@@ -142,8 +170,12 @@ export const startResponse = (activity) => (dispatch, getState) => {
         {
           text: i18n.t("additional:resume"),
           onPress: () => {
+            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+              dispatch(setActivityStartTime(activity.id));
+            }
+            
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen));
+            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -264,25 +296,53 @@ export const startUploadQueue = () => (dispatch, getState) => {
 export const completeResponse = () => (dispatch, getState) => {
   const state = getState();
   // console.log({ state });
+  const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
   // console.log({ applet });
   const inProgressResponse = currentResponsesSelector(state);
+
   console.log({ inProgressResponse });
+  const activity = currentActivitySelector(state);
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  const preparedResponse = prepareResponseForUpload(inProgressResponse, applet);
-  // console.log({ preparedResponse });
-  dispatch(addToUploadQueue(preparedResponse));
+  const responseHistory = currentAppletResponsesSelector(state);
+
+  if (activity.isPrize === true) {
+    const selectedPrizeIndex = inProgressResponse["responses"][0];
+    const version = inProgressResponse["activity"].appletSchemaVersion['en'];
+    const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
+
+    const updates = getTokenUpdateInfo(
+      -selectedPrize.price,
+      responseHistory,
+      applet,
+    );
+
+    updateUserTokenBalance(
+      authToken,
+      applet.id.split('/').pop(),
+      updates.offset,
+      updates.cumulative,
+      version,
+      updates.userPublicKey || null
+    ).then(() => {
+      dispatch(downloadResponses())
+    })
+  } else {
+    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+    dispatch(addToUploadQueue(preparedResponse));
+    dispatch(startUploadQueue());
+  }
+
   setTimeout(() => {
     // Allow some time to navigate back to ActivityList
     dispatch(
       removeResponseInProgress(applet.id + inProgressResponse.activity.id)
     );
   }, 300);
-  dispatch(startUploadQueue());
 };
 
 export const nextScreen = () => (dispatch, getState) => {
@@ -296,21 +356,25 @@ export const nextScreen = () => (dispatch, getState) => {
   if (next === -1) {
     dispatch(completeResponse());
     dispatch(setCurrentActivity(null));
+    dispatch(setActivityEndTime(applet.id + activityId));
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(applet.id, activityId, next));
   }
 };
 
-export const finishActivity = (activity) => (dispatch) => {
+export const finishActivity = (activity) => (dispatch, getState) => {
+  const state = getState();
+  const applet = currentAppletSelector(state);
+
   dispatch(clearActivityStartTime(activity.id));
   dispatch(completeResponse());
   dispatch(setCurrentActivity(null));
+  dispatch(setActivityEndTime(applet.id + activity.id));
   Actions.push("activity_end");
 };
 
 export const endActivity = (activity) => (dispatch) => {
-  console.log({ activity });
   dispatch(clearActivityStartTime(activity.id));
   dispatch(setCurrentActivity(activity.id));
   dispatch(completeResponse());

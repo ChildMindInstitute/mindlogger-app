@@ -49,7 +49,9 @@
   "applet_footer": {
     "surveys": "Enquêtes",
     "data": "Données",
-    "about": "À propos"
+    "about": "À propos",
+    "activities": "Activités",
+    "activity": "Activité"
   },
   "applet_invite_flow": {
     "back": "Retour",

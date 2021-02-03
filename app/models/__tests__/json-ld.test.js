@@ -168,6 +168,7 @@ test('activityTransformJson: ema-hbn', () => {
     fullScreen: false,
     info: undefined,
     notification: {},
+    isPrize: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -214,6 +215,7 @@ test('activityTransformJson: nda-phq', () => {
     info: undefined,
     notification: {},
     id: 'activity/5cba3c1f86fafd5df796d913',
+    isPrize: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -289,7 +291,7 @@ test('attachPreamble', () => {
   };
 
   expect(attachPreamble(longPreamble, [{}, {}])).toEqual([{
-    inputType: 'markdown-message',
+    inputType: 'markdownMessage',
     preamble: longPreamble,
   }, {}, {}]);
 

@@ -16,15 +16,15 @@ class AppletFooter extends React.Component {
     return (
       <Footer>
         <FooterTab>
-          <Button vertical active={active === 'survey'} onPress={() => changeTab('survey')}>
-            <SurveyIcon color={active === 'survey' ? colors.primary : defaultColor} />
+          <Button vertical active={active === 'activity'} onPress={() => changeTab('activity')}>
+            <SurveyIcon color={active === 'activity' ? colors.primary : defaultColor} />
             <BaseText
               style={
-                active === 'survey'
+                active === 'activity'
                   ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily }
                   : { color: defaultColor, fontFamily: theme.fontFamily }
               }
-              textKey="applet_footer:surveys"
+              textKey="applet_footer:activities"
             />
           </Button>
 

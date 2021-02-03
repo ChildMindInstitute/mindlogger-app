@@ -49,7 +49,9 @@
   "applet_footer": {
     "surveys": "Surveys",
     "data": "Data",
-    "about": "about"
+    "about": "About",
+    "activities": "Activities",
+    "activity": "Activity"
   },
   "applet_invite_flow": {
     "back": "Back",
@@ -298,7 +300,9 @@
     "hi": "Hi",
     "enter_old_password": "Please enter your old password",
     "enter_new_password": "Please enter a new password"
+  },
+  "prize": {
+    "lack_tokens_title": "Try again",
+    "lack_tokens_subtitle": "You don't have enough tokens.\nPlease select another prize"
   }
-
-
 }

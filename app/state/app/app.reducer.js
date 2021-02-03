@@ -82,6 +82,13 @@ export const initialState = {
    * @type {object}
    */
   startedTimes: {},
+
+    /**
+   * Times activities finished
+   *
+   * @type {object}
+   */
+  finishedTimes: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -101,6 +108,14 @@ export default (state = initialState, action = {}) => {
         ...state,
         apiHost: initialState.apiHost,
       };
+    case APP_CONSTANTS.SET_ACTIVITY_END_TIME:
+      return {
+        ...state,
+        finishedTimes: {
+          ...state.finishedTimes,
+          [action.payload]: Date.now()
+        },
+      };
     case APP_CONSTANTS.SET_ACTIVITY_START_TIME:
       return {
         ...state,
@@ -114,7 +129,7 @@ export default (state = initialState, action = {}) => {
         ...state,
         startedTimes: {
           ...state.startedTimes,
-          [action.payload]: null,
+          [action.payload]: "",
         },
       }
     case APP_CONSTANTS.SET_APP_STATUS:

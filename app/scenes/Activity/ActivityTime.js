@@ -33,7 +33,8 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
   } else {
     hour = null;
   }
-  const initialState = (!startedTime || hour !== null) ? {
+
+  const initialState = (hour !== null) ? {
     eventDate: moment.duration().add({
       hours: hour,
       minutes: minute,
@@ -49,10 +50,13 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
 
   useEffect(() => {
     if (!activityTime) return;
-    const intervalId = setInterval(() => {
+    let timeoutId = 0;
+
+    let prevTime = Date.now();
+
+    const updateClock = () => {
       let { eventDate, allow } = activityTime;
       if (eventDate <= 0) {
-        clearInterval(intervalId);
         finishActivity(activity);
       } else {
         eventDate = eventDate.subtract(1, "s");
@@ -67,10 +71,22 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
           secs,
           allow
         });
-      }
-    }, 1000);
 
-    return () => clearInterval(intervalId);
+        if (timeoutId >= 0) {
+          prevTime += 1000;
+          timeoutId = setTimeout(updateClock, prevTime - Date.now());
+        }
+      }
+    };
+
+    timeoutId = setTimeout(updateClock, 1000);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = -1;
+    }
   }, []);
 
   return (

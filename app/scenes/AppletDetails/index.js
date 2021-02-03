@@ -21,7 +21,6 @@ import {
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
-  setActivityStartTime,
 } from "../../state/app/app.actions";
 import { startResponse } from "../../state/responses/responses.thunks";
 
@@ -36,9 +35,6 @@ class AppletDetails extends Component {
    */
   handlePressActivity = (activity) => {
     const { startedTimes } = this.props;
-    if (startedTimes && !startedTimes[activity.id]) {
-      this.props.setActivityStartTime(activity.id);
-    }
 
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
@@ -130,14 +126,13 @@ class AppletDetails extends Component {
 
 AppletDetails.defaultProps = {
   currentApplet: null,
-  initialTab: "survey",
+  initialTab: "activity",
 };
 
 AppletDetails.propTypes = {
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
-  setActivityStartTime: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   startedTimes: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
@@ -161,7 +156,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
-  setActivityStartTime,
   setCurrentApplet,
   startResponse,
   getAppletResponseData,
