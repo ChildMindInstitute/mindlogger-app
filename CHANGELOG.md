@@ -5,6 +5,152 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+
+## [0.14.80] - 2020-02-03
+- Small Fix AudioImageRecord Item
+
+## [0.14.78] - 2020-02-01
+- Add tooltip for radio/multi-select options
+
+## [0.14.77] - 2020-01-29
+- Fix markdown rendering
+
+## [0.14.76] - 2020-01-27
+- insert video/audio player, update informational page
+
+## [0.14.75] - 2020-01-26
+- Fixed offline activity status
+- Fix notification count
+
+## [0.14.74] - 2020-01-20
+- Fix activity start time
+
+## [0.14.73] - 2020-01-21
+- Fixed undeinfed object
+- Fix about button text
+
+## [0.14.72] - 2020-01-21
+- Add description field for choice
+
+## [0.14.71] - 2020-01-19
+- Fix activity end times
+
+## [0.14.70] - 2020-01-19
+- fix token accumulation
+
+## [0.14.69] - 2020-01-18
+- Send alerts to backend
+
+## [0.14.68] - 2021-01-18
+- fix negative tokens in token-chart
+
+## [0.14.67] - 2021-01-18
+- update survey to activity
+
+## [0.14.66] - 2021-01-16
+- Fix timer
+- Fixed delivered notification count
+
+## [0.14.65] - 2021-01-15
+- Fixed activity status on offline mode
+
+## [0.14.64] - 2021-01-15
+- Add clear notification function
+
+## [0.14.62] - 2021-01-14
+- Add clear notification function
+
+## [0.14.61] - 2021-01-14
+- Fix timer
+
+## [0.14.60] - 2021-01-13
+- Fix error handling
+
+## [0.14.59] - 2021-01-13
+- Fix notification start_time
+- Fixed offline past-due activity
+
+## [0.14.58] - 2021-01-12
+- Fix activity availability
+
+## [0.14.57] - 2021-01-12
+- Fix calcTimeDiff function
+
+## [0.14.56] - 2021-01-11
+- Fix accumulated tokens registeration
+- Fix token accumulation
+
+## [0.14.55] - 2021-01-10
+- Fix accumulated tokens registeration
+
+## [0.14.54] - 2021-01-07
+- Fix timed activity status
+
+## [0.14.53] - 2021-01-05
+- Fixed `scheduled day only` option
+
+## [0.14.52] - 2021-01-07
+- Fix response submit
+
+## [0.14.51] - 2021-01-05
+- Fixed notification time
+- Added TokenLogger Prizes Activity feature
+
+## [0.14.50] - 2021-01-05
+- Removed console logs
+- Fixed response data issue
+- Fixed token chart issue
+
+## [0.14.49] - 2021-01-04
+- Fixed activity timer after notification
+
+## [0.14.48] - 2021-01-03
+- Fixed offline schedule in past due
+
+## [0.14.47] - 2021-01-04
+- fix token data cumulation
+
+## [0.14.46] - 2020-1-3
+- Fixed iOs/Android version specific issue of react-native-image-picker
+- Fixed uploading response images of media items
+
+## [0.14.45] - 2020-12-31
+- Allow multiple words in Cumulative Score Title field
+
+## [0.14.44] - 2020-12-30
+- Fixed object iteration issue
+
+## [0.14.43] - 2020-12-30
+- Hide permanently delete account in setting
+
+## [0.14.42] - 2020-12-30
+- Fixed T-scale value issue
+
+## [0.14.41] - 2020-12-29
+- Fixed duplicated notification issue
+
+## [0.14.40] - 2020-12-29
+- fix only scheduled day option
+
+## [0.14.39] - 2020-12-28
+- Temporarily hide Data App/ Data Removal Options
+
+## [0.14.38] - 2020-12-28
+- Accumulation of Tokens on Graph
+
+## [0.14.37] - 2020-12-28
+- Fixed localization issue with CalendarStrip
+- AudioRecord Item Fix
+
+## [0.14.36] - 2020-12-24
+- Condition check of freeEntry for TableInput
+
+## [0.14.35] - 2020-12-28
+- use scores for calculating expression in activity summary page
+
+## [0.14.34] - 2020-12-24
+- Fixed notification issue when tapping resume button
+
 ## [0.14.33] - 2020-12-23
 - use lookup table for calculating sub-scaled scores
 

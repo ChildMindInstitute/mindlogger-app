@@ -10,6 +10,7 @@ export const setAuth = auth => ({
   payload: auth,
 });
 
+
 export const clearUser = () => ({
   type: USER_CONSTANTS.CLEAR,
 });

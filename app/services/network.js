@@ -34,8 +34,6 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
 };
 
 export const postFormData = (route, authToken, body, extraHeaders = {}) => {
-  console.log("post form data");
-  console.log({ route, authToken, body, extraHeaders });
   const url = `${apiHost()}/${route}`;
   const headers = {
     "Girder-Token": authToken,
@@ -53,7 +51,7 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
 };
 
 export const postFile = ({ authToken, file, parentType, parentId }) => {
-  console.log("post file");
+  console.log('postFile', { file, parentType, parentId });
   const queryParams = objectToQueryParams({
     parentType,
     parentId,
@@ -65,15 +63,17 @@ export const postFile = ({ authToken, file, parentType, parentId }) => {
     "Girder-Token": authToken,
     "Content-Type": file.type,
   };
-
+  console.log('postFile', { queryParams, url, headers });
   return RNFetchBlob.fetch(
     "POST",
     url,
     headers,
-    RNFetchBlob.wrap(file.uri)
-  ).then((res) =>
-    res.info().status === 200 ? res.json() : Promise.reject(res)
-  );
+    RNFetchBlob.wrap(file.uri),
+  ).then((res) => {
+    const responseInfo = res.info();
+    console.log('postFile response', { res, responseInfo });
+    return responseInfo.status === 200 ? res.json() : Promise.reject(res);
+  });
 };
 
 export const getSkin = () => get("context/skin", null, null);
@@ -90,7 +90,7 @@ export const getApplets = (authToken) =>
     getAllApplets: true,
     retrieveSchedule: true,
     retrieveAllEvents: false,
-    getTodayEvents: true,
+    numberOfDays: 7,
   });
 
 // export const getTargetApplet = (authToken, appletId) => get(
@@ -362,7 +362,6 @@ export const replaceResponseData = ({
 };
 
 export const sendResponseReuploadRequest = ({ authToken, userPublicKeys }) => {
-  console.log("send response reupload request");
   let url = `${apiHost()}/user/responseUpdateRequest`;
 
   const headers = {
@@ -390,5 +389,25 @@ export const getUserUpdates = ({ authToken }) => {
     method: "get",
     mode: "cors",
     headers,
-  }).then((res) => (res.status === 200 ? res.json() : res));
+  }).then(res => (res.status === 200 ? res.json() : res));
+};
+
+export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey) => {
+  const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "post",
+    mode: "cors",
+    headers,
+    body: objectToFormData({
+      updateInfo: JSON.stringify({
+        tokenUpdate,
+        cumulative,
+        version,
+        userPublicKey,
+      })
+    })
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

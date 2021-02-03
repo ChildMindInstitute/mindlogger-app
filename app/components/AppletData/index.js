@@ -33,12 +33,8 @@ class AppletData extends React.Component {
 
   componentDidMount() {
     const { applet, appletData } = this.props;
-
-    console.log({ applet });
-    console.log({ appletData });
-
     const itemTypesToIgnore = [
-      "markdown-message",
+      "markdownMessage",
       "audioRecord",
       "audioStimulus",
       "text",
@@ -336,7 +332,26 @@ class AppletData extends React.Component {
     // data = {from: {hour: h, minute:mm}, to: {hour:h, minute: mm}}
     return data.map((d) => {
       const dp = {};
+
       dp.date = d.date;
+      if (!d.value.from || !d.value.to) {
+        const from = {
+          hour: 0,
+          minute: 0,
+        }
+        const to = {
+          hour: 0,
+          minute: 0,
+        }
+        d = {
+          ...d,
+          value: {
+            to,
+            from,
+          }
+        }
+      }
+
       const from = moment(
         `${d.value.from.hour}:${d.value.from.minute}`,
         "h:mm"
@@ -495,6 +510,9 @@ class AppletData extends React.Component {
 
   renderActivityChartItem = ({ item, data }, type) => {
     const dataObj = data;
+    const { appletData } = this.props;
+    const tokens = appletData.tokens || {};
+
     if (type === "TokenLogger") {
       data.forEach((itemData, itemIndex) => {
         if (Array.isArray(itemData.value)) {
@@ -531,7 +549,7 @@ class AppletData extends React.Component {
           justifyContent: "center",
         }}
       >
-        <ItemChart item={item} data={dataObj} type={type} />
+        <ItemChart item={item} data={dataObj} type={type} tokens={tokens} />
       </View>
     );
   };

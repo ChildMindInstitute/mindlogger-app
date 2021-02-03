@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import ActivityScreen from './screen';
 import SlideInView from './SlideInView';
 
-const calcPosition = (currentScreen, index) => {
+export const calcPosition = (currentScreen, index) => {
   if (currentScreen < index) {
     return 'right';
   }

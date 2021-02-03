@@ -1,6 +1,6 @@
 import { Parser } from 'expr-eval';
 
-const getScoreFromResponse = (item, value) => {
+export const getScoreFromResponse = (item, value) => {
   if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
     return 0;
   }
@@ -33,8 +33,38 @@ const getScoreFromResponse = (item, value) => {
   return totalScore;
 }
 
+export const getValuesFromResponse = (item, value) => {
+  if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
+    return null;
+  }
 
-const getSubScaleScore = (testExpression, items = [], scores = []) => {
+  const valueConstraints = item.valueConstraints || {};
+  const itemList = valueConstraints.itemList || [];
+
+  let response = value;
+  if (typeof response == 'number' || typeof response == 'string') {
+    response = [response];
+  }
+
+  const tokenValues = [];
+
+  for (let value of response) {
+    let option = itemList.find(option => 
+      typeof value == 'number' && option.value === value || 
+      typeof value == 'string' && Object.values(option.name)[0] === value
+    );
+
+    if (option && option.value) {
+      tokenValues.push(option.value);
+    } else {
+      tokenValues.push(0);
+    }
+  }
+
+  return tokenValues;
+}
+
+export const evaluateScore = (testExpression, items = [], scores = []) => {
   const parser = new Parser();
 
   try {
@@ -50,9 +80,27 @@ const getSubScaleScore = (testExpression, items = [], scores = []) => {
     const result = expr.evaluate(inputs);
     return result;
   } catch (error) {
-    return 0;
+    return null;
   }
 };
+
+export const getMaxScore = (item) => {
+  if (item.inputType !== 'radio' && item.inputType !== 'slider') {
+    return 0;
+  }
+
+  const valueConstraints = item.valueConstraints || {};
+  const itemList = valueConstraints.itemList || [];
+
+  if (!valueConstraints.scoring) {
+    return 0;
+  }
+
+  const oo = 1e6;
+  return itemList.reduce((previousValue, currentOption) => {
+    return valueConstraints.multipleChoice ? Math.max(currentOption.score + previousValue, previousValue) : Math.max(currentOption.score, previousValue)
+  }, valueConstraints.multipleChoice ? 0 : -oo);
+}
 
 export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
   let scores = [];
@@ -60,7 +108,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     scores.push(getScoreFromResponse(items[i], responses[i]));
   }
 
-  let subScaleScore = getSubScaleScore(jsExpression, items, scores);
+  let subScaleScore = evaluateScore(jsExpression, items, scores);
   if (!lookupTable) {
     return subScaleScore;
   }
@@ -87,7 +135,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     if ( 
       isValueInRange(subScaleScore, row.rawScore) && 
       isValueInRange(age, row.age) &&
-      isValueInRange(gender, row.gender)
+      isValueInRange(gender, row.sex)
     ) {
       return parseInt(row.tScore);
     }

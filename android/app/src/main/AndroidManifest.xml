@@ -20,7 +20,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:largeHeap="true"
         android:theme="@style/AppTheme"
-        android:requestLegacyExternalStorage="true"
         >
         <activity
             android:name=".MainActivity"
@@ -40,7 +39,7 @@
         <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:value="@mipmap/ic_launcher"/>
-        <service 
+        <service
             android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService"
             android:enabled="true"
             android:exported="true"
@@ -60,4 +59,28 @@
             </intent-filter>
         </receiver>
     </application>
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="image/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.GET_CONTENT" />
+            <data android:mimeType="video/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.PICK" />
+            <data android:mimeType="video/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.CHOOSER" />
+        </intent>
+    </queries>
 </manifest>

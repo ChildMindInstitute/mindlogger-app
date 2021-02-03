@@ -57,7 +57,8 @@ class ItemChart extends React.Component {
 
   renderTokenPlot() {
     const values = {};
-    const { item, data } = this.props;
+    const accValues = {}
+    const { item, data, tokens } = this.props;
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
@@ -79,9 +80,18 @@ class ItemChart extends React.Component {
           return a + parseInt(b);
         }, 0)
         : val.value;
+      const accSum = Array.isArray(val.value)
+        ? val.value.reduce((a, b) => {
+          if (!b) return a > 0 ? a : 0;
+          let c = a > 0 ? a : 0
+          let d = parseInt(b) > 0 ? parseInt(b) : 0
+          return c + d;
+        }, 0)
+        : (val.value > 0 ? val.value : 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
+        accValues[currentDay] = accValues[currentDay] === undefined ? accSum : accValues[currentDay] + accSum;
       }
     });
 
@@ -98,6 +108,36 @@ class ItemChart extends React.Component {
       };
     });
 
+    const dataAccValues = dayOfWeeks.map((dayOfWeek) => {
+      if (Object.keys(accValues).includes(dayOfWeek)) {
+        return {
+          name: dayOfWeek,
+          value: parseInt(accValues[dayOfWeek]),
+        };
+      }
+      return {
+        name: dayOfWeek,
+        value: 0,
+      };
+    });
+
+    const tokenUpdates = tokens.tokenUpdates.filter(tokenUpdate => tokenUpdate.created >= newDate).reduce((usedTokens, tokenUpdate) => {
+      const day = dayOfWeeks[moment(tokenUpdate.created).day()];
+
+      usedTokens[day] = usedTokens[day] || 0;
+      usedTokens[day] += tokenUpdate.value;
+
+      return usedTokens;
+    }, {})
+
+    const tokenHistory = {
+      tokenUpdates: dayOfWeeks.map(day => ({
+        name: day,
+        value: (tokenUpdates[day] || 0)
+      })),
+      currentBalance: tokens.cumulativeToken,
+    };
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -110,7 +150,7 @@ class ItemChart extends React.Component {
           value={item.additionalParams.description}
         />
         {/* {item.additionalParams.timelineChart} */}
-        <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} />
+        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
       </View>
     );
   }
@@ -177,6 +217,7 @@ ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
+  tokens: PropTypes.object.isRequired,
 };
 
 export default ItemChart;

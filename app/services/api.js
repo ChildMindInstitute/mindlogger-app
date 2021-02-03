@@ -1,5 +1,6 @@
 import * as R from "ramda";
 import RNFetchBlob from "rn-fetch-blob";
+import randomString from "random-string";
 import {
   // getResponses,
   getLast7DaysData,
@@ -30,7 +31,6 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       const appletId = applet.id;
-
       /** decrypt responses */
       if (responses.dataSources && applet.encryption) {
         Object.keys(responses.dataSources).forEach((key) => {
@@ -48,6 +48,42 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
         });
       }
 
+      responses.tokens = responses.tokens || {};
+      if (applet.encryption) {
+        if (responses.tokens.cumulativeToken) {
+          try {
+            const cumulative = typeof responses.tokens.cumulativeToken.data !== 'object' ? JSON.parse(
+              decryptData({
+                key: applet.AESKey,
+                text: responses.tokens.cumulativeToken.data,
+              })
+            ) : responses.tokens.cumulativeToken.data;
+
+            responses.tokens.cumulativeToken = cumulative.value || 0;
+          } catch {
+            responses.tokens.cumulativeToken = 0;
+          }
+        } else {
+          responses.tokens.cumulativeToken = 0;
+        }
+
+        responses.tokens.tokenUpdates = responses.tokens.tokenUpdates || [];
+        responses.tokens.tokenUpdates.forEach(tokenUse => {
+          try {
+            const tokenUpdate = typeof tokenUse.data !== 'object' ? JSON.parse(
+              decryptData({
+                key: applet.AESKey,
+                text: tokenUse.data,
+              })
+            ) : tokenUse.data;
+
+            tokenUse.value = tokenUpdate.value || 0;
+          } catch {
+            tokenUse.value = 0;
+          }
+        })
+      }
+      
       /** replace response to plain format */
       if (responses.responses) {
         Object.keys(responses.responses).forEach((item) => {
@@ -108,21 +144,66 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
         }
       }
 
+      if (responses.cumulatives) {
+        Object.keys(responses.cumulatives).forEach((itemIRI) => {
+          const cumulative = responses.cumulatives[itemIRI];
+          if (
+            cumulative.src &&
+            cumulative.ptr !== undefined
+          ) {
+            cumulative.value = responses.dataSources[cumulative.src][cumulative.ptr];
+          }
+
+          const oldItem = responses.itemReferences[cumulative.version] && 
+                          responses.itemReferences[cumulative.version][itemIRI];
+          if ( oldItem ) {
+            const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
+
+            if (currentActivity) {
+              const currentItem = activity.items.find(item => item.id.split('/').pop() === oldItem.original.screenId);
+
+              if (currentItem && currentItem.schema !== itemIRI) {
+                responses.cumulatives[currentItem.schema] = responses.cumulatives[itemIRI];
+
+                delete responses.cumulatives[itemIRI];
+              }
+            }
+          }
+        })
+      }
+
       return { ...responses, appletId };
     });
   });
   return Promise.all(requests).then(transformResponses);
 };
 
+const prepareFile = (file): Promise => {
+  console.log('prepareFile', { file });
+  if (file.svgString && file.uri) {
+    console.log('RNFetchBlob.fs.writeFile', { file });
+    return RNFetchBlob.fs.writeFile(file.uri, file.svgString)
+      .then((result) => {
+        console.log('RNFetchBlob.fs.writeFile result', { result, file });
+        return Promise.resolve(file);
+      }).then(file => RNFetchBlob.fs.stat(file.uri))
+      .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+  }
+  if (file.size) {
+    return Promise.resolve(file);
+  }
+  return RNFetchBlob.fs.stat(file.uri)
+    .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+};
+
 const uploadFiles = (authToken, response, item) => {
   console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
-
+  console.log('uploadFiles', { response, item, answers });
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
     const answer = answers[key];
-
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
     if (R.path(["survey", "uri"], answer)) {
@@ -141,35 +222,42 @@ const uploadFiles = (authToken, response, item) => {
       file = {
         uri: answer.uri,
         filename: answer.filename,
-        type: "application/octet",
+        size: answer.size,
+        type: 'application/octet',
+      };
+    } else if (answer && answer.lines && answer.svgString) {
+      const filename = `${randomString({ length: 20 })}.svg`;
+      file = {
+        svgString: answer.svgString,
+        filename,
+        type: 'application/svg',
+        uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
       };
     } else {
       return accumulator; // Break early
     }
+    console.log('uploadFiles, file', { file, answer });
 
-    const request = RNFetchBlob.fs
-      .stat(file.uri)
-      .then((fileInfo) =>
-        postFile({
-          authToken,
-          file: {
-            ...file,
-            size: fileInfo.size,
-          },
-          parentType: "item",
-          parentId: item._id,
-        })
-      )
-      .then(() => {
+    const request = prepareFile(file)
+      .then(file => postFile({
+        authToken,
+        file,
+        parentType: 'item',
+        parentId: item._id,
+      }))
+      .then((res) => {
+        console.log('uploadFiles, response:', { res });
         /** delete file from local storage after uploading */
         RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+      }).catch((err) => {
+        console.log('uploadFiles error', err.message, { err });
       });
 
-    console.log({ request });
+    console.log('uploadFiles, request', { request });
 
     return [...accumulator, request];
   }, []);
-
+  console.log('uploadFiles uploadRequests', { uploadRequests });
   return Promise.all(uploadRequests);
 };
 
@@ -191,18 +279,19 @@ const uploadResponse = (authToken, response) =>
 export const uploadResponseQueue = (
   authToken,
   responseQueue,
-  progressCallback
+  progressCallback,
 ) => {
   if (responseQueue.length === 0) {
     return Promise.resolve();
   }
+  console.log('uploadResponseQueue', { authToken, responseQueueItem: responseQueue[0] });
   return uploadResponse(authToken, responseQueue[0])
     .then(() => {
       progressCallback();
       return uploadResponseQueue(
         authToken,
         R.remove(0, 1, responseQueue),
-        progressCallback
+        progressCallback,
       );
     })
     .catch((e) => console.warn(e));

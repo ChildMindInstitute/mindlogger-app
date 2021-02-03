@@ -101,7 +101,7 @@ export const Geolocation = ({ value, onChange }) => {
         </View>
       )}
       {locationPermission !== "denied" &&
-        typeof value.latitude !== "undefined" && (
+        typeof value?.latitude !== "undefined" && (
           <View>
             <BaseText
               style={styles.infoText}

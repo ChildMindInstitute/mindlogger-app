@@ -15,3 +15,5 @@ export * from './TableSelector';
 export * from './TextEntry';
 export * from './TimeRange';
 export * from './VisualStimulusResponse';
+export * from './RadioPrizes';
+export * from './TooltipBox';

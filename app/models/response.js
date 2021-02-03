@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable } from '../services/subScaleScoring';
+import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
@@ -15,12 +15,43 @@ export const getEncryptedData = (response, key) =>
 
 export const prepareResponseForUpload = (
   inProgressResponse,
-  appletMetaData
+  appletMetaData,
+  responseHistory,
 ) => {
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
+  const appletVersion = activity.appletSchemaVersion[languageKey];
+  let cumulative = responseHistory.tokens.cumulativeToken;
 
-  console.log({ activity, responses, subjectId });
+  const alerts = [];
+  for (let i = 0; i < responses.length; i++) {
+    const item = activity.items[i];
+
+    if (item.valueConstraints) {
+      const { valueType, responseAlert } = item.valueConstraints;
+
+      if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
+        alerts.push({
+          id: activity.items[i].id.split('/')[1],
+          schema: activity.items[i].schema
+        });
+      }
+
+      if (
+        valueType && 
+        valueType.includes('token')
+      ) {
+        cumulative += (getValuesFromResponse(item, responses[i]) || []).reduce(
+          (cumulative, current) => {
+            if (current >= 0) {
+              return cumulative + current;
+            }
+            return cumulative
+          }, 0
+        )
+      }
+    }
+  }
 
   const responseData = {
     activity: {
@@ -31,7 +62,7 @@ export const prepareResponseForUpload = (
     applet: {
       id: trimId(activity.appletId),
       schema: activity.appletSchema,
-      schemaVersion: activity.appletSchemaVersion[languageKey],
+      schemaVersion: appletVersion,
     },
     subject: subjectId,
     responseStarted: inProgressResponse.timeStarted,
@@ -46,6 +77,7 @@ export const prepareResponseForUpload = (
       height: Dimensions.get("screen").height,
     },
     languageCode: languageKey,
+    alerts,
   };
 
   let subScaleScores = [];
@@ -59,19 +91,23 @@ export const prepareResponseForUpload = (
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
-    const items = activity.items.reduce(
+    const formattedResponses = activity.items.reduce(
       (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
-      {}
+      {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
 
-    responseData['responses'] = items;
+    responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
     if (activity.subScales) {
       responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
     }
+
+    responseData['tokenCumulation'] = getEncryptedData({
+      value: cumulative
+    }, appletMetaData.AESKey);
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
@@ -91,8 +127,42 @@ export const prepareResponseForUpload = (
         }
       });
     }
+
+    responseData['tokenCumulation'] = {
+      value: cumulative
+    };
   }
-  console.log({ responseData });
 
   return responseData;
+};
+
+export const getTokenUpdateInfo = (
+  offset,
+  responseHistory,
+  appletMetaData
+) => {
+  const cumulative = responseHistory.tokens.cumulativeToken + offset;
+
+  if (config.encryptResponse && appletMetaData.encryption) {
+    return {
+      offset: getEncryptedData(
+        {
+          value: offset
+        },
+        appletMetaData.AESKey
+      ),
+      cumulative: getEncryptedData(
+        {
+          value: cumulative
+        },
+        appletMetaData.AESKey
+      ),
+      userPublicKey: appletMetaData['userPublicKey']
+    }      
+  }
+
+  return {
+    offset: { value: offset },
+    cumulative: { value: cumulative }
+  }
 };

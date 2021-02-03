@@ -91,7 +91,7 @@ class AppletDetailsComponent extends React.Component {
 
     const responseDates = this.getResponseDates() || [];
     switch (selectedTab) {
-      case 'survey':
+      case 'activity':
         return (
           <Content>
             <View style={{ flex: 1 }}>
@@ -155,12 +155,13 @@ class AppletDetailsComponent extends React.Component {
           </Body>
           <Right style={{ flexDirection: 'row' }}>
             <Button
+              disabled
               transparent
               onPress={() => {
                 this.handlePressSettings();
               }}
             >
-              <Icon type="FontAwesome" name="gear" />
+              {/* <Icon type="FontAwesome" name="gear" /> */}
             </Button>
           </Right>
         </Header>
