@@ -84,14 +84,25 @@ export const getResponses = (authToken, applet) =>
 export const getSchedule = (authToken, timezone) =>
   get("schedule", authToken, { timezone });
 
-export const getApplets = (authToken) =>
-  get("user/applets", authToken, {
+export const getApplets = (authToken, localInfo) => {
+  const queryParams = objectToQueryParams({
     role: "user",
     getAllApplets: true,
     retrieveSchedule: true,
-    retrieveAllEvents: false,
-    numberOfDays: 7,
+    retrieveResponses: true,
+    numberOfDays: 7
   });
+  const url = `${apiHost()}/user/applets?${queryParams}`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "put",
+    mode: "cors",
+    headers,
+    body: objectToFormData({ localInfo: JSON.stringify(localInfo) }),
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+}
 
 // export const getTargetApplet = (authToken, appletId) => get(
 //   `applet/${appletId}`,
