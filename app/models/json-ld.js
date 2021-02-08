@@ -2,6 +2,7 @@ import * as R from "ramda";
 import moment from 'moment';
 import { Parse, Day } from 'dayspan';
 import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../services/time';
+import { updateBadgeNumber } from "../state/applets/applets.thunks";
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -403,52 +404,76 @@ export const activityTransformJson = (activityJson, itemsJson) => {
 };
 
 export const appletTransformJson = (appletJson) => {
+  const { applet, schedule, updated } = appletJson;
   const res = {
-    id: appletJson._id,
-    groupId: appletJson.groups,
+    id: applet._id,
+    groupId: applet.groups,
     schema: appletJson.url || appletJson[URL],
-    name: languageListToObject(appletJson[PREF_LABEL]),
-    description: languageListToObject(appletJson[DESCRIPTION]),
-    about: languageListToObject(appletJson[ABOUT]),
-    aboutContent: languageListToObject(appletJson[ABOUT_CONTENT]),
-    schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
-    version: languageListToObject(appletJson[VERSION]),
-    altLabel: languageListToObject(appletJson[ALT_LABEL]),
-    visibility: listToVisObject(appletJson[ADD_PROPERTIES]),
-    image: appletJson[IMAGE],
-    order: flattenIdList(appletJson[ORDER][0]["@list"]),
-    schedule: appletJson.schedule,
-    responseDates: appletJson.responseDates,
-    shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
+    name: languageListToObject(applet[PREF_LABEL]),
+    description: languageListToObject(applet[DESCRIPTION]),
+    about: languageListToObject(applet[ABOUT]),
+    aboutContent: languageListToObject(applet[ABOUT_CONTENT]),
+    schemaVersion: languageListToObject(applet[SCHEMA_VERSION]),
+    version: languageListToObject(applet[VERSION]),
+    altLabel: languageListToObject(applet[ALT_LABEL]),
+    visibility: listToVisObject(applet[ADD_PROPERTIES]),
+    image: applet[IMAGE],
+    order: flattenIdList(applet[ORDER][0]["@list"]),
+    schedule,
+    contentUpdateTime: updated,
+    responseDates: applet.responseDates,
+    shuffle: R.path([SHUFFLE, 0, "@value"], applet),
   };
-  if (appletJson.encryption && Object.keys(appletJson.encryption).length) {
-    res.encryption = appletJson.encryption;
+  if (applet.encryption && Object.keys(applet.encryption).length) {
+    res.encryption = applet.encryption;
   }
   return res;
 };
 
-export const transformApplet = (payload) => {
-  const activities = Object.keys(payload.activities).map((key) => {
-    const activity = activityTransformJson(
-      payload.activities[key],
-      payload.items,
-    );
-    activity.schema = key;
-    return activity;
-  });
-  const applet = appletTransformJson(payload.applet);
-  // Add the items and activities to the applet object
-  applet.activities = activities;
+export const transformApplet = (payload, currentApplets = null) => {
+  const applet = appletTransformJson(payload);
+
+  if (currentApplets) {
+    if (!R.isEmpty(activities)) {
+      const currentApplet = currentApplets.find(({ id }) => id.subString(7) === payload.id);
+
+      if (!R.isEmpty(items)) {
+        applet.activities = currentApplet.activities;
+      } else {
+
+      }
+    } else {
+      
+    }
+  } else {
+    const activities = Object.keys(payload.activities).map((key) => {
+      const activity = activityTransformJson(
+        payload.activities[key],
+        payload.items,
+      );
+      activity.schema = key;
+      return activity;
+    });
+    // Add the items and activities to the applet object
+    applet.activities = activities;
+  }
+
   applet.groupId = payload.groups;
   return applet;
 };
+
+export const transformResponse = (payload) => {
+  return {
+    ...payload.responses,
+    appletId: 'applet/' + payload.id
+  }
+}
 
 export const dateParser = (schedule) => {
   const output = {};
   Object.keys(schedule.events).forEach(key => {
     const e = schedule.events[key];
     const uri = e.data.URI;
-
     if (!output[uri]) {
       output[uri] = {
         notificationDateTimes: [],
@@ -524,7 +549,6 @@ export const dateParser = (schedule) => {
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
     };
   });
-
   return output;
 };
 
@@ -555,7 +579,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
     let scheduledTimeout = null;
     let invalid = true;
 
-    if (applet.schedule.data) {
+    if (applet.schedule && applet.schedule.data) {
       Object.keys(applet.schedule.data).forEach(date => {
         const event = applet.schedule.data[date].find(ele => ele.id === id);
 
@@ -563,7 +587,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
           invalid = event.valid;
         }
       })
-    } else if (applet.schedule.valid !== undefined) {
+    } else if (applet.schedule && applet.schedule.valid !== undefined) {
       invalid = applet.schedule.valid;
     }
 

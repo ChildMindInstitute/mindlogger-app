@@ -205,7 +205,6 @@ export const downloadResponses = () => (dispatch, getState) => {
     .then((responses) => {
       if (loggedInSelector(getState())) {
         dispatch(replaceResponses(responses));
-        dispatch(scheduleAndSetNotifications());
       }
     })
     .finally(() => {

@@ -22,6 +22,7 @@
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.4",
     "@react-native-community/art": "^1.1.2",
     "@react-native-community/audio-toolkit": "^2.0.2",
     "@react-native-community/geolocation": "^2.0.2",
