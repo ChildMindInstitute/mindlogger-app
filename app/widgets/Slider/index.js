@@ -234,21 +234,23 @@ class Slider extends Component {
   };
 
   tapSliderHandler = (evt) => {
-    const { sliderWidth, minimumValue } = this.state;
+    const { sliderWidth, minimumValue, maximumValue } = this.state;
     const {
       onChange,
       config: { itemList },
     } = this.props;
 
     if (sliderWidth) {
-      const calculatedValue = Math.ceil(
-        Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1) *
-          itemList.length +
-          minimumValue -
-          1
-      );
-      onChange(calculatedValue);
-      this.setState({ currentValue: calculatedValue });
+      const locationX = evt.nativeEvent.locationX - 20.5;
+      const calculatedValue =
+        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);   
+      const value = calculatedValue > maximumValue
+        ? maximumValue
+        : (calculatedValue < minimumValue
+          ? minimumValue
+          : calculatedValue);
+      onChange(value);
+      this.setState({ currentValue: value });
     }
   };
 
@@ -302,12 +304,14 @@ class Slider extends Component {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
 
     const {
-      config: { maxValue, minValue, itemList },
+      config: { maxValue, minValue, itemList, continousSlider },
       onChange,
       onPress,
       value,
       onRelease,
     } = this.props;
+
+    const step = itemList ? (continousSlider ? 0.01 : 1) : 0;
 
     let currentVal = value;
     if (!value && value !== currentValue) {
@@ -351,7 +355,7 @@ class Slider extends Component {
                     ? styles.thumb
                     : styles.thumbUnselected
                 }
-                step={itemList ? 1 : 0}
+                step={step}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
