@@ -197,12 +197,12 @@ export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getSta
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, userInfo._id)
     .then((applets) => {
-      console.log(applets)
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
           .filter((applet) => !R.isEmpty(applet.items))
           .map(transformApplet);
+        console.log('applets', transformedApplets);
         dispatch(replaceApplets(transformedApplets));
         dispatch(downloadResponses(transformedApplets));
         dispatch(downloadAppletsMedia(transformedApplets));
