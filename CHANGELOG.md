@@ -5,11 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
-
 ## [0.14.81] - 2020-02-03
 - Add ability to change the length of audio user can record
 
 ## [0.14.78] - 2020-02-01
+- Fix notification badge updating
 - Add tooltip for radio/multi-select options
 
 ## [0.14.77] - 2020-01-29
