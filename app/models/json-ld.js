@@ -62,6 +62,7 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
 
 export const ORDER = "reprolib:terms/order";
@@ -148,6 +149,12 @@ export const flattenValueConstraints = (vcObj) =>
         responseAlert: R.path([key, 0, "@value"], vcObj),
       }
     }
+    if (key == CONTINOUS_SLIDER) {
+      return {
+        ...accumulator,
+        continousSlider: R.path([key, 0, "@value"], vcObj),
+      }
+    } 
     if (key == RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
