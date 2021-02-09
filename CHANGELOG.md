@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.14.79] - 2020-02-03
+- Fix styling in markdown
+
+## [0.14.78] - 2020-02-01
+- Fix notification badge updating
+- Add tooltip for radio/multi-select options
+
 ## [0.14.77] - 2020-01-29
 - Fix markdown rendering
 

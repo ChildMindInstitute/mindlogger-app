@@ -572,7 +572,6 @@ class FireBaseMessaging extends Component {
     }
 
     if (stateChanged && isIOS) {
-      this.updateApplicationIconBadgeNumber();
       updateBadgeNumber(this.notificationsCount);
     }
 

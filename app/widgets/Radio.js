@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image } from 'react-native';
 import { ListItem, Text, Icon } from 'native-base';
-import { CheckBox, Tooltip } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
+import { TooltipBox } from './TooltipBox';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
@@ -25,13 +26,9 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
         >
           <View style={{ width: '8%' }}>
             {item.description ? (
-              <Tooltip
-                popover={
-                  <Text>{item.description}</Text>
-                }
-              >
+              <TooltipBox text={item.description}>
                 <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
-              </Tooltip>
+              </TooltipBox>
             ) : (
               <View />
             )}
