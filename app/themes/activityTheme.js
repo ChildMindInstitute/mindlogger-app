@@ -92,6 +92,24 @@ export const markdownStyle = {
     marginBottom: 18,
     fontFamily: theme.fontFamily,
   },
+  heading4: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    fontFamily: theme.fontFamily,
+  },
+  heading5: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    fontFamily: theme.fontFamily,
+  },
+  heading6: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    fontFamily: theme.fontFamily,
+  },
   paragraph: {
     alignSelf: 'center',
     fontSize: 22,
