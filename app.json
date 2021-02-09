@@ -1,8 +1,4 @@
 {
   "name": "MDCApp",
-  "displayName": "MDCApp",
-  "ios": {
-    "bundleIdentifier": "MDCApp",
-    "supportsTablet": true
-  }
+  "displayName": "MDCApp"
 }
