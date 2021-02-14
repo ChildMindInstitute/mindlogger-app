@@ -7,6 +7,7 @@ import {
   postResponse,
   postFile,
 } from "./network";
+import { getData } from "./asyncStorage";
 import { cleanFiles } from "./file";
 import { transformResponses } from "../models/response";
 import { decryptData } from "./encryption";
@@ -16,15 +17,21 @@ import {
   itemAttachExtras,
   ORDER,
 } from "../models/json-ld";
-
-export const downloadAllResponses = (authToken, applets, onProgress) => {
+ 
+export const downloadAllResponses = async (authToken, applets, onProgress) => {
+  const currentResponses = await getData('ml_responses');
   let numDownloaded = 0;
+
   onProgress(numDownloaded, applets.length);
   const requests = applets.map((applet) => {
+    const response = currentResponses ? currentResponses.find(r => applet.id === r.appletId) : null;
     const appletId = applet.id.split("/").pop();
     return getLast7DaysData({
       authToken,
       appletId,
+      localItems: response ? Object.keys(response.items) : null,
+      localActivities: response ? Object.keys(response.activities) : null,
+      startDate: response ? response['schema:startDate'] : null,
       groupByDateActivity: false,
     }).then((responses) => {
       // console.log({responses},"res")

@@ -194,19 +194,17 @@ export const cancelReminder = () => (dispatch, getState) => {
 
 export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, getState) => {
   const state = getState();
-  const auth = authSelector(state);
-  const userInfo = userInfoSelector(state);
-
+  const auth = authSelector(state); 
   const currentApplets = await getData('ml_applets');
   const currentResponses = await getData('ml_responses');
-  const localInfo = {};
+  let localInfo = {};
 
   console.log('stored applet data---', currentApplets);
   console.log('current responses data---', currentResponses)
 
   if (currentApplets) {
     currentApplets.forEach(applet => {
-      const { contentUpdateTime, id } = applet;
+      const { contentUpdateTime, id } = applet; 
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
       const localEvents = Object.keys(applet.schedule.events).map(id => {
         event = applet.schedule.events[id];
@@ -222,7 +220,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         localItems: response ? Object.keys(response.items) : null,
         localActivities: response ? Object.keys(response.activities) : null,
         localEvents,
-        startDate: "2021-01-27T07:49:08.674000"
+        startDate: response ? response['schema:startDate'] : null,
       }
     })
   } else {
@@ -234,26 +232,45 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (applets) => {
-      console.log('applets=================>', applets);
+      console.log('applets=================>', applets); 
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
           .map((appletInfo) => {
-            const { applet, activities, items } = appletInfo;
-            
-            if (!applet) {
+            console.log('schedules', appletInfo.schedule.events);
+            if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.substring(7) === appletInfo.id)
               if (appletInfo.schedule) {
+                const events = currentApplet.schedule.events;
                 currentApplet.schedule = appletInfo.schedule;
-              }
 
+                if (!R.isEmpty(appletInfo.schedule.events)) {
+                  Object.keys(appletInfo.schedule.events).forEach(eventId => {
+                    events[eventId] = appletInfo.schedule.events[eventId];
+                  })
+                } 
+
+                for (const eventId in events) {
+                  let isValid = false;
+                  for (const eventDate in currentApplet.schedule.data) {
+                    if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+                      isValid = true;
+                    }
+                  }
+
+                  if (!isValid) {
+                    delete events[eventId];
+                  }
+                }
+                currentApplet.schedule.events = events;
+              }
               return currentApplet;
             } else {
               return transformApplet(appletInfo, currentApplets);
             }
           });
+        console.log('applet events --------------------->', transformedApplets[0].schedule.events)
         console.log('transformedApplets=================>', transformedApplets);
-
         const responses = applets
           .filter((applet) => !R.isEmpty(applet.items))
           .map((appletInfo) => {
@@ -262,7 +279,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
             }
             return currentResponses.find(({ appletId }) => appletId.substring(7) === appletInfo.id);
           })
-
+ 
         
         console.log('response=============', responses)
         await storeData('ml_applets', transformedApplets);

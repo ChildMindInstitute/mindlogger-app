@@ -330,16 +330,18 @@ export const deleteUserAccount = (authToken, userId) => {
 export const getLast7DaysData = ({
   authToken,
   appletId,
-  referenceDate,
+  localItems,
+  localActivities,
+  startDate,
   groupByDateActivity,
 }) => {
   let url = `${apiHost()}/response/last7Days/${appletId}`;
-  if (referenceDate) {
-    url += `?referenceDate=${referenceDate}`;
-  }
   if (!groupByDateActivity) {
     url += `?groupByDateActivity=${groupByDateActivity}`;
   }
+  url += `?localItems=${localItems}`;
+  url += `?localActivities=${localActivities}`;
+  url += `?startDate=${startDate}`;
   const headers = {
     "Girder-Token": authToken,
   };

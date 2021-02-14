@@ -235,11 +235,11 @@ class FireBaseMessaging extends Component {
         ],
         { cancelable: false },
       );
-    } else if (type === 'applet-update-alert') { 
+    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') { 
       const appletId = _.get(notificationObj, 'notification._data.applet_id');
 
       this.props.downloadApplets(() => {
-        this.props.setCurrentApplet(appletId);
+        // this.props.setCurrentApplet(appletId);
         // Actions.push('applet_details', { initialTab: 'data' });
       });
     } else {
