@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
@@ -12,7 +12,6 @@ import {
   Drawing,
   Geolocation,
   MultiSelect,
-  TLMultiSelect,
   Radio,
   Select,
   Slider,
@@ -43,7 +42,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         config={screen.valueConstraints}
         onChange={onChange}
         value={screenValue}
-        token={valueType && valueType.includes("token")}
+        token={valueType && valueType.includes('token')}
       />
     );
   }
@@ -231,7 +230,14 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     );
   }
 
-  onContentError();
+  const [oneShot, setOneShot] = useState(false);
+  useEffect(() => {
+    if (onContentError && !oneShot) {
+      setOneShot(true);
+      onContentError();
+    }
+  });
+  
   return <WidgetError />;
 };
 
