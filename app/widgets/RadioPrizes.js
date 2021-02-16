@@ -38,10 +38,10 @@ export const RadioPrizes = ({ value, config, onChange, selected, onSelected, tok
   return (
     <View style={{ alignItems: 'stretch' }}>
       <ListItem>
-        <View style={{ width: '80%' }}>
+        <View style={{ width: '70%' }}>
           <Text style={styles.prizesHeaderText}>Prizes</Text>
         </View>
-        <View style={{ width: '20%' }}>
+        <View style={{ width: '30%' }}>
           <Text style={styles.prizesHeaderText}>Tokens</Text>
         </View>
       </ListItem>

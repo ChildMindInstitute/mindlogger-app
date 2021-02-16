@@ -46,7 +46,7 @@ const rules = {
     return (<Image
       style={{
         resizeMode: "center",
-        height: 200,
+        height: 300,
         width: width-50
       }}
       source={{
@@ -105,7 +105,7 @@ export const MarkdownScreen = ({ mstyle, children }) => {
         }
         rules={rules}
       >
-        {children}
+        {children.replace(/(!\[.*\]\s*\(.*?) =\d*x\d*(\))/g, '$1$2')}
       </Markdown>
     </View>
   );
