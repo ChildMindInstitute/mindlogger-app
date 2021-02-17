@@ -116,6 +116,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "rn-fetch-blob": "^0.12.0",
+    "rne-modal-tooltip": "gist:b28c003d87c619674def0878473338a0",
     "stream-browserify": "^1.0.0",
     "string-hash": "^1.1.3",
     "string_decoder": "^0.10.31",

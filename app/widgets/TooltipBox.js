@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dimensions } from 'react-native';
 import { Text } from 'native-base';
-import { Tooltip } from 'react-native-elements';
+import Tooltip from "rne-modal-tooltip";
 import { truncateString } from '../services/helper';
 
 const { width, height } = Dimensions.get('window');
