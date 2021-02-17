@@ -28,6 +28,7 @@ const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const SCORING = "reprolib:terms/scoring";
 const VALUE_TYPE = "reprolib:terms/valueType";
+const ENABLE_NEGATIVE_TOKENS = "reprolib:terms/enableNegativeTokens";
 const NAME = "schema:name";
 const PREAMBLE = "reprolib:terms/preamble";
 const PREF_LABEL = "http://www.w3.org/2004/02/skos/core#prefLabel";
@@ -158,6 +159,12 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         valueType: R.path([key, 0, "@id"], vcObj),
+      };
+    }
+    if (key === ENABLE_NEGATIVE_TOKENS) {
+      return {
+        ...accumulator,
+        enableNegativeTokens: R.path([key, 0, "@value"], vcObj),
       };
     }
     if (key === ITEM_LIST_ELEMENT) {
