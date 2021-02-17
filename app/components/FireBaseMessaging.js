@@ -38,7 +38,6 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   async componentDidMount() {
-    console.log('did mounted -----------');
     this.listeners = [
       fNotifications.onNotification(this.onNotification),
       fNotifications.onNotificationDisplayed(this.onNotificationDisplayed),
@@ -65,7 +64,6 @@ class FireBaseMessaging extends Component {
     this.props.setFCMToken(await fMessaging.getToken());
 
     const event = await fNotifications.getInitialNotification();
-    console.log('event is received', event);
     if (event) {
       this.openActivityByEventId(event);
       // if (isAndroid) NativeModules.DevSettings.reload();
@@ -199,9 +197,7 @@ class FireBaseMessaging extends Component {
    */
   openActivityByEventId = (notificationObj) => {
     const type = _.get(notificationObj, 'notification._data.type');
-    console.log('notification information', notificationObj);
-    console.log('The event type is ', type);
-
+    
     if (type === 'response-data-alert') {
       Alert.alert(
         i18n.t('firebase_messaging:response_refresh_request'),
@@ -465,7 +461,6 @@ class FireBaseMessaging extends Component {
     this.notificationsCount -= 1;
 
     if (isIOS) {
-      console.log('opened')
       this.updateApplicationIconBadgeNumber();
       this.props.updateBadgeNumber(this.notificationsCount);
     }

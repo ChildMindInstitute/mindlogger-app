@@ -73,8 +73,6 @@ class ItemChart extends React.Component {
       return null;
     }
 
-    console.log('***data============', data)
-
     data.forEach((val) => {
       const sum = Array.isArray(val.value)
         ? val.value.reduce((a, b) => {

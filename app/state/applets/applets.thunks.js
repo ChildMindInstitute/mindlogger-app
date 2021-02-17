@@ -199,9 +199,6 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
   const currentResponses = await getData('ml_responses');
   let localInfo = {};
 
-  console.log('stored applet data---', currentApplets);
-  console.log('current responses data---', currentResponses)
-
   if (currentApplets) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet; 
@@ -227,17 +224,13 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
     localInfo = null;
   }
 
-  console.log('local info ----->', localInfo);
-
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (applets) => {
-      console.log('applets=================>', applets); 
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
           .map((appletInfo) => {
-            console.log('schedules', appletInfo.schedule.events);
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.substring(7) === appletInfo.id)
               if (appletInfo.schedule) {
@@ -269,8 +262,6 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return transformApplet(appletInfo, currentApplets);
             }
           });
-        console.log('applet events --------------------->', transformedApplets[0].schedule.events)
-        console.log('transformedApplets=================>', transformedApplets);
         const responses = applets
           .filter((applet) => !R.isEmpty(applet.items))
           .map((appletInfo) => {
@@ -280,8 +271,6 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
             return currentResponses.find(({ appletId }) => appletId.substring(7) === appletInfo.id);
           })
  
-        
-        console.log('response=============', responses)
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
         dispatch(replaceApplets(transformedApplets));
@@ -371,9 +360,7 @@ export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const token = state.user ?.auth ?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
-      .then((response) => {
-        console.log("updateBadgeNumber success", response);
-      })
+      .then((response) => {})
       .catch((e) => {
         console.warn(e);
       });
@@ -407,7 +394,6 @@ export const getAppletResponseData = (appletId) => (dispatch, getState) => {
     authToken: auth.token,
     appletId,
   }).then((resp) => {
-    console.log("response is", resp);
     dispatch(saveAppletResponseData(appletId, resp));
   });
 };
