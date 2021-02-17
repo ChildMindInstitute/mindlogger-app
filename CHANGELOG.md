@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.15.1] - 2020-02-12
 - Implemented app optimization
 
+## [0.14.81] - 2020-02-03
+- Add ability to change the length of audio user can record
+
+## [0.14.80] - 2020-02-03
+- Small Fix AudioImageRecord Item
+- update time picker
+
 ## [0.14.79] - 2020-02-03
 - Fix styling in markdown
 
