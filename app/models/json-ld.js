@@ -2,7 +2,6 @@ import * as R from "ramda";
 import moment from 'moment';
 import { Parse, Day } from 'dayspan';
 import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../services/time';
-import { updateBadgeNumber } from "../state/applets/applets.thunks";
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -415,7 +414,7 @@ export const appletTransformJson = (appletJson) => {
   const res = {
     id: applet._id,
     groupId: applet.groups,
-    schema: appletJson.url || appletJson[URL],
+    schema: applet.url || applet[URL],
     name: languageListToObject(applet[PREF_LABEL]),
     description: languageListToObject(applet[DESCRIPTION]),
     about: languageListToObject(applet[ABOUT]),
@@ -528,9 +527,7 @@ export const transformApplet = (payload, currentApplets = null) => {
       }
 
       if (payload.schedule) {
-        console.log(0, currentApplet);
         const events = currentApplet.schedule.events;
-        console.log(1);
         applet.schedule = payload.schedule;
 
         if (!R.isEmpty(payload.schedule.events)) {
@@ -581,7 +578,6 @@ export const transformApplet = (payload, currentApplets = null) => {
       })
     }
   } else {
-    console.log('0');
     const activities = Object.keys(payload.activities).map((key) => {
       const activity = activityTransformJson(
         payload.activities[key],

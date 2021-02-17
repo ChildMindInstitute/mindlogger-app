@@ -150,6 +150,9 @@
     "preset": "react-native",
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|@?react-navigation|react-navigation-redux-helpers|native-base|native-base-shoutem-theme|@shoutem/animation|@shoutem/ui|tcomb-form-native)"
+    ],
+    "setupFilesAfterEnv": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
     ]
   },
   "react-native": {
