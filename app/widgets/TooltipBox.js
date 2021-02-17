@@ -31,6 +31,7 @@ export const TooltipBox = ({ text, children }) => {
       containerStyle={{
         margin: 0,
       }}
+      backgroundColor="#DEF"
     >
       { children }
     </Tooltip>
