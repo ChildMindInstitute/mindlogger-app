@@ -273,6 +273,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
  
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
+
         dispatch(replaceApplets(transformedApplets));
         dispatch(replaceResponses(responses));
         // dispatch(downloadAppletsMedia(transformedApplets));
