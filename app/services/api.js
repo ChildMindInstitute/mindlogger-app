@@ -226,7 +226,7 @@ const uploadFiles = (authToken, response, item) => {
         uri: answer.uri,
         filename: answer.filename,
         size: answer.size,
-        type:'image/jpeg'
+        type: answer.type
         //type: 'application/octet',
       };
     } else if (answer && answer.lines && answer.svgString) {

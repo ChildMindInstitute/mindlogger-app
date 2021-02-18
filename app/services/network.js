@@ -54,44 +54,18 @@ export const postFile = ({ key,appletId,
   activityId, authToken, file, parentType, parentId }) => {
   console.log('postFile', { appletId,
     activityId, file, parentType, parentId });
-    var response = {};
-    response [key]=  
-     {
-      type: file.type,
-      size: file.size,
-      filename: file.filename 
-    }
 
-    let photo = { uri: file.uri}
     let formdata = new FormData();
-    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},"responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
-    formdata.append( key , {uri: file.uri, name: file.filename, type: 'image/jpeg'})
-
-    
-    /*formdata.append("metadata[response]["+key+"]["+type+"]", file.type)
-    formdata.append("metadata[response]["+key+"]["+size+"]", file.size)
-    formdata.append("metadata[response]["+key+"]["+filename+"]", file.filename)
-    */
-  
-
-
-   // body =  {};
-    //body ["metadata"] = response;
-  //const queryParams = objectToFormData(
-  //response
-  //);
+    formdata.append("metadata",'{responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    formdata.append( activityId , {uri: file.uri, name: file.filename, type: file.type})
 
   const url = `${apiHost()}/response/${appletId}/${activityId}`;
   const headers = {
     "Girder-Token": authToken,
     "Content-Type": 'multipart/form-data',
   };
-  console.log('postFile', { response, url, headers });
- /* objectToFormData([body,{
-      filename:file.filename , data:RNFetchBlob.wrap(file.uri)
-    }])
-    ,*/
-    //RNFetchBlob.wrap(file.uri)
+  console.log('postFile', {  url, headers });
+
   return fetch(url,{
    method: "POST",
    headers:headers,
