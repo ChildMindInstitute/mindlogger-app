@@ -42,7 +42,8 @@ import { setCurrentApplet } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
-import { transformApplet, transformResponse } from "../../models/json-ld";
+import { transformApplet } from "../../models/json-ld";
+import { decryptAppletResponses } from "../../models/response";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -211,7 +212,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         };
       });
 
-      localInfo[id.substring(7)] = {
+      localInfo[id.split("/").pop()] = {
         appletVersion: applet.schemaVersion.en,
         contentUpdateTime,
         localItems: response ? Object.keys(response.items) : null,
@@ -232,7 +233,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         const transformedApplets = applets
           .map((appletInfo) => {
             if (!appletInfo.applet) {
-              const currentApplet = currentApplets.find(({ id }) => id.substring(7) === appletInfo.id)
+              const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
               if (appletInfo.schedule) {
                 const events = currentApplet.schedule.events;
                 currentApplet.schedule = appletInfo.schedule;
@@ -266,11 +267,14 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
           .filter((applet) => !R.isEmpty(applet.items))
           .map((appletInfo) => {
             if (appletInfo.responses) {
-              return transformResponse(appletInfo)
+              return {
+                ...decryptAppletResponses(appletInfo, appletInfo.responses),
+                appletId: 'applet/' + appletInfo.id
+              };
             }
-            return currentResponses.find(({ appletId }) => appletId.substring(7) === appletInfo.id);
-          })
- 
+            return currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id);
+          });
+
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
