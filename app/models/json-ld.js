@@ -62,6 +62,7 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
 
 export const ORDER = "reprolib:terms/order";
@@ -141,6 +142,12 @@ export const flattenValueConstraints = (vcObj) =>
         ...accumulator,
         scoring: R.path([key, 0, "@value"], vcObj),
       };
+    }
+    if (key == SHOW_TICK_MARKS) {
+      return {
+        ...accumulator,
+        showTickMarks: R.path([key, 0, "@value"], vcObj),
+      }
     }
     if (key == RESPONSE_ALERT) {
       return {
