@@ -198,6 +198,9 @@ const prepareFile = (file): Promise => {
 
 const uploadFiles = (authToken, response, item) => {
   console.log({ item });
+  appletId = response.applet.id;
+  activityId = response.activity.id;
+
   const answers = R.pathOr([], ["responses"], response);
   console.log('uploadFiles', { response, item, answers });
   // Each "response" has number of "answers", each of which may have a file
@@ -223,7 +226,8 @@ const uploadFiles = (authToken, response, item) => {
         uri: answer.uri,
         filename: answer.filename,
         size: answer.size,
-        type: 'application/octet',
+        type:'image/jpeg'
+        //type: 'application/octet',
       };
     } else if (answer && answer.lines && answer.svgString) {
       const filename = `${randomString({ length: 20 })}.svg`;
@@ -239,7 +243,9 @@ const uploadFiles = (authToken, response, item) => {
     console.log('uploadFiles, file', { file, answer });
 
     const request = prepareFile(file)
-      .then(file => postFile({
+      .then(file => postFile({key,
+        appletId,
+        activityId,
         authToken,
         file,
         parentType: 'item',

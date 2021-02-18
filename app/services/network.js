@@ -50,26 +50,54 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
   });
 };
 
-export const postFile = ({ authToken, file, parentType, parentId }) => {
-  console.log('postFile', { file, parentType, parentId });
-  const queryParams = objectToQueryParams({
-    parentType,
-    parentId,
-    name: file.filename,
-    size: file.size,
-  });
-  const url = `${apiHost()}/file?${queryParams}`;
+export const postFile = ({ key,appletId,
+  activityId, authToken, file, parentType, parentId }) => {
+  console.log('postFile', { appletId,
+    activityId, file, parentType, parentId });
+    var response = {};
+    response [key]=  
+     {
+      type: file.type,
+      size: file.size,
+      filename: file.filename 
+    }
+
+    let photo = { uri: file.uri}
+    let formdata = new FormData();
+    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},"responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    formdata.append( key , {uri: file.uri, name: file.filename, type: 'image/jpeg'})
+
+    
+    /*formdata.append("metadata[response]["+key+"]["+type+"]", file.type)
+    formdata.append("metadata[response]["+key+"]["+size+"]", file.size)
+    formdata.append("metadata[response]["+key+"]["+filename+"]", file.filename)
+    */
+  
+
+
+   // body =  {};
+    //body ["metadata"] = response;
+  //const queryParams = objectToFormData(
+  //response
+  //);
+
+  const url = `${apiHost()}/response/${appletId}/${activityId}`;
   const headers = {
     "Girder-Token": authToken,
-    "Content-Type": file.type,
+    "Content-Type": 'multipart/form-data',
   };
-  console.log('postFile', { queryParams, url, headers });
-  return RNFetchBlob.fetch(
-    "POST",
-    url,
-    headers,
-    RNFetchBlob.wrap(file.uri),
-  ).then((res) => {
+  console.log('postFile', { response, url, headers });
+ /* objectToFormData([body,{
+      filename:file.filename , data:RNFetchBlob.wrap(file.uri)
+    }])
+    ,*/
+    //RNFetchBlob.wrap(file.uri)
+  return fetch(url,{
+   method: "POST",
+   headers:headers,
+   body:formdata
+  
+  }).then((res) => {
     const responseInfo = res.info();
     console.log('postFile response', { res, responseInfo });
     return responseInfo.status === 200 ? res.json() : Promise.reject(res);
