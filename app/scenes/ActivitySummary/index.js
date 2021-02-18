@@ -120,7 +120,6 @@ const ActivitySummary = ({ responses, activity }) => {
   }, [responses]);
 
   const onClose = () => {
-    console.log('closed');
     Actions.push('activity_thanks');
   };
 

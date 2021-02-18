@@ -14,9 +14,10 @@ import {
   getTargetApplet,
   getAppletSchedule,
 } from "../../services/network";
+import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
-import { downloadResponses, downloadAppletResponses } from '../responses/responses.thunks';
+import { downloadAppletResponses } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
@@ -38,9 +39,10 @@ import {
 } from "../user/user.selectors";
 import { isReminderSetSelector } from "./applets.selectors";
 import { setCurrentApplet } from "../app/app.actions";
+import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
-import { transformApplet } from "../../models/json-ld";
+import { transformApplet, transformResponse } from "../../models/json-ld";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -190,22 +192,91 @@ export const cancelReminder = () => (dispatch, getState) => {
 //   return notification;
 // };
 
-export const downloadApplets = (onAppletsDownloaded = null) => (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, getState) => {
   const state = getState();
-  const auth = authSelector(state);
-  const userInfo = userInfoSelector(state);
+  const auth = authSelector(state); 
+  const currentApplets = await getData('ml_applets');
+  const currentResponses = await getData('ml_responses');
+  let localInfo = {};
+
+  if (currentApplets) {
+    currentApplets.forEach(applet => {
+      const { contentUpdateTime, id } = applet; 
+      const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
+      const localEvents = Object.keys(applet.schedule.events).map(id => {
+        event = applet.schedule.events[id];
+        return {
+          id,
+          updated: event.updated,
+        };
+      });
+
+      localInfo[id.substring(7)] = {
+        appletVersion: applet.schemaVersion.en,
+        contentUpdateTime,
+        localItems: response ? Object.keys(response.items) : null,
+        localActivities: response ? Object.keys(response.activities) : null,
+        localEvents,
+        startDate: response ? response['schema:startDate'] : null,
+      }
+    })
+  } else {
+    localInfo = null;
+  }
+
   dispatch(setDownloadingApplets(true));
-  getApplets(auth.token, userInfo._id)
-    .then((applets) => {
+  getApplets(auth.token, localInfo)
+    .then(async (applets) => {
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const transformedApplets = applets
+          .map((appletInfo) => {
+            if (!appletInfo.applet) {
+              const currentApplet = currentApplets.find(({ id }) => id.substring(7) === appletInfo.id)
+              if (appletInfo.schedule) {
+                const events = currentApplet.schedule.events;
+                currentApplet.schedule = appletInfo.schedule;
+
+                if (!R.isEmpty(appletInfo.schedule.events)) {
+                  Object.keys(appletInfo.schedule.events).forEach(eventId => {
+                    events[eventId] = appletInfo.schedule.events[eventId];
+                  })
+                } 
+
+                for (const eventId in events) {
+                  let isValid = false;
+                  for (const eventDate in currentApplet.schedule.data) {
+                    if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+                      isValid = true;
+                    }
+                  }
+
+                  if (!isValid) {
+                    delete events[eventId];
+                  }
+                }
+                currentApplet.schedule.events = events;
+              }
+              return currentApplet;
+            } else {
+              return transformApplet(appletInfo, currentApplets);
+            }
+          });
+        const responses = applets
           .filter((applet) => !R.isEmpty(applet.items))
-          .map(transformApplet);
-        console.log('applets', transformedApplets);
+          .map((appletInfo) => {
+            if (appletInfo.responses) {
+              return transformResponse(appletInfo)
+            }
+            return currentResponses.find(({ appletId }) => appletId.substring(7) === appletInfo.id);
+          })
+ 
+        await storeData('ml_applets', transformedApplets);
+        await storeData('ml_responses', responses);
+
         dispatch(replaceApplets(transformedApplets));
-        dispatch(downloadResponses(transformedApplets));
-        dispatch(downloadAppletsMedia(transformedApplets));
+        dispatch(replaceResponses(responses));
+        // dispatch(downloadAppletsMedia(transformedApplets));
         if (onAppletsDownloaded) {
           onAppletsDownloaded();
         }
@@ -290,9 +361,7 @@ export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const token = state.user ?.auth ?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
-      .then((response) => {
-        console.log("updateBadgeNumber success", response);
-      })
+      .then((response) => {})
       .catch((e) => {
         console.warn(e);
       });
@@ -326,7 +395,6 @@ export const getAppletResponseData = (appletId) => (dispatch, getState) => {
     authToken: auth.token,
     appletId,
   }).then((resp) => {
-    console.log("response is", resp);
     dispatch(saveAppletResponseData(appletId, resp));
   });
 };
