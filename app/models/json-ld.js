@@ -300,6 +300,9 @@ export const itemTransformJson = (itemJson) => {
     media,
   };
 
+  if (res.inputType == 'markdown-message') {
+    res.inputType = 'markdownMessage';
+  }
   return res;
 };
 

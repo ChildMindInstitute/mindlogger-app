@@ -200,7 +200,7 @@ export class Camera extends Component {
       const options = {
         mediaType: 'video',
         videoQuality: 'low',
-        durationLimit: 5,
+        durationLimit: 60,
         // saveToPhotos: true,
       };
       if (config.allowLibrary) {
