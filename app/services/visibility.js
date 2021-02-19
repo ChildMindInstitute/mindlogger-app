@@ -6,8 +6,6 @@ export const testVisibility = (testExpression = true, items = [], responses = []
   if (testExpression === true || testExpression === 'true') {
     return true;
   }
-  // console.log("111testExpression", testExpression);
-  // console.log("222items", items);
 
   const parser = new Parser({
     logical: true,

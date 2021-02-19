@@ -302,7 +302,7 @@ class Slider extends Component {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
 
     const {
-      config: { maxValue, minValue, itemList },
+      config: { maxValue, minValue, itemList, showTickMarks },
       onChange,
       onPress,
       value,
@@ -327,7 +327,9 @@ class Slider extends Component {
               style={[styles.tickMark, { left: tickMark.left }]}
             >
               <Text style={styles.tickLabel}> l </Text>
-              <Text> {tickMark.value} </Text>
+              {showTickMarks && (
+                <Text> {tickMark.value} </Text>
+              )}
             </View>
           ))}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
@@ -372,7 +374,9 @@ class Slider extends Component {
                 />
               </View>
             )}
-            <Text style={styles.label}>{minValue}</Text>
+            {showTickMarks && (
+              <Text style={styles.label}>{minValue}</Text>
+            )}
           </View>
           <View style={styles.labelBox}>
             {itemList[itemList.length - 1].image && (
@@ -383,7 +387,9 @@ class Slider extends Component {
                 />
               </View>
             )}
-            <Text style={styles.label}>{maxValue}</Text>
+            {showTickMarks && (
+              <Text style={styles.label}>{maxValue}</Text>
+            )}
           </View>
         </View>
       </View>
