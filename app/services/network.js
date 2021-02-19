@@ -56,7 +56,7 @@ export const postFile = ({ key,appletId,
     activityId, file, parentType, parentId });
 
     let formdata = new FormData();
-    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},responses":{"'+activityId+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
     if (file.uri.split('.').pop().length > 3 ) {
       file.uri = file.uri +"/"+file.name;
     }
