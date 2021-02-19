@@ -276,7 +276,7 @@ const uploadResponse = (authToken, response) =>
     .then(() => {
       const responses = R.pathOr([], ["payload", "responses"], response);
       console.log({ apiRes: responses });
-      console.log({ resss: response });
+      console.log({ res: response });
       cleanFiles(responses);
     });
 

@@ -56,10 +56,21 @@ export const postFile = ({ key,appletId,
     activityId, file, parentType, parentId });
 
     let formdata = new FormData();
-    formdata.append("metadata",'{responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},responses":{"'+key+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    if (file.uri.split('.').pop().length > 3 ) {
+      file.uri = file.uri +"/"+file.name;
+    }
+    if (file.type === undefined ) {
+      file.type = "audio/mp4"
+    }
+
     formdata.append( activityId , {uri: file.uri, name: file.filename, type: file.type})
 
+    
+
   const url = `${apiHost()}/response/${appletId}/${activityId}`;
+
+  console.log("form-data / url= : " ,formdata , url);
   const headers = {
     "Girder-Token": authToken,
     "Content-Type": 'multipart/form-data',
