@@ -14,7 +14,7 @@ import { appletsSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
-import { updateBadgeNumber } from '../state/applets/applets.thunks';
+import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
@@ -64,7 +64,6 @@ class FireBaseMessaging extends Component {
     this.props.setFCMToken(await fMessaging.getToken());
 
     const event = await fNotifications.getInitialNotification();
-
     if (event) {
       this.openActivityByEventId(event);
       // if (isAndroid) NativeModules.DevSettings.reload();
@@ -198,8 +197,8 @@ class FireBaseMessaging extends Component {
    */
   openActivityByEventId = (notificationObj) => {
     const type = _.get(notificationObj, 'notification._data.type');
-
-    if (type == 'response-data-alert') {
+    
+    if (type === 'response-data-alert') {
       Alert.alert(
         i18n.t('firebase_messaging:response_refresh_request'),
         i18n.t('firebase_messaging:refresh_request_details'),
@@ -232,6 +231,13 @@ class FireBaseMessaging extends Component {
         ],
         { cancelable: false },
       );
+    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') { 
+      const appletId = _.get(notificationObj, 'notification._data.applet_id');
+
+      this.props.downloadApplets(() => {
+        // this.props.setCurrentApplet(appletId);
+        // Actions.push('applet_details', { initialTab: 'data' });
+      });
     } else {
       const eventId = _.get(notificationObj, 'notification._data.event_id', '');
       const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
@@ -588,6 +594,7 @@ FireBaseMessaging.propTypes = {
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
   updateBadgeNumber: PropTypes.func.isRequired,
+  downloadApplets: PropTypes.func.isRequired,
   syncTargetApplet: PropTypes.func.isRequired,
 };
 
@@ -609,6 +616,7 @@ const mapDispatchToProps = dispatch => ({
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
+  downloadApplets: (cb) => dispatch(downloadApplets(cb)),
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
