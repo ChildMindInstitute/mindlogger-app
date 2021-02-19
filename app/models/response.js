@@ -209,7 +209,6 @@ export const decryptAppletResponses = (applet, responses) => {
     } else {
       responses.tokens.cumulativeToken = 0;
     }
-    responses.tokens.cumulativeToken = 0;
 
     responses.tokens.tokenUpdates = responses.tokens.tokenUpdates || [];
     responses.tokens.tokenUpdates.forEach(tokenUse => {
