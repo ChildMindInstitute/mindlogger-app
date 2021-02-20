@@ -56,17 +56,10 @@ export const postFile = ({ key,appletId,
     activityId, file, parentType, parentId });
 
     let formdata = new FormData();
-      if (file.uri.split('.').pop().length > 3 ) {
-      file.uri = file.uri +"/"+file.name;
-    }
-    if (file.type === undefined ) {
-      file.type = "audio/mp4"
-    }
-    formdata.append("metadata",'{"applet":{"schemaVersion":"1.0"},"subject":{"@id":"asasa","timezone":"US"},"responses":{"'+activityId+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
- 
-    formdata.append( activityId , {uri: file.uri, name: file.filename, type: file.type})
+    //this will need to me refactored when Audio and SVG storing will be fixed 
 
-    
+    formdata.append("metadata",'{"responses":{"'+activityId+'":{"size":"'+file.size+'","type":"'+file.type+'"}}}');
+    formdata.append( activityId , {uri: file.uri, name: file.filename, type: file.type})
 
   const url = `${apiHost()}/response/${appletId}/${activityId}`;
 
@@ -83,9 +76,8 @@ export const postFile = ({ key,appletId,
    body:formdata
   
   }).then((res) => {
-    const responseInfo = res.info();
-    console.log('postFile response', { res, responseInfo });
-    return responseInfo.status === 200 ? res.json() : Promise.reject(res);
+    console.log('postFile response', { res });
+    return res.status === 200 ? res.json() : Promise.reject(res);
   });
 };
 

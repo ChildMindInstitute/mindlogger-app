@@ -226,9 +226,12 @@ const uploadFiles = (authToken, response, item) => {
         uri: answer.uri,
         filename: answer.filename,
         size: answer.size,
-        type: answer.type
+        type: answer.type || "audio/mp4"
         //type: 'application/octet',
       };
+      if (file.uri.split('.').pop().length > 3 ) {
+        file.uri = file.uri +"/"+file.name;
+      }
     } else if (answer && answer.lines && answer.svgString) {
       const filename = `${randomString({ length: 20 })}.svg`;
       file = {
@@ -240,6 +243,8 @@ const uploadFiles = (authToken, response, item) => {
     } else {
       return accumulator; // Break early
     }
+
+    
     console.log('uploadFiles, file', { file, answer });
 
     const request = prepareFile(file)
