@@ -22,7 +22,6 @@ export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
     dispatch(downloadApplets(onAppletsDownloaded));
-    dispatch(startUploadQueue());
   }
 };
 

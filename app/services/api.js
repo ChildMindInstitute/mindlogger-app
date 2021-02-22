@@ -7,6 +7,7 @@ import {
   postResponse,
   postFile,
 } from "./network";
+import { getData } from "./asyncStorage";
 import { cleanFiles } from "./file";
 import { transformResponses } from "../models/response";
 import { decryptData } from "./encryption";
@@ -16,18 +17,23 @@ import {
   itemAttachExtras,
   ORDER,
 } from "../models/json-ld";
-
-export const downloadAllResponses = (authToken, applets, onProgress) => {
+ 
+export const downloadAllResponses = async (authToken, applets, onProgress) => {
+  const currentResponses = await getData('ml_responses');
   let numDownloaded = 0;
+
   onProgress(numDownloaded, applets.length);
   const requests = applets.map((applet) => {
+    const response = currentResponses ? currentResponses.find(r => applet.id === r.appletId) : null;
     const appletId = applet.id.split("/").pop();
     return getLast7DaysData({
       authToken,
       appletId,
+      localItems: response ? Object.keys(response.items) : null,
+      localActivities: response ? Object.keys(response.activities) : null,
+      startDate: response ? response['schema:startDate'] : null,
       groupByDateActivity: false,
     }).then((responses) => {
-      // console.log({responses},"res")
       numDownloaded += 1;
       onProgress(numDownloaded, applets.length);
       const appletId = applet.id;
@@ -178,13 +184,10 @@ export const downloadAllResponses = (authToken, applets, onProgress) => {
   return Promise.all(requests).then(transformResponses);
 };
 
-const prepareFile = (file): Promise => {
-  console.log('prepareFile', { file });
+const prepareFile = (file) => {
   if (file.svgString && file.uri) {
-    console.log('RNFetchBlob.fs.writeFile', { file });
     return RNFetchBlob.fs.writeFile(file.uri, file.svgString)
       .then((result) => {
-        console.log('RNFetchBlob.fs.writeFile result', { result, file });
         return Promise.resolve(file);
       }).then(file => RNFetchBlob.fs.stat(file.uri))
       .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
@@ -197,9 +200,7 @@ const prepareFile = (file): Promise => {
 };
 
 const uploadFiles = (authToken, response, item) => {
-  console.log({ item });
   const answers = R.pathOr([], ["responses"], response);
-  console.log('uploadFiles', { response, item, answers });
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {

@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.14.81",
+  "version": "0.15.2",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -22,8 +22,10 @@
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.4",
     "@react-native-community/art": "^1.1.2",
     "@react-native-community/audio-toolkit": "^2.0.2",
+    "@react-native-community/datetimepicker": "2.2.3",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/netinfo": "^3.2.0",
     "@react-native-community/push-notification-ios": "1.8.0",
@@ -149,6 +151,9 @@
     "preset": "react-native",
     "transformIgnorePatterns": [
       "node_modules/(?!(jest-)?react-native|@?react-navigation|react-navigation-redux-helpers|native-base|native-base-shoutem-theme|@shoutem/animation|@shoutem/ui|tcomb-form-native)"
+    ],
+    "setupFilesAfterEnv": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
     ]
   },
   "react-native": {
