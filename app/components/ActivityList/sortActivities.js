@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 import moment from 'moment';
 import i18n from 'i18next';
-
 const compareByNameAlpha = (a, b) => {
   const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
   const nameB = b.name.en.toUpperCase(); // ignore upper and lowercase
@@ -16,7 +15,7 @@ const compareByNameAlpha = (a, b) => {
 
 const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
-export const getUnscheduled = activityList => activityList.filter(
+export const getUnscheduled = (activityList, appletId, activityAccess) => activityList.filter(
   activity => (!activity.nextScheduledTimestamp
     || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
     && (!activity.oneTimeCompletion
@@ -27,6 +26,7 @@ export const getUnscheduled = activityList => activityList.filter(
       || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
       > activity.lastTimeout
       || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
+    && (!activity.nextAccess || (activityAccess && activityAccess[appletId + activity.id]))
     && (!activity.lastScheduledTimestamp
       || ((((!activity.extendedTime || !activity.extendedTime.allow)
         && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
@@ -38,14 +38,14 @@ export const getUnscheduled = activityList => activityList.filter(
     && activity.invalid !== false,
 );
 
-export const getScheduled = (activityList, endTimes, appletId) => activityList.filter(
+export const getScheduled = (activityList, endTimes, appletId, activityAccess) => activityList.filter(
   activity => activity.nextScheduledTimestamp
     && (!activity.lastScheduledTimestamp
       || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
       || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp
       || (endTimes && endTimes[appletId + activity.id] > activity.lastScheduledTimestamp))
     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-    && !(activity.nextAccess && moment().isSame(moment(activity.lastResponseTimestamp), 'day')),
+    && (!activityAccess || !activityAccess[appletId + activity.id]),
 );
 
 export const getPastdue = (activityList, endTimes, appletId) => activityList.filter(
@@ -75,7 +75,7 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (appletId, activityList, inProgress, activityEndTimes) => {
+export default (appletId, activityList, inProgress, activityEndTimes, activityAccess) => {
   const inProgressKeys = Object.keys(inProgress);
   const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
 
@@ -89,10 +89,10 @@ export default (appletId, activityList, inProgress, activityEndTimes) => {
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
-  const scheduled = getScheduled(notInProgress, activityEndTimes, appletId).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const scheduled = getScheduled(notInProgress, activityEndTimes, appletId, activityAccess).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress).sort(compareByNameAlpha);
+  const unscheduled = getUnscheduled(notInProgress, appletId, activityAccess).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();
@@ -107,7 +107,6 @@ export default (appletId, activityList, inProgress, activityEndTimes) => {
       addProp('status', 'unscheduled', unscheduled),
       i18n.t('additional:unscheduled'),
     ),
-    // ...addSectionHeader(addProp('status', 'completed', completed), 'Completed'),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), i18n.t('additional:scheduled')),
   ];
 };
