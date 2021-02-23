@@ -28,6 +28,7 @@ const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const SCORING = "reprolib:terms/scoring";
 const VALUE_TYPE = "reprolib:terms/valueType";
+const ENABLE_NEGATIVE_TOKENS = "reprolib:terms/enableNegativeTokens";
 const NAME = "schema:name";
 const PREAMBLE = "reprolib:terms/preamble";
 const PREF_LABEL = "http://www.w3.org/2004/02/skos/core#prefLabel";
@@ -62,6 +63,7 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
 
@@ -155,6 +157,12 @@ export const flattenValueConstraints = (vcObj) =>
         responseAlert: R.path([key, 0, "@value"], vcObj),
       }
     }
+    if (key == CONTINOUS_SLIDER) {
+      return {
+        ...accumulator,
+        continousSlider: R.path([key, 0, "@value"], vcObj),
+      }
+    } 
     if (key == RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
@@ -165,6 +173,12 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         valueType: R.path([key, 0, "@id"], vcObj),
+      };
+    }
+    if (key === ENABLE_NEGATIVE_TOKENS) {
+      return {
+        ...accumulator,
+        enableNegativeTokens: R.path([key, 0, "@value"], vcObj),
       };
     }
     if (key === ITEM_LIST_ELEMENT) {
