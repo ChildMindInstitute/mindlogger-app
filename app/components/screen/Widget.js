@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import WidgetError from './WidgetError';
+
+import {
+  View,
+} from "react-native";
 import {
   AudioImageRecord,
   AudioRecord,
@@ -20,6 +24,8 @@ import {
   TimeRange,
   VisualStimulusResponse,
   RadioPrizes,
+  StackedSlider,
+  StackedRadio,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -60,9 +66,33 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       />
     );
   }
+
+  if (screen.inputType === 'stackedRadio') {
+    return (
+      <StackedRadio
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={answer}
+        token={valueType && valueType.includes("token")}
+      />
+    )
+  }
+
   if (screen.inputType === 'slider') {
     return (
       <Slider
+        config={screen.valueConstraints}
+        appletName={applet.name.en}
+        onChange={onChange}
+        onPress={onPress}
+        onRelease={onRelease}
+        value={answer}
+      />
+    );
+  }
+  if (screen.inputType === 'stackedSlider') {
+    return (
+      <StackedSlider
         config={screen.valueConstraints}
         appletName={applet.name.en}
         onChange={onChange}
