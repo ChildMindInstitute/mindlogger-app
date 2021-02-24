@@ -17,3 +17,5 @@ export * from './TimeRange';
 export * from './VisualStimulusResponse';
 export * from './RadioPrizes';
 export * from './TooltipBox';
+export * from './StackedSlider';
+export * from './StackedRadio';
