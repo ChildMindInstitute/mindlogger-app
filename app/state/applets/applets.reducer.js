@@ -20,12 +20,19 @@ export const initialState = {
   invites: [],
   currentInvite: '',
   appletResponseData: {},
+  activityAccess: {},
 };
 
 export default (state = initialState, action = {}) => {
   switch (action.type) {
     case APPLET_CONSTANTS.CLEAR:
       return initialState;
+    case APPLET_CONSTANTS.SET_ACTIVITY_ACCESS:
+      const nextState = { ...state };
+      
+      if (!nextState.activityAccess) nextState.activityAccess = {};
+      nextState.activityAccess[action.payload] = true;
+      return nextState;
     case APPLET_CONSTANTS.REPLACE_APPLETS:
       return {
         ...state,

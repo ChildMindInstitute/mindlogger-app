@@ -44,6 +44,11 @@ export const setDownloadingApplets = isDownloading => ({
   payload: isDownloading,
 });
 
+export const setActivityAccess = id => ({
+  type: APPLET_CONSTANTS.SET_ACTIVITY_ACCESS,
+  payload: id,
+});
+
 export const setDownloadingTargetApplet = isDownloading => ({
   type: APPLET_CONSTANTS.SET_DOWNLOADING_TARGET_APPLET,
   payload: isDownloading,
