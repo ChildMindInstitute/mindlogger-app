@@ -572,7 +572,7 @@ export const transformApplet = (payload, currentApplets = null) => {
 
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
-                const item = itemTransformJson(payload.items[dataKey]);
+                const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
                 let updated = false;
 
                 if (!act.items) {
