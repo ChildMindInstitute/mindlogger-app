@@ -26,8 +26,16 @@ const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
+const MIN_VALUE_IMAGE = "schema:minValueImg";
+const MAX_VALUE_IMAGE = "schema:maxValueImg";
+const SLIDER_LABEL = "schema:sliderLabel";
 const SCORING = "reprolib:terms/scoring";
+const ITEM_LIST = "reprolib:terms/itemList";
+const ITEM_OPTIONS = "reprolib:terms/itemOptions";
+const OPTIONS = "reprolib:terms/options";
+const SLIDER_OPTIONS = "reprolib:terms/sliderOptions";
 const VALUE_TYPE = "reprolib:terms/valueType";
+const ENABLE_NEGATIVE_TOKENS = "reprolib:terms/enableNegativeTokens";
 const NAME = "schema:name";
 const PREAMBLE = "reprolib:terms/preamble";
 const PREF_LABEL = "http://www.w3.org/2004/02/skos/core#prefLabel";
@@ -62,6 +70,8 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
+const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
 
 export const ORDER = "reprolib:terms/order";
@@ -142,12 +152,24 @@ export const flattenValueConstraints = (vcObj) =>
         scoring: R.path([key, 0, "@value"], vcObj),
       };
     }
+    if (key == SHOW_TICK_MARKS) {
+      return {
+        ...accumulator,
+        showTickMarks: R.path([key, 0, "@value"], vcObj),
+      }
+    }
     if (key == RESPONSE_ALERT) {
       return {
         ...accumulator,
         responseAlert: R.path([key, 0, "@value"], vcObj),
       }
     }
+    if (key == CONTINOUS_SLIDER) {
+      return {
+        ...accumulator,
+        continousSlider: R.path([key, 0, "@value"], vcObj),
+      }
+    } 
     if (key == RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
@@ -160,10 +182,55 @@ export const flattenValueConstraints = (vcObj) =>
         valueType: R.path([key, 0, "@id"], vcObj),
       };
     }
+    if (key === ENABLE_NEGATIVE_TOKENS) {
+      return {
+        ...accumulator,
+        enableNegativeTokens: R.path([key, 0, "@value"], vcObj),
+      };
+    }
     if (key === ITEM_LIST_ELEMENT) {
       const itemList = R.path([key], vcObj);
       return { ...accumulator, itemList: flattenItemList(itemList) };
     }
+    if (key === ITEM_LIST) {
+      const itemList = R.path([key], vcObj);
+      return { ...accumulator, itemList: itemList.map(item => ({
+        description: R.path([DESCRIPTION, 0, "@value"], item),
+        image: R.path([IMAGE, 0, "@value"], item),
+        name: R.path([NAME, 0, "@value"], item)
+      })) };
+    }
+
+    if (key === ITEM_OPTIONS) {
+      const itemOptions = R.path([key], vcObj);
+      return { ...accumulator, itemOptions: itemOptions.map(option => ({
+        score: R.path([SCORE, 0, "@value"], option),
+        value: R.path([VALUE, 0, "@value"], option)
+      })) };
+    }
+
+    if (key === OPTIONS) {
+      const options = R.path([key], vcObj);
+      return { ...accumulator, options: options.map(option => ({
+        description: R.path([DESCRIPTION, 0, "@value"], option),
+        image: R.path([IMAGE, 0, "@value"], option),
+        name: R.path([NAME, 0, "@value"], option)
+      }))}
+    }
+
+    if (key === SLIDER_OPTIONS) {
+      const sliderOptions = R.path([SLIDER_OPTIONS], vcObj);
+
+      return { ...accumulator, sliderOptions: sliderOptions.map(option => ({
+        minValue: R.path([MIN_VALUE, 0, "@value"], option),
+        maxValue: R.path([MAX_VALUE, 0, "@value"], option),
+        minValueImg: R.path([MIN_VALUE_IMAGE, 0, "@value"], option),
+        maxValueImg: R.path([MAX_VALUE_IMAGE, 0, "@value"], option),
+        sliderLabel: R.path([SLIDER_LABEL, 0, "@value"], option),
+        itemList: flattenItemList(R.path([ITEM_LIST_ELEMENT], option))
+      }))}
+    }
+
     if (key === REQUIRED_VALUE) {
       return { ...accumulator, required: R.path([key, 0, "@value"], vcObj) };
     }
@@ -293,6 +360,9 @@ export const itemTransformJson = (itemJson) => {
     media,
   };
 
+  if (res.inputType == 'markdown-message') {
+    res.inputType = 'markdownMessage';
+  }
   return res;
 };
 
@@ -326,36 +396,16 @@ export const attachPreamble = (preamble, items) => {
   return items;
 };
 
-export const activityTransformJson = (activityJson, itemsJson) => {
+const transformPureActivity = (activityJson) => {
   const allowList = flattenIdList(
     R.pathOr([], [ALLOW, 0, "@list"], activityJson)
   );
   const scoringLogic = activityJson[SCORING_LOGIC]; // TO DO
-  const notification = {}; // TO DO
-  const info = languageListToObject(activityJson.info); // TO DO
   const addProperties = activityJson[ADD_PROPERTIES];
-
   const preamble = languageListToObject(activityJson[PREAMBLE]);
   const order = (activityJson[ORDER] && flattenIdList(activityJson[ORDER][0]["@list"])) || [];
-  let itemIndex = -1;
-  let itemData;
-
-  const mapItems = R.map((itemKey) => {
-    itemIndex += 1;
-    itemData = itemsJson[itemKey];
-
-    if (!itemData) {
-      console.warn(
-        `Item ID "${itemKey}" defined in 'reprolib:terms/order' was not found`
-      );
-      return null;
-    }
-
-    const item = itemTransformJson(itemsJson[itemKey]);
-    return itemAttachExtras(item, itemKey, addProperties[itemIndex]);
-  });
-  const nonEmptyItems = R.filter(item => item, mapItems(order));
-  const items = attachPreamble(preamble, nonEmptyItems);
+  const notification = {}; // TO DO
+  const info = languageListToObject(activityJson.info); // TO DO
   const compute = activityJson[COMPUTE] && R.map((item) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
@@ -395,60 +445,238 @@ export const activityTransformJson = (activityJson, itemsJson) => {
     subScales,
     messages,
     preamble,
+    addProperties,
+    order,
     scoringLogic,
     notification,
     info,
+  };
+};
+
+export const activityTransformJson = (activityJson, itemsJson) => {
+  const activity = transformPureActivity(activityJson);
+  let itemIndex = -1, itemData;
+
+  const mapItems = R.map((itemKey) => {
+    itemIndex += 1;
+    itemData = itemsJson[itemKey];
+
+    if (!itemData) {
+      console.warn(
+        `Item ID "${itemKey}" defined in 'reprolib:terms/order' was not found`
+      );
+      return null;
+    }
+    const item = itemTransformJson(itemsJson[itemKey]);
+    return itemAttachExtras(item, itemKey, activity.addProperties[itemIndex]);
+  });
+  const nonEmptyItems = R.filter(item => item, mapItems(activity.order));
+  const items = attachPreamble(activity.preamble, nonEmptyItems);
+
+  return {
+    ...activity,
     items,
   };
 };
 
 export const appletTransformJson = (appletJson) => {
+  const { applet, schedule, updated } = appletJson;
   const res = {
-    id: appletJson._id,
-    groupId: appletJson.groups,
-    schema: appletJson.url || appletJson[URL],
-    name: languageListToObject(appletJson[PREF_LABEL]),
-    description: languageListToObject(appletJson[DESCRIPTION]),
-    about: languageListToObject(appletJson[ABOUT]),
-    aboutContent: languageListToObject(appletJson[ABOUT_CONTENT]),
-    schemaVersion: languageListToObject(appletJson[SCHEMA_VERSION]),
-    version: languageListToObject(appletJson[VERSION]),
-    altLabel: languageListToObject(appletJson[ALT_LABEL]),
-    visibility: listToVisObject(appletJson[ADD_PROPERTIES]),
-    image: appletJson[IMAGE],
-    order: flattenIdList(appletJson[ORDER][0]["@list"]),
-    schedule: appletJson.schedule,
-    responseDates: appletJson.responseDates,
-    shuffle: R.path([SHUFFLE, 0, "@value"], appletJson),
+    id: applet._id,
+    groupId: applet.groups,
+    schema: applet.url || applet[URL],
+    name: languageListToObject(applet[PREF_LABEL]),
+    description: languageListToObject(applet[DESCRIPTION]),
+    about: languageListToObject(applet[ABOUT]),
+    aboutContent: languageListToObject(applet[ABOUT_CONTENT]),
+    schemaVersion: languageListToObject(applet[SCHEMA_VERSION]),
+    version: languageListToObject(applet[VERSION]),
+    altLabel: languageListToObject(applet[ALT_LABEL]),
+    visibility: listToVisObject(applet[ADD_PROPERTIES]),
+    image: applet[IMAGE],
+    order: flattenIdList(applet[ORDER][0]["@list"]),
+    schedule,
+    contentUpdateTime: updated,
+    responseDates: applet.responseDates,
+    shuffle: R.path([SHUFFLE, 0, "@value"], applet),
   };
-  if (appletJson.encryption && Object.keys(appletJson.encryption).length) {
-    res.encryption = appletJson.encryption;
+  if (applet.encryption && Object.keys(applet.encryption).length) {
+    res.encryption = applet.encryption;
   }
   return res;
 };
 
-export const transformApplet = (payload) => {
-  const activities = Object.keys(payload.activities).map((key) => {
-    const activity = activityTransformJson(
-      payload.activities[key],
-      payload.items,
-    );
-    activity.schema = key;
-    return activity;
-  });
-  const applet = appletTransformJson(payload.applet);
-  // Add the items and activities to the applet object
-  applet.activities = activities;
+export const transformApplet = (payload, currentApplets = null) => {
+  const applet = appletTransformJson(payload);
+
+  if (currentApplets && !R.isEmpty(currentApplets)) {
+    const currentApplet = currentApplets.find(({ id }) => id.substring(7) === payload.id);
+
+    if (!currentApplet) {
+      const activities = Object.keys(payload.activities).map((key) => {
+        const activity = activityTransformJson(
+          payload.activities[key],
+          payload.items,
+        );
+        activity.schema = key;
+        return activity;
+      });
+      // Add the items and activities to the applet object
+      applet.schedule = payload.schedule;
+      applet.activities = activities;
+    } else {
+      if (R.isEmpty(payload.activities)) {
+        if (R.isEmpty(payload.items)) {
+          applet.activities = currentApplet.activities;
+        } else {
+          Object.keys(payload.items).forEach(dataKey => {
+            const keys = dataKey.split('/');
+
+            applet.activities.forEach((act, index) => {
+              if (act.id.substring(9) === keys[0]) {
+                act.items.forEach((itemData, i) => {
+                  if (itemData.id === payload.items[dataKey]) {
+                    const item = itemTransformJson(payload.items[dataKey]);
+                    applet.activities[index].items[i] = {
+                      ...itemData,
+                      ...item,
+                    }
+                  }
+                })
+              }
+            });
+          });
+        }
+      } else {
+        applet.activities = currentApplet.activities;
+        Object.keys(payload.activities).forEach((key) => {
+          const activity = transformPureActivity(payload.activities[key]);
+
+          let updated = false;
+          applet.activities.forEach((act, index) => {
+            if (act.id.substring(9) === key) {
+              updated = true;
+              applet.activities[index] = {
+                ...activity,
+                items: act.items,
+              };
+            }
+          });
+          if (!updated) {
+            applet.activities.push(activity);
+          }
+        });
+        if (!R.isEmpty(payload.items)) {
+          Object.keys(payload.items).forEach(dataKey => {
+            const keys = dataKey.split('/');
+
+            applet.activities.forEach((act, index) => {
+              if (act.id.substring(9) === keys[0]) {
+                const item = itemTransformJson(payload.items[dataKey]);
+                let updated = false;
+
+                if (!act.items) {
+                  applet.activities[index].items = [];
+                }
+                act.items.forEach((itemData, i) => {
+                  if (itemData.id.split('/')[1] === dataKey.split('/')[1] && !updated) {
+                    updated = true;
+                    applet.activities[index].items[i] = {
+                      ...itemData,
+                      ...item,
+                    }
+                  }
+                });
+                if (!updated) {
+                  applet.activities[index].items.push(item);
+                }
+              }
+            });
+          });
+        }
+      }
+
+      if (payload.schedule) {
+        const events = currentApplet.schedule.events;
+        applet.schedule = payload.schedule;
+
+        if (!R.isEmpty(payload.schedule.events)) {
+          Object.keys(payload.schedule.events).forEach(eventId => {
+            events[eventId] = payload.schedule.events[eventId];
+          })
+        }
+
+        for (const eventId in events) {
+          let isValid = false;
+          for (const eventDate in currentApplet.schedule.data) {
+            if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+              isValid = true;
+            }
+          }
+
+          if (!isValid) {
+            delete events[eventId];
+          }
+        }
+        applet.schedule.events = events;
+      }
+    }
+
+    if (payload.removedItems && payload.removedItems.length) {
+      payload.removedItems.forEach(itemKey => {
+        const keys = itemKey.split('/');
+
+        applet.activities.forEach((activity, index) => {
+          if (activity.id.substring(9) === keys[0]) {
+            activity.items.forEach((item, i) => {
+              if (item.id.substring(7) === keys[1]) {
+                applet.activities[index].items.splice(i, 1);
+              }
+            })
+          }
+        })
+      })
+    }
+
+    if (payload.removedActivities && payload.removedActivities.length) {
+      payload.removedActivities.forEach(activityKey => {
+        applet.activities.forEach((activity, index) => {
+          if (activity.id.substring(9) === activityKey) {
+            applet.activities.splice(index, 1);
+          }
+        })
+      })
+    }
+  } else {
+    const activities = Object.keys(payload.activities).map((key) => {
+      const activity = activityTransformJson(
+        payload.activities[key],
+        payload.items,
+      );
+      activity.schema = key;
+      return activity;
+    });
+    // Add the items and activities to the applet object
+    applet.activities = activities;
+    applet.schedule = payload.schedule;
+  }
+
   applet.groupId = payload.groups;
   return applet;
 };
+
+export const transformResponse = (payload) => {
+  return {
+    ...payload.responses,
+    appletId: 'applet/' + payload.id
+  }
+}
 
 export const dateParser = (schedule) => {
   const output = {};
   Object.keys(schedule.events).forEach(key => {
     const e = schedule.events[key];
     const uri = e.data.URI;
-
     if (!output[uri]) {
       output[uri] = {
         notificationDateTimes: [],
@@ -524,7 +752,6 @@ export const dateParser = (schedule) => {
       notificationDateTimes: output[uri].notificationDateTimes.concat(dateTimes),
     };
   });
-
   return output;
 };
 
@@ -555,7 +782,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
     let scheduledTimeout = null;
     let invalid = true;
 
-    if (applet.schedule.data) {
+    if (applet.schedule && applet.schedule.data) {
       Object.keys(applet.schedule.data).forEach(date => {
         const event = applet.schedule.data[date].find(ele => ele.id === id);
 
@@ -563,7 +790,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
           invalid = event.valid;
         }
       })
-    } else if (applet.schedule.valid !== undefined) {
+    } else if (applet.schedule && applet.schedule.valid !== undefined) {
       invalid = applet.schedule.valid;
     }
 

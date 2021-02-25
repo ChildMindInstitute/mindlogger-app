@@ -28,7 +28,7 @@ export const prepareResponseForUpload = (
     const item = activity.items[i];
 
     if (item.valueConstraints) {
-      const { valueType, responseAlert } = item.valueConstraints;
+      const { valueType, responseAlert, enableNegativeTokens } = item.valueConstraints;
 
       if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
         alerts.push({
@@ -43,7 +43,7 @@ export const prepareResponseForUpload = (
       ) {
         cumulative += (getValuesFromResponse(item, responses[i]) || []).reduce(
           (cumulative, current) => {
-            if (current >= 0) {
+            if (current >= 0 || enableNegativeTokens) {
               return cumulative + current;
             }
             return cumulative
@@ -92,7 +92,7 @@ export const prepareResponseForUpload = (
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);

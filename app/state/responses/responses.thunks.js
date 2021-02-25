@@ -12,6 +12,7 @@ import {
   getTokenUpdateInfo,
 } from "../../models/response";
 import { scheduleAndSetNotifications } from "../applets/applets.thunks";
+import { storeData } from "../../services/asyncStorage";
 import { appletsSelector } from "../applets/applets.selectors";
 import {
   responsesSelector,
@@ -56,7 +57,7 @@ import {
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 
-import { prepareResponseKeys } from "../applets/applets.actions";
+import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
 import { getAESKey, getPublicKey } from "../../services/encryption";
 import config from "../../config";
@@ -202,10 +203,10 @@ export const downloadResponses = () => (dispatch, getState) => {
   downloadAllResponses(authToken, applets, (downloaded, total) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   })
-    .then((responses) => {
+    .then(async (responses) => {
       if (loggedInSelector(getState())) {
+        await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
-        dispatch(scheduleAndSetNotifications());
       }
     })
     .finally(() => {
@@ -354,6 +355,11 @@ export const nextScreen = () => (dispatch, getState) => {
   const activityId = currentActivityIdSelector(state);
 
   if (next === -1) {
+    const activity = currentActivitySelector(state);
+    
+    if (activity.nextAccess) {
+      dispatch(setActivityAccess(applet.id + activityId));
+    }
     dispatch(completeResponse());
     dispatch(setCurrentActivity(null));
     dispatch(setActivityEndTime(applet.id + activityId));

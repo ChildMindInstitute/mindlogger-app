@@ -35,7 +35,7 @@ ${i18n.t("applet_about:no_info")}
   async getMD(url) {
     const resp = await fetch(url);
     const markdown = await resp.text();
-    // console.log('response is', resp);
+
     this.setState({
       markdown,
     });

@@ -5,6 +5,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.15.5] - 2020-02-22
+- Fixed hidden inputbox
+- Added stacked radio/checkbox/radio item
+
+## [0.15.4] - 2020-02-21
+- Fixed activity access
+
+## [0.15.3] - 2020-02-22
+- Fixed token value format
+
+## [0.15.2] - 2020-02-22
+- Implemented smooth slider
+
+## [0.15.1] - 2020-02-12
+- Implemented app optimization
+
+## [0.14.82] - 2020-02-08
+- Implement new slider option
+
+## [0.14.81] - 2020-02-03
+- Add ability to change the length of audio user can record
+
+## [0.14.80] - 2020-02-03
+- Small Fix AudioImageRecord Item
+- update time picker
+
+## [0.14.80] - 2020-02-08
+- Implement new slider option
 
 ## [0.14.79] - 2020-02-03
 - Fix styling in markdown

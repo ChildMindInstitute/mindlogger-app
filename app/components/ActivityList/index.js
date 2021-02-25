@@ -13,6 +13,7 @@ import {
   newAppletSelector,
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
+import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
@@ -40,6 +41,7 @@ const ActivityList = ({
   activityEndTimes,
   responseSchedule,
   inProgress,
+  activityAccess,
   onPressActivity,
   onLongPressActivity,
 }) => {
@@ -55,7 +57,7 @@ const ActivityList = ({
     const newApplet = parseAppletActivities(applet, responseSchedule);
 
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
-    setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes));
+    setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));
 
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
     if (pzActs.length === 1) {
@@ -203,6 +205,7 @@ ActivityList.propTypes = {
   appStatus: PropTypes.bool.isRequired,
   setAppStatus: PropTypes.func.isRequired,
   responseSchedule: PropTypes.object.isRequired,
+  activityAccess: PropTypes.object.isRequired,
   appletTime: PropTypes.any.isRequired,
   inProgress: PropTypes.object.isRequired,
   onPressActivity: PropTypes.func.isRequired,
@@ -228,6 +231,7 @@ const mapStateToProps = (state) => {
     appletTime: state.applets.currentTime,
     activitySelectionDisabled: activitySelectionDisabledSelector(state),
     responseSchedule: responseScheduleSelector(state),
+    activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
   };
 };
