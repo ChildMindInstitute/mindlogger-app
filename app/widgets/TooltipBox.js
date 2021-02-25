@@ -32,6 +32,7 @@ export const TooltipBox = ({ text, children }) => {
           skipAndroidStatusBar={true}
           containerStyle={{
             margin: 0,
+            overflow: 'hidden',
           }}
           backgroundColor="#DEF"
         >
@@ -43,7 +44,7 @@ export const TooltipBox = ({ text, children }) => {
           onLayout={(event) => {
             const { width, height } = event.nativeEvent.layout;
             if (width > 0 && height > 0) {
-              if (step === STEP_LOADED && height > windowHeight / 3) {
+              if (step === STEP_LOADED && height > windowHeight / 2) {
                 const len = parseInt(truncatedText.length * (windowHeight / 3) / height);
                 setTruncatedText(truncateString(truncatedText, len));
                 setStep(STEP_TRUNCATED);
