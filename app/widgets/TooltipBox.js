@@ -1,40 +1,63 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions } from 'react-native';
-import { Text } from 'native-base';
+import { View, Dimensions } from 'react-native';
 import Tooltip from "rne-modal-tooltip";
 import { truncateString } from '../services/helper';
+import { MarkdownScreen } from '../components/core';
 
-const { width, height } = Dimensions.get('window');
+const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
-const TOOLTIP_WIDTH_DEFAULT = 150;
-const TOOLTIP_WIDTH_MAX = width * 8 / 10;
-const TOOLTIP_LINE_HEIGHT = 25;
-const LINE_TEXT_LEN = parseInt(width / 12);
-const LINE_COUNT_MAX = parseInt(height / 2 / TOOLTIP_LINE_HEIGHT);
-const TEXT_LEN_MAX = LINE_TEXT_LEN * LINE_COUNT_MAX;
+const STEP_LOADED = 0;
+const STEP_TRUNCATED = 1;
+const STEP_RESIZED = 2;
 
 export const TooltipBox = ({ text, children }) => {
-  const truncatedText = truncateString(text, TEXT_LEN_MAX);
-  const lineCount = parseInt(truncatedText.length / LINE_TEXT_LEN) + 1;
-  const tooltipWidth = truncatedText.length >= LINE_TEXT_LEN ? TOOLTIP_WIDTH_MAX : TOOLTIP_WIDTH_DEFAULT;
-  const tooltipHeight = TOOLTIP_LINE_HEIGHT * lineCount + 20;
+  const [truncatedText, setTruncatedText] = useState(text);
+  const [tooltipSize, setTooltipSize] = useState(null);
+  const [step, setStep] = useState(STEP_LOADED);
+
+  const textContainer = useMemo(() => (
+    <MarkdownScreen>{truncatedText}</MarkdownScreen>
+  ), [truncatedText]);
 
   return (
-    <Tooltip
-      width={tooltipWidth}
-      height={tooltipHeight}
-      popover={<Text>{truncatedText}</Text>}
-      toggleOnPress={true}
-      withOverlay={false}
-      skipAndroidStatusBar={true}
-      containerStyle={{
-        margin: 0,
-      }}
-      backgroundColor="#DEF"
-    >
-      { children }
-    </Tooltip>
+    <View>
+      {step === STEP_RESIZED ? (
+        <Tooltip
+          width={tooltipSize.width}
+          height={tooltipSize.height}
+          popover={textContainer}
+          toggleOnPress={true}
+          withOverlay={false}
+          skipAndroidStatusBar={true}
+          containerStyle={{
+            margin: 0,
+          }}
+          backgroundColor="#DEF"
+        >
+          { children }
+        </Tooltip>
+      ) : (
+        <View
+          style={{ position: 'absolute', width: windowWidth * 8 / 10 }}
+          onLayout={(event) => {
+            const { width, height } = event.nativeEvent.layout;
+            if (width > 0 && height > 0) {
+              if (step === STEP_LOADED && height > windowHeight / 3) {
+                const len = parseInt(truncatedText.length * (windowHeight / 3) / height);
+                setTruncatedText(truncateString(truncatedText, len));
+                setStep(STEP_TRUNCATED);
+              } else {
+                setTooltipSize({ width, height: height + 30 });
+                setStep(STEP_RESIZED);
+              }
+            }
+          }}
+        >
+          {textContainer}
+        </View>
+      )}
+    </View>
   );
 };
 
