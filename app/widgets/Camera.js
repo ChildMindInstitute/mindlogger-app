@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { View, Icon } from 'native-base';
+import { View, Icon , Item , Input } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -78,6 +78,14 @@ const styles = StyleSheet.create({
 });
 export class Camera extends Component {
   isIos = Platform.OS === 'ios';
+
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    /*onChange(this.finalAnswer);*/
+  }
 
   libraryAlert = () => {
     const { video } = this.props;
@@ -249,7 +257,9 @@ export class Camera extends Component {
   };
 
   render() {
-    const { value, video } = this.props;
+    const { value, video ,isOptionalText} = this.props;
+
+    this.finalAnswer = value ? value :[];
     // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     // this.getImageFromCamera();
@@ -271,6 +281,22 @@ export class Camera extends Component {
             </TouchableOpacity>
           </View>
         )}
+
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }

@@ -23,7 +23,7 @@ export class TimeRange extends React.Component {
   }
 
   render() {
-    const { value } = this.props;
+    const { value ,config:{isOptionalText}} = this.props;
     const safeValue = value || {
       from: defaultTime,
       to: defaultTime,
@@ -32,6 +32,21 @@ export class TimeRange extends React.Component {
       <View style={{ alignItems: 'stretch' }}>
         <TimePicker value={safeValue.from} onChange={this.onChangeFrom} label="From" />
         <TimePicker value={safeValue.to} onChange={this.onChangeTo} label="To" />
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }

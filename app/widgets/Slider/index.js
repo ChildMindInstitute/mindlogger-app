@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from "react-native";
-import { Text } from "native-base";
+import { Text , Item , Input} from "native-base";
 import SliderComponent from "react-native-slider";
 import { getURL } from "../../services/helper";
 import { colors } from "../../themes/colors";
@@ -142,6 +142,14 @@ const styles = StyleSheet.create({
 class Slider extends Component {
   sliderRef = React.createRef();
 
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
   static propTypes = {
     config: PropTypes.shape({
       minValue: PropTypes.string,
@@ -228,8 +236,10 @@ class Slider extends Component {
     const { minimumValue } = this.state;
     if (value <= minimumValue) {
       this.setState({ currentValue: minimumValue });
+      this.finalAnswer["value"] = minimumValue;
     } else {
       this.setState({ currentValue: value });
+      this.finalAnswer["value"] = value;
     }
   };
 
@@ -247,7 +257,8 @@ class Slider extends Component {
           minimumValue -
           1
       );
-      onChange(calculatedValue);
+      this.finalAnswer["value"]=calculatedValue;
+      onChange(this.finalAnswer);
       this.setState({ currentValue: calculatedValue });
     }
   };
@@ -302,14 +313,17 @@ class Slider extends Component {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
 
     const {
-      config: { maxValue, minValue, itemList, showTickMarks },
+      config: { maxValue, minValue, itemList, showTickMarks ,isOptionalText },
       onChange,
       onPress,
       value,
       onRelease,
     } = this.props;
 
-    let currentVal = value;
+
+    this.finalAnswer = value ? value :[];
+
+    let currentVal = this.finalAnswer["value"];
     if (!value && value !== currentValue) {
       this.setState({ currentValue: value });
     }
@@ -357,7 +371,8 @@ class Slider extends Component {
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
-                  onChange(val);
+                  this.finalAnswer["value"] = val;
+                  onChange(this.finalAnswer);
                 }}
               />
             </View>
@@ -392,6 +407,23 @@ class Slider extends Component {
             )}
           </View>
         </View>
+
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    width: "100%",
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }

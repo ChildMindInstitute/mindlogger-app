@@ -75,6 +75,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'timeRange') {
     return (
       <TimeRange
+       config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
       />
@@ -83,6 +84,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'date') {
     return (
       <DatePicker
+      config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
       />
@@ -142,6 +144,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {true}
       />
     );
   }
@@ -151,6 +154,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {true}
         video
       />
     );
