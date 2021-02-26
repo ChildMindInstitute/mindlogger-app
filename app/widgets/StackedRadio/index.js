@@ -103,9 +103,9 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                   multipleChoice && (
                     <CheckBox
                       checked={
-                        currentValue[i].includes(`${item.name}/${option.name}${token ? ':'+tokenValues[i][j] : ''}`)
+                        currentValue[i].includes(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`)
                       }
-                      onPress={() => handlePress(`${item.name}/${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
+                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="check-square"
                       uncheckedIcon="square-o"
                       checkedColor={colors.primary}
@@ -113,8 +113,8 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                     />
                   ) || (
                     <CheckBox
-                      checked={currentValue[i] === `${item.name}/${option.name}${token ? ':'+tokenValues[i][j] : ''}`}
-                      onPress={() => handlePress(`${item.name}/${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
+                      checked={currentValue[i] === `${option.name}${token ? ':'+tokenValues[i][j] : ''}`}
+                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="dot-circle-o"
                       uncheckedIcon="circle-o"
                       checkedColor={colors.primary}
