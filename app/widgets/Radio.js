@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as R from "ramda";
 import { View, Image } from 'react-native';
-import { ListItem, Text, Icon,Input,Item  } from 'native-base';
+import { ListItem, Text, Icon , Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
@@ -10,38 +9,19 @@ import { TooltipBox } from './TooltipBox';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
-  ans = value;
+  var finalAnswer = value ? value :[];
 
-  if (value !== undefined ) {
-    value = value.val
-    text = value.text
-  }
-
-  const setAnswer = (key , value) => {
-    ans[key] = value;
-  }
-
-  
   const handlePress = (itemValue) => {
-    // if the radio was selected , record it and save things 
-  /*  if (selected) {
-    setAnswer ("val" , itemValue) ;
-    }
-
-    if (ans["val"] && (ans["text"] && config.isOptionalTextRequired)) {
-      onSelected(true); 
-      onChange(ans);
-    } else if (!config.isOptionalTextRequired && ans["val"]){
-      onSelected(true); 
-      onChange(ans);
-    }*/
+   // if (!selected) {
+      finalAnswer["value"] = itemValue;
+      onSelected(true);
+      onChange(finalAnswer);
+    //}
   };
 
-
-  const handleComment = (value) => {
-    //if the Comment is provided record it and set the change 
-      setAnswer ("text" , value) ;
-      onChange(ans);
+  const handleComment = (itemValue) => {
+    finalAnswer["text"] = itemValue;
+    onChange(finalAnswer);
   }
 
   return (
@@ -96,7 +76,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
           </View>
           <View style={{ width: '15%' }}>
             <CheckBox
-              checked={value === (token ? item.name.en : item.value)}
+              checked={finalAnswer["value"] === (token ? item.name.en : item.value)}
               onPress={() => handlePress(token ? item.name.en : item.value)}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
@@ -104,9 +84,9 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
             />
           </View>
         </ListItem>
-      ))
-    }
-    {config.isOptionalText ? 
+      ))}
+
+      {config.isOptionalText ? 
       (<View    style={{
                     marginTop: '8%' ,
                     justifyContent: 'center',
@@ -115,7 +95,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
       <Item bordered>
       <Input 
           onChangeText={text=>handleComment(text)}
-          value={text}
+          value={finalAnswer["text"]}
       />
       </Item> 
     </View>
