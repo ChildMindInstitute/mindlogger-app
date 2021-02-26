@@ -84,6 +84,11 @@ class ActivityScreen extends Component {
     if (Array.isArray(answer)) {
       return answer.length !== 0;
     }
+    if (answer !== null && typeof answer !== "undefined") {
+    if (screen.valueConstraints.isOptionalTextRequired && typeof answer["text"] === "undefined") {
+      return false
+    }
+  }
 
     return answer !== null && typeof answer !== "undefined";
   }

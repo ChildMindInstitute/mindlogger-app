@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Image } from "react-native";
 import PropTypes from "prop-types";
 import * as R from "ramda";
-import { ListItem, Text, Icon } from 'native-base';
+import { ListItem, Text, Icon ,Item , Input } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
@@ -114,6 +114,8 @@ export class MultiSelect extends Component {
             </View>
           </ListItem>
         ))}
+
+       
       </View>
     );
   }

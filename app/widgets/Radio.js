@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import * as R from "ramda";
 import { View, Image } from 'react-native';
-import { ListItem, Text, Icon } from 'native-base';
+import { ListItem, Text, Icon,Input,Item  } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
@@ -9,12 +10,39 @@ import { TooltipBox } from './TooltipBox';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
+  ans = value;
+
+  if (value !== undefined ) {
+    value = value.val
+    text = value.text
+  }
+
+  const setAnswer = (key , value) => {
+    ans[key] = value;
+  }
+
+  
   const handlePress = (itemValue) => {
-    if (!selected) {
-      onSelected(true);
-      onChange(itemValue);
+    // if the radio was selected , record it and save things 
+  /*  if (selected) {
+    setAnswer ("val" , itemValue) ;
     }
+
+    if (ans["val"] && (ans["text"] && config.isOptionalTextRequired)) {
+      onSelected(true); 
+      onChange(ans);
+    } else if (!config.isOptionalTextRequired && ans["val"]){
+      onSelected(true); 
+      onChange(ans);
+    }*/
   };
+
+
+  const handleComment = (value) => {
+    //if the Comment is provided record it and set the change 
+      setAnswer ("text" , value) ;
+      onChange(ans);
+  }
 
   return (
     <View style={{ alignItems: 'stretch' }}>
@@ -76,7 +104,23 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
             />
           </View>
         </ListItem>
-      ))}
+      ))
+    }
+    {config.isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>handleComment(text)}
+          value={text}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
     </View>
   );
 };
