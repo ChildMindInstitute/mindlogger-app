@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import DrawingBoard from './DrawingBoard';
+import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
 
 const styles = StyleSheet.create({
@@ -14,22 +15,40 @@ const styles = StyleSheet.create({
 export class Drawing extends React.Component {
   componentDidUpdate(oldProps) {
     const { value } = this.props;
-    if (value !== oldProps.value && !value.lines) {
+    if (value["value"] !== oldProps.value["value"] && !value["value"].lines) {
       this.board.reset();
     }
   }
 
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    
+  onChange(this.finalAnswer);
+  }
+
+  onResult = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["value"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
   render() {
-    const { config, value, onChange, onPress, onRelease } = this.props;
+    const { config, value, onChange, onPress, onRelease  ,isOptionalText} = this.props;
     const url = config.backgroundImage
       ? getURL(config.backgroundImage)
       : null;
+
+    this.finalAnswer= value ? value :[];
+
     return (
       <View>
         <DrawingBoard
           imageSource={url}
-          lines={value && value.lines}
-          onResult={onChange}
+          lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
+          onResult={this.onResult}
           ref={(ref) => { this.board = ref; }}
           onPress={onPress}
           onRelease={onRelease}
@@ -37,6 +56,22 @@ export class Drawing extends React.Component {
         {config.instruction && (
           <Text style={styles.text}>{config.instruction}</Text>
         )}
+
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }
@@ -59,3 +94,4 @@ Drawing.propTypes = {
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
 };
+
