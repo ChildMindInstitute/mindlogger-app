@@ -1,37 +1,62 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import {Item , Input } from 'native-base';
 import TimePicker from './TimePicker';
 
 const defaultTime = { hour: 0, minute: 0 };
 
 export class TimeRange extends React.Component {
+
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
+
   onChangeFrom = (newFromVal) => {
-    const { onChange, value } = this.props;
-    onChange({
+    const { onChange} = this.props;
+ 
+  
+    this.finalAnswer["value"] = {
       from: newFromVal,
-      to: value ? value.to : defaultTime,
-    });
+      to: this.finalAnswer["value"] ? this.finalAnswer["value"].to : defaultTime,
+    };
+
+    onChange(this.finalAnswer);
+    
   }
 
   onChangeTo = (newToVal) => {
-    const { onChange, value } = this.props;
-    onChange({
-      from: value ? value.from : defaultTime,
+    const { onChange } = this.props;
+    
+    this.finalAnswer["value"] = {
+      from: this.finalAnswer["value"] ? this.finalAnswer["value"].from : defaultTime,
       to: newToVal,
-    });
+    };
+    onChange(this.finalAnswer);
+
   }
 
   render() {
-    const { value ,config:{isOptionalText}} = this.props;
-    const safeValue = value || {
+    const { value ,isOptionalText} = this.props;
+
+    this.finalAnswer = value ? value :[];
+
+    const safeValue = this.finalAnswer["value"] || {
       from: defaultTime,
       to: defaultTime,
     };
+
+    this.finalAnswer["value"] = safeValue ? safeValue :[];
+  
     return (
       <View style={{ alignItems: 'stretch' }}>
-        <TimePicker value={safeValue.from} onChange={this.onChangeFrom} label="From" />
-        <TimePicker value={safeValue.to} onChange={this.onChangeTo} label="To" />
+        <TimePicker value={this.finalAnswer["value"].from} onChange={this.onChangeFrom} label="From" />
+        <TimePicker value={this.finalAnswer["value"].to} onChange={this.onChangeTo} label="To" />
         {isOptionalText ? 
       (<View    style={{
                     marginTop: '8%' ,
@@ -47,6 +72,7 @@ export class TimeRange extends React.Component {
     </View>
     ):<View></View>
       }
+     
       </View>
     );
   }

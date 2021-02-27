@@ -84,7 +84,7 @@ export class Camera extends Component {
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    /*onChange(this.finalAnswer);*/
+    onChange(this.finalAnswer);
   }
 
   libraryAlert = () => {
@@ -154,7 +154,8 @@ export class Camera extends Component {
               fromLibrary: false,
             };
             console.log('launchImageLibrary', { picSource });
-            onChange(picSource);
+            this.finalAnswer["value"] = picSource;
+            onChange( this.finalAnswer);
           });
         } else {
           const picSource = {
@@ -165,7 +166,8 @@ export class Camera extends Component {
             fromLibrary: true,
           };
           console.log('launchImageLibrary', { picSource });
-          onChange(picSource);
+          this.finalAnswer["value"] = picSource;
+          onChange( this.finalAnswer);
         }
       }
     });
@@ -196,7 +198,8 @@ export class Camera extends Component {
           fromLibrary: false,
         };
         console.log('launchCamForCam', { picSource });
-        onChange(picSource);
+        this.finalAnswer["value"] = picSource;
+        onChange( this.finalAnswer);
       }
     });
   };
@@ -235,7 +238,8 @@ export class Camera extends Component {
                   fromLibrary: false,
                 };
                 console.log('take', { picSource });
-                onChange(picSource);
+                this.finalAnswer["value"] = picSource;
+                onChange( this.finalAnswer);
               });
             } else {
               const picSource = {
@@ -246,7 +250,8 @@ export class Camera extends Component {
                 fromLibrary: false,
               };
               console.log('take', { picSource });
-              onChange(picSource);
+              this.finalAnswer["value"] = picSource;
+              onChange( this.finalAnswer);
             }
           }
         });
@@ -260,18 +265,19 @@ export class Camera extends Component {
     const { value, video ,isOptionalText} = this.props;
 
     this.finalAnswer = value ? value :[];
+    
     // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     // this.getImageFromCamera();
     return (
       <View style={styles.body}>
-        {value && video && (
+        {this.finalAnswer["value"] && video && (
           <View style={styles.videoConfirmed}>
             <Icon type="Entypo" name="check" style={styles.greenIcon} />
           </View>
         )}
-        {value && !video && <Image source={value} style={styles.image} />}
-        {!value && (
+        {this.finalAnswer["value"] && !video && <Image source={this.finalAnswer["value"]} style={styles.image} />}
+        {!this.finalAnswer["value"] && (
           <View>
             <TouchableOpacity
               onPress={this.libraryAlert}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, ListItem, Left, Right, Icon } from 'native-base';
+import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
 import { View } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -15,6 +15,25 @@ export class DatePicker extends React.Component {
     this.onChangeDate = this.onChangeDate.bind(this);
   }
 
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+
+   selectedDate = this.finalAnswer["value"];
+   
+   selectedDate ? this.finalAnswer["value"] = 
+    {
+      year: selectedDate.getFullYear(),
+      month: selectedDate.getMonth(),
+      day: selectedDate.getDate()
+    } : null
+    
+    onChange(this.finalAnswer);
+  }
+
+
   setShowPicker(visible) {
     this.setState({ show: visible });
   }
@@ -22,36 +41,47 @@ export class DatePicker extends React.Component {
   onChangeDate (event, selectedDate) {
     const { onChange } = this.props;
     if (Platform.OS == 'ios') {
-      onChange({
+
+      this.finalAnswer["value"] = 
+      {
         year: selectedDate.getFullYear(),
         month: selectedDate.getMonth(),
         day: selectedDate.getDate()
-      });
+      }
+      onChange(this.finalAnswer);
     } else {
       this.setShowPicker(false);
   
       if (event.type == 'set') {
-        onChange({
+        this.finalAnswer["value"] = 
+        {
           year: selectedDate.getFullYear(),
           month: selectedDate.getMonth(),
           day: selectedDate.getDate()
-        })
+        }
+        onChange(this.finalAnswer);
       }
     }
   }
 
   render() {
-    const { value } = this.props;
-    const date = value ? new Date(value.year, value.month, value.day) : new Date();
+    const { value , isOptionalText } = this.props;
+    this.finalAnswer= value ? value :[];
 
-    if (value) {
-      date.setHours(value.hour || 0);
-      date.setMinutes(value.minute || 0);
+    const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
+
+   
+
+    if (this.finalAnswer["value"]) {
+      date.setHours(this.finalAnswer["value"].hour || 0);
+      date.setMinutes(this.finalAnswer["value"].minute || 0);
     } else {
       date.setHours(0);
       date.setMinutes(0);
     }
 
+    this.finalAnswer["value"] = date ? date :[];
+    
     return (
       <View style={{ marginBottom: 20 }}>
         <ListItem
@@ -60,7 +90,7 @@ export class DatePicker extends React.Component {
           }}
         >
           <Left>
-            <Text>{moment(date).format('LL')}</Text>
+            <Text>{moment(this.finalAnswer["value"]).format('LL')}</Text>
           </Left>
           <Right>
             <Icon name="arrow-forward" />
@@ -70,14 +100,28 @@ export class DatePicker extends React.Component {
         { this.state.show && (
           <DateTimePicker
             testID="dateTimePicker"
-            value={date}
+            value={this.finalAnswer["value"]}
             mode={'date'}
             is24Hour={true}
             display="default"
             onChange={this.onChangeDate}
           />
         )}
-
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }
@@ -95,3 +139,4 @@ DatePicker.propTypes = {
     day: PropTypes.number,
   }),
 };
+
