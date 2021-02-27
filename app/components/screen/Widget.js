@@ -78,7 +78,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
-        isOptionalText = {true}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -88,7 +88,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
-        isOptionalText = {true}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -146,7 +146,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
-        isOptionalText = {true}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -156,7 +156,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
-        isOptionalText = {true}
+        isOptionalText = {screen.isOptionalText}
         video
       />
     );

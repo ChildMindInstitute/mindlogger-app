@@ -20,15 +20,6 @@ export class DatePicker extends React.Component {
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-
-   selectedDate = this.finalAnswer["value"];
-   
-   selectedDate ? this.finalAnswer["value"] = 
-    {
-      year: selectedDate.getFullYear(),
-      month: selectedDate.getMonth(),
-      day: selectedDate.getDate()
-    } : null
     
     onChange(this.finalAnswer);
   }
@@ -80,7 +71,7 @@ export class DatePicker extends React.Component {
       date.setMinutes(0);
     }
 
-    this.finalAnswer["value"] = date ? date :[];
+    /*this.finalAnswer["value"] = date ? date :[];*/
     
     return (
       <View style={{ marginBottom: 20 }}>
@@ -90,7 +81,7 @@ export class DatePicker extends React.Component {
           }}
         >
           <Left>
-            <Text>{moment(this.finalAnswer["value"]).format('LL')}</Text>
+            <Text>{moment(date).format('LL')}</Text>
           </Left>
           <Right>
             <Icon name="arrow-forward" />
@@ -100,7 +91,7 @@ export class DatePicker extends React.Component {
         { this.state.show && (
           <DateTimePicker
             testID="dateTimePicker"
-            value={this.finalAnswer["value"]}
+            value={date}
             mode={'date'}
             is24Hour={true}
             display="default"
