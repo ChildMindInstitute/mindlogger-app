@@ -117,6 +117,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         config={screen.valueConstraints}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -177,6 +178,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         onPress={onPress}
         onRelease={onRelease}
+        isOptionalText = {screen.isOptionalText}
         value={answer}
       />
     );
@@ -205,6 +207,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <Geolocation
         value={answer}
         onChange={onChange}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
