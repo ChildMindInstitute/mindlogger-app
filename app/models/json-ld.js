@@ -26,7 +26,14 @@ const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
+const MIN_VALUE_IMAGE = "schema:minValueImg";
+const MAX_VALUE_IMAGE = "schema:maxValueImg";
+const SLIDER_LABEL = "schema:sliderLabel";
 const SCORING = "reprolib:terms/scoring";
+const ITEM_LIST = "reprolib:terms/itemList";
+const ITEM_OPTIONS = "reprolib:terms/itemOptions";
+const OPTIONS = "reprolib:terms/options";
+const SLIDER_OPTIONS = "reprolib:terms/sliderOptions";
 const VALUE_TYPE = "reprolib:terms/valueType";
 const ENABLE_NEGATIVE_TOKENS = "reprolib:terms/enableNegativeTokens";
 const NAME = "schema:name";
@@ -185,6 +192,45 @@ export const flattenValueConstraints = (vcObj) =>
       const itemList = R.path([key], vcObj);
       return { ...accumulator, itemList: flattenItemList(itemList) };
     }
+    if (key === ITEM_LIST) {
+      const itemList = R.path([key], vcObj);
+      return { ...accumulator, itemList: itemList.map(item => ({
+        description: R.path([DESCRIPTION, 0, "@value"], item),
+        image: R.path([IMAGE, 0, "@value"], item),
+        name: R.path([NAME, 0, "@value"], item)
+      })) };
+    }
+
+    if (key === ITEM_OPTIONS) {
+      const itemOptions = R.path([key], vcObj);
+      return { ...accumulator, itemOptions: itemOptions.map(option => ({
+        score: R.path([SCORE, 0, "@value"], option),
+        value: R.path([VALUE, 0, "@value"], option)
+      })) };
+    }
+
+    if (key === OPTIONS) {
+      const options = R.path([key], vcObj);
+      return { ...accumulator, options: options.map(option => ({
+        description: R.path([DESCRIPTION, 0, "@value"], option),
+        image: R.path([IMAGE, 0, "@value"], option),
+        name: R.path([NAME, 0, "@value"], option)
+      }))}
+    }
+
+    if (key === SLIDER_OPTIONS) {
+      const sliderOptions = R.path([SLIDER_OPTIONS], vcObj);
+
+      return { ...accumulator, sliderOptions: sliderOptions.map(option => ({
+        minValue: R.path([MIN_VALUE, 0, "@value"], option),
+        maxValue: R.path([MAX_VALUE, 0, "@value"], option),
+        minValueImg: R.path([MIN_VALUE_IMAGE, 0, "@value"], option),
+        maxValueImg: R.path([MAX_VALUE_IMAGE, 0, "@value"], option),
+        sliderLabel: R.path([SLIDER_LABEL, 0, "@value"], option),
+        itemList: flattenItemList(R.path([ITEM_LIST_ELEMENT], option))
+      }))}
+    }
+
     if (key === REQUIRED_VALUE) {
       return { ...accumulator, required: R.path([key, 0, "@value"], vcObj) };
     }
@@ -526,14 +572,14 @@ export const transformApplet = (payload, currentApplets = null) => {
 
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
-                const item = itemTransformJson(payload.items[dataKey]);
+                const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
                 let updated = false;
 
                 if (!act.items) {
                   applet.activities[index].items = [];
                 }
                 act.items.forEach((itemData, i) => {
-                  if (itemData.id === payload.items[dataKey]) {
+                  if (itemData.id.split('/')[1] === dataKey.split('/')[1] && !updated) {
                     updated = true;
                     applet.activities[index].items[i] = {
                       ...itemData,
@@ -618,13 +664,6 @@ export const transformApplet = (payload, currentApplets = null) => {
   applet.groupId = payload.groups;
   return applet;
 };
-
-export const transformResponse = (payload) => {
-  return {
-    ...payload.responses,
-    appletId: 'applet/' + payload.id
-  }
-}
 
 export const dateParser = (schedule) => {
   const output = {};

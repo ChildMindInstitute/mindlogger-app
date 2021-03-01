@@ -331,7 +331,7 @@ class Slider extends Component {
               style={[styles.tickMark, { left: tickMark.left }]}
             >
               <Text style={styles.tickLabel}> l </Text>
-              {showTickMarks && (
+              {!showTickMarks && (
                 <Text> {tickMark.value} </Text>
               )}
             </View>
@@ -378,7 +378,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {showTickMarks && (
+            {!showTickMarks && (
               <Text style={styles.label}>{minValue}</Text>
             )}
           </View>
@@ -391,7 +391,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {showTickMarks && (
+            {!showTickMarks && (
               <Text style={styles.label}>{maxValue}</Text>
             )}
           </View>

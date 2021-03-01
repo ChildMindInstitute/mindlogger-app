@@ -57,7 +57,7 @@ import {
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 
-import { prepareResponseKeys } from "../applets/applets.actions";
+import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
 import { getAESKey, getPublicKey } from "../../services/encryption";
 import config from "../../config";
@@ -355,6 +355,11 @@ export const nextScreen = () => (dispatch, getState) => {
   const activityId = currentActivityIdSelector(state);
 
   if (next === -1) {
+    const activity = currentActivitySelector(state);
+    
+    if (activity.nextAccess) {
+      dispatch(setActivityAccess(applet.id + activityId));
+    }
     dispatch(completeResponse());
     dispatch(setCurrentActivity(null));
     dispatch(setActivityEndTime(applet.id + activityId));

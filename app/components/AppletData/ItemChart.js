@@ -63,6 +63,12 @@ class ItemChart extends React.Component {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
     const dayOfWeeks = i18n.t('calendar:weekdays').split('_');
+    const itemValues = item.valueConstraints.itemList.map(itemData => {
+      return {
+        name: itemData.name.en,
+        value: itemData.value,
+      }
+    });
 
     const month = currentDate.getUTCMonth() + 1;
     const day = currentDate.getUTCDate();
@@ -74,20 +80,21 @@ class ItemChart extends React.Component {
     }
 
     data.forEach((val) => {
-      const sum = Array.isArray(val.value)
-        ? val.value.reduce((a, b) => {
+      const sum = Array.isArray(val.value.ptr)
+        ? val.value.ptr.reduce((a, b) => {
           if (!b) return a;
-          return a + parseInt(b);
+          if (Number.isInteger(b)) return a + parseInt(b);
+          return a + itemValues.find(({ name }) => name === b).value;
         }, 0)
-        : val.value;
-      const accSum = Array.isArray(val.value)
-        ? val.value.reduce((a, b) => {
+        : val.value.ptr;
+      const accSum = Array.isArray(val.value.ptr)
+        ? val.value.ptr.reduce((a, b) => {
           if (!b) return a > 0 ? a : 0;
           let c = a > 0 ? a : 0
-          let d = parseInt(b) > 0 ? parseInt(b) : 0
+          let d = Number.isInteger(b) ? (parseInt(b) > 0 ? parseInt(b) : 0) : itemValues.find(({ name }) => name === b).value;
           return c + d;
         }, 0)
-        : (val.value > 0 ? val.value : 0);
+        : (val.value.ptr > 0 ? val.value.ptr : 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
@@ -135,7 +142,7 @@ class ItemChart extends React.Component {
         name: day,
         value: (tokenUpdates[day] || 0)
       })),
-      currentBalance: tokens.cumulativeToken,
+      currentBalance: Number.isInteger(tokens.currentBalance) ? (tokens.cumulativeToken) : 0,
     };
 
     return (
