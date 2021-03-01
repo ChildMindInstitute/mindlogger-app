@@ -5,7 +5,7 @@ import { View, Linking, Dimensions, Image, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
 import AudioPlayer from './AudioPlayer';
-import Markdown, { MarkdownIt, renderRules } from 'react-native-markdown-display';
+import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from 'react-native-markdown-display';
 import Mimoza from 'mimoza';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
@@ -34,16 +34,22 @@ const rules = {
       );
     } else if (mimeType.startsWith('video/')) {
       return (
-        <VideoPlayer
-          uri={node.attributes.src}
-          key={node.key}
-          width={width}
+        <View
+          width={width - 20}
           height={250}
-        />
+        >
+          <VideoPlayer
+            uri={node.attributes.src}
+            key={node.key}
+            width={width - 20}
+            height={250}
+          />
+        </View>
       );
     }
 
     return (<Image
+      key={node.key}
       style={{
         resizeMode: "center",
         height: 300,
@@ -55,16 +61,16 @@ const rules = {
     />);
   },
   'container_hljs-left': (node, children, parent, styles) => {
-    return <View>{children}</View>
+    return <View key={node.key}>{children}</View>
   },
   'container_hljs-center': (node, children, parent, styles) => {
-    return <View>{children}</View>
+    return <View key={node.key}>{children}</View>
   },
   'container_hljs-right': (node, children, parent, styles) => {
-    return (<View>{children}</View>);
+    return (<View key={node.key}>{children}</View>);
   },
   'ins': (node, children) => {
-    return (<Text style={{ textDecorationLine: 'underline' }}>{children}</Text>)
+    return (<Text key={node.key} style={{ textDecorationLine: 'underline' }}>{children}</Text>)
   },
   paragraph: (node, children, parents, styles) => {
     let type = null;
@@ -78,7 +84,7 @@ const rules = {
 
     if (type) {
       const style = type.endsWith('right') ? 'flex-end' : type.includes('center') ? 'center' : 'flex-start';
-      return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>
+      return <View key={node.key} key={node.key} style={{ justifyContent: style, alignItems: style }}>
         {children}
       </View>
     }
@@ -92,10 +98,10 @@ export const MarkdownScreen = ({ mstyle, children }) => {
 
   return (
     <View
-      style={{ justifyContent: 'center', alignItems: 'center' }}
+      style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 10}}
     >
       <Markdown
-        style={{heading1, heading2, heading3, heading4, heading5, heading6, paragraph}}
+        style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
         mergeStyle={ true }
         onLinkPress={(url) => {
           Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));

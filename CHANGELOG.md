@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
-## [0.15.6] - 2020-02-28
+## [0.15.7] - 2020-02-28
 - Fixed optimization issue
 - Fixed response data issue
+
+## [0.15.6] - 2020-02-24
+- Updated tick marks in slider widget
 
 ## [0.15.5] - 2020-02-22
 - Fixed hidden inputbox

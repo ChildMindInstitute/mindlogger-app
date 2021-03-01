@@ -665,13 +665,6 @@ export const transformApplet = (payload, currentApplets = null) => {
   return applet;
 };
 
-export const transformResponse = (payload) => {
-  return {
-    ...payload.responses,
-    appletId: 'applet/' + payload.id
-  }
-}
-
 export const dateParser = (schedule) => {
   const output = {};
   Object.keys(schedule.events).forEach(key => {
