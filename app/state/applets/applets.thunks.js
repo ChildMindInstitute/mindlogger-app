@@ -17,7 +17,7 @@ import {
 import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
-import { downloadAppletResponses } from '../responses/responses.thunks';
+import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
@@ -42,7 +42,9 @@ import { setCurrentApplet } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
-import { transformApplet, transformResponse } from "../../models/json-ld";
+import { transformApplet } from "../../models/json-ld";
+import { decryptAppletResponses } from "../../models/response";
+import config from "../../config";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -211,7 +213,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         };
       });
 
-      localInfo[id.substring(7)] = {
+      localInfo[id.split("/").pop()] = {
         appletVersion: applet.schemaVersion.en,
         contentUpdateTime,
         localItems: response ? Object.keys(response.items) : null,
@@ -229,10 +231,12 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
     .then(async (applets) => {
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
+        const userInfo = userInfoSelector(state);
+        const responses = [];
         const transformedApplets = applets
           .map((appletInfo) => {
             if (!appletInfo.applet) {
-              const currentApplet = currentApplets.find(({ id }) => id.substring(7) === appletInfo.id)
+              const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
               if (appletInfo.schedule) {
                 const events = currentApplet.schedule.events;
                 currentApplet.schedule = appletInfo.schedule;
@@ -257,20 +261,21 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
                 }
                 currentApplet.schedule.events = events;
               }
+              responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
               return currentApplet;
             } else {
-              return transformApplet(appletInfo, currentApplets);
+              const applet = transformApplet(appletInfo, currentApplets);
+              if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+                dispatch(updateKeys(applet, userInfo));
+              }
+              responses.push({
+                ...decryptAppletResponses(applet, appletInfo.responses),
+                appletId: 'applet/' + appletInfo.id
+              });
+              return applet;
             }
           });
-        const responses = applets
-          .filter((applet) => !R.isEmpty(applet.items))
-          .map((appletInfo) => {
-            if (appletInfo.responses) {
-              return transformResponse(appletInfo)
-            }
-            return currentResponses.find(({ appletId }) => appletId.substring(7) === appletInfo.id);
-          })
- 
+
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
