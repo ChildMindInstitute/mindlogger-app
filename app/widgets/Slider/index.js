@@ -244,22 +244,24 @@ class Slider extends Component {
   };
 
   tapSliderHandler = (evt) => {
-    const { sliderWidth, minimumValue } = this.state;
+    const { sliderWidth, minimumValue, maximumValue } = this.state;
     const {
       onChange,
       config: { itemList },
     } = this.props;
 
     if (sliderWidth) {
-      const calculatedValue = Math.ceil(
-        Math.abs(evt.nativeEvent.locationX / sliderWidth).toFixed(1) *
-          itemList.length +
-          minimumValue -
-          1
-      );
-      this.finalAnswer["value"]=calculatedValue;
-      onChange(this.finalAnswer);
-      this.setState({ currentValue: calculatedValue });
+      const locationX = evt.nativeEvent.locationX - 20.5;
+      const calculatedValue =
+        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);   
+      const value = calculatedValue > maximumValue
+        ? maximumValue
+        : (calculatedValue < minimumValue
+          ? minimumValue
+          : calculatedValue);
+        this.finalAnswer["value"]=value;
+        onChange(this.finalAnswer);
+      this.setState({ currentValue: value });
     }
   };
 
@@ -313,7 +315,7 @@ class Slider extends Component {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
 
     const {
-      config: { maxValue, minValue, itemList, showTickMarks ,isOptionalText },
+      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText },
       onChange,
       onPress,
       value,
@@ -324,6 +326,8 @@ class Slider extends Component {
     this.finalAnswer = value ? value :[];
 
     let currentVal = this.finalAnswer["value"];
+    const step = itemList ? (continousSlider ? 0.01 : 1) : 0;2
+
     if (!value && value !== currentValue) {
       this.setState({ currentValue: value });
     }
@@ -341,7 +345,7 @@ class Slider extends Component {
               style={[styles.tickMark, { left: tickMark.left }]}
             >
               <Text style={styles.tickLabel}> l </Text>
-              {showTickMarks && (
+              {!showTickMarks && (
                 <Text> {tickMark.value} </Text>
               )}
             </View>
@@ -367,7 +371,7 @@ class Slider extends Component {
                     ? styles.thumb
                     : styles.thumbUnselected
                 }
-                step={itemList ? 1 : 0}
+                step={step}
                 onSlidingStart={onPress}
                 onSlidingComplete={(val) => {
                   onRelease();
@@ -389,7 +393,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {showTickMarks && (
+            {!showTickMarks && (
               <Text style={styles.label}>{minValue}</Text>
             )}
           </View>
@@ -402,7 +406,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {showTickMarks && (
+            {!showTickMarks && (
               <Text style={styles.label}>{maxValue}</Text>
             )}
           </View>

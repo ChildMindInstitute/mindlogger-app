@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Platform,
   KeyboardAvoidingView,
 } from "react-native";
 import PropTypes from "prop-types";
@@ -189,9 +190,10 @@ class ActivityScreen extends Component {
     return (
       <View style={styles.outer}>
         <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={2}
+          keyboardVerticalOffset={4}
         >
           <ScrollView
             alwaysBounceVertical={false}

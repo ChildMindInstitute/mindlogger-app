@@ -106,6 +106,11 @@ class Activity extends React.Component {
       testVisibility(item.visibility, activity.items, responses)
     );
     const next = getNextPos(currentScreen, visibility);
+
+    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
+      return ;
+    }
+
     if ((autoAdvance || fullScreen) && !optionalText) {
       if (next === -1 && activity.compute && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });

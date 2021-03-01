@@ -6,12 +6,15 @@ import {
   Platform,
   StyleSheet,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { View, Icon , Item , Input } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
+import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 import permissions from '../permissions';
+const { width, height } = Dimensions.get('window');
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 const styles = StyleSheet.create({
@@ -268,16 +271,26 @@ export class Camera extends Component {
     
     // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
-    // this.getImageFromCamera();
     return (
       <View style={styles.body}>
-        {this.finalAnswer["value"] && video && (
-          <View style={styles.videoConfirmed}>
-            <Icon type="Entypo" name="check" style={styles.greenIcon} />
-          </View>
-        )}
-        {this.finalAnswer["value"] && !video && <Image source={this.finalAnswer["value"]} style={styles.image} />}
-        {!this.finalAnswer["value"] && (
+        {this.finalAnswer["value"] ? (
+          video ? (
+            Platform.OS === 'ios' ? ( // iOS
+              <View style={styles.videoConfirmed}>
+                <Icon type="Entypo" name="check" style={styles.greenIcon} />
+              </View>
+            ):(                       // Android
+              <VideoPlayer
+                video={{ uri: this.finalAnswer["value"].uri }}
+                videoWidth={width}
+                videoHeight={360}
+                resizeMode="contain"
+              />
+            )
+          ):(
+            <Image source={this.finalAnswer["value"]} style={styles.image} />
+          )
+        ):(
           <View>
             <TouchableOpacity
               onPress={this.libraryAlert}
