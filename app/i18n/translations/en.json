@@ -3,6 +3,13 @@
     "incorrect_answer": "Incorrect answer. Please try again",
     "failed": "Failed"
   },
+  "activity_time":{
+    "time_remaining": "Time Remaining"
+  },
+  "timed_activity":{
+    "time_to_complete": "Time to complete",
+    "hours" : "hours"
+  },
   "activity_summary": {
     "save": "Save",
     "summary": "Summary",

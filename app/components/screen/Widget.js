@@ -105,16 +105,20 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'timeRange') {
     return (
       <TimeRange
+       config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
   if (screen.inputType === 'date') {
     return (
       <DatePicker
+      config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -143,6 +147,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         config={screen.valueConstraints}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -172,6 +177,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }
@@ -181,6 +187,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {screen.isOptionalText}
         video
       />
     );
@@ -201,6 +208,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         onPress={onPress}
         onRelease={onRelease}
+        isOptionalText = {screen.isOptionalText}
         value={answer}
       />
     );
@@ -229,6 +237,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <Geolocation
         value={answer}
         onChange={onChange}
+        isOptionalText = {screen.isOptionalText}
       />
     );
   }

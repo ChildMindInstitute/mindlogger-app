@@ -8,7 +8,7 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import { View, Icon } from 'native-base';
+import { View, Icon , Item , Input } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
@@ -82,6 +82,14 @@ const styles = StyleSheet.create({
 export class Camera extends Component {
   isIos = Platform.OS === 'ios';
 
+  finalAnswer = [];
+
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
   libraryAlert = () => {
     const { video } = this.props;
     const mediaType = video ? 'video' : 'photo';
@@ -149,7 +157,8 @@ export class Camera extends Component {
               fromLibrary: false,
             };
             console.log('launchImageLibrary', { picSource });
-            onChange(picSource);
+            this.finalAnswer["value"] = picSource;
+            onChange( this.finalAnswer);
           });
         } else {
           const picSource = {
@@ -160,7 +169,8 @@ export class Camera extends Component {
             fromLibrary: true,
           };
           console.log('launchImageLibrary', { picSource });
-          onChange(picSource);
+          this.finalAnswer["value"] = picSource;
+          onChange( this.finalAnswer);
         }
       }
     });
@@ -191,7 +201,8 @@ export class Camera extends Component {
           fromLibrary: false,
         };
         console.log('launchCamForCam', { picSource });
-        onChange(picSource);
+        this.finalAnswer["value"] = picSource;
+        onChange( this.finalAnswer);
       }
     });
   };
@@ -230,7 +241,8 @@ export class Camera extends Component {
                   fromLibrary: false,
                 };
                 console.log('take', { picSource });
-                onChange(picSource);
+                this.finalAnswer["value"] = picSource;
+                onChange( this.finalAnswer);
               });
             } else {
               const picSource = {
@@ -241,7 +253,8 @@ export class Camera extends Component {
                 fromLibrary: false,
               };
               console.log('take', { picSource });
-              onChange(picSource);
+              this.finalAnswer["value"] = picSource;
+              onChange( this.finalAnswer);
             }
           }
         });
@@ -252,11 +265,15 @@ export class Camera extends Component {
   };
 
   render() {
-    const { value, video } = this.props;
+    const { value, video ,isOptionalText} = this.props;
+
+    this.finalAnswer = value ? value :[];
+    
+    // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     return (
       <View style={styles.body}>
-        {value ? (
+        {this.finalAnswer["value"] ? (
           video ? (
             Platform.OS === 'ios' ? ( // iOS
               <View style={styles.videoConfirmed}>
@@ -264,14 +281,14 @@ export class Camera extends Component {
               </View>
             ):(                       // Android
               <VideoPlayer
-                video={{ uri: value.uri }}
+                video={{ uri: this.finalAnswer["value"].uri }}
                 videoWidth={width}
                 videoHeight={360}
                 resizeMode="contain"
               />
             )
           ):(
-            <Image source={value} style={styles.image} />
+            <Image source={this.finalAnswer["value"]} style={styles.image} />
           )
         ):(
           <View>
@@ -283,6 +300,22 @@ export class Camera extends Component {
             </TouchableOpacity>
           </View>
         )}
+
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }

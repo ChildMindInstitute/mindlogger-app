@@ -82,9 +82,15 @@ class ActivityScreen extends Component {
     if (screen.inputType === "markdownMessage") {
       return true;
     }
-    if (Array.isArray(answer)) {
-      return answer.length !== 0;
+    if (answer !== null && typeof answer !== "undefined") {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "") ) {
+        return false
+      }
     }
+    /*if (Array.isArray(answer)) {
+      return answer.length !== 0;
+    }*/
+   
 
     return answer !== null && typeof answer !== "undefined";
   }
