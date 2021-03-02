@@ -4,7 +4,7 @@ import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
-import { downloadAllResponses, uploadResponseQueue } from "../../services/api";
+import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
 import {
   prepareResponseForUpload,
@@ -187,12 +187,40 @@ export const startResponse = (activity) => (dispatch, getState) => {
   }
 };
 
+export const downloadResponse = () => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+  const userInfo = userInfoSelector(state);
+  const applet = currentAppletSelector(state);
+
+  dispatch(updateKeys(applet, userInfo));
+  dispatch(setDownloadingResponses(true));
+
+  downloadAppletResponse(authToken, applet)
+    .then(async (responses) => {
+      console.log('7days responses', responses)
+      if (loggedInSelector(getState())) {
+        await storeData('ml_responses', responses);
+        dispatch(replaceResponses(responses));
+      }
+    })
+    .finally(() => {
+      dispatch(setDownloadingResponses(false));
+    });
+
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone).then((schedule) => {
+    dispatch(setSchedule(schedule));
+  });
+}
+
 export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
 
   const userInfo = userInfoSelector(state);
+  console.log('***********');
   for (const applet of applets) {
     if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
       dispatch(updateKeys(applet, userInfo));
@@ -204,6 +232,7 @@ export const downloadResponses = () => (dispatch, getState) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   })
     .then(async (responses) => {
+      console.log('7days responses', responses)
       if (loggedInSelector(getState())) {
         await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
@@ -290,7 +319,7 @@ export const startUploadQueue = () => (dispatch, getState) => {
     // Progress - a response was uploaded
     dispatch(shiftUploadQueue());
   }).finally(() => {
-    dispatch(downloadResponses());
+    dispatch(downloadResponse());
   });
 };
 
@@ -301,13 +330,15 @@ export const completeResponse = () => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   // console.log({ applet });
   const inProgressResponse = currentResponsesSelector(state);
-
+ 
   console.log({ inProgressResponse });
   const activity = currentActivitySelector(state);
-
+  console.log('00000000');
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    console.log('0101010101');
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
+  console.log('1111111');
 
   const responseHistory = currentAppletResponsesSelector(state);
 
@@ -334,6 +365,7 @@ export const completeResponse = () => (dispatch, getState) => {
     })
   } else {
     const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }

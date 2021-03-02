@@ -204,6 +204,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
   if (currentApplets) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet; 
+      console.log('=========', currentResponses, id)
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
       const localEvents = Object.keys(applet.schedule.events).map(id => {
         event = applet.schedule.events[id];
@@ -275,7 +276,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return applet;
             }
           });
-
+        console.log('applets --------------', transformedApplets)
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 

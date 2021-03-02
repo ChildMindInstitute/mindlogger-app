@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 import * as R from "ramda";
 import { testVisibility } from "../../services/visibility";
+import { IS_VIS } from "../../models/json-ld";
 
 export const responsesSelector = R.path(["responses", "responseHistory"]);
 
@@ -53,7 +54,9 @@ export const currentResponsesSelector = createSelector(
   R.path(["app", "currentActivity"]),
   R.path(["app", "currentApplet"]),
   inProgressSelector,
-  (activityId, appletId, inProgress) => inProgress[appletId + activityId]
+  (activityId, appletId, inProgress) => {
+    return inProgress[appletId + activityId]
+  }
 );
 
 export const currentScreenSelector = createSelector(
@@ -69,8 +72,8 @@ export const itemVisiblitySelector = createSelector(
     }
     const { responses, activity } = current;
 
-    return activity.items.map((item) =>
-      testVisibility(item.visibility, activity.items, responses)
+    return activity.addProperties.map((property) =>
+      testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
     );
   }
 );

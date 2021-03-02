@@ -70,9 +70,9 @@ class ItemChart extends React.Component {
       }
     });
 
-    const month = currentDate.getUTCMonth() + 1;
-    const day = currentDate.getUTCDate();
-    const year = currentDate.getUTCFullYear();
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
     const newDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 
     if (item.additionalParams.activeCount === 0) {
@@ -80,21 +80,21 @@ class ItemChart extends React.Component {
     }
 
     data.forEach((val) => {
-      const sum = Array.isArray(val.value.ptr)
-        ? val.value.ptr.reduce((a, b) => {
+      const sum = Array.isArray(val.value)
+        ? val.value.reduce((a, b) => {
           if (!b) return a;
           if (Number.isInteger(b)) return a + parseInt(b);
           return a + itemValues.find(({ name }) => name === b).value;
         }, 0)
-        : val.value.ptr;
-      const accSum = Array.isArray(val.value.ptr)
-        ? val.value.ptr.reduce((a, b) => {
+        : val.value;
+      const accSum = Array.isArray(val.value)
+        ? val.value.reduce((a, b) => {
           if (!b) return a > 0 ? a : 0;
           let c = a > 0 ? a : 0
           let d = Number.isInteger(b) ? (parseInt(b) > 0 ? parseInt(b) : 0) : itemValues.find(({ name }) => name === b).value;
           return c + d;
         }, 0)
-        : (val.value.ptr > 0 ? val.value.ptr : 0);
+        : (val.value > 0 ? val.value : 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
