@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { View, Platform, TouchableOpacity, StyleSheet } from "react-native";
 import NativeGeolocation from "@react-native-community/geolocation";
-import { Icon } from "native-base";
+import { Icon , Item , Input} from "native-base";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
@@ -38,12 +38,23 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Geolocation = ({ value, onChange }) => {
+export const Geolocation = ({ value, onChange ,isOptionalText}) => {
   const [locationPermission, setLocationPermission] = useState("undetermined");
   const permission = Platform.select({
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   });
+
+
+  finalAnswer= value ? value :[];
+
+
+  handleComment = (itemValue) => {
+    
+    this.finalAnswer["text"] = itemValue;
+    
+    onChange(this.finalAnswer);
+  }
 
   useEffect(() => {
     Permissions.check(permission).then(setLocationPermission);
@@ -56,10 +67,12 @@ export const Geolocation = ({ value, onChange }) => {
       if (response === Permissions.RESULTS.GRANTED) {
         NativeGeolocation.getCurrentPosition(
           (successResponse) => {
-            onChange({
+            this.finalAnswer["value"] = {
               latitude: successResponse.coords.latitude,
               longitude: successResponse.coords.longitude,
-            });
+            } ;
+
+            onChange(this.finalAnswer);
           },
           (errorResponse) => {
             console.warn(errorResponse);
@@ -101,7 +114,7 @@ export const Geolocation = ({ value, onChange }) => {
         </View>
       )}
       {locationPermission !== "denied" &&
-        typeof value?.latitude !== "undefined" && (
+        typeof this.finalAnswer["value"]?.latitude !== "undefined" && (
           <View>
             <BaseText
               style={styles.infoText}
@@ -109,6 +122,22 @@ export const Geolocation = ({ value, onChange }) => {
             />
           </View>
         )}
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    width: '100%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
     </View>
   );
 };
@@ -116,9 +145,11 @@ export const Geolocation = ({ value, onChange }) => {
 Geolocation.defaultProps = {
   value: {},
   onChange: () => {},
+ // isOptionalText,
 };
 
 Geolocation.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func,
+  isOptionalText: PropTypes.bool
 };

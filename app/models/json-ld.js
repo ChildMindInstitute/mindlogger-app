@@ -72,6 +72,8 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
+const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
+const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
 const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
 
 export const ORDER = "reprolib:terms/order";
@@ -146,6 +148,13 @@ export const flattenValueConstraints = (vcObj) =>
         multipleChoice: R.path([key, 0, "@value"], vcObj),
       };
     }
+
+    if (key === IS_OPTIONAL_TEXT_REQUIRED) {
+      return {
+        ...accumulator,
+        isOptionalTextRequired: R.path([key, 0, "@value"], vcObj),
+      };
+    }
     if (key == SCORING) {
       return {
         ...accumulator,
@@ -157,7 +166,16 @@ export const flattenValueConstraints = (vcObj) =>
         ...accumulator,
         showTickMarks: R.path([key, 0, "@value"], vcObj),
       }
+
     }
+
+  /*  if (key == IS_OPTIONAL_TEXT) {
+      return {
+        ...accumulator,
+        isOptionalText: R.path([key, 0, "@value"], vcObj),
+      }
+    }*/
+
     if (key == RESPONSE_ALERT) {
       return {
         ...accumulator,
@@ -338,6 +356,7 @@ export const itemTransformJson = (itemJson) => {
   const inputsObj = transformInputs(inputs);
 
   const media = transformMedia(R.path([MEDIA, 0], itemJson));
+  valueConstraints.isOptionalText = listToValue(itemJson[IS_OPTIONAL_TEXT]);
 
   const res = {
     id: itemJson._id,
@@ -347,6 +366,7 @@ export const itemTransformJson = (itemJson) => {
     version: languageListToObject(itemJson[VERSION]),
     altLabel: languageListToObject(itemJson[ALT_LABEL]),
     inputType: listToValue(itemJson[INPUT_TYPE]),
+    isOptionalText : listToValue(itemJson[IS_OPTIONAL_TEXT]),
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
     timer: R.path([TIMER, 0, "@value"], itemJson),

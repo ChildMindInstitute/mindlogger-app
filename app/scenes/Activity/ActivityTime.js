@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
+import i18n from 'i18next';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
@@ -91,7 +92,7 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
 
   return (
     <Text style={styles.remainingTime}>
-      {activityTime && `Time remaining: ${activityTime.hours}:${activityTime.mins}:${activityTime.secs}`}
+      {activityTime && `${i18n.t('activity_time:time_remaining')}: ${activityTime.hours}:${activityTime.mins}:${activityTime.secs}`}
     </Text>
   );
 };

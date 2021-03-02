@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Image } from 'react-native';
-import { ListItem, Text, Icon } from 'native-base';
+import { ListItem, Text, Icon , Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
@@ -9,12 +9,20 @@ import { TooltipBox } from './TooltipBox';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
+  var finalAnswer = value ? value :[];
+
   const handlePress = (itemValue) => {
-    if (!selected) {
+   // if (!selected) {
+      finalAnswer["value"] = itemValue;
       onSelected(true);
-      onChange(itemValue);
-    }
+      onChange(finalAnswer);
+    //}
   };
+
+  const handleComment = (itemValue) => {
+    finalAnswer["text"] = itemValue;
+    onChange(finalAnswer);
+  }
 
   return (
     <View style={{ alignItems: 'stretch' }}>
@@ -68,7 +76,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
           </View>
           <View style={{ width: '15%' }}>
             <CheckBox
-              checked={value === (token ? item.name.en : item.value)}
+              checked={finalAnswer["value"] === (token ? item.name.en : item.value)}
               onPress={() => handlePress(token ? item.name.en : item.value)}
               checkedIcon="dot-circle-o"
               uncheckedIcon="circle-o"
@@ -77,6 +85,22 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
           </View>
         </ListItem>
       ))}
+
+      {config.isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>handleComment(text)}
+          value={finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
     </View>
   );
 };

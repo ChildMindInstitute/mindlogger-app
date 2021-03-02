@@ -19,14 +19,15 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
   if (activity.status === 'scheduled' && activity.nextScheduledTimestamp && nextTimedActivity) {
     return (
       <LittleText style={styles.textStyles}>
-        {(nextTimedActivity && nextTimedActivity.allow) ? ` Time to Complete: ${ nextTimedActivity.hour } hours and ${ nextTimedActivity.minute } minutes ` : ``}
+      
+        {(nextTimedActivity && nextTimedActivity.allow) ? `${i18n.t('timed_activity:time_to_complete')}: ${ nextTimedActivity.hour } ${i18n.t('timed_activity:hours')} and ${ nextTimedActivity.minute } minutes ` : ``}
       </LittleText>
     );
   }
   if (activity.status === 'pastdue' && activity.lastScheduledTimestamp && lastTimedActivity) {
     return (
       <LittleText style={styles.textStyles}>
-        {(lastTimedActivity && lastTimedActivity.allow) ? ` Time to Complete: ${ lastTimedActivity.hour } hours and ${ lastTimedActivity.minute } minutes ` : ``}
+        {(lastTimedActivity && lastTimedActivity.allow) ? `${i18n.t('timed_activity:time_to_complete')}: ${ lastTimedActivity.hour } ${i18n.t('timed_activity:hours')} and ${ lastTimedActivity.minute } minutes ` : ``}
       </LittleText>
     );
   }
@@ -54,7 +55,7 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
 
     return (
       <LittleText style={styles.textStyles}>
-        {(!startedTime || hour !== null) ? `Time to Complete: ${ hour } hours and ${ minute } minutes` : ``}
+        {(!startedTime || hour !== null) ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes` : ``}
       </LittleText>
     )
   }

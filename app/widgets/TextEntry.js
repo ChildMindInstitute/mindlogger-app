@@ -8,6 +8,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => (
   <View {...props}>
     <Item>
       <Input
+        
         placeholder={i18n.t('text_entry:type_placeholder')}
         onChangeText={onChange}
         keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}

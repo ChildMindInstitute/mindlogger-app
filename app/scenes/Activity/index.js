@@ -99,6 +99,7 @@ class Activity extends React.Component {
     const { activity, responses } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const optionalText = this.currentItem.isOptionalText
 
     responses[currentScreen] = answer;
     const visibility = activity.items.map((item) =>
@@ -110,7 +111,7 @@ class Activity extends React.Component {
       return ;
     }
 
-    if (autoAdvance || fullScreen) {
+    if ((autoAdvance || fullScreen) && !optionalText) {
       if (next === -1 && activity.compute && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);

@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Image } from "react-native";
 import PropTypes from "prop-types";
 import * as R from "ramda";
-import { ListItem, Text, Icon } from 'native-base';
+import { ListItem, Text, Icon ,Item , Input } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
@@ -15,25 +15,38 @@ export class MultiSelect extends Component {
     }
     return true;
   }
+  finalAnswer = [];
 
   onAnswer = (itemVal) => {
-    const { value, onChange, config } = this.props;
-    if (!value || (config.maxValue === 1 && config.minValue === 1)) {
-      onChange([itemVal]);
-    } else if (Array.isArray(value) && value.includes(itemVal)) {
-      const answerIndex = value.indexOf(itemVal);
-      onChange(R.remove(answerIndex, 1, value));
+    const { onChange, config } = this.props;
+    if (!this.finalAnswer["value"]  || (config.maxValue === 1 && config.minValue === 1)) {
+      this.finalAnswer["value"] =[itemVal]
+      onChange(this.finalAnswer);
+    } else if (Array.isArray(this.finalAnswer["value"] ) && this.finalAnswer["value"] .includes(itemVal)) {
+      const answerIndex = this.finalAnswer["value"] .indexOf(itemVal);
+      this.finalAnswer["value"] =R.remove(answerIndex, 1, this.finalAnswer["value"] );
+      onChange(this.finalAnswer);
     } else {
-      onChange(R.append(itemVal, value));
+      this.finalAnswer["value"] =R.append(itemVal, this.finalAnswer["value"] );
+      onChange(this.finalAnswer);
     }
   };
 
+  handleComment = (itemValue) => {
+    const {onChange} = this.props;
+    this.finalAnswer["text"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
   render() {
     const {
-      config: { itemList },
+      config: { itemList , isOptionalText},
       token,
       value = [],
     } = this.props;
+
+   this.finalAnswer = value ? value :[];
+
     return (
       <View style={{ alignItems: "stretch" }}>
         {itemList.map((item, index) => (
@@ -101,9 +114,9 @@ export class MultiSelect extends Component {
             <View style={{ width: "15%" }}>
               <CheckBox
                 checked={
-                  value &&
-                  Array.isArray(value) &&
-                  value.includes(token ? item.name.en : item.value)
+                  this.finalAnswer["value"] &&
+                  Array.isArray(this.finalAnswer["value"]) &&
+                  this.finalAnswer["value"].includes(token ? item.name.en : item.value)
                 }
                 onPress={() => this.onAnswer(token ? item.name.en : item.value)}
                 checkedIcon="check-square"
@@ -114,6 +127,22 @@ export class MultiSelect extends Component {
             </View>
           </ListItem>
         ))}
+
+        {isOptionalText ? 
+      (<View    style={{
+                    marginTop: '8%' ,
+                    justifyContent: 'center',
+                  }}
+                  >
+      <Item bordered>
+      <Input 
+          onChangeText={text=>this.handleComment(text)}
+          value={this.finalAnswer["text"]}
+      />
+      </Item> 
+    </View>
+    ):<View></View>
+      }
       </View>
     );
   }
@@ -131,5 +160,6 @@ MultiSelect.propTypes = {
   }).isRequired,
   token: PropTypes.bool,
   value: PropTypes.array,
+  finalAnswer: PropTypes.array,
   onChange: PropTypes.func.isRequired,
 };
