@@ -237,7 +237,7 @@ class Slider extends Component {
     const { sliderWidth, minimumValue, maximumValue } = this.state;
     const {
       onChange,
-      config: { itemList },
+      config: { itemList, continousSlider },
     } = this.props;
 
     if (sliderWidth) {
@@ -249,8 +249,9 @@ class Slider extends Component {
         : (calculatedValue < minimumValue
           ? minimumValue
           : calculatedValue);
-      onChange(value);
-      this.setState({ currentValue: value });
+      const currentValue = continousSlider ? value : Math.round(value);
+      onChange(currentValue);
+      this.setState({ currentValue });
     }
   };
 
@@ -302,7 +303,6 @@ class Slider extends Component {
 
   render() {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
-
     const {
       config: { maxValue, minValue, itemList, continousSlider, showTickMarks },
       onChange,
@@ -311,7 +311,7 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
-    const step = itemList ? (continousSlider ? 0.01 : 1) : 0;2
+    const step = itemList ? (continousSlider ? 0.01 : 1) : 0;
 
     let currentVal = value;
     if (!value && value !== currentValue) {
