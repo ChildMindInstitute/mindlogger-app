@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### [Unreleased]
+## [0.15.8] - 2020-03-01
+- Fixed continuous slider issue
+- Fixed conditional logic issue
+
 ## [0.15.7] - 2020-02-28
 - Fixed optimization issue
 - Fixed response data issue

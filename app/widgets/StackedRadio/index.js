@@ -53,7 +53,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
   return (
     <View style={{ alignItems: 'stretch' }}>
       <ListItem
-        style={{ width: '90%' }}
+        style={{ width: '95%' }}
       >
         <View style={{ width: '20%' }}></View>
         {
@@ -75,7 +75,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
 
       {config.itemList.map((item, i) => (
         <ListItem
-          style={{ width: '90%' }}
+          style={{ width: '95%' }}
           key={i}
         >
           <View style={{ width: '20%' }}>
@@ -103,9 +103,9 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                   multipleChoice && (
                     <CheckBox
                       checked={
-                        currentValue[i].includes(token ? `${item.name}/${option.name}` : tokenValues[i][j])
+                        currentValue[i].includes(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`)
                       }
-                      onPress={() => handlePress(token ? `${item.name}/${option.name}` : tokenValues[i][j], i)}
+                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="check-square"
                       uncheckedIcon="square-o"
                       checkedColor={colors.primary}
@@ -113,8 +113,8 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                     />
                   ) || (
                     <CheckBox
-                      checked={currentValue[i] === (token ? `${item.name}/${option.name}` : tokenValues[i][j])}
-                      onPress={() => handlePress(token ? `${item.name}/${option.name}` : tokenValues[i][j], i)}
+                      checked={currentValue[i] === `${option.name}${token ? ':'+tokenValues[i][j] : ''}`}
+                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="dot-circle-o"
                       uncheckedIcon="circle-o"
                       checkedColor={colors.primary}
