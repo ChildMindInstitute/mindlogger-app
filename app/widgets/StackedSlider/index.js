@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sliderLabel: {
-    width: "15%"
+    width: "15%",
+    fontSize: 15
   },
   sliderElement: {
     width: "90%"

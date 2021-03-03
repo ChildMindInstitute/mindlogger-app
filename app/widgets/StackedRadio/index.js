@@ -1,11 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image } from 'react-native';
+import { View, Image, StyleSheet } from 'react-native';
 import { ListItem, Text, Icon } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../../themes/colors';
 import { getURL } from '../../services/helper';
 import { TooltipBox } from '../TooltipBox';
+
+const styles = StyleSheet.create({
+  itemText: {
+    fontSize: 14,
+  },
+  optionText: {
+    fontSize: 14
+  }
+});
 
 export const StackedRadio = ({ value, config, onChange, token }) => {
   const optionNumber = config.options.length;
@@ -62,10 +71,10 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
             <View style={{ width: optionWidth }}>
               {option.description ? (
                 <TooltipBox text={option.description}>
-                  <Text>{ option.name }</Text>
+                  <Text style={styles.optionText}>{ option.name }</Text>
                 </TooltipBox>
               ) : (
-                <Text>{ option.name }</Text>
+                <Text style={styles.optionText}>{ option.name }</Text>
               )}
               {option.image ? (
                 <Image
@@ -88,10 +97,10 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
           <View style={{ width: '20%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
-                <Text>{ item.name }</Text>
+                <Text style={styles.itemText}>{ item.name }</Text>
               </TooltipBox>
             ) : (
-              <Text>{ item.name }</Text>
+              <Text style={styles.itemText}>{ item.name }</Text>
             )}
             {item.image ? (
                 <Image
