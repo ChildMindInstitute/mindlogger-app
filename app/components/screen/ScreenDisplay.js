@@ -29,7 +29,7 @@ const ScreenDisplay = ({ screen }) => {
         {screen.question.en}
       </MarkdownScreen>
     ) || (
-      <Markdown>{screen.question.en}</Markdown>
+      <MarkdownScreen>{screen.question.en}</MarkdownScreen>
     ))}
     {screen.info && (
       <View style={styles.infoTitle}>
