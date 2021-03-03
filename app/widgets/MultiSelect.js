@@ -15,7 +15,7 @@ export class MultiSelect extends Component {
     }
     return true;
   }
-  finalAnswer = [];
+  finalAnswer = {};
 
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
@@ -42,10 +42,10 @@ export class MultiSelect extends Component {
     const {
       config: { itemList , isOptionalText},
       token,
-      value = [],
+      value = {},
     } = this.props;
 
-   this.finalAnswer = value ? value :[];
+   this.finalAnswer = value ? value : {};
 
     return (
       <View style={{ alignItems: "stretch" }}>
@@ -159,7 +159,6 @@ MultiSelect.propTypes = {
     maxValue: PropTypes.number,
   }).isRequired,
   token: PropTypes.bool,
-  value: PropTypes.array,
-  finalAnswer: PropTypes.array,
+  value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
 };

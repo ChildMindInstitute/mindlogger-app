@@ -9,7 +9,7 @@ import { TooltipBox } from './TooltipBox';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
-  var finalAnswer = value ? value :[];
+  let finalAnswer = value ? value : {};
 
   const handlePress = (itemValue) => {
    // if (!selected) {

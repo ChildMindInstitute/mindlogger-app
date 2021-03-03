@@ -48,7 +48,7 @@ export const prepareResponseForUpload = (
         valueType && 
         valueType.includes('token')
       ) {
-        cumulative += (getValuesFromResponse(item, responses[i]) || []).reduce(
+        cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
           (cumulative, current) => {
             if (current >= 0 || enableNegativeTokens) {
               return cumulative + current;

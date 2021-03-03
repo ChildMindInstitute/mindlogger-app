@@ -34,7 +34,7 @@ export const getScoreFromResponse = (item, value) => {
 }
 
 export const getValuesFromResponse = (item, value) => {
-  if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
+  if (value === null || value === undefined || item.inputType !== 'radio' && item.inputType !== 'slider') {
     return null;
   }
 
@@ -105,7 +105,7 @@ export const getMaxScore = (item) => {
 export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
   let scores = [];
   for (let i = 0; i < responses.length; i++) {
-    scores.push(getScoreFromResponse(items[i], responses[i]));
+    scores.push(getScoreFromResponse(items[i], responses[i].value));
   }
 
   let subScaleScore = evaluateScore(jsExpression, items, scores);
@@ -114,7 +114,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
   }
 
   const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
-  const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')] ? 'F' : 'M';
+  const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
 
   const isValueInRange = (value, lookupInfo) => {
     if (!lookupInfo || lookupInfo == value) {
