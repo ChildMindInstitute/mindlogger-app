@@ -87,10 +87,17 @@ class ActivityScreen extends Component {
         return false
       }
     }
-    /*if (Array.isArray(answer)) {
-      return answer.length !== 0;
-    }*/
-   
+    
+
+   if (typeof answer !== "undefined") {
+
+    if (Array.isArray(answer["value"])) {
+      return answer["value"].length !== 0;
+    }
+    if (answer["value"] === null || typeof answer["value"] === "undefined" ) {
+      return false
+    }
+  } 
 
     return answer !== null && typeof answer !== "undefined";
   }
