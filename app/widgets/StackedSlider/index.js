@@ -78,7 +78,9 @@ class StackedSlider extends Component {
                     config={slider}
                     appletName={appletName}
                     onChange={(val) => {
-                      currentValue[index] = Math.floor(val);
+                      currentValue[index] = {
+                        value: Math.floor(val['value'])
+                      };
                       onChange(currentValue);
                     }}
                     onPress={() => {
