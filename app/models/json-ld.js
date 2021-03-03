@@ -52,6 +52,7 @@ const URL = "schema:url";
 const VALUE = "schema:value";
 const PRICE = "schema:price";
 const SCORE = "schema:score";
+const ALERT = "schema:alert";
 const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
@@ -74,7 +75,9 @@ const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
-const RESPONSE_ALERT_MESSAGE = "reprolib:terms/responseAlertMessage";
+const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
+const MIN_ALERT_VALUE = "schema:minAlertValue";
+const MAX_ALERT_VALUE = "schema:maxAlertValue";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -124,6 +127,7 @@ export const flattenItemList = (list = []) =>
     value: R.path([VALUE, 0, "@value"], item),
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
+    alert: R.path([ALERT, 0, "@value"], item),
     description: R.path([DESCRIPTION, 0, "@value"], item),
     image: item[IMAGE],
     valueConstraints: item[RESPONSE_OPTIONS]
@@ -194,6 +198,18 @@ export const flattenValueConstraints = (vcObj) =>
         responseAlertMessage: R.path([key, 0, "@value"], vcObj),
       }
     }
+    if (key == MIN_ALERT_VALUE) {
+      return {
+        ...accumulator,
+        minAlertValue: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+    if (key == MAX_ALERT_VALUE) {
+      return {
+        ...accumulator,
+        maxAlertValue: R.path([key, 0, "@value"], vcObj)
+      }
+    }
     if (key === VALUE_TYPE) {
       return {
         ...accumulator,
@@ -214,7 +230,7 @@ export const flattenValueConstraints = (vcObj) =>
       const itemList = R.path([key], vcObj);
       return { ...accumulator, itemList: itemList.map(item => ({
         description: R.path([DESCRIPTION, 0, "@value"], item),
-        image: R.path([IMAGE, 0, "@value"], item),
+        image: item[IMAGE],
         name: R.path([NAME, 0, "@value"], item)
       })) };
     }
@@ -231,7 +247,7 @@ export const flattenValueConstraints = (vcObj) =>
       const options = R.path([key], vcObj);
       return { ...accumulator, options: options.map(option => ({
         description: R.path([DESCRIPTION, 0, "@value"], option),
-        image: R.path([IMAGE, 0, "@value"], option),
+        image: option[IMAGE],
         name: R.path([NAME, 0, "@value"], option)
       }))}
     }

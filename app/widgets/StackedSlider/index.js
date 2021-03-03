@@ -6,7 +6,6 @@ import {
   StyleSheet,
 } from "react-native";
 
-import { colors } from "../../themes/colors";
 import { Slider } from "../Slider";
 
 const styles = StyleSheet.create({
@@ -16,10 +15,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sliderLabel: {
-    width: "15%"
+    width: "20%",
+    fontSize: 15
   },
   sliderElement: {
-    width: "90%"
+    width: "80%"
   }
 });
 
@@ -66,11 +66,11 @@ class StackedSlider extends Component {
           {
             config.sliderOptions.map((slider, index) => (
               <View style={styles.sliderContainer}>
-                <Text
-                  style={styles.sliderLabel}
-                >
-                  {slider.sliderLabel}
-                </Text>
+                <View style={styles.sliderLabel}>
+                  <Text>
+                    {slider.sliderLabel}
+                  </Text>
+                </View>
                 <View
                   style={styles.sliderElement}
                 >
@@ -78,7 +78,9 @@ class StackedSlider extends Component {
                     config={slider}
                     appletName={appletName}
                     onChange={(val) => {
-                      currentValue[index] = Math.floor(val);
+                      currentValue[index] = {
+                        value: Math.floor(val['value'])
+                      };
                       onChange(currentValue);
                     }}
                     onPress={() => {
