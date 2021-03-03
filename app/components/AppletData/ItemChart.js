@@ -83,7 +83,7 @@ class ItemChart extends React.Component {
       const sum = Array.isArray(val.value)
         ? val.value.reduce((a, b) => {
           if (!b) return a;
-          if (Number.isInteger(b)) return a + parseInt(b);
+          if (!isNaN(b)) return a + parseInt(b);
           return a + itemValues.find(({ name }) => name === b).value;
         }, 0)
         : val.value;
@@ -91,7 +91,7 @@ class ItemChart extends React.Component {
         ? val.value.reduce((a, b) => {
           if (!b) return a > 0 ? a : 0;
           let c = a > 0 ? a : 0
-          let d = Number.isInteger(b) ? (parseInt(b) > 0 ? parseInt(b) : 0) : itemValues.find(({ name }) => name === b).value;
+          let d = !isNaN(b) ? (parseInt(b) > 0 ? parseInt(b) : 0) : itemValues.find(({ name }) => name === b).value;
           return c + d;
         }, 0)
         : (val.value > 0 ? val.value : 0);
