@@ -130,7 +130,8 @@ export const Geolocation = ({ value, onChange ,isOptionalText}) => {
                   }}
                   >
       <Item bordered>
-      <Input 
+      <Input
+          placeholder = "please enter the text"  
           onChangeText={text=>handleComment(text)}
           value={this.finalAnswer["text"]}
       />
