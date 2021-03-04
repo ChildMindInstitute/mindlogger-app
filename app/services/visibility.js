@@ -39,10 +39,14 @@ export const testVisibility = (testExpression = true, items = [], responses = []
     const expr = parser.parse(testExpressionFixed);
     // Build an object where the keys are item variableNames, and values are
     // item responses
-    const inputs = items.reduce((acc, item, index) => ({
-      ...acc,
-      [item.variableName]: responses[index] === 0 ? 0 : (responses[index] || null), // cast undefined to null
-    }), {});
+    const inputs = items.reduce((acc, item, index) => {
+      const response = Array.isArray(responses[index]) ? responses[index].value : responses[index];
+
+      return {
+        ...acc,
+        [item.variableName]: responses[index] === 0 ? 0 : response || null, // cast undefined to null
+      }
+    }, {});
 
     // Run the expression
     const result = expr.evaluate(inputs);

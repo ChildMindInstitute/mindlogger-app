@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 ## [0.15.11] - 2020-03-03
 - Resolved bold text issue
+- Fixed conditional logic
 
 ## [0.15.10] - 2020-03-03
 - Bug fixes of stacked sliders

@@ -47,6 +47,7 @@ export class AudioRecord extends Component {
                   >
       <Item bordered>
       <Input 
+          placeholder = "please enter the text"
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
       />
