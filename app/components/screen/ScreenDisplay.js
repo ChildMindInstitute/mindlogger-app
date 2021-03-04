@@ -3,7 +3,6 @@ import * as R from 'ramda';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { MarkdownScreen } from '../core';
-import { Markdown } from '../core';
 import { markdownStyle } from '../../themes/activityTheme';
 
 const styleLens = R.lensPath(['paragraph', 'fontWeight']);
@@ -29,7 +28,7 @@ const ScreenDisplay = ({ screen }) => {
         {screen.question.en}
       </MarkdownScreen>
     ) || (
-      <Markdown>{screen.question.en}</Markdown>
+      <MarkdownScreen>{screen.question.en}</MarkdownScreen>
     ))}
     {screen.info && (
       <View style={styles.infoTitle}>
