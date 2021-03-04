@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 14
+  },
+  tooltip: {
+    color: 'red'
   }
 });
 
@@ -71,7 +74,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
             <View style={{ width: optionWidth }}>
               {option.description ? (
                 <TooltipBox text={option.description}>
-                  <Text style={styles.optionText}>{ option.name }</Text>
+                  <Text style={styles.optionText}>{ option.name }<Text style={styles.tooltip}>*</Text></Text>
                 </TooltipBox>
               ) : (
                 <Text style={styles.optionText}>{ option.name }</Text>
@@ -97,7 +100,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
           <View style={{ width: '20%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
-                <Text style={styles.itemText}>{ item.name }</Text>
+                <Text style={styles.itemText}>{ item.name }<Text style={styles.tooltip}>*</Text></Text>
               </TooltipBox>
             ) : (
               <Text style={styles.itemText}>{ item.name }</Text>
