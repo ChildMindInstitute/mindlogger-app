@@ -94,6 +94,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
                   >
       <Item bordered>
       <Input 
+          placeholder = "please enter the text"
           onChangeText={text=>handleComment(text)}
           value={finalAnswer["text"]}
       />
