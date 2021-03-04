@@ -48,7 +48,7 @@ export const prepareResponseForUpload = (
         valueType && 
         valueType.includes('token')
       ) {
-        cumulative += (getValuesFromResponse(item, responses[i]) || []).reduce(
+        cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
           (cumulative, current) => {
             if (current >= 0 || enableNegativeTokens) {
               return cumulative + current;
@@ -238,6 +238,9 @@ export const decryptAppletResponses = (applet, responses) => {
         ) {
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
+          if (response.value && response.value.value) {
+            response.value = response.value.value;
+          }
         }
       }
 
