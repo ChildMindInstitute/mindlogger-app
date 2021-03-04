@@ -98,6 +98,10 @@ export const downloadAppletResponse = async (authToken, applet) => {
           ) {
             response.value =
               responses.dataSources[response.value.src][response.value.ptr];
+
+            if (response.value && response.value.value) {
+              response.value = response.value.value;
+            }
           }
         }
 

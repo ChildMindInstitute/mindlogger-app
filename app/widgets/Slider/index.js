@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
 class Slider extends Component {
   sliderRef = React.createRef();
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -324,7 +324,7 @@ class Slider extends Component {
     } = this.props;
 
 
-    this.finalAnswer = value ? value : [];
+    this.finalAnswer = value ? value : {};
 
     let currentVal = this.finalAnswer["value"];
     const step = itemList ? (continousSlider ? 0.01 : 1) : 0;
