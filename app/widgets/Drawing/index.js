@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet,Image } from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
@@ -9,6 +9,17 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 20,
     paddingBottom: 20,
+  },
+  imgContainer: {
+    padding: 20,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+  },
+  img: {
+    width: 300,
+    height: 300,
   },
 });
 
@@ -37,14 +48,25 @@ export class Drawing extends React.Component {
 
   render() {
     const { config, value, onChange, onPress, onRelease  ,isOptionalText} = this.props;
-    const url = config.backgroundImage
-      ? getURL(config.backgroundImage)
+    const url = config.inputs.backgroundImage
+      ? getURL(config.inputs.backgroundImage)
       : null;
 
     this.finalAnswer= value ? value :[];
 
     return (
       <View>
+       {config?.valueConstraints?.image ? ( 
+        <View style = {styles.imgContainer}> 
+        <Image
+         style = {styles.img}
+        source={{
+          uri: config.valueConstraints.image,
+        }}
+      />
+       </View> ) :<View></View> 
+       }
+
         <DrawingBoard
           imageSource={url}
           lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
@@ -53,10 +75,11 @@ export class Drawing extends React.Component {
           onPress={onPress}
           onRelease={onRelease}
         />
-        {config.instruction && (
-          <Text style={styles.text}>{config.instruction}</Text>
+        {config.inputs.instruction && (
+          <Text style={styles.text}>{config.inputs.instruction}</Text>
         )}
 
+       
         {isOptionalText ? 
       (<View    style={{
                     marginTop: '8%' ,
@@ -87,8 +110,8 @@ Drawing.defaultProps = {
 
 Drawing.propTypes = {
   config: PropTypes.shape({
-    backgroundImage: PropTypes.string,
-    instruction: PropTypes.any,
+    inputs: PropTypes.object,
+    valueConstraints:  PropTypes.object,
   }),
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
