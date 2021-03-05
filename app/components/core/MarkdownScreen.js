@@ -21,7 +21,7 @@ const markdownItInstance = MarkdownIt({typographer: true})
 
 const rules = {
   image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
-    const mimeType = Mimoza.getMimeType(node.attributes.src);
+    const mimeType = Mimoza.getMimeType(node.attributes.src) || "";
     if (mimeType.startsWith('audio/')) {
       return (
         <AudioPlayer
