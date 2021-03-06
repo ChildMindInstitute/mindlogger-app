@@ -97,6 +97,25 @@ class ActivityScreen extends Component {
       }
     }
 
+    if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] !== null) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (answer !== null && typeof answer !== "undefined") {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "") ) {
+        return false
+      }
+    }
+
     if (screen.inputType === "slider" || (screen.inputType === "radio" && !screen.valueConstraints.multipleChoice)) {
       if (!answer || (answer.value !== 0 && !answer.value)) {
         return false;
