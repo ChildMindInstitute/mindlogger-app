@@ -75,7 +75,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
             <View style={{ width: optionWidth }}>
               {option.description ? (
                 <TooltipBox text={option.description}>
-                  <Text style={styles.optionText}>{ option.name }<Text style={styles.tooltip}>*</Text></Text>
+                  <Text style={styles.optionText}>{ option.name.en }<Text style={styles.tooltip}>*</Text></Text>
                 </TooltipBox>
               ) : (
                 <Text style={styles.optionText}>{ option.name.en }</Text>
@@ -101,7 +101,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
           <View style={{ width: '25%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
-                <Text style={styles.itemText}>{ item.name }<Text style={styles.tooltip}>*</Text></Text>
+                <Text style={styles.itemText}>{ item.name.en }<Text style={styles.tooltip}>*</Text></Text>
               </TooltipBox>
             ) : (
               <Text style={styles.itemText}>{ item.name.en }</Text>
