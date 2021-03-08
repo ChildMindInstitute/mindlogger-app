@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
 
 export const StackedRadio = ({ value, config, onChange, token }) => {
   const optionNumber = config.options.length;
-  const optionWidth = `${Math.floor(80 / optionNumber)}%`;
+  const optionWidth = `${Math.floor(75 / optionNumber)}%`;
   const tokenValues = [];
   const multipleChoice = config.multipleChoice;
 
@@ -68,7 +68,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
       <ListItem
         style={{ width: '95%' }}
       >
-        <View style={{ width: '20%' }}></View>
+        <View style={{ width: '25%' }}></View>
         {
           config.options.map(option => (
             <View style={{ width: optionWidth }}>
@@ -97,7 +97,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
           style={{ width: '95%' }}
           key={i}
         >
-          <View style={{ width: '20%' }}>
+          <View style={{ width: '25%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
                 <Text style={styles.itemText}>{ item.name }<Text style={styles.tooltip}>*</Text></Text>
