@@ -209,7 +209,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onPress={onPress}
         onRelease={onRelease}
         isOptionalText = {screen.isOptionalText}
-        value={answer}
+        answer={answer}
       />
     );
   }

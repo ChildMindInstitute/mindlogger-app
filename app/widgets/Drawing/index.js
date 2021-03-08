@@ -14,13 +14,14 @@ const styles = StyleSheet.create({
 
 export class Drawing extends React.Component {
   componentDidUpdate(oldProps) {
-    const { value } = this.props;
-    if (value["value"] !== oldProps.value["value"] && !value["value"].lines) {
+    const { answer } = this.props;
+
+    if (!answer && (oldProps.answer && oldProps.answer.value.lines)) {
       this.board.reset();
     }
   }
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -36,12 +37,12 @@ export class Drawing extends React.Component {
   }
 
   render() {
-    const { config, value, onChange, onPress, onRelease  ,isOptionalText} = this.props;
+    const { config, answer, onChange, onPress, onRelease  ,isOptionalText} = this.props;
     const url = config.backgroundImage
       ? getURL(config.backgroundImage)
       : null;
 
-    this.finalAnswer= value ? value :[];
+    this.finalAnswer = answer ? answer : {};
 
     return (
       <View>
@@ -80,7 +81,6 @@ export class Drawing extends React.Component {
 
 Drawing.defaultProps = {
   config: {},
-  value: {},
   onPress: () => {},
   onRelease: () => {},
 };
@@ -90,7 +90,7 @@ Drawing.propTypes = {
     backgroundImage: PropTypes.string,
     instruction: PropTypes.any,
   }),
-  value: PropTypes.object,
+  answer: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
