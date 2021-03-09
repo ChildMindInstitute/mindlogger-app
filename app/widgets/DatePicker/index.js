@@ -15,7 +15,7 @@ export class DatePicker extends React.Component {
     this.onChangeDate = this.onChangeDate.bind(this);
   }
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -57,7 +57,7 @@ export class DatePicker extends React.Component {
 
   render() {
     const { value , isOptionalText } = this.props;
-    this.finalAnswer= value ? value :[];
+    this.finalAnswer = value ? value : {};
 
     const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
 

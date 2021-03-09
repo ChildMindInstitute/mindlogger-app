@@ -20,7 +20,7 @@ export class Drawing extends React.Component {
     }
   }
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -41,7 +41,7 @@ export class Drawing extends React.Component {
       ? getURL(config.backgroundImage)
       : null;
 
-    this.finalAnswer= value ? value :[];
+    this.finalAnswer = value ? value : {};
 
     return (
       <View>

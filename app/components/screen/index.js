@@ -92,14 +92,15 @@ class ActivityScreen extends Component {
       if (Array.isArray(answer["value"])) {
         return answer["value"].length !== 0;
       }
-      if (screen.inputType !== "time"
-        && screen.inputType !== "date"
-        && (answer["value"] === null || typeof answer["value"] === "undefined")) {
-        return false
+      if (Array.isArray(answer)) {
+        if (Array.isArray(answer[0])) {
+          return answer[0].length;
+        }
+        return answer.length !== 0;
       }
     } 
 
-    return answer !== null && typeof answer !== "undefined";
+    return answer;
   }
 
   constructor() {
