@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.15.15] - 2020-03-07
 - Modified activity button
 
+### [Unreleased]
+## [0.15.14] - 2020-03-07
+- Fixed drawing widget
+
 ## [0.15.13] - 2020-03-05
 - Fixed response data format
 

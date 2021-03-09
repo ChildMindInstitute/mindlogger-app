@@ -9,7 +9,7 @@ import {
 } from "./network";
 import { getData } from "./asyncStorage";
 import { cleanFiles } from "./file";
-import { transformResponses } from "../models/response";
+import { transformResponses, decryptAppletResponses } from "../models/response";
 import { decryptData } from "./encryption";
 import {
   activityTransformJson,
