@@ -136,7 +136,7 @@ export class MultiSelect extends Component {
                   >
       <Item bordered>
       <Input 
-          placeholder = "please enter the text"
+          placeholder = "Please enter the text"
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
       />
