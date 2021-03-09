@@ -9,7 +9,7 @@ import AudioRecorder from './AudioRecorder';
 export class AudioRecord extends Component {
  
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -30,7 +30,7 @@ export class AudioRecord extends Component {
     const { value, config,isOptionalText } = this.props;
     const maxLength = parseInt(R.path(['maxValue'], config));
 
-    this.finalAnswer= value ? value :[];
+    this.finalAnswer= value ? value :{};
     
     return (
       <View style={{ paddingTop: 16, paddingBottom: 16 }}>
