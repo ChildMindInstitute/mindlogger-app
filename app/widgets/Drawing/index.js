@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet ,ScrollView,KeyboardAvoidingView} from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
@@ -45,6 +45,9 @@ export class Drawing extends React.Component {
     this.finalAnswer = answer ? answer : {};
 
     return (
+      <KeyboardAvoidingView
+    //behavior="padding"
+  >
       <View>
         <DrawingBoard
           imageSource={url}
@@ -61,20 +64,35 @@ export class Drawing extends React.Component {
         {isOptionalText ? 
       (<View    style={{
                     marginTop: '8%' ,
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
-          placeholder = "Please enter the text"
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={4}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView } from 'react-native';
 import {Item , Input } from 'native-base';
 import TimePicker from './TimePicker';
 
@@ -54,27 +54,43 @@ export class TimeRange extends React.Component {
     this.finalAnswer["value"] = safeValue ? safeValue :[];
   
     return (
+      <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
         <TimePicker value={this.finalAnswer["value"].from} onChange={this.onChangeFrom} label="From" />
         <TimePicker value={this.finalAnswer["value"].to} onChange={this.onChangeTo} label="To" />
         {isOptionalText ? 
-      (<View    style={{
+          (<View    style={{
                     marginTop: '8%' ,
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
-          placeholder = "Please enter the text"
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={1}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
      
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
