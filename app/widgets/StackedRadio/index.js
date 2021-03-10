@@ -9,10 +9,10 @@ import { TooltipBox } from '../TooltipBox';
 
 const styles = StyleSheet.create({
   itemText: {
-    fontSize: 14,
+    fontSize: 12,
   },
   optionText: {
-    fontSize: 14
+    fontSize: 12
   },
   tooltip: {
     color: 'red'
