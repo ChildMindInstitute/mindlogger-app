@@ -354,6 +354,13 @@ class FireBaseMessaging extends Component {
       deltaTime = 0;
     }
 
+    if (
+      activity.lastScheduledTimestamp && 
+      !moment(activity.lastScheduledTimestamp).isBefore(currentDate, 'day')
+    ) {
+      deltaTime = 0;
+    }
+
     const allowAccessBefore = event.data.timeout && event.data.timeout.access;
 
     if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
