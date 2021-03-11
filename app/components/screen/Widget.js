@@ -72,6 +72,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <StackedRadio
         config={screen.valueConstraints}
         onChange={onChange}
+        onSelected={setSelected}
         value={answer}
         token={valueType && valueType.includes("token")}
       />
