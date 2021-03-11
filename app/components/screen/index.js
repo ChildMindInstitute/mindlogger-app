@@ -88,18 +88,19 @@ class ActivityScreen extends Component {
       }
     }
     
+    if (typeof answer !== "undefined") {
+      if (Array.isArray(answer["value"])) {
+        return answer["value"].length !== 0;
+      }
+      if (Array.isArray(answer)) {
+        if (Array.isArray(answer[0])) {
+          return answer[0].length;
+        }
+        return answer.length !== 0;
+      }
+    } 
 
-   if (typeof answer !== "undefined") {
-
-    if (Array.isArray(answer["value"])) {
-      return answer["value"].length !== 0;
-    }
-    if (answer["value"] === null || typeof answer["value"] === "undefined" ) {
-      return false
-    }
-  } 
-
-    return answer !== null && typeof answer !== "undefined";
+    return answer;
   }
 
   constructor() {

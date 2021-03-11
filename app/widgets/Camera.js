@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
 export class Camera extends Component {
   isIos = Platform.OS === 'ios';
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -267,7 +267,7 @@ export class Camera extends Component {
   render() {
     const { value, video ,isOptionalText} = this.props;
 
-    this.finalAnswer = value ? value :[];
+    this.finalAnswer = value ? value : {};
     
     // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';

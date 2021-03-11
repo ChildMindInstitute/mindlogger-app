@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { View, Linking, Dimensions, Image, Text } from 'react-native';
@@ -93,29 +93,37 @@ const rules = {
   }
 }
 
-export const MarkdownScreen = ({ mstyle, children }) => {
-  const {heading1, heading2, heading3, heading4, heading5, heading6, paragraph} = markdownStyle;
+class MarkdownScreen extends Component {
+  shouldComponentUpdate(nextProps, nextState){
+    return nextProps.children != this.props.children;
+  }
 
-  return (
-    <View
-      style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 10}}
-    >
-      <Markdown
-        style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
-        mergeStyle={ true }
-        onLinkPress={(url) => {
-          Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
-        }}
-        markdownit={
-          markdownItInstance
-        }
-        rules={rules}
+  render() {
+    const { mstyle, children } = this.props;
+
+    const {heading1, heading2, heading3, heading4, heading5, heading6, paragraph} = markdownStyle;
+
+    return (
+      <View
+        style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 10}}
       >
-        {children.replace(/(!\[.*\]\s*\(.*?) =\d*x\d*(\))/g, '$1$2')}
-      </Markdown>
-    </View>
-  );
-};
+        <Markdown
+          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
+          mergeStyle={ true }
+          onLinkPress={(url) => {
+            Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
+          }}
+          markdownit={
+            markdownItInstance
+          }
+          rules={rules}
+        >
+          {children.replace(/(!\[.*\]\s*\(.*?) =\d*x\d*(\))/g, '$1$2')}
+        </Markdown>
+      </View>
+    );
+  }
+}
 
 MarkdownScreen.defaultProps = {
   mstyle: {},
@@ -126,3 +134,5 @@ MarkdownScreen.propTypes = {
   mstyle: PropTypes.object,
   children: PropTypes.node,
 };
+
+export { MarkdownScreen };

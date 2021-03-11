@@ -8,7 +8,7 @@ const defaultTime = { hour: 0, minute: 0 };
 
 export class TimeRange extends React.Component {
 
-  finalAnswer = [];
+  finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
@@ -44,7 +44,7 @@ export class TimeRange extends React.Component {
   render() {
     const { value ,isOptionalText} = this.props;
 
-    this.finalAnswer = value ? value :[];
+    this.finalAnswer = value ? value : {};
 
     const safeValue = this.finalAnswer["value"] || {
       from: defaultTime,
