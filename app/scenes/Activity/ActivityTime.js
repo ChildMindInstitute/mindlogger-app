@@ -18,12 +18,16 @@ const styles = StyleSheet.create({
 });
 
 const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
-  let { hour, minute, second, allow } = activity.lastTimedActivity;
   const startedTime = startedTimes ? startedTimes[activity.id] : null;
-  
+  let hour = activity.lastTimedActivity ? activity.lastTimedActivity.hour : activity.nextTimedActivity.hour;
+  let minute = activity.lastTimedActivity ? activity.lastTimedActivity.minute : activity.nextTimedActivity.minute;
+  let second = activity.lastTimedActivity ? activity.lastTimedActivity.second : activity.nextTimedActivity.second;
+  let allow = activity.lastTimedActivity ? activity.lastTimedActivity.allow : activity.nextTimedActivity.allow;
+
   if (startedTime && allow) {
     const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
     const difference = Math.abs(Date.now() - startedTime);
+
     if (activityTime > difference) {
       hour = Math.floor((activityTime - difference) / 60000 / 60);
       minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
