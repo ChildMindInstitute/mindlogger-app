@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export const StackedRadio = ({ value, config, onChange, token, onSelected }) => {
+export const StackedRadio = ({ value, config, onChange, token }) => {
   const optionNumber = config.options.length;
   const optionWidth = `${Math.floor(75 / optionNumber)}%`;
   const tokenValues = [];
@@ -62,7 +62,6 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
       onChange(currentValue);
     }
 
-    onSelected();
   };
 
   return (
@@ -182,5 +181,4 @@ StackedRadio.propTypes = {
   }).isRequired,
   token: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
-  onSelected: PropTypes.func.isRequired,
 };

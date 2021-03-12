@@ -88,7 +88,7 @@ class ActivityScreen extends Component {
         return false;
       }
       for (let i = 0; i < answer.length; i++) {
-        if (answer[i] !== null) {
+        if (!Array.isArray(answer[i]) && answer[i] !== null || Array.isArray(answer[i]) && answer[i].length > 0) {
           return true;
         }
       }
