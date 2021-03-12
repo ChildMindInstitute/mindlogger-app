@@ -5,6 +5,7 @@ import {
   Image,
   TouchableWithoutFeedback,
   StyleSheet,
+  ScrollView,KeyboardAvoidingView
 } from "react-native";
 import { Text , Item , Input} from "native-base";
 import SliderComponent from "react-native-slider";
@@ -338,6 +339,10 @@ class Slider extends Component {
     }
 
     return (
+      <KeyboardAvoidingView
+      behavior="padding"
+    >
+
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
           {tickMarks.map((tickMark) => (
@@ -414,22 +419,37 @@ class Slider extends Component {
         </View>
 
         {isOptionalText ? 
-      (<View    style={{
+          (<View    style={{
                     marginTop: '8%' ,
-                    width: "100%",
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={1}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
