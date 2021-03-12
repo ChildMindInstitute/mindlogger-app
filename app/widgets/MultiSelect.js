@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Image } from "react-native";
+import { View, Image , ScrollView,KeyboardAvoidingView} from "react-native";
 import PropTypes from "prop-types";
 import * as R from "ramda";
 import { ListItem, Text, Icon ,Item , Input } from 'native-base';
@@ -48,6 +48,9 @@ export class MultiSelect extends Component {
    this.finalAnswer = value ? value : {};
 
     return (
+      <KeyboardAvoidingView
+      behavior="padding"
+    >
       <View style={{ alignItems: "stretch" }}>
         {itemList.map((item, index) => (
           <ListItem
@@ -129,22 +132,37 @@ export class MultiSelect extends Component {
         ))}
 
         {isOptionalText ? 
-      (<View    style={{
+          (<View    style={{
                     marginTop: '8%' ,
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
-          placeholder = "please enter the text"
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={1}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
