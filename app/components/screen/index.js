@@ -114,7 +114,7 @@ class ActivityScreen extends Component {
       }
     } 
 
-    return answer;
+    return !!answer;
   }
 
   constructor() {
