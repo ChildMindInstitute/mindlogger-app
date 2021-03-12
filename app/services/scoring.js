@@ -104,8 +104,11 @@ export const getMaxScore = (item) => {
 
 export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
   let scores = [];
+
   for (let i = 0; i < responses.length; i++) {
-    scores.push(getScoreFromResponse(items[i], responses[i].value));
+    if (responses[i]) {
+      scores.push(getScoreFromResponse(items[i], responses[i].value));
+    }
   }
 
   let subScaleScore = evaluateScore(jsExpression, items, scores);

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.15.18] - 2020-03-10
 - Fixed activity timer after opening via notification
 
+## [0.15.17] - 2020-03-010
+- Modified information page
+
 ## [0.15.16] - 2020-03-08
 - Fixed next button label in widgets
 

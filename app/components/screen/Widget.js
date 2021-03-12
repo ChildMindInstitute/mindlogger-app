@@ -72,6 +72,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <StackedRadio
         config={screen.valueConstraints}
         onChange={onChange}
+        onSelected={setSelected}
         value={answer}
         token={valueType && valueType.includes("token")}
       />
@@ -204,7 +205,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'drawing') {
     return (
       <Drawing
-        config={screen.inputs}
+        config={screen}
         onChange={onChange}
         onPress={onPress}
         onRelease={onRelease}
@@ -235,6 +236,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'geolocation') {
     return (
       <Geolocation
+        config={screen.valueConstraints}
         value={answer}
         onChange={onChange}
         isOptionalText = {screen.isOptionalText}
