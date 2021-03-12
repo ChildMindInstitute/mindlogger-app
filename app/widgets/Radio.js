@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image } from 'react-native';
+import { View, Image ,KeyboardAvoidingView,ScrollView} from 'react-native';
 import { ListItem, Text, Icon , Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
@@ -25,6 +25,9 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
   }
 
   return (
+    <KeyboardAvoidingView
+    behavior="padding"
+  >
     <View style={{ alignItems: 'stretch' }}>
       {config.itemList.map((item, index) => (
         <ListItem
@@ -87,22 +90,37 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
       ))}
 
       {config.isOptionalText ? 
-      (<View    style={{
+        (<View    style={{
                     marginTop: '8%' ,
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
-          placeholder = "please enter the text"
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={1}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>handleComment(text)}
           value={finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

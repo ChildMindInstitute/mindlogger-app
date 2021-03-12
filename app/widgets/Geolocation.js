@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View, Platform, TouchableOpacity, StyleSheet ,Image} from "react-native";
+import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView } from "react-native";
 import NativeGeolocation from "@react-native-community/geolocation";
 import { Icon , Item , Input} from "native-base";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { getURL } from '../services/helper';
+
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -64,6 +65,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   });
 
+ 
 
   finalAnswer= value ? value :[];
 
@@ -102,6 +104,9 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
   };
 
   return (
+    <KeyboardAvoidingView
+    behavior="padding"
+  >
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
         <View style={styles.locationButton}>
@@ -160,24 +165,35 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
       (<View    style={{
                     marginTop: '8%' ,
                     width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
       <Input
-          placeholder = "please enter the text"  
-          onChangeText={text=>handleComment(text)}
+          multiline={true}
+          numberOfLines={4}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
+          onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{ height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
       
-      
-       
     </View>
-    
+    </KeyboardAvoidingView>
   );
 };
 
