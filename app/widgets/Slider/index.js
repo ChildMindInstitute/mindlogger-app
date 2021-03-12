@@ -340,7 +340,7 @@ class Slider extends Component {
 
     return (
       <KeyboardAvoidingView
-      behavior="padding"
+     // behavior="padding"
     >
 
       <View style={styles.container}>

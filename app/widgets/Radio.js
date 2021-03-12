@@ -26,7 +26,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
 
   return (
     <KeyboardAvoidingView
-    behavior="padding"
+   // behavior="padding"
   >
     <View style={{ alignItems: 'stretch' }}>
       {config.itemList.map((item, index) => (
