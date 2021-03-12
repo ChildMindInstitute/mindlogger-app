@@ -148,7 +148,10 @@ export const startResponse = (activity) => (dispatch, getState) => {
               responses
             );
 
-            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+              && startedTimes
+              && !startedTimes[activity.id]
+            ) {
               dispatch(setActivityStartTime(activity.id));
             }
 
@@ -171,7 +174,10 @@ export const startResponse = (activity) => (dispatch, getState) => {
         {
           text: i18n.t("additional:resume"),
           onPress: () => {
-            if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
+            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+              && startedTimes
+              && !startedTimes[activity.id]
+            ) {
               dispatch(setActivityStartTime(activity.id));
             }
             
