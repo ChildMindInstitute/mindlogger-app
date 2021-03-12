@@ -59,6 +59,7 @@ class ItemChart extends React.Component {
     const values = {};
     const accValues = {}
     const { item, data, tokens } = this.props;
+    const { enableNegativeTokens } = item.valueConstraints;
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
@@ -80,25 +81,19 @@ class ItemChart extends React.Component {
     }
 
     data.forEach((val) => {
-      const sum = Array.isArray(val.value)
-        ? val.value.reduce((a, b) => {
-          if (!b) return a;
-          if (!isNaN(b)) return a + parseInt(b);
-          return a + itemValues.find(({ name }) => name === b).value;
-        }, 0)
-        : val.value;
-      const accSum = Array.isArray(val.value)
-        ? val.value.reduce((a, b) => {
-          if (!b) return a > 0 ? a : 0;
-          let c = a > 0 ? a : 0
-          let d = !isNaN(b) ? (parseInt(b) > 0 ? parseInt(b) : 0) : itemValues.find(({ name }) => name === b).value;
-          return c + d;
-        }, 0)
-        : (val.value > 0 ? val.value : 0);
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
+        const sum = Array.isArray(val.value)
+          ? val.value.reduce((a, b) => {
+            const bValue = !isNaN(b) ? parseInt(b) : itemValues.find(({ name }) => name === b).value;
+            if (enableNegativeTokens || bValue > 0) {
+              return a + bValue;
+            }
+            return a;
+          }, 0)
+          : val.value;
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
-        accValues[currentDay] = accValues[currentDay] === undefined ? accSum : accValues[currentDay] + accSum;
+        // accValues[currentDay] = accValues[currentDay] === undefined ? accSum : accValues[currentDay] + accSum;
       }
     });
 
@@ -107,19 +102,6 @@ class ItemChart extends React.Component {
         return {
           name: dayOfWeek,
           value: parseInt(values[dayOfWeek]),
-        };
-      }
-      return {
-        name: dayOfWeek,
-        value: 0,
-      };
-    });
-
-    const dataAccValues = dayOfWeeks.map((dayOfWeek) => {
-      if (Object.keys(accValues).includes(dayOfWeek)) {
-        return {
-          name: dayOfWeek,
-          value: parseInt(accValues[dayOfWeek]),
         };
       }
       return {
@@ -142,7 +124,7 @@ class ItemChart extends React.Component {
         name: day,
         value: (tokenUpdates[day] || 0)
       })),
-      currentBalance: Number.isInteger(tokens.currentBalance) ? (tokens.cumulativeToken) : 0,
+      currentBalance: Number.isInteger(tokens.cumulativeToken) ? (tokens.cumulativeToken) : 0,
     };
 
     return (
@@ -157,7 +139,7 @@ class ItemChart extends React.Component {
           value={item.additionalParams.description}
         />
         {/* {item.additionalParams.timelineChart} */}
-        <TokenChart item={item} data={dataValues} acc={dataAccValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
+        <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
       </View>
     );
   }

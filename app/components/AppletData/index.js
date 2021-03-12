@@ -253,10 +253,10 @@ class AppletData extends React.Component {
                 .toDate()
                 .getTime();
             const differenceDay = differenceTime / (1000 * 3600 * 24);
-            if (differenceDay < 7) {
+            // if (differenceDay < 7) {
               count += 1;
               break;
-            }
+            // }
           }
         });
       }
