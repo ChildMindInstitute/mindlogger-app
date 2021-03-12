@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
-import { View } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView  } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -74,6 +74,7 @@ export class DatePicker extends React.Component {
     /*this.finalAnswer["value"] = date ? date :[];*/
     
     return (
+      <KeyboardAvoidingView>
       <View style={{ marginBottom: 20 }}>
         <ListItem
           onPress={() => {
@@ -99,22 +100,37 @@ export class DatePicker extends React.Component {
           />
         )}
         {isOptionalText ? 
-      (<View    style={{
+          (<View    style={{
                     marginTop: '8%' ,
+                    width: '100%' ,
+                    height:100,
                     justifyContent: 'center',
                   }}
                   >
-      <Item bordered>
-      <Input 
-          placeholder = "please enter the text"
+      <Item bordered
+       style={{borderWidth: 1}}
+      >
+      <ScrollView 
+      keyboardShouldPersistTaps={'always'}
+        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+      >
+
+      <Input
+          multiline={true}
+          numberOfLines={1}
+          scrollEnabled={false}
+          placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
+          style={{height: 150}}
       />
+      </ScrollView>
       </Item> 
     </View>
     ):<View></View>
       }
       </View>
+      </KeyboardAvoidingView>
     );
   }
 }
