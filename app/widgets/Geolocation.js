@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View, Platform, TouchableOpacity, StyleSheet ,KeyboardAvoidingView,ScrollView} from "react-native";
+import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView } from "react-native";
 import NativeGeolocation from "@react-native-community/geolocation";
 import { Icon , Item , Input} from "native-base";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
+import { getURL } from '../services/helper';
 
 
 const styles = StyleSheet.create({
@@ -31,15 +32,33 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: "flex-start",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center"
+  },
+  imgContainer: {
+    padding: 20,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center"
+    
+  },
+  img: {
+    width: 300,
+    height: 300,
+    
+    
   },
   infoText: {
     color: colors.tertiary,
     fontSize: 16,
     marginTop: 16,
   },
+  
 });
 
-export const Geolocation = ({ value, onChange ,isOptionalText}) => {
+export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
   const [locationPermission, setLocationPermission] = useState("undetermined");
   const permission = Platform.select({
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
@@ -102,6 +121,7 @@ export const Geolocation = ({ value, onChange ,isOptionalText}) => {
           />
         </View>
       </TouchableOpacity>
+
       {locationPermission === "denied" && Platform.OS === "ios" && (
         <View>
           <BaseText
@@ -127,6 +147,20 @@ export const Geolocation = ({ value, onChange ,isOptionalText}) => {
             />
           </View>
         )}
+
+       
+      {config?.image ? ( 
+        <View style = {styles.imgContainer}> 
+        <Image
+         style = {styles.img}
+        source={{
+          uri: config.image,
+        }}
+      />
+       </View> ) :<View></View> 
+       }
+
+
         {isOptionalText ? 
       (<View    style={{
                     marginTop: '8%' ,
@@ -170,6 +204,7 @@ Geolocation.defaultProps = {
 };
 
 Geolocation.propTypes = {
+  config: PropTypes.object,
   value: PropTypes.object,
   onChange: PropTypes.func,
   isOptionalText: PropTypes.bool
