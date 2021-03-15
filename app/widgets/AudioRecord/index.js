@@ -44,30 +44,24 @@ export class AudioRecord extends Component {
         />
          {isOptionalText ? 
           (<View    style={{
-                    marginTop: '8%' ,
+                    marginTop: '35%' ,
                     width: '100%' ,
-                    height:100,
-                    justifyContent: 'center',
+             
                   }}
                   >
       <Item bordered
        style={{borderWidth: 1}}
       >
-      <ScrollView 
-      keyboardShouldPersistTaps={'always'}
-        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-      >
+     
 
       <Input
-          multiline={false}
-          numberOfLines={4}
-          scrollEnabled={false}
+        
           placeholder = "Please enter the text"  
           onChangeText={text=>this.handleComment(text)}
           value={this.finalAnswer["text"]}
-          style={{height: 150}}
+         
       />
-      </ScrollView>
+    
       </Item> 
     </View>
     ):<View></View>
