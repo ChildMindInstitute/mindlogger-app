@@ -105,7 +105,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
 
   return (
     <KeyboardAvoidingView
-    behavior="padding"
+   // behavior="padding"
   >
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress}>
