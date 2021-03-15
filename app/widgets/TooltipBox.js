@@ -1,24 +1,21 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, Dimensions } from 'react-native';
-import Tooltip from "rne-modal-tooltip";
-import { truncateString } from '../services/helper';
+import { View, ScrollView, Dimensions } from 'react-native';
+import { Tooltip } from 'react-native-elements';
 import { MarkdownScreen } from '../components/core';
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 const STEP_LOADED = 0;
-const STEP_TRUNCATED = 1;
-const STEP_RESIZED = 2;
+const STEP_RESIZED = 1;
 
 export const TooltipBox = ({ text, children }) => {
-  const [truncatedText, setTruncatedText] = useState(text);
   const [tooltipSize, setTooltipSize] = useState(null);
   const [step, setStep] = useState(STEP_LOADED);
 
   const textContainer = useMemo(() => (
-    <MarkdownScreen>{truncatedText}</MarkdownScreen>
-  ), [truncatedText]);
+    <MarkdownScreen>{text}</MarkdownScreen>
+  ), [text]);
 
   return (
     <View>
@@ -26,14 +23,23 @@ export const TooltipBox = ({ text, children }) => {
         <Tooltip
           width={tooltipSize.width}
           height={tooltipSize.height}
-          popover={textContainer}
-          toggleOnPress={true}
+          popover={
+            <View
+              style={{
+                flex: 1,
+                height: tooltipSize.height,
+              }}
+            >
+              <ScrollView
+                persistentScrollbar={true}
+              >
+                {textContainer}
+              </ScrollView>
+            </View>
+          }
           withOverlay={false}
           skipAndroidStatusBar={true}
-          containerStyle={{
-            margin: 0,
-            overflow: 'hidden',
-          }}
+          closeOnlyOnBackdropPress={false}
           backgroundColor="#DEF"
         >
           { children }
@@ -44,14 +50,8 @@ export const TooltipBox = ({ text, children }) => {
           onLayout={(event) => {
             const { width, height } = event.nativeEvent.layout;
             if (width > 0 && height > 0) {
-              if (step === STEP_LOADED && height > windowHeight / 2) {
-                const len = parseInt(truncatedText.length * (windowHeight / 3) / height);
-                setTruncatedText(truncateString(truncatedText, len));
-                setStep(STEP_TRUNCATED);
-              } else {
-                setTooltipSize({ width, height: height + 30 });
-                setStep(STEP_RESIZED);
-              }
+              setTooltipSize({ width, height: Math.min(height, windowHeight / 3) + 30 });
+              setStep(STEP_RESIZED);
             }
           }}
         >
