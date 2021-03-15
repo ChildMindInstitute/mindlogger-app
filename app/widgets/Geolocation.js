@@ -178,7 +178,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
       >
 
       <Input
-          multiline={true}
+          multiline={false}
           numberOfLines={4}
           scrollEnabled={false}
           placeholder = "Please enter the text"  

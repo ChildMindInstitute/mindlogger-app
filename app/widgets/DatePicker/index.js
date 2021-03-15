@@ -116,7 +116,7 @@ export class DatePicker extends React.Component {
       >
 
       <Input
-          multiline={true}
+          multiline={false}
           numberOfLines={1}
           scrollEnabled={false}
           placeholder = "Please enter the text"  

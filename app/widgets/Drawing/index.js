@@ -101,7 +101,7 @@ export class Drawing extends React.Component {
       >
 
       <Input
-          multiline={true}
+          multiline={false}
           numberOfLines={4}
           scrollEnabled={false}
           placeholder = "Please enter the text"  

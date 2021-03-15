@@ -106,7 +106,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
       >
 
       <Input
-          multiline={true}
+          multiline={false}
           numberOfLines={1}
           scrollEnabled={false}
           placeholder = "Please enter the text"  

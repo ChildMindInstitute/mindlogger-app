@@ -59,7 +59,7 @@ export class AudioRecord extends Component {
       >
 
       <Input
-          multiline={true}
+          multiline={false}
           numberOfLines={4}
           scrollEnabled={false}
           placeholder = "Please enter the text"  
