@@ -49,7 +49,7 @@ export class MultiSelect extends Component {
 
     return (
       <KeyboardAvoidingView
-      behavior="padding"
+    //  behavior="padding"
     >
       <View style={{ alignItems: "stretch" }}>
         {itemList.map((item, index) => (
