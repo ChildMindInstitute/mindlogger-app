@@ -212,7 +212,9 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {activity.lastTimedActivity && <ActivityTime activity={activity} />}
+        {(activity.lastTimedActivity || activity.nextTimedActivity) &&
+          <ActivityTime activity={activity} />
+        }
         {!isSummaryScreen ? (
           <ActivityScreens
             activity={activity}
