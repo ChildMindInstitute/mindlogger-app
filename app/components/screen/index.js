@@ -97,12 +97,9 @@ class ActivityScreen extends Component {
     }
 
     if (answer !== null && typeof answer !== "undefined") {
-      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "") ) {
+      if (screen.valueConstraints.isOptionalTextRequired && ((typeof answer["text"] === "undefined" || answer["text"] == "") )|| (typeof answer["value"] === "undefined" || answer["value"] == "")) {
         return false
       }
-    }
-    
-    if (typeof answer !== "undefined") {
       if (Array.isArray(answer["value"])) {
         return answer["value"].length !== 0;
       }

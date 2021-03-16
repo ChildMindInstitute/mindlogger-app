@@ -27,7 +27,7 @@ export class Drawing extends React.Component {
   componentDidUpdate(oldProps) {
     const { answer } = this.props;
 
-    if (!answer && (oldProps.answer && oldProps.answer.value.lines)) {
+    if (!answer && (oldProps.answer && oldProps.answer?.value?.lines)) {
       this.board.reset();
     }
   }
