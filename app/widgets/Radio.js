@@ -93,28 +93,19 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
         (<View    style={{
                     marginTop: '8%' ,
                     width: '100%' ,
-                    height:100,
-                    justifyContent: 'center',
                   }}
                   >
       <Item bordered
        style={{borderWidth: 1}}
       >
-      <ScrollView 
-      keyboardShouldPersistTaps={'always'}
-        keyboardDismissMode={ Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-      >
-
+  
       <Input
-          multiline={true}
-          numberOfLines={1}
-          scrollEnabled={false}
+        
           placeholder = "Please enter the text"  
           onChangeText={text=>handleComment(text)}
           value={finalAnswer["text"]}
-          style={{height: 150}}
       />
-      </ScrollView>
+     
       </Item> 
     </View>
     ):<View></View>
