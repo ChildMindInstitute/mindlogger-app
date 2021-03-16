@@ -24,6 +24,11 @@ export const setCurrentApplet = appletId => ({
   payload: appletId,
 });
 
+export const setConnection = status => ({
+  type: APP_ACTIONS.SET_CONNECTION,
+  payload: status,
+});
+
 export const setCurrentActivity = activityId => ({
   type: APP_ACTIONS.SET_CURRENT_ACTIVITY,
   payload: activityId,
