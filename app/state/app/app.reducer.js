@@ -83,12 +83,19 @@ export const initialState = {
    */
   startedTimes: {},
 
-    /**
+  /**
    * Times activities finished
    *
    * @type {object}
    */
   finishedTimes: {},
+
+  /**
+   * Connection status
+   *
+   * @type {boolean}
+   */
+  isConnected: true,
 };
 
 export default (state = initialState, action = {}) => {
@@ -98,6 +105,12 @@ export default (state = initialState, action = {}) => {
         ...state,
         apiHost: action.payload,
       };
+    case APP_CONSTANTS.SET_CONNECTION:
+      console.log('*****', action.payload)
+      return {
+        ...state,
+        isConnected: action.payload,
+      }
     case APP_CONSTANTS.SET_UPDATED_TIME:
       return {
         ...state,
