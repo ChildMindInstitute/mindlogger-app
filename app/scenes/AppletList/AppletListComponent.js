@@ -16,7 +16,9 @@ import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'nativ
 // import PushNotification from "react-native-push-notification";
 import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
+import { connectionSelector } from '../../state/app/app.selectors';
 import { setReminder, cancelReminder } from '../../state/applets/applets.thunks';
+import { setConnection } from '../../state/app/app.actions';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
@@ -51,6 +53,8 @@ const AppletListComponent = ({
   isDownloadingApplets,
   isDownloadingTargetApplet,
   title,
+  isConnected,
+  setConnection,
   setReminder,
   cancelReminder,
   onPressDrawer,
@@ -63,7 +67,6 @@ const AppletListComponent = ({
 }) => {
   const [onSettings, setOnSettings] = useState(0);
   const [onAboutTime, setOnAboutTime] = useState(0);
-  const [isConnected, setIsConnected] = useState(true);
   const netInfo = useNetInfo();
 
   const onPressSettings = () => {
@@ -89,11 +92,11 @@ const AppletListComponent = ({
       cancelReminder();
 
       if (!isConnected) {
+        setConnection(true);
         onUploadQueue();
-        setIsConnected(true);
       }
     } else {
-      setIsConnected(false);
+      setConnection(false);
       setReminder();
     }
   }
@@ -201,6 +204,7 @@ AppletListComponent.propTypes = {
   onPressDrawer: PropTypes.func.isRequired,
   setReminder: PropTypes.func.isRequired,
   cancelReminder: PropTypes.func.isRequired,
+  setConnection: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
   onUploadQueue: PropTypes.func.isRequired,
@@ -208,15 +212,23 @@ AppletListComponent.propTypes = {
   title: PropTypes.string.isRequired,
   primaryColor: PropTypes.string.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
+  isConnected: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => {
+  return {
+    isConnected: connectionSelector(state),
+  };
 };
 
 const mapDispatchToProps = {
   setReminder,
+  setConnection,
   cancelReminder,
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(AppletListComponent);
