@@ -784,6 +784,20 @@ export const dateParser = (schedule) => {
   return output;
 };
 
+const getActivityAbility = (schedule, activityId) => {
+  let availability = false;
+
+  Object.keys(schedule.events).forEach(key => {
+    const e = schedule.events[key];
+
+    if (e.data.activity_id === activityId.substring(9)) {
+      availability = e.data.availability;
+    }
+  });
+
+  return availability;
+}
+
 export const parseAppletActivities = (applet, responseSchedule) => {
   let scheduledDateTimesByActivity = {};
   // applet.schedule, if defined, has an events key.
@@ -805,6 +819,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
     const id = R.pathOr(null, ['id'], scheduledDateTimes);
     const extendedTime = R.pathOr(null, ['extendedTime'], scheduledDateTimes);
     const lastResponse = R.path([applet.id, act.id, 'lastResponse'], responseSchedule);
+    const availability = getActivityAbility(applet.schedule, act.id);
 
     let nextAccess = false;
     let prevTimeout = null;
@@ -848,6 +863,7 @@ export const parseAppletActivities = (applet, responseSchedule) => {
       lastTimedActivity,
       currentTime: new Date().getTime(),
       invalid,
+      availability,
       extendedTime,
       nextAccess,
       isOverdue: lastScheduled && moment(lastResponse) < moment(lastScheduled),
