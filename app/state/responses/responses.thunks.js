@@ -204,7 +204,6 @@ export const downloadResponse = () => (dispatch, getState) => {
 
   downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
-      console.log('7days responses', responses)
       if (loggedInSelector(getState())) {
         await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
@@ -224,9 +223,8 @@ export const downloadResponses = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
-
   const userInfo = userInfoSelector(state);
-  console.log('***********');
+
   for (const applet of applets) {
     if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
       dispatch(updateKeys(applet, userInfo));
@@ -238,7 +236,6 @@ export const downloadResponses = () => (dispatch, getState) => {
     dispatch(setResponsesDownloadProgress(downloaded, total));
   })
     .then(async (responses) => {
-      console.log('7days responses', responses)
       if (loggedInSelector(getState())) {
         await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
@@ -321,30 +318,30 @@ export const startUploadQueue = () => (dispatch, getState) => {
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
   const authToken = authTokenSelector(state);
+  const applet = currentAppletSelector(state);
+
   uploadResponseQueue(authToken, uploadQueue, () => {
     // Progress - a response was uploaded
     dispatch(shiftUploadQueue());
   }).finally(() => {
-    dispatch(downloadResponse());
+    if (applet) {
+      dispatch(downloadResponse());
+    } else {
+      dispatch(downloadResponses());
+    }
   });
 };
 
 export const completeResponse = () => (dispatch, getState) => {
   const state = getState();
-  // console.log({ state });
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
-  // console.log({ applet });
-  const inProgressResponse = currentResponsesSelector(state);
- 
-  console.log({ inProgressResponse });
+  const inProgressResponse = currentResponsesSelector(state); 
   const activity = currentActivitySelector(state);
-  console.log('00000000');
+
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-    console.log('0101010101');
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
-  console.log('1111111');
 
   const responseHistory = currentAppletResponsesSelector(state);
 

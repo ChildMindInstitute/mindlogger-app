@@ -11,12 +11,13 @@ import sortActivities from './sortActivities';
 import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
+  connectionSelector,
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
-import { setUpdatedTime, setAppStatus } from '../../state/app/app.actions';
+import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
   responseScheduleSelector,
@@ -30,10 +31,12 @@ const ActivityList = ({
   syncUploadQueue,
   appStatus,
   setAppStatus,
+  setConnection,
   getSchedules,
   setReminder,
   cancelReminder,
   scheduleUpdated,
+  isConnected,
   setScheduleUpdated,
   setUpdatedTime,
   appletTime,
@@ -48,7 +51,6 @@ const ActivityList = ({
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
-  const [isConnected, setIsConnected] = useState(true);
 
   const updateStatusDelay = 60 * 1000;
   const updateScheduleDelay = 24 * 3600 * 1000;
@@ -100,11 +102,11 @@ const ActivityList = ({
       cancelReminder();
 
       if (!isConnected) {
+        setConnection(true);
         syncUploadQueue();
-        setIsConnected(true);
       }
     } else {
-      setIsConnected(false);
+      setConnection(false);
       setReminder();
     }
   }
@@ -204,6 +206,7 @@ ActivityList.propTypes = {
   applet: PropTypes.object.isRequired,
   appStatus: PropTypes.bool.isRequired,
   setAppStatus: PropTypes.func.isRequired,
+  setConnection: PropTypes.func.isRequired,
   responseSchedule: PropTypes.object.isRequired,
   activityAccess: PropTypes.object.isRequired,
   appletTime: PropTypes.any.isRequired,
@@ -215,6 +218,7 @@ ActivityList.propTypes = {
   setUpdatedTime: PropTypes.func.isRequired,
   getSchedules: PropTypes.func.isRequired,
   setScheduleUpdated: PropTypes.func.isRequired,
+  isConnected: PropTypes.bool.isRequired,
   scheduleUpdated: PropTypes.bool.isRequired,
   syncUploadQueue: PropTypes.func.isRequired,
   setReminder: PropTypes.func.isRequired,
@@ -228,6 +232,7 @@ const mapStateToProps = (state) => {
     appStatus: state.app.appStatus,
     scheduleUpdated: state.applets.scheduleUpdated,
     applet: newAppletSelector(state),
+    isConnected: connectionSelector(state),
     appletTime: state.applets.currentTime,
     activitySelectionDisabled: activitySelectionDisabledSelector(state),
     responseSchedule: responseScheduleSelector(state),
@@ -244,6 +249,7 @@ const mapDispatchToProps = {
   setUpdatedTime,
   getSchedules,
   setAppStatus,
+  setConnection,
   setScheduleUpdated,
   syncUploadQueue,
   setReminder,
