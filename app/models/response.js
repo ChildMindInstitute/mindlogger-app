@@ -92,10 +92,10 @@ export const prepareResponseForUpload = (
     alerts,
   };
 
-  let subScaleScores = [];
+  let subScaleResult = [];
   if (activity.subScales) {
     for (let subScale of activity.subScales) {
-      subScaleScores.push(
+      subScaleResult.push(
         getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
       );
     }
@@ -113,7 +113,7 @@ export const prepareResponseForUpload = (
     responseData['dataSource'] = dataSource;
 
     if (activity.subScales) {
-      responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
+      responseData['subScaleSource'] = getEncryptedData(subScaleResult, appletMetaData.AESKey);
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
     }
 

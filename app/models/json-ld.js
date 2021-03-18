@@ -69,6 +69,7 @@ const AGE = "reprolib:terms/age";
 const RAW_SCORE = "reprolib:terms/rawScore";
 const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
+const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
@@ -323,7 +324,8 @@ export const flattenLookupTable = (lookupTable) => {
     [AGE]: 'age',
     [RAW_SCORE]: 'rawScore',
     [SEX]: 'sex',
-    [T_SCORE]: 'tScore'
+    [T_SCORE]: 'tScore',
+    [OUTPUT_TEXT]: 'outputText'
   };
 
   return R.map(row => Object.keys(references).reduce((previousValue, key) => {
@@ -573,7 +575,9 @@ export const transformApplet = (payload, currentApplets = null) => {
               if (act.id.substring(9) === keys[0]) {
                 act.items.forEach((itemData, i) => {
                   if (itemData.id === payload.items[dataKey]) {
-                    const item = itemTransformJson(payload.items[dataKey]);
+                    const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                    item.variableName = payload.items[dataKey]['@id'];
+
                     applet.activities[index].items[i] = {
                       ...itemData,
                       ...item,
@@ -610,6 +614,8 @@ export const transformApplet = (payload, currentApplets = null) => {
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
                 const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                item.variableName = payload.items[dataKey]['@id'];
+
                 let updated = false;
 
                 if (!act.items) {
