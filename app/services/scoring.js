@@ -124,12 +124,12 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
       return true;
     }
 
-    const matched = lookupInfo.match(/^(\d+)\s*[-~]\s*(\d+)$/);
+    const matched = lookupInfo.match(/^([\d.]+)\s*[-~]\s*([\d.]+)$/);
 
     if (matched) {
       value = parseInt(value);
 
-      return !isNaN(value) && value >= parseInt(matched[1]) && value <= parseInt(matched[2]);
+      return !isNaN(value) && value >= Number(matched[1]) && value <= Number(matched[2]);
     }
     return false;
   };
@@ -140,9 +140,15 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
       isValueInRange(age, row.age) &&
       isValueInRange(gender, row.sex)
     ) {
-      return parseInt(row.tScore);
+      return {
+        tScore: Number(row.tScore),
+        outputText: row.outputText
+      };
     }
   }
 
-  return subScaleScore;
+  return {
+    tScore: subScaleScore,
+    outputText: null
+  };
 }
