@@ -90,7 +90,8 @@ export const getApplets = (authToken, localInfo) => {
     getAllApplets: true,
     retrieveSchedule: true,
     retrieveResponses: true,
-    numberOfDays: 7
+    numberOfDays: 7,
+    groupByDateActivity: false
   });
   const url = `${apiHost()}/user/applets?${queryParams}`;
   const headers = {
