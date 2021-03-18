@@ -83,6 +83,32 @@ class ActivityScreen extends Component {
       return true;
     }
 
+    if (screen.valueConstraints && screen.valueConstraints.isOptionalTextRequired) {
+      if (!answer || !answer["text"]) {
+        return false;
+      }
+    }
+
+    if (screen.inputType === "text") {
+      if (!answer) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (screen.inputType === "slider" || (screen.inputType === "radio" && !screen.valueConstraints.multipleChoice)) {
+      if (!answer || (answer.value !== 0 && !answer.value)) {
+        return false;
+      }
+    }
+
+    if (screen.inputType === "radio" && screen.valueConstraints.multipleChoice) {
+      if (!answer || !answer.value || !answer.value.length) {
+        return false;
+      }
+    }
+
     if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
       if (!answer) {
         return false;
@@ -97,9 +123,6 @@ class ActivityScreen extends Component {
     }
 
     if (answer !== null && typeof answer !== "undefined") {
-      if (screen.valueConstraints.isOptionalTextRequired && ((typeof answer["text"] === "undefined" || answer["text"] == "") )|| (typeof answer["value"] === "undefined" || answer["value"] == "")) {
-        return false
-      }
       if (Array.isArray(answer["value"])) {
         return answer["value"].length !== 0;
       }
@@ -111,7 +134,7 @@ class ActivityScreen extends Component {
       }
     } 
 
-    return !!answer;
+    return answer && (answer.value === 0 || !!answer.value);
   }
 
   constructor() {
