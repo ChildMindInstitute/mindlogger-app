@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 ## [0.15.24] - 2020-03-18
 - Fixed async storage cache issue
+- Updated optional text box in all widgets
 
 ## [0.15.23] - 2020-03-18
 - Fixed next button issues
