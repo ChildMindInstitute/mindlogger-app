@@ -8,6 +8,7 @@ import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
+import { clearAsyncStorage } from "../../services/asyncStorage";
 import { clearUser } from '../user/user.actions';
 import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
@@ -75,20 +76,25 @@ export const logout = () => (dispatch, getState) => {
   }
   const uploadQueue = uploadQueueSelector(state);
 
-  if (uploadQueue.length > 0) {
-    Actions.push('logout_warning', {
-      onCancel: () => {
-        Actions.pop();
-      },
-      onLogout: () => {
-        Actions.push('login');
+  clearAsyncStorage()
+    .then(() => {
+      if (uploadQueue.length > 0) {
+        Actions.push('logout_warning', {
+          onCancel: () => {
+            Actions.pop();
+          },
+          onLogout: () => {
+            Actions.push('login');
+            doLogout(dispatch, getState);
+          },
+        });
+      } else {
         doLogout(dispatch, getState);
-      },
+      }
     });
-  } else {
-    doLogout(dispatch, getState);
-  }
-};
+
+
+}; 
 
 export const removeAccount = () => (dispatch, getState) => {
   const state = getState();
