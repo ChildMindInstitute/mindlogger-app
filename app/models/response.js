@@ -112,9 +112,9 @@ export const prepareResponseForUpload = (
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
     }
 
-    responseData['tokenCumulation'] = getEncryptedData({
+    responseData['tokenCumulation'] = {
       value: cumulative
-    }, appletMetaData.AESKey);
+    };
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
@@ -158,12 +158,9 @@ export const getTokenUpdateInfo = (
         },
         appletMetaData.AESKey
       ),
-      cumulative: getEncryptedData(
-        {
-          value: cumulative
-        },
-        appletMetaData.AESKey
-      ),
+      cumulative: {
+        value: cumulative
+      },
       userPublicKey: appletMetaData['userPublicKey']
     }      
   }

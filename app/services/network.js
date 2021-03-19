@@ -90,7 +90,8 @@ export const getApplets = (authToken, localInfo) => {
     getAllApplets: true,
     retrieveSchedule: true,
     retrieveResponses: true,
-    numberOfDays: 7
+    numberOfDays: 7,
+    groupByDateActivity: false
   });
   const url = `${apiHost()}/user/applets?${queryParams}`;
   const headers = {
@@ -357,6 +358,7 @@ export const replaceResponseData = ({
   userPublicKey,
   appletId,
   dataSources,
+  tokenUpdates
 }) => {
   console.log("replace response data");
   let url = `${apiHost()}/response/${appletId}`;
@@ -369,7 +371,7 @@ export const replaceResponseData = ({
     mode: "cors",
     headers,
     body: objectToFormData({
-      responses: JSON.stringify({ dataSources, userPublicKey }),
+      responses: JSON.stringify({ tokenUpdates, dataSources, userPublicKey }),
     }),
   }).then((res) => (res.status === 200 ? res.json() : res));
 };

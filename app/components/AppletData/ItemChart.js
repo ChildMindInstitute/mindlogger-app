@@ -57,7 +57,6 @@ class ItemChart extends React.Component {
 
   renderTokenPlot() {
     const values = {};
-    const accValues = {}
     const { item, data, tokens } = this.props;
     const { enableNegativeTokens } = item.valueConstraints;
 
@@ -93,7 +92,6 @@ class ItemChart extends React.Component {
           }, 0)
           : val.value;
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
-        // accValues[currentDay] = accValues[currentDay] === undefined ? accSum : accValues[currentDay] + accSum;
       }
     });
 
