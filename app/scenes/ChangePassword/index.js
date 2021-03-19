@@ -23,8 +23,8 @@ import { userInfoSelector, authTokenSelector } from '../../state/user/user.selec
 import { updateUserDetails, updatePassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
-import { replaceReponses } from '../../state/responses/responses.thunks';
-import { getPrivateKey } from '../../services/encryption';
+import { replaceReponses } from '../../state/responses/responses.thunks'
+import { getPrivateKey } from '../../services/encryption'
 
 import ChangePasswordForm from './ChangePasswordForm';
 
@@ -51,6 +51,10 @@ class ChangePasswordScreen extends Component {
     const { authToken, user, updateUserDetailsSuccessful, replaceReponses } = this.props;
 
     return updatePassword(authToken, oldPassword, password)
+      .then(() => {
+        user.privateKey = getPrivateKey({ userId: user._id, email: user.email, password: password });
+        return replaceReponses(user);
+      })
       .then(() => updateUserDetailsSuccessful(user))
       .catch((e) => {
         throw new SubmissionError({

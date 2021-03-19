@@ -358,6 +358,7 @@ export const replaceResponseData = ({
   userPublicKey,
   appletId,
   dataSources,
+  tokenUpdates
 }) => {
   console.log("replace response data");
   let url = `${apiHost()}/response/${appletId}`;
@@ -370,7 +371,7 @@ export const replaceResponseData = ({
     mode: "cors",
     headers,
     body: objectToFormData({
-      responses: JSON.stringify({ dataSources, userPublicKey }),
+      responses: JSON.stringify({ tokenUpdates, dataSources, userPublicKey }),
     }),
   }).then((res) => (res.status === 200 ? res.json() : res));
 };
