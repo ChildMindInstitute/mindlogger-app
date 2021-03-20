@@ -158,12 +158,9 @@ export const getTokenUpdateInfo = (
         },
         appletMetaData.AESKey
       ),
-      cumulative: getEncryptedData(
-        {
-          value: cumulative
-        },
-        appletMetaData.AESKey
-      ),
+      cumulative: {
+        value: cumulative
+      },
       userPublicKey: appletMetaData['userPublicKey']
     }      
   }
