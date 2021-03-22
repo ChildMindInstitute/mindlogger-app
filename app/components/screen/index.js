@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 25,
     minHeight: "100%",
     justifyContent: "center",
     flexGrow: 1,
