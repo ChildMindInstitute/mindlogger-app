@@ -89,7 +89,7 @@ class ActivityScreen extends Component {
       }
     }
 
-    if (screen.inputType === "text") {
+    if (screen.inputType === "text" || screen.inputType === "time") {
       if (!answer) {
         return false;
       } else {
