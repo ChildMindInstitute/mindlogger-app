@@ -784,6 +784,31 @@ export const dateParser = (schedule) => {
   return output;
 };
 
+export const parseAppletEvents = (applet) => {
+  const extraInfoActivities = applet.activities.map((act) => {
+    const events = [];
+
+    for (let eventId in applet.schedule.events) {
+      const event = appplet.schedule.events[eventId];
+
+      if (event.data.activity_id === act.id.substring(9)) {
+        events.push(event);
+      }
+    }
+
+    return {
+      ...act,
+      appletId: applet.id,
+      events
+    }
+  });
+
+  return {
+    ...applet,
+    activities: extraInfoActivities,
+  };
+}
+
 export const parseAppletActivities = (applet, responseSchedule) => {
   let scheduledDateTimesByActivity = {};
   // applet.schedule, if defined, has an events key.
