@@ -102,6 +102,21 @@ export const getMaxScore = (item) => {
   }, valueConstraints.multipleChoice ? 0 : -oo);
 }
 
+const isValueInRange = (value, lookupInfo) => {
+  if (!lookupInfo || lookupInfo == value) {
+    return true;
+  }
+
+  const matched = lookupInfo.match(/^([\d.]+)\s*[-~]\s*([\d.]+)$/);
+
+  if (matched) {
+    value = parseInt(value);
+
+    return !isNaN(value) && value >= Number(matched[1]) && value <= Number(matched[2]);
+  }
+  return false;
+};
+
 export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
   let scores = [];
 
@@ -118,21 +133,6 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
 
   const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
   const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
-
-  const isValueInRange = (value, lookupInfo) => {
-    if (!lookupInfo || lookupInfo == value) {
-      return true;
-    }
-
-    const matched = lookupInfo.match(/^([\d.]+)\s*[-~]\s*([\d.]+)$/);
-
-    if (matched) {
-      value = parseInt(value);
-
-      return !isNaN(value) && value >= Number(matched[1]) && value <= Number(matched[2]);
-    }
-    return false;
-  };
 
   for (let row of lookupTable) {
     if ( 
@@ -151,4 +151,34 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     tScore: subScaleScore,
     outputText: null
   };
+}
+
+export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
+  let total = 0, count = 0;
+  for (let i = 0; i < responses.length; i++) {
+    if (responses[i]) {
+      total += getScoreFromResponse(items[i], responses[i].value);
+      if (items[i].valueConstraints && items[i].valueConstraints.scoring) {
+        count++;
+      }
+    }
+  }
+
+  const score = (isAverage ? total / Math.max(count, 1) : total);
+
+  for (let row of lookupTable) {
+    if (
+      isValueInRange(score, row.rawScore)
+    ) {
+      return {
+        rawScore: score,
+        outputText: row.outputText
+      };
+    }
+  }
+
+  return {
+    rawScore: score,
+    outputText: ''
+  }
 }

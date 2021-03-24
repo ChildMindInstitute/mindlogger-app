@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
+import { getScoreFromLookupTable, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -112,9 +112,17 @@ export const prepareResponseForUpload = (
     responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
-    if (activity.subScales) {
+    if (activity.finalSubScale) {
+      subScaleResult.push(getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable));
+    }
+
+    if (subScaleResult.length) {
       responseData['subScaleSource'] = getEncryptedData(subScaleResult, appletMetaData.AESKey);
-      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+      responseData['subScales'] = (activity.subScales || []).reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+
+      if (activity.finalSubScale) {
+        responseData['subScales'][activity.finalSubScale.variableName] = (activity.subScales || []).length;
+      }
     }
 
     responseData['tokenCumulation'] = {
@@ -135,9 +143,15 @@ export const prepareResponseForUpload = (
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
         return {
           ...accumulator,
-          [subScale.variableName]: subScaleScores[index],
+          [subScale.variableName]: subScaleResult[index],
         }
       });
+    }
+
+    if (activity.finalSubScale) {
+      responseData['subScales'] = responseData['subScales'] || {};
+      responseData['subScales'][activity.finalSubScale.variableName] = 
+        getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
 
     responseData['tokenCumulation'] = {
