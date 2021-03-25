@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 25,
     minHeight: "100%",
     justifyContent: "center",
     flexGrow: 1,
@@ -235,7 +235,7 @@ class ActivityScreen extends Component {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={4}
+          keyboardVerticalOffset={20}
         >
           <ScrollView
             alwaysBounceVertical={false}
