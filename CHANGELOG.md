@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.15.26] - 2020-03-21
 - Fixed EMA next button issue
 
+## [0.15.26] - 2020-03-25
+- Modified audioImageRecord widget
+
 ## [0.15.25] - 2020-03-21
 - Fixed next button in EMA applet
 - Removed white space above items
