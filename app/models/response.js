@@ -5,6 +5,7 @@ import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
 import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
+import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
   activityTransformJson,
@@ -38,10 +39,14 @@ export const prepareResponseForUpload = (
       const { valueType, responseAlert, enableNegativeTokens } = item.valueConstraints;
 
       if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
-        alerts.push({
-          id: activity.items[i].id.split('/')[1],
-          schema: activity.items[i].schema
-        });
+        const messages = getAlertsFromResponse(item, responses[i].value ? responses[i].value : responses[i]);
+        messages.forEach(msg => {
+          alerts.push({
+            id: activity.items[i].id.split('/')[1],
+            schema: activity.items[i].schema,
+            message: msg
+          });
+        })
       }
 
       if (

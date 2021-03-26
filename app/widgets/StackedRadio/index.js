@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export const StackedRadio = ({ value, config, onChange, token }) => {
+export const StackedRadio = ({ value, config, onChange, token, onSelected }) => {
   const optionNumber = config.options.length;
   const optionWidth = `${Math.floor(75 / optionNumber)}%`;
   const tokenValues = [];
@@ -42,7 +42,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
     for (let i = 0; i < config.itemList.length; i++) {
       tokenValues.push([]);
       for (let j = 0; j < config.options.length; j++) {
-        tokenValues[i].push(config.itemOptions[i * config.options.length + j].value);
+        tokenValues[i].push(config.itemOptions[i * config.options.length + j].value || 0);
       }
     }
   }
@@ -62,6 +62,7 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
       onChange(currentValue);
     }
 
+    onSelected();
   };
 
   return (
@@ -75,10 +76,10 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
             <View style={{ width: optionWidth }}>
               {option.description ? (
                 <TooltipBox text={option.description}>
-                  <Text style={styles.optionText}>{ option.name }<Text style={styles.tooltip}>*</Text></Text>
+                  <Text style={styles.optionText}>{ option.name.en }<Text style={styles.tooltip}>*</Text></Text>
                 </TooltipBox>
               ) : (
-                <Text style={styles.optionText}>{ option.name }</Text>
+                <Text style={styles.optionText}>{ option.name.en }</Text>
               )}
               {option.image ? (
                 <Image
@@ -101,10 +102,10 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
           <View style={{ width: '25%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
-                <Text style={styles.itemText}>{ item.name }<Text style={styles.tooltip}>*</Text></Text>
+                <Text style={styles.itemText}>{ item.name.en }<Text style={styles.tooltip}>*</Text></Text>
               </TooltipBox>
             ) : (
-              <Text style={styles.itemText}>{ item.name }</Text>
+              <Text style={styles.itemText}>{ item.name.en }</Text>
             )}
             {item.image ? (
                 <Image
@@ -129,9 +130,9 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                   multipleChoice && (
                     <CheckBox
                       checked={
-                        currentValue[i].includes(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`)
+                        currentValue[i].includes(`${option.name.en}${token ? ':'+tokenValues[i][j] : ''}`)
                       }
-                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
+                      onPress={() => handlePress(`${option.name.en}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="check-square"
                       uncheckedIcon="square-o"
                       checkedColor={colors.primary}
@@ -139,8 +140,8 @@ export const StackedRadio = ({ value, config, onChange, token }) => {
                     />
                   ) || (
                     <CheckBox
-                      checked={currentValue[i] === `${option.name}${token ? ':'+tokenValues[i][j] : ''}`}
-                      onPress={() => handlePress(`${option.name}${token ? ':'+tokenValues[i][j] : ''}`, i)}
+                      checked={currentValue[i] === `${option.name.en}${token ? ':'+tokenValues[i][j] : ''}`}
+                      onPress={() => handlePress(`${option.name.en}${token ? ':'+tokenValues[i][j] : ''}`, i)}
                       checkedIcon="dot-circle-o"
                       uncheckedIcon="circle-o"
                       checkedColor={colors.primary}
@@ -181,4 +182,5 @@ StackedRadio.propTypes = {
   }).isRequired,
   token: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
+  onSelected: PropTypes.func.isRequired,
 };
