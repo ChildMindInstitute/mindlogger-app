@@ -231,7 +231,7 @@ export const flattenValueConstraints = (vcObj) =>
       return { ...accumulator, itemList: itemList.map(item => ({
         description: R.path([DESCRIPTION, 0, "@value"], item),
         image: item[IMAGE],
-        name: R.path([NAME, 0, "@value"], item)
+        name: languageListToObject(item[NAME])
       })) };
     }
 
@@ -239,7 +239,8 @@ export const flattenValueConstraints = (vcObj) =>
       const itemOptions = R.path([key], vcObj);
       return { ...accumulator, itemOptions: itemOptions.map(option => ({
         score: R.path([SCORE, 0, "@value"], option),
-        value: R.path([VALUE, 0, "@value"], option)
+        value: R.path([VALUE, 0, "@value"], option),
+        alert: R.path([ALERT, 0, "@value"], option)
       })) };
     }
 
@@ -248,7 +249,7 @@ export const flattenValueConstraints = (vcObj) =>
       return { ...accumulator, options: options.map(option => ({
         description: R.path([DESCRIPTION, 0, "@value"], option),
         image: option[IMAGE],
-        name: R.path([NAME, 0, "@value"], option)
+        name: languageListToObject(option[NAME])
       }))}
     }
 

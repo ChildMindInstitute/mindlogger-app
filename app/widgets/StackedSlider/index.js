@@ -78,9 +78,7 @@ class StackedSlider extends Component {
                     config={slider}
                     appletName={appletName}
                     onChange={(val) => {
-                      currentValue[index] = {
-                        value: Math.floor(val['value'])
-                      };
+                      currentValue[index] = Math.floor(val['value']);
                       onChange(currentValue);
                     }}
                     onPress={() => {
@@ -92,7 +90,7 @@ class StackedSlider extends Component {
                       onPress();
                     }}
                     onRelease={onRelease}
-                    value={currentValue[index]}
+                    value={{value: currentValue[index]}}
                   />
                 </View>
               </View>
