@@ -15,59 +15,136 @@ const compareByNameAlpha = (a, b) => {
 
 const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
-export const getUnscheduled = (activityList, appletId, activityAccess) => activityList.filter(
-  activity => (!activity.nextScheduledTimestamp
-    || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-    && (!activity.oneTimeCompletion
-      || !activity.lastResponseTimestamp
-      || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
-    && (!activity.lastResponseTimestamp
-      || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
-      || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-      > activity.lastTimeout
-      || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
-    && (!activity.nextAccess || (activityAccess && activityAccess[appletId + activity.id]))
-    && (!activity.lastScheduledTimestamp
-      || ((((!activity.extendedTime || !activity.extendedTime.allow)
-        && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
-        || (activity.extendedTime
-          && activity.extendedTime.allow
-          && new Date().getTime() - activity.lastScheduledTimestamp
-          > activity.lastTimeout + activity.extendedTime.days * 86400000))
-        && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
-    && activity.invalid !== false,
-);
+export const getUnscheduled = (activityList, appletId, activityAccess) => {
+  const unscheduledActivities = [];
 
-export const getScheduled = (activityList, endTimes, appletId, activityAccess) => activityList.filter(
-  activity => activity.nextScheduledTimestamp
-    && (!activity.lastScheduledTimestamp
-      || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
-      || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp
-      || (endTimes && endTimes[appletId + activity.id] > activity.lastScheduledTimestamp))
-    && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-    && (!activityAccess || !activityAccess[appletId + activity.id]),
-);
+  activityList.forEach(activity => {
+    activity.events.forEach(event => {
+      const today = new Date();
+      const { scheduledTime, data } = event;
+      const activityTimeout = data.timeout.day * 86400000
+        + data.timeout.hour * 360000
+        + data.timeout.minute * 6000;
 
-export const getPastdue = (activityList, endTimes, appletId) => activityList.filter(
-  activity => activity.lastScheduledTimestamp
-    && activity.lastTimeout
-    && (!endTimes || !endTimes[appletId + activity.id] || endTimes[appletId + activity.id] < activity.lastScheduledTimestamp)
-    && (!activity.lastResponseTimestamp
-      || moment(activity.lastResponseTimestamp) <= activity.lastScheduledTimestamp
-      || ((!activity.extendedTime || !activity.extendedTime.allow)
-        && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-        > activity.lastTimeout)
-      || (activity.extendedTime
-        && activity.extendedTime.allow
-        && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-        > activity.extendedTime.days * 86400000))
-    && ((activity.extendedTime
-      && activity.extendedTime.allow
-      && new Date().getTime() - activity.lastScheduledTimestamp
-      <= activity.lastTimeout + activity.extendedTime.days * 86400000)
-      || ((!activity.extendedTime || !activity.extendedTime.allow)
-        && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
-);
+      if (scheduledTime > today
+        && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
+        const unscheduledActivity = { ...activity };
+
+        delete unscheduledActivity.events;
+        unscheduledActivity.event = event;
+        unscheduledActivities.push(unscheduledActivity);
+      }
+    })
+  });
+
+  return scheduledActivities;
+
+
+  // activityList.filter(
+  //   activity => (!activity.nextScheduledTimestamp
+  //     || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+  //     && (!activity.oneTimeCompletion
+  //       || !activity.lastResponseTimestamp
+  //       || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
+  //     && (!activity.lastResponseTimestamp
+  //       || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
+  //       || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+  //       > activity.lastTimeout
+  //       || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
+  //     && (!activity.nextAccess || (activityAccess && activityAccess[appletId + activity.id]))
+  //     && (!activity.lastScheduledTimestamp
+  //       || ((((!activity.extendedTime || !activity.extendedTime.allow)
+  //         && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
+  //         || (activity.extendedTime
+  //           && activity.extendedTime.allow
+  //           && new Date().getTime() - activity.lastScheduledTimestamp
+  //           > activity.lastTimeout + activity.extendedTime.days * 86400000))
+  //         && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
+  //     && activity.invalid !== false,
+  // );
+}
+
+export const getScheduled = (activityList, endTimes, appletId, activityAccess) => {
+  const scheduledActivities = [];
+
+  activityList.forEach(activity => {
+    activity.events.forEach(event => {
+      const today = new Date();
+      const { scheduledTime, data } = event;
+      const activityTimeout = data.timeout.day * 86400000
+        + data.timeout.hour * 360000
+        + data.timeout.minute * 6000;
+
+      if (scheduledTime > today
+        && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
+        const scheduledActivity = { ...activity };
+
+        delete scheduledActivity.events;
+        scheduledActivity.event = event;
+        scheduledActivities.push(scheduledActivity);
+      }
+    })
+  });
+
+  return scheduledActivities;
+
+  // activityList.filter(
+  //   activity => activity.nextScheduledTimestamp
+  //     && (!activity.lastScheduledTimestamp
+  //       || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
+  //       || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp
+  //       || (endTimes && endTimes[appletId + activity.id] > activity.lastScheduledTimestamp))
+  //     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
+  //     && (!activityAccess || !activityAccess[appletId + activity.id]),
+  // );
+}
+
+export const getPastdue = (activityList, endTimes, appletId) => {
+  const pastActivities = [];
+
+  activityList.forEach(activity => {
+    activity.events.forEach(event => {
+      const today = new Date();
+      const { scheduledTime, data } = event;
+      const activityTimeout = data.timeout.day * 86400000
+        + data.timeout.hour * 360000
+        + data.timeout.minute * 6000;
+
+      if (scheduledTime <= today
+        && moment().isSame(moment(scheduledTime), 'day')
+        && (!data.timeout.allow || today.getTime() - scheduledTime.getTime() < activityTimeout)) {
+        const pastActivity = { ...activity };
+
+        delete pastActivity.events;
+        pastActivity.event = event;
+        pastActivities.push(pastActivity);
+      }
+    })
+  });
+
+  return pastActivities;
+
+  // return activityList.filter(
+  //   activity => activity.lastScheduledTimestamp
+  //     && activity.lastTimeout
+  //     && (!endTimes || !endTimes[appletId + activity.id] || endTimes[appletId + activity.id] < activity.lastScheduledTimestamp)
+  //     && (!activity.lastResponseTimestamp
+  //       || moment(activity.lastResponseTimestamp) <= activity.lastScheduledTimestamp
+  //       || ((!activity.extendedTime || !activity.extendedTime.allow)
+  //         && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+  //         > activity.lastTimeout)
+  //       || (activity.extendedTime
+  //         && activity.extendedTime.allow
+  //         && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
+  //         > activity.extendedTime.days * 86400000))
+  //     && ((activity.extendedTime
+  //       && activity.extendedTime.allow
+  //       && new Date().getTime() - activity.lastScheduledTimestamp
+  //       <= activity.lastTimeout + activity.extendedTime.days * 86400000)
+  //       || ((!activity.extendedTime || !activity.extendedTime.allow)
+  //         && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
+  // );
+}
 
 const addSectionHeader = (array, headerText) => (array.length > 0 ? [{ isHeader: true, text: headerText }, ...array] : []);
 
