@@ -15,11 +15,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sliderLabel: {
-    width: "20%",
-    fontSize: 15
+    width: "30%"
   },
   sliderElement: {
-    width: "80%"
+    width: "70%"
   }
 });
 
@@ -67,7 +66,10 @@ class StackedSlider extends Component {
             config.sliderOptions.map((slider, index) => (
               <View style={styles.sliderContainer}>
                 <View style={styles.sliderLabel}>
-                  <Text>
+                  <Text
+                    allowFontScaling={false}
+                    style={{ fontSize: 12 }}
+                  >
                     {slider.sliderLabel}
                   </Text>
                 </View>

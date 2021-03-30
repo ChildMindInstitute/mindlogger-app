@@ -9,10 +9,10 @@ import { TooltipBox } from '../TooltipBox';
 
 const styles = StyleSheet.create({
   itemText: {
-    fontSize: 12,
+    fontSize: 11,
   },
   optionText: {
-    fontSize: 12
+    fontSize: 11
   },
   tooltip: {
     color: 'red'
@@ -68,7 +68,7 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
   return (
     <View style={{ alignItems: 'stretch' }}>
       <ListItem
-        style={{ width: '95%' }}
+        style={{ width: '100%' }}
       >
         <View style={{ width: '25%' }}></View>
         {
@@ -76,10 +76,16 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
             <View style={{ width: optionWidth }}>
               {option.description ? (
                 <TooltipBox text={option.description}>
-                  <Text style={styles.optionText}>{ option.name.en }<Text style={styles.tooltip}>*</Text></Text>
+                  <Text
+                    style={styles.optionText}
+                    allowFontScaling={false}
+                  >{ option.name.en }<Text style={styles.tooltip}>*</Text></Text>
                 </TooltipBox>
               ) : (
-                <Text style={styles.optionText}>{ option.name.en }</Text>
+                <Text
+                  style={styles.optionText}
+                  allowFontScaling={false}
+                >{ option.name.en }</Text>
               )}
               {option.image ? (
                 <Image
@@ -96,16 +102,22 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
 
       {config.itemList.map((item, i) => (
         <ListItem
-          style={{ width: '95%' }}
+          style={{ width: '100%' }}
           key={i}
         >
           <View style={{ width: '25%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
-                <Text style={styles.itemText}>{ item.name.en }<Text style={styles.tooltip}>*</Text></Text>
+                <Text
+                  style={styles.itemText}
+                  allowFontScaling={false}
+                >{ item.name.en }<Text style={styles.tooltip}>*</Text></Text>
               </TooltipBox>
             ) : (
-              <Text style={styles.itemText}>{ item.name.en }</Text>
+              <Text
+                style={styles.itemText}
+                allowFontScaling={false}
+              >{ item.name.en }</Text>
             )}
             {item.image ? (
                 <Image
