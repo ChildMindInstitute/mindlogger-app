@@ -7,6 +7,7 @@ import i18n from "i18next";
 import { BodyText, Heading } from "../../components/core";
 import theme from "../../themes/base-theme";
 import FunButton from "../../components/core/FunButton";
+import { setCurrentActivity } from "../../state/app/app.actions";
 
 const styles = StyleSheet.create({
   box: {
@@ -19,9 +20,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityThanks = () => {
+const ActivityThanks = (setCurrentActivity) => {
   const onClose = () => {
     Actions.replace("applet_details");
+    setCurrentActivity(null);
+
   };
 
   return (
@@ -48,7 +51,9 @@ const ActivityThanks = () => {
 
 ActivityThanks.propTypes = {};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setCurrentActivity,
+};
 
 export default connect(
   null,

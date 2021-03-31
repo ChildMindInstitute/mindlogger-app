@@ -56,9 +56,9 @@ const ActivityList = ({
   const updateScheduleDelay = 24 * 3600 * 1000;
 
   const stateUpdate = () => {
-    const newApplets = parseAppletEvents(applet);
-    console.log('newapplets', newApplets)
-    const newApplet = parseAppletActivities(applet, responseSchedule);
+    const newApplet = parseAppletEvents(applet);
+    console.log('newApplet', newApplet)
+    // const newApplet = parseAppletActivities(applet, responseSchedule);
 
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
     setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));
@@ -138,8 +138,6 @@ const ActivityList = ({
 
   useEffect(() => {
     let intervalId;
-    console.log('applet- - - -- -  -', applet)
-    console.log('responseSchedule - - - - - - -', responseSchedule);
     const currentTime = new Date();
     const nextDay = new Date(
       currentTime.getFullYear(),
@@ -192,7 +190,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
-          key={activity.id || activity.text}
+          key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))} 
       {prizeActivity && (

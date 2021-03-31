@@ -6,7 +6,6 @@ import {
   removeResponseInProgress,
   createResponseInProgress,
   setAnswer,
-  setAnswers,
   addToUploadQueue,
   shiftUploadQueue,
   setSchedule,
@@ -68,22 +67,6 @@ test('it removes response in progress', () => {
   expect(responsesReducer(oneResponseState, removeResponseInProgress('myAppletmyActivity'))).toEqual({
     ...initialState,
     inProgress: {},
-  });
-});
-
-test('it can set all answers at once', () => {
-  const appletId = 'myApplet';
-  const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
-  expect(responsesReducer(oneResponseState, setAnswers('myApplet', 'myActivity', 'new answers'))).toEqual({
-    ...initialState,
-    inProgress: {
-      myAppletmyActivity: {
-        activity,
-        responses: 'new answers',
-        screenIndex: 0,
-      },
-    },
   });
 });
 

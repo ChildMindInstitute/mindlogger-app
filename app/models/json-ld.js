@@ -792,6 +792,7 @@ export const dateParser = (schedule) => {
 export const parseAppletEvents = (applet) => {
   const extraInfoActivities = applet.activities.map((act) => {
     const events = [];
+    const availability = getActivityAbility(applet.schedule, act.id);
 
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
@@ -813,6 +814,7 @@ export const parseAppletEvents = (applet) => {
     return {
       ...act,
       appletId: applet.id,
+      availability,
       events
     }
   });
@@ -821,6 +823,20 @@ export const parseAppletEvents = (applet) => {
     ...applet,
     activities: extraInfoActivities,
   };
+}
+
+const getActivityAbility = (schedule, activityId) => {
+  let availability = false;
+
+  Object.keys(schedule.events).forEach(key => {
+    const e = schedule.events[key];
+
+    if (e.data.activity_id === activityId.substring(9)) {
+      availability = e.data.availability;
+    }
+  });
+
+  return availability;
 }
 
 export const parseAppletActivities = (applet, responseSchedule) => {

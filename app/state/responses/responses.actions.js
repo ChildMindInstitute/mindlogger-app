@@ -57,22 +57,12 @@ export const createResponseInProgress = (appletId, activity, subjectId, timeStar
   },
 });
 
-export const setAnswer = (appletId, activityId, screenIndex, answer) => ({
+export const setAnswer = (activity, screenIndex, answer) => ({
   type: RESPONSES_CONSTANTS.SET_ANSWER,
   payload: {
-    appletId,
-    activityId,
+    activity,
     screenIndex,
     answer,
-  },
-});
-
-export const setAnswers = (appletId, activityId, response) => ({
-  type: RESPONSES_CONSTANTS.SET_ANSWERS,
-  payload: {
-    appletId,
-    activityId,
-    response,
   },
 });
 
@@ -85,11 +75,10 @@ export const shiftUploadQueue = () => ({
   type: RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE,
 });
 
-export const setCurrentScreen = (appletId, activityId, screenIndex) => ({
+export const setCurrentScreen = (activity, screenIndex) => ({
   type: RESPONSES_CONSTANTS.SET_CURRENT_SCREEN,
   payload: {
-    appletId,
-    activityId,
+    activity,
     screenIndex,
   },
 });

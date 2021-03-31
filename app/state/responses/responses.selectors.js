@@ -52,12 +52,31 @@ export const currentAppletTokenBalanceSelector = createSelector(
 
 export const currentResponsesSelector = createSelector(
   R.path(["app", "currentActivity"]),
-  R.path(["app", "currentApplet"]),
+  R.path(['applets', 'applets']),
   inProgressSelector,
-  (activityId, appletId, inProgress) => {
-    return inProgress[appletId + activityId]
+  (activityId, applets, inProgress) => {
+    const activities = applets.reduce(
+      (acc, applet) => [
+        ...acc,
+        ...applet.activities,
+      ],
+      [],
+    );
+    console.log('activityIdactivityIdactivityId', activityId);
+    console.log('activitiesactivitiesactivities', activities)
+    const activity = activities.find(activity => activity.id === activityId)
+    return inProgress[activity.event ? activity.id + activity.event.id : activity.id]
   }
 );
+
+// export const currentResponsesSelector = createSelector(
+//   R.path(["app", "currentActivity"]),
+//   R.path(["app", "currentApplet"]),
+//   inProgressSelector,
+//   (activityId, appletId, inProgress) => {
+//     return inProgress[appletId + activityId]
+//   }
+// );
 
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,
@@ -71,7 +90,6 @@ export const itemVisiblitySelector = createSelector(
       return [];
     }
     const { responses, activity } = current;
-
     return activity.addProperties.map((property) =>
       testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
     );

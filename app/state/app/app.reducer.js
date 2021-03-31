@@ -161,6 +161,7 @@ export default (state = initialState, action = {}) => {
         currentApplet: action.payload,
       };
     case APP_CONSTANTS.SET_CURRENT_ACTIVITY:
+      console.log('***********************', action.payload)
       return {
         ...state,
         currentActivity: action.payload,

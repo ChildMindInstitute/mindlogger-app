@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import moment from 'moment';
 import i18n from 'i18next';
+
 const compareByNameAlpha = (a, b) => {
   const nameA = a.name.en.toUpperCase(); // ignore upper and lowercase
   const nameB = b.name.en.toUpperCase(); // ignore upper and lowercase
@@ -15,29 +16,30 @@ const compareByNameAlpha = (a, b) => {
 
 const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
-export const getUnscheduled = (activityList, appletId, activityAccess) => {
+export const getUnscheduled = (activityList, pastActivities, scheduledActivities) => {
   const unscheduledActivities = [];
 
   activityList.forEach(activity => {
-    activity.events.forEach(event => {
-      const today = new Date();
-      const { scheduledTime, data } = event;
-      const activityTimeout = data.timeout.day * 86400000
-        + data.timeout.hour * 360000
-        + data.timeout.minute * 6000;
+    if (!activity.events.length || activity.availability) {
+      unscheduledActivities.push({ ...activity });
+    } else {
+      activity.events.forEach(event => {
+        const today = new Date();
+        const { scheduledTime, data } = event;
 
-      if (scheduledTime > today
-        && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
-        const unscheduledActivity = { ...activity };
-
-        delete unscheduledActivity.events;
-        unscheduledActivity.event = event;
-        unscheduledActivities.push(unscheduledActivity);
-      }
-    })
+        if (scheduledTime > today
+          && !data.completion
+          && !scheduledActivities.find(({ schema }) => schema === activity.schema)
+          && !pastActivities.find(({ schema }) => schema === activity.schema)
+          && !unscheduledActivities.find(({ schema }) => schema === activity.schema)
+          && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
+          unscheduledActivities.push({ ...activity });
+        }
+      });
+    }
   });
 
-  return scheduledActivities;
+  return unscheduledActivities;
 
 
   // activityList.filter(
@@ -64,18 +66,17 @@ export const getUnscheduled = (activityList, appletId, activityAccess) => {
   // );
 }
 
-export const getScheduled = (activityList, endTimes, appletId, activityAccess) => {
+export const getScheduled = (activityList, activityAccess) => {
   const scheduledActivities = [];
 
   activityList.forEach(activity => {
     activity.events.forEach(event => {
       const today = new Date();
       const { scheduledTime, data } = event;
-      const activityTimeout = data.timeout.day * 86400000
-        + data.timeout.hour * 360000
-        + data.timeout.minute * 6000;
 
-      if (scheduledTime > today
+      if (!activity.availability
+        && scheduledTime > today
+        && !data.completion
         && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
         const scheduledActivity = { ...activity };
 
@@ -99,18 +100,19 @@ export const getScheduled = (activityList, endTimes, appletId, activityAccess) =
   // );
 }
 
-export const getPastdue = (activityList, endTimes, appletId) => {
+export const getPastdue = (activityList, appletId) => {
   const pastActivities = [];
 
   activityList.forEach(activity => {
     activity.events.forEach(event => {
       const today = new Date();
       const { scheduledTime, data } = event;
-      const activityTimeout = data.timeout.day * 86400000
-        + data.timeout.hour * 360000
-        + data.timeout.minute * 6000;
+      const activityTimeout = data.timeout.day * 864000000
+        + data.timeout.hour * 3600000
+        + data.timeout.minute * 60000;
 
-      if (scheduledTime <= today
+      if (!activity.availability
+        && scheduledTime <= today
         && moment().isSame(moment(scheduledTime), 'day')
         && (!data.timeout.allow || today.getTime() - scheduledTime.getTime() < activityTimeout)) {
         const pastActivity = { ...activity };
@@ -154,22 +156,22 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 // before the activities that fit into that category.
 export default (appletId, activityList, inProgress, activityEndTimes, activityAccess) => {
   const inProgressKeys = Object.keys(inProgress);
-  const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(appletId + activity.id));
+  const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(activity.event ? activity.id + activity.event.id : activity.id));
 
   const notInProgress = inProgressKeys
-    ? activityList.filter(activity => !inProgressKeys.includes(appletId + activity.id))
+    ? activityList.filter(activity => !inProgressKeys.includes(activity.event ? activity.id + activity.event.id : activity.id))
     : activityList;
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
   // Activities scheduled some time in the future.
-  const pastdue = getPastdue(notInProgress, activityEndTimes, appletId)
+  const pastdue = getPastdue(notInProgress, appletId)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
-  const scheduled = getScheduled(notInProgress, activityEndTimes, appletId, activityAccess).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const scheduled = getScheduled(notInProgress, activityAccess).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress, appletId, activityAccess).sort(compareByNameAlpha);
+  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();

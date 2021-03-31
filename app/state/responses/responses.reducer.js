@@ -71,52 +71,51 @@ export default (state = initialState, action = {}) => {
         inProgress: R.omit([action.payload], state.inProgress),
       };
     case RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS:
+      const { activity } = action.payload;
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.appletId + action.payload.activity.id]: {
-            activity: R.clone(action.payload.activity),
-            responses: new Array(action.payload.activity.items.length),
+          [activity.event ? activity.id + activity.event.id : activity.id]: {
+            activity: R.clone(activity),
+            responses: new Array(activity.items.length),
             subjectId: action.payload.subjectId,
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
           },
         },
       };
-    case RESPONSES_CONSTANTS.SET_ANSWERS:
-      return {
-        ...state,
-        inProgress: {
-          ...state.inProgress,
-          [action.payload.appletId + action.payload.activityId]: {
-            ...state.inProgress[action.payload.appletId + action.payload.activityId],
-            responses: action.payload.response,
-          },
-        },
-      };
     case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
+      const curAct = action.payload.activity;
+      console.log('0###########################', action.payload)
+      console.log('activity-------------------', curAct)
+      const screenId = curAct.event ? curAct.id + curAct.event.id : curAct.id;
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.appletId + action.payload.activityId]: {
-            ...state.inProgress[action.payload.appletId + action.payload.activityId],
+          [screenId]: {
+            ...state.inProgress[screenId],
             screenIndex: action.payload.screenIndex,
           },
         },
       };
     case RESPONSES_CONSTANTS.SET_ANSWER:
+      const currentAct = action.payload.activity;
+      const index = currentAct.event ? currentAct.id + currentAct.event.id : currentAct.id;
+
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [action.payload.appletId + action.payload.activityId]: {
-            ...state.inProgress[action.payload.appletId + action.payload.activityId],
+          [index]: {
+            ...state.inProgress[index],
             responses: R.update(
               action.payload.screenIndex,
               action.payload.answer,
-              state.inProgress[action.payload.appletId + action.payload.activityId].responses,
+              state.inProgress[index].responses,
             ),
           },
         },
