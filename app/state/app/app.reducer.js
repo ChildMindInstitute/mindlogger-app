@@ -106,7 +106,6 @@ export default (state = initialState, action = {}) => {
         apiHost: action.payload,
       };
     case APP_CONSTANTS.SET_CONNECTION:
-      console.log('*****', action.payload)
       return {
         ...state,
         isConnected: action.payload,

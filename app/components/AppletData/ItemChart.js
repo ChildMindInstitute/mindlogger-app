@@ -38,6 +38,7 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -47,7 +48,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={item.question['en']}
         />
         {item.additionalParams.timelineChart}
         {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
@@ -134,7 +135,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={item.question['en']}
         />
         {/* {item.additionalParams.timelineChart} */}
         <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
@@ -151,7 +152,7 @@ class ItemChart extends React.Component {
     }
     return (
       <View style={styles.plotView}>
-        <BaseText style={styles.linePlotTitle} value={item.additionalParams.description} />
+        <BaseText style={styles.linePlotTitle} value={item.question['en']} />
         <BaseText style={styles.linePlotLabel} value={item.additionalParams.minMaxLabels[1]} />
         {item.additionalParams.lineChart}
         {/* <LineChart data={data} labels={item.additionalParams.labels} /> */}
@@ -175,7 +176,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={item.question['en']}
         />
         {/* <BarChart data={item.additionalParams.dataFix} /> */}
       </View>
