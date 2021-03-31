@@ -136,7 +136,7 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
       if ( 
         isValueInRange(subScaleScore, row.rawScore) && 
         isValueInRange(age, row.age) &&
-        isValueInRange(gender, row.sex)
+        isValueInRange(gender, row.sex.toUpperCase())
       ) {
         return {
           tScore: Number(row.tScore),
