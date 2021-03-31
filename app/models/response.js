@@ -51,7 +51,8 @@ export const prepareResponseForUpload = (
 
       if (
         valueType && 
-        valueType.includes('token')
+        valueType.includes('token') &&
+        responses[i] !== undefined && responses[i] !== null
       ) {
         cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
           (cumulative, current) => {
