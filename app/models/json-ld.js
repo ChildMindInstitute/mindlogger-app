@@ -62,6 +62,8 @@ export const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
 const COMPUTE = "reprolib:terms/compute";
 const SUBSCALES = "reprolib:terms/subScales";
+const FINAL_SUBSCALE = "reprolib:terms/finalSubScale";
+const IS_AVERAGE_SCORE = "reprolib:terms/isAverageScore";
 const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
 const LOOKUP_TABLE = "reprolib:terms/lookupTable";
@@ -69,6 +71,7 @@ const AGE = "reprolib:terms/age";
 const RAW_SCORE = "reprolib:terms/rawScore";
 const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
+const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
@@ -314,17 +317,23 @@ export const transformVariableMap = (variableAr) =>
     };
   }, {});
 
-export const flattenLookupTable = (lookupTable) => {
+export const flattenLookupTable = (lookupTable, isFinalSubScale) => {
   if (!Array.isArray(lookupTable)) {
     return undefined;
   }
 
-  const references = {
-    [AGE]: 'age',
+  let references = {
     [RAW_SCORE]: 'rawScore',
-    [SEX]: 'sex',
-    [T_SCORE]: 'tScore'
+    [OUTPUT_TEXT]: 'outputText'
   };
+
+  if (!isFinalSubScale) {
+    Object.assign(references, {
+      [AGE]: 'age',
+      [SEX]: 'sex',
+      [T_SCORE]: 'tScore'
+    });
+  }
 
   return R.map(row => Object.keys(references).reduce((previousValue, key) => {
     return {
@@ -453,9 +462,16 @@ const transformPureActivity = (activityJson) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
       variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
-      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE])
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false)
     }
   }, activityJson[SUBSCALES])
+
+  const finalSubScale = activityJson[FINAL_SUBSCALE] && {
+    isAverageScore: R.path([FINAL_SUBSCALE, 0, IS_AVERAGE_SCORE, 0, "@value"], activityJson),
+    variableName: R.path([FINAL_SUBSCALE, 0, VARIABLE_NAME, 0, "@value"], activityJson),
+    lookupTable: flattenLookupTable(R.path([FINAL_SUBSCALE, 0, LOOKUP_TABLE], activityJson), true),
+  }
+
   const messages = activityJson[MESSAGES] && R.map((item) => {
     return {
       message: R.path([MESSAGE, 0, "@value"], item),
@@ -480,6 +496,7 @@ const transformPureActivity = (activityJson) => {
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     compute,
     subScales,
+    finalSubScale,
     messages,
     preamble,
     addProperties,
@@ -573,7 +590,9 @@ export const transformApplet = (payload, currentApplets = null) => {
               if (act.id.substring(9) === keys[0]) {
                 act.items.forEach((itemData, i) => {
                   if (itemData.id === payload.items[dataKey]) {
-                    const item = itemTransformJson(payload.items[dataKey]);
+                    const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                    item.variableName = payload.items[dataKey]['@id'];
+
                     applet.activities[index].items[i] = {
                       ...itemData,
                       ...item,
@@ -610,6 +629,8 @@ export const transformApplet = (payload, currentApplets = null) => {
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
                 const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                item.variableName = payload.items[dataKey]['@id'];
+
                 let updated = false;
 
                 if (!act.items) {
