@@ -51,16 +51,16 @@ export const prepareResponseForUpload = (
 
       if (
         valueType && 
-        valueType.includes('token')
+        valueType.includes('token') &&
+        responses[i] !== undefined && responses[i] !== null
       ) {
-        cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
-          (cumulative, current) => {
-            if (current >= 0 || enableNegativeTokens) {
-              return cumulative + current;
-            }
-            return cumulative
-          }, 0
-        )
+        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+        cumulative += positiveSum;
+        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+          cumulative += negativeSum;
+        }
       }
     }
   }
