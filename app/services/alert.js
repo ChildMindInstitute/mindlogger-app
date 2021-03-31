@@ -36,7 +36,7 @@ const getAlertFromContinuousSlider = (sliderConstraint, value) => {
 
 export const getAlertsFromResponse = (item, value) => {
   if (value === null || value === undefined || item.inputType !== 'radio' && item.inputType !== 'slider' && item.inputType !== 'stackedRadio' && item.inputType !== 'stackedSlider') {
-      return null;
+      return [];
   }
 
   const valueConstraints = item.valueConstraints || {};
@@ -80,4 +80,3 @@ export const getAlertsFromResponse = (item, value) => {
     return [];
   }
 }
-  
