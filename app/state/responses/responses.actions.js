@@ -75,10 +75,10 @@ export const shiftUploadQueue = () => ({
   type: RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE,
 });
 
-export const setCurrentScreen = (activity, screenIndex) => ({
+export const setCurrentScreen = (activityId, screenIndex) => ({
   type: RESPONSES_CONSTANTS.SET_CURRENT_SCREEN,
   payload: {
-    activity,
+    activityId,
     screenIndex,
   },
 });

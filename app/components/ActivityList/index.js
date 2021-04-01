@@ -24,7 +24,7 @@ import {
   inProgressSelector,
 } from '../../state/responses/responses.selectors';
 
-import { parseAppletActivities, parseAppletEvents } from '../../models/json-ld';
+import { parseAppletEvents } from '../../models/json-ld';
 
 const ActivityList = ({
   applet,
@@ -57,8 +57,6 @@ const ActivityList = ({
 
   const stateUpdate = () => {
     const newApplet = parseAppletEvents(applet);
-    console.log('newApplet', newApplet)
-    // const newApplet = parseAppletActivities(applet, responseSchedule);
 
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
     setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));

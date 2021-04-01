@@ -35,6 +35,13 @@ export const initialState = {
   currentActivity: null,
 
   /**
+   * The ID of the current activity.
+   *
+   * @type {string}
+   */
+  currentEvent: null,
+
+  /**
    * Whether the applet cards are disabled.
    *
    * @type {boolean}.
@@ -106,7 +113,6 @@ export default (state = initialState, action = {}) => {
         apiHost: action.payload,
       };
     case APP_CONSTANTS.SET_CONNECTION:
-      console.log('*****', action.payload)
       return {
         ...state,
         isConnected: action.payload,
@@ -161,10 +167,14 @@ export default (state = initialState, action = {}) => {
         currentApplet: action.payload,
       };
     case APP_CONSTANTS.SET_CURRENT_ACTIVITY:
-      console.log('***********************', action.payload)
       return {
         ...state,
         currentActivity: action.payload,
+      };
+    case APP_CONSTANTS.SET_CURRENT_EVENT:
+      return {
+        ...state,
+        currentEvent: action.payload,
       };
     case APP_CONSTANTS.SET_APPLET_SELECTION_DISABLED:
       return {

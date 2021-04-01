@@ -87,18 +87,15 @@ export default (state = initialState, action = {}) => {
         },
       };
     case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
-      const curAct = action.payload.activity;
-      console.log('0###########################', action.payload)
-      console.log('activity-------------------', curAct)
-      const screenId = curAct.event ? curAct.id + curAct.event.id : curAct.id;
+      const { activityId, screenIndex } = action.payload;
 
       return {
         ...state,
         inProgress: {
           ...state.inProgress,
-          [screenId]: {
-            ...state.inProgress[screenId],
-            screenIndex: action.payload.screenIndex,
+          [activityId]: {
+            ...state.inProgress[activityId],
+            screenIndex
           },
         },
       };

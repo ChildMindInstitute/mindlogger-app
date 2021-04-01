@@ -77,7 +77,7 @@ export const getScheduled = (activityList, activityAccess) => {
       if (!activity.availability
         && scheduledTime > today
         && !data.completion
-        && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
+        && (data.timeout.access || moment().isSame(moment(scheduledTime), 'day'))) {
         const scheduledActivity = { ...activity };
 
         delete scheduledActivity.events;
@@ -155,12 +155,46 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
 export default (appletId, activityList, inProgress, activityEndTimes, activityAccess) => {
+  let notInProgress = [];
+  let inProgressActivities = [];
   const inProgressKeys = Object.keys(inProgress);
-  const inProgressActivities = activityList.filter(activity => inProgressKeys.includes(activity.event ? activity.id + activity.event.id : activity.id));
 
-  const notInProgress = inProgressKeys
-    ? activityList.filter(activity => !inProgressKeys.includes(activity.event ? activity.id + activity.event.id : activity.id))
-    : activityList;
+  if (inProgressKeys) {
+    activityList.forEach(activity => {
+      const notInProgressEvents = [];
+
+      if (activity.events.length) {
+        activity.events.forEach(event => {
+          if (!inProgressKeys.includes(activity.id + event.id)) {
+            notInProgressEvents.push(event);
+          } else {
+            inProgressActivities.push({
+              ...activity,
+              event,
+            });
+          }
+        });
+
+        if (notInProgressEvents.length) {
+          notInProgress.push({
+            ...activity,
+            events: notInProgressEvents,
+          })
+        }
+      } else {
+        if (inProgressKeys.includes(activity.id)) { 
+          inProgressActivities.push({
+            ...activity,
+          });
+        } else {
+          notInProgress.push({ ...activity });
+        }
+      }
+    })
+  } else {
+    notInProgress = activityList;
+  }
+
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
   // Activities scheduled some time in the future.

@@ -27,7 +27,9 @@ const ActivityDueDate = ({ activity }) => {
   if (activity.status === 'pastdue') {
     return (
       <LittleText style={styles.textStyles}>
-        {`${i18n.t('activity_due_date:to')} ${scheduledEndTime(activity.event.scheduledTime)}`}
+        {activity.event.data.timeout.allow
+          ? `${i18n.t('activity_due_date:to')} ${scheduledEndTime(activity.event.scheduledTime, activity.event.data.timeout)}`
+          : `${i18n.t('activity_due_date:to')} 11:59 PM`}
       </LittleText>
     );
   }
