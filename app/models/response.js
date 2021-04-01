@@ -39,7 +39,7 @@ export const prepareResponseForUpload = (
       const { valueType, responseAlert, enableNegativeTokens } = item.valueConstraints;
 
       if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
-        const messages = getAlertsFromResponse(item, responses[i].value ? responses[i].value : responses[i]);
+        const messages = getAlertsFromResponse(item, responses[i].value !== undefined ? responses[i].value : responses[i]);
         messages.forEach(msg => {
           alerts.push({
             id: activity.items[i].id.split('/')[1],

@@ -127,23 +127,22 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
   }
 
   let subScaleScore = evaluateScore(jsExpression, items, scores);
-  if (!lookupTable) {
-    return subScaleScore;
-  }
 
-  const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
-  const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
+  if (lookupTable) {
+    const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
+    const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
 
-  for (let row of lookupTable) {
-    if ( 
-      isValueInRange(subScaleScore, row.rawScore) && 
-      isValueInRange(age, row.age) &&
-      isValueInRange(gender, row.sex)
-    ) {
-      return {
-        tScore: Number(row.tScore),
-        outputText: row.outputText
-      };
+    for (let row of lookupTable) {
+      if ( 
+        isValueInRange(subScaleScore, row.rawScore) && 
+        isValueInRange(age, row.age) &&
+        isValueInRange(gender, row.sex.toUpperCase())
+      ) {
+        return {
+          tScore: Number(row.tScore),
+          outputText: row.outputText
+        };
+      }
     }
   }
 
@@ -166,14 +165,16 @@ export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
 
   const score = (isAverage ? total / Math.max(count, 1) : total);
 
-  for (let row of lookupTable) {
-    if (
-      isValueInRange(score, row.rawScore)
-    ) {
-      return {
-        rawScore: score,
-        outputText: row.outputText
-      };
+  if (lookupTable) {
+    for (let row of lookupTable) {
+      if (
+        isValueInRange(score, row.rawScore)
+      ) {
+        return {
+          rawScore: score,
+          outputText: row.outputText
+        };
+      }
     }
   }
 
