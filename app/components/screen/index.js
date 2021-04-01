@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 25,
     minHeight: "100%",
     justifyContent: "center",
     flexGrow: 1,
@@ -79,7 +79,7 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdownMessage" ||screen.inputType ===  "audioStimulus") {
+    if (screen.inputType === "markdownMessage" || screen.inputType ===  "audioStimulus") {
       return true;
     }
 
@@ -89,11 +89,30 @@ class ActivityScreen extends Component {
       }
     }
 
-    if (screen.inputType === "text" || screen.inputType === "time") {
+    if (screen.inputType === "text" || screen.inputType === "time" || screen.inputType === "audioImageRecord") {
       if (!answer) {
         return false;
       } else {
         return true;
+      }
+    }
+
+    if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] !== null) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (answer !== null && typeof answer !== "undefined") {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "") ) {
+        return false
       }
     }
 
@@ -235,7 +254,7 @@ class ActivityScreen extends Component {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={4}
+          keyboardVerticalOffset={20}
         >
           <ScrollView
             alwaysBounceVertical={false}

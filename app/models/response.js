@@ -4,7 +4,8 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
+import { getScoreFromLookupTable, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
   activityTransformJson,
@@ -38,24 +39,28 @@ export const prepareResponseForUpload = (
       const { valueType, responseAlert, enableNegativeTokens } = item.valueConstraints;
 
       if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
-        alerts.push({
-          id: activity.items[i].id.split('/')[1],
-          schema: activity.items[i].schema
-        });
+        const messages = getAlertsFromResponse(item, responses[i].value !== undefined ? responses[i].value : responses[i]);
+        messages.forEach(msg => {
+          alerts.push({
+            id: activity.items[i].id.split('/')[1],
+            schema: activity.items[i].schema,
+            message: msg
+          });
+        })
       }
 
       if (
         valueType && 
-        valueType.includes('token')
+        valueType.includes('token') &&
+        responses[i] !== undefined && responses[i] !== null
       ) {
-        cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
-          (cumulative, current) => {
-            if (current >= 0 || enableNegativeTokens) {
-              return cumulative + current;
-            }
-            return cumulative
-          }, 0
-        )
+        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+        cumulative += positiveSum;
+        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+          cumulative += negativeSum;
+        }
       }
     }
   }
@@ -87,10 +92,10 @@ export const prepareResponseForUpload = (
     alerts,
   };
 
-  let subScaleScores = [];
+  let subScaleResult = [];
   if (activity.subScales) {
     for (let subScale of activity.subScales) {
-      subScaleScores.push(
+      subScaleResult.push(
         getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
       );
     }
@@ -107,9 +112,17 @@ export const prepareResponseForUpload = (
     responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
-    if (activity.subScales) {
-      responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
-      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+    if (activity.finalSubScale) {
+      subScaleResult.push(getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable));
+    }
+
+    if (subScaleResult.length) {
+      responseData['subScaleSource'] = getEncryptedData(subScaleResult, appletMetaData.AESKey);
+      responseData['subScales'] = (activity.subScales || []).reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+
+      if (activity.finalSubScale) {
+        responseData['subScales'][activity.finalSubScale.variableName] = (activity.subScales || []).length;
+      }
     }
 
     responseData['tokenCumulation'] = {
@@ -130,9 +143,15 @@ export const prepareResponseForUpload = (
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
         return {
           ...accumulator,
-          [subScale.variableName]: subScaleScores[index],
+          [subScale.variableName]: subScaleResult[index],
         }
       });
+    }
+
+    if (activity.finalSubScale) {
+      responseData['subScales'] = responseData['subScales'] || {};
+      responseData['subScales'][activity.finalSubScale.variableName] = 
+        getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
 
     responseData['tokenCumulation'] = {

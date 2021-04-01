@@ -51,9 +51,9 @@ const rules = {
     return (<Image
       key={node.key}
       style={{
-        resizeMode: "center",
-        height: 300,
-        width: width-50
+        resizeMode: "contain",
+        height: 320,
+        width: width-100
       }}
       source={{
         uri: node.attributes.src
