@@ -6,7 +6,6 @@ import {
   removeResponseInProgress,
   createResponseInProgress,
   setAnswer,
-  setAnswers,
   addToUploadQueue,
   shiftUploadQueue,
   setSchedule,
@@ -48,16 +47,18 @@ test('it sets responses download progress', () => {
 
 test('it creates a response in progress', () => {
   const appletId = 'myApplet';
-  const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
+  const activity = { id: 'Event', foo: 'bar', items: [{}] };
   expect(responsesReducer(initialState, createResponseInProgress(appletId, activity))).toEqual({
     ...initialState,
     inProgress: {
-      myAppletmyActivity: {
+      [activity.id]: {
         activity,
         responses: [undefined],
         screenIndex: 0,
+        subjectId: undefined,
+        timeStarted: undefined,
       },
-    },
+    }
   });
 });
 
@@ -67,23 +68,15 @@ test('it removes response in progress', () => {
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
   expect(responsesReducer(oneResponseState, removeResponseInProgress('myAppletmyActivity'))).toEqual({
     ...initialState,
-    inProgress: {},
-  });
-});
-
-test('it can set all answers at once', () => {
-  const appletId = 'myApplet';
-  const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
-  const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
-  expect(responsesReducer(oneResponseState, setAnswers('myApplet', 'myActivity', 'new answers'))).toEqual({
-    ...initialState,
     inProgress: {
-      myAppletmyActivity: {
+      [activity.id]: {
         activity,
-        responses: 'new answers',
+        responses: [undefined],
         screenIndex: 0,
+        subjectId: undefined,
+        timeStarted: undefined,
       },
-    },
+    }
   });
 });
 
@@ -91,10 +84,10 @@ test('it sets an answer', () => {
   const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
-  expect(responsesReducer(oneResponseState, setAnswer('myApplet', 'myActivity', 0, 'foobar'))).toEqual({
+  expect(responsesReducer(oneResponseState, setAnswer(activity, 0, 'foobar'))).toEqual({
     ...initialState,
     inProgress: {
-      myAppletmyActivity: {
+      [activity.id]: {
         activity,
         responses: ['foobar'],
         screenIndex: 0,

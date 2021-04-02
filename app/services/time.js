@@ -4,7 +4,7 @@ import * as R from 'ramda';
 const COVER_DAY = true;
 const TIMED_EVENTS = true;
 
-const getStartOfInterval = R.pathOr(null, [0, 'start', 'date']);
+export const getStartOfInterval = R.pathOr(null, [0, 'start', 'date']);
 
 export const NOTIFICATION_DATETIME_FORMAT = 'YYYYMMDD HH:mm';
 

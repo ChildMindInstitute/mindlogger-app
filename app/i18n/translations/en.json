@@ -201,8 +201,9 @@
   },
   "activity_due_date": {
     "available_all_day":"Available: All day",
-    "available": "Available",
-    "to": "to",
+    "scheduled_at": "Scheduled At",
+    "available": "Available From",
+    "to": "To",
     "day": "day",
     "days": "days",
     "am": "AM"

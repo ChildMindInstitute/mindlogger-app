@@ -196,6 +196,7 @@
   "activity_due_date": {
     "available_all_day": "Disponible : Toute la journée",
     "available": "Disponible",
+    "scheduled_at": "Programmé à",
     "to": "à",
     "day": "jour",
     "days": "jours",

@@ -7,9 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.16.3] - 2020-04-01
 - Resolved native keyboard issue on text input
-
-## [0.16.2] - 2020-04-01
 - Fix text widget issue
+
+## [0.16.1] - 2020-04-01
+- Updated scheduling logic
 
 ## [0.15.30] - 2020-03-31
 - Fix several bugs

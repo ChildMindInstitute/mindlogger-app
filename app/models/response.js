@@ -25,10 +25,10 @@ export const prepareResponseForUpload = (
   inProgressResponse,
   appletMetaData,
   responseHistory,
-) => {
+) => { 
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
-  const appletVersion = activity.appletSchemaVersion[languageKey];
+  const appletVersion = activity.schemaVersion[languageKey];
   let cumulative = responseHistory.tokens.cumulativeToken;
 
   const alerts = [];
