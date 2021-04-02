@@ -24,7 +24,7 @@ import {
   inProgressSelector,
 } from '../../state/responses/responses.selectors';
 
-import { parseAppletActivities } from '../../models/json-ld';
+import { parseAppletEvents } from '../../models/json-ld';
 
 const ActivityList = ({
   applet,
@@ -56,7 +56,7 @@ const ActivityList = ({
   const updateScheduleDelay = 24 * 3600 * 1000;
 
   const stateUpdate = () => {
-    const newApplet = parseAppletActivities(applet, responseSchedule);
+    const newApplet = parseAppletEvents(applet);
 
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
     setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));
@@ -188,9 +188,9 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
-          key={activity.id || activity.text}
+          key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
-      ))}
+      ))} 
       {prizeActivity && (
         <ActivityListItem
           onPress={() => onPressActivity(prizeActivity)}

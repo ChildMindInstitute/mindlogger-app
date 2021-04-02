@@ -50,7 +50,7 @@ import {
 } from "../app/app.actions";
 
 import {
-  currentActivityIdSelector,
+  currentEventSelector,
   currentAppletSelector,
   startedTimesSelector,
   currentActivitySelector,
@@ -93,6 +93,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   const { user } = state;
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
+  const event = currentEventSelector(state);
   const applet = currentAppletSelector(state);
 
   // There is no response in progress, so start a new one
@@ -100,7 +101,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   dispatch(
     createResponseInProgress(applet.id, activity, subjectId, timeStarted)
   );
-  dispatch(setCurrentScreen(applet.id, activity.id, 0));
+  dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
   Actions.push("take_act");
 };
@@ -113,6 +114,8 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const timeStarted = Date.now();
   const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
+  const index = activity.event ? activity.id + activity.event.id : activity.id;
+  const event = currentEventSelector(state);
 
   if (activity.isPrize === true) {
     const tokenBalance = currentAppletTokenBalanceSelector(state).cumulativeToken;
@@ -120,10 +123,10 @@ export const startResponse = (activity) => (dispatch, getState) => {
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
     dispatch(setCurrentActivity(activity.id));
     Actions.push('take_act');
-  } else if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
+  } else if (typeof responses.inProgress[index] === "undefined") {
     // There is no response in progress, so start a new one
     if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
       dispatch(setActivityStartTime(activity.id));
@@ -131,7 +134,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
     dispatch(
       createResponseInProgress(applet.id, activity, subjectId, timeStarted)
     );
-    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
     dispatch(setCurrentActivity(activity.id));
     Actions.push("take_act");
   } else {
@@ -144,7 +147,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
           onPress: () => {
             const itemResponses = R.pathOr(
               [],
-              ["inProgress", applet.id + activity.id, "responses"],
+              ["inProgress", index, "responses"],
               responses
             );
 
@@ -166,7 +169,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
                 timeStarted
               )
             );
-            dispatch(setCurrentScreen(applet.id, activity.id, 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -182,7 +185,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
             }
             
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen || 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -398,9 +401,10 @@ export const completeResponse = () => (dispatch, getState) => {
   }
 
   setTimeout(() => {
+    const { activity } = inProgressResponse;
     // Allow some time to navigate back to ActivityList
     dispatch(
-      removeResponseInProgress(applet.id + inProgressResponse.activity.id)
+      removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
     );
   }, 300);
 };
@@ -411,38 +415,38 @@ export const nextScreen = () => (dispatch, getState) => {
   const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
   const next = getNextPos(screenIndex, visibilityArray);
-  const activityId = currentActivityIdSelector(state);
+  const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if (next === -1) {
-    const activity = currentActivitySelector(state);
-    
     if (activity.nextAccess) {
-      dispatch(setActivityAccess(applet.id + activityId));
+      dispatch(setActivityAccess(applet.id + activity.id));
     }
     dispatch(completeResponse());
-    dispatch(setCurrentActivity(null));
-    dispatch(setActivityEndTime(applet.id + activityId));
+    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+
     Actions.push("activity_thanks");
   } else {
-    dispatch(setCurrentScreen(applet.id, activityId, next));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
   }
 };
 
 export const finishActivity = (activity) => (dispatch, getState) => {
   const state = getState();
-  const applet = currentAppletSelector(state);
+  const event = currentEventSelector(state);
 
   dispatch(clearActivityStartTime(activity.id));
   dispatch(completeResponse());
+  dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+
   dispatch(setCurrentActivity(null));
-  dispatch(setActivityEndTime(applet.id + activity.id));
   Actions.push("activity_end");
 };
 
 export const endActivity = (activity) => (dispatch) => {
   dispatch(clearActivityStartTime(activity.id));
   dispatch(setCurrentActivity(activity.id));
-  dispatch(completeResponse());
+
   dispatch(setCurrentActivity(null));
 };
 
@@ -452,12 +456,13 @@ export const prevScreen = () => (dispatch, getState) => {
   const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
   const prev = getLastPos(screenIndex, visibilityArray);
-  const activityId = currentActivityIdSelector(state);
+  const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if (prev === -1) {
     Actions.pop();
     dispatch(setCurrentActivity(null));
   } else {
-    dispatch(setCurrentScreen(applet.id, activityId, prev));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, prev));
   }
 };

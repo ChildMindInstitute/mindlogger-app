@@ -76,7 +76,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
           <View style={styles.left}>
             <SubHeading
               style={{
-                opacity: (activity.status === 'scheduled' && !activity.nextAccess) ? 0.5 : 1,
+                opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
                 fontFamily: theme.fontFamily
               }}>
               {activity.name.en}
@@ -84,7 +84,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
             {activity.description && (
               <BodyText
                 style={{
-                  opacity: (activity.status === 'scheduled' && !activity.nextAccess) ? 0.5 : 1,
+                  opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
                   fontFamily: theme.fontFamily
                 }}>
                 {activity.description.en}
