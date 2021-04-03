@@ -183,7 +183,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
             ) {
               dispatch(setActivityStartTime(activity.id));
             }
-            
+
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
@@ -359,11 +359,11 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const completeResponse = () => (dispatch, getState) => {
+export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
-  const inProgressResponse = currentResponsesSelector(state); 
+  const inProgressResponse = currentResponsesSelector(state);
   const activity = currentActivitySelector(state);
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
@@ -394,7 +394,7 @@ export const completeResponse = () => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
+    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
 
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());

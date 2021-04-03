@@ -13,7 +13,7 @@ import {
   itemAttachExtras,
   ORDER,
 } from "./json-ld";
- 
+
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
 
@@ -25,10 +25,12 @@ export const prepareResponseForUpload = (
   inProgressResponse,
   appletMetaData,
   responseHistory,
-) => { 
+  isTimeout
+) => {
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = activity.schemaVersion[languageKey];
+  const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
   const alerts = [];
@@ -50,7 +52,7 @@ export const prepareResponseForUpload = (
       }
 
       if (
-        valueType && 
+        valueType &&
         valueType.includes('token') &&
         responses[i] !== undefined && responses[i] !== null
       ) {
@@ -79,6 +81,8 @@ export const prepareResponseForUpload = (
     subject: subjectId,
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
+    timeout: isTimeout ? 1 : 0,
+    scheduledTime: new Date(scheduledTime).getTime(),
     client: {
       os: DeviceInfo.getSystemName(),
       osVersion: DeviceInfo.getSystemVersion(),
@@ -150,7 +154,7 @@ export const prepareResponseForUpload = (
 
     if (activity.finalSubScale) {
       responseData['subScales'] = responseData['subScales'] || {};
-      responseData['subScales'][activity.finalSubScale.variableName] = 
+      responseData['subScales'][activity.finalSubScale.variableName] =
         getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
 
@@ -181,7 +185,7 @@ export const getTokenUpdateInfo = (
         value: cumulative
       },
       userPublicKey: appletMetaData['userPublicKey']
-    }      
+    }
   }
 
   return {
@@ -242,7 +246,7 @@ export const decryptAppletResponses = (applet, responses) => {
       }
     })
   }
-  
+
   /** replace response to plain format */
   if (responses.responses) {
     Object.keys(responses.responses).forEach((item) => {
@@ -316,7 +320,7 @@ export const decryptAppletResponses = (applet, responses) => {
         cumulative.value = responses.dataSources[cumulative.src][cumulative.ptr];
       }
 
-      const oldItem = responses.itemReferences[cumulative.version] && 
+      const oldItem = responses.itemReferences[cumulative.version] &&
                       responses.itemReferences[cumulative.version][itemIRI];
       if ( oldItem ) {
         const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
