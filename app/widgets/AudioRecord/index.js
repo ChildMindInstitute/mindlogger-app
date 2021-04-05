@@ -1,20 +1,20 @@
 /* eslint-disable radix */
 import React, { Component } from 'react';
-import { View ,ScrollView,KeyboardAvoidingView } from 'react-native';
+import { View ,ScrollView,KeyboardAvoidingView,TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { Item , Input } from 'native-base';
 import AudioRecorder from './AudioRecorder';
 
 export class AudioRecord extends Component {
- 
+
 
   finalAnswer = {};
 
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    
+
     onChange(this.finalAnswer);
   }
 
@@ -31,7 +31,7 @@ export class AudioRecord extends Component {
     const maxLength = parseInt(R.path(['maxValue'], config));
 
     this.finalAnswer= value ? value :{};
-    
+
     return (
       <KeyboardAvoidingView
       //behavior="padding"
@@ -42,28 +42,24 @@ export class AudioRecord extends Component {
           path={this.finalAnswer["value"] && this.finalAnswer["value"].uri}
           maxLength={Number.isNaN(maxLength) ? Infinity : maxLength}
         />
-         {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '35%' ,
-                    width: '100%' ,
-             
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-     
-
-      <Input
-        
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-         
-      />
-    
-      </Item> 
-    </View>
+         {isOptionalText ?
+          (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
+        <Item bordered
+          style={{borderWidth: 1}}
+        >
+          <TextInput
+              style={{ maxHeight: 100, width: '100%' }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
+      </View>
     ):<View></View>
       }
       </View>

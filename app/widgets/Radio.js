@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image ,KeyboardAvoidingView,ScrollView} from 'react-native';
+import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput} from 'react-native';
 import { ListItem, Text, Icon , Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
@@ -89,24 +89,23 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
         </ListItem>
       ))}
 
-      {config.isOptionalText ? 
-        (<View    style={{
-                    marginTop: '8%' ,
-                    width: '100%' ,
-                  }}
-                  >
+      {config.isOptionalText ?
+        (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
       <Item bordered
        style={{borderWidth: 1}}
       >
-  
-      <Input
-        
-          placeholder = "Please enter the text"  
-          onChangeText={text=>handleComment(text)}
-          value={finalAnswer["text"]}
-      />
-     
-      </Item> 
+        <TextInput
+            style={{ maxHeight: 100, width: '100%' }}
+            placeholder = "Please enter the text"
+            onChangeText={text=>handleComment(text)}
+            value={finalAnswer["text"]}
+            multiline={true}
+        />
+      </Item>
     </View>
     ):<View></View>
       }

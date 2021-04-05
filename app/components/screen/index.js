@@ -7,6 +7,9 @@ import {
   Platform,
   KeyboardAvoidingView,
 } from "react-native";
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 import PropTypes from "prop-types";
 import { Icon, Button } from "native-base";
 import ScreenDisplay from "./ScreenDisplay";
@@ -151,7 +154,7 @@ class ActivityScreen extends Component {
         }
         return answer.length !== 0;
       }
-    } 
+    }
 
     return answer && (answer.value === 0 || !!answer.value);
   }
@@ -250,11 +253,8 @@ class ActivityScreen extends Component {
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
     return (
       <View style={styles.outer}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardContainer}
-          enabled
-          keyboardVerticalOffset={20}
+        <KeyboardAwareScrollView
+          extraScrollHeight={5}
         >
           <ScrollView
             alwaysBounceVertical={false}
@@ -312,7 +312,7 @@ class ActivityScreen extends Component {
               />
             )}
           </ScrollView>
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
         {timerActive && (
           <View style={styles.timerView}>
             <Timer duration={screen.timer} color={colors.primary} size={40} />

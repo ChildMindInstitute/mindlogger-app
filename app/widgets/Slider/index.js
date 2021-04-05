@@ -5,7 +5,8 @@ import {
   Image,
   TouchableWithoutFeedback,
   StyleSheet,
-  ScrollView,KeyboardAvoidingView
+  ScrollView,KeyboardAvoidingView,
+  TextInput
 } from "react-native";
 import { Text , Item , Input} from "native-base";
 import SliderComponent from "react-native-slider";
@@ -254,7 +255,7 @@ class Slider extends Component {
     if (sliderWidth) {
       const locationX = evt.nativeEvent.locationX - 20.5;
       const calculatedValue =
-        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);   
+        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);
       const value = calculatedValue > maximumValue
         ? maximumValue
         : (calculatedValue < minimumValue
@@ -262,7 +263,7 @@ class Slider extends Component {
           : calculatedValue);
       const currentValue = continousSlider ? value : Math.round(value);
       this.finalAnswer["value"] = currentValue;
-    
+
       onChange(this.finalAnswer);
       this.setState({ currentValue });
     }
@@ -418,25 +419,24 @@ class Slider extends Component {
           </View>
         </View>
 
-        {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '12%' ,
-                    width: '100%' ,
-
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-
-      <Input
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-      />
-    
-      </Item> 
-    </View>
+        {isOptionalText ?
+          (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
+        <Item bordered
+          style={{borderWidth: 1}}
+        >
+          <TextInput
+              style={{ maxHeight: 100, width: '100%' }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
+      </View>
     ):<View></View>
       }
       </View>

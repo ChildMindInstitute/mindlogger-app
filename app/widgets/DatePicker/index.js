@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
-import { View, ScrollView,KeyboardAvoidingView  } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView, TextInput } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -20,7 +20,7 @@ export class DatePicker extends React.Component {
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    
+
     onChange(this.finalAnswer);
   }
 
@@ -33,7 +33,7 @@ export class DatePicker extends React.Component {
     const { onChange } = this.props;
     if (Platform.OS == 'ios') {
 
-      this.finalAnswer["value"] = 
+      this.finalAnswer["value"] =
       {
         year: selectedDate.getFullYear(),
         month: selectedDate.getMonth(),
@@ -42,9 +42,9 @@ export class DatePicker extends React.Component {
       onChange(this.finalAnswer);
     } else {
       this.setShowPicker(false);
-  
+
       if (event.type == 'set') {
-        this.finalAnswer["value"] = 
+        this.finalAnswer["value"] =
         {
           year: selectedDate.getFullYear(),
           month: selectedDate.getMonth(),
@@ -61,7 +61,7 @@ export class DatePicker extends React.Component {
 
     const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
 
-   
+
 
     if (this.finalAnswer["value"]) {
       date.setHours(this.finalAnswer["value"].hour || 0);
@@ -72,7 +72,7 @@ export class DatePicker extends React.Component {
     }
 
     /*this.finalAnswer["value"] = date ? date :[];*/
-    
+
     return (
       <KeyboardAvoidingView>
       <View style={{ marginBottom: 20 }}>
@@ -99,28 +99,24 @@ export class DatePicker extends React.Component {
             onChange={this.onChangeDate}
           />
         )}
-        {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '40%' ,
-                    width: '100%' ,
-                 
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-    
-
-      <Input
-       
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-        
-      />
-    
-      </Item> 
-    </View>
+        {isOptionalText ?
+          (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
+        <Item bordered
+          style={{borderWidth: 1}}
+        >
+          <TextInput
+              style={{ maxHeight: 100, width: '100%' }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
+      </View>
     ):<View></View>
       }
       </View>

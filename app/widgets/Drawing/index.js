@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInput } from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
@@ -37,7 +37,7 @@ export class Drawing extends React.Component {
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    
+
   onChange(this.finalAnswer);
   }
 
@@ -60,15 +60,15 @@ export class Drawing extends React.Component {
     //behavior="padding"
   >
       <View>
-       {config?.valueConstraints?.image ? ( 
-        <View style = {styles.imgContainer}> 
+       {config?.valueConstraints?.image ? (
+        <View style = {styles.imgContainer}>
         <Image
          style = {styles.img}
         source={{
           uri: config.valueConstraints.image,
         }}
       />
-       </View> ) :<View></View> 
+       </View> ) :<View></View>
        }
 
         <DrawingBoard
@@ -83,29 +83,20 @@ export class Drawing extends React.Component {
           <Text style={styles.text}>{config.inputs.instruction}</Text>
         )}
 
-       
-        {isOptionalText ? 
-      (<View    style={{
-                    marginTop: '8%' ,
-                    width: '100%' ,
-             
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-     
 
-      <Input
-        
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-         
-      />
-    
-      </Item> 
-    </View>
+        {isOptionalText ?
+      (
+        <Item bordered
+          style={{borderWidth: 1, marginTop: 20}}
+        >
+          <TextInput
+              style={{ maxHeight: 100, width: '100%' }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
     ):<View></View>
       }
       </View>

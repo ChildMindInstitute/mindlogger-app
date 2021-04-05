@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ScrollView,KeyboardAvoidingView } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView, TextInput } from 'react-native';
 import {Item , Input } from 'native-base';
 import TimePicker from './TimePicker';
 
@@ -19,20 +19,20 @@ export class TimeRange extends React.Component {
 
   onChangeFrom = (newFromVal) => {
     const { onChange} = this.props;
- 
-  
+
+
     this.finalAnswer["value"] = {
       from: newFromVal,
       to: this.finalAnswer["value"] ? this.finalAnswer["value"].to : defaultTime,
     };
 
     onChange(this.finalAnswer);
-    
+
   }
 
   onChangeTo = (newToVal) => {
     const { onChange } = this.props;
-    
+
     this.finalAnswer["value"] = {
       from: this.finalAnswer["value"] ? this.finalAnswer["value"].from : defaultTime,
       to: newToVal,
@@ -52,37 +52,33 @@ export class TimeRange extends React.Component {
     };
 
     this.finalAnswer["value"] = safeValue ? safeValue :[];
-  
+
     return (
       <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
         <TimePicker value={this.finalAnswer["value"].from} onChange={this.onChangeFrom} label="From" />
         <TimePicker value={this.finalAnswer["value"].to} onChange={this.onChangeTo} label="To" />
-        {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '8%' ,
-                    width: '100%' ,
-        
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-
-
-      <Input
-       
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-       
-      />
-   
-      </Item> 
+        {isOptionalText ?
+          (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
+        <Item bordered
+          style={{borderWidth: 1}}
+        >
+          <TextInput
+              style={{ maxHeight: 100, width: '100%' }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
     </View>
     ):<View></View>
       }
-     
+
       </View>
       </KeyboardAvoidingView>
     );
