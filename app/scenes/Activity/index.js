@@ -163,7 +163,7 @@ class Activity extends React.Component {
   };
 
   handleTimeIsUp = () => {
-    this.props.completeResponse();
+    this.props.completeResponse(true);
     Actions.replace("activity_thanks");
   };
 
