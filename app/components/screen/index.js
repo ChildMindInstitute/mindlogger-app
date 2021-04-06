@@ -255,6 +255,7 @@ class ActivityScreen extends Component {
       <View style={styles.outer}>
         <KeyboardAwareScrollView
           extraScrollHeight={5}
+          enableOnAndroid={true}
         >
           <ScrollView
             alwaysBounceVertical={false}

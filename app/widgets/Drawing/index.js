@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInput } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInput, Platform } from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
@@ -90,7 +90,10 @@ export class Drawing extends React.Component {
           style={{borderWidth: 1, marginTop: 20}}
         >
           <TextInput
-              style={{ maxHeight: 100, width: '100%' }}
+              style={{
+                width: '100%',
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              }}
               placeholder = "Please enter the text"
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}

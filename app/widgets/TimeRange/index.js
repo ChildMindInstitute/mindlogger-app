@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, ScrollView,KeyboardAvoidingView, TextInput } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import {Item , Input } from 'native-base';
 import TimePicker from './TimePicker';
 
@@ -68,7 +68,10 @@ export class TimeRange extends React.Component {
           style={{borderWidth: 1}}
         >
           <TextInput
-              style={{ maxHeight: 100, width: '100%' }}
+              style={{
+                width: '100%',
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              }}
               placeholder = "Please enter the text"
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}

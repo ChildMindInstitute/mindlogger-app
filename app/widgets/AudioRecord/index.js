@@ -1,6 +1,6 @@
 /* eslint-disable radix */
 import React, { Component } from 'react';
-import { View ,ScrollView,KeyboardAvoidingView,TextInput } from 'react-native';
+import { View ,ScrollView,KeyboardAvoidingView,TextInput, Platform } from 'react-native';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { Item , Input } from 'native-base';
@@ -52,7 +52,10 @@ export class AudioRecord extends Component {
           style={{borderWidth: 1}}
         >
           <TextInput
-              style={{ maxHeight: 100, width: '100%' }}
+              style={{
+                width: '100%',
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              }}
               placeholder = "Please enter the text"
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}

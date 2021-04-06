@@ -315,7 +315,10 @@ export class Camera extends Component {
             style={{borderWidth: 1}}
           >
             <TextInput
-                style={{ maxHeight: 100, width: '100%' }}
+                style={{
+                  width: '100%',
+                  ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+                }}
                 placeholder = "Please enter the text"
                 onChangeText={text=>this.handleComment(text)}
                 value={this.finalAnswer["text"]}

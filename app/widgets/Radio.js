@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput} from 'react-native';
+import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput, Platform} from 'react-native';
 import { ListItem, Text, Icon , Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
@@ -99,7 +99,10 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
        style={{borderWidth: 1}}
       >
         <TextInput
-            style={{ maxHeight: 100, width: '100%' }}
+            style={{
+              width: '100%',
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+            }}
             placeholder = "Please enter the text"
             onChangeText={text=>handleComment(text)}
             value={finalAnswer["text"]}

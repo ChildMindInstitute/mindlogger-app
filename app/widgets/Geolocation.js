@@ -67,14 +67,14 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
 
 
 
-  finalAnswer= value ? value :[];
+  let finalAnswer= value ? value :{};
 
 
   handleComment = (itemValue) => {
 
-    this.finalAnswer["text"] = itemValue;
+    finalAnswer["text"] = itemValue;
 
-    onChange(this.finalAnswer);
+    onChange(finalAnswer);
   }
 
   useEffect(() => {
@@ -88,12 +88,12 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
       if (response === Permissions.RESULTS.GRANTED) {
         NativeGeolocation.getCurrentPosition(
           (successResponse) => {
-            this.finalAnswer["value"] = {
+            finalAnswer["value"] = {
               latitude: successResponse.coords.latitude,
               longitude: successResponse.coords.longitude,
             } ;
 
-            onChange(this.finalAnswer);
+            onChange(finalAnswer);
           },
           (errorResponse) => {
             console.warn(errorResponse);
@@ -139,7 +139,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
         </View>
       )}
       {locationPermission !== "denied" &&
-        typeof this.finalAnswer["value"]?.latitude !== "undefined" && (
+        typeof finalAnswer["value"]?.latitude !== "undefined" && (
           <View>
             <BaseText
               style={styles.infoText}
@@ -171,7 +171,11 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
         style={{borderWidth: 1}}
       >
         <TextInput
-            style={{ maxHeight: 100, width: '100%' }}
+            style={{
+              width: '100%',
+              minHeight: 50,
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+            }}
             placeholder = "Please enter the text"
             onChangeText={text=>handleComment(text)}
             value={finalAnswer["text"]}
