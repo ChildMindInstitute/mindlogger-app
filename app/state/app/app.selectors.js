@@ -43,5 +43,6 @@ export const currentActivitySelector = createSelector(
   (currentActivityId, activities) => activities.find(activity => activity.id === currentActivityId),
 );
 
+export const currentEventSelector = R.path(['app', 'currentEvent']);
 export const appletSelectionDisabledSelector = R.path(['app', 'appletSelectionDisabled']);
 export const activitySelectionDisabledSelector = R.path(['app', 'activitySelectionDisabled']);

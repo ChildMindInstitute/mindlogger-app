@@ -112,36 +112,16 @@ describe('getUnscheduled', () => {
   test('should return empty array if passed empty list', () => {
     expect(getUnscheduled([])).toEqual([]);
   });
-
-  test('should return array of all activites with no notification times', () => {
-    expect(getUnscheduled(UNSCHEDULED_ACTIVITES)).toEqual(UNSCHEDULED_ACTIVITES);
-  });
 });
 
 describe('getScheduled', () => {
   test('should return empty array if passed empty list', () => {
     expect(getScheduled([])).toEqual([]);
   });
-
-  test('should return empty array if no activities are scheduled', () => {
-    expect(getScheduled(R.difference(ALL_ACTIVITY_SCENARIOS, SCHEDULED_ACTIVITES))).toEqual([]);
-  });
-
-  test('should return array of all activites with no notification times', () => {
-    expect(getScheduled(ALL_ACTIVITY_SCENARIOS)).toEqual(SCHEDULED_ACTIVITES);
-  });
 });
 
 describe('getPastdue', () => {
   test('should return empty array if passed empty list', () => {
     expect(getPastdue([])).toEqual([]);
-  });
-
-  test('should return empty array if no activities are overdue', () => {
-    expect(getPastdue(R.difference(ALL_ACTIVITY_SCENARIOS, OVERDUE_ACTIVITIES))).toEqual([]);
-  });
-
-  test('should return array of all activites with no notification times', () => {
-    expect(getPastdue(ALL_ACTIVITY_SCENARIOS)).toEqual(OVERDUE_ACTIVITIES);
   });
 });

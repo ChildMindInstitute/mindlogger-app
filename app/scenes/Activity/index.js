@@ -221,7 +221,7 @@ class Activity extends React.Component {
             answers={responses}
             currentScreen={currentScreen}
             onChange={(answer, goToNext = false) => {
-              setAnswer(currentApplet.id, activity.id, currentScreen, answer);
+              setAnswer(activity, currentScreen, answer);
               this.handleChange(answer, goToNext);
             }}
             authToken={authToken}
@@ -293,6 +293,8 @@ class Activity extends React.Component {
                   setSelected(false);
                 } else {
                   if (!currentScreen) {
+                    console.log('3');
+
                     setCurrentActivity(null);
                   }
                   prevScreen();
@@ -303,12 +305,7 @@ class Activity extends React.Component {
               }}
               actionLabel={actionLabel}
               onPressAction={() => {
-                setAnswer(
-                  currentApplet.id,
-                  activity.id,
-                  currentScreen,
-                  undefined
-                );
+                setAnswer(activity, currentScreen, undefined);
               }}
             />
           </View>

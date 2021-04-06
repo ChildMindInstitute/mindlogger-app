@@ -34,6 +34,11 @@ export const setCurrentActivity = activityId => ({
   payload: activityId,
 });
 
+export const setCurrentEvent = eventId => ({
+  type: APP_ACTIONS.SET_CURRENT_EVENT,
+  payload: eventId,
+});
+
 export const setAppletSelectionDisabled = status => ({
   type: APP_ACTIONS.SET_APPLET_SELECTION_DISABLED,
   payload: status,

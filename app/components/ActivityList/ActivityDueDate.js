@@ -2,13 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import i18n from 'i18next';
+import moment from 'moment';
 import { LittleText } from '../core';
-import {
-  scheduledTime,
-  scheduledEndTime,
-  lastScheduledTime,
-  lastScheduledEndTime,
-} from '../../services/time';
+import { scheduledEndTime } from '../../services/time';
 
 const styles = StyleSheet.create({
   textStyles: {
@@ -17,60 +13,27 @@ const styles = StyleSheet.create({
 });
 
 const ActivityDueDate = ({ activity }) => {
-  const nextScheduledTime = scheduledTime(activity.nextScheduledTimestamp);
-  const nextScheduledEndTime = scheduledEndTime(
-    activity.nextScheduledTimestamp,
-    activity.nextTimeout,
-  );
-  const prevScheduledTime = lastScheduledTime(activity.lastScheduledTimestamp);
-  const prevScheduledEndTime = lastScheduledEndTime(
-    activity.lastScheduledTimestamp,
-    activity.lastTimeout,
-  );
-  if (activity.status === 'scheduled' && activity.nextScheduledTimestamp && nextScheduledTime) {
+  if (activity.status === 'scheduled' && activity.event) {
     return (
       <LittleText style={styles.textStyles}>
-        {activity.nextTimeout === 86340000
-          ? i18n.t('activity_due_date:available_all_day')
-          : `${i18n.t('activity_due_date:available')} ${nextScheduledTime} ${i18n.t(
+        {!activity.event.data.timeout.allow
+          ? `${i18n.t('activity_due_date:scheduled_at')} ${moment(activity.event.scheduledTime).format('hh:mm a')}`
+          : `${i18n.t('activity_due_date:available')} ${moment(activity.event.scheduledTime).format('hh:mm a')} ${i18n.t(
             'activity_due_date:to',
-          )} ${nextScheduledEndTime}`}
+          )} ${scheduledEndTime(activity.event.scheduledTime, activity.event.data.timeout)}`}
       </LittleText>
     );
   }
-  if (activity.status === 'pastdue' && activity.extendedTime && activity.extendedTime.allow) {
-    const leftDays = activity.extendedTime.days
-      - Math.floor(Math.abs(new Date() - activity.lastScheduledTimestamp) / (1000 * 60 * 60 * 24));
+  if (activity.status === 'pastdue') {
     return (
       <LittleText style={styles.textStyles}>
-        {leftDays > 0
-          ? leftDays === 1
-            ? `${i18n.t('activity_due_date:available')}: ${leftDays} ${i18n.t(
-              'activity_due_date:day',
-            )}`
-            : `${i18n.t('activity_due_date:available')}: ${leftDays} ${i18n.t(
-              'activity_due_date:days',
-            )}`
-          : `${i18n.t('activity_due_date:available')}: 12:00 ${i18n.t(
-            'activity_due_date:am',
-          )} ${i18n.t('activity_due_date:to')} ${prevScheduledEndTime}`}
+        {activity.event.data.timeout.allow
+          ? `${i18n.t('activity_due_date:to')} ${scheduledEndTime(activity.event.scheduledTime, activity.event.data.timeout)}`
+          : `${i18n.t('activity_due_date:to')} 11:59 PM`}
       </LittleText>
     );
   }
-  if (
-    activity.status === 'pastdue'
-    && (activity.lastTimeout === 86340000 || (prevScheduledTime && prevScheduledEndTime))
-  ) {
-    return (
-      <LittleText style={styles.textStyles}>
-        {activity.lastTimeout === 86340000
-          ? i18n.t('activity_due_date:available_all_day')
-          : `${i18n.t('activity_due_date:available')}: ${prevScheduledTime} ${i18n.t(
-            'activity_due_date:to',
-          )} ${prevScheduledEndTime}`}
-      </LittleText>
-    );
-  }
+
   return null;
 };
 
