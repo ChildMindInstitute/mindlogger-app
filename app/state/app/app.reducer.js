@@ -103,6 +103,13 @@ export const initialState = {
    * @type {boolean}
    */
   isConnected: true,
+
+  /**
+   * Completed events
+   *
+   * @type {object}
+   */
+  finishedEvents: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -161,6 +168,14 @@ export default (state = initialState, action = {}) => {
         ...state,
         skin: action.payload,
       };
+    case APP_CONSTANTS.SET_CLOSED_EVENT:
+      return {
+        ...state,
+        finishedEvents: {
+          ...state.finishedEvents,
+          [action.payload]: Date.now()
+        }
+      }
     case APP_CONSTANTS.SET_CURRENT_APPLET:
       return {
         ...state,

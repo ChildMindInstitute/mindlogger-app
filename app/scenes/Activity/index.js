@@ -212,7 +212,7 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {(activity.lastTimedActivity || activity.nextTimedActivity) &&
+        {(activity.event && activity.event.data.timedActivity.allow) &&
           <ActivityTime activity={activity} />
         }
         {!isSummaryScreen ? (
@@ -293,8 +293,6 @@ class Activity extends React.Component {
                   setSelected(false);
                 } else {
                   if (!currentScreen) {
-                    console.log('3');
-
                     setCurrentActivity(null);
                   }
                   prevScreen();
