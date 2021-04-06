@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.16.2",
+  "version": "0.16.3",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -22,7 +22,7 @@
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.13.4",
+    "@react-native-async-storage/async-storage": "^1.14.0",
     "@react-native-community/art": "^1.1.2",
     "@react-native-community/audio-toolkit": "^2.0.2",
     "@react-native-community/datetimepicker": "2.2.3",

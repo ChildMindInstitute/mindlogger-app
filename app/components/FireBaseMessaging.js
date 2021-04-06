@@ -361,7 +361,7 @@ class FireBaseMessaging extends Component {
       deltaTime = 0;
     }
 
-    const allowAccessBefore = event.data.timeout && event.data.timeout.access;
+    const allowAccessBefore = event.data && event.data.timeout && event.data.timeout.access;
 
     if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
       this.props.startResponse(activity);
