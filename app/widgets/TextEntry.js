@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, TextInput } from 'react-native';
+import { View, TextInput, Platform } from 'react-native';
 import { Item, Input } from 'native-base';
 import i18n from 'i18next';
 
 export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
   const [text, setText] = useState(value);
   const [height, setHeight] = useState(36);
+  const [focused, setFocused] = useState(false);
+
   let newStyle = {
     height,
     width: '100%',
-    minHeight: 36,
-    fontSize: 18,
+    minHeight: 45,
+    fontSize: 18
+  }
+
+  if (focused && Platform.OS === 'ios') {
+    newStyle.maxHeight = 100;
   }
 
   const updateHeight = (contentHeight) => {
@@ -40,6 +46,8 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
           keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
           value={text}
           multiline={true}
+          onBlur={() => setFocused(false)}
+          onFocus={() => setFocused(true)}
           onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
         />
       </Item>
