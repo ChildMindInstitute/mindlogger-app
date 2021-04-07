@@ -45,6 +45,7 @@ import {
 import {
   setActivityStartTime,
   setCurrentActivity,
+  setClosedEvent,
   clearActivityStartTime,
   setActivityEndTime,
 } from "../app/app.actions";
@@ -128,12 +129,14 @@ export const startResponse = (activity) => (dispatch, getState) => {
     Actions.push('take_act');
   } else if (typeof responses.inProgress[index] === "undefined") {
     // There is no response in progress, so start a new one
-    if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
-      dispatch(setActivityStartTime(activity.id));
+    if (activity.event
+      && activity.event.data.timedActivity.allow
+      && startedTimes
+      && !startedTimes[activity.id + activity.event.id]
+    ) {
+      dispatch(setActivityStartTime(activity.id + activity.event.id));
     }
-    dispatch(
-      createResponseInProgress(applet.id, activity, subjectId, timeStarted)
-    );
+    dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
     dispatch(setCurrentActivity(activity.id));
     Actions.push("take_act");
@@ -151,16 +154,18 @@ export const startResponse = (activity) => (dispatch, getState) => {
               responses
             );
 
-            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+            if (activity.event
+              && activity.event.data.timedActivity.allow
               && startedTimes
-              && !startedTimes[activity.id]
+              && !startedTimes[activity.id + activity.event.id]
             ) {
-              dispatch(setActivityStartTime(activity.id));
+              dispatch(setActivityStartTime(activity.id + activity.event.id));
             }
 
             cleanFiles(itemResponses);
             dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
+
             dispatch(
               createResponseInProgress(
                 applet.id,
@@ -177,11 +182,12 @@ export const startResponse = (activity) => (dispatch, getState) => {
         {
           text: i18n.t("additional:resume"),
           onPress: () => {
-            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+            if (activity.event
+              && activity.event.data.timedActivity.allow
               && startedTimes
-              && !startedTimes[activity.id]
+              && !startedTimes[activity.id + activity.event.id]
             ) {
-              dispatch(setActivityStartTime(activity.id));
+              dispatch(setActivityStartTime(activity.id + activity.event.id));
             }
 
             dispatch(setActivityOpened(true));
@@ -425,6 +431,9 @@ export const nextScreen = () => (dispatch, getState) => {
     dispatch(completeResponse());
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
 
+    if (event) {
+      dispatch(setClosedEvent(event))
+    }
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
@@ -435,7 +444,9 @@ export const finishActivity = (activity) => (dispatch, getState) => {
   const state = getState();
   const event = currentEventSelector(state);
 
-  dispatch(clearActivityStartTime(activity.id));
+  dispatch(
+    clearActivityStartTime(activity.event ? activity.id + activity.event.id : activity.id)
+  );
   dispatch(completeResponse());
   dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
 
@@ -444,7 +455,9 @@ export const finishActivity = (activity) => (dispatch, getState) => {
 };
 
 export const endActivity = (activity) => (dispatch) => {
-  dispatch(clearActivityStartTime(activity.id));
+  dispatch(
+    clearActivityStartTime(activity.event ? activity.id + activity.event.id : activity.id)
+  );
   dispatch(setCurrentActivity(activity.id));
 
   dispatch(setCurrentActivity(null));

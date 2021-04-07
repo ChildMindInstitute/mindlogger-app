@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Image , ScrollView,KeyboardAvoidingView} from "react-native";
+import { View, Image , ScrollView,KeyboardAvoidingView, TextInput, Platform} from "react-native";
 import PropTypes from "prop-types";
 import * as R from "ramda";
 import { ListItem, Text, Icon ,Item , Input } from 'native-base';
@@ -131,28 +131,27 @@ export class MultiSelect extends Component {
           </ListItem>
         ))}
 
-        {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '8%' ,
-                    width: '100%' ,
-                 
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-
-
-      <Input
-        
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-      
-      />
-  
-      </Item> 
-    </View>
+        {isOptionalText ?
+          (<View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+          >
+        <Item bordered
+          style={{borderWidth: 1}}
+        >
+          <TextInput
+              style={{
+                width: '100%',
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              }}
+              placeholder = "Please enter the text"
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              multiline={true}
+          />
+        </Item>
+      </View>
     ):<View></View>
       }
       </View>

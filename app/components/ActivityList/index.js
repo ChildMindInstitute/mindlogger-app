@@ -12,6 +12,7 @@ import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
   connectionSelector,
+  finishedEventsSelector,
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { activityAccessSelector } from '../../state/applets/applets.selectors';
@@ -44,7 +45,7 @@ const ActivityList = ({
   activityEndTimes,
   responseSchedule,
   inProgress,
-  activityAccess,
+  finishedEvents,
   onPressActivity,
   onLongPressActivity,
 }) => {
@@ -57,11 +58,11 @@ const ActivityList = ({
 
   const stateUpdate = () => {
     const newApplet = parseAppletEvents(applet);
-
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
-    setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));
-
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
+    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
+
+    setActivities(sortActivities(applet.id, appletActivities, inProgress, finishedEvents));
+
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
     }
@@ -184,13 +185,13 @@ const ActivityList = ({
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
         <ActivityListItem
-          disabled={activity.status === 'scheduled' && !activity.nextAccess}
+          disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
-      ))} 
+      ))}
       {prizeActivity && (
         <ActivityListItem
           onPress={() => onPressActivity(prizeActivity)}
@@ -238,6 +239,8 @@ const mapStateToProps = (state) => {
     responseSchedule: responseScheduleSelector(state),
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
+    finishedEvents: finishedEventsSelector(state),
+    
   };
 };
 

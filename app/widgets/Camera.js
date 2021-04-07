@@ -8,7 +8,8 @@ import {
   Alert,
   Dimensions,
   ScrollView,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  TextInput
 } from 'react-native';
 import { View, Icon , Item , Input } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
@@ -270,7 +271,7 @@ export class Camera extends Component {
     const { value, video ,isOptionalText} = this.props;
 
     this.finalAnswer = value ? value : {};
-    
+
     // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     return (
@@ -303,22 +304,29 @@ export class Camera extends Component {
           </View>
         )}
 
-        {isOptionalText ? 
-          (
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
+        {isOptionalText ?
+        (
+        <View style={{
+            marginTop: '8%' ,
+            width: '100%' ,
+          }}
+        >
+          <Item bordered
+            style={{borderWidth: 1}}
+          >
+            <TextInput
+                style={{
+                  width: '100%',
+                  ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+                }}
+                placeholder = "Please enter the text"
+                onChangeText={text=>this.handleComment(text)}
+                value={this.finalAnswer["text"]}
+                multiline={true}
+            />
+          </Item>
+      </View>
 
-      <Input
-          
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-       
-      />
-    
-      </Item> 
-   
     ):<View></View>
       }
       </View>

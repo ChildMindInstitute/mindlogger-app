@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView } from "react-native";
+import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView, TextInput } from "react-native";
 import NativeGeolocation from "@react-native-community/geolocation";
 import { Icon , Item , Input} from "native-base";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
@@ -42,20 +42,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     textAlign: "center"
-    
+
   },
   img: {
     width: 300,
     height: 300,
-    
-    
+
+
   },
   infoText: {
     color: colors.tertiary,
     fontSize: 16,
     marginTop: 16,
   },
-  
+
 });
 
 export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
@@ -65,16 +65,16 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   });
 
- 
 
-  finalAnswer= value ? value :[];
+
+  let finalAnswer= value ? value :{};
 
 
   handleComment = (itemValue) => {
-    
-    this.finalAnswer["text"] = itemValue;
-    
-    onChange(this.finalAnswer);
+
+    finalAnswer["text"] = itemValue;
+
+    onChange(finalAnswer);
   }
 
   useEffect(() => {
@@ -88,12 +88,12 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
       if (response === Permissions.RESULTS.GRANTED) {
         NativeGeolocation.getCurrentPosition(
           (successResponse) => {
-            this.finalAnswer["value"] = {
+            finalAnswer["value"] = {
               latitude: successResponse.coords.latitude,
               longitude: successResponse.coords.longitude,
             } ;
 
-            onChange(this.finalAnswer);
+            onChange(finalAnswer);
           },
           (errorResponse) => {
             console.warn(errorResponse);
@@ -139,7 +139,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
         </View>
       )}
       {locationPermission !== "denied" &&
-        typeof this.finalAnswer["value"]?.latitude !== "undefined" && (
+        typeof finalAnswer["value"]?.latitude !== "undefined" && (
           <View>
             <BaseText
               style={styles.infoText}
@@ -148,44 +148,44 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
           </View>
         )}
 
-       
-      {config?.image ? ( 
-        <View style = {styles.imgContainer}> 
+
+      {config?.image ? (
+        <View style = {styles.imgContainer}>
         <Image
          style = {styles.img}
         source={{
           uri: config.image,
         }}
       />
-       </View> ) :<View></View> 
+       </View> ) :<View></View>
        }
 
 
-        {isOptionalText ? 
-      (<View    style={{
-                    marginTop: '35%' ,
-                    width: '100%' ,
-                  
-                  }}
-                  >
+        {isOptionalText ?
+      (<View style={{
+          marginTop: '8%' ,
+          width: '100%' ,
+        }}
+        >
       <Item bordered
-       style={{borderWidth: 1}}
+        style={{borderWidth: 1}}
       >
-    
-
-      <Input
-          
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-    
-      />
-  
-      </Item> 
+        <TextInput
+            style={{
+              width: '100%',
+              minHeight: 50,
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+            }}
+            placeholder = "Please enter the text"
+            onChangeText={text=>handleComment(text)}
+            value={finalAnswer["text"]}
+            multiline={true}
+        />
+      </Item>
     </View>
     ):<View></View>
       }
-      
+
     </View>
     </KeyboardAvoidingView>
   );
