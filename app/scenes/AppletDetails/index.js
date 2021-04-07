@@ -37,9 +37,7 @@ class AppletDetails extends Component {
   handlePressActivity = (activity) => {
     const { startedTimes } = this.props;
 
-    if (activity.event) {
-      this.props.setCurrentEvent(activity.event.id);
-    }
+    this.props.setCurrentEvent(activity.event ? activity.event.id : null);
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
@@ -91,7 +89,6 @@ class AppletDetails extends Component {
 
   componentDidMount() {
     this.props.setCurrentActivity(null);
-    this.props.setCurrentEvent(null);
     this.props.setAppletSelectionDisabled(false);
   }
 

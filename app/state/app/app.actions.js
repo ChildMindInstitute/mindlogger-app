@@ -54,6 +54,11 @@ export const setActivityEndTime = status => ({
   payload: status,
 });
 
+export const setClosedEvent = eventId => ({
+  type: APP_ACTIONS.SET_CLOSED_EVENT,
+  payload: eventId,
+});
+
 export const setActivityStartTime = status => ({
   type: APP_ACTIONS.SET_ACTIVITY_START_TIME,
   payload: status,

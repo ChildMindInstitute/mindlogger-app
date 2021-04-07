@@ -15,27 +15,32 @@ const styles = StyleSheet.create({
 });
 
 const TimedActivity = ({ activity, startedTimes, endActivity }) => {
-  const { lastTimedActivity, nextTimedActivity } = activity
-  if (activity.status === 'scheduled' && activity.nextScheduledTimestamp && nextTimedActivity) {
+  const { event } = activity
+
+  if (activity.status === 'scheduled' && event && event.data.timedActivity.allow) {
+    let { hour, minute, allow } = event.data.timedActivity;
+
     return (
       <LittleText style={styles.textStyles}>
       
-        {(nextTimedActivity && nextTimedActivity.allow) ? `${i18n.t('timed_activity:time_to_complete')}: ${ nextTimedActivity.hour } ${i18n.t('timed_activity:hours')} and ${ nextTimedActivity.minute } minutes ` : ``}
+        {allow ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes ` : ``}
       </LittleText>
     );
   }
-  if (activity.status === 'pastdue' && activity.lastScheduledTimestamp && lastTimedActivity) {
+  if (activity.status === 'pastdue' && event && event.data.timedActivity.allow) {
+    let { hour, minute, allow } = event.data.timedActivity;
+
     return (
       <LittleText style={styles.textStyles}>
-        {(lastTimedActivity && lastTimedActivity.allow) ? `${i18n.t('timed_activity:time_to_complete')}: ${ lastTimedActivity.hour } ${i18n.t('timed_activity:hours')} and ${ lastTimedActivity.minute } minutes ` : ``}
+        {allow ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes ` : ``}
       </LittleText>
     );
   }
-  if (activity.status === 'in-progress' && activity.lastScheduledTimestamp && lastTimedActivity) {
-    let { hour, minute, second } = activity.lastTimedActivity;
-    const startedTime = startedTimes ? startedTimes[activity.id] : null;
+  if (activity.status === 'in-progress' && event && event.data.timedActivity.allow ) {
+    let { hour, minute, second, allow } = event.data.timedActivity;
+    const startedTime = startedTimes ? startedTimes[activity.id + event.id] : null;
 
-    if (startedTime && activity.lastTimedActivity.allow) {
+    if (startedTime && allow) {
       const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
       const difference = Math.abs(Date.now() - startedTime);
 

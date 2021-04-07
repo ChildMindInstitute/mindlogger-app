@@ -16,57 +16,46 @@ const compareByNameAlpha = (a, b) => {
 
 const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
-export const getUnscheduled = (activityList, pastActivities, scheduledActivities) => {
+export const getUnscheduled = (activityList, pastActivities, scheduledActivities, finishedEvents) => {
   const unscheduledActivities = [];
 
-  activityList.forEach(activity => {
-    if (!activity.events.length || activity.availability) {
+  for (const activity of activityList) {
+    if (!activity.events.length) {
       unscheduledActivities.push({ ...activity });
     } else {
-      activity.events.forEach(event => {
-        const today = new Date();
-        const { scheduledTime, data } = event;
+      let actStatus = false;
+      let selectedEvent = null;
 
-        if (scheduledTime > today
-          && !data.completion
-          && !scheduledActivities.find(({ schema }) => schema === activity.schema)
+      for (const event of activity.events) {
+        const { data, id } = event;
+
+        if (data.completion && Object.keys(finishedEvents).includes(id)) {
+          actStatus = false;
+          break;
+        }
+
+        if (!scheduledActivities.find(({ schema }) => schema === activity.schema)
           && !pastActivities.find(({ schema }) => schema === activity.schema)
           && !unscheduledActivities.find(({ schema }) => schema === activity.schema)
-          && (data.timeout.access || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))) {
-          unscheduledActivities.push({ ...activity });
+        ) {
+          actStatus = true;
+          selectedEvent = event;
         }
-      });
+      }
+
+      if (actStatus) {
+        unscheduledActivities.push({
+          ...activity,
+          event: selectedEvent
+        });
+      }
     }
-  });
+  }
 
   return unscheduledActivities;
-
-
-  // activityList.filter(
-  //   activity => (!activity.nextScheduledTimestamp
-  //     || !moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-  //     && (!activity.oneTimeCompletion
-  //       || !activity.lastResponseTimestamp
-  //       || moment(activity.lastResponseTimestamp) < activity.lastScheduledTimestamp)
-  //     && (!activity.lastResponseTimestamp
-  //       || !moment().isSame(moment(activity.lastResponseTimestamp), 'day')
-  //       || new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-  //       > activity.lastTimeout
-  //       || new Date(activity.lastResponseTimestamp).getTime() < activity.lastScheduledTimestamp)
-  //     && (!activity.nextAccess || (activityAccess && activityAccess[appletId + activity.id]))
-  //     && (!activity.lastScheduledTimestamp
-  //       || ((((!activity.extendedTime || !activity.extendedTime.allow)
-  //         && new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout)
-  //         || (activity.extendedTime
-  //           && activity.extendedTime.allow
-  //           && new Date().getTime() - activity.lastScheduledTimestamp
-  //           > activity.lastTimeout + activity.extendedTime.days * 86400000))
-  //         && !moment().isSame(moment(activity.lastScheduledTimestamp), 'day')))
-  //     && activity.invalid !== false,
-  // );
 }
 
-export const getScheduled = (activityList, activityAccess) => {
+export const getScheduled = (activityList, finishedEvents) => {
   const scheduledActivities = [];
 
   activityList.forEach(activity => {
@@ -77,6 +66,7 @@ export const getScheduled = (activityList, activityAccess) => {
       if (!activity.availability
         && scheduledTime > today
         && !data.completion
+        && !Object.keys(finishedEvents).includes(event.id)
         && (data.timeout.access || moment().isSame(moment(scheduledTime), 'day'))) {
         const scheduledActivity = { ...activity };
 
@@ -88,19 +78,9 @@ export const getScheduled = (activityList, activityAccess) => {
   });
 
   return scheduledActivities;
-
-  // activityList.filter(
-  //   activity => activity.nextScheduledTimestamp
-  //     && (!activity.lastScheduledTimestamp
-  //       || new Date().getTime() - activity.lastScheduledTimestamp > activity.lastTimeout
-  //       || moment(activity.lastResponseTimestamp) > activity.lastScheduledTimestamp
-  //       || (endTimes && endTimes[appletId + activity.id] > activity.lastScheduledTimestamp))
-  //     && (activity.nextAccess || moment().isSame(moment(activity.nextScheduledTimestamp), 'day'))
-  //     && (!activityAccess || !activityAccess[appletId + activity.id]),
-  // );
 }
 
-export const getPastdue = (activityList, appletId) => {
+export const getPastdue = (activityList, finishedEvents) => {
   const pastActivities = [];
 
   activityList.forEach(activity => {
@@ -113,6 +93,7 @@ export const getPastdue = (activityList, appletId) => {
 
       if (!activity.availability
         && scheduledTime <= today
+        && !Object.keys(finishedEvents).includes(event.id)
         && moment().isSame(moment(scheduledTime), 'day')
         && (!data.timeout.allow || today.getTime() - scheduledTime.getTime() < activityTimeout)) {
         const pastActivity = { ...activity };
@@ -125,27 +106,6 @@ export const getPastdue = (activityList, appletId) => {
   });
 
   return pastActivities;
-
-  // return activityList.filter(
-  //   activity => activity.lastScheduledTimestamp
-  //     && activity.lastTimeout
-  //     && (!endTimes || !endTimes[appletId + activity.id] || endTimes[appletId + activity.id] < activity.lastScheduledTimestamp)
-  //     && (!activity.lastResponseTimestamp
-  //       || moment(activity.lastResponseTimestamp) <= activity.lastScheduledTimestamp
-  //       || ((!activity.extendedTime || !activity.extendedTime.allow)
-  //         && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-  //         > activity.lastTimeout)
-  //       || (activity.extendedTime
-  //         && activity.extendedTime.allow
-  //         && new Date(activity.lastResponseTimestamp).getTime() - activity.lastScheduledTimestamp
-  //         > activity.extendedTime.days * 86400000))
-  //     && ((activity.extendedTime
-  //       && activity.extendedTime.allow
-  //       && new Date().getTime() - activity.lastScheduledTimestamp
-  //       <= activity.lastTimeout + activity.extendedTime.days * 86400000)
-  //       || ((!activity.extendedTime || !activity.extendedTime.allow)
-  //         && new Date().getTime() - activity.lastScheduledTimestamp <= activity.lastTimeout)),
-  // );
 }
 
 const addSectionHeader = (array, headerText) => (array.length > 0 ? [{ isHeader: true, text: headerText }, ...array] : []);
@@ -154,7 +114,7 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (appletId, activityList, inProgress, activityEndTimes, activityAccess) => {
+export default (appletId, activityList, inProgress, finishedEvents) => {
   let notInProgress = [];
   let inProgressActivities = [];
   const inProgressKeys = Object.keys(inProgress);
@@ -198,14 +158,14 @@ export default (appletId, activityList, inProgress, activityEndTimes, activityAc
   // Activities currently scheduled - or - previously scheduled and not yet completed.
 
   // Activities scheduled some time in the future.
-  const pastdue = getPastdue(notInProgress, appletId)
+  const pastdue = getPastdue(notInProgress, finishedEvents)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
-  const scheduled = getScheduled(notInProgress, activityAccess).sort(compareByTimestamp('nextScheduledTimestamp'));
+  const scheduled = getScheduled(notInProgress, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled).sort(compareByNameAlpha);
+  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();

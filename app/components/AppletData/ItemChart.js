@@ -6,10 +6,6 @@ import i18n from 'i18next';
 
 import TokenChart from './TokenChart';
 import BaseText from '../base_text/base_text';
-// import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
-// import { colors } from '../../themes/colors';
-// import LineChart from './LineChart';
-// import BarChart from './BarChart';
 
 const styles = {
   plotView: {
@@ -39,6 +35,8 @@ class ItemChart extends React.Component {
       return null;
     }
 
+    const values = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -48,10 +46,9 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.question['en']}
+          value={values[values.length - 1]}
         />
         {item.additionalParams.timelineChart}
-        {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
       </View>
     );
   }
