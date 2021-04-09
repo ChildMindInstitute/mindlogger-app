@@ -251,14 +251,8 @@ class ActivityScreen extends Component {
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
-    return (
-      <View style={styles.outer}>
-        <KeyboardAwareScrollView
-          extraScrollHeight={5}
-          enableOnAndroid={true}
-          contentContainerStyle={styles.container}
-        >
-          <ScrollView
+    const itemScreen =
+      <ScrollView
             alwaysBounceVertical={false}
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
@@ -313,8 +307,29 @@ class ActivityScreen extends Component {
                 onContentError={onContentError}
               />
             )}
-          </ScrollView>
-        </KeyboardAwareScrollView>
+        </ScrollView>
+
+    return (
+      <View style={styles.outer}>
+        {
+          Platform.OS === "ios" && (
+            <KeyboardAwareScrollView
+              extraScrollHeight={5}
+              enableOnAndroid={true}
+              contentContainerStyle={styles.keyboardContainer}
+            >
+              { itemScreen }
+            </KeyboardAwareScrollView>
+          ) ||
+          <KeyboardAvoidingView
+            behavior={"height"}
+            style={styles.keyboardContainer}
+            enabled
+            keyboardVerticalOffset={20}
+          >
+            { itemScreen }
+          </KeyboardAvoidingView>
+        }
         {timerActive && (
           <View style={styles.timerView}>
             <Timer duration={screen.timer} color={colors.primary} size={40} />
