@@ -52,7 +52,7 @@ const rules = {
       key={node.key}
       style={{
         resizeMode: "contain",
-        height: 320,
+        height: 200,
         width: width-100
       }}
       source={{
