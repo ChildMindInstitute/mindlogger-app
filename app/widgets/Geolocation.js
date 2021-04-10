@@ -174,7 +174,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
             style={{
               width: '100%',
               minHeight: 50,
-              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
             }}
             placeholder = {
               i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')

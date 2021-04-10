@@ -102,7 +102,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
         <TextInput
             style={{
               width: '100%',
-              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
             }}
             placeholder = {
               i18n.t(config.isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
