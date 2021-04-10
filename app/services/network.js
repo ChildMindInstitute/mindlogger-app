@@ -236,18 +236,6 @@ export const registerOpenApplet = (authToken, schemaURI) => {
   }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-// export const getAppletSchedule = (authToken, appletId) => {
-//   const url = `${apiHost()}/applet/${appletId}/schedule?getTodayEvents=true`;
-//   const headers = {
-//     'Girder-Token': authToken,
-//   };
-//   return fetch(url, {
-//     method: 'get',
-//     mode: 'cors',
-//     headers,
-//   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
-// };
-
 export const getAppletSchedule = (authToken, appletId) => {
   const queryParams = `?${objectToQueryParams({
     getAllEvents: false,
