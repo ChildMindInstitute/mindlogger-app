@@ -13,6 +13,7 @@ import { Text , Item , Input} from "native-base";
 import SliderComponent from "react-native-slider";
 import { getURL } from "../../services/helper";
 import { colors } from "../../themes/colors";
+import i18n from 'i18next';
 
 const testTicks = [
   { name: "One", value: 1 },
@@ -319,7 +320,7 @@ class Slider extends Component {
   render() {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
     const {
-      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText },
+      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired },
       onChange,
       onPress,
       value,
@@ -434,7 +435,9 @@ class Slider extends Component {
                 width: '100%',
                 ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
               }}
-              placeholder = "Please enter the text"
+              placeholder = {
+                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+              }
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}
               multiline={true}

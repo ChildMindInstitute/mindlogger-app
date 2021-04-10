@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, ScrollView,KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import {Item , Input } from 'native-base';
 import TimePicker from './TimePicker';
+import i18n from 'i18next';
 
 const defaultTime = { hour: 0, minute: 0 };
 
@@ -42,7 +43,7 @@ export class TimeRange extends React.Component {
   }
 
   render() {
-    const { value ,isOptionalText} = this.props;
+    const { value ,isOptionalText, isOptionalTextRequired } = this.props;
 
     this.finalAnswer = value ? value : {};
 
@@ -72,7 +73,9 @@ export class TimeRange extends React.Component {
                 width: '100%',
                 ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
               }}
-              placeholder = "Please enter the text"
+              placeholder = {
+                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+              }
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}
               multiline={true}

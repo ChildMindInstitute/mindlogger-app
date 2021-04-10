@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInp
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
+import i18n from 'i18next';
 
 const styles = StyleSheet.create({
   text: {
@@ -48,7 +49,7 @@ export class Drawing extends React.Component {
   }
 
   render() {
-    const { config, answer, onChange, onPress, onRelease  ,isOptionalText} = this.props;
+    const { config, answer, onChange, onPress, onRelease  ,isOptionalText, isOptionalTextRequired } = this.props;
     const url = config.inputs.backgroundImage
       ? getURL(config.inputs.backgroundImage)
       : null;
@@ -94,7 +95,9 @@ export class Drawing extends React.Component {
                 width: '100%',
                 ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
               }}
-              placeholder = "Please enter the text"
+              placeholder = {
+                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+              }
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}
               multiline={true}

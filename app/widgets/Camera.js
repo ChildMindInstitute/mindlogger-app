@@ -268,7 +268,7 @@ export class Camera extends Component {
   };
 
   render() {
-    const { value, video ,isOptionalText} = this.props;
+    const { value, video ,isOptionalText, isOptionalTextRequired } = this.props;
 
     this.finalAnswer = value ? value : {};
 
@@ -319,7 +319,9 @@ export class Camera extends Component {
                   width: '100%',
                   ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
                 }}
-                placeholder = "Please enter the text"
+                placeholder = {
+                  i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+                }
                 onChangeText={text=>this.handleComment(text)}
                 value={this.finalAnswer["text"]}
                 multiline={true}
