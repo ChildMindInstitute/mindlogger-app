@@ -42,7 +42,6 @@ const ActivityList = ({
   setUpdatedTime,
   appletTime,
   lastUpdatedTime,
-  activityEndTimes,
   responseSchedule,
   inProgress,
   finishedEvents,
@@ -111,8 +110,6 @@ const ActivityList = ({
       setReminder();
     }
   }
-
-  // useInterval(stateUpdate, updateStatusDelay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
     let updateId;
