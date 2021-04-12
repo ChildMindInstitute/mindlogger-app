@@ -81,7 +81,6 @@ class CustomToolTip extends React.PureComponent {
       flex: 1,
       borderRadius: 10,
       padding: 10,
-      paddingTop: 20,
       ...containerStyle,
     };
   };
