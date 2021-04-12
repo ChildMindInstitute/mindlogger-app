@@ -11,9 +11,10 @@ import moment from 'moment';
 import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
+import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
+import { lastActiveTimeSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
@@ -46,6 +47,7 @@ class FireBaseMessaging extends Component {
       fMessaging.onMessage(this.onMessage),
     ];
     this.appState = 'active';
+    this.pendingNotification = null;
     this.notificationsCount = 0;
     // AppState.addEventListener('change', this.handleAppStateChange);
 
@@ -467,7 +469,12 @@ class FireBaseMessaging extends Component {
   onNotificationOpened = async (
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
-    this.openActivityByEventId(notificationOpen);
+    if (this.appState == 'background') {
+      this.pendingNotification = notificationOpen;
+    } else {
+      this.openActivityByEventId(notificationOpen);
+    }
+
     this.notificationsCount -= 1;
 
     if (isIOS) {
@@ -565,13 +572,14 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    const { setAppStatus, updateBadgeNumber } = this.props;
+    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive } = this.props;
     const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
     const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
     const stateChanged = nextAppState !== this.appState;
 
     if (goingToBackground) {
       setAppStatus(false);
+      setLastActiveTime(new Date().getTime());
     } else if (goingToForeground) {
       setAppStatus(true);
     }
@@ -581,6 +589,22 @@ class FireBaseMessaging extends Component {
     }
 
     this.appState = nextAppState;
+
+    if (this.appState == 'active') {
+      if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
+        sync(() => {
+          if (this.pendingNotification) {
+            this.openActivityByEventId(this.pendingNotification);
+            this.pendingNotification = null;
+          }
+        })
+      } else {
+        if (this.pendingNotification) {
+          this.openActivityByEventId(this.pendingNotification);
+          this.pendingNotification = null;
+        }
+      }
+    }
   };
 
   /**
@@ -616,6 +640,7 @@ const mapStateToProps = state => ({
   applets: appletsSelector(state),
   inProgress: inProgressSelector(state),
   authToken: authTokenSelector(state),
+  lastActive: lastActiveTimeSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -630,6 +655,7 @@ const mapDispatchToProps = dispatch => ({
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
+  setLastActiveTime: time => dispatch(setLastActiveTime(time)),
 });
 
 export default connect(

@@ -74,6 +74,11 @@ export const setAppStatus = appStatus => ({
   payload: appStatus,
 });
 
+export const setLastActiveTime = time => ({
+  type: APP_ACTIONS.SET_LAST_ACTIVE_TIME,
+  payload: time,
+})
+
 export const toggleMobileDataAllowed = () => ({
   type: APP_ACTIONS.TOGGLE_MOBILE_DATA_ALLOWED,
 });
