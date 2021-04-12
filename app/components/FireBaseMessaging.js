@@ -197,7 +197,7 @@ class FireBaseMessaging extends Component {
    */
   openActivityByEventId = (notificationObj) => {
     const type = _.get(notificationObj, 'notification._data.type');
-    
+
     if (type === 'response-data-alert') {
       Alert.alert(
         i18n.t('firebase_messaging:response_refresh_request'),
@@ -231,7 +231,7 @@ class FireBaseMessaging extends Component {
         ],
         { cancelable: false },
       );
-    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') { 
+    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') {
       const appletId = _.get(notificationObj, 'notification._data.applet_id');
 
       this.props.downloadApplets(() => {
@@ -355,7 +355,7 @@ class FireBaseMessaging extends Component {
     }
 
     if (
-      activity.lastScheduledTimestamp && 
+      activity.lastScheduledTimestamp &&
       !moment(activity.lastScheduledTimestamp).isBefore(currentDate, 'day')
     ) {
       deltaTime = 0;
@@ -364,7 +364,10 @@ class FireBaseMessaging extends Component {
     const allowAccessBefore = event.data && event.data.timeout && event.data.timeout.access;
 
     if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
-      this.props.startResponse(activity);
+      this.props.startResponse({
+        ...activity,
+        event
+      });
     } else {
       const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
 

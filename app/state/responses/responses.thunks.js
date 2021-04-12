@@ -371,6 +371,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   const inProgressResponse = currentResponsesSelector(state);
   const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
@@ -406,6 +407,10 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     dispatch(startUploadQueue());
   }
 
+  if (event) {
+    dispatch(setClosedEvent(event))
+  }
+
   setTimeout(() => {
     const { activity } = inProgressResponse;
     // Allow some time to navigate back to ActivityList
@@ -430,10 +435,6 @@ export const nextScreen = () => (dispatch, getState) => {
     }
     dispatch(completeResponse());
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
-
-    if (event) {
-      dispatch(setClosedEvent(event))
-    }
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
