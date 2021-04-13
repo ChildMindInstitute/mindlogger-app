@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
   },
   optionText: {
-    fontSize: 11
+    fontSize: 10
   },
   tooltip: {
     color: 'red'
@@ -70,7 +70,7 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
       <ListItem
         style={{ width: '100%' }}
       >
-        <View style={{ width: '25%' }}></View>
+        <View style={{ width: '22%' }}></View>
         {
           config.options.map(option => (
             <View style={{ width: optionWidth }}>
@@ -105,7 +105,7 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
           style={{ width: '100%' }}
           key={i}
         >
-          <View style={{ width: '25%' }}>
+          <View style={{ width: '22%' }}>
             {item.description ? (
               <TooltipBox text={item.description}>
                 <Text
