@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, TextInput, Platform } from 'react-native';
+import { View, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { Item, Input } from 'native-base';
 import i18n from 'i18next';
 
@@ -32,26 +32,30 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
 
   const onEndEditing = () => {
     onChange(text);
-    console.log('values', text)
   }
 
   return (
-    <View {...props}>
-      <Item>
-        <TextInput
-          placeholder={i18n.t('text_entry:type_placeholder')}
-          onChangeText={setText}
-          onEndEditing={onEndEditing}
-          style={[newStyle]}
-          keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
-          value={text}
-          multiline={true}
-          onBlur={() => setFocused(false)}
-          onFocus={() => setFocused(true)}
-          onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
-        />
-      </Item>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'height' : "padding"}
+      keyboardVerticalOffset={45}
+    >
+      <View {...props}>
+        <Item>
+          <TextInput
+            placeholder={i18n.t('text_entry:type_placeholder')}
+            onChangeText={setText}
+            onEndEditing={onEndEditing}
+            style={[newStyle]}
+            keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
+            value={text}
+            multiline={true}
+            onBlur={() => setFocused(false)}
+            onFocus={() => setFocused(true)}
+            onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
+          />
+        </Item>
+      </View>
+    </KeyboardAvoidingView>
   )
 };
 
