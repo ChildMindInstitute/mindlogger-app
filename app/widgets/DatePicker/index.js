@@ -4,6 +4,7 @@ import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
 import { View, ScrollView,KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import moment from 'moment';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import i18n from 'i18next';
 
 export class DatePicker extends React.Component {
   constructor(props) {
@@ -56,7 +57,7 @@ export class DatePicker extends React.Component {
   }
 
   render() {
-    const { value , isOptionalText } = this.props;
+    const { value , isOptionalText, isOptionalTextRequired } = this.props;
     this.finalAnswer = value ? value : {};
 
     const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
@@ -111,9 +112,11 @@ export class DatePicker extends React.Component {
           <TextInput
               style={{
                 width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
               }}
-              placeholder = "Please enter the text"
+              placeholder = {
+                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+              }
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}
               multiline={true}

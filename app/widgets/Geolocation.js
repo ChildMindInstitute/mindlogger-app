@@ -7,7 +7,7 @@ import Permissions, { PERMISSIONS } from "react-native-permissions";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { getURL } from '../services/helper';
-
+import i18n from 'i18next';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
 
 });
 
-export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
+export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptionalTextRequired}) => {
   const [locationPermission, setLocationPermission] = useState("undetermined");
   const permission = Platform.select({
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
@@ -174,9 +174,11 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText}) => {
             style={{
               width: '100%',
               minHeight: 50,
-              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
             }}
-            placeholder = "Please enter the text"
+            placeholder = {
+              i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+            }
             onChangeText={text=>handleComment(text)}
             value={finalAnswer["text"]}
             multiline={true}
@@ -201,5 +203,6 @@ Geolocation.propTypes = {
   config: PropTypes.object,
   value: PropTypes.object,
   onChange: PropTypes.func,
-  isOptionalText: PropTypes.bool
+  isOptionalText: PropTypes.bool,
+  isOptionalTextRequired: PropTypes.bool
 };
