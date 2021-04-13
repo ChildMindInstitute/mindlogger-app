@@ -192,6 +192,10 @@
     "play": "PLAY",
     "done": "DONE"
   },
+  "optional_text": {
+    "required": "This is a required field.",
+    "enter_text": "Please enter the text."
+  },
   "date_picker": {
     "ok": "OK"
   },

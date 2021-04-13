@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { Item , Input } from 'native-base';
 import AudioRecorder from './AudioRecorder';
+import i18n from 'i18next';
 
 export class AudioRecord extends Component {
 
@@ -27,7 +28,7 @@ export class AudioRecord extends Component {
 
   render() {
 
-    const { value, config,isOptionalText } = this.props;
+    const { value, config, isOptionalText, isOptionalTextRequired } = this.props;
     const maxLength = parseInt(R.path(['maxValue'], config));
 
     this.finalAnswer= value ? value :{};
@@ -54,9 +55,11 @@ export class AudioRecord extends Component {
           <TextInput
               style={{
                 width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
               }}
-              placeholder = "Please enter the text"
+              placeholder = {
+                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+              }
               onChangeText={text=>this.handleComment(text)}
               value={this.finalAnswer["text"]}
               multiline={true}

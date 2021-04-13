@@ -186,6 +186,10 @@
     "play": "Lecture",
     "done": "Fait"
   },
+  "optional_text": {
+    "required": "Ceci est un champ obligatoire.",
+    "enter_text": "Veuillez saisir le texte."
+  },
   "date_picker": {
     "ok": "OK"
   },
