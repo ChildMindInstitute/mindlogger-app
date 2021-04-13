@@ -6,6 +6,7 @@ import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
+import i18n from 'i18next';
 
 export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
 
@@ -101,9 +102,11 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
         <TextInput
             style={{
               width: '100%',
-              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100 }
+              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
             }}
-            placeholder = "Please enter the text"
+            placeholder = {
+              i18n.t(config.isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+            }
             onChangeText={text=>handleComment(text)}
             value={finalAnswer["text"]}
             multiline={true}

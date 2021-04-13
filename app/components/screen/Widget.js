@@ -110,6 +110,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -120,6 +121,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -149,6 +151,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         config={screen.valueConstraints}
         value={answer}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -179,6 +182,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         config={screen.inputs}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
       />
     );
   }
@@ -189,6 +193,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         config={screen.inputs}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
         video
       />
     );
@@ -210,6 +215,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onPress={onPress}
         onRelease={onRelease}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
         answer={answer}
       />
     );
@@ -240,6 +246,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -278,7 +285,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       onContentError();
     }
   });
-  
+
   return <WidgetError />;
 };
 

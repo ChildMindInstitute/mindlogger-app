@@ -70,6 +70,13 @@ export const initialState = {
   appStatus: false,
 
   /**
+   * timestamp for app was open last time
+   *
+   * @type {Number}
+   */
+  lastActive: new Date().getTime(),
+
+  /**
    * app language code
    *
    * @type {string}
@@ -163,6 +170,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         appStatus: action.payload,
       };
+    case APP_CONSTANTS.SET_LAST_ACTIVE_TIME:
+      return {
+        ...state,
+        lastActive: action.payload,
+      }
     case APP_CONSTANTS.SET_SKIN:
       return {
         ...state,

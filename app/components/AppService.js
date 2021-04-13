@@ -11,14 +11,15 @@ import moment from 'moment';
 import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
+import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
+import { lastActiveTimeSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
-
+import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
 
 const AndroidChannelId = 'MindLoggerChannelId';
@@ -28,7 +29,7 @@ const fNotifications = firebase.notifications.nativeModuleExists && firebase.not
 const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
-class FireBaseMessaging extends Component {
+class AppService extends Component {
   /**
    * Method called when the component is about to be rendered.
    *
@@ -46,7 +47,9 @@ class FireBaseMessaging extends Component {
       fMessaging.onMessage(this.onMessage),
     ];
     this.appState = 'active';
+    this.pendingNotification = null;
     this.notificationsCount = 0;
+    this.intervalId = 0;
     // AppState.addEventListener('change', this.handleAppStateChange);
 
     if (isAndroid) {
@@ -68,6 +71,33 @@ class FireBaseMessaging extends Component {
       this.openActivityByEventId(event);
       // if (isAndroid) NativeModules.DevSettings.reload();
     }
+
+    this.startTimer();
+  }
+
+  /**
+   * start timer for app ( automatically refreshes app at 12:00am everyday)
+   */
+  startTimer()
+  {
+    const { sync } = this.props;
+    const updateScheduleDelay = 24 * 3600 * 1000;
+
+    const currentTime = new Date();
+    const nextDay = new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate() + 1,
+    );
+    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+
+    this.intervalId = delayedExec(
+      () => {
+        sync();
+        this.intervalId = delayedExec(sync, { every: updateScheduleDelay });
+      },
+      { after: leftTimeout },
+    );
   }
 
   /**
@@ -80,6 +110,10 @@ class FireBaseMessaging extends Component {
       this.listeners.forEach(removeListener => removeListener());
     }
     AppState.removeEventListener('change', this.handleAppStateChange);
+
+    if (this.intervalId) {
+      clearExec(this.intervalId);
+    }
   }
 
   /**
@@ -467,7 +501,12 @@ class FireBaseMessaging extends Component {
   onNotificationOpened = async (
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
-    this.openActivityByEventId(notificationOpen);
+    if (this.appState == 'background') {
+      this.pendingNotification = notificationOpen;
+    } else {
+      this.openActivityByEventId(notificationOpen);
+    }
+
     this.notificationsCount -= 1;
 
     if (isIOS) {
@@ -565,15 +604,20 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    const { setAppStatus, updateBadgeNumber } = this.props;
+    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive } = this.props;
     const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
     const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
     const stateChanged = nextAppState !== this.appState;
 
     if (goingToBackground) {
       setAppStatus(false);
+      setLastActiveTime(new Date().getTime());
+
+      clearExec(this.intervalId);
+      this.intervalId = 0;
     } else if (goingToForeground) {
       setAppStatus(true);
+      this.startTimer();
     }
 
     if (stateChanged && isIOS) {
@@ -581,6 +625,22 @@ class FireBaseMessaging extends Component {
     }
 
     this.appState = nextAppState;
+
+    if (this.appState == 'active') {
+      if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
+        sync(() => {
+          if (this.pendingNotification) {
+            this.openActivityByEventId(this.pendingNotification);
+            this.pendingNotification = null;
+          }
+        })
+      } else {
+        if (this.pendingNotification) {
+          this.openActivityByEventId(this.pendingNotification);
+          this.pendingNotification = null;
+        }
+      }
+    }
   };
 
   /**
@@ -595,7 +655,7 @@ class FireBaseMessaging extends Component {
   }
 }
 
-FireBaseMessaging.propTypes = {
+AppService.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
@@ -608,7 +668,7 @@ FireBaseMessaging.propTypes = {
   syncTargetApplet: PropTypes.func.isRequired,
 };
 
-FireBaseMessaging.defaultProps = {
+AppService.defaultProps = {
   inProgress: {},
 };
 
@@ -616,6 +676,7 @@ const mapStateToProps = state => ({
   applets: appletsSelector(state),
   inProgress: inProgressSelector(state),
   authToken: authTokenSelector(state),
+  lastActive: lastActiveTimeSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -630,9 +691,10 @@ const mapDispatchToProps = dispatch => ({
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
+  setLastActiveTime: time => dispatch(setLastActiveTime(time)),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FireBaseMessaging);
+)(AppService);

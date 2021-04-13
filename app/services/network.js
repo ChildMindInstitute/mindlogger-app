@@ -236,23 +236,25 @@ export const registerOpenApplet = (authToken, schemaURI) => {
   }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-// export const getAppletSchedule = (authToken, appletId) => {
-//   const url = `${apiHost()}/applet/${appletId}/schedule?getTodayEvents=true`;
-//   const headers = {
-//     'Girder-Token': authToken,
-//   };
-//   return fetch(url, {
-//     method: 'get',
-//     mode: 'cors',
-//     headers,
-//   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
-// };
-
-export const getAppletSchedule = (authToken, appletId) =>
-  get(`applet/${appletId}/schedule`, authToken, {
+export const getAppletSchedule = (authToken, appletId) => {
+  const queryParams = `?${objectToQueryParams({
     getAllEvents: false,
-    getTodayEvents: true,
-  });
+    numberOfDays: 7
+  })}`;
+
+  const url = `${apiHost()}/applet/${appletId}/getSchedule${queryParams}`;
+
+  const headers = {};
+  if (authToken) {
+    headers["Girder-Token"] = authToken;
+  }
+
+  return fetch(url, {
+    method: "put",
+    mode: "cors",
+    headers,
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+}
 
 export const getAppletInvites = (authToken) => {
   const url = `${apiHost()}/user/invites`;

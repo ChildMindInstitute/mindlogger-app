@@ -4,6 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import moment from 'moment';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -53,7 +54,6 @@ const ActivityList = ({
   const [prizeActivity, setPrizeActivity] = useState(null);
 
   const updateStatusDelay = 60 * 1000;
-  const updateScheduleDelay = 24 * 3600 * 1000;
 
   const stateUpdate = () => {
     const newApplet = parseAppletEvents(applet);
@@ -66,50 +66,6 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
-
-  const scheduleUpdate = () => {
-    const currentTime = new Date();
-    const appletId = applet.id;
-
-    if (lastUpdatedTime[appletId]) {
-
-      if (!moment().isSame(moment(new Date(lastUpdatedTime[appletId])), 'day')) {
-        const updatedTime = lastUpdatedTime;
-        updatedTime[appletId] = currentTime;
-        getSchedules(appletId.split('/')[1]);
-        setUpdatedTime(updatedTime);
-      } else {
-        const updatedTime = lastUpdatedTime;
-        updatedTime[appletId] = currentTime;
-        setUpdatedTime(updatedTime);
-      }
-    } else if (!moment().isSame(moment(appletTime), 'day')) {
-      const updatedTime = lastUpdatedTime;
-      updatedTime[appletId] = appletTime;
-
-      getSchedules(appletId.split('/')[1]);
-      setUpdatedTime(updatedTime);
-    } else {
-      const updatedTime = lastUpdatedTime;
-      updatedTime[appletId] = appletTime;
-
-      setUpdatedTime(updatedTime);
-    }
-  };
-
-  const handleConnectivityChange = (connection) => {
-    if (connection.isConnected) {
-      cancelReminder();
-
-      if (!isConnected) {
-        setConnection(true);
-        syncUploadQueue();
-      }
-    } else {
-      setConnection(false);
-      setReminder();
-    }
-  }
 
   useEffect(() => {
     let updateId;
@@ -133,41 +89,8 @@ const ActivityList = ({
   }, [Object.keys(inProgress).length, responseSchedule]);
 
   useEffect(() => {
-    let intervalId;
-    const currentTime = new Date();
-    const nextDay = new Date(
-      currentTime.getFullYear(),
-      currentTime.getMonth(),
-      currentTime.getDate() + 1,
-    );
-    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
-
-    const leftTimeoutId = delayedExec(
-      () => {
-        scheduleUpdate();
-        intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
-      },
-      { after: leftTimeout },
-    );
-
-    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
-
-    return () => {
-      if (netInfoUnsubscribe) {
-        netInfoUnsubscribe();
-      }
-
-      clearExec(leftTimeoutId);
-      if (intervalId) {
-        clearExec(intervalId);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
     if (appStatus) {
       stateUpdate();
-      setAppStatus(false);
     }
   }, [appStatus]);
 
@@ -237,7 +160,7 @@ const mapStateToProps = (state) => {
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
-    
+
   };
 };
 

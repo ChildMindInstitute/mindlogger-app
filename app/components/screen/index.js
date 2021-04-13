@@ -82,7 +82,7 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdownMessage" || screen.inputType ===  "audioStimulus") {
+    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus") {
       return true;
     }
 
@@ -114,7 +114,7 @@ class ActivityScreen extends Component {
     }
 
     if (answer !== null && typeof answer !== "undefined") {
-      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "") ) {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "")) {
         return false
       }
     }
@@ -253,46 +253,31 @@ class ActivityScreen extends Component {
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
     const itemScreen =
       <ScrollView
-            alwaysBounceVertical={false}
-            style={styles.container}
-            contentContainerStyle={styles.contentContainer}
-            scrollEnabled={scrollEnabled}
-            // eslint-disable-next-line no-return-assign
-            ref={(scrollView) => (this.scrollView = scrollView)}
-            onContentSizeChange={this.onContentSizeChange}
-            onScroll={({ nativeEvent }) => {
-              if (this.isCloseToBottom(nativeEvent)) {
-                this.setState({ screenHeight: height });
-              }
-            }}
-          >
-            <ScreenDisplay screen={screen} />
-            {inputDelayed ? (
-              <View pointerEvents="none" style={styles.delayView}>
-                <View style={styles.delayTimerView}>
-                  <Timer
-                    duration={screen.delay}
-                    color={colors.tertiary}
-                    size={50}
-                    strokeWidth={5}
-                  />
-                </View>
-                <View style={{ opacity: 0.25 }}>
-                  <Widget
-                    answer={answer}
-                    onChange={onChange}
-                    isCurrent={isCurrent}
-                    screen={screen}
-                    onPress={() => {
-                      this.setState({ scrollEnabled: false });
-                    }}
-                    onRelease={() => {
-                      this.setState({ scrollEnabled: true });
-                    }}
-                  />
-                </View>
-              </View>
-            ) : (
+        alwaysBounceVertical={false}
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+        scrollEnabled={scrollEnabled}
+        // eslint-disable-next-line no-return-assign
+        ref={(scrollView) => (this.scrollView = scrollView)}
+        onContentSizeChange={this.onContentSizeChange}
+        onScroll={({ nativeEvent }) => {
+          if (this.isCloseToBottom(nativeEvent)) {
+            this.setState({ screenHeight: height });
+          }
+        }}
+      >
+        <ScreenDisplay screen={screen} />
+        {inputDelayed ? (
+          <View pointerEvents="none" style={styles.delayView}>
+            <View style={styles.delayTimerView}>
+              <Timer
+                duration={screen.delay}
+                color={colors.tertiary}
+                size={50}
+                strokeWidth={5}
+              />
+            </View>
+            <View style={{ opacity: 0.25 }}>
               <Widget
                 answer={answer}
                 onChange={onChange}
@@ -304,32 +289,36 @@ class ActivityScreen extends Component {
                 onRelease={() => {
                   this.setState({ scrollEnabled: true });
                 }}
-                onContentError={onContentError}
               />
-            )}
-        </ScrollView>
+            </View>
+          </View>
+        ) : (
+            <Widget
+              answer={answer}
+              onChange={onChange}
+              isCurrent={isCurrent}
+              screen={screen}
+              onPress={() => {
+                this.setState({ scrollEnabled: false });
+              }}
+              onRelease={() => {
+                this.setState({ scrollEnabled: true });
+              }}
+              onContentError={onContentError}
+            />
+          )}
+      </ScrollView>
 
     return (
       <View style={styles.outer}>
-        {
-          Platform.OS === "ios" && (
-            <KeyboardAwareScrollView
-              extraScrollHeight={5}
-              enableOnAndroid={true}
-              contentContainerStyle={styles.keyboardContainer}
-            >
-              { itemScreen }
-            </KeyboardAwareScrollView>
-          ) ||
-          <KeyboardAvoidingView
-            behavior={"height"}
-            style={styles.keyboardContainer}
-            enabled
-            keyboardVerticalOffset={20}
-          >
-            { itemScreen }
-          </KeyboardAvoidingView>
-        }
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardContainer}
+          enabled
+          keyboardVerticalOffset={20}
+        >
+          {itemScreen}
+        </KeyboardAvoidingView>
         {timerActive && (
           <View style={styles.timerView}>
             <Timer duration={screen.timer} color={colors.primary} size={40} />

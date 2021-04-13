@@ -11,11 +11,16 @@ const UNDO = i18n.t('activity_navigation:undo');
 export const checkValidity = (item, response) => Screen.isValid(response, item);
 
 export const checkSkippable = (activity, item) => {
-  if (typeof item.skippable !== 'undefined') {
-    return item.skippable;
-  }
   if (activity.skippable === true) {
     return true;
+  }
+
+  if (item.valueConstraints && item.valueConstraints.isOptionalTextRequired) {
+    return false;
+  }
+
+  if (typeof item.skippable !== 'undefined') {
+    return item.skippable;
   }
   return false;
 };

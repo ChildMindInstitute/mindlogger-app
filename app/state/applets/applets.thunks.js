@@ -31,6 +31,7 @@ import {
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
+  setScheduleUpdated
 } from "./applets.actions";
 import {
   authSelector,
@@ -163,7 +164,7 @@ export const setReminder = () => async (dispatch, getState) => {
 export const cancelReminder = () => (dispatch, getState) => {
   const state = getState();
   const isReminderSet = isReminderSetSelector(state);
-  
+
   if (isReminderSet) {
     firebase.notifications().cancelAllNotifications();
     dispatch(clearNotificationReminder());
@@ -196,14 +197,14 @@ export const cancelReminder = () => (dispatch, getState) => {
 
 export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, getState) => {
   const state = getState();
-  const auth = authSelector(state); 
+  const auth = authSelector(state);
   const currentApplets = await getData('ml_applets');
   const currentResponses = await getData('ml_responses');
   let localInfo = {};
 
   if (currentApplets) {
     currentApplets.forEach(applet => {
-      const { contentUpdateTime, id } = applet; 
+      const { contentUpdateTime, id } = applet;
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
       const localEvents = Object.keys(applet.schedule.events).map(id => {
         event = applet.schedule.events[id];
@@ -233,6 +234,8 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
         const responses = [];
+        let scheduleUpdated = false;
+
         const transformedApplets = applets
           .map((appletInfo) => {
             if (!appletInfo.applet) {
@@ -244,8 +247,9 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
                 if (!R.isEmpty(appletInfo.schedule.events)) {
                   Object.keys(appletInfo.schedule.events).forEach(eventId => {
                     events[eventId] = appletInfo.schedule.events[eventId];
+                    scheduleUpdated = true;
                   })
-                } 
+                }
 
                 for (const eventId in events) {
                   let isValid = false;
@@ -279,6 +283,9 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
+        if (scheduleUpdated) {
+          dispatch(setScheduleUpdated(true));
+        }
         dispatch(replaceApplets(transformedApplets));
         dispatch(replaceResponses(responses));
         // dispatch(downloadAppletsMedia(transformedApplets));

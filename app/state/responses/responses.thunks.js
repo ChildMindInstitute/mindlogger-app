@@ -48,6 +48,7 @@ import {
   setClosedEvent,
   clearActivityStartTime,
   setActivityEndTime,
+  setCurrentEvent
 } from "../app/app.actions";
 
 import {
@@ -108,6 +109,8 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
 };
 
 export const startResponse = (activity) => (dispatch, getState) => {
+  dispatch(setCurrentEvent(activity.event ? activity.event.id : null));
+
   const state = getState();
   const { responses, user } = state;
   const startedTimes = startedTimesSelector(state);

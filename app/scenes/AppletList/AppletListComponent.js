@@ -54,6 +54,7 @@ const AppletListComponent = ({
   isDownloadingTargetApplet,
   title,
   isConnected,
+  appStatus,
   setConnection,
   setReminder,
   cancelReminder,
@@ -219,6 +220,7 @@ AppletListComponent.propTypes = {
 const mapStateToProps = (state) => {
   return {
     isConnected: connectionSelector(state),
+    appStatus: state.app.appStatus,
   };
 };
 
