@@ -65,6 +65,10 @@ class Timer {
     this._countdownTime = 0;
     this._cbTriggerTime = Date.now();
     this._callback = null;
+
+    if (this._subscription) {
+      clearInterval(this._subscription);
+    }
   };
 
   /**
