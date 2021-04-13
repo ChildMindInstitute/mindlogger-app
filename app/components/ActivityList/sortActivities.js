@@ -29,7 +29,7 @@ export const getUnscheduled = (activityList, pastActivities, scheduledActivities
       for (const event of activity.events) {
         const { data, id } = event;
 
-        if (data.completion && Object.keys(finishedEvents).includes(id)) {
+        if (Object.keys(finishedEvents).includes(id)) {
           actStatus = false;
           break;
         }
