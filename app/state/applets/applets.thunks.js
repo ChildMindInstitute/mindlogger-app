@@ -226,6 +226,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
     localInfo = null;
   }
 
+  console.log('localInfo', localInfo);
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (applets) => {
@@ -275,6 +276,8 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return applet;
             }
           });
+        
+        console.log('transformedApplets', transformedApplets);
 
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);

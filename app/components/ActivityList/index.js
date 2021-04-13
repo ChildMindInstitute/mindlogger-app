@@ -60,7 +60,8 @@ const ActivityList = ({
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
     const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
 
-    setActivities(sortActivities(applet.id, appletActivities, inProgress, finishedEvents));
+    console.log('applet------------>', applet);
+    setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
