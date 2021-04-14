@@ -66,7 +66,7 @@ export const getScheduled = (activityList, finishedEvents) => {
       if (!activity.availability
         && scheduledTime > today
         && !data.completion
-        && !Object.keys(finishedEvents).includes(event.id)
+        && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
         && (data.timeout.access || moment().isSame(moment(scheduledTime), 'day'))) {
         const scheduledActivity = { ...activity };
 
@@ -93,7 +93,7 @@ export const getPastdue = (activityList, finishedEvents) => {
 
       if (!activity.availability
         && scheduledTime <= today
-        && !Object.keys(finishedEvents).includes(event.id)
+        && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
         && moment().isSame(moment(scheduledTime), 'day')
         && (!data.timeout.allow || today.getTime() - scheduledTime.getTime() < activityTimeout)) {
         const pastActivity = { ...activity };
@@ -142,7 +142,7 @@ export default (appletId, activityList, inProgress, finishedEvents) => {
           })
         }
       } else {
-        if (inProgressKeys.includes(activity.id)) { 
+        if (inProgressKeys.includes(activity.id)) {
           inProgressActivities.push({
             ...activity,
           });
