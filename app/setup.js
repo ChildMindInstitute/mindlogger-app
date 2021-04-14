@@ -16,7 +16,7 @@ import { clearUser } from './state/user/user.actions';
 // import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';
 // import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
-import FireBaseMessaging from './components/FireBaseMessaging';
+import AppService from './components/AppService';
 
 const isAndroid = Platform.OS === 'android';
 const checkAuthToken = (store) => {
@@ -85,9 +85,9 @@ const setup = () => {
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
           <Root>
-            <FireBaseMessaging>
+            <AppService>
               <AppNavigator />
-            </FireBaseMessaging>
+            </AppService>
           </Root>
         </I18nextProvider>
       </Provider>

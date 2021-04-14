@@ -25,8 +25,6 @@ import AppletInvite from '../../components/AppletInvite';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
 
-import { delayedExec, clearExec } from '../../services/timing';
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.secondary,
@@ -112,36 +110,6 @@ const AppletListComponent = ({
       }
     }
   }, [])
-
-  useEffect(() => {
-    if (appStatus) {
-      let intervalId = 0;
-      const updateScheduleDelay = 24 * 3600 * 1000;
-
-      const currentTime = new Date();
-      const nextDay = new Date(
-        currentTime.getFullYear(),
-        currentTime.getMonth(),
-        currentTime.getDate() + 1,
-      );
-      const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
-
-      const leftTimeoutId = delayedExec(
-        () => {
-          onPressRefresh();
-          intervalId = delayedExec(onPressRefresh, { every: updateScheduleDelay });
-        },
-        { after: leftTimeout },
-      );
-
-      return () => {
-        clearExec(leftTimeoutId);
-        if (intervalId) {
-          clearExec(intervalId);
-        }
-      };
-    }
-  }, [appStatus]);
 
   return (
     <Container style={styles.container}>

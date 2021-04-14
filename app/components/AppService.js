@@ -19,7 +19,7 @@ import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thu
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
-
+import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
 
 const AndroidChannelId = 'MindLoggerChannelId';
@@ -29,7 +29,7 @@ const fNotifications = firebase.notifications.nativeModuleExists && firebase.not
 const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
-class FireBaseMessaging extends Component {
+class AppService extends Component {
   /**
    * Method called when the component is about to be rendered.
    *
@@ -49,6 +49,7 @@ class FireBaseMessaging extends Component {
     this.appState = 'active';
     this.pendingNotification = null;
     this.notificationsCount = 0;
+    this.intervalId = 0;
     // AppState.addEventListener('change', this.handleAppStateChange);
 
     if (isAndroid) {
@@ -70,6 +71,33 @@ class FireBaseMessaging extends Component {
       this.openActivityByEventId(event);
       // if (isAndroid) NativeModules.DevSettings.reload();
     }
+
+    this.startTimer();
+  }
+
+  /**
+   * start timer for app ( automatically refreshes app at 12:00am everyday)
+   */
+  startTimer()
+  {
+    const { sync } = this.props;
+    const updateScheduleDelay = 24 * 3600 * 1000;
+
+    const currentTime = new Date();
+    const nextDay = new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate() + 1,
+    );
+    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+
+    this.intervalId = delayedExec(
+      () => {
+        sync();
+        this.intervalId = delayedExec(sync, { every: updateScheduleDelay });
+      },
+      { after: leftTimeout },
+    );
   }
 
   /**
@@ -82,6 +110,10 @@ class FireBaseMessaging extends Component {
       this.listeners.forEach(removeListener => removeListener());
     }
     AppState.removeEventListener('change', this.handleAppStateChange);
+
+    if (this.intervalId) {
+      clearExec(this.intervalId);
+    }
   }
 
   /**
@@ -580,8 +612,12 @@ class FireBaseMessaging extends Component {
     if (goingToBackground) {
       setAppStatus(false);
       setLastActiveTime(new Date().getTime());
+
+      clearExec(this.intervalId);
+      this.intervalId = 0;
     } else if (goingToForeground) {
       setAppStatus(true);
+      this.startTimer();
     }
 
     if (stateChanged && isIOS) {
@@ -619,7 +655,7 @@ class FireBaseMessaging extends Component {
   }
 }
 
-FireBaseMessaging.propTypes = {
+AppService.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
@@ -632,7 +668,7 @@ FireBaseMessaging.propTypes = {
   syncTargetApplet: PropTypes.func.isRequired,
 };
 
-FireBaseMessaging.defaultProps = {
+AppService.defaultProps = {
   inProgress: {},
 };
 
@@ -661,4 +697,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FireBaseMessaging);
+)(AppService);
