@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
@@ -200,8 +200,8 @@ class AppService extends Component {
   findActivityById(eventId, applet, activityId) {
     let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
 
-    if (activity) {
-      return activity;
+    if (!activity) {
+      return null;
     }
 
     let event = {};
@@ -224,7 +224,7 @@ class AppService extends Component {
       applet.schedule.data
     );
 
-    let sortedActivity = sortedActivities.find(({ id }) => id.endsWith(activityId))
+    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(activityId));
     if (sortedActivity) {
       return sortedActivity;
     }
@@ -376,7 +376,7 @@ class AppService extends Component {
         event
       });
     } else {
-      const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
+      const time = moment(activity.event.scheduledTime).format('HH:mm');
 
       Alert.alert(
         i18n.t('firebase_messaging:today'),
@@ -600,18 +600,24 @@ class AppService extends Component {
     this.appState = nextAppState;
 
     if (this.appState == 'active') {
-      if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
-        sync(() => {
+      /* deactivate for now
+        if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
+          sync(() => {
+            if (this.pendingNotification) {
+              this.openActivityByEventId(this.pendingNotification);
+              this.pendingNotification = null;
+            }
+          })
+        } else {
           if (this.pendingNotification) {
             this.openActivityByEventId(this.pendingNotification);
             this.pendingNotification = null;
           }
-        })
-      } else {
-        if (this.pendingNotification) {
-          this.openActivityByEventId(this.pendingNotification);
-          this.pendingNotification = null;
         }
+      */
+      if (this.pendingNotification) {
+        this.openActivityByEventId(this.pendingNotification);
+        this.pendingNotification = null;
       }
     }
   };
