@@ -58,54 +58,55 @@ export class Drawing extends React.Component {
 
     return (
       <KeyboardAvoidingView
-    //behavior="padding"
-  >
-      <View>
-       {config?.valueConstraints?.image ? (
-        <View style = {styles.imgContainer}>
-        <Image
-         style = {styles.img}
-        source={{
-          uri: config.valueConstraints.image,
-        }}
-      />
-       </View> ) :<View></View>
-       }
+        // behavior="padding"
+      >
+        <View>
+          {
+            config?.valueConstraints?.image ? (
+              <View style = {styles.imgContainer}>
+                <Image
+                  style = {styles.img}
+                  source={{
+                    uri: config.valueConstraints.image,
+                  }}
+                />
+              </View> ): <View></View>
+          }
 
-        <DrawingBoard
-          imageSource={url}
-          lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
-          onResult={this.onResult}
-          ref={(ref) => { this.board = ref; }}
-          onPress={onPress}
-          onRelease={onRelease}
-        />
-        {config.inputs.instruction && (
-          <Text style={styles.text}>{config.inputs.instruction}</Text>
-        )}
-
-
-        {isOptionalText ?
-      (
-        <Item bordered
-          style={{borderWidth: 1, marginTop: 20}}
-        >
-          <TextInput
-              style={{
-                width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-              }}
-              placeholder = {
-                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-              }
-              onChangeText={text=>this.handleComment(text)}
-              value={this.finalAnswer["text"]}
-              multiline={true}
+          <DrawingBoard
+            imageSource={url}
+            lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
+            onResult={this.onResult}
+            ref={(ref) => { this.board = ref; }}
+            onPress={onPress}
+            onRelease={onRelease}
           />
-        </Item>
-    ):<View></View>
-      }
-      </View>
+          {config.inputs.instruction && (
+            <Text style={styles.text}>{config.inputs.instruction}</Text>
+          )}
+
+
+          {isOptionalText ?
+              (
+                <Item bordered
+                  style={{borderWidth: 1, marginTop: 20}}
+                >
+                  <TextInput
+                      style={{
+                        width: '100%',
+                        ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
+                      }}
+                      placeholder = {
+                        i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+                      }
+                      onChangeText={text=>this.handleComment(text)}
+                      value={this.finalAnswer["text"]}
+                      multiline={true}
+                  />
+                </Item>
+            ):<View></View>
+          }
+        </View>
       </KeyboardAvoidingView>
     );
   }

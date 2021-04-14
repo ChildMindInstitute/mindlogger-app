@@ -279,7 +279,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return applet;
             }
           });
-
+        
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
