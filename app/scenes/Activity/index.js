@@ -85,6 +85,12 @@ class Activity extends React.Component {
     });
   }
 
+  componentDidUpdate() {
+    if (!this.props.currentResponse) {
+      this.idleTimer.clear();
+    }
+  }
+
   handleChange(answer, goToNext) {
     const { isSummaryScreen } = this.state;
     const {
