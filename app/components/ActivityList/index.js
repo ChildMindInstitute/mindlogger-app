@@ -4,6 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import moment from 'moment';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -132,38 +133,39 @@ const ActivityList = ({
     }
   }, [Object.keys(inProgress).length, responseSchedule]);
 
-  useEffect(() => {
-    let intervalId;
-    const currentTime = new Date();
-    const nextDay = new Date(
-      currentTime.getFullYear(),
-      currentTime.getMonth(),
-      currentTime.getDate() + 1,
-    );
-    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+  /*
+    useEffect(() => {
+      let intervalId;
+      const currentTime = new Date();
+      const nextDay = new Date(
+        currentTime.getFullYear(),
+        currentTime.getMonth(),
+        currentTime.getDate() + 1,
+      );
+      const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
 
-    const leftTimeoutId = delayedExec(
-      () => {
-        scheduleUpdate();
-        intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
-      },
-      { after: leftTimeout },
-    );
+      const leftTimeoutId = delayedExec(
+        () => {
+          scheduleUpdate();
+          intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
+        },
+        { after: leftTimeout },
+      );
 
-    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+      const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
 
-    return () => {
-      if (netInfoUnsubscribe) {
-        netInfoUnsubscribe();
-      }
+      return () => {
+        if (netInfoUnsubscribe) {
+          netInfoUnsubscribe();
+        }
 
-      clearExec(leftTimeoutId);
-      if (intervalId) {
-        clearExec(intervalId);
-      }
-    };
-  }, []);
-
+        clearExec(leftTimeoutId);
+        if (intervalId) {
+          clearExec(intervalId);
+        }
+      };
+    }, []);
+  */
   useEffect(() => {
     if (appStatus) {
       stateUpdate();
@@ -237,7 +239,7 @@ const mapStateToProps = (state) => {
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
-    
+
   };
 };
 
