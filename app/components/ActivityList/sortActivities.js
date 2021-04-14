@@ -16,7 +16,13 @@ const compareByNameAlpha = (a, b) => {
 
 const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[propName]);
 
-export const getUnscheduled = (activityList, pastActivities, scheduledActivities, finishedEvents) => {
+export const getUnscheduled = (
+  activityList,
+  pastActivities,
+  scheduledActivities,
+  finishedEvents,
+  scheduleData,
+) => {
   const unscheduledActivities = [];
 
   for (const activity of activityList) {
@@ -25,11 +31,14 @@ export const getUnscheduled = (activityList, pastActivities, scheduledActivities
     } else {
       let actStatus = false;
       let selectedEvent = null;
+      let todayEvents = scheduleData[Object.keys(scheduleData)[0]];
 
       for (const event of activity.events) {
         const { data, id } = event;
+        let currentEvent = todayEvents.find((event) => event.id === id);
 
-        if (Object.keys(finishedEvents).includes(id)) {
+        if (Object.keys(finishedEvents).includes(id)
+          || (currentEvent && !currentEvent.valid)) {
           actStatus = false;
           break;
         }
@@ -114,7 +123,7 @@ const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
 // Sort the activities into categories and inject header labels, e.g. "In Progress",
 // before the activities that fit into that category.
-export default (appletId, activityList, inProgress, finishedEvents) => {
+export default (activityList, inProgress, finishedEvents, scheduleData) => {
   let notInProgress = [];
   let inProgressActivities = [];
   const inProgressKeys = Object.keys(inProgress);
@@ -165,7 +174,7 @@ export default (appletId, activityList, inProgress, finishedEvents) => {
   const scheduled = getScheduled(notInProgress, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
 
   // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents).sort(compareByNameAlpha);
+  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents, scheduleData).sort(compareByNameAlpha);
 
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();
