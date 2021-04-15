@@ -62,16 +62,14 @@ class Timer {
    * @returns {void}
    */
   clear = () => {
+    if (this._subscription) {
+      clearInterval(this._subscription);
+    }
+
     this._countdownTime = 0;
     this._cbTriggerTime = Date.now();
     this._callback = null;
   };
-
-  delete = () => {
-    if (this._subscription) {
-      clearInterval(this._subscription);
-    }
-  }
 
   /**
    * Checks whether it is time to trigger the callback function.

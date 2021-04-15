@@ -74,11 +74,13 @@ class Activity extends React.Component {
 
   componentDidMount() {
     const { isSummaryScreen } = this.props;
+    const idleTime = this.getIdleTime();
+
     this.props.setActivitySelectionDisabled(false);
-    this.setState({ isSummaryScreen, idleTime: this.getIdleTime() }, () => {
-      if (this.state.idleTime) {
+    this.setState({ isSummaryScreen, idleTime }, () => {
+      if (idleTime) {
         this.idleTimer.startCountdown(
-          this.state.idleTime, // Time in seconds.
+          idleTime, // Time in seconds.
           this.handleTimeIsUp // Callback.
         );
       }
@@ -87,7 +89,7 @@ class Activity extends React.Component {
 
   componentDidUpdate() {
     if (!this.props.currentResponse) {
-      this.idleTimer.delete();
+      this.idleTimer.clear();
     }
   }
 
@@ -160,7 +162,7 @@ class Activity extends React.Component {
   }
 
   componentWillUnmount() {
-    this.idleTimer.delete();
+    this.idleTimer.clear();
   }
 
   render() {

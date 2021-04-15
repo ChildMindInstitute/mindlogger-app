@@ -58,6 +58,7 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
 
     const updateClock = () => {
       let { eventDate, allow } = activityTime;
+
       if (eventDate <= 0) {
         finishActivity(activity);
       } else {
