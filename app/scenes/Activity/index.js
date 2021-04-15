@@ -87,7 +87,7 @@ class Activity extends React.Component {
 
   componentDidUpdate() {
     if (!this.props.currentResponse) {
-      this.idleTimer.clear();
+      this.idleTimer.delete();
     }
   }
 
@@ -139,39 +139,29 @@ class Activity extends React.Component {
   }
 
   getIdleTime = () => {
-    let currentEvent = {};
+    const { activity } = this.props.currentResponse;
+    let currentEvent = activity.event;
 
-    Object.keys(this.props.currentApplet.schedule.events).forEach(key => {
-      const event = this.props.currentApplet.schedule.events[key];
-      const schedule = event.schedule;
-
-      if (schedule.dayOfMonth && schedule.month && schedule.year) {
-        const [dayOfMonth] = schedule.dayOfMonth;
-        const [month] = schedule.month;
-        const [year] = schedule.year;
-
-        if (
-          dayOfMonth === moment().date() &&
-          month === moment().month() &&
-          year === moment().year()
-        ) {
-          currentEvent = event;
-        }
+    if (currentEvent) {
+      const allow = _.get(currentEvent, "data.idleTime.allow", false);
+      if (allow) {
+        const idleMinutes = _.get(currentEvent, "data.idleTime.minute", null);
+        return idleMinutes && parseInt(idleMinutes, 10) * 60;
       }
-    });
-
-    const allow = _.get(currentEvent, "data.idleTime.allow", false);
-    if (allow) {
-      const idleMinutes = _.get(currentEvent, "data.idleTime.minute", null);
-      return idleMinutes && parseInt(idleMinutes, 10) * 60;
     }
     return null;
   };
 
   handleTimeIsUp = () => {
-    this.props.completeResponse(true);
-    Actions.replace("activity_thanks");
-  };
+    if (this.props.currentResponse) {
+      this.props.completeResponse(true);
+      Actions.replace("activity_thanks")
+    }
+  }
+
+  componentWillUnmount() {
+    this.idleTimer.delete();
+  }
 
   render() {
     const {
