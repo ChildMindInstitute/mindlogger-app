@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
+## [0.16.9] - 2020-04-14
+- Fix opening activity via notification
+
 ## [0.16.8] - 2020-04-14
 - Changed activity availability
 - Small fix
@@ -21,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed scheduling issues
 
 ## [0.16.3] - 2020-04-06
-- Fix white screen issue 
+- Fix white screen issue
 - Fix opening activity issue on push notification
 
 ## [0.16.2] - 2020-04-01
@@ -293,13 +296,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - use lookup table for calculating sub-scaled scores
 
 ## [0.14.32] - 2020-12-22
-- Implemented offline scheduling 
+- Implemented offline scheduling
 
 ## [0.14.31] - 2020-12-22
 - Fix activity timer on notification
 
 ## [0.14.30] - 2020-12-22
-- Wrapped completionHandler in the try/catch block 
+- Wrapped completionHandler in the try/catch block
 
 ## [0.14.29] - 2020-12-21
 - Fixed media items not working

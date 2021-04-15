@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
@@ -14,13 +14,14 @@ import { appletsSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
-import { lastActiveTimeSelector } from '../state/app/app.selectors';
+import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
 import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
+import sortActivities from './ActivityList/sortActivities';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -197,10 +198,10 @@ class AppService extends Component {
    * @returns {object} the requested activity.
    */
   findActivityById(eventId, applet, activityId) {
-    const activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
 
-    if (activity) {
-      return activity;
+    if (!activity) {
+      return null;
     }
 
     let event = {};
@@ -216,7 +217,20 @@ class AppService extends Component {
       return null;
     }
 
-    return applet.activities.find(({ schema }) => schema === event.data.URI);
+    const sortedActivities = sortActivities(
+      applet.activities,
+      this.props.inProgress,
+      this.props.finishedEvents,
+      applet.schedule.data
+    );
+
+    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(activityId));
+    if (sortedActivity) {
+      return sortedActivity;
+    }
+
+    activity.isCompleted = true;
+    return activity;
   }
 
   /**
@@ -288,7 +302,8 @@ class AppService extends Component {
         );
       }
 
-      let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+      const activity = this.findActivityById(eventId, applet, activityId);
+
       let event = {};
 
       Object.keys(applet.schedule.events).forEach(key => {
@@ -339,11 +354,9 @@ class AppService extends Component {
       return Alert.alert(i18n.t('firebase_messaging:activity_not_found'));
     }
 
-    const isActivityCompleted = this.isActivityCompleted(applet, activity);
-
     this.props.setCurrentApplet(applet.id);
 
-    if (isActivityCompleted) {
+    if (activity.isCompleted) {
       Actions.push('applet_details', { initialTab: 'data' });
       return Alert.alert(
         '',
@@ -357,53 +370,13 @@ class AppService extends Component {
       Actions.push('applet_details');
     }
 
-    const currentDate = new Date();
-
-    if (activity.lastScheduledTimestamp && activity.lastTimeout) {
-      const deltaTime = currentDate.getTime()
-        - this.getMilliseconds(activity.lastScheduledTimestamp)
-        - activity.lastTimeout;
-
-      if (deltaTime >= 0) {
-        const time = moment(activity.lastScheduledTimestamp).format('HH:mm');
-
-        return Alert.alert(
-          '',
-          `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${time}. ${i18n.t(
-            'firebase_messaging:if_progress_was_made_on_the',
-          )} `
-            + `${activity.name.en}, ${i18n.t(
-              'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
-            )} `}${i18n.t('firebase_messaging:today')}`,
-        );
-      }
-    }
-
-    let deltaTime = currentDate.getTime() - this.getMilliseconds(activity.nextScheduledTimestamp);
-
-    if (
-      activity.nextScheduledTimestamp
-      && moment(currentDate).isBefore(moment(activity.nextScheduledTimestamp), 'day')
-    ) {
-      deltaTime = 0;
-    }
-
-    if (
-      activity.lastScheduledTimestamp &&
-      !moment(activity.lastScheduledTimestamp).isBefore(currentDate, 'day')
-    ) {
-      deltaTime = 0;
-    }
-
-    const allowAccessBefore = event.data && event.data.timeout && event.data.timeout.access;
-
-    if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
+    if (!activity.status === 'scheduled' || event.data.timeout.access) {
       this.props.startResponse({
         ...activity,
         event
       });
     } else {
-      const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
+      const time = moment(activity.event.scheduledTime).format('HH:mm');
 
       Alert.alert(
         i18n.t('firebase_messaging:today'),
@@ -627,18 +600,24 @@ class AppService extends Component {
     this.appState = nextAppState;
 
     if (this.appState == 'active') {
-      if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
-        sync(() => {
+      /* deactivate for now
+        if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
+          sync(() => {
+            if (this.pendingNotification) {
+              this.openActivityByEventId(this.pendingNotification);
+              this.pendingNotification = null;
+            }
+          })
+        } else {
           if (this.pendingNotification) {
             this.openActivityByEventId(this.pendingNotification);
             this.pendingNotification = null;
           }
-        })
-      } else {
-        if (this.pendingNotification) {
-          this.openActivityByEventId(this.pendingNotification);
-          this.pendingNotification = null;
         }
+      */
+      if (this.pendingNotification) {
+        this.openActivityByEventId(this.pendingNotification);
+        this.pendingNotification = null;
       }
     }
   };
@@ -677,6 +656,7 @@ const mapStateToProps = state => ({
   inProgress: inProgressSelector(state),
   authToken: authTokenSelector(state),
   lastActive: lastActiveTimeSelector(state),
+  finishedEvents: finishedEventsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
