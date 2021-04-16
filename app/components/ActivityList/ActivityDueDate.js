@@ -18,7 +18,7 @@ const ActivityDueDate = ({ activity }) => {
       <LittleText style={styles.textStyles}>
         {!activity.event.data.timeout.allow
           ? `${i18n.t('activity_due_date:scheduled_at')} ${moment(activity.event.scheduledTime).format('hh:mm a')}`
-          : `${i18n.t('activity_due_date:available')} ${moment(activity.event.scheduledTime).format('hh:mm a')} ${i18n.t(
+          : `${i18n.t('activity_due_date:available')} ${moment(activity.event.scheduledTime).format('hh:mm A')} ${i18n.t(
             'activity_due_date:to',
           )} ${scheduledEndTime(activity.event.scheduledTime, activity.event.data.timeout)}`}
       </LittleText>

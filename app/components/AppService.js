@@ -370,7 +370,7 @@ class AppService extends Component {
       Actions.push('applet_details');
     }
 
-    if (!activity.status === 'scheduled' || event.data.timeout.access) {
+    if (activity.status !== 'scheduled' || event.data.timeout.access) {
       this.props.startResponse({
         ...activity,
         event
