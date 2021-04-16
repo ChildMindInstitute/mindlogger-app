@@ -384,7 +384,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
-    const version = inProgressResponse["activity"].appletSchemaVersion['en'];
+    const version = inProgressResponse["activity"].schemaVersion['en'];
     const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
 
     const updates = getTokenUpdateInfo(
