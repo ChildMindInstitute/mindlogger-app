@@ -416,9 +416,9 @@ class AppService extends Component {
   onNotificationDisplayed = async (
     notification: firebase.RNFirebase.notifications.Notification,
   ) => {
-    this.notificationsCount += 1;
-
     if (isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       this.updateApplicationIconBadgeNumber();
     }
   };
@@ -480,9 +480,9 @@ class AppService extends Component {
       this.openActivityByEventId(notificationOpen);
     }
 
-    this.notificationsCount -= 1;
-
     if (isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       this.updateApplicationIconBadgeNumber();
       this.props.updateBadgeNumber(this.notificationsCount);
     }
@@ -594,6 +594,8 @@ class AppService extends Component {
     }
 
     if (stateChanged && isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       updateBadgeNumber(this.notificationsCount);
     }
 
