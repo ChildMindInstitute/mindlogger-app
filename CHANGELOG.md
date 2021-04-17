@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.16.15] - 2020-04-17
+- fixed notification count
+
 ## [0.16.14] - 2020-04-16
 - Fixed inprogress response
 
 ## [0.16.13] - 2020-04-15
-- Fix opening notification 
+- Fix opening notification
 
 ## [0.16.9] - 2020-04-14
 - Fix opening activity via notification
