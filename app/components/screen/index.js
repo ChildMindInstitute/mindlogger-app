@@ -169,6 +169,7 @@ class ActivityScreen extends Component {
     this.interval = null;
     this.startTime = null;
     this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.keyboardVisible = false;
   }
 
   componentDidMount() {
@@ -179,13 +180,19 @@ class ActivityScreen extends Component {
 
     if (Platform.OS === "ios") {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
+      Keyboard.addListener('keyboardWillHide', this.keyboardVisibleWillHide)
     }
+  }
+
+  keyboardWillHide(obj) {
+    this.keyboardVisible = false;
   }
 
   scrollToBottom(obj) {
     if (this.scrollView) {
       this.scrollView.scrollToEnd();
     }
+    this.keyboardVisible = true;
   }
 
   componentDidUpdate(oldProps) {
@@ -256,6 +263,10 @@ class ActivityScreen extends Component {
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
+
+    if (this.keyboardVisible && this.state.screenHeight < contentHeight) {
+      this.scrollToBottom()
+    }
   };
 
   isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
