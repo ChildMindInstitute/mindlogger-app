@@ -21,7 +21,8 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
           ... Platform.OS !== 'ios' ? { height } : {
             maxHeight: 100,
             minHeight: 40,
-            borderBottomWidth: 2,
+            height,
+            borderBottomWidth: 1,
             borderBottomColor: 'grey'
           },
         }}

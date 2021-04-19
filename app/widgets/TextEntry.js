@@ -12,12 +12,17 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
   let newStyle = {
     height,
     width: '100%',
-    minHeight: 45,
+    minHeight: Platform.OS == 'android' ? 45 : 28,
     fontSize: 18
   }
 
-  if (focused && Platform.OS === 'ios') {
-    newStyle.maxHeight = 100;
+  if (Platform.OS === 'ios') {
+    if (focused) {
+      newStyle.maxHeight = 100;
+    }
+
+    newStyle.borderBottomWidth = 1;
+    newStyle.borderBottomColor = 'grey'
   }
 
   const updateHeight = (contentHeight) => {
@@ -40,20 +45,18 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
       keyboardVerticalOffset={45}
     >
       <View {...props}>
-        <Item>
-          <TextInput
-            placeholder={i18n.t('text_entry:type_placeholder')}
-            onChangeText={setText}
-            onEndEditing={onEndEditing}
-            style={[newStyle]}
-            keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
-            value={text}
-            multiline={true}
-            onBlur={() => setFocused(false)}
-            onFocus={() => setFocused(true)}
-            onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
-          />
-        </Item>
+        <TextInput
+          placeholder={i18n.t('text_entry:type_placeholder')}
+          onChangeText={setText}
+          onEndEditing={onEndEditing}
+          style={[newStyle]}
+          keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
+          value={text}
+          multiline={true}
+          onBlur={() => setFocused(false)}
+          onFocus={() => setFocused(true)}
+          onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
+        />
       </View>
     </KeyboardAvoidingView>
   )
