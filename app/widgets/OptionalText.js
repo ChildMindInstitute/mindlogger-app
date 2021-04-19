@@ -28,7 +28,14 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
         width: '100%' ,
       }}
     >
-      { Platform.OS === 'ios' && <Item>{el}</Item> || el }
+      { Platform.OS === 'ios' &&
+          <Item
+            bordered
+            style={{borderWidth: 1}}
+          >
+            {el}
+          </Item> || el
+        }
     </View>
   );
 };
