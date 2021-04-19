@@ -169,6 +169,8 @@ class ActivityScreen extends Component {
     this.interval = null;
     this.startTime = null;
     this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.keyboardWillHide = this.keyboardWillHide.bind(this);
+    this.keyboardWillShow = this.keyboardWillShow.bind(this);
     this.keyboardVisible = false;
   }
 
@@ -180,19 +182,23 @@ class ActivityScreen extends Component {
 
     if (Platform.OS === "ios") {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
-      Keyboard.addListener('keyboardWillHide', this.keyboardVisibleWillHide)
+      Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
     }
   }
 
-  keyboardWillHide(obj) {
+  keyboardWillHide() {
     this.keyboardVisible = false;
+  }
+
+  keyboardWillShow() {
+    this.keyboardVisible = true;
   }
 
   scrollToBottom(obj) {
     if (this.scrollView) {
       this.scrollView.scrollToEnd();
     }
-    this.keyboardVisible = true;
   }
 
   componentDidUpdate(oldProps) {
@@ -207,6 +213,8 @@ class ActivityScreen extends Component {
   componentWillUnmount() {
     if (Platform.OS === "ios") {
       Keyboard.removeListener('keyboardDidShow', this.scrollToBottom);
+      Keyboard.removeListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.removeListener('keyboardWillShow', this.keyboardWillShow)
     }
 
     clearInterval(this.interval);
