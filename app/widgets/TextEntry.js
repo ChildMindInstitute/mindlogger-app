@@ -45,18 +45,20 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
       keyboardVerticalOffset={45}
     >
       <View {...props}>
-        <TextInput
-          placeholder={i18n.t('text_entry:type_placeholder')}
-          onChangeText={setText}
-          onEndEditing={onEndEditing}
-          style={[newStyle]}
-          keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
-          value={text}
-          multiline={true}
-          onBlur={() => setFocused(false)}
-          onFocus={() => setFocused(true)}
-          onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
-        />
+        <Item>
+          <TextInput
+            placeholder={i18n.t('text_entry:type_placeholder')}
+            onChangeText={setText}
+            onEndEditing={onEndEditing}
+            style={[newStyle]}
+            keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
+            value={text}
+            multiline={true}
+            onBlur={() => setFocused(false)}
+            onFocus={() => setFocused(true)}
+            onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
+          />
+        </Item>
       </View>
     </KeyboardAvoidingView>
   )
