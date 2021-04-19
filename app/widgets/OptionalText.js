@@ -36,10 +36,6 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
 
   if (Platform.OS == 'ios') {
     return (
-      <KeyboardAvoidingView
-        behavior={'height'}
-        keyboardVerticalOffset={45}
-      >
         <View
           style={{
             marginTop: '8%',
@@ -50,7 +46,6 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
             { textInputItem }
           </Item>
         </View>
-      </KeyboardAvoidingView>
     );
   }
 
@@ -61,7 +56,11 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
         width: '100%' ,
       }}
     >
-      { textInputItem }
+      { 
+        Platform.OS == 'ios' && (<Item>
+          { textInputItem }
+        </Item>) || textInputItem
+      }
     </View>
   );
 };
