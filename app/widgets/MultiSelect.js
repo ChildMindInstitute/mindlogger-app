@@ -7,7 +7,7 @@ import { CheckBox } from 'react-native-elements';
 import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
 import { TooltipBox } from './TooltipBox';
-import i18n from 'i18next';
+import { OptionalText } from './OptionalText';
 
 export class MultiSelect extends Component {
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
@@ -132,31 +132,13 @@ export class MultiSelect extends Component {
           </ListItem>
         ))}
 
-        {isOptionalText ?
-          (<View style={{
-            marginTop: '8%' ,
-            width: '100%' ,
-          }}
-          >
-        <Item bordered
-          style={{borderWidth: 1}}
-        >
-          <TextInput
-              style={{
-                width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-              }}
-              placeholder = {
-                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-              }
-              onChangeText={text=>this.handleComment(text)}
-              value={this.finalAnswer["text"]}
-              multiline={true}
+        {isOptionalText &&
+          <OptionalText
+            isRequired={isOptionalTextRequired}
+            value={this.finalAnswer["text"]}
+            onChange={text=>this.handleComment(text)}
           />
-        </Item>
-      </View>
-    ):<View></View>
-      }
+        }
       </View>
       </KeyboardAvoidingView>
     );
