@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput, Platform} from 'react-native';
 import { ListItem, Text, Icon , Item , Input} from 'native-base';
@@ -7,10 +7,29 @@ import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
 import i18n from 'i18next';
+import { connect } from "react-redux";
 
-export const Radio = ({ value, config, onChange, token ,selected, onSelected }) => {
+import {
+  currentScreenSelector,
+} from "../state/responses/responses.selectors";
+
+const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, currentScreen }) => {
 
   let finalAnswer = value ? value : {};
+
+  const shuffle = (list) => {
+    return [...list].sort(() => Math.random() - 0.5)
+  };
+
+  const [itemOrder, setItemOrder] = useState(
+    config.randomizeOptions ? shuffle(config.itemList) : config.itemList
+  );
+
+  useEffect(() => {
+    if (config.randomizeOptions) {
+      setItemOrder(shuffle(config.itemList));
+    }
+  }, [currentScreen]);
 
   const handlePress = (itemValue) => {
    // if (!selected) {
@@ -29,7 +48,7 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
     <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
         {
-          config.itemList.map((item, index) => (
+          itemOrder.map((item, index) => (
             <ListItem
               style={{ width: '90%' }}
               onPress={() => handlePress(token ? item.name.en : item.value)}
@@ -121,11 +140,11 @@ export const Radio = ({ value, config, onChange, token ,selected, onSelected }) 
   );
 };
 
-Radio.defaultProps = {
+RadioScreen.defaultProps = {
   value: undefined,
 };
 
-Radio.propTypes = {
+RadioScreen.propTypes = {
   value: PropTypes.any,
   config: PropTypes.shape({
     itemList: PropTypes.arrayOf(
@@ -141,3 +160,9 @@ Radio.propTypes = {
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
 };
+
+const mapStateToProps = (state) => ({
+  currentScreen: currentScreenSelector(state),
+});
+
+export const Radio = connect(mapStateToProps)(RadioScreen);

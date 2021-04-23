@@ -8,8 +8,18 @@ import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
 import { TooltipBox } from './TooltipBox';
 import i18n from 'i18next';
+import { connect } from "react-redux";
+import {
+  currentScreenSelector,
+} from "../state/responses/responses.selectors";
 
-export class MultiSelect extends Component {
+export class MultiSelectScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+      orderedItems: []
+    };
+  }
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
     if (!value || value.length < minValue || value.length > maxValue) {
       return false;
@@ -17,6 +27,26 @@ export class MultiSelect extends Component {
     return true;
   }
   finalAnswer = {};
+
+  componentDidMount() {
+    if (this.props.config.randomizeOptions) {
+      this.setState({
+        orderedItems: [...this.props.config.itemList].sort(() => Math.random() - 0.5)
+      })
+    } else {
+      this.setState({
+        orderedItems: this.props.config.itemList
+      });
+    }
+  }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.currentScreen !== this.props.currentScreen && this.props.config.randomizeOptions) {
+      this.setState({
+        orderedItems: [...this.props.config.itemList].sort(() => Math.random() - 0.5)
+      })
+    }
+  }
 
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
@@ -53,7 +83,7 @@ export class MultiSelect extends Component {
     //  behavior="padding"
     >
       <View style={{ alignItems: "stretch" }}>
-        {itemList.map((item, index) => (
+        {this.state.orderedItems.map((item, index) => (
           <ListItem
             style={{ width: "90%" }}
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
@@ -163,11 +193,11 @@ export class MultiSelect extends Component {
   }
 }
 
-MultiSelect.defaultProps = {
+MultiSelectScreen.defaultProps = {
   value: undefined,
 };
 
-MultiSelect.propTypes = {
+MultiSelectScreen.propTypes = {
   config: PropTypes.shape({
     itemList: PropTypes.array,
     minValue: PropTypes.number,
@@ -177,3 +207,9 @@ MultiSelect.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = (state) => ({
+  currentScreen: currentScreenSelector(state),
+});
+
+export const MultiSelect = connect(mapStateToProps)(MultiSelectScreen);
