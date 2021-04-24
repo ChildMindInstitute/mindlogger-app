@@ -7,16 +7,16 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
   TextInput
 } from 'react-native';
-import { View, Icon , Item , Input } from 'native-base';
+import { View, Icon, Item } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
+
 import permissions from '../permissions';
+
 const { width, height } = Dimensions.get('window');
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
@@ -88,7 +88,7 @@ export class Camera extends Component {
   finalAnswer = {};
 
   handleComment = (itemValue) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     this.finalAnswer["text"] = itemValue;
     onChange(this.finalAnswer);
   }
@@ -131,12 +131,12 @@ export class Camera extends Component {
     const options = {
       mediaType: video ? 'video' : 'photo',
       videoQuality: 'low',
-      quality: 0.1,
+      quality: 0.3,
       maxWidth: 800,
       maxHeight: 800,
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('launchImageLibrary', { response });
+    ImagePicker.launchImageLibrary(options, async (response) => {
+      console.log('launchImageLibrary', response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -159,9 +159,8 @@ export class Camera extends Component {
               type: response.type || VIDEO_MIME_TYPE,
               fromLibrary: false,
             };
-            console.log('launchImageLibrary', { picSource });
             this.finalAnswer["value"] = picSource;
-            onChange( this.finalAnswer);
+            onChange(this.finalAnswer);
           });
         } else {
           const picSource = {
@@ -171,9 +170,39 @@ export class Camera extends Component {
             type: response.type || VIDEO_MIME_TYPE,
             fromLibrary: true,
           };
-          console.log('launchImageLibrary', { picSource });
+          console.log('launchImageLibrary 2', picSource);
           this.finalAnswer["value"] = picSource;
-          onChange( this.finalAnswer);
+          onChange(this.finalAnswer);
+
+          /*
+          // const url = `https://api-staging.mindlogger.org/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
+          // const url = `https://9c241fea8fe9.ngrok.io/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
+          const headers = {
+            "Girder-Token": "1ChgAH8YxJB7GZ4k3u0HFcDF6ZburL4UHszHj8587smEGlFZFQdzlyUrXi18nrDq",
+            // "Content-Type": file.type,
+            // "Content-Type": "multipart/form-data"
+          };
+
+          response.base64 = await RNFS.readFile(response.uri, 'base64');
+          console.log("video data: ", response.base64)
+
+          fetch(url, {
+            method: 'post',
+            headers,
+            body: objectToFormData({
+              "metadata": JSON.stringify({ "applet": { "schemaVersion": "1.0" }, "subject": { "@id": "asasa", "timezone": "US" }, "responses": { "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc43": { "size": response.fileSize, "type": "image/png" } } }),
+              "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc43": response.base64
+            })
+          })
+            .then(res => res.json())
+            .then(response => {
+              console.log("image uploaded: ", response)
+            }).catch(err => {
+              console.log("--------err-----------")
+              console.log(err)
+            })
+            */
+
         }
       }
     });
@@ -185,7 +214,7 @@ export class Camera extends Component {
       // saveToPhotos: true,
       maxWidth: 800,
       maxHeight: 800,
-      quality: 0.5,
+      quality: 0.3,
     };
     ImagePicker.launchCamera(options, (response) => {
       const { onChange } = this.props;
@@ -205,7 +234,7 @@ export class Camera extends Component {
         };
         console.log('launchCamForCam', { picSource });
         this.finalAnswer["value"] = picSource;
-        onChange( this.finalAnswer);
+        onChange(this.finalAnswer);
       }
     });
   };
@@ -245,7 +274,7 @@ export class Camera extends Component {
                 };
                 console.log('take', { picSource });
                 this.finalAnswer["value"] = picSource;
-                onChange( this.finalAnswer);
+                onChange(this.finalAnswer);
               });
             } else {
               const picSource = {
@@ -257,7 +286,7 @@ export class Camera extends Component {
               };
               console.log('take', { picSource });
               this.finalAnswer["value"] = picSource;
-              onChange( this.finalAnswer);
+              onChange(this.finalAnswer);
             }
           }
         });
@@ -268,7 +297,7 @@ export class Camera extends Component {
   };
 
   render() {
-    const { value, video ,isOptionalText, isOptionalTextRequired } = this.props;
+    const { value, video, isOptionalText, isOptionalTextRequired } = this.props;
 
     this.finalAnswer = value ? value : {};
 
@@ -282,55 +311,55 @@ export class Camera extends Component {
               <View style={styles.videoConfirmed}>
                 <Icon type="Entypo" name="check" style={styles.greenIcon} />
               </View>
-            ):(                       // Android
-              <VideoPlayer
-                video={{ uri: this.finalAnswer["value"].uri }}
-                videoWidth={width}
-                videoHeight={360}
-                resizeMode="contain"
-              />
+            ) : (                       // Android
+                <VideoPlayer
+                  video={{ uri: this.finalAnswer["value"].uri }}
+                  videoWidth={width}
+                  videoHeight={360}
+                  resizeMode="contain"
+                />
+              )
+          ) : (
+              <Image source={{ uri: Platform.OS === 'android' ? `file://${this.finalAnswer["value"].uri}` : this.finalAnswer["value"].uri }} style={styles.image} />
             )
-          ):(
-            <Image source={this.finalAnswer["value"]} style={styles.image} />
-          )
-        ):(
-          <View>
-            <TouchableOpacity
-              onPress={this.libraryAlert}
-              style={styles.takeButton}
-            >
-              <Icon type="Entypo" name={iconName} style={styles.redIcon} />
-            </TouchableOpacity>
-          </View>
-        )}
+        ) : (
+            <View>
+              <TouchableOpacity
+                onPress={this.libraryAlert}
+                style={styles.takeButton}
+              >
+                <Icon type="Entypo" name={iconName} style={styles.redIcon} />
+              </TouchableOpacity>
+            </View>
+          )}
 
         {isOptionalText ?
-        (
-        <View style={{
-            marginTop: '8%' ,
-            width: '100%' ,
-          }}
-        >
-          <Item bordered
-            style={{borderWidth: 1}}
-          >
-            <TextInput
-                style={{
-                  width: '100%',
-                  ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-                }}
-                placeholder = {
-                  i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-                }
-                onChangeText={text=>this.handleComment(text)}
-                value={this.finalAnswer["text"]}
-                multiline={true}
-            />
-          </Item>
-      </View>
+          (
+            <View style={{
+              marginTop: '8%',
+              width: '100%',
+            }}
+            >
+              <Item bordered
+                style={{ borderWidth: 1 }}
+              >
+                <TextInput
+                  style={{
+                    width: '100%',
+                    ...Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
+                  }}
+                  placeholder={
+                    i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+                  }
+                  onChangeText={text => this.handleComment(text)}
+                  value={this.finalAnswer["text"]}
+                  multiline={true}
+                />
+              </Item>
+            </View>
 
-    ):<View></View>
-      }
+          ) : <View></View>
+        }
       </View>
     );
   }

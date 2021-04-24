@@ -183,7 +183,7 @@ export const downloadAppletResponse = async (authToken, applet) => {
     return currentResponses;
   });
 }
- 
+
 export const downloadAllResponses = async (authToken, applets, onProgress) => {
   const currentResponses = await getData('ml_responses');
   let numDownloaded = 0;
@@ -229,64 +229,67 @@ const prepareFile = (file) => {
 
 const uploadFiles = (authToken, response, item) => {
   const answers = R.pathOr([], ["responses"], response);
+  const appletId = response.applet.id;
+  const activityId = response.activity.id;
+
   // Each "response" has number of "answers", each of which may have a file
   // associated with it
   const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
     const answer = answers[key];
+
     // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
     if (R.path(["survey", "uri"], answer)) {
       file = {
+        key,
         uri: answer.survey.uri,
         filename: answer.survey.filename,
-        type: "application/octet",
+        type: "image/png",
       };
     } else if (R.path(["canvas", "uri"], answer)) {
       file = {
+        key,
         uri: answer.canvas.uri,
         filename: answer.canvas.filename,
-        type: "application/jpg",
+        type: "image/jpg",
       };
     } else if (answer && answer.uri && answer.filename) {
       file = {
-        uri: answer.uri,
-        filename: answer.filename,
-        size: answer.size,
-        type: 'application/octet',
+        key,
+        ...answer
       };
     } else if (answer && answer.lines && answer.svgString) {
       const filename = `${randomString({ length: 20 })}.svg`;
       file = {
+        key,
         svgString: answer.svgString,
         filename,
-        type: 'application/svg',
+        type: 'image/svg',
         uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
       };
     } else {
       return accumulator; // Break early
     }
-    console.log('uploadFiles, file', { file, answer });
-
     const request = prepareFile(file)
       .then(file => postFile({
         authToken,
         file,
         parentType: 'item',
         parentId: item._id,
+        appletId,
+        activityId
       }))
       .then((res) => {
-        console.log('uploadFiles, response:', { res });
-        /** delete file from local storage after uploading */
-        RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+        try {
+          /** delete file from local storage after uploading */
+          RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+        } catch (error) { }
       }).catch((err) => {
-        console.log('uploadFiles error', err.message, { err });
+        console.log('uploadFiles error', err.message, err);
       });
-
-    console.log('uploadFiles, request', { request });
 
     return [...accumulator, request];
   }, []);
-  console.log('uploadFiles uploadRequests', { uploadRequests });
   return Promise.all(uploadRequests);
 };
 
@@ -298,8 +301,6 @@ const uploadResponse = (authToken, response) =>
     .then((item) => uploadFiles(authToken, response, item))
     .then(() => {
       const responses = R.pathOr([], ["payload", "responses"], response);
-      console.log({ apiRes: responses });
-      console.log({ resss: response });
       cleanFiles(responses);
     });
 
@@ -313,7 +314,6 @@ export const uploadResponseQueue = (
   if (responseQueue.length === 0) {
     return Promise.resolve();
   }
-  console.log('uploadResponseQueue', { authToken, responseQueueItem: responseQueue[0] });
   return uploadResponse(authToken, responseQueue[0])
     .then(() => {
       progressCallback();
