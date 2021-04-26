@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.16.15] - 2020-04-17
 - Fixed undo button on free text widget
+- fixed notification count
 
 ## [0.16.14] - 2020-04-16
 - Fixed inprogress response
 
 ## [0.16.13] - 2020-04-15
-- Fix opening notification 
+- Fix opening notification
 
 ## [0.16.9] - 2020-04-14
 - Fix opening activity via notification
