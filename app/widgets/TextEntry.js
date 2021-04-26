@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { Item, Input } from 'native-base';
@@ -23,6 +23,10 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
 
     newStyle.borderBottomWidth = 1;
     newStyle.borderBottomColor = 'grey'
+  }
+
+  if (!focused && text !== value) {
+    setText(value);
   }
 
   const updateHeight = (contentHeight) => {
