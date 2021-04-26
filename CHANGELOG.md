@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 ## [0.16.15] - 2020-04-17
+- Fixed undo button on free text widget
 - fixed notification count
 
 ## [0.16.14] - 2020-04-16
