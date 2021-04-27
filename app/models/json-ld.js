@@ -79,6 +79,7 @@ const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
@@ -194,12 +195,20 @@ export const flattenValueConstraints = (vcObj) =>
         responseAlert: R.path([key, 0, "@value"], vcObj),
       }
     }
+
+    if (key == RANDOMIZE_OPTIONS) {
+      return {
+        ...accumulator,
+        randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
     if (key == CONTINOUS_SLIDER) {
       return {
         ...accumulator,
         continousSlider: R.path([key, 0, "@value"], vcObj),
       }
-    } 
+    }
     if (key == RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
@@ -825,7 +834,7 @@ export const parseAppletEvents = (applet) => {
         0,
         true,
       );
-      
+
       event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
 
       if (event.data.activity_id === act.id.substring(9)) {

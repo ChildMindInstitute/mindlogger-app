@@ -350,6 +350,12 @@ class AppService extends Component {
    * @returns {void}
    */
   prepareAndOpenActivity = (applet, activity, event) => {
+    const today = new Date();
+    const { scheduledTime, data } = event;
+    const activityTimeout = data.timeout.day * 864000000
+      + data.timeout.hour * 3600000
+      + data.timeout.minute * 60000;
+
     if (!activity) {
       return Alert.alert(i18n.t('firebase_messaging:activity_not_found'));
     }
@@ -368,6 +374,19 @@ class AppService extends Component {
       Actions.replace('applet_details');
     } else {
       Actions.push('applet_details');
+    }
+
+    if (scheduledTime > today
+      || (data.timeout.allow && today.getTime() - scheduledTime.getTime() > activityTimeout)) {
+      return Alert.alert(
+        '',
+        `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${scheduledTime}. ${i18n.t(
+          'firebase_messaging:if_progress_was_made_on_the',
+        )} `
+        + `${activity.name.en}, ${i18n.t(
+          'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
+        )} `}${i18n.t('firebase_messaging:today')}`,
+      );
     }
 
     if (activity.status !== 'scheduled' || event.data.timeout.access) {
