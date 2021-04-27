@@ -1,10 +1,9 @@
 // Third-party libraries.
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import moment from 'moment';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -32,17 +31,12 @@ const ActivityList = ({
   applet,
   syncUploadQueue,
   appStatus,
-  setAppStatus,
   setConnection,
-  getSchedules,
   setReminder,
   cancelReminder,
   scheduleUpdated,
   isConnected,
   setScheduleUpdated,
-  setUpdatedTime,
-  appletTime,
-  lastUpdatedTime,
   responseSchedule,
   inProgress,
   finishedEvents,
@@ -52,8 +46,8 @@ const ActivityList = ({
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
-
   const updateStatusDelay = 60 * 1000;
+  let currentConnection = false;
 
   const stateUpdate = () => {
     const newApplet = parseAppletEvents(applet);
@@ -66,6 +60,22 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
+
+  const handleConnectivityChange = (connection) => {
+    if (connection.isConnected) {
+      cancelReminder();
+
+      if (!isConnected && !currentConnection) {
+        currentConnection = true;
+        setConnection(true);
+        syncUploadQueue();
+      }
+    } else {
+      currentConnection = false;
+      setConnection(false);
+      setReminder();
+    }
+  }
 
   useEffect(() => {
     let updateId;
@@ -88,12 +98,13 @@ const ActivityList = ({
     }
   }, [Object.keys(inProgress).length, responseSchedule]);
 
+  
   useEffect(() => {
     if (appStatus) {
       stateUpdate();
     }
   }, [appStatus]);
-
+  
   useEffect(() => {
     if (scheduleUpdated) {
       stateUpdate();
@@ -101,6 +112,15 @@ const ActivityList = ({
     }
   }, [applet.schedule]);
 
+  useEffect(() => {
+    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    return () => {
+      if (netInfoUnsubscribe) {
+        netInfoUnsubscribe();
+      }
+    }
+  }, [])
+  
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
