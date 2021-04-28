@@ -12,16 +12,21 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
   let newStyle = {
     height,
     width: '100%',
-    minHeight: 45,
+    minHeight: Platform.OS == 'android' ? 45 : 28,
     fontSize: 18
+  }
+
+  if (Platform.OS === 'ios') {
+    if (focused) {
+      newStyle.maxHeight = 100;
+    }
+
+    newStyle.borderBottomWidth = 1;
+    newStyle.borderBottomColor = 'grey'
   }
 
   if (!focused && text !== value) {
     setText(value);
-  }
-
-  if (focused && Platform.OS === 'ios') {
-    newStyle.maxHeight = 100;
   }
 
   const updateHeight = (contentHeight) => {
