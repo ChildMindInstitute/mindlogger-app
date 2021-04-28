@@ -306,6 +306,7 @@
     "unscheduled":"Non programmé",
     "scheduled": "Programmé",
     "past_due": "En retard",
+    "available": "disponible",
     "sure_delete_account_data": "Êtes-vous sûr de vouloir supprimer votre compte et vos données?",
     "no_cancel": "Non, annuler",
     "yes_delete": "Oui, effacer",

@@ -180,7 +180,7 @@ export default (activityList, inProgress, finishedEvents, scheduleData) => {
   // const completed = getCompleted(notInProgress).reverse();
 
   return [
-    ...addSectionHeader(addProp('status', 'pastdue', pastdue), i18n.t('additional:past_due')),
+    ...addSectionHeader(addProp('status', 'pastdue', pastdue), i18n.t('additional:available')),
     ...addSectionHeader(
       addProp('status', 'in-progress', inProgressActivities),
       i18n.t('additional:in_progress'),

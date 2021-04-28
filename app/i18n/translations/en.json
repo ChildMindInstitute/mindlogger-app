@@ -306,6 +306,7 @@
     "unscheduled":"Unscheduled",
     "scheduled": "Scheduled",
     "past_due": "Past Due",
+    "available": "Available",
     "sure_delete_account_data": "Are you sure you want to delete your account and data?",
     "no_cancel": "No, cancel",
     "yes_delete": "Yes, delete it",
