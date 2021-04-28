@@ -17,6 +17,7 @@ import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 import permissions from '../permissions';
+import { OptionalText } from './OptionalText';
 const { width, height } = Dimensions.get('window');
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
@@ -304,33 +305,13 @@ export class Camera extends Component {
           </View>
         )}
 
-        {isOptionalText ?
-        (
-        <View style={{
-            marginTop: '8%' ,
-            width: '100%' ,
-          }}
-        >
-          <Item bordered
-            style={{borderWidth: 1}}
-          >
-            <TextInput
-                style={{
-                  width: '100%',
-                  ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-                }}
-                placeholder = {
-                  i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-                }
-                onChangeText={text=>this.handleComment(text)}
-                value={this.finalAnswer["text"]}
-                multiline={true}
-            />
-          </Item>
-      </View>
-
-    ):<View></View>
-      }
+        {isOptionalText &&
+          <OptionalText
+            onChangeText={text=>this.handleComment(text)}
+            value={this.finalAnswer["text"]}
+            isRequired={isOptionalTextRequired}
+          />
+        }
       </View>
     );
   }

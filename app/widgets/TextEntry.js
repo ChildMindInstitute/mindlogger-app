@@ -12,7 +12,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
   let newStyle = {
     height,
     width: '100%',
-    minHeight: 45,
+    minHeight: Platform.OS == 'android' ? 45 : 28,
     fontSize: 18
   }
 
@@ -22,6 +22,9 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
 
   if (focused && Platform.OS === 'ios') {
     newStyle.maxHeight = 100;
+
+    newStyle.borderBottomWidth = 1;
+    newStyle.borderBottomColor = 'grey'
   }
 
   const updateHeight = (contentHeight) => {
