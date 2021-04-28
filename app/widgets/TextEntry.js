@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
-import { Item, Input } from 'native-base';
+import { Item } from 'native-base';
 import i18n from 'i18next';
 
 export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
@@ -16,7 +16,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
     fontSize: 18
   }
 
-  if (!focused && text !== value) {
+  if (value !== text) {
     setText(value);
   }
 
@@ -31,11 +31,18 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
       } else {
         setHeight(contentHeight);
       }
+    } else if (!text && contentHeight < newStyle.minHeight) {
+      setHeight(newStyle.minHeight);
     }
   }
 
   const onEndEditing = () => {
     onChange(text);
+  }
+
+  const onChangeText = (newText) => {
+    setText(newText);
+    onChange(newText);
   }
 
   return (
@@ -47,7 +54,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
         <Item>
           <TextInput
             placeholder={i18n.t('text_entry:type_placeholder')}
-            onChangeText={setText}
+            onChangeText={onChangeText}
             onEndEditing={onEndEditing}
             style={[newStyle]}
             keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
