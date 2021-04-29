@@ -6,7 +6,7 @@ import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
-import i18n from 'i18next';
+import { OptionalText } from './OptionalText';
 import { connect } from "react-redux";
 
 import {
@@ -110,30 +110,12 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
         }
 
         {
-          config.isOptionalText ?
-              (<View style={{
-                  marginTop: '8%' ,
-                  width: '100%' ,
-                }}
-                >
-            <Item bordered
-            style={{borderWidth: 1}}
-            >
-              <TextInput
-                  style={{
-                    width: '100%',
-                    ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-                  }}
-                  placeholder = {
-                    i18n.t(config.isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-                  }
-                  onChangeText={text=>handleComment(text)}
-                  value={finalAnswer["text"]}
-                  multiline={true}
-              />
-            </Item>
-          </View>
-          ):<View></View>
+          config.isOptionalText &&
+            <OptionalText
+              isRequired={config.isOptionalTextRequired}
+              value={finalAnswer["text"]}
+              onChangeText={text=>handleComment(text)}
+            />
         }
       </View>
     </KeyboardAvoidingView>

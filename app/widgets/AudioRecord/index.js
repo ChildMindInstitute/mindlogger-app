@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { Item , Input } from 'native-base';
 import AudioRecorder from './AudioRecorder';
-import i18n from 'i18next';
+import { OptionalText } from '../OptionalText';
 
 export class AudioRecord extends Component {
 
@@ -43,31 +43,14 @@ export class AudioRecord extends Component {
           path={this.finalAnswer["value"] && this.finalAnswer["value"].uri}
           maxLength={Number.isNaN(maxLength) ? Infinity : maxLength}
         />
-         {isOptionalText ?
-          (<View style={{
-            marginTop: '8%' ,
-            width: '100%' ,
-          }}
-          >
-        <Item bordered
-          style={{borderWidth: 1}}
-        >
-          <TextInput
-              style={{
-                width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-              }}
-              placeholder = {
-                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-              }
-              onChangeText={text=>this.handleComment(text)}
-              value={this.finalAnswer["text"]}
-              multiline={true}
+        {
+          isOptionalText &&
+          <OptionalText
+            onChangeText={text=>this.handleComment(text)}
+            value={this.finalAnswer["text"]}
+            isRequired={isOptionalTextRequired}
           />
-        </Item>
-      </View>
-    ):<View></View>
-      }
+        }
       </View>
       </KeyboardAvoidingView>
     );
