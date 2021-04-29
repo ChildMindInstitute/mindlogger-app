@@ -7,9 +7,19 @@ import { CheckBox } from 'react-native-elements';
 import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
 import { TooltipBox } from './TooltipBox';
-import i18n from 'i18next';
+import { OptionalText } from './OptionalText';
+import { connect } from "react-redux";
+import {
+  currentScreenSelector,
+} from "../state/responses/responses.selectors";
 
-export class MultiSelect extends Component {
+export class MultiSelectScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+      orderedItems: []
+    };
+  }
   static isValid(value = [], { minValue = 1, maxValue = Infinity }) {
     if (!value || value.length < minValue || value.length > maxValue) {
       return false;
@@ -17,6 +27,26 @@ export class MultiSelect extends Component {
     return true;
   }
   finalAnswer = {};
+
+  componentDidMount() {
+    if (this.props.config.randomizeOptions) {
+      this.setState({
+        orderedItems: [...this.props.config.itemList].sort(() => Math.random() - 0.5)
+      })
+    } else {
+      this.setState({
+        orderedItems: this.props.config.itemList
+      });
+    }
+  }
+
+  componentDidUpdate(oldProps) {
+    if (oldProps.currentScreen !== this.props.currentScreen && this.props.config.randomizeOptions) {
+      this.setState({
+        orderedItems: [...this.props.config.itemList].sort(() => Math.random() - 0.5)
+      })
+    }
+  }
 
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
@@ -53,7 +83,7 @@ export class MultiSelect extends Component {
     //  behavior="padding"
     >
       <View style={{ alignItems: "stretch" }}>
-        {itemList.map((item, index) => (
+        {this.state.orderedItems.map((item, index) => (
           <ListItem
             style={{ width: "90%" }}
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
@@ -132,42 +162,24 @@ export class MultiSelect extends Component {
           </ListItem>
         ))}
 
-        {isOptionalText ?
-          (<View style={{
-            marginTop: '8%' ,
-            width: '100%' ,
-          }}
-          >
-        <Item bordered
-          style={{borderWidth: 1}}
-        >
-          <TextInput
-              style={{
-                width: '100%',
-                ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-              }}
-              placeholder = {
-                i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-              }
-              onChangeText={text=>this.handleComment(text)}
-              value={this.finalAnswer["text"]}
-              multiline={true}
+        {isOptionalText &&
+          <OptionalText
+            isRequired={isOptionalTextRequired}
+            value={this.finalAnswer["text"]}
+            onChange={text=>this.handleComment(text)}
           />
-        </Item>
-      </View>
-    ):<View></View>
-      }
+        }
       </View>
       </KeyboardAvoidingView>
     );
   }
 }
 
-MultiSelect.defaultProps = {
+MultiSelectScreen.defaultProps = {
   value: undefined,
 };
 
-MultiSelect.propTypes = {
+MultiSelectScreen.propTypes = {
   config: PropTypes.shape({
     itemList: PropTypes.array,
     minValue: PropTypes.number,
@@ -177,3 +189,9 @@ MultiSelect.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = (state) => ({
+  currentScreen: currentScreenSelector(state),
+});
+
+export const MultiSelect = connect(mapStateToProps)(MultiSelectScreen);

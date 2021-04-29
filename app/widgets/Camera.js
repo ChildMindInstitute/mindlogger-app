@@ -173,36 +173,6 @@ export class Camera extends Component {
           console.log('launchImageLibrary 2', picSource);
           this.finalAnswer["value"] = picSource;
           onChange(this.finalAnswer);
-
-          /*
-          // const url = `https://api-staging.mindlogger.org/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
-          // const url = `https://9c241fea8fe9.ngrok.io/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
-          const headers = {
-            "Girder-Token": "1ChgAH8YxJB7GZ4k3u0HFcDF6ZburL4UHszHj8587smEGlFZFQdzlyUrXi18nrDq",
-            // "Content-Type": file.type,
-            // "Content-Type": "multipart/form-data"
-          };
-
-          response.base64 = await RNFS.readFile(response.uri, 'base64');
-          console.log("video data: ", response.base64)
-
-          fetch(url, {
-            method: 'post',
-            headers,
-            body: objectToFormData({
-              "metadata": JSON.stringify({ "applet": { "schemaVersion": "1.0" }, "subject": { "@id": "asasa", "timezone": "US" }, "responses": { "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc43": { "size": response.fileSize, "type": "image/png" } } }),
-              "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc43": response.base64
-            })
-          })
-            .then(res => res.json())
-            .then(response => {
-              console.log("image uploaded: ", response)
-            }).catch(err => {
-              console.log("--------err-----------")
-              console.log(err)
-            })
-            */
-
         }
       }
     });
@@ -301,7 +271,6 @@ export class Camera extends Component {
 
     this.finalAnswer = value ? value : {};
 
-    // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     return (
       <View style={styles.body}>
@@ -332,7 +301,6 @@ export class Camera extends Component {
               </TouchableOpacity>
             </View>
           )}
-
         {isOptionalText ?
           (
             <View style={{

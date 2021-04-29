@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import { Item, Input } from 'native-base';
 import AudioRecorder from './AudioRecorder';
-import i18n from 'i18next';
+import { OptionalText } from '../OptionalText';
 
 export class AudioRecord extends Component {
   finalAnswer = {};

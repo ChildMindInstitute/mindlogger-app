@@ -7,7 +7,7 @@ import Permissions, { PERMISSIONS } from "react-native-permissions";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { getURL } from '../services/helper';
-import i18n from 'i18next';
+import { OptionalText } from './OptionalText';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -161,33 +161,13 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
        }
 
 
-        {isOptionalText ?
-      (<View style={{
-          marginTop: '8%' ,
-          width: '100%' ,
-        }}
-        >
-      <Item bordered
-        style={{borderWidth: 1}}
-      >
-        <TextInput
-            style={{
-              width: '100%',
-              minHeight: 50,
-              ... Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
-            }}
-            placeholder = {
-              i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
-            }
-            onChangeText={text=>handleComment(text)}
-            value={finalAnswer["text"]}
-            multiline={true}
+      {isOptionalText &&
+        <OptionalText
+          isRequired={isOptionalTextRequired}
+          value={finalAnswer["text"]}
+          onChangeText={text=>handleComment(text)}
         />
-      </Item>
-    </View>
-    ):<View></View>
       }
-
     </View>
     </KeyboardAvoidingView>
   );
