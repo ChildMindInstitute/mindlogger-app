@@ -405,7 +405,6 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     })
   } else {
     const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
-
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
