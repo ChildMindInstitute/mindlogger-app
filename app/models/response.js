@@ -51,11 +51,7 @@ export const prepareResponseForUpload = (
         })
       }
 
-      if (
-        valueType &&
-        valueType.includes('token') &&
-        responses[i] !== undefined && responses[i] !== null
-      ) {
+      if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
         const responseValues = getValuesFromResponse(item, responses[i].value) || [];
         const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
         const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
@@ -108,11 +104,10 @@ export const prepareResponseForUpload = (
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] ? responses[index].value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
-
     responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
@@ -122,7 +117,7 @@ export const prepareResponseForUpload = (
 
     if (subScaleResult.length) {
       responseData['subScaleSource'] = getEncryptedData(subScaleResult, appletMetaData.AESKey);
-      responseData['subScales'] = (activity.subScales || []).reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+      responseData['subScales'] = (activity.subScales || []).reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index }), {});
 
       if (activity.finalSubScale) {
         responseData['subScales'][activity.finalSubScale.variableName] = (activity.subScales || []).length;
@@ -134,11 +129,12 @@ export const prepareResponseForUpload = (
     };
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
+
   } else {
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
         ...accumulator,
-        [item.schema]: responses[index],
+        [item.schema]: responses[index].value,
       };
     }, {});
     responseData['responses'] = formattedResponses;
@@ -161,6 +157,7 @@ export const prepareResponseForUpload = (
     responseData['tokenCumulation'] = {
       value: cumulative
     };
+
   }
 
   return responseData;
@@ -321,8 +318,8 @@ export const decryptAppletResponses = (applet, responses) => {
       }
 
       const oldItem = responses.itemReferences[cumulative.version] &&
-                      responses.itemReferences[cumulative.version][itemIRI];
-      if ( oldItem ) {
+        responses.itemReferences[cumulative.version][itemIRI];
+      if (oldItem) {
         const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
 
         if (currentActivity) {

@@ -7,17 +7,16 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
-  ScrollView,
-  KeyboardAvoidingView,
   TextInput
 } from 'react-native';
-import { View, Icon , Item , Input } from 'native-base';
+import { View, Icon, Item } from 'native-base';
 import * as ImagePicker from 'react-native-image-picker';
 import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
+
 import permissions from '../permissions';
-import { OptionalText } from './OptionalText';
+
 const { width, height } = Dimensions.get('window');
 
 const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
@@ -89,7 +88,7 @@ export class Camera extends Component {
   finalAnswer = {};
 
   handleComment = (itemValue) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     this.finalAnswer["text"] = itemValue;
     onChange(this.finalAnswer);
   }
@@ -132,12 +131,12 @@ export class Camera extends Component {
     const options = {
       mediaType: video ? 'video' : 'photo',
       videoQuality: 'low',
-      quality: 0.1,
+      quality: 0.3,
       maxWidth: 800,
       maxHeight: 800,
     };
-    ImagePicker.launchImageLibrary(options, (response) => {
-      console.log('launchImageLibrary', { response });
+    ImagePicker.launchImageLibrary(options, async (response) => {
+      console.log('launchImageLibrary', response);
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.errorCode) {
@@ -160,9 +159,8 @@ export class Camera extends Component {
               type: response.type || VIDEO_MIME_TYPE,
               fromLibrary: false,
             };
-            console.log('launchImageLibrary', { picSource });
             this.finalAnswer["value"] = picSource;
-            onChange( this.finalAnswer);
+            onChange(this.finalAnswer);
           });
         } else {
           const picSource = {
@@ -172,9 +170,9 @@ export class Camera extends Component {
             type: response.type || VIDEO_MIME_TYPE,
             fromLibrary: true,
           };
-          console.log('launchImageLibrary', { picSource });
+          console.log('launchImageLibrary 2', picSource);
           this.finalAnswer["value"] = picSource;
-          onChange( this.finalAnswer);
+          onChange(this.finalAnswer);
         }
       }
     });
@@ -186,7 +184,7 @@ export class Camera extends Component {
       // saveToPhotos: true,
       maxWidth: 800,
       maxHeight: 800,
-      quality: 0.5,
+      quality: 0.3,
     };
     ImagePicker.launchCamera(options, (response) => {
       const { onChange } = this.props;
@@ -206,7 +204,7 @@ export class Camera extends Component {
         };
         console.log('launchCamForCam', { picSource });
         this.finalAnswer["value"] = picSource;
-        onChange( this.finalAnswer);
+        onChange(this.finalAnswer);
       }
     });
   };
@@ -246,7 +244,7 @@ export class Camera extends Component {
                 };
                 console.log('take', { picSource });
                 this.finalAnswer["value"] = picSource;
-                onChange( this.finalAnswer);
+                onChange(this.finalAnswer);
               });
             } else {
               const picSource = {
@@ -258,7 +256,7 @@ export class Camera extends Component {
               };
               console.log('take', { picSource });
               this.finalAnswer["value"] = picSource;
-              onChange( this.finalAnswer);
+              onChange(this.finalAnswer);
             }
           }
         });
@@ -269,11 +267,10 @@ export class Camera extends Component {
   };
 
   render() {
-    const { value, video ,isOptionalText, isOptionalTextRequired } = this.props;
+    const { value, video, isOptionalText, isOptionalTextRequired } = this.props;
 
     this.finalAnswer = value ? value : {};
 
-    // console.log({ v: value });
     const iconName = video ? 'video-camera' : 'camera';
     return (
       <View style={styles.body}>
@@ -283,34 +280,53 @@ export class Camera extends Component {
               <View style={styles.videoConfirmed}>
                 <Icon type="Entypo" name="check" style={styles.greenIcon} />
               </View>
-            ):(                       // Android
-              <VideoPlayer
-                video={{ uri: this.finalAnswer["value"].uri }}
-                videoWidth={width}
-                videoHeight={360}
-                resizeMode="contain"
-              />
+            ) : (                       // Android
+                <VideoPlayer
+                  video={{ uri: this.finalAnswer["value"].uri }}
+                  videoWidth={width}
+                  videoHeight={360}
+                  resizeMode="contain"
+                />
+              )
+          ) : (
+              <Image source={{ uri: Platform.OS === 'android' ? `file://${this.finalAnswer["value"].uri}` : this.finalAnswer["value"].uri }} style={styles.image} />
             )
-          ):(
-            <Image source={this.finalAnswer["value"]} style={styles.image} />
-          )
-        ):(
-          <View>
-            <TouchableOpacity
-              onPress={this.libraryAlert}
-              style={styles.takeButton}
+        ) : (
+            <View>
+              <TouchableOpacity
+                onPress={this.libraryAlert}
+                style={styles.takeButton}
+              >
+                <Icon type="Entypo" name={iconName} style={styles.redIcon} />
+              </TouchableOpacity>
+            </View>
+          )}
+        {isOptionalText ?
+          (
+            <View style={{
+              marginTop: '8%',
+              width: '100%',
+            }}
             >
-              <Icon type="Entypo" name={iconName} style={styles.redIcon} />
-            </TouchableOpacity>
-          </View>
-        )}
+              <Item bordered
+                style={{ borderWidth: 1 }}
+              >
+                <TextInput
+                  style={{
+                    width: '100%',
+                    ...Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
+                  }}
+                  placeholder={
+                    i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+                  }
+                  onChangeText={text => this.handleComment(text)}
+                  value={this.finalAnswer["text"]}
+                  multiline={true}
+                />
+              </Item>
+            </View>
 
-        {isOptionalText &&
-          <OptionalText
-            onChangeText={text=>this.handleComment(text)}
-            value={this.finalAnswer["text"]}
-            isRequired={isOptionalTextRequired}
-          />
+          ) : <View></View>
         }
       </View>
     );

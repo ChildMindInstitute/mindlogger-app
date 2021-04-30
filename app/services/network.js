@@ -1,5 +1,7 @@
 import objectToFormData from "object-to-formdata";
 import RNFetchBlob from "rn-fetch-blob";
+import RNFS from 'react-native-fs';
+
 import { getStore } from "../store";
 // eslint-disable-next-line
 import { btoa } from "./helper";
@@ -19,7 +21,6 @@ export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
   const queryParams = queryObj ? `?${objectToQueryParams(queryObj)}` : "";
 
   const url = `${apiHost()}/${route}${queryParams}`;
-
   const headers = {
     ...extraHeaders,
   };
@@ -45,35 +46,61 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
     headers,
     body: objectToFormData(body),
   }).then((res) => {
-    console.log({ res });
     return res.status === 200 ? res.json() : Promise.reject(res);
-  });
+  })
 };
 
-export const postFile = ({ authToken, file, parentType, parentId }) => {
-  console.log('postFile', { file, parentType, parentId });
-  const queryParams = objectToQueryParams({
-    parentType,
-    parentId,
-    name: file.filename,
-    size: file.size,
-  });
-  const url = `${apiHost()}/file?${queryParams}`;
+export const postFile = async ({ authToken, file, appletId, activityId }) => {
+  const url = `${apiHost()}/response/${appletId}/${activityId}`; // `https://api-staging.mindlogger.org/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
+
   const headers = {
     "Girder-Token": authToken,
-    "Content-Type": file.type,
+    // "Content-Type": file.type,
   };
-  console.log('postFile', { queryParams, url, headers });
-  return RNFetchBlob.fetch(
-    "POST",
-    url,
+  const metadata = {
+    "applet": { "schemaVersion": "1.0" },
+    "subject": { "@id": "asasa", "timezone": "US" },
+    "responses": {
+      [file.key]: { "size": file.size, "type": file.type }
+    }
+  };
+
+  const base64String = await RNFS.readFile(file.uri, 'base64');
+
+  return fetch(url, {
+    method: 'post',
     headers,
-    RNFetchBlob.wrap(file.uri),
-  ).then((res) => {
-    const responseInfo = res.info();
-    console.log('postFile response', { res, responseInfo });
-    return responseInfo.status === 200 ? res.json() : Promise.reject(res);
-  });
+    body: objectToFormData({
+      "metadata": JSON.stringify(metadata),
+      [file.key]: base64String
+    })
+  })
+    .then(res => {
+      return res.status === 200 ? res.json() : Promise.reject(res);
+    }).catch(err => {
+      Promise.reject(err);
+      console.log(err)
+    })
+
+  // return RNFetchBlob.fetch(
+  //   "POST",
+  //   url,
+  //   headers,
+  //   [{
+  //     name: "metadata",
+  //     data: JSON.stringify({ "applet": { "schemaVersion": "1.0" }, "subject": { "@id": "asasa", "timezone": "US" }, "responses": { "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc92": { "size": 1000, "type": "image/png" } } }),
+  //   },
+  //   {
+  //     name: "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc92",
+  //     data: RNFetchBlob.wrap(file.uri),
+  //   }]
+  // ).then((res) => {
+  //   const responseInfo = res.info();
+  //   console.log('postFile response.....', res, responseInfo);
+  //   return responseInfo.status === 200 ? res.json() : Promise.reject(res);
+  // }).catch((err) => {
+  //   console.log('postFile ERR.....', err);
+  // });
 };
 
 export const getSkin = () => get("context/skin", null, null);
@@ -119,17 +146,15 @@ export const getTargetApplet = (authToken, appletId) =>
   });
 
 export const postResponse = ({ authToken, response }) => {
-  console.log({ uploadRes: response });
-
   return postFormData(
     `response/${response.applet.id}/${response.activity.id}`,
     authToken,
     {
       metadata: JSON.stringify(response),
     },
-    console.log("post response")
   );
 };
+
 export const postAppletBadge = (authToken, badge) => {
   console.log("post applet badge");
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
@@ -219,8 +244,8 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
 export const fileLink = (file, token) =>
   file
     ? `${apiHost()}/${
-        file["@id"]
-      }/download?contentDisposition=inline&token=${token}`
+    file["@id"]
+    }/download?contentDisposition=inline&token=${token}`
     : "";
 
 export const registerOpenApplet = (authToken, schemaURI) => {
@@ -362,7 +387,6 @@ export const replaceResponseData = ({
   dataSources,
   tokenUpdates
 }) => {
-  console.log("replace response data");
   let url = `${apiHost()}/response/${appletId}`;
   const headers = {
     "Girder-Token": authToken,

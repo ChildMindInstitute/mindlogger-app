@@ -7,14 +7,19 @@ import AudioRecorder from './AudioRecorder';
 import { getURL } from '../../services/helper';
 
 export class AudioImageRecord extends Component {
+  finalAnswer = {};
+
   onRecord = (filePath) => {
-    const filename = filePath && filePath.length > 0 && filePath.split('/').pop();
-    this.props.onChange({ uri: filePath, filename });
+    const filename = (filePath && filePath.length > 0) && filePath.split('/').pop();
+    this.finalAnswer["value"] = { uri: filePath, filename, type: "audio/mp3" };
+    this.props.onChange(this.finalAnswer);
   };
 
   render() {
     const { value, config } = this.props;
-    const maxLength = parseInt(R.path(['maxValue'], config));
+    let maxLength = parseInt(R.path(['maxValue'], config));
+    maxLength = maxLength <= 1 ? 60000 : maxLength
+
     return (
       <View style={{ paddingBottom: 16 }}>
         <Image
