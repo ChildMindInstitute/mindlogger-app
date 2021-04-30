@@ -29,7 +29,7 @@ const ActivityDueDate = ({ activity }) => {
       <LittleText style={styles.textStyles}>
         {activity.event.data.timeout.allow
           ? `${i18n.t('activity_due_date:to')} ${scheduledEndTime(activity.event.scheduledTime, activity.event.data.timeout)}`
-          : `${i18n.t('activity_due_date:to')} 11:59 PM`}
+          : `${i18n.t('activity_due_date:to')} Midnight`}
       </LittleText>
     );
   }
