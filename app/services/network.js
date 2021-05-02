@@ -169,7 +169,7 @@ export const postAppletBadge = (authToken, badge) => {
 };
 
 export const signIn = ({ user, password, deviceId, timezone }) =>
-  get("user/authentication", null, null, {
+  get("user/authentication", null, { returnKeys: true }, {
     "Girder-Authorization": `Basic ${btoa(`${user}:${password}`)}`,
     deviceId,
     timezone,
@@ -225,7 +225,7 @@ export const updateUserDetails = (
   }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const updatePassword = (authToken, oldPassword, newPassword) => {
+export const updatePassword = (authToken, oldPassword, newPassword, email) => {
   const url = `${apiHost()}/user/password`;
   const headers = {
     "Girder-Token": authToken,
@@ -237,6 +237,7 @@ export const updatePassword = (authToken, oldPassword, newPassword) => {
     body: objectToFormData({
       old: oldPassword,
       new: newPassword,
+      email
     }),
   }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
