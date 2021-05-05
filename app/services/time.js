@@ -43,7 +43,7 @@ export const convertDateString = (str) => {
   if (str == '12:00 PM') {
     return 'Noon';
   }
-  if (str == '12:00 AM') {
+  if (str == '11:59 PM') {
     return 'Midnight';
   }
 
