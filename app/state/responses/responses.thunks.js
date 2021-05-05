@@ -276,20 +276,6 @@ export const replaceReponses = (user) => (dispatch, getState) => {
 
     const applet = applets.find((applet) => applet.id === response.appletId);
 
-    if (Object.keys(response.dataSources).length || (response.tokens && response.tokens.tokenUpdates.length)) {
-      dispatch(updateKeys(applet, user));
-    } else {
-      /** if there isn't anything to re-upload leave key as empty for speed */
-      dispatch(
-        prepareResponseKeys(applet.id, {
-          AESKey: null,
-          userPublicKey: null,
-        })
-      );
-
-      continue;
-    }
-
     for (const responseId in response.dataSources) {
       if (Object.keys(response).length) {
         dataSources[responseId] = getEncryptedData(

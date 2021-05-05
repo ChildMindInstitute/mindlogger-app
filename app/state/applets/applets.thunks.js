@@ -18,6 +18,8 @@ import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
+import { prepareResponseKeys } from "../applets/applets.actions";
+
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
@@ -195,7 +197,7 @@ export const cancelReminder = () => (dispatch, getState) => {
 //   return notification;
 // };
 
-export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const currentApplets = await getData('ml_applets');
@@ -270,7 +272,14 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
               if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-                dispatch(updateKeys(applet, userInfo));
+                const appletId = applet.id.split('/')[1];
+
+                if (keys && keys[appletId]) {
+                  dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+                  Object.assign(applet, keys[appletId]);
+                } else {
+                  dispatch(updateKeys(applet, userInfo));
+                }
               }
               responses.push({
                 ...decryptAppletResponses(applet, appletInfo.responses),
@@ -279,7 +288,7 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return applet;
             }
           });
-        
+
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
