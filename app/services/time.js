@@ -39,6 +39,17 @@ export const scheduledEndTime = (timestamp, timeout) => {
   return null;
 };
 
+export const convertDateString = (str) => {
+  if (str == '12:00 PM') {
+    return 'Noon';
+  }
+  if (str == '12:00 AM') {
+    return 'Midnight';
+  }
+
+  return str;
+}
+
 export const lastScheduledTime = (timestamp) => {
   if (timestamp) {
     return moment(timestamp).format('h:mm A');
