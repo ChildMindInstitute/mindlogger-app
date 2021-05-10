@@ -111,14 +111,16 @@ export const getResponses = (authToken, applet) =>
 export const getSchedule = (authToken, timezone) =>
   get("schedule", authToken, { timezone });
 
-export const getApplets = (authToken, localInfo) => {
+export const getApplets = (authToken, localInfo, currentApplet='', nextActivity='') => {
   const queryParams = objectToQueryParams({
     role: "user",
     getAllApplets: true,
     retrieveSchedule: true,
     retrieveResponses: true,
     numberOfDays: 7,
-    groupByDateActivity: false
+    groupByDateActivity: false,
+    currentApplet,
+    nextActivity
   });
   const url = `${apiHost()}/user/applets?${queryParams}`;
   const headers = {
@@ -129,7 +131,30 @@ export const getApplets = (authToken, localInfo) => {
     mode: "cors",
     headers,
     body: objectToFormData({ localInfo: JSON.stringify(localInfo) }),
-  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res))).then(res => {
+    if (res.nextActivity) {
+      return new Promise(resolve => setTimeout(() => resolve(getApplets(authToken, localInfo, res.currentApplet, res.nextActivity).then(next => {
+        for (const applet of next.data) {
+          const d = res.data.find(d => d.id == applet.id);
+          if (!d) {
+            res.data.push(applet);
+            continue;
+          }
+
+          for (const IRI in applet.items) {
+            d.items[IRI] = applet.items[IRI]
+          }
+
+          for (const IRI in applet.activities) {
+            d.activities[IRI] = applet.activities[IRI]
+          }
+        }
+
+        return res;
+      })), 50));
+    }
+    return res;
+  })
 }
 
 // export const getTargetApplet = (authToken, appletId) => get(
@@ -138,12 +163,30 @@ export const getApplets = (authToken, localInfo) => {
 //   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
 // );
 
-export const getTargetApplet = (authToken, appletId) =>
-  get(`user/applet/${appletId}`, authToken, {
+export const getTargetApplet = (authToken, appletId, nextActivity='') => {
+  return get(`user/applet/${appletId}`, authToken, {
     retrieveSchedule: true,
     role: "user",
     getAllApplets: true,
-  });
+    nextActivity
+  }).then(resp => {
+    if (resp.nextActivity) {
+      return new Promise(resolve => setTimeout(() => resolve(getTargetApplet(authToken, appletId, resp.nextActivity ).then(next => {
+        for (const IRI in next.items) {
+          resp.items[IRI] = next.items[IRI]
+        }
+
+        for (const IRI of next.activities) {
+          resp.activities[IRI] = next.activities[IRI]
+        }
+
+        return resp;
+      })), 50));
+    }
+
+    return resp;
+  })
+}
 
 export const postResponse = ({ authToken, response }) => {
   return postFormData(
