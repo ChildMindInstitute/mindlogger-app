@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
-## [0.16.20] - 2020-05-04
+## [0.16.21] - 2020-05-11
 - Optiize changeg password & login
+
+## [0.16.20] - 2020-05-04
+- Fix time string
 
 ## [0.16.19] - 2020-04-29
 - Update texts in UI
