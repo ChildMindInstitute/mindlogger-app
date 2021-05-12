@@ -24,7 +24,7 @@ import { updateUserDetails, updatePassword } from '../../services/network';
 import { skinSelector } from '../../state/app/app.selectors';
 import { updateUserDetailsSuccessful } from '../../state/user/user.thunks';
 import { replaceReponses } from '../../state/responses/responses.thunks'
-import { prepareResponseKeys } from "../../state/applets/applets.actions";
+import { setMultipleResponseKeys } from "../../state/applets/applets.actions";
 
 import ChangePasswordForm from './ChangePasswordForm';
 
@@ -48,18 +48,14 @@ class ChangePasswordScreen extends Component {
   };
 
   onSubmit = ({ oldPassword, password }) => {
-    const { authToken, user, updateUserDetailsSuccessful, replaceReponses, prepareResponseKeys } = this.props;
+    const { authToken, user, updateUserDetailsSuccessful, replaceReponses, setMultipleResponseKeys } = this.props;
 
     return updatePassword(authToken, oldPassword, password, user.email)
       .then((resp) => {
         user.privateKey = resp.privateKey;
 
-        for (let appletId in resp.keys) {
-          prepareResponseKeys(
-            `applet/${appletId}`, resp.keys[appletId]
-          );
-        }
-        return replaceReponses(user);
+        setMultipleResponseKeys(resp.keys);
+        replaceReponses(user);
       })
       .then(() => updateUserDetailsSuccessful(user))
       .catch((e) => {
@@ -121,7 +117,7 @@ ChangePasswordScreen.propTypes = {
 const bindAction = {
   updateUserDetailsSuccessful,
   replaceReponses,
-  prepareResponseKeys
+  setMultipleResponseKeys
 };
 
 const mapStateToProps = state => ({

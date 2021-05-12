@@ -24,6 +24,11 @@ export const prepareResponseKeys = (appletId, keys) => ({
   payload: { appletId, keys }
 })
 
+export const setMultipleResponseKeys = ( keys ) => ({
+  type: APPLET_CONSTANTS.SET_MULTIPLE_ENCRYPTION_KEY,
+  payload: { keys }
+})
+
 export const replaceTargetApplet = applet => ({
   type: APPLET_CONSTANTS.REPLACE_TARGET_APPLET,
   payload: applet,

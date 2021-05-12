@@ -296,12 +296,14 @@ export const replaceReponses = (user) => (dispatch, getState) => {
       }
     }
 
-    uploadData.push({
-      userPublicKey: applet.userPublicKey,
-      appletId: applet.id.split("/").pop(),
-      dataSources,
-      tokenUpdates,
-    });
+    if (Object.keys(dataSources).length || Object.keys(tokenUpdates).length) {
+      uploadData.push({
+        userPublicKey: applet.userPublicKey,
+        appletId: applet.id.split("/").pop(),
+        dataSources,
+        tokenUpdates,
+      });
+    }
   }
 
   return Promise.all(

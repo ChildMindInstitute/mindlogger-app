@@ -29,7 +29,7 @@ export default (state = initialState, action = {}) => {
       return initialState;
     case APPLET_CONSTANTS.SET_ACTIVITY_ACCESS:
       const nextState = { ...state };
-      
+
       if (!nextState.activityAccess) nextState.activityAccess = {};
       nextState.activityAccess[action.payload] = true;
       return nextState;
@@ -40,9 +40,9 @@ export default (state = initialState, action = {}) => {
         currentTime: new Date(),
       };
     case APPLET_CONSTANTS.SET_SELECTION_DISABLED:
-      return { 
-        ...state, 
-        selectionDisabled: action.payload 
+      return {
+        ...state,
+        selectionDisabled: action.payload
       };
     case APPLET_CONSTANTS.SET_REMINDER:
       return {
@@ -66,6 +66,24 @@ export default (state = initialState, action = {}) => {
         ...state,
         applets: [
           ...state.applets.map(applet => (applet.id === action.payload.appletId ? { ...applet, ...action.payload.keys } : applet))
+        ]
+      }
+    case APPLET_CONSTANTS.SET_MULTIPLE_ENCRYPTION_KEY:
+      return {
+        ...state,
+        applets: [
+          ...state.applets.map(applet => {
+            const appletId = applet.id.split('/')[1];
+
+            if (action.payload.keys[appletId]) {
+              return {
+                ...applet,
+                ...action.payload.keys[appletId]
+              }
+            }
+
+            return applet;
+          })
         ]
       }
     case APPLET_CONSTANTS.SET_SCHEDULE_UPDATED:
