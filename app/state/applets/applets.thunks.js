@@ -231,7 +231,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
-    .then(async (applets) => {
+    .then(async (resp) => {
+      const applets = resp.data;
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
