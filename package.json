@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.16.22",
+  "version": "0.16.23",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",

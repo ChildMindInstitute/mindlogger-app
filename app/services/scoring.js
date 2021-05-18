@@ -1,7 +1,7 @@
 import { Parser } from 'expr-eval';
 
 export const getScoreFromResponse = (item, value) => {
-  if (value == null || item.inputType !== 'radio' && item.inputType !== 'slider') {
+  if (value === null || item.inputType !== 'radio' && item.inputType !== 'slider') {
     return 0;
   }
 
@@ -13,9 +13,9 @@ export const getScoreFromResponse = (item, value) => {
   }
 
   let response = value;
-  if (typeof response == 'number' || typeof response == 'string') {
+  if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
-  } else if (typeof response == 'object') {
+  } else if (typeof response === 'object') {
     response = [response.value]
   }
 
@@ -23,8 +23,8 @@ export const getScoreFromResponse = (item, value) => {
 
   for (let value of response) {
     let option = itemList.find(option => 
-      typeof value == 'number' && option.value === value || 
-      typeof value == 'string' && Object.values(option.name)[0] === value
+      typeof value === 'number' && option.value === value || 
+      typeof value === 'string' && Object.values(option.name)[0] === value
     );
 
     if (option && option.score) {
@@ -44,7 +44,7 @@ export const getValuesFromResponse = (item, value) => {
   const itemList = valueConstraints.itemList || [];
 
   let response = value;
-  if (typeof response == 'number' || typeof response == 'string') {
+  if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
   }
 
@@ -52,8 +52,8 @@ export const getValuesFromResponse = (item, value) => {
 
   for (let value of response) {
     let option = itemList.find(option => 
-      typeof value == 'number' && option.value === value || 
-      typeof value == 'string' && Object.values(option.name)[0] === value
+      typeof value === 'number' && option.value === value || 
+      typeof value === 'string' && Object.values(option.name)[0] === value
     );
 
     if (option && option.value) {
