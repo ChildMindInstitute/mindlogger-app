@@ -15,6 +15,8 @@ export const getScoreFromResponse = (item, value) => {
   let response = value;
   if (typeof response == 'number' || typeof response == 'string') {
     response = [response];
+  } else if (typeof response == 'object') {
+    response = [response.value]
   }
 
   let totalScore = 0;
