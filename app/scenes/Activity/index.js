@@ -189,8 +189,7 @@ class Activity extends React.Component {
 
     const { activity, responses } = currentResponse;
 
-    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
-    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const prevLabel = isSummaryScreen
       ? "Back"
       : getPrevLabel(currentScreen, itemVisibility);
