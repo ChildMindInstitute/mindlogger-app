@@ -98,13 +98,13 @@ const ActivityList = ({
     }
   }, [Object.keys(inProgress).length, responseSchedule]);
 
-  
+
   useEffect(() => {
     if (appStatus) {
       stateUpdate();
     }
   }, [appStatus]);
-  
+
   useEffect(() => {
     if (scheduleUpdated) {
       stateUpdate();
@@ -120,7 +120,7 @@ const ActivityList = ({
       }
     }
   }, [])
-  
+
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
