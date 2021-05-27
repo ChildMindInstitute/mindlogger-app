@@ -24,7 +24,6 @@ export class AudioRecord extends Component {
   }
 
   render() {
-
     const { value, config, isOptionalText, isOptionalTextRequired } = this.props;
     const maxLength = parseInt(R.path(['maxValue'], config));
 
