@@ -72,7 +72,6 @@ export default (state = initialState, action = {}) => {
       };
     case RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS:
       const { activity } = action.payload;
-      console.log('activity', activity);
 
       return {
         ...state,
