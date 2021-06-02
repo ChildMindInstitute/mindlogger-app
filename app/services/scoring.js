@@ -15,12 +15,8 @@ export const getScoreFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
-  } else if (typeof response === 'object') {
-    if (!Array.isArray(response.value)) {
-      response = [response.value]
-    } else {
-      response = response.value;
-    }
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    response = [response.value]
   }
 
   let totalScore = 0;
@@ -54,6 +50,8 @@ export const getValuesFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    response = [response.value]
   }
 
   const tokenValues = [];
