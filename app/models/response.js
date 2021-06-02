@@ -96,7 +96,7 @@ export const prepareResponseForUpload = (
   if (activity.subScales) {
     for (let subScale of activity.subScales) {
       subScaleResult.push(
-        getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
+        getScoreFromLookupTable(responses, subScale.jsExpression, subScale.isAverageScore, activity.items, subScale['lookupTable'])
       );
     }
   }

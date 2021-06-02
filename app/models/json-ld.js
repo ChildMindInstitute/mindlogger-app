@@ -474,9 +474,10 @@ const transformPureActivity = (activityJson) => {
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
     return {
+      isAverageScore: R.path([IS_AVERAGE_SCORE, 0, "@value"], subScale),
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
       variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
-      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false)
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false),
     }
   }, activityJson[SUBSCALES])
 
