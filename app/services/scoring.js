@@ -125,7 +125,7 @@ const isValueInRange = (value, lookupInfo) => {
   return false;
 };
 
-export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
+export const getScoreFromLookupTable = (responses, jsExpression, isAverageScore, items, lookupTable) => {
   let scores = [];
 
   for (let i = 0; i < responses.length; i++) {
@@ -135,6 +135,11 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
   }
 
   let subScaleScore = evaluateScore(jsExpression, items, scores);
+
+  if (isAverageScore) {
+    const nodes = jsExpression.split('+');
+    subScaleScore /= nodes.length;
+  }
 
   if (lookupTable) {
     const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
