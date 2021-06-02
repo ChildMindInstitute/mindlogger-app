@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.16.25] - 2021-05-30
 - implement average scoring
+- Fix TextEntry widget and scoring
 
 ## [0.16.24] - 2021-05-22
 - optimize scheduling

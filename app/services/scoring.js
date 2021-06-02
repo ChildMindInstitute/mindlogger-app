@@ -16,19 +16,27 @@ export const getScoreFromResponse = (item, value) => {
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
   } else if (typeof response === 'object') {
-    response = [response.value]
+    if (!Array.isArray(response.value)) {
+      response = [response.value]
+    } else {
+      response = response.value;
+    }
   }
 
   let totalScore = 0;
 
   for (let value of response) {
-    let option = itemList.find(option => 
-      typeof value === 'number' && option.value === value || 
-      typeof value === 'string' && Object.values(option.name)[0] === value
-    );
+    if (typeof value === 'number' || typeof value === 'string') {
+      let option = itemList.find(option =>
+        typeof value === 'number' && option.value === value ||
+        typeof value === 'string' && Object.values(option.name)[0] === value
+      );
 
-    if (option && option.score) {
-      totalScore += option.score;
+      if (option && option.score) {
+        totalScore += option.score;
+      }
+    } else {
+
     }
   }
 
