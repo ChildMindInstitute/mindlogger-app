@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import i18n from 'i18next';
 import { LittleText } from '../core';
+import { Actions } from "react-native-router-flux";
 import { startedTimesSelector } from '../../state/app/app.selectors';
 import { endActivity } from '../../state/responses/responses.thunks';
 
@@ -14,27 +15,32 @@ const styles = StyleSheet.create({
 });
 
 const TimedActivity = ({ activity, startedTimes, endActivity }) => {
-  const { lastTimedActivity, nextTimedActivity } = activity
-  if (activity.status === 'scheduled' && activity.nextScheduledTimestamp && nextTimedActivity) {
+  const { event } = activity
+
+  if (activity.status === 'scheduled' && event && event.data.timedActivity.allow) {
+    let { hour, minute, allow } = event.data.timedActivity;
+
     return (
       <LittleText style={styles.textStyles}>
-        {` Time to Complete: ${ nextTimedActivity.hour } hours and ${ nextTimedActivity.minute } minutes `}
+      
+        {allow ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes ` : ``}
       </LittleText>
     );
   }
-  if (activity.status === 'pastdue' && activity.lastScheduledTimestamp && lastTimedActivity) {
+  if (activity.status === 'pastdue' && event && event.data.timedActivity.allow) {
+    let { hour, minute, allow } = event.data.timedActivity;
+
     return (
       <LittleText style={styles.textStyles}>
-        {` Time to Complete: ${ lastTimedActivity.hour } hours and ${ lastTimedActivity.minute } minutes `}
+        {allow ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes ` : ``}
       </LittleText>
     );
   }
-  if (activity.status === 'in-progress' && activity.lastScheduledTimestamp && lastTimedActivity) {
-    let { hour, minute, second } = activity.lastTimedActivity;
+  if (activity.status === 'in-progress' && event && event.data.timedActivity.allow ) {
+    let { hour, minute, second, allow } = event.data.timedActivity;
+    const startedTime = startedTimes ? startedTimes[activity.id + event.id] : null;
 
-    const startedTime = startedTimes ? startedTimes[activity.id] : null;
-
-    if (startedTime) {
+    if (startedTime && allow) {
       const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
       const difference = Math.abs(Date.now() - startedTime);
 
@@ -43,13 +49,18 @@ const TimedActivity = ({ activity, startedTimes, endActivity }) => {
         minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
       } else {
         hour = null;
-        endActivity(activity);
+
+        if (Actions.currentScene == 'applet_details') {
+          endActivity(activity);
+        }
       }
+    } else {
+      hour = null;
     }
 
     return (
       <LittleText style={styles.textStyles}>
-        {(!startedTime || hour !== null) ? `Time to Complete: ${ hour } hours and ${ minute } minutes` : ``}
+        {(!startedTime || hour !== null) ? `${i18n.t('timed_activity:time_to_complete')}: ${ hour } ${i18n.t('timed_activity:hours')} and ${ minute } minutes` : ``}
       </LittleText>
     )
   }

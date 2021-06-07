@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
+import i18n from 'i18next';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
@@ -17,11 +18,13 @@ const styles = StyleSheet.create({
 });
 
 const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
-  let { hour, minute, second } = activity.lastTimedActivity;
-  const startedTime = startedTimes ? startedTimes[activity.id] : null;
-  if (startedTime) {
+  const startedTime = startedTimes ? startedTimes[activity.id + activity.event.id] : null;
+  let { allow, hour, minute, second } = activity.event.data.timedActivity;
+
+  if (startedTime && allow) {
     const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
     const difference = Math.abs(Date.now() - startedTime);
+
     if (activityTime > difference) {
       hour = Math.floor((activityTime - difference) / 60000 / 60);
       minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
@@ -29,8 +32,11 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
     } else {
       hour = null;
     }
+  } else {
+    hour = null;
   }
-  const initialState = (!startedTime || hour !== null) ? {
+
+  const initialState = (hour !== null) ? {
     eventDate: moment.duration().add({
       hours: hour,
       minutes: minute,
@@ -46,10 +52,14 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
 
   useEffect(() => {
     if (!activityTime) return;
-    const intervalId = setInterval(() => {
+    let timeoutId = 0;
+
+    let prevTime = Date.now();
+
+    const updateClock = () => {
       let { eventDate, allow } = activityTime;
+
       if (eventDate <= 0) {
-        clearInterval(intervalId);
         finishActivity(activity);
       } else {
         eventDate = eventDate.subtract(1, "s");
@@ -64,15 +74,27 @@ const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
           secs,
           allow
         });
-      }
-    }, 1000);
 
-    return () => clearInterval(intervalId);
+        if (timeoutId >= 0) {
+          prevTime += 1000;
+          timeoutId = setTimeout(updateClock, prevTime - Date.now());
+        }
+      }
+    };
+
+    timeoutId = setTimeout(updateClock, 1000);
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = -1;
+    }
   }, []);
 
   return (
     <Text style={styles.remainingTime}>
-      {activityTime && `Time remaining: ${activityTime.hours}:${activityTime.mins}:${activityTime.secs}`}
+      {activityTime && `${i18n.t('activity_time:time_remaining')}: ${activityTime.hours}:${activityTime.mins}:${activityTime.secs}`}
     </Text>
   );
 };

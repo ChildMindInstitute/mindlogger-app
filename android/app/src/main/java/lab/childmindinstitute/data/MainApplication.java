@@ -4,12 +4,17 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.johnsonsu.rnsoundplayer.RNSoundPlayerPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import com.brentvatne.react.ReactVideoPackage;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+
+
 
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
@@ -31,6 +36,7 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
              packages.add(new RNFirebaseNotificationsPackage());
             packages.add(new RNFirebaseMessagingPackage());
+            packages.add(new ReactVideoPackage());
           return packages;
         }
 
@@ -49,6 +55,10 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
+    long size = 70L * 1024L * 1024L; // 70 MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
+
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
   }
 

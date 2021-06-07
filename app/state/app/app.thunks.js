@@ -8,6 +8,7 @@ import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
+import { clearAsyncStorage } from "../../services/asyncStorage";
 import { clearUser } from '../user/user.actions';
 import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
@@ -18,10 +19,16 @@ export const showToast = toast => () => {
   Toast.show(toast);
 };
 
-export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
+export const sync = (onAppletsDownloaded = null, keys = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
-    dispatch(downloadApplets(onAppletsDownloaded));
+    dispatch(downloadApplets(onAppletsDownloaded, keys));
+  }
+};
+
+export const syncUploadQueue = () => (dispatch, getState) => {
+  const state = getState();
+  if (state.user.auth !== null) {
     dispatch(startUploadQueue());
   }
 };
@@ -69,19 +76,24 @@ export const logout = () => (dispatch, getState) => {
   }
   const uploadQueue = uploadQueueSelector(state);
 
-  if (uploadQueue.length > 0) {
-    Actions.push('logout_warning', {
-      onCancel: () => {
-        Actions.pop();
-      },
-      onLogout: () => {
-        Actions.push('login');
+  clearAsyncStorage()
+    .then(() => {
+      if (uploadQueue.length > 0) {
+        Actions.push('logout_warning', {
+          onCancel: () => {
+            Actions.pop();
+          },
+          onLogout: () => {
+            Actions.push('login');
+            doLogout(dispatch, getState);
+          },
+        });
+      } else {
         doLogout(dispatch, getState);
-      },
+      }
     });
-  } else {
-    doLogout(dispatch, getState);
-  }
+
+
 };
 
 export const removeAccount = () => (dispatch, getState) => {

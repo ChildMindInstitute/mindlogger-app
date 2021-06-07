@@ -1,4 +1,15 @@
 {
+  "activity": {
+    "incorrect_answer": "Réponse incorrecte. Veuillez réessayer",
+    "failed": "Échoué"
+  },
+  "activity_time":{
+    "time_remaining": "Temps restant"
+  },
+  "timed_activity":{
+    "time_to_complete": "Temps pour terminer",
+    "hours" : "les heures"
+  },
   "activity_summary": {
     "save": "Sauvegarder",
     "summary": "Résumé",
@@ -16,6 +27,11 @@
   },
   "activity_chart": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
+  },
+  "calendar": {
+    "months": "Janvier_Février_Mars_Avril_Mai_Juin_Juillet_Août_Septembre_Octobre_Novembre_Décembre",
+    "weekdays": "Dim_Lun_Mar_Mer_Jeu_Ven_Sam",
+    "x_days": "L_M_M_J_V_S_D"
   },
   "applet_data": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
@@ -40,7 +56,9 @@
   "applet_footer": {
     "surveys": "Enquêtes",
     "data": "Données",
-    "about": "À propos"
+    "about": "À propos",
+    "activities": "Activités",
+    "activity": "Activité"
   },
   "applet_invite_flow": {
     "back": "Retour",
@@ -94,7 +112,7 @@
     "next": "Suivant"
   },
   "forgot_pass_form": {
-    "reset_pass": "Reset Password",
+    "reset_pass": "Réinitialiser le mot de passe",
     "enter_email_mess": "Veuillez saisir votre adresse e-mail",
     "invalid_email": "Adresse e-mail invalide",
     "email_address": "Adresse e-mail",
@@ -149,7 +167,11 @@
     "no_items": "Aucun élément"
   },
   "audio_recorder": {
-    "permission": "Vous devez accorder la permission d'utiliser votre microphone pour accomplir cette tâche."
+    "permission": "Vous devez accorder la permission d'utiliser votre microphone pour accomplir cette tâche.",
+    "alert_title":"\"MindLogger\" souhaite utiliser votre microphone pour effectuer cette tâche.",
+    "alert_message": "Ceux-ci peuvent être configurés dans les paramètres.",
+    "alert_button_ok": "Ouvrir les paramètres",
+    "alert_button_cancel": "Rejeter"
   },
   "record_button": {
     "stop": "STOP",
@@ -164,6 +186,10 @@
     "play": "Lecture",
     "done": "Fait"
   },
+  "optional_text": {
+    "required": "Ceci est un champ obligatoire.",
+    "enter_text": "Veuillez saisir le texte."
+  },
   "date_picker": {
     "ok": "OK"
   },
@@ -172,8 +198,9 @@
     "long_press_detail": "* Une pression longue diminue le compteur"
   },
   "activity_due_date": {
-    "available_all_day":"MindLogger Text - Google Sheets",
+    "available_all_day": "Disponible : Toute la journée",
     "available": "Disponible",
+    "scheduled_at": "Programmé à",
     "to": "à",
     "day": "jour",
     "days": "jours",
@@ -279,6 +306,7 @@
     "unscheduled":"Non programmé",
     "scheduled": "Programmé",
     "past_due": "En retard",
+    "available": "disponible",
     "sure_delete_account_data": "Êtes-vous sûr de vouloir supprimer votre compte et vos données?",
     "no_cancel": "Non, annuler",
     "yes_delete": "Oui, effacer",

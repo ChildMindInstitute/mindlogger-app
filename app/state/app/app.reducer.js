@@ -35,6 +35,13 @@ export const initialState = {
   currentActivity: null,
 
   /**
+   * The ID of the current activity.
+   *
+   * @type {string}
+   */
+  currentEvent: null,
+
+  /**
    * Whether the applet cards are disabled.
    *
    * @type {boolean}.
@@ -63,6 +70,13 @@ export const initialState = {
   appStatus: false,
 
   /**
+   * timestamp for app was open last time
+   *
+   * @type {Number}
+   */
+  lastActive: new Date().getTime(),
+
+  /**
    * app language code
    *
    * @type {string}
@@ -82,6 +96,27 @@ export const initialState = {
    * @type {object}
    */
   startedTimes: {},
+
+  /**
+   * Times activities finished
+   *
+   * @type {object}
+   */
+  finishedTimes: {},
+
+  /**
+   * Connection status
+   *
+   * @type {boolean}
+   */
+  isConnected: true,
+
+  /**
+   * Completed events
+   *
+   * @type {object}
+   */
+  finishedEvents: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -91,6 +126,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         apiHost: action.payload,
       };
+    case APP_CONSTANTS.SET_CONNECTION:
+      return {
+        ...state,
+        isConnected: action.payload,
+      }
     case APP_CONSTANTS.SET_UPDATED_TIME:
       return {
         ...state,
@@ -100,6 +140,14 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         apiHost: initialState.apiHost,
+      };
+    case APP_CONSTANTS.SET_ACTIVITY_END_TIME:
+      return {
+        ...state,
+        finishedTimes: {
+          ...state.finishedTimes,
+          [action.payload]: Date.now()
+        },
       };
     case APP_CONSTANTS.SET_ACTIVITY_START_TIME:
       return {
@@ -114,7 +162,7 @@ export default (state = initialState, action = {}) => {
         ...state,
         startedTimes: {
           ...state.startedTimes,
-          [action.payload]: null,
+          [action.payload]: "",
         },
       }
     case APP_CONSTANTS.SET_APP_STATUS:
@@ -122,11 +170,24 @@ export default (state = initialState, action = {}) => {
         ...state,
         appStatus: action.payload,
       };
+    case APP_CONSTANTS.SET_LAST_ACTIVE_TIME:
+      return {
+        ...state,
+        lastActive: action.payload,
+      }
     case APP_CONSTANTS.SET_SKIN:
       return {
         ...state,
         skin: action.payload,
       };
+    case APP_CONSTANTS.SET_CLOSED_EVENT:
+      return {
+        ...state,
+        finishedEvents: {
+          ...state.finishedEvents,
+          [action.payload]: Date.now()
+        }
+      }
     case APP_CONSTANTS.SET_CURRENT_APPLET:
       return {
         ...state,
@@ -136,6 +197,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         currentActivity: action.payload,
+      };
+    case APP_CONSTANTS.SET_CURRENT_EVENT:
+      return {
+        ...state,
+        currentEvent: action.payload,
       };
     case APP_CONSTANTS.SET_APPLET_SELECTION_DISABLED:
       return {

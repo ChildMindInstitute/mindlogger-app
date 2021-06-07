@@ -1,23 +1,34 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { TouchableOpacity, Image, StatusBar } from 'react-native';
-import { connect } from 'react-redux';
-import { Container, Content, Text, View, Icon, Footer, Right } from 'native-base';
-import { Actions } from 'react-native-router-flux';
-import i18n from 'i18next';
-import { SubmissionError } from 'redux-form';
-import moment from 'moment';
-import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
-import styles from './styles';
-import { signInSuccessful } from '../../state/user/user.thunks';
-import { signIn } from '../../services/network';
-import LoginForm from './LoginForm';
-import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.selectors';
-import { toggleMobileDataAllowed } from '../../state/app/app.actions';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { TouchableOpacity, Image, StatusBar } from "react-native";
+import { connect } from "react-redux";
+import {
+  Container,
+  Content,
+  Text,
+  View,
+  Icon,
+  Footer,
+  Right,
+} from "native-base";
+import { Actions } from "react-native-router-flux";
+import i18n from "i18next";
+import { SubmissionError } from "redux-form";
+import moment from "moment";
+import { fcmFcmTokenSelector } from "../../state/fcm/fcm.selectors";
+import styles from "./styles";
+import { signInSuccessful } from "../../state/user/user.thunks";
+import { signIn } from "../../services/network";
+import LoginForm from "./LoginForm";
+import {
+  skinSelector,
+  mobileDataAllowedSelector,
+} from "../../state/app/app.selectors";
+import { toggleMobileDataAllowed } from "../../state/app/app.actions";
 
-import { getPrivateKey } from '../../services/encryption';
+import { getPrivateKey } from "../../services/encryption";
 
-const defaultLogo = require('../../../img/CMI_white_logo.png');
+const defaultLogo = require("../../../img/CMI_white_logo.png");
 
 class Login extends Component {
   constructor(props) {
@@ -71,27 +82,22 @@ class Login extends Component {
 
     return signIn({ ...body, deviceId: fcmToken, timezone })
       .then((response) => {
-        if (typeof response.exception !== 'undefined') {
+        if (typeof response.exception !== "undefined") {
           throw response.exception;
         } else {
-          response.user.privateKey = getPrivateKey({
-            userId: response.user._id,
-            email: body.user,
-            password: body.password,
-          });
           response.user.email = body.user;
 
           signInSuccessful(response);
         }
       })
       .catch((e) => {
-        if (typeof e.status !== 'undefined') {
+        if (typeof e.status !== "undefined") {
           throw new SubmissionError({
-            password: i18n.t('login:login_error'),
+            password: i18n.t("login:login_error"),
           });
         } else {
           throw new SubmissionError({
-            password: i18n.t('login:login_error'),
+            password: i18n.t("login:login_error"),
           });
         }
       });
@@ -104,7 +110,8 @@ class Login extends Component {
   render() {
     const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin.name;
-    const logo = typeof skin.logo !== 'undefined' ? { uri: skin.logo } : defaultLogo;
+    const logo =
+      typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
         <StatusBar barStyle="light-content" />
@@ -121,20 +128,29 @@ class Login extends Component {
           />
           <View style={styles.bottomRow}>
             <TouchableOpacity onPress={this.onRegister}>
-              <Text style={styles.whiteText}>{i18n.t('login:new_user')}</Text>
+              <Text style={styles.whiteText}>{i18n.t("login:new_user")}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.forgotPassword} onPress={this.onForgotPassword}>
-              <Text style={styles.whiteText}>{i18n.t('login:forgot_password')}</Text>
+            <TouchableOpacity
+              style={styles.forgotPassword}
+              onPress={this.onForgotPassword}
+            >
+              <Text style={styles.whiteText}>
+                {i18n.t("login:forgot_password")}
+              </Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={this.onAbout}>
-              <Text style={styles.whiteText}>{`${i18n.t('login:what_is')} ${title}?`}</Text>
+              <Text style={styles.whiteText}>{`${i18n.t(
+                "login:what_is"
+              )} ${title}?`}</Text>
             </TouchableOpacity>
           </View>
           <View>
             <TouchableOpacity onPress={() => Actions.app_language()}>
-              <Text style={styles.whiteText}>{i18n.t('language_screen:change_app_language')}</Text>
+              <Text style={styles.whiteText}>
+                {i18n.t("language_screen:change_app_language")}
+              </Text>
             </TouchableOpacity>
           </View>
           <Image square style={styles.logo} source={logo} />
@@ -142,7 +158,11 @@ class Login extends Component {
         <Footer style={styles.footer}>
           <Right>
             <TouchableOpacity onPress={this.onChangeStudy}>
-              <Icon type="FontAwesome" name="database" style={styles.whiteIcon} />
+              <Icon
+                type="FontAwesome"
+                name="database"
+                style={styles.whiteIcon}
+              />
             </TouchableOpacity>
           </Right>
         </Footer>
@@ -161,7 +181,7 @@ Login.propTypes = {
 Login.defaultProps = {
   fcmToken: null,
 };
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   fcmToken: fcmFcmTokenSelector(state),

@@ -1,13 +1,25 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Image, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-native';
-import { View, Icon } from 'native-base';
-import ImagePicker from 'react-native-image-picker';
+import {
+  Image,
+  TouchableOpacity,
+  Platform,
+  StyleSheet,
+  Alert,
+  Dimensions,
+  TextInput
+} from 'react-native';
+import { View, Icon, Item } from 'native-base';
+import * as ImagePicker from 'react-native-image-picker';
+import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
 
-const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
+import permissions from '../permissions';
 
+const { width, height } = Dimensions.get('window');
+
+const VIDEO_MIME_TYPE = Platform.OS === 'ios' ? 'video/quicktime' : 'video/mp4';
 const styles = StyleSheet.create({
   body: {
     flex: 1,
@@ -70,29 +82,43 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-
 export class Camera extends Component {
-  libraryAlert = (options, callback) => {
+  isIos = Platform.OS === 'ios';
+
+  finalAnswer = {};
+
+  handleComment = (itemValue) => {
+    const { onChange } = this.props;
+    this.finalAnswer["text"] = itemValue;
+    onChange(this.finalAnswer);
+  }
+
+  libraryAlert = () => {
+    const { video } = this.props;
+    const mediaType = video ? 'video' : 'photo';
+
     Alert.alert(
-      `${i18n.t('camera:choose')} ${options.mediaType}`,
-      `${i18n.t('camera:take_a_new')} ${options.mediaType} ${i18n.t('camera:or_choose')}`,
+      `${i18n.t('camera:choose')} ${mediaType}`,
+      `${i18n.t('camera:take_a_new')} ${mediaType} ${i18n.t(
+        'camera:or_choose',
+      )}`,
       [
         {
           text: i18n.t('camera:camera'),
           onPress: () => {
-            ImagePicker.launchCamera(options, (response) => {
-              response.choice = 'camera';
-              callback(response);
+            permissions.checkCameraPermission().then(() => {
+              if (video) {
+                this.take();
+              } else {
+                this.launchCamForCam();
+              }
             });
           },
         },
         {
           text: i18n.t('camera:library'),
           onPress: () => {
-            ImagePicker.launchImageLibrary(options, (response) => {
-              response.choice = 'library';
-              callback(response);
-            });
+            permissions.checkGalleryPermission().then(() => { this.launchImageLibrary(); });
           },
         },
       ],
@@ -100,75 +126,212 @@ export class Camera extends Component {
     );
   };
 
-  take = () => {
-    const { video, onChange, config } = this.props;
+  launchImageLibrary = () => {
+    const { video } = this.props;
     const options = {
       mediaType: video ? 'video' : 'photo',
-      storageOptions: {
-        cameraRoll: true,
-        waitUntilSaved: true,
-      },
-      quality: 0.5,
-      cameraType: 'front',
       videoQuality: 'low',
-      maxWidth: 2048,
-      maxHeight: 2048,
+      quality: 0.3,
+      maxWidth: 800,
+      maxHeight: 800,
     };
-
-    const pickerFunc = config.allowLibrary ? this.libraryAlert : ImagePicker.launchCamera;
-
-    pickerFunc(options, (response) => {
-      if (!response.didCancel && !response.error) {
-        const filename = response.path.split('/').pop();
-
-        const toPath = `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`;
-
-        const picSource = {
-          uri: Platform.OS === 'ios' ? toPath : `file://${toPath}`,
-          filename,
-          type: response.type || VIDEO_MIME_TYPE,
-          fromLibrary: response.choice === 'library',
-        };
-
-        let fileManager = RNFetchBlob.fs.cp(response.path, picSource.uri.split('///').pop());
-
-        if (response.choice !== 'library') {
-          fileManager = fileManager.then(() => RNFetchBlob.fs.unlink(response.path));
+    ImagePicker.launchImageLibrary(options, async (response) => {
+      console.log('launchImageLibrary', response);
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorCode);
+      }
+      if (!response.didCancel && !response.errorCode) {
+        const { onChange } = this.props;
+        const uri = response.uri.replace('file://', '');
+        let filename = response.fileName;
+        if (!filename) {
+          filename = uri.split('/').pop();
         }
 
-        fileManager.then(() => {
-          onChange(picSource);
-        }).catch(e => {
-          console.error(e);
-        });
-
+        if (!response.fileSize && uri.indexOf('content://') === -1) {
+          RNFetchBlob.fs.stat(uri).then((fileInfo) => {
+            const picSource = {
+              uri,
+              filename,
+              size: fileInfo.size,
+              type: response.type || VIDEO_MIME_TYPE,
+              fromLibrary: false,
+            };
+            this.finalAnswer["value"] = picSource;
+            onChange(this.finalAnswer);
+          });
+        } else {
+          const picSource = {
+            uri,
+            filename,
+            size: response.fileSize,
+            type: response.type || VIDEO_MIME_TYPE,
+            fromLibrary: true,
+          };
+          console.log('launchImageLibrary 2', picSource);
+          this.finalAnswer["value"] = picSource;
+          onChange(this.finalAnswer);
+        }
       }
     });
   };
 
+  launchCamForCam = () => {
+    const options = {
+      mediaType: 'photo',
+      // saveToPhotos: true,
+      maxWidth: 800,
+      maxHeight: 800,
+      quality: 0.3,
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      const { onChange } = this.props;
+      console.log('launchCamForCam', { options, response });
+      if (response.errorCode) {
+        Alert.alert(response.errorCode.indexOf('other') > -1 ? response.errorMessage : response.errorCode);
+      }
+      if (!response.didCancel && !response.errorCode) {
+        const uri = response.uri.replace('file://', '');
+        const filename = response.fileName;
+        const picSource = {
+          uri,
+          filename,
+          type: response.type || VIDEO_MIME_TYPE,
+          size: response.fileSize,
+          fromLibrary: false,
+        };
+        console.log('launchCamForCam', { picSource });
+        this.finalAnswer["value"] = picSource;
+        onChange(this.finalAnswer);
+      }
+    });
+  };
+
+  take = () => {
+    try {
+      const { video, onChange, config } = this.props;
+      console.log({ video });
+      const options = {
+        mediaType: 'video',
+        videoQuality: 'low',
+        durationLimit: 60,
+        // saveToPhotos: true,
+      };
+      if (config.allowLibrary) {
+        permissions.checkGalleryPermission().then(() => { this.launchImageLibrary(); });
+      } else {
+        ImagePicker.launchCamera(options, (response) => {
+          console.log(response, 'video response');
+          if (response.errorCode) {
+            Alert.alert(response.errorCode.indexOf('other') > -1 ? response.errorMessage : response.errorCode);
+          }
+          if (!response.didCancel && !response.errorCode) {
+            const uri = response.uri.replace('file://', '');
+            let filename = response.fileName;
+            if (!filename) {
+              filename = uri.split('/').pop();
+            }
+            if (!response.fileSize && uri.indexOf('content://') === -1) {
+              RNFetchBlob.fs.stat(uri).then((fileInfo) => {
+                const picSource = {
+                  uri,
+                  filename,
+                  size: fileInfo.size,
+                  type: response.type || VIDEO_MIME_TYPE,
+                  fromLibrary: false,
+                };
+                console.log('take', { picSource });
+                this.finalAnswer["value"] = picSource;
+                onChange(this.finalAnswer);
+              });
+            } else {
+              const picSource = {
+                uri,
+                filename,
+                size: response.fileSize,
+                type: response.type || VIDEO_MIME_TYPE,
+                fromLibrary: false,
+              };
+              console.log('take', { picSource });
+              this.finalAnswer["value"] = picSource;
+              onChange(this.finalAnswer);
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   render() {
-    const { value, video } = this.props;
+    const { value, video, isOptionalText, isOptionalTextRequired } = this.props;
+
+    this.finalAnswer = value ? value : {};
+
     const iconName = video ? 'video-camera' : 'camera';
     return (
       <View style={styles.body}>
-        {value && video && (
-          <View style={styles.videoConfirmed}>
-            <Icon type="Entypo" name="check" style={styles.greenIcon} />
-          </View>
-        )}
-        {value && !video && <Image source={value} style={styles.image} />}
-        {!value && (
-          <View>
-            <TouchableOpacity onPress={this.take} style={styles.takeButton}>
-              <Icon type="Entypo" name={iconName} style={styles.redIcon} />
-            </TouchableOpacity>
-          </View>
-        )}
+        {this.finalAnswer["value"] ? (
+          video ? (
+            Platform.OS === 'ios' ? ( // iOS
+              <View style={styles.videoConfirmed}>
+                <Icon type="Entypo" name="check" style={styles.greenIcon} />
+              </View>
+            ) : (                       // Android
+                <VideoPlayer
+                  video={{ uri: this.finalAnswer["value"].uri }}
+                  videoWidth={width}
+                  videoHeight={360}
+                  resizeMode="contain"
+                />
+              )
+          ) : (
+              <Image source={{ uri: Platform.OS === 'android' ? `file://${this.finalAnswer["value"].uri}` : this.finalAnswer["value"].uri }} style={styles.image} />
+            )
+        ) : (
+            <View>
+              <TouchableOpacity
+                onPress={this.libraryAlert}
+                style={styles.takeButton}
+              >
+                <Icon type="Entypo" name={iconName} style={styles.redIcon} />
+              </TouchableOpacity>
+            </View>
+          )}
+        {isOptionalText ?
+          (
+            <View style={{
+              marginTop: '8%',
+              width: '100%',
+            }}
+            >
+              <Item bordered
+                style={{ borderWidth: 1 }}
+              >
+                <TextInput
+                  style={{
+                    width: '100%',
+                    ...Platform.OS !== 'ios' ? {} : { maxHeight: 100, minHeight: 40 }
+                  }}
+                  placeholder={
+                    i18n.t(isOptionalTextRequired ? 'optional_text:required' : 'optional_text:enter_text')
+                  }
+                  onChangeText={text => this.handleComment(text)}
+                  value={this.finalAnswer["text"]}
+                  multiline={true}
+                />
+              </Item>
+            </View>
+
+          ) : <View></View>
+        }
       </View>
     );
   }
 }
-
 Camera.defaultProps = {
   value: undefined,
   video: false,
@@ -176,7 +339,6 @@ Camera.defaultProps = {
     allowLibrary: true,
   },
 };
-
 Camera.propTypes = {
   video: PropTypes.bool,
   value: PropTypes.shape({

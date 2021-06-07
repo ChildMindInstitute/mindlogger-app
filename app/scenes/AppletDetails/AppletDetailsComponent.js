@@ -91,11 +91,11 @@ class AppletDetailsComponent extends React.Component {
 
     const responseDates = this.getResponseDates() || [];
     switch (selectedTab) {
-      case 'survey':
+      case 'activity':
         return (
           <Content>
             <View style={{ flex: 1 }}>
-              <AppletCalendar responseDates={responseDates} appLanguage={this.props.appLanguage} />
+              <AppletCalendar responseDates={responseDates} />
               <ActivityList
                 onPressActivity={onPressActivity}
                 onLongPressActivity={onLongPressActivity}
@@ -155,12 +155,13 @@ class AppletDetailsComponent extends React.Component {
           </Body>
           <Right style={{ flexDirection: 'row' }}>
             <Button
+              disabled
               transparent
               onPress={() => {
                 this.handlePressSettings();
               }}
             >
-              <Icon type="FontAwesome" name="gear" />
+              {/* <Icon type="FontAwesome" name="gear" /> */}
             </Button>
           </Right>
         </Header>
@@ -196,13 +197,4 @@ AppletDetailsComponent.propTypes = {
   initialTab: PropTypes.string.isRequired,
 };
 
-const mapDispatchToProps = {};
-
-const mapStateToProps = state => ({
-  appLanguage: state.app.appLanguage,
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AppletDetailsComponent);
+export default AppletDetailsComponent;

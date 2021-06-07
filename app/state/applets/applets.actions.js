@@ -9,9 +9,24 @@ export const replaceApplets = applets => ({
   payload: applets,
 });
 
+export const setNotificationReminder = applets => ({
+  type: APPLET_CONSTANTS.SET_REMINDER,
+  payload: applets,
+});
+
+export const clearNotificationReminder = applets => ({
+  type: APPLET_CONSTANTS.CLEAR_REMINDER,
+  payload: applets,
+});
+
 export const prepareResponseKeys = (appletId, keys) => ({
   type: APPLET_CONSTANTS.SET_ENCRYPTION_KEY,
   payload: { appletId, keys }
+})
+
+export const setMultipleResponseKeys = ( keys ) => ({
+  type: APPLET_CONSTANTS.SET_MULTIPLE_ENCRYPTION_KEY,
+  payload: { keys }
 })
 
 export const replaceTargetApplet = applet => ({
@@ -32,6 +47,11 @@ export const replaceTargetAppletSchedule = (appletId, schedule) => ({
 export const setDownloadingApplets = isDownloading => ({
   type: APPLET_CONSTANTS.SET_DOWNLOADING_APPLETS,
   payload: isDownloading,
+});
+
+export const setActivityAccess = id => ({
+  type: APPLET_CONSTANTS.SET_ACTIVITY_ACCESS,
+  payload: id,
 });
 
 export const setDownloadingTargetApplet = isDownloading => ({

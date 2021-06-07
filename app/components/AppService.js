@@ -1,25 +1,27 @@
 import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules } from 'react-native';
+import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import * as firebase from 'react-native-firebase';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-
+import RNRestart from 'react-native-restart';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet, setAppStatus } from '../state/app/app.actions';
+import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
-import { updateBadgeNumber } from '../state/applets/applets.thunks';
+import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
+import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
-
+import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
+import sortActivities from './ActivityList/sortActivities';
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -28,7 +30,7 @@ const fNotifications = firebase.notifications.nativeModuleExists && firebase.not
 const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
-class FireBaseMessaging extends Component {
+class AppService extends Component {
   /**
    * Method called when the component is about to be rendered.
    *
@@ -46,28 +48,57 @@ class FireBaseMessaging extends Component {
       fMessaging.onMessage(this.onMessage),
     ];
     this.appState = 'active';
+    this.pendingNotification = null;
     this.notificationsCount = 0;
-
-    AppState.addEventListener('change', this.handleAppStateChange);
+    this.intervalId = 0;
+    // AppState.addEventListener('change', this.handleAppStateChange);
 
     if (isAndroid) {
       this.initAndroidChannel();
     }
-
     if (isIOS) {
       this.notificationsCount = await this.getDeliveredNotificationsCount();
       firebase.messaging().ios.registerForRemoteNotifications();
     }
+    // this.notificationsCount = await this.getDeliveredNotificationsCount();
+    AppState.addEventListener('change', this.handleAppStateChange);
+
 
     this.requestPermissions();
     this.props.setFCMToken(await fMessaging.getToken());
 
     const event = await fNotifications.getInitialNotification();
-
     if (event) {
       this.openActivityByEventId(event);
       // if (isAndroid) NativeModules.DevSettings.reload();
     }
+
+    this.startTimer();
+  }
+
+  /**
+   * start timer for app ( automatically refreshes app at 12:00am everyday)
+   */
+  startTimer()
+  {
+    const { sync } = this.props;
+    const updateScheduleDelay = 24 * 3600 * 1000;
+
+    const currentTime = new Date();
+    const nextDay = new Date(
+      currentTime.getFullYear(),
+      currentTime.getMonth(),
+      currentTime.getDate() + 1,
+    );
+    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+
+    this.intervalId = delayedExec(
+      () => {
+        sync();
+        this.intervalId = delayedExec(sync, { every: updateScheduleDelay });
+      },
+      { after: leftTimeout },
+    );
   }
 
   /**
@@ -76,8 +107,14 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   componentWillUnmount() {
-    this.listeners.forEach(removeListener => removeListener());
+    if (this.listeners) {
+      this.listeners.forEach(removeListener => removeListener());
+    }
     AppState.removeEventListener('change', this.handleAppStateChange);
+
+    if (this.intervalId) {
+      clearExec(this.intervalId);
+    }
   }
 
   /**
@@ -161,19 +198,39 @@ class FireBaseMessaging extends Component {
    * @returns {object} the requested activity.
    */
   findActivityById(eventId, applet, activityId) {
-    const activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
 
-    if (activity) {
-      return activity;
+    if (!activity) {
+      return null;
     }
 
-    const event = applet.schedule.events.find(({ id }) => id === eventId);
+    let event = {};
+
+    Object.keys(applet.schedule.events).forEach(key => {
+      const e = applet.schedule.events[key];
+      if (e.id === eventId) {
+        event = e;
+      }
+    });
 
     if (!event) {
       return null;
     }
 
-    return applet.activities.find(({ schema }) => schema === event.data.URI);
+    const sortedActivities = sortActivities(
+      applet.activities,
+      this.props.inProgress,
+      this.props.finishedEvents,
+      applet.schedule.data
+    );
+
+    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(activityId));
+    if (sortedActivity) {
+      return sortedActivity;
+    }
+
+    activity.isCompleted = true;
+    return activity;
   }
 
   /**
@@ -189,7 +246,7 @@ class FireBaseMessaging extends Component {
   openActivityByEventId = (notificationObj) => {
     const type = _.get(notificationObj, 'notification._data.type');
 
-    if (type == 'response-data-alert') {
+    if (type === 'response-data-alert') {
       Alert.alert(
         i18n.t('firebase_messaging:response_refresh_request'),
         i18n.t('firebase_messaging:refresh_request_details'),
@@ -222,11 +279,17 @@ class FireBaseMessaging extends Component {
         ],
         { cancelable: false },
       );
+    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') {
+      const appletId = _.get(notificationObj, 'notification._data.applet_id');
+
+      this.props.downloadApplets(() => {
+        // this.props.setCurrentApplet(appletId);
+        // Actions.push('applet_details', { initialTab: 'data' });
+      });
     } else {
       const eventId = _.get(notificationObj, 'notification._data.event_id', '');
       const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
       const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-
       // Ignore the notification if some data is missing.
       if (!eventId || !appletId || !activityId) return;
 
@@ -239,8 +302,16 @@ class FireBaseMessaging extends Component {
         );
       }
 
-      let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
-      const event = applet.schedule.events.find(({ id }) => id.endsWith(eventId));
+      const activity = this.findActivityById(eventId, applet, activityId);
+
+      let event = {};
+
+      Object.keys(applet.schedule.events).forEach(key => {
+        const e = applet.schedule.events[key];
+        if (e.id.endsWith(eventId)) {
+          event = e;
+        }
+      });
 
       if (activity) {
         return this.prepareAndOpenActivity(applet, activity, event);
@@ -279,15 +350,19 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   prepareAndOpenActivity = (applet, activity, event) => {
+    const today = new Date();
+    const { scheduledTime, data } = event;
+    const activityTimeout = data.timeout.day * 864000000
+      + data.timeout.hour * 3600000
+      + data.timeout.minute * 60000;
+
     if (!activity) {
       return Alert.alert(i18n.t('firebase_messaging:activity_not_found'));
     }
 
-    const isActivityCompleted = this.isActivityCompleted(applet, activity);
-
     this.props.setCurrentApplet(applet.id);
 
-    if (isActivityCompleted) {
+    if (activity.isCompleted) {
       Actions.push('applet_details', { initialTab: 'data' });
       return Alert.alert(
         '',
@@ -301,43 +376,26 @@ class FireBaseMessaging extends Component {
       Actions.push('applet_details');
     }
 
-    const currentDate = new Date();
-
-    if (activity.lastScheduledTimestamp && activity.lastTimeout) {
-      const deltaTime = currentDate.getTime()
-        - this.getMilliseconds(activity.lastScheduledTimestamp)
-        - activity.lastTimeout;
-
-      if (deltaTime >= 0) {
-        const time = moment(activity.lastScheduledTimestamp).format('HH:mm');
-
-        return Alert.alert(
-          '',
-          `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${time}. ${i18n.t(
-            'firebase_messaging:if_progress_was_made_on_the',
-          )} `
-            + `${activity.name.en}, ${i18n.t(
-              'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
-            )} `}${i18n.t('firebase_messaging:today')}`,
-        );
-      }
+    if (scheduledTime > today
+      || (data.timeout.allow && today.getTime() - scheduledTime.getTime() > activityTimeout)) {
+      return Alert.alert(
+        '',
+        `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${scheduledTime}. ${i18n.t(
+          'firebase_messaging:if_progress_was_made_on_the',
+        )} `
+        + `${activity.name.en}, ${i18n.t(
+          'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
+        )} `}${i18n.t('firebase_messaging:today')}`,
+      );
     }
 
-    let deltaTime = currentDate.getTime() - this.getMilliseconds(activity.nextScheduledTimestamp);
-
-    if (
-      activity.nextScheduledTimestamp
-      && moment(currentDate).isBefore(moment(activity.nextScheduledTimestamp), 'day')
-    ) {
-      deltaTime = 0;
-    }
-
-    const allowAccessBefore = event.data.timeout && event.data.timeout.access;
-
-    if (activity.nextAccess || deltaTime >= 0 || allowAccessBefore) {
-      this.props.startResponse(activity);
+    if (activity.status !== 'scheduled' || event.data.timeout.access) {
+      this.props.startResponse({
+        ...activity,
+        event
+      });
     } else {
-      const time = moment(activity.nextScheduledTimestamp).format('HH:mm');
+      const time = moment(activity.event.scheduledTime).format('HH:mm');
 
       Alert.alert(
         i18n.t('firebase_messaging:today'),
@@ -377,9 +435,9 @@ class FireBaseMessaging extends Component {
   onNotificationDisplayed = async (
     notification: firebase.RNFirebase.notifications.Notification,
   ) => {
-    this.notificationsCount += 1;
-
     if (isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       this.updateApplicationIconBadgeNumber();
     }
   };
@@ -406,7 +464,7 @@ class FireBaseMessaging extends Component {
    *
    * @returns {void}
    */
-  onNotification = async (notification: firebase.RNFirebase.notifications.Notification) => {
+  onNotification = async (notification) => {
     const localNotification = this.newNotification({
       notificationId: notification.notificationId,
       title: notification.title,
@@ -415,6 +473,7 @@ class FireBaseMessaging extends Component {
       data: notification.data,
       // iosBadge: notification.ios.badge,
     });
+
 
     try {
       await firebase.notifications().displayNotification(localNotification);
@@ -434,10 +493,15 @@ class FireBaseMessaging extends Component {
   onNotificationOpened = async (
     notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
   ) => {
-    this.openActivityByEventId(notificationOpen);
-    this.notificationsCount -= 1;
+    if (this.appState == 'background') {
+      this.pendingNotification = notificationOpen;
+    } else {
+      this.openActivityByEventId(notificationOpen);
+    }
 
     if (isIOS) {
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       this.updateApplicationIconBadgeNumber();
       this.props.updateBadgeNumber(this.notificationsCount);
     }
@@ -532,23 +596,51 @@ class FireBaseMessaging extends Component {
    * @returns {void}
    */
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    const { setAppStatus, updateBadgeNumber } = this.props;
+    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive } = this.props;
     const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
     const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
     const stateChanged = nextAppState !== this.appState;
 
     if (goingToBackground) {
       setAppStatus(false);
+      setLastActiveTime(new Date().getTime());
+
+      clearExec(this.intervalId);
+      this.intervalId = 0;
     } else if (goingToForeground) {
       setAppStatus(true);
+      this.startTimer();
     }
 
     if (stateChanged && isIOS) {
-      this.updateApplicationIconBadgeNumber();
+      this.notificationsCount = await this.getDeliveredNotificationsCount();
+
       updateBadgeNumber(this.notificationsCount);
     }
 
     this.appState = nextAppState;
+
+    if (this.appState == 'active') {
+      /* deactivate for now
+        if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
+          sync(() => {
+            if (this.pendingNotification) {
+              this.openActivityByEventId(this.pendingNotification);
+              this.pendingNotification = null;
+            }
+          })
+        } else {
+          if (this.pendingNotification) {
+            this.openActivityByEventId(this.pendingNotification);
+            this.pendingNotification = null;
+          }
+        }
+      */
+      if (this.pendingNotification) {
+        this.openActivityByEventId(this.pendingNotification);
+        this.pendingNotification = null;
+      }
+    }
   };
 
   /**
@@ -563,7 +655,7 @@ class FireBaseMessaging extends Component {
   }
 }
 
-FireBaseMessaging.propTypes = {
+AppService.propTypes = {
   children: PropTypes.node.isRequired,
   setFCMToken: PropTypes.func.isRequired,
   applets: PropTypes.array.isRequired,
@@ -572,10 +664,11 @@ FireBaseMessaging.propTypes = {
   setCurrentApplet: PropTypes.func.isRequired,
   startResponse: PropTypes.func.isRequired,
   updateBadgeNumber: PropTypes.func.isRequired,
+  downloadApplets: PropTypes.func.isRequired,
   syncTargetApplet: PropTypes.func.isRequired,
 };
 
-FireBaseMessaging.defaultProps = {
+AppService.defaultProps = {
   inProgress: {},
 };
 
@@ -583,6 +676,8 @@ const mapStateToProps = state => ({
   applets: appletsSelector(state),
   inProgress: inProgressSelector(state),
   authToken: authTokenSelector(state),
+  lastActive: lastActiveTimeSelector(state),
+  finishedEvents: finishedEventsSelector(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -593,12 +688,14 @@ const mapDispatchToProps = dispatch => ({
   setCurrentApplet: id => dispatch(setCurrentApplet(id)),
   startResponse: activity => dispatch(startResponse(activity)),
   updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
+  downloadApplets: (cb) => dispatch(downloadApplets(cb)),
   sync: cb => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
+  setLastActiveTime: time => dispatch(setLastActiveTime(time)),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FireBaseMessaging);
+)(AppService);

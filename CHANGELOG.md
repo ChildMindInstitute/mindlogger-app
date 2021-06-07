@@ -3,8 +3,373 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ### [Unreleased]
+
+## [0.16.25] - 2021-05-30
+- implement average scoring
+- Fix TextEntry widget and scoring
+
+## [0.16.24] - 2021-05-22
+- optimize scheduling
+
+## [0.16.23] - 2021-05-18
+- fix getting score from response
+
+## [0.16.22] - 2021-05-17
+- update logic for pulling data from backend
+
+## [0.16.21] - 2021-05-11
+- Optiize changeg password & login
+
+## [0.16.20] - 2021-05-04
+- Fix time string
+
+## [0.16.19] - 2021-04-29
+- Update texts in UI
+
+## [0.16.18] - 2021-04-28
+- Modify free text widget
+
+## [0.16.17] - 2021-04-22
+- Fixed duplicated response
+
+## [0.16.16] - 2021-04-20
+- Modify notif error msg for unavailable activity
+
+## [0.16.15] - 2021-04-17
+- Fixed undo button on free text widget
+- fixed notification count
+
+## [0.16.14] - 2021-04-16
+- Fixed inprogress response
+
+## [0.16.13] - 2021-04-15
+- Fix opening notification
+
+## [0.16.9] - 2021-04-14
+- Fix opening activity via notification
+
+## [0.16.8] - 2021-04-14
+- Changed activity availability
+- Small fix
+
+## [0.16.7] - 2021-04-10
+- Fixed drawing widget issue
+
+## [0.16.6] - 2021-04-09
+- Fixed idle timer and finished events
+
+## [0.16.5] - 2021-04-07
+- Change item image height
+
+## [0.16.4] - 2021-04-06
+- Fixed scheduling issues
+
+## [0.16.3] - 2021-04-06
+- Fix white screen issue
+- Fix opening activity issue on push notification
+
+## [0.16.2] - 2021-04-01
+- Resolved native keyboard issue on text input
+- Fix text widget issue
+
+## [0.16.1] - 2021-04-01
+- Updated scheduling logic
+
+## [0.15.30] - 2021-03-31
+- Fix several bugs
+
+## [0.15.29] - 2021-03-29
+- Changed image resize mode
+
+## [0.15.28] - 2021-03-28
+- Fixed question name in data tab
+
+## [0.15.27] - 2021-03-21
+- Fixed EMA next button issue
+
+## [0.15.26] - 2021-03-25
+- Modified audioImageRecord widget
+
+## [0.15.25] - 2021-03-21
+- Fixed next button in EMA applet
+- Removed white space above items
+- Fixed vertical offset
+
+## [0.15.24] - 2021-03-18
+- Fixed async storage cache issue
+- Updated optional text box in all widgets
+
+## [0.15.23] - 2021-03-18
+- Fixed next button issues
+
+## [0.15.22] - 2021-03-16
+- Modified applet image
+
+## [0.15.21] - 2021-03-17
+- Fix app crashing issue
+- Fix drawing item issue
+- Modified response uploading after reconnecting
+
+## [0.15.20] - 2021-03-16
+- Fix keyboard overlap issue with textbox
+
+## [0.15.19] - 2021-03-14
+- Fixed bug with stacked slider
+
+## [0.15.18] - 2021-03-10
+- Fixed activity timer after opening via notification
+
+## [0.15.17] - 2021-03-010
+- Modified information page
+
+## [0.15.16] - 2021-03-08
+- Fixed next button label in widgets
+
+## [0.15.15] - 2021-03-07
+- Modified activity button
+
+## [0.15.14] - 2021-03-07
+- Fixed drawing widget
+
+## [0.15.13] - 2021-03-05
+- Fixed response data format
+
+## [0.15.12] - 2021-03-03
+- Fixed app crashing bug with header image
+
+## [0.15.11] - 2021-03-03
+- Resolved bold text issue
+- Fixed conditional logic
+
+## [0.15.10] - 2021-03-03
+- Bug fixes of stacked sliders
+
+## [0.15.9] - 2021-03-01
+- Modified continuous slider
+- Resolved conditional logic issue
+
+## [0.15.8] - 2021-02-28
+- Fixed optimization issue
+- Fixed response data issue
+
+## [0.15.7] - 2021-03-1
+- Optional textbox for items
+
+## [0.15.6] - 2021-02-24
+- Updated tick marks in slider widget
+
+## [0.15.5] - 2021-02-22
+- Fixed hidden inputbox
+- Added stacked radio/checkbox/radio item
+
+## [0.15.4] - 2021-02-21
+- Fixed activity access
+
+## [0.15.3] - 2021-02-22
+- Fixed token value format
+
+## [0.15.2] - 2021-02-22
+- Implemented smooth slider
+
+## [0.15.1] - 2021-02-12
+- Implemented app optimization
+
+## [0.14.82] - 2021-02-08
+- Implement new slider option
+
+## [0.14.81] - 2021-02-03
+- Add ability to change the length of audio user can record
+
+## [0.14.80] - 2021-02-03
+- Small Fix AudioImageRecord Item
+- update time picker
+
+## [0.14.80] - 2021-02-08
+- Implement new slider option
+
+## [0.14.79] - 2021-02-03
+- Fix styling in markdown
+
+## [0.14.78] - 2021-02-01
+- Fix notification badge updating
+- Add tooltip for radio/multi-select options
+
+## [0.14.77] - 2021-01-29
+- Fix markdown rendering
+
+## [0.14.76] - 2021-01-27
+- insert video/audio player, update informational page
+
+## [0.14.75] - 2021-01-26
+- Fixed offline activity status
+- Fix notification count
+
+## [0.14.74] - 2021-01-20
+- Fix activity start time
+
+## [0.14.73] - 2021-01-21
+- Fixed undeinfed object
+- Fix about button text
+
+## [0.14.72] - 2021-01-21
+- Add description field for choice
+
+## [0.14.71] - 2021-01-19
+- Fix activity end times
+
+## [0.14.70] - 2021-01-19
+- fix token accumulation
+
+## [0.14.69] - 2021-01-18
+- Send alerts to backend
+
+## [0.14.68] - 2021-01-18
+- fix negative tokens in token-chart
+
+## [0.14.67] - 2021-01-18
+- update survey to activity
+
+## [0.14.66] - 2021-01-16
+- Fix timer
+- Fixed delivered notification count
+
+## [0.14.65] - 2021-01-15
+- Fixed activity status on offline mode
+
+## [0.14.64] - 2021-01-15
+- Add clear notification function
+
+## [0.14.62] - 2021-01-14
+- Add clear notification function
+
+## [0.14.61] - 2021-01-14
+- Fix timer
+
+## [0.14.60] - 2021-01-13
+- Fix error handling
+
+## [0.14.59] - 2021-01-13
+- Fix notification start_time
+- Fixed offline past-due activity
+
+## [0.14.58] - 2021-01-12
+- Fix activity availability
+
+## [0.14.57] - 2021-01-12
+- Fix calcTimeDiff function
+
+## [0.14.56] - 2021-01-11
+- Fix accumulated tokens registeration
+- Fix token accumulation
+
+## [0.14.55] - 2021-01-10
+- Fix accumulated tokens registeration
+
+## [0.14.54] - 2021-01-07
+- Fix timed activity status
+
+## [0.14.53] - 2021-01-05
+- Fixed `scheduled day only` option
+
+## [0.14.52] - 2021-01-07
+- Fix response submit
+
+## [0.14.51] - 2021-01-05
+- Fixed notification time
+- Added TokenLogger Prizes Activity feature
+
+## [0.14.50] - 2021-01-05
+- Removed console logs
+- Fixed response data issue
+- Fixed token chart issue
+
+## [0.14.49] - 2021-01-04
+- Fixed activity timer after notification
+
+## [0.14.48] - 2021-01-03
+- Fixed offline schedule in past due
+
+## [0.14.47] - 2021-01-04
+- fix token data cumulation
+
+## [0.14.46] - 2020-1-3
+- Fixed iOs/Android version specific issue of react-native-image-picker
+- Fixed uploading response images of media items
+
+## [0.14.45] - 2020-12-31
+- Allow multiple words in Cumulative Score Title field
+
+## [0.14.44] - 2020-12-30
+- Fixed object iteration issue
+
+## [0.14.43] - 2020-12-30
+- Hide permanently delete account in setting
+
+## [0.14.42] - 2020-12-30
+- Fixed T-scale value issue
+
+## [0.14.41] - 2020-12-29
+- Fixed duplicated notification issue
+
+## [0.14.40] - 2020-12-29
+- fix only scheduled day option
+
+## [0.14.39] - 2020-12-28
+- Temporarily hide Data App/ Data Removal Options
+
+## [0.14.38] - 2020-12-28
+- Accumulation of Tokens on Graph
+
+## [0.14.37] - 2020-12-28
+- Fixed localization issue with CalendarStrip
+- AudioRecord Item Fix
+
+## [0.14.36] - 2020-12-24
+- Condition check of freeEntry for TableInput
+
+## [0.14.35] - 2020-12-28
+- use scores for calculating expression in activity summary page
+
+## [0.14.34] - 2020-12-24
+- Fixed notification issue when tapping resume button
+
+## [0.14.33] - 2020-12-23
+- use lookup table for calculating sub-scaled scores
+
+## [0.14.32] - 2020-12-22
+- Implemented offline scheduling
+
+## [0.14.31] - 2020-12-22
+- Fix activity timer on notification
+
+## [0.14.30] - 2020-12-22
+- Wrapped completionHandler in the try/catch block
+
+## [0.14.29] - 2020-12-21
+- Fixed media items not working
+
+## [0.14.28] - 2020-12-20
+- Add minor fix on activity timer
+
+## [0.14.27] - 2020-12-15
+- Added numeric input widget
+
+## [0.14.26] - 2020-12-13
+- Fixed default activity time
+
+## [0.14.25] - 2020-12-8
+- send sub-scaled scores to backend
+
+## [0.14.24] - 2020-12-7
+- Changed token chart width
+- Fixed maximum value on slider widget
+
+## [0.14.23] - 2020-12-6
+- Fixed navigation issue on restart
+
+## [0.14.22] - 2020-12-7
+- Add more loalizations, fixed some layout issue
 
 ## [0.14.21] - 2020-12-3
 - Update Push-notification-ios library to 1.8.0

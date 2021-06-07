@@ -1,27 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
-import ScreenButton from './screen/ScreenButton';
-import { colors } from '../themes/colors';
+import React from "react";
+import PropTypes from "prop-types";
+import { StyleSheet, View } from "react-native";
+import ScreenButton from "./screen/ScreenButton";
+import { colors } from "../themes/colors";
 
 const styles = StyleSheet.create({
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 15,
+    paddingHorizontal: 5,
     backgroundColor: colors.secondary,
   },
 });
-
 
 const renderButton = (label, enabled, onPress) => {
   const handlePress = (label, onPress) => {
     onPress();
   };
   if (!enabled || !label) {
-    return (<ScreenButton transparent />);
+    return <ScreenButton transparent />;
   }
-  return (<ScreenButton transparent onPress={() => handlePress(label, onPress)} text={label} />);
+  return (
+    <ScreenButton
+      transparent
+      onPress={() => handlePress(label, onPress)}
+      text={label}
+    />
+  );
 };
 
 const ActivityButtons = ({

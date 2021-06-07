@@ -3,6 +3,7 @@ import MEDIA_CONSTANTS from './media.constants';
 
 export const initialState = {
   mediaMap: {},
+  currentMedia: null
 };
 
 export default (state = initialState, action = {}) => {
@@ -22,6 +23,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         mediaMap: R.dissoc(action.payload, state.mediaMap),
       };
+    case MEDIA_CONSTANTS.SET_CURRENT_MEDIA:
+      return {
+        ...state,
+        currentMedia: action.payload.uri,
+      }
     default:
       return state;
   }

@@ -65,29 +65,35 @@ test('flattenValueConstraints', () => {
   const valueConstraints = item['reprolib:terms/responseOptions'][0];
   expect(flattenValueConstraints(valueConstraints)).toEqual({
     multipleChoice: false,
+    valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     maxValue: 1,
     minValue: 0,
+    valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
     itemList: [
       {
         image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F634.svg?sanitize=true',
         name: {
           en: 'No',
         },
+        score: undefined,
         value: 0,
+        valueConstraints: undefined,
       },
       {
         image: 'https://raw.githubusercontent.com/hfg-gmuend/openmoji/master/color/svg/1F62B.svg?sanitize=true',
         name: {
           en: 'Yes',
         },
+        score: undefined,
         value: 1,
+        valueConstraints: undefined,
       },
     ],
   });
 });
 
 test('appletTransformJson: ema-hbn', () => {
-  const appletJson = emaHbn.applet;
+  const appletJson = emaHbn;
 
   const expectedResult = {
     responseDates: [],
@@ -96,6 +102,9 @@ test('appletTransformJson: ema-hbn', () => {
     about: {
       en:
         "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/README.md",
+    },
+    aboutContent: {
+      en: "This is testing applet",
     },
     image:
       "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
@@ -126,6 +135,8 @@ test('appletTransformJson: ema-hbn', () => {
     schema:
       "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
     id: "applet/5ca5314fd27b4e0459cee21f",
+    contentUpdateTime: "",
+    schedule: null,
   };
 
   expect(appletTransformJson(appletJson)).toEqual(expectedResult);
@@ -146,6 +157,23 @@ test('activityTransformJson: ema-hbn', () => {
 
   const expectedResult = {
     id: 'activity/5cba070386fafd5df796d908',
+    addProperties: [
+      {
+        "isAbout": "nightmares",
+        "isVis": true,
+        "variableName": "nightmares",
+      },
+      {
+        "isAbout": "sleeping_aids",
+        "isVis": true,
+        "variableName": "sleeping_aids",
+      },
+      {
+        "isAbout": "time_in_bed",
+        "isVis": true,
+        "variableName": "time_in_bed",
+      },
+    ],
     preamble: { en: '' },
     description: { en: 'Morning Questions' },
     name: { en: 'EMA: Morning' },
@@ -156,12 +184,21 @@ test('activityTransformJson: ema-hbn', () => {
     shuffle: false,
     scoringLogic: [],
     altLabel: { en: 'ema_morning_schema' },
+    order: [
+      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/time_in_bed.jsonld',
+      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/nightmares.jsonld',
+      'https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/EmaHBNMorning/items/sleeping_aids.jsonld',
+    ],
     skippable: false,
+    compute: undefined,
     autoAdvance: false,
     backDisabled: false,
     fullScreen: false,
+    messages: undefined,
+    subScales: undefined,
     info: undefined,
     notification: {},
+    isPrize: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -187,11 +224,69 @@ test('activityTransformJson: nda-phq', () => {
   });
 
   const expectedResult = {
+    addProperties: [
+      {
+        "isAbout": "countryOfBirth",
+        "isVis": true,
+        "variableName": "countryOfBirth",
+      },
+      {
+        "isAbout": "gender",
+        "isVis": true,
+        "variableName": "gender",
+      },
+      {
+        "isAbout": "healthCondition",
+        "isVis": true,
+        "variableName": "healthCondition",
+      },
+      {
+        "isAbout": "medication",
+        "isVis": true,
+        "variableName": "medication",
+      },
+      {
+        "isAbout": "mentalHealth",
+        "isVis": true,
+        "variableName": "mentalHealth",
+      },
+      {
+        "isAbout": "nativeLanguage",
+        "isVis": true,
+        "variableName": "nativeLanguage",
+      },
+      {
+        "isAbout": "raceEthnicity",
+        "isVis": true,
+        "variableName": "raceEthnicity",
+      },
+      {
+        "isAbout": "state",
+        "isVis": true,
+        "variableName": "state",
+      },
+      {
+        "isAbout": "yearOfBirth",
+        "isVis": true,
+        "variableName": "yearOfBirth",
+      },
+    ],
     skippable: true,
     autoAdvance: false,
     backDisabled: false,
     fullScreen: false,
     altLabel: { en: 'nda_guid' },
+    order: [
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/yearOfBirth.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/raceEthnicity.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/gender.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/state.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/countryOfBirth.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/nativeLanguage.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/mentalHealth.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/healthCondition.jsonld",
+      "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activities/NDA/items/medication.jsonld",
+    ],
     description: {
       en: 'schema describing terms needed to generate NDA guid',
     },
@@ -200,14 +295,18 @@ test('activityTransformJson: nda-phq', () => {
     },
     items: transformedItems,
     preamble: undefined,
+    compute: undefined,
     image: undefined,
     schemaVersion: { en: '0.0.1' },
     scoringLogic: undefined,
+    messages: undefined,
     shuffle: false,
     version: { en: '0.0.1' },
     info: undefined,
+    subScales: undefined,
     notification: {},
     id: 'activity/5cba3c1f86fafd5df796d913',
+    isPrize: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -227,6 +326,7 @@ test('itemTransformJson', () => {
     inputs: {},
     valueConstraints: {
       multipleChoice: false,
+      valueType: "http://www.w3.org/2001/XMLSchema#anyURI",
       maxValue: 1,
       minValue: 0,
       itemList: [
@@ -235,6 +335,7 @@ test('itemTransformJson', () => {
           name: {
             en: 'No',
           },
+          score: undefined,
           value: 0,
           valueConstraints: undefined,
         },
@@ -243,6 +344,7 @@ test('itemTransformJson', () => {
           name: {
             en: 'Yes',
           },
+          score: undefined,
           value: 1,
           valueConstraints: undefined,
         },
@@ -251,6 +353,7 @@ test('itemTransformJson', () => {
     skippable: undefined,
     autoAdvance: false,
     backDisabled: false,
+    correctAnswer: undefined,
     fullScreen: false,
     id: "screen/5cbf991e86fafd5189aee252",
     timer: undefined,
@@ -279,7 +382,7 @@ test('attachPreamble', () => {
   };
 
   expect(attachPreamble(longPreamble, [{}, {}])).toEqual([{
-    inputType: 'markdown-message',
+    inputType: 'markdownMessage',
     preamble: longPreamble,
   }, {}, {}]);
 

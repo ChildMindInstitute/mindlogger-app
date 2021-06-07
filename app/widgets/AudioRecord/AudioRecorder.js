@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Alert, Linking } from 'react-native';
 import PropTypes from 'prop-types';
 import { Recorder } from '@react-native-community/audio-toolkit';
 import randomString from 'random-string';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import RNFetchBlob from 'rn-fetch-blob';
+import i18n from 'i18next';
 import RecordButton from './RecordButton';
 import BaseText from '../../components/base_text/base_text';
 import { colors } from '../../theme';
+
 
 let intervalId = null;
 let recorder = null;
@@ -26,7 +28,7 @@ export default class AudioRecorder extends Component {
       recorderState: 'ready',
       elapsed: null,
       path: props.path,
-      permission: 'undetermined',
+      permission: '',
     };
   }
 
@@ -109,11 +111,30 @@ export default class AudioRecorder extends Component {
           this.setState({ permission: response });
           if (response === Permissions.RESULTS.GRANTED) {
             this.record();
+          } else if (response === Permissions.RESULTS.BLOCKED) {
+            Alert.alert(
+              i18n.t('audio_recorder:alert_title'),
+              i18n.t('audio_recorder:alert_message'),
+              [
+                {
+                  text: i18n.t('audio_recorder:alert_button_cancel'),
+                  onPress: () => { this.setState({ permission: Permissions.RESULTS.DENIED }); },
+                  style: 'cancel',
+                },
+                {
+                  text: i18n.t('audio_recorder:alert_button_ok'),
+                  onPress: Linking.openSettings.bind(Linking),
+                  style: 'default',
+                },
+              ],
+            );
           }
         });
       } else {
         this.setState({ permission: response });
-        this.record();
+        if (response === Permissions.RESULTS.GRANTED) {
+          this.record();
+        }
       }
     });
   };
@@ -121,7 +142,8 @@ export default class AudioRecorder extends Component {
   stopRecording = () => {
     const { onStop } = this.props;
     const { path } = this.state;
-    if (recorder.isRecording) {
+    console.log({ path });
+    if (recorder && recorder.isRecording) {
       recorder.stop((e) => {
         if (e) {
           const { err, message } = e;
@@ -139,7 +161,7 @@ export default class AudioRecorder extends Component {
 
   reset = () => {
     const { path } = this.props;
-    if (recorder.isRecording) {
+    if (recorder && recorder.isRecording) {
       recorder.stop((e) => {
         if (e) {
           const { err, message } = e;
@@ -159,16 +181,27 @@ export default class AudioRecorder extends Component {
   render() {
     const { recorderState, elapsed, permission, path } = this.state;
     const { allowRetry } = this.props;
-
-    if (permission !== 'authorized' && permission !== 'undetermined') {
-      return <BaseText style={styles.infoText} textKey="audio_recorder:permission" />;
+    if (
+      permission !== 'authorized'
+      && (permission === 'undetermined'
+      || permission === 'denied')
+    ) {
+      return (
+        <BaseText style={styles.infoText} textKey="audio_recorder:permission" />
+      );
     }
 
     return (
       <RecordButton
-        onPress={recorderState === 'recording' ? this.stopRecording : this.startRecording}
+        onPress={
+          recorderState === 'recording'
+            ? this.stopRecording
+            : this.startRecording
+        }
         elapsed={elapsed}
-        disabled={recorderState !== 'recording' && allowRetry === false && path !== null}
+        disabled={
+          recorderState !== 'recording' && allowRetry === false && path !== null
+        }
         recording={recorderState === 'recording'}
         fileSaved={path !== null}
       />

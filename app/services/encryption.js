@@ -4,7 +4,7 @@ import config from '../config'
 export const getPrivateKey = ({ userId, email, password }) => {
     const key1 = crypto.createHash('sha512').update(password + email).digest();
     const key2 = crypto.createHash('sha512').update(userId + email).digest();
-    return key1 + key2;
+    return Buffer.concat([Buffer.from(key1), Buffer.from(key2)]);
 }
 
 export const getPublicKey = ( privateKey, appletPrime, base ) => {
@@ -29,7 +29,7 @@ export const encryptData = ({ text, key }) => {
     let iv = crypto.randomBytes(config.IV_LENGTH);
     let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
     let encrypted = cipher.update(text);
-   
+
     encrypted = Buffer.concat([encrypted, cipher.final()]);
 
     return iv.toString('hex') + ':' + encrypted.toString('hex');

@@ -15,14 +15,14 @@ const getURL = (url) => {
 
 const AppletImage = ({ applet, size = 64 }) => {
   // Display the image if there is one
-  if (typeof applet.image !== 'undefined') {
+  if (applet.image) {
     return (
       <CachedImage
-        style={{ width: size, height: size, resizeMode: 'cover' }}
+        style={{ width: size, height: size, resizeMode: 'cover', borderRadius: size / 2 }}
         source={{ uri: getURL(applet.image) }}
       />
     );
-  }
+  } 
 
   // Default to showing the first letter of the applet name
   const firstLetter = applet.name.en[0].toUpperCase();

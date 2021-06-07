@@ -1,100 +1,141 @@
-import objectToFormData from 'object-to-formdata';
-import RNFetchBlob from 'rn-fetch-blob';
-import { getStore } from '../store';
+import objectToFormData from "object-to-formdata";
+import RNFetchBlob from "rn-fetch-blob";
+import RNFS from 'react-native-fs';
+
+import { getStore } from "../store";
 // eslint-disable-next-line
-import { btoa } from './helper';
-import { apiHostSelector } from '../state/app/app.selectors';
+import { btoa } from "./helper";
+import { apiHostSelector } from "../state/app/app.selectors";
 
 const apiHost = () => {
   const state = getStore().getState(); // Get redux state
   return apiHostSelector(state);
 };
 
-const objectToQueryParams = obj => Object.keys(obj).map(
-  key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`,
-).join('&');
+const objectToQueryParams = (obj) =>
+  Object.keys(obj)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+    .join("&");
 
 export const get = (route, authToken, queryObj = {}, extraHeaders = {}) => {
-  const queryParams = queryObj
-    ? `?${objectToQueryParams(queryObj)}`
-    : '';
+  const queryParams = queryObj ? `?${objectToQueryParams(queryObj)}` : "";
 
   const url = `${apiHost()}/${route}${queryParams}`;
-
   const headers = {
     ...extraHeaders,
   };
   if (authToken) {
-    headers['Girder-Token'] = authToken;
+    headers["Girder-Token"] = authToken;
   }
 
   return fetch(url, {
-    mode: 'cors',
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const postFormData = (route, authToken, body, extraHeaders = {}) => {
   const url = `${apiHost()}/${route}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
     ...extraHeaders,
   };
   return fetch(url, {
-    method: 'post',
-    mode: 'cors',
+    method: "post",
+    mode: "cors",
     headers,
     body: objectToFormData(body),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => {
+    return res.status === 200 ? res.json() : Promise.reject(res);
+  })
 };
 
-export const postFile = ({ authToken, file, parentType, parentId }) => {
-  const queryParams = objectToQueryParams({
-    parentType,
-    parentId,
-    name: file.filename,
-    size: file.size,
-  });
-  const url = `${apiHost()}/file?${queryParams}`;
+export const postFile = async ({ authToken, file, appletId, activityId }) => {
+  const url = `${apiHost()}/response/${appletId}/${activityId}`; // `https://api-staging.mindlogger.org/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
+
   const headers = {
-    'Girder-Token': authToken,
-    'Content-Type': file.type,
+    "Girder-Token": authToken,
+    // "Content-Type": file.type,
+  };
+  const metadata = {
+    "applet": { "schemaVersion": "1.0" },
+    "subject": { "@id": "asasa", "timezone": "US" },
+    "responses": {
+      [file.key]: { "size": file.size, "type": file.type }
+    }
   };
 
-  return RNFetchBlob.fetch(
-    'POST',
-    url,
+  const base64String = await RNFS.readFile(file.uri, 'base64');
+
+  return fetch(url, {
+    method: 'post',
     headers,
-    RNFetchBlob.wrap(file.uri),
-  ).then(res => (res.info().status === 200 ? res.json() : Promise.reject(res)));
+    body: objectToFormData({
+      "metadata": JSON.stringify(metadata),
+      [file.key]: base64String
+    })
+  })
+    .then(async res => {
+      return res.status === 200 ? await res.json() : Promise.reject(res);
+    }).catch(err => {
+      Promise.reject(err);
+      console.log(err)
+    })
 };
 
-export const getSkin = () => get(
-  'context/skin',
-  null,
-  null,
-);
+export const getSkin = () => get("context/skin", null, null);
 
-export const getResponses = (authToken, applet) => get(
-  'response',
-  authToken,
-  { applet },
-);
+export const getResponses = (authToken, applet) =>
+  get("response", authToken, { applet });
 
-export const getSchedule = (authToken, timezone) => get(
-  'schedule',
-  authToken,
-  { timezone },
-);
+export const getSchedule = (authToken, timezone) =>
+  get("schedule", authToken, { timezone });
 
-export const getApplets = authToken => get('user/applets', authToken, {
-  role: 'user',
-  getAllApplets: true,
-  retrieveSchedule: true,
-  retrieveAllEvents: false,
-  getTodayEvents: true,
-});
+export const getApplets = (authToken, localInfo, currentApplet = '', nextActivity = '') => {
+  const queryParams = objectToQueryParams({
+    role: "user",
+    getAllApplets: true,
+    retrieveSchedule: true,
+    retrieveResponses: true,
+    numberOfDays: 7,
+    groupByDateActivity: false,
+    currentApplet,
+    nextActivity
+  });
+  const url = `${apiHost()}/user/applets?${queryParams}`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "put",
+    mode: "cors",
+    headers,
+    body: objectToFormData({ localInfo: JSON.stringify(localInfo) }),
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res))).then(res => {
+    if (res.nextActivity) {
+      return new Promise(resolve => setTimeout(() => resolve(getApplets(authToken, localInfo, res.currentApplet, res.nextActivity).then(next => {
+        for (const applet of next.data) {
+          const d = res.data.find(d => d.id == applet.id);
+          if (!d) {
+            res.data.push(applet);
+            continue;
+          }
 
+          for (const IRI in applet.items) {
+            d.items[IRI] = applet.items[IRI]
+          }
+
+          for (const IRI in applet.activities) {
+            d.activities[IRI] = applet.activities[IRI]
+          }
+        }
+
+        return res;
+      })), 50));
+    }
+    return res;
+  })
+}
 
 // export const getTargetApplet = (authToken, appletId) => get(
 //   `applet/${appletId}`,
@@ -102,276 +143,334 @@ export const getApplets = authToken => get('user/applets', authToken, {
 //   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
 // );
 
-export const getTargetApplet = (authToken, appletId) => get(
-  `user/applet/${appletId}`,
-  authToken,
-  { retrieveSchedule: true, role: 'user', getAllApplets: true },
-);
+export const getTargetApplet = (authToken, appletId, nextActivity = '') => {
+  return get(`user/applet/${appletId}`, authToken, {
+    retrieveSchedule: true,
+    role: "user",
+    getAllApplets: true,
+    nextActivity
+  }).then(resp => {
+    if (resp.nextActivity) {
+      return new Promise(resolve => setTimeout(() => resolve(getTargetApplet(authToken, appletId, resp.nextActivity).then(next => {
+        for (const IRI in next.items) {
+          resp.items[IRI] = next.items[IRI]
+        }
 
-export const postResponse = ({ authToken, response }) => postFormData(
-  `response/${response.applet.id}/${response.activity.id}`,
-  authToken,
-  {
-    metadata: JSON.stringify(response),
-  },
-);
-export const postAppletBadge = (authToken, badge) => {
-  const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
-  const headers = {
-    'Girder-Token': authToken,
-  };
-  return fetch(url, {
-    method: 'post',
-    mode: 'cors',
-    headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+        for (const IRI of next.activities) {
+          resp.activities[IRI] = next.activities[IRI]
+        }
+
+        return resp;
+      })), 50));
+    }
+
+    return resp;
+  })
+}
+
+export const postResponse = ({ authToken, response }) => {
+  return postFormData(
+    `response/${response.applet.id}/${response.activity.id}`,
+    authToken,
+    {
+      metadata: JSON.stringify(response),
+    },
+  );
 };
 
-export const signIn = ({ user, password, deviceId, timezone }) => get(
-  'user/authentication',
-  null,
-  null,
-  {
-    'Girder-Authorization': `Basic ${btoa(`${user}:${password}`)}`,
+export const postAppletBadge = (authToken, badge) => {
+  console.log("post applet badge");
+  const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "post",
+    mode: "cors",
+    headers,
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+export const signIn = ({ user, password, deviceId, timezone }) =>
+  get("user/authentication", null, { returnKeys: true }, {
+    "Girder-Authorization": `Basic ${btoa(`${user}:${password}`)}`,
     deviceId,
     timezone,
-  },
-);
+  });
 
 export const signOut = (authToken) => {
   const url = `${apiHost()}/user/authentication`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'delete',
-    mode: 'cors',
+    method: "delete",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const forgotPassword = (email, lang) => {
   const queryParams = objectToQueryParams({ email, lang });
   const url = `${apiHost()}/user/password/temporary?${queryParams}`;
   return fetch(url, {
-    method: 'put',
-    mode: 'cors',
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+    method: "put",
+    mode: "cors",
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const signUp = (userData) => {
   const url = `${apiHost()}/user`;
   return fetch(url, {
-    method: 'post',
-    mode: 'cors',
+    method: "post",
+    mode: "cors",
     body: objectToFormData(userData),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const updateUserDetails = (authToken, { id, firstName, lastName, email }) => {
+export const updateUserDetails = (
+  authToken,
+  { id, firstName, lastName, email }
+) => {
   const url = `${apiHost()}/user/${id}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'put',
-    mode: 'cors',
+    method: "put",
+    mode: "cors",
     headers,
     body: objectToFormData({
       firstName,
       lastName,
       email,
     }),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const updatePassword = (authToken, oldPassword, newPassword) => {
+export const updatePassword = (authToken, oldPassword, newPassword, email) => {
   const url = `${apiHost()}/user/password`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'put',
-    mode: 'cors',
+    method: "put",
+    mode: "cors",
     headers,
     body: objectToFormData({
       old: oldPassword,
       new: newPassword,
+      email
     }),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const fileLink = (file, token) => (file
-  ? `${apiHost()}/${file['@id']}/download?contentDisposition=inline&token=${token}`
-  : '');
+export const fileLink = (file, token) =>
+  file
+    ? `${apiHost()}/${file["@id"]}/download?contentDisposition=inline&token=${token}`
+    : "";
 
 export const registerOpenApplet = (authToken, schemaURI) => {
   const url = `${apiHost()}/applet/invite`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'post',
-    mode: 'cors',
+    method: "post",
+    mode: "cors",
     headers,
     body: objectToFormData({ url: schemaURI }),
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-// export const getAppletSchedule = (authToken, appletId) => {
-//   const url = `${apiHost()}/applet/${appletId}/schedule?getTodayEvents=true`;
-//   const headers = {
-//     'Girder-Token': authToken,
-//   };
-//   return fetch(url, {
-//     method: 'get',
-//     mode: 'cors',
-//     headers,
-//   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
-// };
-
-export const getAppletSchedule = (authToken, appletId) => get(`applet/${appletId}/schedule`,
-  authToken,
-  {
+export const getAppletSchedule = (authToken, appletId) => {
+  const queryParams = `?${objectToQueryParams({
     getAllEvents: false,
-    getTodayEvents: true,
-  });
+    numberOfDays: 7
+  })}`;
+
+  const url = `${apiHost()}/applet/${appletId}/getSchedule${queryParams}`;
+
+  const headers = {};
+  if (authToken) {
+    headers["Girder-Token"] = authToken;
+  }
+
+  return fetch(url, {
+    method: "put",
+    mode: "cors",
+    headers,
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+}
 
 export const getAppletInvites = (authToken) => {
   const url = `${apiHost()}/user/invites`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'get',
-    mode: 'cors',
+    method: "get",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const acceptAppletInvite = (authToken, id) => {
   const url = `${apiHost()}/group/${id}/member`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'post',
-    mode: 'cors',
+    method: "post",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const declineAppletInvite = (authToken, id) => {
   const url = `${apiHost()}/group/${id}/member`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'delete',
-    mode: 'cors',
+    method: "delete",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const removeApplet = (authToken, groupId) => {
   const del = false;
   const url = `${apiHost()}/group/${groupId}/member?delete=${del}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'delete',
-    mode: 'cors',
+    method: "delete",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const deleteApplet = (authToken, groupId) => {
   const del = true;
   const url = `${apiHost()}/group/${groupId}/member?delete=${del}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'delete',
-    mode: 'cors',
+    method: "delete",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
 export const deleteUserAccount = (authToken, userId) => {
   const url = `${apiHost()}/user/${userId}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'delete',
-    mode: 'cors',
+    method: "delete",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };
 
-export const getLast7DaysData = ({ authToken, appletId, referenceDate, groupByDateActivity }) => {
+export const getLast7DaysData = ({
+  authToken,
+  appletId,
+  localItems,
+  localActivities,
+  startDate,
+  groupByDateActivity,
+}) => {
   let url = `${apiHost()}/response/last7Days/${appletId}`;
-  if (referenceDate) {
-    url += `?referenceDate=${referenceDate}`;
-  }
   if (!groupByDateActivity) {
     url += `?groupByDateActivity=${groupByDateActivity}`;
   }
+  url += `?localItems=${localItems}`;
+  url += `?localActivities=${localActivities}`;
+  url += `?startDate=${startDate}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
   return fetch(url, {
-    method: 'get',
-    mode: 'cors',
+    method: "get",
+    mode: "cors",
     headers,
-  }).then(res => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
+  }).then((res) => (res.status === 200 ? res.json() : res)); // Promise.reject(res)));
 };
 
-export const replaceResponseData = ({ authToken, userPublicKey, appletId, dataSources }) => {
+export const replaceResponseData = ({
+  authToken,
+  userPublicKey,
+  appletId,
+  dataSources,
+  tokenUpdates
+}) => {
   let url = `${apiHost()}/response/${appletId}`;
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
 
   return fetch(url, {
-    method: 'put',
-    mode: 'cors',
+    method: "put",
+    mode: "cors",
     headers,
     body: objectToFormData({
-      responses: JSON.stringify({ dataSources, userPublicKey })
-    })
-  }).then(res => (res.status === 200 ? res.json() : res));
-}
+      responses: JSON.stringify({ tokenUpdates, dataSources, userPublicKey }),
+    }),
+  }).then((res) => (res.status === 200 ? res.json() : res));
+};
 
 export const sendResponseReuploadRequest = ({ authToken, userPublicKeys }) => {
   let url = `${apiHost()}/user/responseUpdateRequest`;
 
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
 
   return fetch(url, {
-    method: 'post',
-    mode: 'cors',
+    method: "post",
+    mode: "cors",
     headers,
     body: objectToFormData({
-      userPublicKeys: JSON.stringify(userPublicKeys)
-    })
-  }).then(res => (res.status === 200 ? res.json() : res));
-}
+      userPublicKeys: JSON.stringify(userPublicKeys),
+    }),
+  }).then((res) => (res.status === 200 ? res.json() : res));
+};
 
 export const getUserUpdates = ({ authToken }) => {
   let url = `${apiHost()}/user/updates`;
 
   const headers = {
-    'Girder-Token': authToken,
+    "Girder-Token": authToken,
   };
 
   return fetch(url, {
-    method: 'get',
-    mode: 'cors',
+    method: "get",
+    mode: "cors",
     headers,
   }).then(res => (res.status === 200 ? res.json() : res));
-}
+};
+
+export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey) => {
+  const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
+  const headers = {
+    "Girder-Token": authToken,
+  };
+  return fetch(url, {
+    method: "post",
+    mode: "cors",
+    headers,
+    body: objectToFormData({
+      updateInfo: JSON.stringify({
+        tokenUpdate,
+        cumulative,
+        version,
+        userPublicKey,
+      })
+    })
+  }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};

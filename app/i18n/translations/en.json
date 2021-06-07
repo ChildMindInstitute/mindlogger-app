@@ -1,4 +1,15 @@
 {
+  "activity": {
+    "incorrect_answer": "Incorrect answer. Please try again",
+    "failed": "Failed"
+  },
+  "activity_time":{
+    "time_remaining": "Time Remaining"
+  },
+  "timed_activity":{
+    "time_to_complete": "Time to complete",
+    "hours" : "hours"
+  },
   "activity_summary": {
     "save": "Save",
     "summary": "Summary",
@@ -16,6 +27,11 @@
   },
   "activity_chart": {
     "title": "Please take the assessment for data to be displayed."
+  },
+  "calendar": {
+    "months": "January_February_March_April_May_June_July_August_September_October_November_December",
+    "weekdays": "Sun_Mon_Tue_Wed_Thu_Fri_Sat",
+    "x_days": "M_T_W_T_F_S_S"
   },
   "applet_data": {
     "title": "Please take the assessment for data to be displayed."
@@ -40,7 +56,9 @@
   "applet_footer": {
     "surveys": "Surveys",
     "data": "Data",
-    "about": "about"
+    "about": "About",
+    "activities": "Activities",
+    "activity": "Activity"
   },
   "applet_invite_flow": {
     "back": "Back",
@@ -126,7 +144,7 @@
     "use_cellular_data":"Use Cellular Data",
     "logout": "Logout",
     "permanently_delete_account": "Permanently Delete Account",
-    "user_settings": "User Settings"    
+    "user_settings": "User Settings"
   },
   "language_screen": {
     "app_language": "Application language",
@@ -155,7 +173,11 @@
     "no_items": "No items"
   },
   "audio_recorder": {
-    "permission": "You must grant permission to use your microphone to complete this task."
+    "permission": "You must grant permission to use your microphone to complete this task.",
+    "alert_title":"\"MindLogger\" would like to use your microphone to complete this task.",
+    "alert_message": "These can be configured in Settings.",
+    "alert_button_ok": "Open Settings",
+    "alert_button_cancel": "Dismiss"
   },
   "record_button": {
     "stop": "STOP",
@@ -170,6 +192,10 @@
     "play": "PLAY",
     "done": "DONE"
   },
+  "optional_text": {
+    "required": "This is a required field.",
+    "enter_text": "Please enter the text."
+  },
   "date_picker": {
     "ok": "OK"
   },
@@ -179,8 +205,9 @@
   },
   "activity_due_date": {
     "available_all_day":"Available: All day",
-    "available": "Available",
-    "to": "to",
+    "scheduled_at": "Scheduled At",
+    "available": "Available From",
+    "to": "To",
     "day": "day",
     "days": "days",
     "am": "AM"
@@ -279,13 +306,16 @@
     "unscheduled":"Unscheduled",
     "scheduled": "Scheduled",
     "past_due": "Past Due",
+    "available": "Available",
     "sure_delete_account_data": "Are you sure you want to delete your account and data?",
     "no_cancel": "No, cancel",
     "yes_delete": "Yes, delete it",
     "hi": "Hi",
     "enter_old_password": "Please enter your old password",
     "enter_new_password": "Please enter a new password"
+  },
+  "prize": {
+    "lack_tokens_title": "Try again",
+    "lack_tokens_subtitle": "You don't have enough tokens.\nPlease select another prize"
   }
-  
-  
 }

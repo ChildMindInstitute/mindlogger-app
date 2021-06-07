@@ -1,26 +1,29 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { Actions } from 'react-native-router-flux';
-import * as firebase from 'react-native-firebase';
-import { getStore } from '../../store';
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Actions } from "react-native-router-flux";
+import * as firebase from "react-native-firebase";
+import { getStore } from "../../store";
 import {
-  currentAppletSelector, skinSelector, startedTimesSelector
-} from '../../state/app/app.selectors';
-import AppletDetailsComponent from './AppletDetailsComponent';
+  currentAppletSelector,
+  skinSelector,
+  startedTimesSelector,
+} from "../../state/app/app.selectors";
+import AppletDetailsComponent from "./AppletDetailsComponent";
 import {
-  inProgressSelector, currentAppletResponsesSelector,
-} from '../../state/responses/responses.selectors';
-import { invitesSelector } from '../../state/applets/applets.selectors';
-import { getAppletResponseData } from '../../state/applets/applets.thunks';
+  inProgressSelector,
+  currentAppletResponsesSelector,
+} from "../../state/responses/responses.selectors";
+import { invitesSelector } from "../../state/applets/applets.selectors";
+import { getAppletResponseData } from "../../state/applets/applets.thunks";
 import {
   setCurrentActivity,
+  setCurrentEvent,
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
-  setActivityStartTime,
-} from '../../state/app/app.actions';
-import { startResponse } from '../../state/responses/responses.thunks';
+} from "../../state/app/app.actions";
+import { startResponse } from "../../state/responses/responses.thunks";
 
 class AppletDetails extends Component {
   /**
@@ -33,10 +36,8 @@ class AppletDetails extends Component {
    */
   handlePressActivity = (activity) => {
     const { startedTimes } = this.props;
-    if (startedTimes && !startedTimes[activity.id]) {
-      this.props.setActivityStartTime(activity.id);
-    }
 
+    this.props.setCurrentEvent(activity.event ? activity.event.id : null);
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
@@ -59,29 +60,30 @@ class AppletDetails extends Component {
     const notification = new firebase.notifications.Notification(settings)
       .setNotificationId(`${activity.id}-${Math.random()}`)
       .setTitle(activity.name.en)
-      .setBody('Test notification')
+      .setBody("Test notification")
       // .setSound('default')
       .setData({
         event_id: 1,
-        applet_id: this.props.currentApplet.id.split('/').pop(),
-        activity_id: activity.id.split('/').pop(),
+        applet_id: this.props.currentApplet.id.split("/").pop(),
+        activity_id: activity.id.split("/").pop(),
       });
 
-    notification.android.setChannelId('MindLoggerChannelId');
-    notification.android.setPriority(firebase.notifications.Android.Priority.High);
+    notification.android.setChannelId("MindLoggerChannelId");
+    notification.android.setPriority(
+      firebase.notifications.Android.Priority.High
+    );
     notification.android.setAutoCancel(true);
 
     try {
-      console.log('Displaying notification');
       await firebase.notifications().displayNotification(notification);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.warn('Failed to display the notification', error);
+      console.warn("Failed to display the notification", error);
     }
   };
 
   handleBack = () => {
-    Actions.replace('applet_list');
+    Actions.replace("applet_list");
     this.props.setCurrentApplet(null);
   };
 
@@ -103,7 +105,7 @@ class AppletDetails extends Component {
     if (!currentApplet) {
       return null;
     }
-    // console.log('applet data is', appletData[currentApplet.id.split('/')[1]] || {});
+
     return (
       <AppletDetailsComponent
         applet={currentApplet}
@@ -114,7 +116,7 @@ class AppletDetails extends Component {
         onPressActivity={this.handlePressActivity}
         onLongPressActivity={this.handleLongPressActivity}
         onPressBack={this.handleBack}
-        onPressSettings={() => Actions.push('applet_settings')}
+        onPressSettings={() => Actions.push("applet_settings")}
         primaryColor={skin.colors.primary}
         hasInvites={hasInvites}
         initialTab={initialTab}
@@ -125,14 +127,14 @@ class AppletDetails extends Component {
 
 AppletDetails.defaultProps = {
   currentApplet: null,
-  initialTab: 'survey',
+  initialTab: "activity",
 };
 
 AppletDetails.propTypes = {
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
-  setActivityStartTime: PropTypes.func.isRequired,
+  setCurrentEvent: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   startedTimes: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
@@ -144,7 +146,7 @@ AppletDetails.propTypes = {
   setActivitySelectionDisabled: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   inProgress: inProgressSelector(state),
   skin: skinSelector(state),
@@ -156,7 +158,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
-  setActivityStartTime,
+  setCurrentEvent,
   setCurrentApplet,
   startResponse,
   getAppletResponseData,
@@ -166,5 +168,5 @@ const mapDispatchToProps = {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AppletDetails);

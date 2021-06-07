@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
 import WidgetError from './WidgetError';
+
+import {
+  View,
+} from "react-native";
 import {
   AudioImageRecord,
   AudioRecord,
@@ -12,7 +16,6 @@ import {
   Drawing,
   Geolocation,
   MultiSelect,
-  TLMultiSelect,
   Radio,
   Select,
   Slider,
@@ -20,14 +23,20 @@ import {
   TextEntry,
   TimeRange,
   VisualStimulusResponse,
+  RadioPrizes,
+  StackedSlider,
+  StackedRadio,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';
+import {
+  currentAppletTokenBalanceSelector,
+} from "../../state/responses/responses.selectors";
 
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError }) => {
+const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, appletTokenBalance }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
   if (screen.inputType === 'radio'
@@ -39,7 +48,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         config={screen.valueConstraints}
         onChange={onChange}
         value={screenValue}
-        token={valueType && valueType.includes("token")}
+        token={valueType && valueType.includes('token')}
       />
     );
   }
@@ -53,10 +62,23 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        token={ valueType && valueType.includes("token")}
+        token={valueType && valueType.includes("token")}
       />
     );
   }
+
+  if (screen.inputType === 'stackedRadio') {
+    return (
+      <StackedRadio
+        config={screen.valueConstraints}
+        onChange={onChange}
+        onSelected={setSelected}
+        value={answer}
+        token={valueType && valueType.includes("token")}
+      />
+    )
+  }
+
   if (screen.inputType === 'slider') {
     return (
       <Slider
@@ -69,19 +91,37 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       />
     );
   }
+  if (screen.inputType === 'stackedSlider') {
+    return (
+      <StackedSlider
+        config={screen.valueConstraints}
+        appletName={applet.name.en}
+        onChange={onChange}
+        onPress={onPress}
+        onRelease={onRelease}
+        value={answer}
+      />
+    );
+  }
   if (screen.inputType === 'timeRange') {
     return (
       <TimeRange
+       config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
   if (screen.inputType === 'date') {
     return (
       <DatePicker
+      config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -100,6 +140,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       <TextEntry
         onChange={onChange}
         value={answer}
+        valueType={screen.valueConstraints.valueType}
       />
     );
   }
@@ -109,6 +150,8 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         config={screen.valueConstraints}
         value={answer}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -138,6 +181,8 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
       />
     );
   }
@@ -147,6 +192,8 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         onChange={onChange}
         config={screen.inputs}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
         video
       />
     );
@@ -163,11 +210,13 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'drawing') {
     return (
       <Drawing
-        config={screen.inputs}
+        config={screen}
         onChange={onChange}
         onPress={onPress}
         onRelease={onRelease}
-        value={answer}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
+        answer={answer}
       />
     );
   }
@@ -193,8 +242,11 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'geolocation') {
     return (
       <Geolocation
+        config={screen.valueConstraints}
         value={answer}
         onChange={onChange}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
   }
@@ -208,11 +260,32 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     );
   }
   // markdown items are rendered in ScreenDisplay
-  if (screen.inputType === 'markdown-message') {
+  if (screen.inputType === 'markdownMessage') {
     return null;
   }
 
-  onContentError();
+  if (screen.inputType === 'prize'
+    && R.path(['valueConstraints', 'itemList'], screen)) {
+    return (
+      <RadioPrizes
+        config={screen.valueConstraints}
+        onChange={onChange}
+        onSelected={setSelected}
+        value={answer}
+        selected={isSelected}
+        tokenBalance={appletTokenBalance.cumulativeToken}
+      />
+    );
+  }
+
+  const [oneShot, setOneShot] = useState(false);
+  useEffect(() => {
+    if (onContentError && !oneShot) {
+      setOneShot(true);
+      onContentError();
+    }
+  });
+
   return <WidgetError />;
 };
 
@@ -233,11 +306,13 @@ Widget.propTypes = {
   isSelected: PropTypes.bool.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
+  appletTokenBalance: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = state => ({
   applet: currentAppletSelector(state),
   isSelected: state.responses.isSelected,
+  appletTokenBalance: currentAppletTokenBalanceSelector(state),
 });
 
 const mapDispatchToProps = {

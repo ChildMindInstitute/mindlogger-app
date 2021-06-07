@@ -2,13 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import moment from 'moment';
+import i18n from 'i18next';
 
 import TokenChart from './TokenChart';
 import BaseText from '../base_text/base_text';
-// import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
-// import { colors } from '../../themes/colors';
-// import LineChart from './LineChart';
-// import BarChart from './BarChart';
 
 const styles = {
   plotView: {
@@ -37,6 +34,9 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -46,25 +46,31 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={values[values.length - 1]}
         />
         {item.additionalParams.timelineChart}
-        {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
       </View>
     );
   }
 
   renderTokenPlot() {
     const values = {};
-    const { item, data } = this.props;
+    const { item, data, tokens } = this.props;
+    const { enableNegativeTokens } = item.valueConstraints;
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() - currentDate.getDay());
-    const dayOfWeeks = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    const dayOfWeeks = i18n.t('calendar:weekdays').split('_');
+    const itemValues = item.valueConstraints.itemList.map(itemData => {
+      return {
+        name: itemData.name.en,
+        value: itemData.value,
+      }
+    });
 
-    const month = currentDate.getUTCMonth() + 1;
-    const day = currentDate.getUTCDate();
-    const year = currentDate.getUTCFullYear();
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
     const newDate = `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 
     if (item.additionalParams.activeCount === 0) {
@@ -72,14 +78,17 @@ class ItemChart extends React.Component {
     }
 
     data.forEach((val) => {
-      const sum = Array.isArray(val.value)
-        ? val.value.reduce((a, b) => {
-          if (!b) return a;
-          return a + parseInt(b);
-        }, 0)
-        : val.value;
       if (val.date >= newDate) {
         const currentDay = dayOfWeeks[moment(val.date).day()];
+        const sum = Array.isArray(val.value)
+          ? val.value.reduce((a, b) => {
+            const bValue = !isNaN(b) ? parseInt(b) : itemValues.find(({ name }) => name === b).value;
+            if (enableNegativeTokens || bValue > 0) {
+              return a + bValue;
+            }
+            return a;
+          }, 0)
+          : val.value;
         values[currentDay] = values[currentDay] === undefined ? sum : values[currentDay] + sum;
       }
     });
@@ -97,6 +106,25 @@ class ItemChart extends React.Component {
       };
     });
 
+    const tokenUpdates = tokens.tokenUpdates.filter(tokenUpdate => tokenUpdate.created >= newDate).reduce((usedTokens, tokenUpdate) => {
+      const day = dayOfWeeks[moment(tokenUpdate.created).day()];
+
+      usedTokens[day] = usedTokens[day] || 0;
+      usedTokens[day] += tokenUpdate.value;
+
+      return usedTokens;
+    }, {})
+
+    const tokenHistory = {
+      tokenUpdates: dayOfWeeks.map(day => ({
+        name: day,
+        value: (tokenUpdates[day] || 0)
+      })),
+      currentBalance: Number.isInteger(tokens.cumulativeToken) ? (tokens.cumulativeToken) : 0,
+    };
+
+    const questions = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -106,10 +134,10 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={questions[questions.length - 1]}
         />
         {/* {item.additionalParams.timelineChart} */}
-        <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} />
+        <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
       </View>
     );
   }
@@ -121,9 +149,12 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
-        <BaseText style={styles.linePlotTitle} value={item.additionalParams.description} />
+        <BaseText style={styles.linePlotTitle} value={values[values.length - 1]} />
         <BaseText style={styles.linePlotLabel} value={item.additionalParams.minMaxLabels[1]} />
         {item.additionalParams.lineChart}
         {/* <LineChart data={data} labels={item.additionalParams.labels} /> */}
@@ -138,6 +169,9 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+    
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -147,7 +181,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={values[values.length - 1]}
         />
         {/* <BarChart data={item.additionalParams.dataFix} /> */}
       </View>
@@ -176,6 +210,7 @@ ItemChart.propTypes = {
   item: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
+  tokens: PropTypes.object.isRequired,
 };
 
 export default ItemChart;

@@ -3,6 +3,7 @@ import USER_CONSTANTS from './user.constants';
 export const initialState = {
   auth: null,
   info: null,
+  tokenBalance: 0,
 };
 
 export default (state = initialState, action = {}) => {

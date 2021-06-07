@@ -34,7 +34,7 @@ export class AudioStimulus extends Component {
     return (
       <View style={{ paddingTop: 16, paddingBottom: 16 }}>
         <AudioPlayer
-          source={`file://${safeUrl}`}
+          source={`${safeUrl}`}
           ref={(ref) => { this.player = ref; }}
           allowReplay={config.allowReplay}
           onEnd={() => onChange(true)}

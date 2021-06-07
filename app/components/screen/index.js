@@ -1,33 +1,42 @@
-import React, { Component } from 'react';
-import { Dimensions, StyleSheet, ScrollView, View, KeyboardAvoidingView } from 'react-native';
-import PropTypes from 'prop-types';
-import { Icon, Button } from 'native-base';
-import ScreenDisplay from './ScreenDisplay';
-import Widget from './Widget';
-import Timer from '../Timer';
-import { colors } from '../../theme';
+import React, { Component } from "react";
+import {
+  Dimensions,
+  StyleSheet,
+  ScrollView,
+  View,
+  Platform,
+  KeyboardAvoidingView,
+  Keyboard
+} from "react-native";
+
+import PropTypes from "prop-types";
+import { Icon, Button } from "native-base";
+import ScreenDisplay from "./ScreenDisplay";
+import Widget from "./Widget";
+import Timer from "../Timer";
+import { colors } from "../../theme";
 
 const styles = StyleSheet.create({
   outer: {
-    width: '100%',
+    width: "100%",
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    position: 'relative',
+    backgroundColor: "white",
+    position: "relative",
   },
   keyboardContainer: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 60,
-    minHeight: '100%',
-    justifyContent: 'center',
+    paddingTop: 25,
+    minHeight: "100%",
+    justifyContent: "center",
     flexGrow: 1,
   },
   text: {
@@ -35,20 +44,20 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   delayView: {
-    position: 'relative',
+    position: "relative",
     minHeight: 100,
   },
   timerView: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     top: 60,
   },
   delayTimerView: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
     opacity: 0.5,
   },
   button: {
@@ -68,18 +77,85 @@ const styles = StyleSheet.create({
   },
 });
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === 'markdown-message') {
+    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus") {
       return true;
     }
-    if (Array.isArray(answer)) {
-      return answer.length !== 0;
+
+    if (screen.valueConstraints && screen.valueConstraints.isOptionalTextRequired) {
+      if (!answer || !answer["text"]) {
+        return false;
+      }
     }
 
-    return answer !== null && typeof answer !== 'undefined';
+    if (screen.inputType === "text" || screen.inputType === "time" || screen.inputType === "audioImageRecord") {
+      if (!answer) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] !== null) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (answer !== null && typeof answer !== "undefined") {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "")) {
+        return false
+      }
+    }
+
+    if (screen.inputType === "slider" || (screen.inputType === "radio" && !screen.valueConstraints.multipleChoice)) {
+      if (!answer || (answer.value !== 0 && !answer.value)) {
+        return false;
+      }
+    }
+
+    if (screen.inputType === "radio" && screen.valueConstraints.multipleChoice) {
+      if (!answer || !answer.value || !answer.value.length) {
+        return false;
+      }
+    }
+
+    if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < answer.length; i++) {
+        if (!Array.isArray(answer[i]) && answer[i] !== null || Array.isArray(answer[i]) && answer[i].length > 0) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (answer !== null && typeof answer !== "undefined") {
+      if (Array.isArray(answer["value"])) {
+        return answer["value"].length !== 0;
+      }
+      if (Array.isArray(answer)) {
+        if (Array.isArray(answer[0])) {
+          return answer[0].length;
+        }
+        return answer.length !== 0;
+      }
+    }
+
+    return answer && (answer.value === 0 || !!answer.value);
   }
 
   constructor() {
@@ -92,12 +168,36 @@ class ActivityScreen extends Component {
     };
     this.interval = null;
     this.startTime = null;
+    this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.keyboardWillHide = this.keyboardWillHide.bind(this);
+    this.keyboardWillShow = this.keyboardWillShow.bind(this);
+    this.keyboardVisible = false;
   }
 
   componentDidMount() {
     const { isCurrent } = this.props;
     if (isCurrent) {
       this._startClock();
+    }
+
+    if (Platform.OS === "ios") {
+      Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
+      Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
+    }
+  }
+
+  keyboardWillHide() {
+    this.keyboardVisible = false;
+  }
+
+  keyboardWillShow() {
+    this.keyboardVisible = true;
+  }
+
+  scrollToBottom(obj) {
+    if (this.scrollView) {
+      this.scrollView.scrollToEnd();
     }
   }
 
@@ -111,6 +211,12 @@ class ActivityScreen extends Component {
   }
 
   componentWillUnmount() {
+    if (Platform.OS === "ios") {
+      Keyboard.removeListener('keyboardDidShow', this.scrollToBottom);
+      Keyboard.removeListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.removeListener('keyboardWillShow', this.keyboardWillShow)
+    }
+
     clearInterval(this.interval);
   }
 
@@ -151,9 +257,9 @@ class ActivityScreen extends Component {
       const safeDelay = delay || 0;
       const timerEnd = safeDelay + timer;
       if (
-        timeElapsed > safeDelay
-        && timeElapsed < timerEnd
-        && timerActive === false
+        timeElapsed > safeDelay &&
+        timeElapsed < timerEnd &&
+        timerActive === false
       ) {
         this.setState({ timerActive: true });
       } else if (timeElapsed >= timerEnd) {
@@ -165,6 +271,10 @@ class ActivityScreen extends Component {
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
+
+    if (this.keyboardVisible && this.state.screenHeight < contentHeight) {
+      this.scrollToBottom()
+    }
   };
 
   isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -174,12 +284,14 @@ class ActivityScreen extends Component {
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
+
     return (
       <View style={styles.outer}>
         <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={2}
+          keyboardVerticalOffset={10}
         >
           <ScrollView
             alwaysBounceVertical={false}
@@ -187,7 +299,7 @@ class ActivityScreen extends Component {
             contentContainerStyle={styles.contentContainer}
             scrollEnabled={scrollEnabled}
             // eslint-disable-next-line no-return-assign
-            ref={scrollView => (this.scrollView = scrollView)}
+            ref={(scrollView) => (this.scrollView = scrollView)}
             onContentSizeChange={this.onContentSizeChange}
             onScroll={({ nativeEvent }) => {
               if (this.isCloseToBottom(nativeEvent)) {
@@ -222,20 +334,20 @@ class ActivityScreen extends Component {
                 </View>
               </View>
             ) : (
-              <Widget
-                answer={answer}
-                onChange={onChange}
-                isCurrent={isCurrent}
-                screen={screen}
-                onPress={() => {
-                  this.setState({ scrollEnabled: false });
-                }}
-                onRelease={() => {
-                  this.setState({ scrollEnabled: true });
-                }}
-                onContentError={onContentError}
-              />
-            )}
+                <Widget
+                  answer={answer}
+                  onChange={onChange}
+                  isCurrent={isCurrent}
+                  screen={screen}
+                  onPress={() => {
+                    this.setState({ scrollEnabled: false });
+                  }}
+                  onRelease={() => {
+                    this.setState({ scrollEnabled: true });
+                  }}
+                  onContentError={onContentError}
+                />
+              )}
           </ScrollView>
         </KeyboardAvoidingView>
         {timerActive && (
@@ -246,16 +358,16 @@ class ActivityScreen extends Component {
         {this.state.screenHeight > height ? (
           <View
             style={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 7,
-              alignSelf: 'center',
-              shadowColor: '#000',
+              alignSelf: "center",
+              shadowColor: "#000",
               shadowOffset: {
                 width: 0,
                 height: 2,
               },
               shadowOpacity: 0.5,
-              shadowRadius: 7.50,
+              shadowRadius: 7.5,
               elevation: 4,
               flex: 1,
             }}

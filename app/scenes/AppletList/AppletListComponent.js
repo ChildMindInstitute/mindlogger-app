@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import {
   StyleSheet,
   ScrollView,
@@ -12,10 +13,15 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'native-base';
-import { useNetInfo } from '@react-native-community/netinfo';
+// import PushNotification from "react-native-push-notification";
+import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
+import { connectionSelector } from '../../state/app/app.selectors';
+import { setReminder, cancelReminder } from '../../state/applets/applets.thunks';
+import { setConnection } from '../../state/app/app.actions';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
+// import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
 
@@ -47,9 +53,13 @@ const AppletListComponent = ({
   isDownloadingApplets,
   isDownloadingTargetApplet,
   title,
-  primaryColor,
+  isConnected,
+  setConnection,
+  setReminder,
+  cancelReminder,
   onPressDrawer,
   onPressRefresh,
+  onUploadQueue,
   onPressAbout,
   onPressApplet,
   mobileDataAllowed,
@@ -58,6 +68,7 @@ const AppletListComponent = ({
   const [onSettings, setOnSettings] = useState(0);
   const [onAboutTime, setOnAboutTime] = useState(0);
   const netInfo = useNetInfo();
+  let currentConnection = false;
 
   const onPressSettings = () => {
     const currentTime = Date.now();
@@ -76,6 +87,31 @@ const AppletListComponent = ({
       onPressAbout();
     }
   };
+
+  const handleConnectivityChange = (connection) => {
+    if (connection.isConnected) {
+      cancelReminder();
+
+      if (!isConnected && !currentConnection) {
+        currentConnection = true;
+        setConnection(true);
+        onUploadQueue();
+      }
+    } else {
+      currentConnection = false;
+      setConnection(false);
+      setReminder();
+    }
+  }
+
+  useEffect(() => {
+    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    return () => {
+      if (netInfoUnsubscribe) {
+        netInfoUnsubscribe();
+      }
+    }
+  }, [])
 
   return (
     <Container style={styles.container}>
@@ -169,13 +205,34 @@ AppletListComponent.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
+  setReminder: PropTypes.func.isRequired,
+  cancelReminder: PropTypes.func.isRequired,
+  setConnection: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
+  onUploadQueue: PropTypes.func.isRequired,
   onPressApplet: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   primaryColor: PropTypes.string.isRequired,
   mobileDataAllowed: PropTypes.bool.isRequired,
+  isConnected: PropTypes.bool.isRequired,
   toggleMobileDataAllowed: PropTypes.func.isRequired,
 };
 
-export default AppletListComponent;
+const mapStateToProps = (state) => {
+  return {
+    isConnected: connectionSelector(state),
+    appStatus: state.app.appStatus,
+  };
+};
+
+const mapDispatchToProps = {
+  setReminder,
+  setConnection,
+  cancelReminder,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppletListComponent);

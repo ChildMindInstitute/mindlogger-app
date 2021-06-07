@@ -1,15 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { View } from 'react-native';
-import i18n from 'i18next';
-import { AboutView } from './core/AboutView';
+import React from "react";
+import PropTypes from "prop-types";
+import { View } from "react-native";
+import i18n from "i18next";
+import { AboutView } from "./core/AboutView";
 
 // eslint-disable-next-line
 class AppletAbout extends React.Component {
   constructor() {
     super();
     this.state = {
-      markdown: i18n.t('applet_about:loading'),
+      markdown: i18n.t("applet_about:loading"),
     };
   }
 
@@ -25,7 +25,7 @@ class AppletAbout extends React.Component {
       this.setState({
         markdown: `# ¯\\\\_(ツ)_/¯
         ‍
-${i18n.t('applet_about:no_info')}
+${i18n.t("applet_about:no_info")}
 
         `,
       });
@@ -35,7 +35,7 @@ ${i18n.t('applet_about:no_info')}
   async getMD(url) {
     const resp = await fetch(url);
     const markdown = await resp.text();
-    // console.log('response is', resp);
+
     this.setState({
       markdown,
     });
@@ -44,7 +44,7 @@ ${i18n.t('applet_about:no_info')}
   render() {
     const { markdown } = this.state;
     return (
-      <View style={{ padding: 10, backgroundColor: 'white' }}>
+      <View style={{ padding: 10, backgroundColor: "white" }}>
         <AboutView>{markdown}</AboutView>
       </View>
     );

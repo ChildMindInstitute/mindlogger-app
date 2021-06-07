@@ -11,7 +11,7 @@ export const signInSuccessful = response => (dispatch) => {
   dispatch(
     sync(() => getUserUpdates({
       authToken: response.authToken.token,
-    })),
+    }), response.keys),
   );
   Actions.replace('applet_list');
 };
