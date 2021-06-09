@@ -96,7 +96,7 @@ export const prepareResponseForUpload = (
   if (activity.subScales) {
     for (let subScale of activity.subScales) {
       subScaleResult.push(
-        getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
+        getScoreFromLookupTable(responses, subScale.jsExpression, subScale.isAverageScore, activity.items, subScale['lookupTable'])
       );
     }
   }
@@ -104,7 +104,8 @@ export const prepareResponseForUpload = (
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      // (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] ? responses[index].value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);

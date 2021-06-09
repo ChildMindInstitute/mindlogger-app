@@ -39,10 +39,6 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
     }
   }
 
-  const onEndEditing = () => {
-    onChange(text);
-  }
-
   const onChangeText = (newText) => {
     setText(newText);
     onChange(newText);
@@ -58,10 +54,10 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
           <TextInput
             placeholder={i18n.t('text_entry:type_placeholder')}
             onChangeText={onChangeText}
-            onEndEditing={onEndEditing}
             style={[newStyle]}
             keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
             value={text}
+            autoCorrect={false}
             multiline={true}
             onBlur={() => setFocused(false)}
             onFocus={() => setFocused(true)}

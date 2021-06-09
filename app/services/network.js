@@ -75,32 +75,12 @@ export const postFile = async ({ authToken, file, appletId, activityId }) => {
       [file.key]: base64String
     })
   })
-    .then(res => {
-      return res.status === 200 ? res.json() : Promise.reject(res);
+    .then(async res => {
+      return res.status === 200 ? await res.json() : Promise.reject(res);
     }).catch(err => {
       Promise.reject(err);
       console.log(err)
     })
-
-  // return RNFetchBlob.fetch(
-  //   "POST",
-  //   url,
-  //   headers,
-  //   [{
-  //     name: "metadata",
-  //     data: JSON.stringify({ "applet": { "schemaVersion": "1.0" }, "subject": { "@id": "asasa", "timezone": "US" }, "responses": { "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc92": { "size": 1000, "type": "image/png" } } }),
-  //   },
-  //   {
-  //     name: "60813d6429edf40497e54d0a/607f4f9ad6ff0040d3aefc92",
-  //     data: RNFetchBlob.wrap(file.uri),
-  //   }]
-  // ).then((res) => {
-  //   const responseInfo = res.info();
-  //   console.log('postFile response.....', res, responseInfo);
-  //   return responseInfo.status === 200 ? res.json() : Promise.reject(res);
-  // }).catch((err) => {
-  //   console.log('postFile ERR.....', err);
-  // });
 };
 
 export const getSkin = () => get("context/skin", null, null);
@@ -111,7 +91,7 @@ export const getResponses = (authToken, applet) =>
 export const getSchedule = (authToken, timezone) =>
   get("schedule", authToken, { timezone });
 
-export const getApplets = (authToken, localInfo, currentApplet='', nextActivity='') => {
+export const getApplets = (authToken, localInfo, currentApplet = '', nextActivity = '') => {
   const queryParams = objectToQueryParams({
     role: "user",
     getAllApplets: true,
@@ -163,7 +143,7 @@ export const getApplets = (authToken, localInfo, currentApplet='', nextActivity=
 //   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
 // );
 
-export const getTargetApplet = (authToken, appletId, nextActivity='') => {
+export const getTargetApplet = (authToken, appletId, nextActivity = '') => {
   return get(`user/applet/${appletId}`, authToken, {
     retrieveSchedule: true,
     role: "user",
@@ -171,7 +151,7 @@ export const getTargetApplet = (authToken, appletId, nextActivity='') => {
     nextActivity
   }).then(resp => {
     if (resp.nextActivity) {
-      return new Promise(resolve => setTimeout(() => resolve(getTargetApplet(authToken, appletId, resp.nextActivity ).then(next => {
+      return new Promise(resolve => setTimeout(() => resolve(getTargetApplet(authToken, appletId, resp.nextActivity).then(next => {
         for (const IRI in next.items) {
           resp.items[IRI] = next.items[IRI]
         }
@@ -287,9 +267,7 @@ export const updatePassword = (authToken, oldPassword, newPassword, email) => {
 
 export const fileLink = (file, token) =>
   file
-    ? `${apiHost()}/${
-    file["@id"]
-    }/download?contentDisposition=inline&token=${token}`
+    ? `${apiHost()}/${file["@id"]}/download?contentDisposition=inline&token=${token}`
     : "";
 
 export const registerOpenApplet = (authToken, schemaURI) => {

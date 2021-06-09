@@ -96,7 +96,7 @@ const ActivityList = ({
         clearExec(updateId);
       }
     }
-  }, [Object.keys(inProgress).length, responseSchedule]);
+  }, [Object.keys(inProgress).length, responseSchedule, applet]);
 
 
   useEffect(() => {

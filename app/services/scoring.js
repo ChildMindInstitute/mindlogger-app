@@ -15,20 +15,24 @@ export const getScoreFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
-  } else if (typeof response === 'object') {
-    response = response.value
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    response = response.value;
   }
 
   let totalScore = 0;
 
   for (let value of response) {
-    let option = itemList.find(option => 
-      typeof value === 'number' && option.value === value || 
-      typeof value === 'string' && Object.values(option.name)[0] === value
-    );
+    if (typeof value === 'number' || typeof value === 'string') {
+      let option = itemList.find(option =>
+        typeof value === 'number' && option.value === value ||
+        typeof value === 'string' && Object.values(option.name)[0] === value
+      );
 
-    if (option && option.score) {
-      totalScore += option.score;
+      if (option && option.score) {
+        totalScore += option.score;
+      }
+    } else {
+
     }
   }
 
@@ -46,6 +50,8 @@ export const getValuesFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    response = [response.value]
   }
 
   const tokenValues = [];
@@ -119,7 +125,7 @@ const isValueInRange = (value, lookupInfo) => {
   return false;
 };
 
-export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
+export const getScoreFromLookupTable = (responses, jsExpression, isAverageScore, items, lookupTable) => {
   let scores = [];
 
   for (let i = 0; i < responses.length; i++) {
@@ -129,6 +135,11 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
   }
 
   let subScaleScore = evaluateScore(jsExpression, items, scores);
+
+  if (isAverageScore) {
+    const nodes = jsExpression.split('+');
+    subScaleScore /= nodes.length;
+  }
 
   if (lookupTable) {
     const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
