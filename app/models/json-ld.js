@@ -302,14 +302,14 @@ export const transformInputs = (inputs) =>
       val = flattenItemList(itemList);
     }
 
-    if (inputObj["@type"].includes(AUDIO_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(AUDIO_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
         transcript: languageListToObject(inputObj[TRANSCRIPT]),
       };
     }
 
-    if (inputObj["@type"].includes(IMAGE_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(IMAGE_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
       };
