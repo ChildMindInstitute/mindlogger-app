@@ -108,7 +108,7 @@ class Activity extends React.Component {
     const next = getNextPos(currentScreen, visibility);
 
     if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
-      return ;
+      return;
     }
 
     if ((autoAdvance || fullScreen) && !optionalText) {
@@ -199,12 +199,12 @@ class Activity extends React.Component {
     const nextLabel = isSummaryScreen
       ? "Next"
       : getNextLabel(
-          currentScreen,
-          itemVisibility,
-          activity,
-          responses,
-          this.state.isContentError
-        );
+        currentScreen,
+        itemVisibility,
+        activity,
+        responses,
+        this.state.isContentError
+      );
     const actionLabel = isSummaryScreen
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
@@ -229,8 +229,8 @@ class Activity extends React.Component {
             onAnyTouch={this.idleTimer.resetCountdown}
           />
         ) : (
-          <ActivitySummary responses={responses} activity={activity} />
-        )}
+            <ActivitySummary responses={responses} activity={activity} />
+          )}
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
