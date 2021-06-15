@@ -473,10 +473,13 @@ const transformPureActivity = (activityJson) => {
     }
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
+    const jsExpression = R.path([JS_EXPRESSION, 0, "@value"], subScale);
     return {
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
+      isAverageScore: R.path([IS_AVERAGE_SCORE, 0, "@value"], subScale),
+      jsExpression,
       variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
-      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false)
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false),
+      innerSubScales: jsExpression.split('+').filter(name => name.includes('(')).map(name => name.trim().replace(/[()]/g, ''))
     }
   }, activityJson[SUBSCALES])
 
@@ -827,17 +830,17 @@ export const parseAppletEvents = (applet) => {
 
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
-      const futureSchedule = Parse.schedule(event.schedule).forecast(
-        Day.fromDate(new Date()),
-        true,
-        1,
-        0,
-        true,
-      );
-
-      event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
 
       if (event.data.activity_id === act.id.substring(9)) {
+        const futureSchedule = Parse.schedule(event.schedule).forecast(
+          Day.fromDate(new Date()),
+          true,
+          1,
+          0,
+          true,
+        );
+
+        event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
         events.push(event);
       }
     }

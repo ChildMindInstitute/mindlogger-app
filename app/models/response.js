@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -94,17 +94,18 @@ export const prepareResponseForUpload = (
 
   let subScaleResult = [];
   if (activity.subScales) {
-    for (let subScale of activity.subScales) {
-      subScaleResult.push(
-        getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
-      );
-    }
+    subScaleResult = getSubScaleResult(
+      activity.subScales,
+      responses,
+      activity.items
+    )
   }
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      // (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] ? responses[index].value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
