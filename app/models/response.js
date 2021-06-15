@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -94,11 +94,11 @@ export const prepareResponseForUpload = (
 
   let subScaleResult = [];
   if (activity.subScales) {
-    for (let subScale of activity.subScales) {
-      subScaleResult.push(
-        getScoreFromLookupTable(responses, subScale.jsExpression, subScale.isAverageScore, activity.items, subScale['lookupTable'])
-      );
-    }
+    subScaleResult = getSubScaleResult(
+      activity.subScales,
+      responses,
+      activity.items
+    )
   }
 
   /** process for encrypting response */
