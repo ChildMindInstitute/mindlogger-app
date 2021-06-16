@@ -302,14 +302,14 @@ export const transformInputs = (inputs) =>
       val = flattenItemList(itemList);
     }
 
-    if (inputObj["@type"].includes(AUDIO_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(AUDIO_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
         transcript: languageListToObject(inputObj[TRANSCRIPT]),
       };
     }
 
-    if (inputObj["@type"].includes(IMAGE_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(IMAGE_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
       };
@@ -473,11 +473,13 @@ const transformPureActivity = (activityJson) => {
     }
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
+    const jsExpression = R.path([JS_EXPRESSION, 0, "@value"], subScale);
     return {
       isAverageScore: R.path([IS_AVERAGE_SCORE, 0, "@value"], subScale),
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
+      jsExpression,
       variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
       lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false),
+      innerSubScales: jsExpression.split('+').filter(name => name.includes('(')).map(name => name.trim().replace(/[()]/g, ''))
     }
   }, activityJson[SUBSCALES])
 
