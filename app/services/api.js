@@ -99,14 +99,14 @@ export const downloadAppletResponse = async (authToken, applet) => {
             response.value =
               responses.dataSources[response.value.src][response.value.ptr];
 
-            if (response.value && response.value.value !== undefined) {
+            if (response.value && response.value.value) {
               response.value = response.value.value;
             }
           }
         }
 
         responses.responses[item] = responses.responses[item].filter(
-          (response) => response.value !== undefined && response.value !== null
+          (response) => response.value
         );
         if (responses.responses[item].length === 0) {
           delete responses.responses[item];
