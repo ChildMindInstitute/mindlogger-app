@@ -104,8 +104,7 @@ export const prepareResponseForUpload = (
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      // (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: responses[index] ? responses[index].value : index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: (item.inputType == 'drawing' ? responses[index].value : index) }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
@@ -256,14 +255,14 @@ export const decryptAppletResponses = (applet, responses) => {
         ) {
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
-          if (response.value && response.value.value) {
+          if (response.value && response.value.value !== undefined) {
             response.value = response.value.value;
           }
         }
       }
 
       responses.responses[item] = responses.responses[item].filter(
-        (response) => response.value
+        (response) => response.value !== undefined && response.value !== null
       );
       if (responses.responses[item].length === 0) {
         delete responses.responses[item];
