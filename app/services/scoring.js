@@ -15,20 +15,28 @@ export const getScoreFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
-  } else if (typeof response === 'object') {
-    response = [response.value]
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    if (!Array.isArray(response.value)) {
+      response = [response.value];
+    } else {
+      response = response.value;
+    }
   }
 
   let totalScore = 0;
 
   for (let value of response) {
-    let option = itemList.find(option => 
-      typeof value === 'number' && option.value === value || 
-      typeof value === 'string' && Object.values(option.name)[0] === value
-    );
+    if (typeof value === 'number' || typeof value === 'string') {
+      let option = itemList.find(option =>
+        typeof value === 'number' && option.value === value ||
+        typeof value === 'string' && Object.values(option.name)[0] === value
+      );
 
-    if (option && option.score) {
-      totalScore += option.score;
+      if (option && option.score) {
+        totalScore += option.score;
+      }
+    } else {
+
     }
   }
 
@@ -46,13 +54,15 @@ export const getValuesFromResponse = (item, value) => {
   let response = value;
   if (typeof response === 'number' || typeof response === 'string') {
     response = [response];
+  } else if (typeof response === 'object' && !Array.isArray(response)) {
+    response = [response.value]
   }
 
   const tokenValues = [];
 
   for (let value of response) {
-    let option = itemList.find(option => 
-      typeof value === 'number' && option.value === value || 
+    let option = itemList.find(option =>
+      typeof value === 'number' && option.value === value ||
       typeof value === 'string' && Object.values(option.name)[0] === value
     );
 
@@ -66,22 +76,31 @@ export const getValuesFromResponse = (item, value) => {
   return tokenValues;
 }
 
-export const evaluateScore = (testExpression, items = [], scores = []) => {
+export const evaluateScore = (testExpression, items = [], scores = [], subScaleResult = {}) => {
   const parser = new Parser();
 
   try {
-    const expr = parser.parse(testExpression);
-    // Build an object where the keys are item variableNames, and values are
-    // item responses
-    const inputs = items.reduce((acc, item, index) => ({
-      ...acc,
-      [item.variableName]: scores[index],
-    }), {});
+    let expression = testExpression;
+
+    for (const variableName in subScaleResult) {
+      expression = expression.replace(
+        new RegExp(`\\(${variableName}\\)`, 'g'), subScaleResult[variableName].tScore
+      );
+    }
+
+    for (let i = 0; i < items.length; i++) {
+      expression = expression.replace(
+        new RegExp(`\\b${items[i].variableName}\\b`, 'g'), scores[i]
+      );
+    }
 
     // Run the expression
-    const result = expr.evaluate(inputs);
+    const expr = parser.parse(expression);
+
+    const result = expr.evaluate();
     return result;
   } catch (error) {
+    console.log('error is', error);
     return null;
   }
 };
@@ -119,7 +138,14 @@ const isValueInRange = (value, lookupInfo) => {
   return false;
 };
 
-export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTable) => {
+export const getScoreFromLookupTable = (
+  responses,
+  jsExpression,
+  isAverageScore,
+  items,
+  lookupTable,
+  subScaleResult
+) => {
   let scores = [];
 
   for (let i = 0; i < responses.length; i++) {
@@ -128,15 +154,20 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     }
   }
 
-  let subScaleScore = evaluateScore(jsExpression, items, scores);
+  let subScaleScore = evaluateScore(jsExpression, items, scores, subScaleResult);
+
+  if (isAverageScore) {
+    const nodes = jsExpression.split('+');
+    subScaleScore /= nodes.length;
+  }
 
   if (lookupTable) {
     const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
     const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
 
     for (let row of lookupTable) {
-      if ( 
-        isValueInRange(subScaleScore, row.rawScore) && 
+      if (
+        isValueInRange(subScaleScore, row.rawScore) &&
         isValueInRange(age, row.age) &&
         isValueInRange(gender, row.sex.toUpperCase())
       ) {
@@ -152,6 +183,41 @@ export const getScoreFromLookupTable = (responses, jsExpression, items, lookupTa
     tScore: subScaleScore,
     outputText: null
   };
+}
+
+export const getSubScaleResult = (subScales, responses, items) => {
+  const subScaleResult = {};
+  const calculated = {};
+
+  while(true) {
+    let updated = false;
+
+    for (const subScale of subScales) {
+      if (!calculated[subScale.variableName]) {
+        if (subScale.innerSubScales.find(name => !calculated[name])) {
+          continue;
+        }
+
+        subScaleResult[subScale.variableName] =
+          getScoreFromLookupTable(
+            responses,
+            subScale.jsExpression,
+            subScale.isAverageScore,
+            items,
+            subScale['lookupTable'],
+            subScaleResult
+          );
+
+        calculated[subScale.variableName] = true;
+
+        updated = true;
+      }
+    }
+
+    if (!updated) break;
+  }
+
+  return subScales.map(subScale => subScaleResult[subScale.variableName]);
 }
 
 export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {

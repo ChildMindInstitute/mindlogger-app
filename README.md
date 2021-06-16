@@ -1,4 +1,4 @@
-# MindLogger 0.16.23
+# MindLogger 0.16.28
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -127,12 +127,12 @@ See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 
 ## Authors
 
-- [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger)
-- [**Stuart Freen**](https://github.com/stufreen) - _Rangle.io developer: code refactoring, pilot version_
-- [**Erik Ilyin**](https://github.com/erik-ilyin) - _Independent developer: initial prototype_
+- [Child Mind Institute **MATTER Lab**](https://matter.childmind.org/mindlogger) list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors)
+- Early contributors:
+  - [**Stuart Freen**](https://github.com/stufreen) - _Rangle.io developer: code refactoring, pilot version_
+  - [**Erik Ilyin**](https://github.com/erik-ilyin) - _Independent developer: initial prototype_
 
-See also the list of [contributors](https://github.com/ChildMindInstitute/ab2cd-app/contributors) who participated in this project.
 
 ## License
 
-[Apache 2.0](LICENSE)
+CPAL 1.0

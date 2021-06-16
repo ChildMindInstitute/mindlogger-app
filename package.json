@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.16.23",
+  "version": "0.16.28",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -51,7 +51,7 @@
     "hash-int": "^1.0.0",
     "https-browserify": "0.0.1",
     "i18next": "^19.8.4",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "lodash-es": "^4.17.15",
     "markdown-it-container": "^3.0.0",
     "markdown-it-html5-media": "^0.7.0",
@@ -109,7 +109,7 @@
     "react-native-vector-icons": "6.6.0",
     "react-native-video": "^5.1.1",
     "react-native-video-player": "^0.10.1",
-    "react-native-webview": "7.5.2",
+    "react-native-webview": "11.0.0",
     "react-redux": "^7.2.0",
     "react-timer-mixin": "^0.13.4",
     "readable-stream": "^1.0.33",

@@ -5,216 +5,232 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
-## [0.16.23] - 2020-05-18
+## [0.16.28] - 2021-06-14
+- Fix score calculation for radio items
+
+## [0.16.27] - 2021-06-13
+- Add subscale within a subscale
+
+## [0.16.26] - 2021-06-08
+- optimize scheduling
+
+## [0.16.25] - 2021-05-30
+- implement average scoring
+- Fix TextEntry widget and scoring
+
+## [0.16.24] - 2021-05-22
+- optimize scheduling
+
+## [0.16.23] - 2021-05-18
 - fix getting score from response
 
-## [0.16.22] - 2020-05-17
+## [0.16.22] - 2021-05-17
 - update logic for pulling data from backend
 
-## [0.16.21] - 2020-05-11
+## [0.16.21] - 2021-05-11
 - Optiize changeg password & login
 
-## [0.16.20] - 2020-05-04
+## [0.16.20] - 2021-05-04
 - Fix time string
 
-## [0.16.19] - 2020-04-29
+## [0.16.19] - 2021-04-29
 - Update texts in UI
 
-## [0.16.18] - 2020-04-28
+## [0.16.18] - 2021-04-28
 - Modify free text widget
 
-## [0.16.17] - 2020-04-22
+## [0.16.17] - 2021-04-22
 - Fixed duplicated response
 
-## [0.16.16] - 2020-04-20
+## [0.16.16] - 2021-04-20
 - Modify notif error msg for unavailable activity
 
-## [0.16.15] - 2020-04-17
+## [0.16.15] - 2021-04-17
 - Fixed undo button on free text widget
 - fixed notification count
 
-## [0.16.14] - 2020-04-16
+## [0.16.14] - 2021-04-16
 - Fixed inprogress response
 
-## [0.16.13] - 2020-04-15
+## [0.16.13] - 2021-04-15
 - Fix opening notification
 
-## [0.16.9] - 2020-04-14
+## [0.16.9] - 2021-04-14
 - Fix opening activity via notification
 
-## [0.16.8] - 2020-04-14
+## [0.16.8] - 2021-04-14
 - Changed activity availability
 - Small fix
 
-## [0.16.7] - 2020-04-10
+## [0.16.7] - 2021-04-10
 - Fixed drawing widget issue
 
-## [0.16.6] - 2020-04-09
+## [0.16.6] - 2021-04-09
 - Fixed idle timer and finished events
 
-## [0.16.5] - 2020-04-07
+## [0.16.5] - 2021-04-07
 - Change item image height
 
-## [0.16.4] - 2020-04-06
+## [0.16.4] - 2021-04-06
 - Fixed scheduling issues
 
-## [0.16.3] - 2020-04-06
+## [0.16.3] - 2021-04-06
 - Fix white screen issue
 - Fix opening activity issue on push notification
 
-## [0.16.2] - 2020-04-01
+## [0.16.2] - 2021-04-01
 - Resolved native keyboard issue on text input
 - Fix text widget issue
 
-## [0.16.1] - 2020-04-01
+## [0.16.1] - 2021-04-01
 - Updated scheduling logic
 
-## [0.15.30] - 2020-03-31
+## [0.15.30] - 2021-03-31
 - Fix several bugs
 
-## [0.15.29] - 2020-03-29
+## [0.15.29] - 2021-03-29
 - Changed image resize mode
 
-## [0.15.28] - 2020-03-28
+## [0.15.28] - 2021-03-28
 - Fixed question name in data tab
 
-## [0.15.27] - 2020-03-21
+## [0.15.27] - 2021-03-21
 - Fixed EMA next button issue
 
-## [0.15.26] - 2020-03-25
+## [0.15.26] - 2021-03-25
 - Modified audioImageRecord widget
 
-## [0.15.25] - 2020-03-21
+## [0.15.25] - 2021-03-21
 - Fixed next button in EMA applet
 - Removed white space above items
 - Fixed vertical offset
 
-## [0.15.24] - 2020-03-18
+## [0.15.24] - 2021-03-18
 - Fixed async storage cache issue
 - Updated optional text box in all widgets
 
-## [0.15.23] - 2020-03-18
+## [0.15.23] - 2021-03-18
 - Fixed next button issues
 
-## [0.15.22] - 2020-03-16
+## [0.15.22] - 2021-03-16
 - Modified applet image
 
-## [0.15.21] - 2020-03-17
+## [0.15.21] - 2021-03-17
 - Fix app crashing issue
 - Fix drawing item issue
 - Modified response uploading after reconnecting
 
-## [0.15.20] - 2020-03-16
+## [0.15.20] - 2021-03-16
 - Fix keyboard overlap issue with textbox
 
-## [0.15.19] - 2020-03-14
+## [0.15.19] - 2021-03-14
 - Fixed bug with stacked slider
 
-## [0.15.18] - 2020-03-10
+## [0.15.18] - 2021-03-10
 - Fixed activity timer after opening via notification
 
-## [0.15.17] - 2020-03-010
+## [0.15.17] - 2021-03-010
 - Modified information page
 
-## [0.15.16] - 2020-03-08
+## [0.15.16] - 2021-03-08
 - Fixed next button label in widgets
 
-## [0.15.15] - 2020-03-07
+## [0.15.15] - 2021-03-07
 - Modified activity button
 
-## [0.15.14] - 2020-03-07
+## [0.15.14] - 2021-03-07
 - Fixed drawing widget
 
-## [0.15.13] - 2020-03-05
+## [0.15.13] - 2021-03-05
 - Fixed response data format
 
-## [0.15.12] - 2020-03-03
+## [0.15.12] - 2021-03-03
 - Fixed app crashing bug with header image
 
-## [0.15.11] - 2020-03-03
+## [0.15.11] - 2021-03-03
 - Resolved bold text issue
 - Fixed conditional logic
 
-## [0.15.10] - 2020-03-03
+## [0.15.10] - 2021-03-03
 - Bug fixes of stacked sliders
 
-## [0.15.9] - 2020-03-01
+## [0.15.9] - 2021-03-01
 - Modified continuous slider
 - Resolved conditional logic issue
 
-## [0.15.8] - 2020-02-28
+## [0.15.8] - 2021-02-28
 - Fixed optimization issue
 - Fixed response data issue
 
-## [0.15.7] - 2020-03-1
+## [0.15.7] - 2021-03-1
 - Optional textbox for items
 
-## [0.15.6] - 2020-02-24
+## [0.15.6] - 2021-02-24
 - Updated tick marks in slider widget
 
-## [0.15.5] - 2020-02-22
+## [0.15.5] - 2021-02-22
 - Fixed hidden inputbox
 - Added stacked radio/checkbox/radio item
 
-## [0.15.4] - 2020-02-21
+## [0.15.4] - 2021-02-21
 - Fixed activity access
 
-## [0.15.3] - 2020-02-22
+## [0.15.3] - 2021-02-22
 - Fixed token value format
 
-## [0.15.2] - 2020-02-22
+## [0.15.2] - 2021-02-22
 - Implemented smooth slider
 
-## [0.15.1] - 2020-02-12
+## [0.15.1] - 2021-02-12
 - Implemented app optimization
 
-## [0.14.82] - 2020-02-08
+## [0.14.82] - 2021-02-08
 - Implement new slider option
 
-## [0.14.81] - 2020-02-03
+## [0.14.81] - 2021-02-03
 - Add ability to change the length of audio user can record
 
-## [0.14.80] - 2020-02-03
+## [0.14.80] - 2021-02-03
 - Small Fix AudioImageRecord Item
 - update time picker
 
-## [0.14.80] - 2020-02-08
+## [0.14.80] - 2021-02-08
 - Implement new slider option
 
-## [0.14.79] - 2020-02-03
+## [0.14.79] - 2021-02-03
 - Fix styling in markdown
 
-## [0.14.78] - 2020-02-01
+## [0.14.78] - 2021-02-01
 - Fix notification badge updating
 - Add tooltip for radio/multi-select options
 
-## [0.14.77] - 2020-01-29
+## [0.14.77] - 2021-01-29
 - Fix markdown rendering
 
-## [0.14.76] - 2020-01-27
+## [0.14.76] - 2021-01-27
 - insert video/audio player, update informational page
 
-## [0.14.75] - 2020-01-26
+## [0.14.75] - 2021-01-26
 - Fixed offline activity status
 - Fix notification count
 
-## [0.14.74] - 2020-01-20
+## [0.14.74] - 2021-01-20
 - Fix activity start time
 
-## [0.14.73] - 2020-01-21
+## [0.14.73] - 2021-01-21
 - Fixed undeinfed object
 - Fix about button text
 
-## [0.14.72] - 2020-01-21
+## [0.14.72] - 2021-01-21
 - Add description field for choice
 
-## [0.14.71] - 2020-01-19
+## [0.14.71] - 2021-01-19
 - Fix activity end times
 
-## [0.14.70] - 2020-01-19
+## [0.14.70] - 2021-01-19
 - fix token accumulation
 
-## [0.14.69] - 2020-01-18
+## [0.14.69] - 2021-01-18
 - Send alerts to backend
 
 ## [0.14.68] - 2021-01-18

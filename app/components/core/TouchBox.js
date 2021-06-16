@@ -42,12 +42,10 @@ class TouchBox extends React.Component {
 
     if (activityOpened) {
       this.selectedTime = Date.now();
-      setActivityOpened(false);
     }
   }
 
   onHandlePress = () => {
-    // this.handlePress();
     const { activityStatus } = this.props;
     const { onPress } = this.props;
     const currentTime = Date.now();

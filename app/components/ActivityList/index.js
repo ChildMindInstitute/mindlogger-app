@@ -96,15 +96,15 @@ const ActivityList = ({
         clearExec(updateId);
       }
     }
-  }, [Object.keys(inProgress).length, responseSchedule]);
+  }, [Object.keys(inProgress).length, responseSchedule, applet]);
 
-  
+
   useEffect(() => {
     if (appStatus) {
       stateUpdate();
     }
   }, [appStatus]);
-  
+
   useEffect(() => {
     if (scheduleUpdated) {
       stateUpdate();
@@ -120,7 +120,7 @@ const ActivityList = ({
       }
     }
   }, [])
-  
+
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
