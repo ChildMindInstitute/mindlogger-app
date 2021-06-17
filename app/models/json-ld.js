@@ -88,6 +88,7 @@ const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
 const HAS_RESPONSE_IDENTIFIER = "reprolib:terms/hasResponseIdentifier";
+const IS_RESPONSE_IDENTIFIER = "reprolib:terms/isResponseIdentifier";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -160,6 +161,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
+      };
+    }
+
+    if (key == IS_RESPONSE_IDENTIFIER) {
+      return {
+        ...accumulator,
+        isResponseIdentifier: R.path([key, 0, "@value"], vcObj),
       };
     }
 
