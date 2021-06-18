@@ -107,13 +107,6 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
     "Girder-Token": authToken,
   };
 
-  console.log("called fetch applet");
-  console.log(queryParams);
-  console.log(headers);
-  console.log(url);
-  console.log('================');
-  console.log(objectToFormData({ localInfo: JSON.stringify(localInfo) }));
-
   return fetch(url, {
     method: "put",
     mode: "cors",
@@ -121,14 +114,9 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
     body: objectToFormData({ localInfo: JSON.stringify(localInfo) }),
   })
     .then((res) => {
-      console.log(res);
-      console.log(res.status);
       return res.status === 200 ? res.json() : Promise.reject(res)
     })
     .then(res => {
-
-      console.log(res);
-
       if (res.nextActivity) {
         return new Promise(resolve => setTimeout(() => resolve(getApplets(authToken, localInfo, res.currentApplet, res.nextActivity).then(next => {
           for (const applet of next.data) {
@@ -196,7 +184,6 @@ export const postResponse = ({ authToken, response }) => {
 };
 
 export const postAppletBadge = (authToken, badge) => {
-  console.log("post applet badge");
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
   const headers = {
     "Girder-Token": authToken,

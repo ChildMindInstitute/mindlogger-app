@@ -230,15 +230,13 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   }
 
   dispatch(setDownloadingApplets(true));
-  console.log("----called------");
   getApplets(auth.token, localInfo).then(async (resp) => {
-    console.log("----called 2------");
-    // console.log(resp);
     let applets = []
     if (resp.data)
       applets = resp.data;
     else
       applets = resp;
+
     if (loggedInSelector(getState())) {
       // Check that we are still logged in when fetch finishes
       const userInfo = userInfoSelector(state);
@@ -277,9 +275,9 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           return currentApplet;
         } else {
           const applet = transformApplet(appletInfo, currentApplets);
+
           if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
             const appletId = applet.id.split('/')[1];
-
             if (keys && keys[appletId]) {
               dispatch(prepareResponseKeys(applet.id, keys[appletId]))
               Object.assign(applet, keys[appletId]);

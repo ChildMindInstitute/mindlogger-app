@@ -78,8 +78,9 @@ const ActivitySummary = ({ responses, activity }) => {
 
     let scores = [], maxScores = [];
     for (let i = 0; i < activity.items.length; i++) {
+      if (!activity.items[i] || !responses[i]) continue;
+
       let score = getScoreFromResponse(activity.items[i], responses[i]);
-  
       scores.push(score);
 
       maxScores.push(getMaxScore(activity.items[i]))

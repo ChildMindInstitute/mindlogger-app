@@ -45,12 +45,12 @@ export class Select extends React.Component {
       );
     }
 
-    const selectedItem = config.itemList.find(item => item.value === value);
+    const selectedItem = config.itemList.find(item => item.value === (typeof value === "object" ? value.value : value));
     return (
       <View style={{ marginBottom: 0, height: 350 }}>
         {this.state.modalVisible ? (
           <Container style={styles.paddingContent}>
-            <Picker selectedValue={value} onValueChange={onChange}>
+            <Picker selectedValue={value} onValueChange={(v) => onChange({ value: v })}>
               <Picker.Item label="Select one" value={config.itemList[0].value} />
               {config.itemList.map((item, index) => (
                 <Picker.Item label={item.name.en} value={item.value} key={index} />
@@ -58,19 +58,19 @@ export class Select extends React.Component {
             </Picker>
           </Container>
         ) : (
-          <ListItem
-            onPress={() => {
-              this.setModalVisible(true);
-            }}
-          >
-            <Left>
-              <Text>{selectedItem ? selectedItem.name.en : i18n.t('select:select_one')}</Text>
-            </Left>
-            <Right>
-              <Icon name="arrow-forward" />
-            </Right>
-          </ListItem>
-        )}
+            <ListItem
+              onPress={() => {
+                this.setModalVisible(true);
+              }}
+            >
+              <Left>
+                <Text>{selectedItem ? selectedItem.name.en : i18n.t('select:select_one')}</Text>
+              </Left>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+          )}
       </View>
     );
   }
