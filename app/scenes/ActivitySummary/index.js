@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 import { Parser } from 'expr-eval';
+import _ from 'lodash';
 
 import {
   SafeAreaView,
@@ -20,6 +21,9 @@ import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
+import { newAppletSelector } from '../../state/app/app.selectors';
+import { parseAppletEvents } from '../../models/json-ld';
+import { setActivities } from '../../state/activities/activities.actions';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -67,14 +71,17 @@ const DATA = [
   },
 ];
 
-const ActivitySummary = ({ responses, activity }) => {
+const ActivitySummary = ({ responses, activity, applet, setActivities, activities }) => {
   const [messages, setMessages] = useState([]);
+  const [nextActivity, setNextActivity] = useState();
 
   useEffect(() => {
     const parser = new Parser({
       logical: true,
       comparison: true,
     });
+
+    const newApplet = parseAppletEvents(applet);
 
     let scores = [], maxScores = [];
     for (let i = 0; i < activity.items.length; i++) {
@@ -102,17 +109,27 @@ const ActivitySummary = ({ responses, activity }) => {
 
     const reportMessages = [];
     activity.messages.forEach((msg) => {
-      const { jsExpression, message, outputType } = msg;
+      const { jsExpression, message, outputType, nextActivity } = msg;
 
       const variableName = jsExpression.split(/[><]/g)[0];
       const category = variableName.trim().replace(/\s/g, '__');
       const expr = parser.parse(category + jsExpression.substr(variableName.length));
 
       if (expr.evaluate(cumulativeScores)) {
+        const score = outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) : cumulativeScores[category];
+
+        console.log('----------------nextActivity');
+        console.log(nextActivity);
+
+        if (nextActivity) {
+          // setNextActivity();
+          setActivities([...activities, _.find(newApplet.activities, { name: { en: nextActivity } })])
+        }
+
         reportMessages.push({
           category,
           message,
-          score: (outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) + '%' : cumulativeScores[category]),
+          score: outputType == 'percentage' ? score + '%' : score
         });
       }
     });
@@ -158,9 +175,16 @@ ActivitySummary.propTypes = {
   activity: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = {};
+const mapStateToProps = (state) => ({
+  applet: newAppletSelector(state),
+  activities: state.activities.activities,
+})
+
+const mapDispatchToProps = {
+  setActivities
+};
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(ActivitySummary);

@@ -78,6 +78,7 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
+const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
@@ -494,6 +495,7 @@ const transformPureActivity = (activityJson) => {
       message: R.path([MESSAGE, 0, "@value"], item),
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
       outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
+      nextActivity: R.path([NEXT_ACTIVITY, 0, "@value"], item),
     }
   }, activityJson[MESSAGES]);
 

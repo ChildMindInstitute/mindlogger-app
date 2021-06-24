@@ -91,3 +91,4 @@ export const setLanguage = language => ({
   type: APP_ACTIONS.SET_APP_LANGUAGE,
   payload: language,
 });
+
