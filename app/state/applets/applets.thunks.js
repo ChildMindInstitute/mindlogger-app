@@ -232,7 +232,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (resp) => {
-      const applets = resp.data;
+      let applets = resp;
+      if (resp.data) applets = resp.data;
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
@@ -380,10 +381,10 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user ?.auth ?.token;
+  const token = state.user?.auth?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
-      .then((response) => {})
+      .then((response) => { })
       .catch((e) => {
         console.warn(e);
       });
