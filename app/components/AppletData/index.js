@@ -145,11 +145,11 @@ class AppletData extends React.Component {
                   /** in case of tokenlogger item */
                   currentItem.valueMapping[oldItem.appletVersion][
                     Object.values(oldOption.name)[0]
-                  ] = oldOption.value;
+                  ] = options[newId].value;
                 } else {
                   currentItem.valueMapping[oldItem.appletVersion][
-                    Object.values(oldOption.name)[0]
-                  ] = oldOption.value;
+                    oldOption.value
+                  ] = options[newId].value;
                 }
               });
             } else if (currentItem.inputType == "slider") {
@@ -277,6 +277,7 @@ class AppletData extends React.Component {
               });
             }
             const itemData = [];
+
             responses.forEach((response) => {
               if (
                 !item.appletVersions ||
@@ -296,7 +297,7 @@ class AppletData extends React.Component {
                       value: response.value.map((value) => {
                         const itemValue =
                           item.valueMapping[response.version][value];
-                        return itemValue === "undefined" ? value : itemValue;
+                        return itemValue === undefined ? value : itemValue;
                       }),
                     });
                   } else {
@@ -305,7 +306,7 @@ class AppletData extends React.Component {
                     itemData.push({
                       ...response,
                       value:
-                        itemValue === "undefined" ? response.value : itemValue,
+                        itemValue === undefined ? response.value : itemValue,
                     });
                   }
                 } else {
