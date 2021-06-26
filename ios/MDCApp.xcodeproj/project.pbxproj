@@ -20,10 +20,6 @@
 		3FAC1F992451C52400C01290 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3FAC1F982451C52400C01290 /* GoogleService-Info.plist */; };
 		8197F68D65B1BB32704ABFE7 /* libPods-MDCApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E08BEF87C87B4F6E597FE0F /* libPods-MDCApp-tvOSTests.a */; };
 		98E7CC6B03F274074C53373C /* libPods-MDCAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 075F4F179E6C452DA7A8A3D5 /* libPods-MDCAppTests.a */; };
-		C3CE7DCA2686737600CD0B9D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE7DC92686737600CD0B9D /* Security.framework */; };
-		C3CE7DCC2686738000CD0B9D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE7DCB2686738000CD0B9D /* SystemConfiguration.framework */; };
-		C3CE7DCE2686739600CD0B9D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE7DCD2686739600CD0B9D /* libc++.tbd */; };
-		C3CE7DD42686739F00CD0B9D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CE7DD32686739F00CD0B9D /* libz.tbd */; };
 		E1AD9CD27D9A5AF791E72485 /* libPods-MDCApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B19C9B8E6E0B641E0AC268A /* libPods-MDCApp.a */; };
 /* End PBXBuildFile section */
 
@@ -70,10 +66,6 @@
 		8A7EAC9EC470E5F9779437D2 /* Pods-MDCApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-MDCApp-tvOS/Pods-MDCApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		8D636ABABFA7281D3E2AD1AA /* Pods-MDCAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCAppTests.release.xcconfig"; path = "Target Support Files/Pods-MDCAppTests/Pods-MDCAppTests.release.xcconfig"; sourceTree = "<group>"; };
 		B1CA9D16F83EC58E1DC9481F /* Pods-MDCApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-MDCApp-tvOS/Pods-MDCApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		C3CE7DC92686737600CD0B9D /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		C3CE7DCB2686738000CD0B9D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		C3CE7DCD2686739600CD0B9D /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		C3CE7DD32686739F00CD0B9D /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		DCDE06AE34DE78082985B26C /* Pods-MDCApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-MDCApp-tvOSTests/Pods-MDCApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		E280EA8C901B42479CD574C0 /* Pods-MDCApp-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCApp-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-MDCApp-tvOSTests/Pods-MDCApp-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -93,10 +85,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3CE7DD42686739F00CD0B9D /* libz.tbd in Frameworks */,
-				C3CE7DCE2686739600CD0B9D /* libc++.tbd in Frameworks */,
-				C3CE7DCC2686738000CD0B9D /* SystemConfiguration.framework in Frameworks */,
-				C3CE7DCA2686737600CD0B9D /* Security.framework in Frameworks */,
 				E1AD9CD27D9A5AF791E72485 /* libPods-MDCApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,10 +144,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C3CE7DD32686739F00CD0B9D /* libz.tbd */,
-				C3CE7DCD2686739600CD0B9D /* libc++.tbd */,
-				C3CE7DCB2686738000CD0B9D /* SystemConfiguration.framework */,
-				C3CE7DC92686737600CD0B9D /* Security.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				1B19C9B8E6E0B641E0AC268A /* libPods-MDCApp.a */,
@@ -742,7 +726,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3FB84A1BD989B122B4FA7685 /* Pods-MDCApp.release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = MDCApp/MDCApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -752,7 +735,6 @@
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 0.14.15;
-				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -960,6 +942,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator14.2]" = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
