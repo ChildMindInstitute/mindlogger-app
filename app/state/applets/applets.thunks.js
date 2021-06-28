@@ -255,56 +255,56 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                   })
                 }
 
-                for (const eventId in events) {
-                  let isValid = false;
-                  for (const eventDate in currentApplet.schedule.data) {
-                    if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
-                      isValid = true;
-                    }
-                  }
-
-                  if (!isValid) {
-                    delete events[eventId];
-                  }
-                }
-                currentApplet.schedule.events = events;
-              }
-              responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
-              return currentApplet;
-            } else {
-              const applet = transformApplet(appletInfo, currentApplets);
-              if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-                const appletId = applet.id.split('/')[1];
-
-                if (keys && keys[appletId]) {
-                  dispatch(prepareResponseKeys(applet.id, keys[appletId]))
-                  Object.assign(applet, keys[appletId]);
-                } else {
-                  dispatch(updateKeys(applet, userInfo));
+            for (const eventId in events) {
+              let isValid = false;
+              for (const eventDate in currentApplet.schedule.data) {
+                if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+                  isValid = true;
                 }
               }
-              responses.push({
-                ...decryptAppletResponses(applet, appletInfo.responses),
-                appletId: 'applet/' + appletInfo.id
-              });
-              return applet;
+
+              if (!isValid) {
+                delete events[eventId];
+              }
             }
+            currentApplet.schedule.events = events;
+          }
+          responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
+          return currentApplet;
+        } else {
+          const applet = transformApplet(appletInfo, currentApplets);
+          if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+            const appletId = applet.id.split('/')[1];
+
+            if (keys && keys[appletId]) {
+              dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+              Object.assign(applet, keys[appletId]);
+            } else {
+              dispatch(updateKeys(applet, userInfo));
+            }
+          }
+          responses.push({
+            ...decryptAppletResponses(applet, appletInfo.responses),
+            appletId: 'applet/' + appletInfo.id
           });
-
-        await storeData('ml_applets', transformedApplets);
-        await storeData('ml_responses', responses);
-
-        if (scheduleUpdated) {
-          dispatch(setScheduleUpdated(true));
+          return applet;
         }
-        dispatch(replaceApplets(transformedApplets));
-        dispatch(replaceResponses(responses));
-        // dispatch(downloadAppletsMedia(transformedApplets));
-        if (onAppletsDownloaded) {
-          onAppletsDownloaded();
-        }
+      });
+
+      await storeData('ml_applets', transformedApplets);
+      await storeData('ml_responses', responses);
+
+      if (scheduleUpdated) {
+        dispatch(setScheduleUpdated(true));
       }
-    })
+      dispatch(replaceApplets(transformedApplets));
+      dispatch(replaceResponses(responses));
+      // dispatch(downloadAppletsMedia(transformedApplets));
+      if (onAppletsDownloaded) {
+        onAppletsDownloaded();
+      }
+    }
+  })
     .catch((err) => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
