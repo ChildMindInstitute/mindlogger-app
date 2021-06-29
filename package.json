@@ -19,7 +19,6 @@
     "postinstall": "jetify",
     "patchinstall": "npx patch-package",
     "ios-build": "cd ios && fastlane ios beta",
-    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'",
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
   },
   "dependencies": {
@@ -31,7 +30,6 @@
     "@react-native-community/netinfo": "^3.2.0",
     "@react-native-community/push-notification-ios": "1.8.0",
     "@react-native-community/slider": "^2.0.8",
-    "@react-native-community/toolbar-android": "^0.1.0-rc.2",
     "@sentry/react-native": "^2.2.1",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
