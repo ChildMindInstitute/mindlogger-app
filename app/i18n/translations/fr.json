@@ -186,6 +186,10 @@
     "play": "Lecture",
     "done": "Fait"
   },
+  "optional_text": {
+    "required": "Ceci est un champ obligatoire.",
+    "enter_text": "Veuillez saisir le texte."
+  },
   "date_picker": {
     "ok": "OK"
   },
@@ -196,6 +200,7 @@
   "activity_due_date": {
     "available_all_day": "Disponible : Toute la journée",
     "available": "Disponible",
+    "scheduled_at": "Programmé à",
     "to": "à",
     "day": "jour",
     "days": "jours",
@@ -301,6 +306,7 @@
     "unscheduled":"Non programmé",
     "scheduled": "Programmé",
     "past_due": "En retard",
+    "available": "disponible",
     "sure_delete_account_data": "Êtes-vous sûr de vouloir supprimer votre compte et vos données?",
     "no_cancel": "Non, annuler",
     "yes_delete": "Oui, effacer",

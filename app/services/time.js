@@ -4,7 +4,7 @@ import * as R from 'ramda';
 const COVER_DAY = true;
 const TIMED_EVENTS = true;
 
-const getStartOfInterval = R.pathOr(null, [0, 'start', 'date']);
+export const getStartOfInterval = R.pathOr(null, [0, 'start', 'date']);
 
 export const NOTIFICATION_DATETIME_FORMAT = 'YYYYMMDD HH:mm';
 
@@ -38,6 +38,17 @@ export const scheduledEndTime = (timestamp, timeout) => {
   }
   return null;
 };
+
+export const convertDateString = (str) => {
+  if (str == '12:00 PM') {
+    return 'Noon';
+  }
+  if (str == '11:59 PM') {
+    return 'Midnight';
+  }
+
+  return str;
+}
 
 export const lastScheduledTime = (timestamp) => {
   if (timestamp) {

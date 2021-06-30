@@ -18,6 +18,7 @@ import { invitesSelector } from "../../state/applets/applets.selectors";
 import { getAppletResponseData } from "../../state/applets/applets.thunks";
 import {
   setCurrentActivity,
+  setCurrentEvent,
   setCurrentApplet,
   setAppletSelectionDisabled,
   setActivitySelectionDisabled,
@@ -36,6 +37,7 @@ class AppletDetails extends Component {
   handlePressActivity = (activity) => {
     const { startedTimes } = this.props;
 
+    this.props.setCurrentEvent(activity.event ? activity.event.id : null);
     this.props.setActivitySelectionDisabled(true);
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
@@ -73,7 +75,6 @@ class AppletDetails extends Component {
     notification.android.setAutoCancel(true);
 
     try {
-      console.log("Displaying notification");
       await firebase.notifications().displayNotification(notification);
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -104,7 +105,7 @@ class AppletDetails extends Component {
     if (!currentApplet) {
       return null;
     }
-    // console.log('applet data is', appletData[currentApplet.id.split('/')[1]] || {});
+
     return (
       <AppletDetailsComponent
         applet={currentApplet}
@@ -133,6 +134,7 @@ AppletDetails.propTypes = {
   currentApplet: PropTypes.object,
   inProgress: PropTypes.object.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
+  setCurrentEvent: PropTypes.func.isRequired,
   skin: PropTypes.object.isRequired,
   startedTimes: PropTypes.object.isRequired,
   startResponse: PropTypes.func.isRequired,
@@ -156,6 +158,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   setCurrentActivity,
+  setCurrentEvent,
   setCurrentApplet,
   startResponse,
   getAppletResponseData,

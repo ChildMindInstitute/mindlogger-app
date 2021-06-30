@@ -12,6 +12,8 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.brentvatne.react.ReactVideoPackage;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+
 
 
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
@@ -53,6 +55,10 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
+    long size = 70L * 1024L * 1024L; // 70 MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(size);
+
     initializeFlipper(this); // Remove this line if you don't want Flipper enabled
   }
 

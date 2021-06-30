@@ -68,6 +68,7 @@ const AppletListComponent = ({
   const [onSettings, setOnSettings] = useState(0);
   const [onAboutTime, setOnAboutTime] = useState(0);
   const netInfo = useNetInfo();
+  let currentConnection = false;
 
   const onPressSettings = () => {
     const currentTime = Date.now();
@@ -91,11 +92,13 @@ const AppletListComponent = ({
     if (connection.isConnected) {
       cancelReminder();
 
-      if (!isConnected) {
+      if (!isConnected && !currentConnection) {
+        currentConnection = true;
         setConnection(true);
         onUploadQueue();
       }
     } else {
+      currentConnection = false;
       setConnection(false);
       setReminder();
     }
@@ -219,6 +222,7 @@ AppletListComponent.propTypes = {
 const mapStateToProps = (state) => {
   return {
     isConnected: connectionSelector(state),
+    appStatus: state.app.appStatus,
   };
 };
 

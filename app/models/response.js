@@ -4,7 +4,8 @@ import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getValuesFromResponse } from '../services/scoring';
+import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
   activityTransformJson,
@@ -12,7 +13,7 @@ import {
   itemAttachExtras,
   ORDER,
 } from "./json-ld";
- 
+
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
 
@@ -24,10 +25,12 @@ export const prepareResponseForUpload = (
   inProgressResponse,
   appletMetaData,
   responseHistory,
+  isTimeout
 ) => {
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
-  const appletVersion = activity.appletSchemaVersion[languageKey];
+  const appletVersion = appletMetaData.schemaVersion[languageKey];
+  const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
   const alerts = [];
@@ -38,24 +41,24 @@ export const prepareResponseForUpload = (
       const { valueType, responseAlert, enableNegativeTokens } = item.valueConstraints;
 
       if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
-        alerts.push({
-          id: activity.items[i].id.split('/')[1],
-          schema: activity.items[i].schema
-        });
+        const messages = getAlertsFromResponse(item, responses[i].value !== undefined ? responses[i].value : responses[i]);
+        messages.forEach(msg => {
+          alerts.push({
+            id: activity.items[i].id.split('/')[1],
+            schema: activity.items[i].schema,
+            message: msg
+          });
+        })
       }
 
-      if (
-        valueType && 
-        valueType.includes('token')
-      ) {
-        cumulative += (getValuesFromResponse(item, responses[i].value) || []).reduce(
-          (cumulative, current) => {
-            if (current >= 0 || enableNegativeTokens) {
-              return cumulative + current;
-            }
-            return cumulative
-          }, 0
-        )
+      if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
+        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+        cumulative += positiveSum;
+        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+          cumulative += negativeSum;
+        }
       }
     }
   }
@@ -74,6 +77,8 @@ export const prepareResponseForUpload = (
     subject: subjectId,
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
+    timeout: isTimeout ? 1 : 0,
+    scheduledTime: new Date(scheduledTime).getTime(),
     client: {
       os: DeviceInfo.getSystemName(),
       osVersion: DeviceInfo.getSystemVersion(),
@@ -87,29 +92,36 @@ export const prepareResponseForUpload = (
     alerts,
   };
 
-  let subScaleScores = [];
+  let subScaleResult = [];
   if (activity.subScales) {
-    for (let subScale of activity.subScales) {
-      subScaleScores.push(
-        getScoreFromLookupTable(responses, subScale.jsExpression, activity.items, subScale['lookupTable'])
-      );
-    }
+    subScaleResult = getSubScaleResult(
+      activity.subScales,
+      responses,
+      activity.items
+    )
   }
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: (item.inputType == 'drawing' ? responses[index].value : index) }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
-
     responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
 
-    if (activity.subScales) {
-      responseData['subScaleSource'] = getEncryptedData(subScaleScores, appletMetaData.AESKey);
-      responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index}), {});
+    if (activity.finalSubScale) {
+      subScaleResult.push(getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable));
+    }
+
+    if (subScaleResult.length) {
+      responseData['subScaleSource'] = getEncryptedData(subScaleResult, appletMetaData.AESKey);
+      responseData['subScales'] = (activity.subScales || []).reduce((accumulator, subScale, index) => ({ ...accumulator, [subScale.variableName]: index }), {});
+
+      if (activity.finalSubScale) {
+        responseData['subScales'][activity.finalSubScale.variableName] = (activity.subScales || []).length;
+      }
     }
 
     responseData['tokenCumulation'] = {
@@ -117,11 +129,12 @@ export const prepareResponseForUpload = (
     };
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
+
   } else {
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
         ...accumulator,
-        [item.schema]: responses[index],
+        [item.schema]: responses[index].value,
       };
     }, {});
     responseData['responses'] = formattedResponses;
@@ -130,14 +143,21 @@ export const prepareResponseForUpload = (
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
         return {
           ...accumulator,
-          [subScale.variableName]: subScaleScores[index],
+          [subScale.variableName]: subScaleResult[index],
         }
       });
+    }
+
+    if (activity.finalSubScale) {
+      responseData['subScales'] = responseData['subScales'] || {};
+      responseData['subScales'][activity.finalSubScale.variableName] =
+        getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
 
     responseData['tokenCumulation'] = {
       value: cumulative
     };
+
   }
 
   return responseData;
@@ -162,7 +182,7 @@ export const getTokenUpdateInfo = (
         value: cumulative
       },
       userPublicKey: appletMetaData['userPublicKey']
-    }      
+    }
   }
 
   return {
@@ -223,7 +243,7 @@ export const decryptAppletResponses = (applet, responses) => {
       }
     })
   }
-  
+
   /** replace response to plain format */
   if (responses.responses) {
     Object.keys(responses.responses).forEach((item) => {
@@ -235,14 +255,14 @@ export const decryptAppletResponses = (applet, responses) => {
         ) {
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
-          if (response.value && response.value.value) {
+          if (response.value && response.value.value !== undefined) {
             response.value = response.value.value;
           }
         }
       }
 
       responses.responses[item] = responses.responses[item].filter(
-        (response) => response.value
+        (response) => response.value !== undefined && response.value !== null
       );
       if (responses.responses[item].length === 0) {
         delete responses.responses[item];
@@ -297,9 +317,9 @@ export const decryptAppletResponses = (applet, responses) => {
         cumulative.value = responses.dataSources[cumulative.src][cumulative.ptr];
       }
 
-      const oldItem = responses.itemReferences[cumulative.version] && 
-                      responses.itemReferences[cumulative.version][itemIRI];
-      if ( oldItem ) {
+      const oldItem = responses.itemReferences[cumulative.version] &&
+        responses.itemReferences[cumulative.version][itemIRI];
+      if (oldItem) {
         const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
 
         if (currentActivity) {

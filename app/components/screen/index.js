@@ -6,7 +6,9 @@ import {
   View,
   Platform,
   KeyboardAvoidingView,
+  Keyboard
 } from "react-native";
+
 import PropTypes from "prop-types";
 import { Icon, Button } from "native-base";
 import ScreenDisplay from "./ScreenDisplay";
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 25,
     minHeight: "100%",
     justifyContent: "center",
     flexGrow: 1,
@@ -79,7 +81,7 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdownMessage" ||screen.inputType ===  "audioStimulus") {
+    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus") {
       return true;
     }
 
@@ -89,11 +91,30 @@ class ActivityScreen extends Component {
       }
     }
 
-    if (screen.inputType === "text" || screen.inputType === "time") {
+    if (screen.inputType === "text" || screen.inputType === "time" || screen.inputType === "audioImageRecord") {
       if (!answer) {
         return false;
       } else {
         return true;
+      }
+    }
+
+    if (screen.inputType === 'stackedRadio' || screen.inputType === 'stackedSlider') {
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < answer.length; i++) {
+        if (answer[i] !== null) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    if (answer !== null && typeof answer !== "undefined") {
+      if (screen.valueConstraints.isOptionalTextRequired && (typeof answer["text"] === "undefined" || answer["text"] == "")) {
+        return false
       }
     }
 
@@ -132,7 +153,7 @@ class ActivityScreen extends Component {
         }
         return answer.length !== 0;
       }
-    } 
+    }
 
     return answer && (answer.value === 0 || !!answer.value);
   }
@@ -147,12 +168,36 @@ class ActivityScreen extends Component {
     };
     this.interval = null;
     this.startTime = null;
+    this.scrollToBottom = this.scrollToBottom.bind(this);
+    this.keyboardWillHide = this.keyboardWillHide.bind(this);
+    this.keyboardWillShow = this.keyboardWillShow.bind(this);
+    this.keyboardVisible = false;
   }
 
   componentDidMount() {
     const { isCurrent } = this.props;
     if (isCurrent) {
       this._startClock();
+    }
+
+    if (Platform.OS === "ios") {
+      Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
+      Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
+    }
+  }
+
+  keyboardWillHide() {
+    this.keyboardVisible = false;
+  }
+
+  keyboardWillShow() {
+    this.keyboardVisible = true;
+  }
+
+  scrollToBottom(obj) {
+    if (this.scrollView) {
+      this.scrollView.scrollToEnd();
     }
   }
 
@@ -166,6 +211,12 @@ class ActivityScreen extends Component {
   }
 
   componentWillUnmount() {
+    if (Platform.OS === "ios") {
+      Keyboard.removeListener('keyboardDidShow', this.scrollToBottom);
+      Keyboard.removeListener('keyboardWillHide', this.keyboardWillHide)
+      Keyboard.removeListener('keyboardWillShow', this.keyboardWillShow)
+    }
+
     clearInterval(this.interval);
   }
 
@@ -220,6 +271,10 @@ class ActivityScreen extends Component {
 
   onContentSizeChange = (contentWidth, contentHeight) => {
     this.setState({ screenHeight: contentHeight });
+
+    if (this.keyboardVisible && this.state.screenHeight < contentHeight) {
+      this.scrollToBottom()
+    }
   };
 
   isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
@@ -229,13 +284,14 @@ class ActivityScreen extends Component {
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
+
     return (
       <View style={styles.outer}>
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={4}
+          keyboardVerticalOffset={10}
         >
           <ScrollView
             alwaysBounceVertical={false}
@@ -278,20 +334,20 @@ class ActivityScreen extends Component {
                 </View>
               </View>
             ) : (
-              <Widget
-                answer={answer}
-                onChange={onChange}
-                isCurrent={isCurrent}
-                screen={screen}
-                onPress={() => {
-                  this.setState({ scrollEnabled: false });
-                }}
-                onRelease={() => {
-                  this.setState({ scrollEnabled: true });
-                }}
-                onContentError={onContentError}
-              />
-            )}
+                <Widget
+                  answer={answer}
+                  onChange={onChange}
+                  isCurrent={isCurrent}
+                  screen={screen}
+                  onPress={() => {
+                    this.setState({ scrollEnabled: false });
+                  }}
+                  onRelease={() => {
+                    this.setState({ scrollEnabled: true });
+                  }}
+                  onContentError={onContentError}
+                />
+              )}
           </ScrollView>
         </KeyboardAvoidingView>
         {timerActive && (

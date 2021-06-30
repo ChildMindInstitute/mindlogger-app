@@ -74,15 +74,23 @@ class Activity extends React.Component {
 
   componentDidMount() {
     const { isSummaryScreen } = this.props;
+    const idleTime = this.getIdleTime();
+
     this.props.setActivitySelectionDisabled(false);
-    this.setState({ isSummaryScreen, idleTime: this.getIdleTime() }, () => {
-      if (this.state.idleTime) {
+    this.setState({ isSummaryScreen, idleTime }, () => {
+      if (idleTime) {
         this.idleTimer.startCountdown(
-          this.state.idleTime, // Time in seconds.
+          idleTime, // Time in seconds.
           this.handleTimeIsUp // Callback.
         );
       }
     });
+  }
+
+  componentDidUpdate() {
+    if (!this.props.currentResponse) {
+      this.idleTimer.clear();
+    }
   }
 
   handleChange(answer, goToNext) {
@@ -133,39 +141,29 @@ class Activity extends React.Component {
   }
 
   getIdleTime = () => {
-    let currentEvent = {};
+    const { activity } = this.props.currentResponse;
+    let currentEvent = activity.event;
 
-    Object.keys(this.props.currentApplet.schedule.events).forEach(key => {
-      const event = this.props.currentApplet.schedule.events[key];
-      const schedule = event.schedule;
-
-      if (schedule.dayOfMonth && schedule.month && schedule.year) {
-        const [dayOfMonth] = schedule.dayOfMonth;
-        const [month] = schedule.month;
-        const [year] = schedule.year;
-
-        if (
-          dayOfMonth === moment().date() &&
-          month === moment().month() &&
-          year === moment().year()
-        ) {
-          currentEvent = event;
-        }
+    if (currentEvent) {
+      const allow = _.get(currentEvent, "data.idleTime.allow", false);
+      if (allow) {
+        const idleMinutes = _.get(currentEvent, "data.idleTime.minute", null);
+        return idleMinutes && parseInt(idleMinutes, 10) * 60;
       }
-    });
-
-    const allow = _.get(currentEvent, "data.idleTime.allow", false);
-    if (allow) {
-      const idleMinutes = _.get(currentEvent, "data.idleTime.minute", null);
-      return idleMinutes && parseInt(idleMinutes, 10) * 60;
     }
     return null;
   };
 
   handleTimeIsUp = () => {
-    this.props.completeResponse();
-    Actions.replace("activity_thanks");
-  };
+    if (this.props.currentResponse) {
+      this.props.completeResponse(true);
+      Actions.replace("activity_thanks")
+    }
+  }
+
+  componentWillUnmount() {
+    this.idleTimer.clear();
+  }
 
   render() {
     const {
@@ -191,8 +189,7 @@ class Activity extends React.Component {
 
     const { activity, responses } = currentResponse;
 
-    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
-    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const prevLabel = isSummaryScreen
       ? "Back"
       : getPrevLabel(currentScreen, itemVisibility);
@@ -212,7 +209,7 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {(activity.lastTimedActivity || activity.nextTimedActivity) &&
+        {(activity.event && activity.event.data.timedActivity.allow) &&
           <ActivityTime activity={activity} />
         }
         {!isSummaryScreen ? (
@@ -221,7 +218,7 @@ class Activity extends React.Component {
             answers={responses}
             currentScreen={currentScreen}
             onChange={(answer, goToNext = false) => {
-              setAnswer(currentApplet.id, activity.id, currentScreen, answer);
+              setAnswer(activity, currentScreen, answer);
               this.handleChange(answer, goToNext);
             }}
             authToken={authToken}
@@ -303,12 +300,7 @@ class Activity extends React.Component {
               }}
               actionLabel={actionLabel}
               onPressAction={() => {
-                setAnswer(
-                  currentApplet.id,
-                  activity.id,
-                  currentScreen,
-                  undefined
-                );
+                setAnswer(activity, currentScreen, undefined);
               }}
             />
           </View>

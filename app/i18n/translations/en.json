@@ -192,6 +192,10 @@
     "play": "PLAY",
     "done": "DONE"
   },
+  "optional_text": {
+    "required": "This is a required field.",
+    "enter_text": "Please enter the text."
+  },
   "date_picker": {
     "ok": "OK"
   },
@@ -201,8 +205,9 @@
   },
   "activity_due_date": {
     "available_all_day":"Available: All day",
-    "available": "Available",
-    "to": "to",
+    "scheduled_at": "Scheduled At",
+    "available": "Available From",
+    "to": "To",
     "day": "day",
     "days": "days",
     "am": "AM"
@@ -301,6 +306,7 @@
     "unscheduled":"Unscheduled",
     "scheduled": "Scheduled",
     "past_due": "Past Due",
+    "available": "Available",
     "sure_delete_account_data": "Are you sure you want to delete your account and data?",
     "no_cancel": "No, cancel",
     "yes_delete": "Yes, delete it",

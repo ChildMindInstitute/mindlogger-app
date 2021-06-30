@@ -18,6 +18,8 @@ import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
+import { prepareResponseKeys } from "../applets/applets.actions";
+
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
@@ -31,6 +33,7 @@ import {
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
+  setScheduleUpdated
 } from "./applets.actions";
 import {
   authSelector,
@@ -163,7 +166,7 @@ export const setReminder = () => async (dispatch, getState) => {
 export const cancelReminder = () => (dispatch, getState) => {
   const state = getState();
   const isReminderSet = isReminderSetSelector(state);
-  
+
   if (isReminderSet) {
     firebase.notifications().cancelAllNotifications();
     dispatch(clearNotificationReminder());
@@ -194,16 +197,16 @@ export const cancelReminder = () => (dispatch, getState) => {
 //   return notification;
 // };
 
-export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
-  const auth = authSelector(state); 
+  const auth = authSelector(state);
   const currentApplets = await getData('ml_applets');
   const currentResponses = await getData('ml_responses');
   let localInfo = {};
 
   if (currentApplets) {
     currentApplets.forEach(applet => {
-      const { contentUpdateTime, id } = applet; 
+      const { contentUpdateTime, id } = applet;
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
       const localEvents = Object.keys(applet.schedule.events).map(id => {
         event = applet.schedule.events[id];
@@ -216,23 +219,26 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
       localInfo[id.split("/").pop()] = {
         appletVersion: applet.schemaVersion.en,
         contentUpdateTime,
-        localItems: response ? Object.keys(response.items) : null,
-        localActivities: response ? Object.keys(response.activities) : null,
+        localItems: response ? Object.keys(response.items) : [],
+        localActivities: response ? Object.keys(response.activities) : [],
         localEvents,
         startDate: response ? response['schema:startDate'] : null,
       }
     })
   } else {
-    localInfo = null;
+    localInfo = {};
   }
 
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
-    .then(async (applets) => {
+    .then(async (resp) => {
+      const applets = resp.data;
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
         const responses = [];
+        let scheduleUpdated = false;
+
         const transformedApplets = applets
           .map((appletInfo) => {
             if (!appletInfo.applet) {
@@ -244,8 +250,9 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
                 if (!R.isEmpty(appletInfo.schedule.events)) {
                   Object.keys(appletInfo.schedule.events).forEach(eventId => {
                     events[eventId] = appletInfo.schedule.events[eventId];
+                    scheduleUpdated = true;
                   })
-                } 
+                }
 
                 for (const eventId in events) {
                   let isValid = false;
@@ -266,7 +273,14 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
               if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-                dispatch(updateKeys(applet, userInfo));
+                const appletId = applet.id.split('/')[1];
+
+                if (keys && keys[appletId]) {
+                  dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+                  Object.assign(applet, keys[appletId]);
+                } else {
+                  dispatch(updateKeys(applet, userInfo));
+                }
               }
               responses.push({
                 ...decryptAppletResponses(applet, appletInfo.responses),
@@ -275,9 +289,13 @@ export const downloadApplets = (onAppletsDownloaded = null) => async (dispatch, 
               return applet;
             }
           });
+
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
+        if (scheduleUpdated) {
+          dispatch(setScheduleUpdated(true));
+        }
         dispatch(replaceApplets(transformedApplets));
         dispatch(replaceResponses(responses));
         // dispatch(downloadAppletsMedia(transformedApplets));

@@ -8,9 +8,13 @@ export const skinSelector = R.path(['app', 'skin']);
 
 export const startedTimesSelector = R.path(['app', 'startedTimes']);
 
+export const finishedEventsSelector = R.path(['app', 'finishedEvents']);
+
 export const connectionSelector = R.path(['app', 'isConnected']);
 
 export const appStatusSelector = R.path(['app', 'appStatus']);
+
+export const lastActiveTimeSelector = R.path(['app', 'lastActive']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 
@@ -43,5 +47,6 @@ export const currentActivitySelector = createSelector(
   (currentActivityId, activities) => activities.find(activity => activity.id === currentActivityId),
 );
 
+export const currentEventSelector = R.path(['app', 'currentEvent']);
 export const appletSelectionDisabledSelector = R.path(['app', 'appletSelectionDisabled']);
 export const activitySelectionDisabledSelector = R.path(['app', 'activitySelectionDisabled']);

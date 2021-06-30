@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 import * as R from "ramda";
 import { testVisibility } from "../../services/visibility";
+import { parseAppletEvents } from '../../models/json-ld';
 import { IS_VIS } from "../../models/json-ld";
 
 export const responsesSelector = R.path(["responses", "responseHistory"]);
@@ -52,12 +53,13 @@ export const currentAppletTokenBalanceSelector = createSelector(
 
 export const currentResponsesSelector = createSelector(
   R.path(["app", "currentActivity"]),
-  R.path(["app", "currentApplet"]),
+  R.path(["app", "currentEvent"]),
   inProgressSelector,
-  (activityId, appletId, inProgress) => {
-    return inProgress[appletId + activityId]
+  (activityId, eventId, inProgress) => {
+    return inProgress[eventId ? activityId + eventId : activityId]
   }
 );
+
 
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,

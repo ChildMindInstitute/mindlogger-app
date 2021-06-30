@@ -19,10 +19,10 @@ export const showToast = toast => () => {
   Toast.show(toast);
 };
 
-export const sync = (onAppletsDownloaded = null) => (dispatch, getState) => {
+export const sync = (onAppletsDownloaded = null, keys = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
-    dispatch(downloadApplets(onAppletsDownloaded));
+    dispatch(downloadApplets(onAppletsDownloaded, keys));
   }
 };
 
@@ -94,7 +94,7 @@ export const logout = () => (dispatch, getState) => {
     });
 
 
-}; 
+};
 
 export const removeAccount = () => (dispatch, getState) => {
   const state = getState();

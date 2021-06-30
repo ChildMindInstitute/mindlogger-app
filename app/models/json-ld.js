@@ -1,7 +1,12 @@
 import * as R from "ramda";
 import moment from 'moment';
 import { Parse, Day } from 'dayspan';
-import { getLastScheduled, getNextScheduled, getScheduledNotifications } from '../services/time';
+import {
+  getLastScheduled,
+  getStartOfInterval,
+  getNextScheduled,
+  getScheduledNotifications,
+} from '../services/time';
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -62,6 +67,8 @@ export const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
 const COMPUTE = "reprolib:terms/compute";
 const SUBSCALES = "reprolib:terms/subScales";
+const FINAL_SUBSCALE = "reprolib:terms/finalSubScale";
+const IS_AVERAGE_SCORE = "reprolib:terms/isAverageScore";
 const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
 const LOOKUP_TABLE = "reprolib:terms/lookupTable";
@@ -69,8 +76,10 @@ const AGE = "reprolib:terms/age";
 const RAW_SCORE = "reprolib:terms/rawScore";
 const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
+const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
+const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
@@ -186,12 +195,20 @@ export const flattenValueConstraints = (vcObj) =>
         responseAlert: R.path([key, 0, "@value"], vcObj),
       }
     }
+
+    if (key == RANDOMIZE_OPTIONS) {
+      return {
+        ...accumulator,
+        randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
     if (key == CONTINOUS_SLIDER) {
       return {
         ...accumulator,
         continousSlider: R.path([key, 0, "@value"], vcObj),
       }
-    } 
+    }
     if (key == RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
@@ -231,7 +248,7 @@ export const flattenValueConstraints = (vcObj) =>
       return { ...accumulator, itemList: itemList.map(item => ({
         description: R.path([DESCRIPTION, 0, "@value"], item),
         image: item[IMAGE],
-        name: R.path([NAME, 0, "@value"], item)
+        name: languageListToObject(item[NAME])
       })) };
     }
 
@@ -239,7 +256,8 @@ export const flattenValueConstraints = (vcObj) =>
       const itemOptions = R.path([key], vcObj);
       return { ...accumulator, itemOptions: itemOptions.map(option => ({
         score: R.path([SCORE, 0, "@value"], option),
-        value: R.path([VALUE, 0, "@value"], option)
+        value: R.path([VALUE, 0, "@value"], option),
+        alert: R.path([ALERT, 0, "@value"], option)
       })) };
     }
 
@@ -248,7 +266,7 @@ export const flattenValueConstraints = (vcObj) =>
       return { ...accumulator, options: options.map(option => ({
         description: R.path([DESCRIPTION, 0, "@value"], option),
         image: option[IMAGE],
-        name: R.path([NAME, 0, "@value"], option)
+        name: languageListToObject(option[NAME])
       }))}
     }
 
@@ -284,14 +302,14 @@ export const transformInputs = (inputs) =>
       val = flattenItemList(itemList);
     }
 
-    if (inputObj["@type"].includes(AUDIO_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(AUDIO_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
         transcript: languageListToObject(inputObj[TRANSCRIPT]),
       };
     }
 
-    if (inputObj["@type"].includes(IMAGE_OBJECT)) {
+    if (inputObj["@type"] && inputObj["@type"].includes(IMAGE_OBJECT)) {
       val = {
         contentUrl: languageListToObject(inputObj[CONTENT_URL]),
       };
@@ -313,17 +331,23 @@ export const transformVariableMap = (variableAr) =>
     };
   }, {});
 
-export const flattenLookupTable = (lookupTable) => {
+export const flattenLookupTable = (lookupTable, isFinalSubScale) => {
   if (!Array.isArray(lookupTable)) {
     return undefined;
   }
 
-  const references = {
-    [AGE]: 'age',
+  let references = {
     [RAW_SCORE]: 'rawScore',
-    [SEX]: 'sex',
-    [T_SCORE]: 'tScore'
+    [OUTPUT_TEXT]: 'outputText'
   };
+
+  if (!isFinalSubScale) {
+    Object.assign(references, {
+      [AGE]: 'age',
+      [SEX]: 'sex',
+      [T_SCORE]: 'tScore'
+    });
+  }
 
   return R.map(row => Object.keys(references).reduce((previousValue, key) => {
     return {
@@ -449,12 +473,22 @@ const transformPureActivity = (activityJson) => {
     }
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
+    const jsExpression = R.path([JS_EXPRESSION, 0, "@value"], subScale);
     return {
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], subScale),
+      isAverageScore: R.path([IS_AVERAGE_SCORE, 0, "@value"], subScale),
+      jsExpression,
       variableName: R.path([VARIABLE_NAME, 0, "@value"], subScale),
-      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE])
+      lookupTable: flattenLookupTable(subScale[LOOKUP_TABLE], false),
+      innerSubScales: jsExpression.split('+').filter(name => name.includes('(')).map(name => name.trim().replace(/[()]/g, ''))
     }
   }, activityJson[SUBSCALES])
+
+  const finalSubScale = activityJson[FINAL_SUBSCALE] && {
+    isAverageScore: R.path([FINAL_SUBSCALE, 0, IS_AVERAGE_SCORE, 0, "@value"], activityJson),
+    variableName: R.path([FINAL_SUBSCALE, 0, VARIABLE_NAME, 0, "@value"], activityJson),
+    lookupTable: flattenLookupTable(R.path([FINAL_SUBSCALE, 0, LOOKUP_TABLE], activityJson), true),
+  }
+
   const messages = activityJson[MESSAGES] && R.map((item) => {
     return {
       message: R.path([MESSAGE, 0, "@value"], item),
@@ -479,6 +513,7 @@ const transformPureActivity = (activityJson) => {
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     compute,
     subScales,
+    finalSubScale,
     messages,
     preamble,
     addProperties,
@@ -572,7 +607,9 @@ export const transformApplet = (payload, currentApplets = null) => {
               if (act.id.substring(9) === keys[0]) {
                 act.items.forEach((itemData, i) => {
                   if (itemData.id === payload.items[dataKey]) {
-                    const item = itemTransformJson(payload.items[dataKey]);
+                    const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                    item.variableName = payload.items[dataKey]['@id'];
+
                     applet.activities[index].items[i] = {
                       ...itemData,
                       ...item,
@@ -609,6 +646,8 @@ export const transformApplet = (payload, currentApplets = null) => {
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
                 const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+                item.variableName = payload.items[dataKey]['@id'];
+
                 let updated = false;
 
                 if (!act.items) {
@@ -783,6 +822,56 @@ export const dateParser = (schedule) => {
   });
   return output;
 };
+
+export const parseAppletEvents = (applet) => {
+  const extraInfoActivities = applet.activities.map((act) => {
+    const events = [];
+    const availability = getActivityAbility(applet.schedule, act.id);
+
+    for (let eventId in applet.schedule.events) {
+      const event = applet.schedule.events[eventId];
+
+      if (event.data.activity_id === act.id.substring(9)) {
+        const futureSchedule = Parse.schedule(event.schedule).forecast(
+          Day.fromDate(new Date()),
+          true,
+          1,
+          0,
+          true,
+        );
+
+        event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+        events.push(event);
+      }
+    }
+
+    return {
+      ...act,
+      appletId: applet.id,
+      availability,
+      events
+    }
+  });
+
+  return {
+    ...applet,
+    activities: extraInfoActivities,
+  };
+}
+
+const getActivityAbility = (schedule, activityId) => {
+  let availability = false;
+
+  Object.keys(schedule.events).forEach(key => {
+    const e = schedule.events[key];
+
+    if (e.data.activity_id === activityId.substring(9)) {
+      availability = e.data.availability;
+    }
+  });
+
+  return availability;
+}
 
 export const parseAppletActivities = (applet, responseSchedule) => {
   let scheduledDateTimesByActivity = {};

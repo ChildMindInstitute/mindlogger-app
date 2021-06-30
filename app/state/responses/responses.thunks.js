@@ -45,12 +45,14 @@ import {
 import {
   setActivityStartTime,
   setCurrentActivity,
+  setClosedEvent,
   clearActivityStartTime,
   setActivityEndTime,
+  setCurrentEvent
 } from "../app/app.actions";
 
 import {
-  currentActivityIdSelector,
+  currentEventSelector,
   currentAppletSelector,
   startedTimesSelector,
   currentActivitySelector,
@@ -93,6 +95,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   const { user } = state;
   const subjectId = R.path(["info", "_id"], user);
   const timeStarted = Date.now();
+  const event = currentEventSelector(state);
   const applet = currentAppletSelector(state);
 
   // There is no response in progress, so start a new one
@@ -100,12 +103,14 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   dispatch(
     createResponseInProgress(applet.id, activity, subjectId, timeStarted)
   );
-  dispatch(setCurrentScreen(applet.id, activity.id, 0));
+  dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
   Actions.push("take_act");
 };
 
 export const startResponse = (activity) => (dispatch, getState) => {
+  dispatch(setCurrentEvent(activity.event ? activity.event.id : null));
+
   const state = getState();
   const { responses, user } = state;
   const startedTimes = startedTimesSelector(state);
@@ -113,6 +118,8 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const timeStarted = Date.now();
   const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
+  const index = activity.event ? activity.id + activity.event.id : activity.id;
+  const event = currentEventSelector(state);
 
   if (activity.isPrize === true) {
     const tokenBalance = currentAppletTokenBalanceSelector(state).cumulativeToken;
@@ -120,18 +127,20 @@ export const startResponse = (activity) => (dispatch, getState) => {
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
     dispatch(setCurrentActivity(activity.id));
     Actions.push('take_act');
-  } else if (typeof responses.inProgress[applet.id + activity.id] === "undefined") {
+  } else if (typeof responses.inProgress[index] === "undefined") {
     // There is no response in progress, so start a new one
-    if (activity.lastTimedActivity && startedTimes && !startedTimes[activity.id]) {
-      dispatch(setActivityStartTime(activity.id));
+    if (activity.event
+      && activity.event.data.timedActivity.allow
+      && startedTimes
+      && !startedTimes[activity.id + activity.event.id]
+    ) {
+      dispatch(setActivityStartTime(activity.id + activity.event.id));
     }
-    dispatch(
-      createResponseInProgress(applet.id, activity, subjectId, timeStarted)
-    );
-    dispatch(setCurrentScreen(applet.id, activity.id, 0));
+    dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
     dispatch(setCurrentActivity(activity.id));
     Actions.push("take_act");
   } else {
@@ -144,20 +153,22 @@ export const startResponse = (activity) => (dispatch, getState) => {
           onPress: () => {
             const itemResponses = R.pathOr(
               [],
-              ["inProgress", applet.id + activity.id, "responses"],
+              ["inProgress", index, "responses"],
               responses
             );
 
-            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+            if (activity.event
+              && activity.event.data.timedActivity.allow
               && startedTimes
-              && !startedTimes[activity.id]
+              && !startedTimes[activity.id + activity.event.id]
             ) {
-              dispatch(setActivityStartTime(activity.id));
+              dispatch(setActivityStartTime(activity.id + activity.event.id));
             }
 
             cleanFiles(itemResponses);
             dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
+
             dispatch(
               createResponseInProgress(
                 applet.id,
@@ -166,7 +177,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
                 timeStarted
               )
             );
-            dispatch(setCurrentScreen(applet.id, activity.id, 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -174,15 +185,16 @@ export const startResponse = (activity) => (dispatch, getState) => {
         {
           text: i18n.t("additional:resume"),
           onPress: () => {
-            if ((activity.lastTimedActivity || activity.nextTimedActivity)
+            if (activity.event
+              && activity.event.data.timedActivity.allow
               && startedTimes
-              && !startedTimes[activity.id]
+              && !startedTimes[activity.id + activity.event.id]
             ) {
-              dispatch(setActivityStartTime(activity.id));
+              dispatch(setActivityStartTime(activity.id + activity.event.id));
             }
-            
+
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(applet.id, activity.id, currentScreen || 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || 0));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -264,20 +276,6 @@ export const replaceReponses = (user) => (dispatch, getState) => {
 
     const applet = applets.find((applet) => applet.id === response.appletId);
 
-    if (Object.keys(response.dataSources).length || (response.tokens && response.tokens.tokenUpdates.length)) {
-      dispatch(updateKeys(applet, user));
-    } else {
-      /** if there isn't anything to re-upload leave key as empty for speed */
-      dispatch(
-        prepareResponseKeys(applet.id, {
-          AESKey: null,
-          userPublicKey: null,
-        })
-      );
-
-      continue;
-    }
-
     for (const responseId in response.dataSources) {
       if (Object.keys(response).length) {
         dataSources[responseId] = getEncryptedData(
@@ -298,12 +296,14 @@ export const replaceReponses = (user) => (dispatch, getState) => {
       }
     }
 
-    uploadData.push({
-      userPublicKey: applet.userPublicKey,
-      appletId: applet.id.split("/").pop(),
-      dataSources,
-      tokenUpdates,
-    });
+    if (Object.keys(dataSources).length || Object.keys(tokenUpdates).length) {
+      uploadData.push({
+        userPublicKey: applet.userPublicKey,
+        appletId: applet.id.split("/").pop(),
+        dataSources,
+        tokenUpdates,
+      });
+    }
   }
 
   return Promise.all(
@@ -356,12 +356,13 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const completeResponse = () => (dispatch, getState) => {
+export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
-  const inProgressResponse = currentResponsesSelector(state); 
+  const inProgressResponse = currentResponsesSelector(state);
   const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
@@ -371,7 +372,7 @@ export const completeResponse = () => (dispatch, getState) => {
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
-    const version = inProgressResponse["activity"].appletSchemaVersion['en'];
+    const version = inProgressResponse["activity"].schemaVersion['en'];
     const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
 
     const updates = getTokenUpdateInfo(
@@ -391,16 +392,20 @@ export const completeResponse = () => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory);
-
+    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
 
+  if (event) {
+    dispatch(setClosedEvent(event))
+  }
+
   setTimeout(() => {
+    const { activity } = inProgressResponse;
     // Allow some time to navigate back to ActivityList
     dispatch(
-      removeResponseInProgress(applet.id + inProgressResponse.activity.id)
+      removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
     );
   }, 300);
 };
@@ -411,38 +416,41 @@ export const nextScreen = () => (dispatch, getState) => {
   const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
   const next = getNextPos(screenIndex, visibilityArray);
-  const activityId = currentActivityIdSelector(state);
+  const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if (next === -1) {
-    const activity = currentActivitySelector(state);
-    
     if (activity.nextAccess) {
-      dispatch(setActivityAccess(applet.id + activityId));
+      dispatch(setActivityAccess(applet.id + activity.id));
     }
     dispatch(completeResponse());
-    dispatch(setCurrentActivity(null));
-    dispatch(setActivityEndTime(applet.id + activityId));
+    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     Actions.push("activity_thanks");
   } else {
-    dispatch(setCurrentScreen(applet.id, activityId, next));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
   }
 };
 
 export const finishActivity = (activity) => (dispatch, getState) => {
   const state = getState();
-  const applet = currentAppletSelector(state);
+  const event = currentEventSelector(state);
 
-  dispatch(clearActivityStartTime(activity.id));
+  dispatch(
+    clearActivityStartTime(activity.event ? activity.id + activity.event.id : activity.id)
+  );
   dispatch(completeResponse());
+  dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+
   dispatch(setCurrentActivity(null));
-  dispatch(setActivityEndTime(applet.id + activity.id));
   Actions.push("activity_end");
 };
 
 export const endActivity = (activity) => (dispatch) => {
-  dispatch(clearActivityStartTime(activity.id));
+  dispatch(
+    clearActivityStartTime(activity.event ? activity.id + activity.event.id : activity.id)
+  );
   dispatch(setCurrentActivity(activity.id));
-  dispatch(completeResponse());
+
   dispatch(setCurrentActivity(null));
 };
 
@@ -452,12 +460,13 @@ export const prevScreen = () => (dispatch, getState) => {
   const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
   const prev = getLastPos(screenIndex, visibilityArray);
-  const activityId = currentActivityIdSelector(state);
+  const activity = currentActivitySelector(state);
+  const event = currentEventSelector(state);
 
   if (prev === -1) {
     Actions.pop();
     dispatch(setCurrentActivity(null));
   } else {
-    dispatch(setCurrentScreen(applet.id, activityId, prev));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, prev));
   }
 };

@@ -1,5 +1,5 @@
 // Third-party libraries.
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ import ActivityListItem from './ActivityListItem';
 import {
   newAppletSelector,
   connectionSelector,
+  finishedEventsSelector,
   activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { activityAccessSelector } from '../../state/applets/applets.selectors';
@@ -24,76 +25,39 @@ import {
   inProgressSelector,
 } from '../../state/responses/responses.selectors';
 
-import { parseAppletActivities } from '../../models/json-ld';
+import { parseAppletEvents } from '../../models/json-ld';
 
 const ActivityList = ({
   applet,
   syncUploadQueue,
   appStatus,
-  setAppStatus,
   setConnection,
-  getSchedules,
   setReminder,
   cancelReminder,
   scheduleUpdated,
   isConnected,
   setScheduleUpdated,
-  setUpdatedTime,
-  appletTime,
-  lastUpdatedTime,
-  activityEndTimes,
   responseSchedule,
   inProgress,
-  activityAccess,
+  finishedEvents,
   onPressActivity,
   onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
-
   const updateStatusDelay = 60 * 1000;
-  const updateScheduleDelay = 24 * 3600 * 1000;
+  let currentConnection = false;
 
   const stateUpdate = () => {
-    const newApplet = parseAppletActivities(applet, responseSchedule);
-
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
-    setActivities(sortActivities(applet.id, appletActivities, inProgress, activityEndTimes, activityAccess));
-
+    const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
+    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
+
+    setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
+
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
-    }
-  };
-
-  const scheduleUpdate = () => {
-    const currentTime = new Date();
-    const appletId = applet.id;
-
-    if (lastUpdatedTime[appletId]) {
-
-      if (!moment().isSame(moment(new Date(lastUpdatedTime[appletId])), 'day')) {
-        const updatedTime = lastUpdatedTime;
-        updatedTime[appletId] = currentTime;
-        getSchedules(appletId.split('/')[1]);
-        setUpdatedTime(updatedTime);
-      } else {
-        const updatedTime = lastUpdatedTime;
-        updatedTime[appletId] = currentTime;
-        setUpdatedTime(updatedTime);
-      }
-    } else if (!moment().isSame(moment(appletTime), 'day')) {
-      const updatedTime = lastUpdatedTime;
-      updatedTime[appletId] = appletTime;
-
-      getSchedules(appletId.split('/')[1]);
-      setUpdatedTime(updatedTime);
-    } else {
-      const updatedTime = lastUpdatedTime;
-      updatedTime[appletId] = appletTime;
-
-      setUpdatedTime(updatedTime);
     }
   };
 
@@ -101,17 +65,17 @@ const ActivityList = ({
     if (connection.isConnected) {
       cancelReminder();
 
-      if (!isConnected) {
+      if (!isConnected && !currentConnection) {
+        currentConnection = true;
         setConnection(true);
         syncUploadQueue();
       }
     } else {
+      currentConnection = false;
       setConnection(false);
       setReminder();
     }
   }
-
-  // useInterval(stateUpdate, updateStatusDelay, Object.keys(inProgress).length, responseSchedule);
 
   useEffect(() => {
     let updateId;
@@ -132,44 +96,12 @@ const ActivityList = ({
         clearExec(updateId);
       }
     }
-  }, [Object.keys(inProgress).length, responseSchedule]);
+  }, [Object.keys(inProgress).length, responseSchedule, applet]);
 
-  useEffect(() => {
-    let intervalId;
-    const currentTime = new Date();
-    const nextDay = new Date(
-      currentTime.getFullYear(),
-      currentTime.getMonth(),
-      currentTime.getDate() + 1,
-    );
-    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
-
-    const leftTimeoutId = delayedExec(
-      () => {
-        scheduleUpdate();
-        intervalId = delayedExec(scheduleUpdate, { every: updateScheduleDelay });
-      },
-      { after: leftTimeout },
-    );
-
-    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
-
-    return () => {
-      if (netInfoUnsubscribe) {
-        netInfoUnsubscribe();
-      }
-
-      clearExec(leftTimeoutId);
-      if (intervalId) {
-        clearExec(intervalId);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (appStatus) {
       stateUpdate();
-      setAppStatus(false);
     }
   }, [appStatus]);
 
@@ -180,15 +112,24 @@ const ActivityList = ({
     }
   }, [applet.schedule]);
 
+  useEffect(() => {
+    const netInfoUnsubscribe = NetInfo.addEventListener(handleConnectivityChange);
+    return () => {
+      if (netInfoUnsubscribe) {
+        netInfoUnsubscribe();
+      }
+    }
+  }, [])
+
   return (
     <View style={{ paddingBottom: 30 }}>
       {activities.map(activity => (
         <ActivityListItem
-          disabled={activity.status === 'scheduled' && !activity.nextAccess}
+          disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
-          key={activity.id || activity.text}
+          key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))}
       {prizeActivity && (
@@ -238,6 +179,8 @@ const mapStateToProps = (state) => {
     responseSchedule: responseScheduleSelector(state),
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
+    finishedEvents: finishedEventsSelector(state),
+
   };
 };
 

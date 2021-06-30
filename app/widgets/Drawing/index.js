@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInput, Platform } from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item , Input } from 'native-base';
 import { getURL } from '../../services/helper';
+import { OptionalText } from '../OptionalText';
 
 const styles = StyleSheet.create({
   text: {
@@ -37,7 +38,7 @@ export class Drawing extends React.Component {
   handleComment = (itemValue) => {
     const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    
+
   onChange(this.finalAnswer);
   }
 
@@ -48,7 +49,7 @@ export class Drawing extends React.Component {
   }
 
   render() {
-    const { config, answer, onChange, onPress, onRelease  ,isOptionalText} = this.props;
+    const { config, answer, onChange, onPress, onRelease  ,isOptionalText, isOptionalTextRequired } = this.props;
     const url = config.inputs.backgroundImage
       ? getURL(config.inputs.backgroundImage)
       : null;
@@ -57,58 +58,43 @@ export class Drawing extends React.Component {
 
     return (
       <KeyboardAvoidingView
-    //behavior="padding"
-  >
-      <View>
-       {config?.valueConstraints?.image ? ( 
-        <View style = {styles.imgContainer}> 
-        <Image
-         style = {styles.img}
-        source={{
-          uri: config.valueConstraints.image,
-        }}
-      />
-       </View> ) :<View></View> 
-       }
-
-        <DrawingBoard
-          imageSource={url}
-          lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
-          onResult={this.onResult}
-          ref={(ref) => { this.board = ref; }}
-          onPress={onPress}
-          onRelease={onRelease}
-        />
-        {config.inputs.instruction && (
-          <Text style={styles.text}>{config.inputs.instruction}</Text>
-        )}
-
-       
-        {isOptionalText ? 
-      (<View    style={{
-                    marginTop: '8%' ,
-                    width: '100%' ,
-             
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
+        // behavior="padding"
       >
-     
+        <View>
+          {
+            config?.valueConstraints?.image ? (
+              <View style = {styles.imgContainer}>
+                <Image
+                  style = {styles.img}
+                  source={{
+                    uri: config.valueConstraints.image,
+                  }}
+                />
+              </View> ): <View></View>
+          }
 
-      <Input
-        
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-         
-      />
-    
-      </Item> 
-    </View>
-    ):<View></View>
-      }
-      </View>
+          <DrawingBoard
+            imageSource={url}
+            lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
+            onResult={this.onResult}
+            ref={(ref) => { this.board = ref; }}
+            onPress={onPress}
+            onRelease={onRelease}
+          />
+          {config.inputs.instruction && (
+            <Text style={styles.text}>{config.inputs.instruction}</Text>
+          )}
+
+
+          {
+            isOptionalText &&
+            <OptionalText
+              onChangeText={text=>this.handleComment(text)}
+              value={this.finalAnswer["text"]}
+              isRequired={isOptionalTextRequired}
+            />
+          }
+        </View>
       </KeyboardAvoidingView>
     );
   }

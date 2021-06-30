@@ -35,6 +35,13 @@ export const initialState = {
   currentActivity: null,
 
   /**
+   * The ID of the current activity.
+   *
+   * @type {string}
+   */
+  currentEvent: null,
+
+  /**
    * Whether the applet cards are disabled.
    *
    * @type {boolean}.
@@ -61,6 +68,13 @@ export const initialState = {
    * @type {boolean}
    */
   appStatus: false,
+
+  /**
+   * timestamp for app was open last time
+   *
+   * @type {Number}
+   */
+  lastActive: new Date().getTime(),
 
   /**
    * app language code
@@ -96,6 +110,13 @@ export const initialState = {
    * @type {boolean}
    */
   isConnected: true,
+
+  /**
+   * Completed events
+   *
+   * @type {object}
+   */
+  finishedEvents: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -106,7 +127,6 @@ export default (state = initialState, action = {}) => {
         apiHost: action.payload,
       };
     case APP_CONSTANTS.SET_CONNECTION:
-      console.log('*****', action.payload)
       return {
         ...state,
         isConnected: action.payload,
@@ -150,11 +170,24 @@ export default (state = initialState, action = {}) => {
         ...state,
         appStatus: action.payload,
       };
+    case APP_CONSTANTS.SET_LAST_ACTIVE_TIME:
+      return {
+        ...state,
+        lastActive: action.payload,
+      }
     case APP_CONSTANTS.SET_SKIN:
       return {
         ...state,
         skin: action.payload,
       };
+    case APP_CONSTANTS.SET_CLOSED_EVENT:
+      return {
+        ...state,
+        finishedEvents: {
+          ...state.finishedEvents,
+          [action.payload]: Date.now()
+        }
+      }
     case APP_CONSTANTS.SET_CURRENT_APPLET:
       return {
         ...state,
@@ -164,6 +197,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         currentActivity: action.payload,
+      };
+    case APP_CONSTANTS.SET_CURRENT_EVENT:
+      return {
+        ...state,
+        currentEvent: action.payload,
       };
     case APP_CONSTANTS.SET_APPLET_SELECTION_DISABLED:
       return {

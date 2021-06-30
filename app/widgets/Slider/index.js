@@ -5,12 +5,15 @@ import {
   Image,
   TouchableWithoutFeedback,
   StyleSheet,
-  ScrollView,KeyboardAvoidingView
+  ScrollView,KeyboardAvoidingView,
+  TextInput,
+  Platform
 } from "react-native";
 import { Text , Item , Input} from "native-base";
 import SliderComponent from "react-native-slider";
 import { getURL } from "../../services/helper";
 import { colors } from "../../themes/colors";
+import { OptionalText } from '../OptionalText';
 
 const testTicks = [
   { name: "One", value: 1 },
@@ -254,7 +257,7 @@ class Slider extends Component {
     if (sliderWidth) {
       const locationX = evt.nativeEvent.locationX - 20.5;
       const calculatedValue =
-        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);   
+        Math.abs(locationX / (sliderWidth - 26) * (itemList.length - 1) + minimumValue);
       const value = calculatedValue > maximumValue
         ? maximumValue
         : (calculatedValue < minimumValue
@@ -262,7 +265,7 @@ class Slider extends Component {
           : calculatedValue);
       const currentValue = continousSlider ? value : Math.round(value);
       this.finalAnswer["value"] = currentValue;
-    
+
       onChange(this.finalAnswer);
       this.setState({ currentValue });
     }
@@ -317,7 +320,7 @@ class Slider extends Component {
   render() {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
     const {
-      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText },
+      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired },
       onChange,
       onPress,
       value,
@@ -418,27 +421,13 @@ class Slider extends Component {
           </View>
         </View>
 
-        {isOptionalText ? 
-          (<View    style={{
-                    marginTop: '12%' ,
-                    width: '100%' ,
-
-                  }}
-                  >
-      <Item bordered
-       style={{borderWidth: 1}}
-      >
-
-      <Input
-          placeholder = "Please enter the text"  
-          onChangeText={text=>this.handleComment(text)}
-          value={this.finalAnswer["text"]}
-      />
-    
-      </Item> 
-    </View>
-    ):<View></View>
-      }
+        { isOptionalText &&
+          <OptionalText
+            onChangeText={text=>this.handleComment(text)}
+            value={this.finalAnswer["text"]}
+            isRequired={isOptionalTextRequired}
+          />
+        }
       </View>
       </KeyboardAvoidingView>
     );

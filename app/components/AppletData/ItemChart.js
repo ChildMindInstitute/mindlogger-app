@@ -6,10 +6,6 @@ import i18n from 'i18next';
 
 import TokenChart from './TokenChart';
 import BaseText from '../base_text/base_text';
-// import { VictoryBar, VictoryChart, VictoryLabel } from 'victory-native';
-// import { colors } from '../../themes/colors';
-// import LineChart from './LineChart';
-// import BarChart from './BarChart';
 
 const styles = {
   plotView: {
@@ -38,6 +34,9 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -47,10 +46,9 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={values[values.length - 1]}
         />
         {item.additionalParams.timelineChart}
-        {/* <TimelineChart data={data} labels={item.additionalParams.labels} /> */}
       </View>
     );
   }
@@ -125,6 +123,8 @@ class ItemChart extends React.Component {
       currentBalance: Number.isInteger(tokens.cumulativeToken) ? (tokens.cumulativeToken) : 0,
     };
 
+    const questions = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -134,7 +134,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={questions[questions.length - 1]}
         />
         {/* {item.additionalParams.timelineChart} */}
         <TokenChart item={item} data={dataValues} labels={item.additionalParams.labels} tokens={tokenHistory}/>
@@ -149,9 +149,12 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+
     return (
       <View style={styles.plotView}>
-        <BaseText style={styles.linePlotTitle} value={item.additionalParams.description} />
+        <BaseText style={styles.linePlotTitle} value={values[values.length - 1]} />
         <BaseText style={styles.linePlotLabel} value={item.additionalParams.minMaxLabels[1]} />
         {item.additionalParams.lineChart}
         {/* <LineChart data={data} labels={item.additionalParams.labels} /> */}
@@ -166,6 +169,9 @@ class ItemChart extends React.Component {
     if (item.additionalParams.activeCount === 0) {
       return null;
     }
+
+    const values = item.question['en'].split("\n");
+    
     return (
       <View style={styles.plotView}>
         <BaseText
@@ -175,7 +181,7 @@ class ItemChart extends React.Component {
             paddingTop: 20,
             paddingHorizontal: 20,
           }}
-          value={item.additionalParams.description}
+          value={values[values.length - 1]}
         />
         {/* <BarChart data={item.additionalParams.dataFix} /> */}
       </View>
