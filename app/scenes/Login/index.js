@@ -85,6 +85,11 @@ class Login extends Component {
         if (typeof response.exception !== "undefined") {
           throw response.exception;
         } else {
+          response.user.privateKey = getPrivateKey({
+            userId: response.user._id,
+            email: body.user,
+            password: body.password,
+          });
           response.user.email = body.user;
 
           signInSuccessful(response);
