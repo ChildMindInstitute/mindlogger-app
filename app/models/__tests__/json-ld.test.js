@@ -200,7 +200,6 @@ test('activityTransformJson: ema-hbn', () => {
     info: undefined,
     notification: {},
     isPrize: false,
-    hasResponseIdentifier: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -309,7 +308,6 @@ test('activityTransformJson: nda-phq', () => {
     notification: {},
     id: 'activity/5cba3c1f86fafd5df796d913',
     isPrize: false,
-    hasResponseIdentifier: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
