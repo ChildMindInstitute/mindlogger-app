@@ -305,7 +305,9 @@ class Activity extends React.Component {
             />
           </View>
         )}
-        {!fullScreen && <ActHeader title={activity.name.en} />}
+        {!fullScreen &&
+          <ActHeader title={activity.name.en} watermark={currentApplet.watermark} />
+        }
       </Container>
     );
   }

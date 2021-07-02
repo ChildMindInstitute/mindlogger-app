@@ -61,13 +61,19 @@ const rules = {
     />);
   },
   'container_hljs-left': (node, children, parent, styles) => {
-    return <View key={node.key}>{children}</View>
+    const style = 'flex-start';
+
+    return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
   },
   'container_hljs-center': (node, children, parent, styles) => {
-    return <View key={node.key}>{children}</View>
+    const style = 'center';
+
+    return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
   },
   'container_hljs-right': (node, children, parent, styles) => {
-    return (<View key={node.key}>{children}</View>);
+    const style = 'flex-end';
+
+    return (<View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>);
   },
   'ins': (node, children) => {
     return (<Text key={node.key} style={{ textDecorationLine: 'underline' }}>{children}</Text>)
@@ -100,12 +106,19 @@ class MarkdownScreen extends Component {
 
   render() {
     const { mstyle, children } = this.props;
+    const { heading1, heading2, heading3, heading4, heading5, heading6, paragraph } = markdownStyle;
+    let alignment = 'center';
 
-    const {heading1, heading2, heading3, heading4, heading5, heading6, paragraph} = markdownStyle;
+    if (children.includes('::: hljs-right')) {
+      alignment = 'flex-end';
+    } else if (children.includes('::: hljs-left')) {
+      alignment = 'flex-start';
+    }
+    
 
     return (
       <View
-        style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 10}}
+        style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10}}
       >
         <Markdown
           style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
