@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
-
+## [0.16.30] - 2021-07-2
+- Fixed media export issue
 ## [0.16.29] - 2021-06-30
 - Bug Fixes
 ## [0.16.28] - 2021-06-14
