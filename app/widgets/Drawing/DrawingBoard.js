@@ -4,8 +4,6 @@ import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
 
-const SENSITIVITY = 30; // Milliseconds between line points (lower is more sensitive)
-
 const styles = StyleSheet.create({
   picture: {
     width: '100%',
@@ -56,13 +54,7 @@ export default class DrawingBoard extends Component {
         this.props.onRelease();
         const result = this.save();
         const svgString = this.serialize();
-        // if (this.svgRef) {
-        //   this.svgRef.toDataURL((base64) => {
-        //     this.props.onResult({ ...result, base64 });
-        //   });
-        // } else {
-        //
-        // }
+
         this.props.onResult({ ...result, svgString });
       },
     });
@@ -70,37 +62,28 @@ export default class DrawingBoard extends Component {
   }
 
   addLine = (evt) => {
-    const { lines, startTime } = this.state;
+    const { lines } = this.state;
     if (!this.allowed) return;
-    const timestamp = Date.now();
     const { locationX, locationY } = evt.nativeEvent;
-    if (!startTime) {
-      this.setState({ startTime: timestamp });
-    }
-    this.lastPressTimestamp = timestamp;
     this.startX = locationX;
     this.startY = locationY;
-    const newLine = { points: [{ x: locationX, y: locationY, time: 0 }] };
+    const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }] };
     this.setState({ lines: [...lines, newLine] });
   }
 
   addPoint = (evt, gestureState) => {
-    const { lines, startTime } = this.state;
+    const { lines } = this.state;
     if (!this.allowed || lines.length === 0) return;
-    const nowTimestamp = Date.now();
-    const timeElapsed = nowTimestamp - startTime;
-    const timeDelta = nowTimestamp - this.lastPressTimestamp;
+
+    const time = Date.now();
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-    const x = moveX - x0 + this.startX;
-    const y = moveY - y0 + this.startY;
-    if (timeDelta >= SENSITIVITY) {
-      this.lastX = x;
-      this.lastY = y;
-      this.lastPressTimestamp = nowTimestamp;
-      lines[n].points.push({ x: this.lastX, y: this.lastY, timeElapsed });
-      this.setState({ lines });
-    }
+
+    this.lastX = moveX - x0 + this.startX;
+    this.lastY = moveY - y0 + this.startY;
+    this.lastPressTimestamp = time;
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time });
+    this.setState({ lines });
   }
 
   onLayout = (event) => {
@@ -122,7 +105,7 @@ export default class DrawingBoard extends Component {
   }
 
   reset = () => {
-    this.setState({ lines: [], startTime: undefined });
+    this.setState({ lines: [] });
   }
 
   start = () => {
@@ -135,7 +118,7 @@ export default class DrawingBoard extends Component {
   }
 
   save = () => {
-    const { lines, startTime } = this.state;
+    const { lines } = this.state;
     const { width } = this.state.dimensions;
     const results = lines.map(line => ({
       ...line,
@@ -145,7 +128,7 @@ export default class DrawingBoard extends Component {
         y: point.y / width * 100,
       })),
     }));
-    return { lines: results, startTime };
+    return { lines: results };
   }
 
   renderLine = (pointStr, idx) => (
