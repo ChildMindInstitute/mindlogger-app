@@ -84,6 +84,7 @@ const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
+const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
@@ -511,6 +512,7 @@ const transformPureActivity = (activityJson) => {
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
+    isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     compute,
     subScales,
     finalSubScale,
