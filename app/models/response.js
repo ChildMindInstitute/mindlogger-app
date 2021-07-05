@@ -92,14 +92,6 @@ export const prepareResponseForUpload = (
     alerts,
   };
 
-  const index = activity.items.findIndex(
-    item => item.valueConstraints && item.valueConstraints.isResponseIdentifier
-  );
-
-  if (index >= 0) {
-    responseData.identifier = responses[index].value !== undefined ? responses[index].value : responses[index];
-  }
-
   let subScaleResult = [];
   if (activity.subScales) {
     subScaleResult = getSubScaleResult(
@@ -111,8 +103,16 @@ export const prepareResponseForUpload = (
 
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
+    const mediaItems = [
+      'photo',
+      'video',
+      'audioRecord',
+      'drawing',
+      'audioImageRecord'
+    ];
+
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: (item.inputType == 'drawing' ? responses[index].value : index) }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index].value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);

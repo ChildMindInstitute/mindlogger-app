@@ -88,8 +88,6 @@ const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
-const HAS_RESPONSE_IDENTIFIER = "reprolib:terms/hasResponseIdentifier";
-const IS_RESPONSE_IDENTIFIER = "reprolib:terms/isResponseIdentifier";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -162,13 +160,6 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
-      };
-    }
-
-    if (key == IS_RESPONSE_IDENTIFIER) {
-      return {
-        ...accumulator,
-        isResponseIdentifier: R.path([key, 0, "@value"], vcObj),
       };
     }
 
@@ -523,7 +514,6 @@ const transformPureActivity = (activityJson) => {
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
-    hasResponseIdentifier: R.path([HAS_RESPONSE_IDENTIFIER, 0, "@value"], activityJson) || false,
     compute,
     subScales,
     finalSubScale,
@@ -844,7 +834,7 @@ export const parseAppletEvents = (applet) => {
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
 
-      if (event.data.activity_id === act.id.substring(9) && !act.hasResponseIdentifier) {
+      if (event.data.activity_id === act.id.substring(9)) {
         const futureSchedule = Parse.schedule(event.schedule).forecast(
           Day.fromDate(new Date()),
           true,
