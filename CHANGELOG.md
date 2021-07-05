@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.1] - 2021-07-4
 - Implement color palette for radio/checkbox items
 
+## [0.16.31] - 2021-07-2
+- Fixed activity start/end time export issue
+
 ## [0.16.30] - 2021-07-2
 - Fixed media export issue
 
