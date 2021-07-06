@@ -20,6 +20,7 @@ import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
+import { MarkdownScreen } from '../../components/core';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -132,7 +133,7 @@ const ActivitySummary = ({ responses, activity }) => {
         <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>
           {item.score}
         </BaseText>
-        <BaseText style={{ fontSize: 15 }}>{item.message}</BaseText>
+        <MarkdownScreen>{item.message}</MarkdownScreen>
       </View>
     );
   };
