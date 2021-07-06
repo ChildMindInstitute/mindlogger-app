@@ -270,6 +270,7 @@ const uploadFiles = (authToken, response, item) => {
     } else {
       return accumulator; // Break early
     }
+
     const request = prepareFile(file)
       .then(file => postFile({
         authToken,
@@ -293,16 +294,16 @@ const uploadFiles = (authToken, response, item) => {
   return Promise.all(uploadRequests);
 };
 
-const uploadResponse = (authToken, response) =>
-  postResponse({
-    authToken,
-    response,
-  })
-    .then((item) => uploadFiles(authToken, response, item))
-    .then(() => {
-      const responses = R.pathOr([], ["payload", "responses"], response);
-      cleanFiles(responses);
-    });
+const uploadResponse = (authToken, response) => postResponse({
+  authToken,
+  response,
+})
+  .then((item) => uploadFiles(authToken, response, item))
+  .then(() => {
+    const responses = R.pathOr([], ["payload", "responses"], response);
+    cleanFiles(responses);
+  });
+
 
 // Recursive function that tries to upload the first item in the queue and
 // calls itself again on success
@@ -314,7 +315,6 @@ export const uploadResponseQueue = (
   if (responseQueue.length === 0) {
     return Promise.resolve();
   }
-
   return uploadResponse(authToken, responseQueue[0])
     .then(() => {
       progressCallback();

@@ -14,6 +14,8 @@ import * as ImagePicker from 'react-native-image-picker';
 import VideoPlayer from 'react-native-video-player';
 import i18n from 'i18next';
 import RNFetchBlob from 'rn-fetch-blob';
+import { ProcessingManager } from 'react-native-video-processing';
+import RNFS from "react-native-fs";
 
 import permissions from '../permissions';
 
@@ -130,7 +132,8 @@ export class Camera extends Component {
     const { video } = this.props;
     const options = {
       mediaType: video ? 'video' : 'photo',
-      videoQuality: 'low',
+      videoQuality: "low",
+      durationLimit: 60,
       quality: 0.3,
       maxWidth: 800,
       maxHeight: 800,
@@ -170,6 +173,27 @@ export class Camera extends Component {
             type: response.type || VIDEO_MIME_TYPE,
             fromLibrary: true,
           };
+          if (video && Platform.OS !== 'ios' && picSource.size > 5000000) {
+            const optionsV = {
+              width: 360,
+              height: 640,
+              bitrateMultiplier: 2.6,
+              minimumBitrate: 270000,
+            };
+
+            try {
+              const uriComponents = uri.split('/')
+              const fileNameAndExtension = uriComponents.length - 1
+              const fileInfo = `${RNFS.TemporaryDirectoryPath}/${fileNameAndExtension}`
+              await RNFS.copyFile(uri, fileInfo)
+  
+              const data = await ProcessingManager.compress("file://" + fileInfo, optionsV)
+              picSource["uri"] = data.source;
+            } catch (error) {
+              console.log(error)
+            }
+          }
+
           console.log('launchImageLibrary 2', picSource);
           this.finalAnswer["value"] = picSource;
           onChange(this.finalAnswer);
@@ -212,7 +236,6 @@ export class Camera extends Component {
   take = () => {
     try {
       const { video, onChange, config } = this.props;
-      console.log({ video });
       const options = {
         mediaType: 'video',
         videoQuality: 'low',
@@ -242,7 +265,7 @@ export class Camera extends Component {
                   type: response.type || VIDEO_MIME_TYPE,
                   fromLibrary: false,
                 };
-                console.log('take', { picSource });
+                console.log('take', picSource);
                 this.finalAnswer["value"] = picSource;
                 onChange(this.finalAnswer);
               });
@@ -254,7 +277,7 @@ export class Camera extends Component {
                 type: response.type || VIDEO_MIME_TYPE,
                 fromLibrary: false,
               };
-              console.log('take', { picSource });
+              console.log('take', picSource);
               this.finalAnswer["value"] = picSource;
               onChange(this.finalAnswer);
             }
