@@ -120,7 +120,7 @@ class Activity extends React.Component {
     }
 
     if ((autoAdvance || fullScreen) && !optionalText) {
-      if (next === -1 && activity.compute && !isSummaryScreen) {
+      if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);
       } else {
@@ -267,6 +267,7 @@ class Activity extends React.Component {
                 if (
                   getNextPos(currentScreen, itemVisibility) === -1 &&
                   activity.compute &&
+                  !activity.summaryDisabled &&
                   !isSummaryScreen
                 ) {
                   this.setState({ isSummaryScreen: true });
