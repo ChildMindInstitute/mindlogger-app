@@ -50,7 +50,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
         {
           itemOrder.map((item, index) => (
             <ListItem
-              style={{ width: '90%' }}
+              style={{ width: '90%', backgroundColor: config.colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
               onPress={() => handlePress(token ? item.name.en : item.value)}
               key={index}
             >
@@ -63,7 +63,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                   <View />
                 )}
               </View>
-              <View style={{ width: '85%' }}>
+              <View style={{ width: '77%' }}>
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                   {item.image ? (
                     <Image

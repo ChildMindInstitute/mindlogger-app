@@ -71,7 +71,12 @@ export class MultiSelectScreen extends Component {
 
   render() {
     const {
-      config: { itemList , isOptionalText, isOptionalTextRequired},
+      config: {
+        colorPalette,
+        itemList,
+        isOptionalText,
+        isOptionalTextRequired
+      },
       token,
       value = {},
     } = this.props;
@@ -85,7 +90,7 @@ export class MultiSelectScreen extends Component {
       <View style={{ alignItems: "stretch" }}>
         {this.state.orderedItems.map((item, index) => (
           <ListItem
-            style={{ width: "90%" }}
+            style={{ width: '90%', backgroundColor: colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
@@ -98,7 +103,7 @@ export class MultiSelectScreen extends Component {
                 <View />
               )}
             </View>
-            <View style={{ width: "85%" }}>
+            <View style={{ width: "77%" }}>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 {item.image ? (
                   <Image
