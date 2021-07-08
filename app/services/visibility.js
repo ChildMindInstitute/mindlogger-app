@@ -18,7 +18,7 @@ export const testVisibility = (testExpression = true, items = [], responses = []
   testExpressionFixed = testExpressionFixed.replace('!==', '!=');
   testExpressionFixed = testExpressionFixed.replace(/(\w+\.)/g, 'arrayIncludes($&');
   testExpressionFixed = testExpressionFixed.replace(/.includes\(/g, ', ');
-  testExpressionFixed = testExpressionFixed.replaceAll('!arrayIncludes', 'arrayNotIncludes');
+  testExpressionFixed = testExpressionFixed.replace(/!arrayIncludes/g, 'arrayNotIncludes');
 
   // Custom function to test if element is present in array
   const arrayIncludes = (array, element) => {
