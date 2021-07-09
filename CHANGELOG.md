@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.16.34] - 2021-07-8
+- Fixed camera quality
+- Fixed calendar layout
+- Fixed header and footer padding
+
 ## [0.16.31] - 2021-07-2
 - Fixed activity start/end time export issue
 
