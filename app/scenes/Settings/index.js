@@ -32,7 +32,7 @@ import { colors } from '../../themes/colors';
 /* STYLES */
 import styles from './styles';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 // eslint-disable-next-line

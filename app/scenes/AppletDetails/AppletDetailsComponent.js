@@ -12,7 +12,7 @@ import AppletFooter from './AppletFooter';
 import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 const styles = StyleSheet.create({

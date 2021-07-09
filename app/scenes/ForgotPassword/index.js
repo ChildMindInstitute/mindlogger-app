@@ -12,7 +12,7 @@ import { skinSelector, languageSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 8 : 0;
 
 class ForgotPassword extends Component {

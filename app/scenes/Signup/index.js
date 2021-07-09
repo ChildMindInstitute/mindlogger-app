@@ -13,7 +13,7 @@ import styles from './styles';
 import SignupForm from './SignupForm';
 import { getPrivateKey } from '../../services/encryption';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 class SignUp extends Component {

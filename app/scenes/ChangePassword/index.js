@@ -28,7 +28,7 @@ import { setMultipleResponseKeys } from "../../state/applets/applets.actions";
 
 import ChangePasswordForm from './ChangePasswordForm';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 class ChangePasswordScreen extends Component {
