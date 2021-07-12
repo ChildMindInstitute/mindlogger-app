@@ -4,8 +4,9 @@ import PropTypes from 'prop-types';
 import i18n from 'i18next';
 import { Item } from 'native-base';
 
-export const OptionalText = ({ isRequired, onChangeText, value }) => {
+export const OptionalText = ({ isRequired, value, onChange }) => {
   const minHeight = 40;
+
   const [height, setHeight] = useState(minHeight);
 
   const updateHeight = (contentHeight) => {
@@ -28,7 +29,7 @@ export const OptionalText = ({ isRequired, onChangeText, value }) => {
     placeholder = {
       i18n.t(isRequired ? 'optional_text:required' : 'optional_text:enter_text')
     }
-    onChangeText={onChangeText}
+    onChangeText={onChange}
     value={value}
     multiline={true}
     onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height + 15)}

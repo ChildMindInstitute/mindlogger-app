@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.16.33] - 2021-07-11
+- Fixed sub-scales 
+
 ## [0.16.32] - 2021-07-07
 - Add arrayNotIncludes function for expr
 
