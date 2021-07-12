@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.16.34] - 2021-07-11
 - Fix skippable option for media items
 
+## [0.16.33] - 2021-07-11
+- Fixed sub-scales 
+
 ## [0.16.32] - 2021-07-07
 - Add arrayNotIncludes function for expr
 
