@@ -52,7 +52,9 @@ const ActivityList = ({
   const stateUpdate = () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
+    const appletActivities = newApplet.activities.filter(
+      act => act.isPrize != true && act.isReviewerActivity != true
+    );
 
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
