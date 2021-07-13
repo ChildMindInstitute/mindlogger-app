@@ -112,7 +112,7 @@ export const prepareResponseForUpload = (
     ];
 
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index].value : index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index]?.value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
