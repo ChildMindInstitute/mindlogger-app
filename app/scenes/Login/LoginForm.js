@@ -18,6 +18,7 @@ const LoginForm = ({
   toggleMobileDataAllowed,
 }) => {
   const netInfo = useNetInfo();
+
   return (
     <Form>
       <Field

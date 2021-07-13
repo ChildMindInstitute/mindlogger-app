@@ -351,6 +351,7 @@ class AppService extends Component {
    */
   prepareAndOpenActivity = (applet, activity, event) => {
     const today = new Date();
+    const todayEnd = moment().endOf("day").utc();
     const { scheduledTime, data } = event;
     const activityTimeout = data.timeout.day * 864000000
       + data.timeout.hour * 3600000
@@ -376,8 +377,8 @@ class AppService extends Component {
       Actions.push('applet_details');
     }
 
-    if (scheduledTime > today
-      || (data.timeout.allow && today.getTime() - scheduledTime.getTime() > activityTimeout)) {
+    if (scheduledTime > todayEnd._d
+      || (data.timeout.allow && (today.getTime() - scheduledTime.getTime() > activityTimeout))) {
       return Alert.alert(
         '',
         `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${scheduledTime}. ${i18n.t(
