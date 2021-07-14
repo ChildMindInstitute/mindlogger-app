@@ -211,7 +211,10 @@ export const downloadResponse = () => (dispatch, getState) => {
   const userInfo = userInfoSelector(state);
   const applet = currentAppletSelector(state);
 
-  dispatch(updateKeys(applet, userInfo));
+  if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    dispatch(updateKeys(applet, userInfo));
+  }
+
   dispatch(setDownloadingResponses(true));
 
   downloadAppletResponse(authToken, applet)
