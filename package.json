@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.16.35",
+  "version": "0.16.36",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -77,7 +77,6 @@
     "react-native-calendar-strip": "^1.3.8",
     "react-native-camera": "^3.16.0",
     "react-native-crypto": "^2.2.0",
-    "react-native-device-info": "^7.0.2",
     "react-native-elements": "^1.2.7",
     "react-native-firebase": "5.6.0",
     "react-native-fix-image": "^2.0.1",
@@ -92,6 +91,7 @@
     "react-native-markdown-renderer": "^3.2.8",
     "react-native-markdown-view": "https://github.com/shnizzedy/react-native-markdown-view.git",
     "react-native-media-controls": "^2.2.0",
+    "react-native-modal-datetime-picker": "^10.2.0",
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^2.2.2",
     "react-native-progress": "^3.4.0",
