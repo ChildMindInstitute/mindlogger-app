@@ -155,6 +155,17 @@ export const markdownStyle = {
   image: {
     resizeMode: 'contain',
   },
+  ordered_list_content: {
+
+  },
+  textgroup: {
+    fontSize: 20
+  },
+  ordered_list_icon: {
+    marginLeft: 10,
+    marginRight: 10,
+    fontSize: 20
+  },
 };
 
 export default styles;
