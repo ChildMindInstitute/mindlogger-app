@@ -1,10 +1,13 @@
 import * as R from 'ramda';
 import { Dimensions } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import {
+  getSubScaleResult,
+  getValuesFromResponse,
+  getFinalSubScale
+} from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -80,9 +83,6 @@ export const prepareResponseForUpload = (
     timeout: isTimeout ? 1 : 0,
     scheduledTime: new Date(scheduledTime).getTime(),
     client: {
-      os: DeviceInfo.getSystemName(),
-      osVersion: DeviceInfo.getSystemVersion(),
-      deviceModel: DeviceInfo.getModel(),
       appId: "mindlogger-mobile",
       appVersion: packageJson.version,
       width: Dimensions.get("screen").width,
