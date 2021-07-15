@@ -48,7 +48,7 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
           <AppletImage applet={applet} />
           <View style={styles.textBlock}>
             <View style={styles.headerBlock}>
-              <SubHeading style={{ fontFamily: theme.fontFamily }}>
+              <SubHeading style={{ fontFamily: theme.fontFamily, maxWidth: '80%' }}>
                 {applet.name.en}
               </SubHeading>
 
