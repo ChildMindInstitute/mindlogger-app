@@ -5,6 +5,7 @@ import TouchBox from "./core/TouchBox";
 import { SubHeading, BodyText, NotificationText } from "./core";
 import AppletImage from "./AppletImage";
 import theme from "../themes/variables";
+import { CachedImage } from 'react-native-img-cache';
 
 const styles = StyleSheet.create({
   box: {
@@ -20,6 +21,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
     fontFamily: theme.fontFamily,
+  },
+  headerBlock: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   notification: {
     position: "absolute",
@@ -41,9 +47,19 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
         <View style={styles.inner}>
           <AppletImage applet={applet} />
           <View style={styles.textBlock}>
-            <SubHeading style={{ fontFamily: theme.fontFamily }}>
-              {applet.name.en}
-            </SubHeading>
+            <View style={styles.headerBlock}>
+              <SubHeading style={{ fontFamily: theme.fontFamily }}>
+                {applet.name.en}
+              </SubHeading>
+
+              { applet && applet.theme && applet.theme.logo ? (
+                <CachedImage
+                  style={{ width: 32, height: 32, resizeMode: 'cover', borderRadius: 32 / 2 }}
+                  source={{ uri: applet.theme.logo }}
+                />
+              ) : undefined }
+            </View>
+
             {applet.description && (
               <BodyText style={{ fontFamily: theme.fontFamily }}>
                 {applet.description.en}
