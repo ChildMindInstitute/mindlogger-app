@@ -11,17 +11,20 @@ import BaseText from '../../components/base_text/base_text';
 // eslint-disable-next-line
 class AppletFooter extends React.Component {
   render() {
-    const { active, changeTab } = this.props;
+    const { active, changeTab, applet } = this.props;
+
     const defaultColor = '#7E7E7E';
+    const activeColor = applet && applet.theme && applet.theme.primaryColor ? applet.theme.primaryColor : colors.primary;
+
     return (
       <Footer>
         <FooterTab>
           <Button vertical active={active === 'activity'} onPress={() => changeTab('activity')}>
-            <SurveyIcon color={active === 'activity' ? colors.primary : defaultColor} />
+            <SurveyIcon color={active === 'activity' ? activeColor : defaultColor} />
             <BaseText
               style={
                 active === 'activity'
-                  ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily }
+                  ? { color: activeColor, fontWeight: 'bold', fontFamily: theme.fontFamily }
                   : { color: defaultColor, fontFamily: theme.fontFamily }
               }
               textKey="applet_footer:activities"
@@ -29,11 +32,11 @@ class AppletFooter extends React.Component {
           </Button>
 
           <Button vertical active={active === 'data'} onPress={() => changeTab('data')}>
-            <DataIcon color={active === 'data' ? colors.primary : defaultColor} />
+            <DataIcon color={active === 'data' ? activeColor : defaultColor} />
             <BaseText
               style={
                 active === 'data'
-                  ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily }
+                  ? { color: activeColor, fontWeight: 'bold', fontFamily: theme.fontFamily }
                   : { color: defaultColor, fontFamily: theme.fontFamily }
               }
               textKey="applet_footer:data"
@@ -41,11 +44,11 @@ class AppletFooter extends React.Component {
           </Button>
 
           <Button vertical active={active === 'about'} onPress={() => changeTab('about')}>
-            <AboutIcon color={active === 'about' ? colors.primary : defaultColor} />
+            <AboutIcon color={active === 'about' ? activeColor : defaultColor} />
             <BaseText
               style={
                 active === 'about'
-                  ? { color: colors.primary, fontWeight: 'bold', fontFamily: theme.fontFamily }
+                  ? { color: activeColor, fontWeight: 'bold', fontFamily: theme.fontFamily }
                   : { color: defaultColor, fontFamily: theme.fontFamily }
               }
               textKey="applet_footer:about"
@@ -58,6 +61,7 @@ class AppletFooter extends React.Component {
 }
 
 AppletFooter.propTypes = {
+  applet: PropTypes.object.isRequired,
   active: PropTypes.string.isRequired,
   changeTab: PropTypes.func.isRequired,
 };
