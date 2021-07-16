@@ -41,6 +41,8 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
     0
   );
 
+  const maxWidthStyle = applet && applet.theme && applet.theme.logo ? { maxWidth: '72%' } : {};
+
   return (
     <View style={styles.box}>
       <TouchBox onPress={() => onPress(applet)} disabled={disabled}>
@@ -48,7 +50,7 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
           <AppletImage applet={applet} />
           <View style={styles.textBlock}>
             <View style={styles.headerBlock}>
-              <SubHeading style={{ fontFamily: theme.fontFamily, maxWidth: '80%' }}>
+              <SubHeading style={{ fontFamily: theme.fontFamily, ...maxWidthStyle }}>
                 {applet.name.en}
               </SubHeading>
 
