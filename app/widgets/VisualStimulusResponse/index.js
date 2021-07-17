@@ -9,7 +9,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
   if (isCurrent) {
     // Prepare config data for injecting into the WebView
     const trials = config.trials.map(trial => ({
-      stimulus: trial.image,
+      stimulus: {
+        en: trial.image
+      },
       choices: trial.valueConstraints.itemList,
       correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
       weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
@@ -45,7 +47,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
         onMessage={(e) => {
           const dataString = e.nativeEvent.data;
           const data = JSON.parse(dataString);
-          onChange(data);
+
+          onChange(data.map(record => ({
+            delay: record.rt,
+            question: record.stimulus,
+            button_pressed: record.button_pressed,
+            correct: record.correct
+          })));
         }}
       />
     );
