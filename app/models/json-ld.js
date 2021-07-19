@@ -80,6 +80,7 @@ const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const REMOVE_BACK_OPTION = "reprolib:terms/removeBackOption";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
@@ -200,6 +201,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === REMOVE_BACK_OPTION) {
+      return {
+        ...accumulator,
+        removeBackOption: R.path([key, 0, "@value"], vcObj)
       }
     }
 
