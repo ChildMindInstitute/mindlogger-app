@@ -34,6 +34,11 @@ export class Select extends React.Component {
     this.setState({ modalVisible: visible });
   }
 
+  onSelect(v) {
+    const { onChange } = this.props;
+    onChange({ value: v });
+  }
+
   render() {
     const { onChange, value, config } = this.props;
 
@@ -45,7 +50,8 @@ export class Select extends React.Component {
       );
     }
 
-    const selectedItem = config.itemList.find(item => item.value === (typeof value === "object" ? value.value : value));
+    const selectedItem = config.itemList.find(item => item.value === (typeof value === 'object' ? value.value : value));
+
     return (
       <View style={{ marginBottom: 0, height: 350 }}>
         {this.state.modalVisible ? (

@@ -230,89 +230,92 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   }
 
   dispatch(setDownloadingApplets(true));
-  getApplets(auth.token, localInfo).then(async (resp) => {
-    let applets = []
-    if (resp.data)
-      applets = resp.data;
-    else
-      applets = resp;
+  getApplets(auth.token, localInfo)
+    .then(async (resp) => {
+      let applets = [];
+      if (resp.data)
+        applets = resp.data;
+      else
+        applets = resp;
 
-    if (loggedInSelector(getState())) {
-      // Check that we are still logged in when fetch finishes
-      const userInfo = userInfoSelector(state);
-      const responses = [];
-      let scheduleUpdated = false;
+      if (loggedInSelector(getState())) {
+        // Check that we are still logged in when fetch finishes
+        const userInfo = userInfoSelector(state);
+        const responses = [];
+        let scheduleUpdated = false;
 
-      const transformedApplets = applets.map((appletInfo) => {
-        if (!appletInfo.applet) {
-          const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
-          if (appletInfo.schedule) {
-            const events = currentApplet.schedule.events;
-            currentApplet.schedule = appletInfo.schedule;
+        const transformedApplets = applets
+          .map((appletInfo) => {
+            if (!appletInfo.applet) {
+              const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
+              if (appletInfo.schedule) {
+                const events = currentApplet.schedule.events;
+                currentApplet.schedule = appletInfo.schedule;
 
-            if (!R.isEmpty(appletInfo.schedule.events)) {
-              Object.keys(appletInfo.schedule.events).forEach(eventId => {
-                events[eventId] = appletInfo.schedule.events[eventId];
-                scheduleUpdated = true;
-              })
-            }
-
-            for (const eventId in events) {
-              let isValid = false;
-              for (const eventDate in currentApplet.schedule.data) {
-                if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
-                  isValid = true;
+                if (!R.isEmpty(appletInfo.schedule.events)) {
+                  Object.keys(appletInfo.schedule.events).forEach(eventId => {
+                    events[eventId] = appletInfo.schedule.events[eventId];
+                    scheduleUpdated = true;
+                  })
                 }
-              }
 
-              if (!isValid) {
-                delete events[eventId];
+                for (const eventId in events) {
+                  let isValid = false;
+                  for (const eventDate in currentApplet.schedule.data) {
+                    if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+                      isValid = true;
+                    }
+                  }
+
+                  if (!isValid) {
+                    delete events[eventId];
+                  }
+                }
+                currentApplet.schedule.events = events;
+              }
+              responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
+              return currentApplet;
+          } else {
+            const applet = transformApplet(appletInfo, currentApplets);
+            if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+              const appletId = applet.id.split('/')[1];
+
+              if (keys && keys[appletId]) {
+                dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+                Object.assign(applet, keys[appletId]);
+              } else {
+                dispatch(updateKeys(applet, userInfo));
               }
             }
-            currentApplet.schedule.events = events;
+            responses.push({
+              ...decryptAppletResponses(applet, appletInfo.responses),
+              appletId: 'applet/' + appletInfo.id
+            });
+
+            return applet;
           }
-          responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
-          return currentApplet;
-        } else {
-          const applet = transformApplet(appletInfo, currentApplets);
+        });
 
-          if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-            const appletId = applet.id.split('/')[1];
-            if (keys && keys[appletId]) {
-              dispatch(prepareResponseKeys(applet.id, keys[appletId]))
-              Object.assign(applet, keys[appletId]);
-            } else {
-              dispatch(updateKeys(applet, userInfo));
-            }
-          }
-          responses.push({
-            ...decryptAppletResponses(applet, appletInfo.responses),
-            appletId: 'applet/' + appletInfo.id
-          });
-          return applet;
-        }
-      });
+  await storeData('ml_applets', transformedApplets);
+  await storeData('ml_responses', responses);
 
-      await storeData('ml_applets', transformedApplets);
-      await storeData('ml_responses', responses);
-
-      if (scheduleUpdated) {
-        dispatch(setScheduleUpdated(true));
-      }
-      dispatch(replaceApplets(transformedApplets));
-      dispatch(replaceResponses(responses));
-      // dispatch(downloadAppletsMedia(transformedApplets));
-      if (onAppletsDownloaded) {
-        onAppletsDownloaded();
-      }
-    }
-  })
-    .catch((err) => console.warn(err.message))
+  if (scheduleUpdated) {
+    dispatch(setScheduleUpdated(true));
+  }
+  dispatch(replaceApplets(transformedApplets));
+  dispatch(replaceResponses(responses));
+  // dispatch(downloadAppletsMedia(transformedApplets));
+  if (onAppletsDownloaded) {
+    onAppletsDownloaded();
+  }
+}
+    })
+    .catch ((err) => console.warn(err.message))
     .finally(() => {
-      dispatch(setDownloadingApplets(false));
-      // dispatch(scheduleAndSetNotifications());
-      // dispatch(getInvitations());
-    });
+  dispatch(setDownloadingApplets(false));
+  // dispatch(scheduleAndSetNotifications());
+  // dispatch(getInvitations());
+});
 };
 
 export const downloadTargetApplet = (appletId, cb = null) => (

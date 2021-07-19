@@ -99,47 +99,42 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
     retrieveResponses: true,
     numberOfDays: 7,
     groupByDateActivity: false,
-    // currentApplet,
-    // nextActivity
+    currentApplet,
+    nextActivity
   });
   const url = `${apiHost()}/user/applets?${queryParams}`;
   const headers = {
     "Girder-Token": authToken,
   };
-
   return fetch(url, {
     method: "put",
     mode: "cors",
     headers,
     body: objectToFormData({ localInfo: JSON.stringify(localInfo) }),
-  })
-    .then((res) => {
-      return res.status === 200 ? res.json() : Promise.reject(res)
-    })
-    .then(res => {
-      if (res.nextActivity) {
-        return new Promise(resolve => setTimeout(() => resolve(getApplets(authToken, localInfo, res.currentApplet, res.nextActivity).then(next => {
-          for (const applet of next.data) {
-            const d = res.data.find(d => d.id == applet.id);
-            if (!d) {
-              res.data.push(applet);
-              continue;
-            }
-
-            for (const IRI in applet.items) {
-              d.items[IRI] = applet.items[IRI]
-            }
-
-            for (const IRI in applet.activities) {
-              d.activities[IRI] = applet.activities[IRI]
-            }
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res))).then(res => {
+    if (res.nextActivity) {
+      return new Promise(resolve => setTimeout(() => resolve(getApplets(authToken, localInfo, res.currentApplet, res.nextActivity).then(next => {
+        for (const applet of next.data) {
+          const d = res.data.find(d => d.id == applet.id);
+          if (!d) {
+            res.data.push(applet);
+            continue;
           }
 
-          return res;
-        })), 50));
-      }
-      return res;
-    })
+          for (const IRI in applet.items) {
+            d.items[IRI] = applet.items[IRI]
+          }
+
+          for (const IRI in applet.activities) {
+            d.activities[IRI] = applet.activities[IRI]
+          }
+        }
+
+        return res;
+      })), 50));
+    }
+    return res;
+  })
 }
 
 // export const getTargetApplet = (authToken, appletId) => get(
