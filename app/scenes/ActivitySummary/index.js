@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Parser } from 'expr-eval';
 import _ from 'lodash';
 
@@ -73,7 +74,6 @@ const DATA = [
 
 const ActivitySummary = ({ responses, activity, applet, setActivities, activities }) => {
   const [messages, setMessages] = useState([]);
-  const [nextActivity, setNextActivity] = useState();
 
   useEffect(() => {
     const parser = new Parser({
@@ -107,22 +107,18 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       };
     }, {});
 
-    const reportMessages = [];
-    activity.messages.forEach((msg) => {
-      const { jsExpression, message, outputType, nextActivity } = msg;
 
+    const reportMessages = [];
+    activity.messages.forEach(async (msg) => {
+      const { jsExpression, message, outputType, nextActivity } = msg;
       const variableName = jsExpression.split(/[><]/g)[0];
       const category = variableName.trim().replace(/\s/g, '__');
       const expr = parser.parse(category + jsExpression.substr(variableName.length));
 
       if (expr.evaluate(cumulativeScores)) {
         const score = outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) : cumulativeScores[category];
-
-        console.log('----------------nextActivity');
-        console.log(nextActivity);
-
         if (nextActivity) {
-          // setNextActivity();
+          AsyncStorage.setItem(`${activity.id}/nextActivity`, nextActivity)
           setActivities([...activities, _.find(newApplet.activities, { name: { en: nextActivity } })])
         }
 

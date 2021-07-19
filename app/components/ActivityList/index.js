@@ -27,6 +27,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ActivityList = ({
   applet,
@@ -52,15 +53,23 @@ const ActivityList = ({
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
-  const stateUpdate = () => {
+  const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
 
     const notShownAct = newApplet.activities.find(act => act.messages && act.messages[0].nextActivity);
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true && act.name.en != (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity));
+    const appletActivities = [];
 
-    console.log(notShownAct);
-    console.log(appletActivities);
+    for (let index = 0; index < newApplet.activities.length; index++) {
+      const act = newApplet.activities[index];
+      const alreadyAct = notShownAct && await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
+      const isNextActivityShown = alreadyAct && alreadyAct === (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity)
+        ? true
+        : act.name.en != (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity);
+
+      if (act.isPrize != true && isNextActivityShown)
+        appletActivities.push(act);
+    }
 
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
@@ -128,9 +137,6 @@ const ActivityList = ({
       }
     }
   }, [])
-
-  console.log('------activities--------');
-  console.log(activities);
 
   return (
     <View style={{ paddingBottom: 30 }}>
