@@ -117,6 +117,7 @@ export const initialState = {
    * @type {object}
    */
   finishedEvents: {},
+  activities: []
 };
 
 export default (state = initialState, action = {}) => {
