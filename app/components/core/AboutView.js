@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as R from "ramda";
-import { View, Linking } from "react-native";
-import Markdown, { getUniqueID } from "react-native-markdown-renderer";
-import { getURL } from "../../services/helper";
+import { View } from "react-native";
 import { StyleSheet } from 'react-native';
+import { MarkdownScreen } from "./MarkdownScreen";
 
 const unescapeUrl = (url) => url.replace(/\\([^0-9A-Za-z\s])/g, "$1");
 
@@ -39,46 +38,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const rules = {
-  heading1: (node, children, parent, styles) =>
-    <Text key={getUniqueID()} style={[styles.heading, styles.heading1]}>
-      [{children}]
-      </Text>,
-  heading2: (node, children, parent, styles) =>
-    <Text key={getUniqueID()} style={[styles.heading, styles.heading2]}>
-      [{children}]
-      </Text>,
-  heading3: (node, children, parent, styles) =>
-    <Text key={getUniqueID()} style={[styles.heading, styles.heading3]}>
-      [{children}]
-      </Text>,
-  image: (node, children, parent, styles) =>
-    <Text key={getUniqueID()} style={[styles.heading, styles.image]}>
-      [{children}]
-      <br />
-      </Text>,
-};
-
-const rules1 = {
-  image: {
-    parse: (capture) => ({
-      alt: capture[1],
-      target: getURL(unescapeUrl(capture[2])),
-      title: capture[3],
-      width: capture[4] ? parseInt(capture[4], 10) : undefined,
-      height: capture[5] ? parseInt(capture[5], 10) : undefined,
-    }),
-  },
-};
-
 export const AboutView = ({ mstyle, children }) => {
   return (
     <View>
-      <Markdown
-        style={styles }
-      >
-        {children}
-      </Markdown>
+      <MarkdownScreen>{children}</MarkdownScreen>
     </View>
   );
 };

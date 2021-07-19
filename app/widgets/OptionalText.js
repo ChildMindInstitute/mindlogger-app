@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import i18n from 'i18next';
 import { Item } from 'native-base';
 
-export const OptionalText = ({ isRequired, onChangeText, value }) => {
+export const OptionalText = (props) => {
+  const { isRequired, value, onChangeText } = props;
   const minHeight = 40;
+
   const [height, setHeight] = useState(minHeight);
 
   const updateHeight = (contentHeight) => {

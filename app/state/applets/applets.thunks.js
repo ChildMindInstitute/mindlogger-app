@@ -286,6 +286,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 ...decryptAppletResponses(applet, appletInfo.responses),
                 appletId: 'applet/' + appletInfo.id
               });
+
               return applet;
             }
           });
