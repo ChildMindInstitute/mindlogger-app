@@ -5,13 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.16.35] - 2021-07-13
+- Fix required text input
+
+## [0.16.34] - 2021-07-11
+- Fix skippable option for media items
+
+## [0.16.33] - 2021-07-11
+- Fixed sub-scales 
+
+## [0.16.32] - 2021-07-07
+- Add arrayNotIncludes function for expr
+
 ## [0.16.31] - 2021-07-2
 - Fixed activity start/end time export issue
 
 ## [0.16.30] - 2021-07-2
 - Fixed media export issue
+
 ## [0.16.29] - 2021-06-30
 - Bug Fixes
+
 ## [0.16.28] - 2021-06-14
 - Fix score calculation for radio items
 
