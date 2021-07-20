@@ -232,7 +232,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (resp) => {
-      const applets = resp.data;
+      let applets = [];
+      if (resp.data)
+        applets = resp.data;
+      else
+        applets = resp;
+
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
@@ -270,47 +275,47 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
               return currentApplet;
-            } else {
-              const applet = transformApplet(appletInfo, currentApplets);
-              if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-                const appletId = applet.id.split('/')[1];
+          } else {
+            const applet = transformApplet(appletInfo, currentApplets);
+            if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+              const appletId = applet.id.split('/')[1];
 
-                if (keys && keys[appletId]) {
-                  dispatch(prepareResponseKeys(applet.id, keys[appletId]))
-                  Object.assign(applet, keys[appletId]);
-                } else {
-                  dispatch(updateKeys(applet, userInfo));
-                }
+              if (keys && keys[appletId]) {
+                dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+                Object.assign(applet, keys[appletId]);
+              } else {
+                dispatch(updateKeys(applet, userInfo));
               }
-              responses.push({
-                ...decryptAppletResponses(applet, appletInfo.responses),
-                appletId: 'applet/' + appletInfo.id
-              });
-
-              return applet;
             }
-          });
+            responses.push({
+              ...decryptAppletResponses(applet, appletInfo.responses),
+              appletId: 'applet/' + appletInfo.id
+            });
 
-        await storeData('ml_applets', transformedApplets);
-        await storeData('ml_responses', responses);
+            return applet;
+          }
+        });
 
-        if (scheduleUpdated) {
-          dispatch(setScheduleUpdated(true));
-        }
-        dispatch(replaceApplets(transformedApplets));
-        dispatch(replaceResponses(responses));
-        // dispatch(downloadAppletsMedia(transformedApplets));
-        if (onAppletsDownloaded) {
-          onAppletsDownloaded();
-        }
-      }
+  await storeData('ml_applets', transformedApplets);
+  await storeData('ml_responses', responses);
+
+  if (scheduleUpdated) {
+    dispatch(setScheduleUpdated(true));
+  }
+  dispatch(replaceApplets(transformedApplets));
+  dispatch(replaceResponses(responses));
+  // dispatch(downloadAppletsMedia(transformedApplets));
+  if (onAppletsDownloaded) {
+    onAppletsDownloaded();
+  }
+}
     })
-    .catch((err) => console.warn(err.message))
+    .catch ((err) => console.warn(err.message))
     .finally(() => {
-      dispatch(setDownloadingApplets(false));
-      // dispatch(scheduleAndSetNotifications());
-      // dispatch(getInvitations());
-    });
+  dispatch(setDownloadingApplets(false));
+  // dispatch(scheduleAndSetNotifications());
+  // dispatch(getInvitations());
+});
 };
 
 export const downloadTargetApplet = (appletId, cb = null) => (
@@ -381,10 +386,10 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user ?.auth ?.token;
+  const token = state.user?.auth?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
-      .then((response) => {})
+      .then((response) => { })
       .catch((e) => {
         console.warn(e);
       });
