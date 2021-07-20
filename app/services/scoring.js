@@ -83,16 +83,15 @@ export const evaluateScore = (testExpression, items = [], scores = [], subScaleR
 
   try {
     let expression = testExpression;
-
     for (const variableName in subScaleResult) {
       expression = expression.replace(
-        new RegExp(`\\(${variableName}\\)`, 'g'), subScaleResult[variableName].tScore
+        new RegExp(`\\(${variableName}\\)`, 'g'), subScaleResult[variableName].tScore ? subScaleResult[variableName].tScore : 0
       );
     }
 
     for (let i = 0; i < items.length; i++) {
       expression = expression.replace(
-        new RegExp(`\\b${items[i].variableName}\\b`, 'g'), scores[i]
+        new RegExp(`\\b${items[i].variableName}\\b`, 'g'), scores[i] ? scores[i] : 0
       );
     }
 
