@@ -18,6 +18,7 @@ const BACK_DISABLED = "reprolib:terms/disable_back";
 const CONTENT_URL = "schema:contentUrl";
 const DELAY = "reprolib:terms/delay";
 const DESCRIPTION = "schema:description";
+const SPLASH = "schema:splash";
 const DO_NOT_KNOW = "reprolib:terms/dont_know_answer";
 const ENCODING_FORMAT = "schema:encodingFormat";
 const FULL_SCREEN = "reprolib:terms/full_screen";
@@ -503,6 +504,7 @@ const transformPureActivity = (activityJson) => {
     id: activityJson._id,
     name: languageListToObject(activityJson[PREF_LABEL]),
     description: languageListToObject(activityJson[DESCRIPTION]),
+    splash: languageListToObject(activityJson[SPLASH]),
     schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
     version: languageListToObject(activityJson[VERSION]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),

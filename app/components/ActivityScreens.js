@@ -56,6 +56,7 @@ class ActivityScreens extends React.PureComponent {
             slideInFrom={direction}
           >
             <ActivityScreen
+              activity={activity}
               screen={activity.items[index]}
               answer={answers[index]}
               onChange={onChange}
