@@ -52,6 +52,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
             delay: record.rt,
             question: record.stimulus,
             button_pressed: record.button_pressed,
+            start_time: record.start_time,
+            image_time: record.image_time,
             correct: record.correct
           })));
         }}
