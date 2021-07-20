@@ -46,6 +46,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
         injectedJavaScript={injectConfig}
         onMessage={(e) => {
           const dataString = e.nativeEvent.data;
+
           const data = JSON.parse(dataString);
 
           onChange(data.map(record => ({
@@ -54,7 +55,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
             button_pressed: record.button_pressed,
             start_time: record.start_time,
             image_time: record.image_time,
-            correct: record.correct
+            correct: record.correct,
+            timestamp: record.timestamp,
           })));
         }}
       />
