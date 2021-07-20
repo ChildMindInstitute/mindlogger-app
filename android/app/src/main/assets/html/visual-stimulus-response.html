@@ -170,11 +170,12 @@ jsPsych.plugins["html-button-response"] = (function() {
       // gather the data to store for the trial
       var trial_data = {
         "rt": response.rt,
-        "start_time": response.start_time,
-        "end_time": response.end_time,
-        "image_time": response.image_time,
+        "start_time": start_time,
+        "end_time": performance.now(),
+        "image_time": image_time,
         "stimulus": trial.stimulus,
-        "button_pressed": response.button
+        "button_pressed": response.button,
+        "timestamp": new Date().getTime()
       };
 
       // clear the display
