@@ -232,10 +232,10 @@ class Activity extends React.Component {
             onAnyTouch={this.idleTimer.resetCountdown}
           />
         )}
-        {isSummaryScreen && (
+        {!!isSummaryScreen && (
           <ActivitySummary responses={responses} activity={activity} />
         )}
-        {isSplashScreen && (
+        {!!isSplashScreen && (
           <ActivitySplash activity={activity} />
         )}
         {!fullScreen && (
