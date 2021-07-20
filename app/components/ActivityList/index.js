@@ -19,6 +19,7 @@ import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
+import { setActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
   responseScheduleSelector,
@@ -26,9 +27,11 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ActivityList = ({
   applet,
+  activities,
   syncUploadQueue,
   appStatus,
   setConnection,
@@ -39,20 +42,34 @@ const ActivityList = ({
   setScheduleUpdated,
   responseSchedule,
   inProgress,
+  setActivities,
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
-  const [activities, setActivities] = useState([]);
+  // const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
-  const stateUpdate = () => {
+  const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
+
+    const notShownAct = newApplet.activities.find(act => act.messages && act.messages[0].nextActivity);
+    const appletActivities = [];
+
+    for (let index = 0; index < newApplet.activities.length; index++) {
+      const act = newApplet.activities[index];
+      const alreadyAct = notShownAct && await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
+      const isNextActivityShown = alreadyAct && alreadyAct === (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity)
+        ? true
+        : act.name.en != (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity);
+
+      if (act.isPrize != true && isNextActivityShown)
+        appletActivities.push(act);
+    }
 
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
@@ -123,7 +140,7 @@ const ActivityList = ({
 
   return (
     <View style={{ paddingBottom: 30 }}>
-      {activities.map(activity => (
+      {activities && activities.map(activity => (
         <ActivityListItem
           disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
           onPress={() => onPressActivity(activity)}
@@ -167,6 +184,7 @@ ActivityList.propTypes = {
 };
 
 const mapStateToProps = (state) => {
+  console.log(state.activities);
   return {
     lastUpdatedTime: state.app.lastUpdatedTime,
     activityEndTimes: state.app.finishedTimes,
@@ -180,6 +198,7 @@ const mapStateToProps = (state) => {
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
+    activities: state.activities.activities,
 
   };
 };
@@ -197,6 +216,7 @@ const mapDispatchToProps = {
   syncUploadQueue,
   setReminder,
   cancelReminder,
+  setActivities
 };
 
 export default connect(

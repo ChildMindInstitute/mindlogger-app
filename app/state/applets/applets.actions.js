@@ -79,3 +79,4 @@ export const saveAppletResponseData = (appletId, data) => ({
   type: APPLET_CONSTANTS.SAVE_APPLET_RESPONSE_DATA,
   payload: { appletId, data },
 });
+
