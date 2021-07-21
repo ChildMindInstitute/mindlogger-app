@@ -36,6 +36,7 @@ import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
 import ActivityTime from "./ActivityTime";
 import ActivitySummary from "../ActivitySummary";
+import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import ActivityButtons from "../../components/ActivityButtons";
@@ -68,16 +69,21 @@ class Activity extends React.Component {
       isContentError: false,
       idleTime: null,
       isSummaryScreen: false,
+      isSplashScreen: false,
     };
     this.idleTimer = new Timer();
   }
 
   componentDidMount() {
-    const { isSummaryScreen } = this.props;
+    const { isSummaryScreen, currentResponse: { activity }, currentScreen } = this.props;
     const idleTime = this.getIdleTime();
 
     this.props.setActivitySelectionDisabled(false);
-    this.setState({ isSummaryScreen, idleTime }, () => {
+    this.setState({
+      isSummaryScreen,
+      idleTime,
+      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0
+    }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
           idleTime, // Time in seconds.
@@ -181,7 +187,7 @@ class Activity extends React.Component {
       isSelected,
     } = this.props;
 
-    const { isSummaryScreen } = this.state;
+    const { isSummaryScreen, isSplashScreen } = this.state;
 
     if (!currentResponse) {
       return <View />;
@@ -212,7 +218,7 @@ class Activity extends React.Component {
         {(activity.event && activity.event.data.timedActivity.allow) &&
           <ActivityTime activity={activity} />
         }
-        {!isSummaryScreen ? (
+        {!isSummaryScreen && !isSplashScreen && (
           <ActivityScreens
             activity={activity}
             answers={responses}
@@ -225,9 +231,13 @@ class Activity extends React.Component {
             onContentError={() => this.setState({ isContentError: true })}
             onAnyTouch={this.idleTimer.resetCountdown}
           />
-        ) : (
-            <ActivitySummary responses={responses} activity={activity} />
-          )}
+        )}
+        {!!isSummaryScreen && (
+          <ActivitySummary responses={responses} activity={activity} />
+        )}
+        {!!isSplashScreen && (
+          <ActivitySplash activity={activity} />
+        )}
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
@@ -243,6 +253,10 @@ class Activity extends React.Component {
               nextLabel={nextLabel}
               nextEnabled={isNextEnabled(currentScreen, activity, responses)}
               onPressNext={() => {
+                if (isSplashScreen) {
+                  this.setState({ isSplashScreen: false })
+                  return
+                }
                 if (
                   activity.items[currentScreen].correctAnswer &&
                   activity.items[currentScreen].correctAnswer["en"]
