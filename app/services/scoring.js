@@ -1,4 +1,5 @@
 import { Parser } from 'expr-eval';
+import _ from "lodash";
 
 export const getScoreFromResponse = (item, value) => {
   if (value === null || item.inputType !== 'radio' && item.inputType !== 'slider') {
@@ -8,7 +9,8 @@ export const getScoreFromResponse = (item, value) => {
   const valueConstraints = item.valueConstraints || {};
   const itemList = valueConstraints.itemList || [];
 
-  if (!valueConstraints.scoring) {
+  const isScoring = valueConstraints.scoring || _.findIndex(itemList, obj => Boolean(obj.score)) > -1;
+  if (!isScoring) {
     return 0;
   }
 
@@ -113,7 +115,8 @@ export const getMaxScore = (item) => {
   const valueConstraints = item.valueConstraints || {};
   const itemList = valueConstraints.itemList || [];
 
-  if (!valueConstraints.scoring) {
+  const isScoring = valueConstraints.scoring || _.findIndex(itemList, obj => Boolean(obj.score)) > -1;
+  if (!isScoring) {
     return 0;
   }
 
@@ -189,7 +192,7 @@ export const getSubScaleResult = (subScales, responses, items) => {
   const subScaleResult = {};
   const calculated = {};
 
-  while(true) {
+  while (true) {
     let updated = false;
 
     for (const subScale of subScales) {
@@ -225,7 +228,8 @@ export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
   for (let i = 0; i < responses.length; i++) {
     if (responses[i]) {
       total += getScoreFromResponse(items[i], responses[i].value);
-      if (items[i].valueConstraints && items[i].valueConstraints.scoring) {
+      const isScoring = items[i].valueConstraints.scoring || _.findIndex(items[i].valueConstraints.itemList, obj => Boolean(obj.score)) > -1;
+      if (items[i].valueConstraints && isScoring) {
         count++;
       }
     }
