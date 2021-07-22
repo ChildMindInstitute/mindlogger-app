@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { Dimensions } from 'react-native';
-// import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
