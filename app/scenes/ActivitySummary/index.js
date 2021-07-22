@@ -107,7 +107,6 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       };
     }, {});
 
-
     const reportMessages = [];
     activity.messages.forEach(async (msg) => {
       const { jsExpression, message, outputType, nextActivity } = msg;
@@ -117,10 +116,8 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
 
       if (expr.evaluate(cumulativeScores)) {
         const score = outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) : cumulativeScores[category];
-        if (nextActivity) {
+        if (nextActivity)
           AsyncStorage.setItem(`${activity.id}/nextActivity`, nextActivity)
-          setActivities([...activities, _.find(newApplet.activities, { name: { en: nextActivity } })])
-        }
 
         reportMessages.push({
           category,
