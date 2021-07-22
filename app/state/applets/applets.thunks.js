@@ -286,15 +286,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               } else {
                 dispatch(updateKeys(applet, userInfo));
               }
-<<<<<<< HEAD
-              responses.push({
-                ...decryptAppletResponses(applet, appletInfo.responses),
-                appletId: 'applet/' + appletInfo.id
-              });
-
-              return applet;
-=======
->>>>>>> 48437d0a12563ad1dd829beb091d972f668ca951
             }
             responses.push({
               ...decryptAppletResponses(applet, appletInfo.responses),
@@ -305,19 +296,19 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           }
         });
 
-  await storeData('ml_applets', transformedApplets);
-  await storeData('ml_responses', responses);
+        await storeData('ml_applets', transformedApplets);
+        await storeData('ml_responses', responses);
 
-  if (scheduleUpdated) {
-    dispatch(setScheduleUpdated(true));
-  }
-  dispatch(replaceApplets(transformedApplets));
-  dispatch(replaceResponses(responses));
-  // dispatch(downloadAppletsMedia(transformedApplets));
-  if (onAppletsDownloaded) {
-    onAppletsDownloaded();
-  }
-}
+        if (scheduleUpdated) {
+          dispatch(setScheduleUpdated(true));
+        }
+        dispatch(replaceApplets(transformedApplets));
+        dispatch(replaceResponses(responses));
+        // dispatch(downloadAppletsMedia(transformedApplets));
+        if (onAppletsDownloaded) {
+          onAppletsDownloaded();
+        }
+      }
     })
     .catch ((err) => console.warn(err.message))
     .finally(() => {
