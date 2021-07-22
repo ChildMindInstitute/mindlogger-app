@@ -101,15 +101,17 @@ class MarkdownScreen extends Component {
   render() {
     const { mstyle, children } = this.props;
 
-    const {heading1, heading2, heading3, heading4, heading5, heading6, paragraph} = markdownStyle;
+    const {
+      heading1, heading2, heading3, heading4, heading5, heading6, paragraph, ordered_list_content, textgroup, ordered_list_icon
+    } = markdownStyle;
 
     return (
       <View
         style={{ justifyContent: 'center', alignItems: 'center', marginHorizontal: 10}}
       >
         <Markdown
-          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
-          mergeStyle={ true }
+          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph, ordered_list_content, textgroup, ordered_list_icon }}
+          mergeStyle={ false }
           onLinkPress={(url) => {
             Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
           }}
