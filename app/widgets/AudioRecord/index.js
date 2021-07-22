@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { View, ScrollView, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import PropTypes from 'prop-types';
+import i18n from 'i18next';
 import * as R from 'ramda';
 import { Item, Input } from 'native-base';
 import AudioRecorder from './AudioRecorder';
