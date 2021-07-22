@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.1] - 2021-07-4
 - Implement color palette for radio/checkbox items
 
+## [0.16.40] - 2021-07-18
+- Updated images on appletList and end screens
+
+## [0.16.38] - 2021-07-20
+- Fixed a condition for activitySplash component
+
+## [0.16.37] - 2021-07-20
+- Optimize Confirmation Screen
+
+## [0.16.36] - 2021-07-13
+- Show activity based on threshold achieved in Cumulative Score
+
+## [0.16.35] - 2021-07-13
+- Fix required text input
+
+## [0.16.34] - 2021-07-11
+- Fix skippable option for media items
+
+## [0.16.33] - 2021-07-11
+- Fixed sub-scales 
+
+## [0.16.32] - 2021-07-07
+- Add arrayNotIncludes function for expr
+
 ## [0.16.31] - 2021-07-2
 - Fixed activity start/end time export issue
 

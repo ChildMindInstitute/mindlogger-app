@@ -64,9 +64,8 @@ export class MultiSelectScreen extends Component {
   };
 
   handleComment = (itemValue) => {
-    const {onChange} = this.props;
     this.finalAnswer["text"] = itemValue;
-    onChange(this.finalAnswer);
+    this.props.onChange(this.finalAnswer);
   }
 
   render() {
@@ -171,7 +170,7 @@ export class MultiSelectScreen extends Component {
           <OptionalText
             isRequired={isOptionalTextRequired}
             value={this.finalAnswer["text"]}
-            onChange={text=>this.handleComment(text)}
+            onChangeText={text=>this.handleComment(text)}
           />
         }
       </View>

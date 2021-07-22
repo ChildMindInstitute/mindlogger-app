@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { Dimensions } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
@@ -80,9 +79,6 @@ export const prepareResponseForUpload = (
     timeout: isTimeout ? 1 : 0,
     scheduledTime: new Date(scheduledTime).getTime(),
     client: {
-      os: DeviceInfo.getSystemName(),
-      osVersion: DeviceInfo.getSystemVersion(),
-      deviceModel: DeviceInfo.getModel(),
       appId: "mindlogger-mobile",
       appVersion: packageJson.version,
       width: Dimensions.get("screen").width,
@@ -112,7 +108,7 @@ export const prepareResponseForUpload = (
     ];
 
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index].value : index }),
+      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index]?.value : index }),
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);

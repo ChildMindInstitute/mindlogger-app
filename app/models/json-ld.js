@@ -18,6 +18,7 @@ const BACK_DISABLED = "reprolib:terms/disable_back";
 const CONTENT_URL = "schema:contentUrl";
 const DELAY = "reprolib:terms/delay";
 const DESCRIPTION = "schema:description";
+const SPLASH = "schema:splash";
 const DO_NOT_KNOW = "reprolib:terms/dont_know_answer";
 const ENCODING_FORMAT = "schema:encodingFormat";
 const FULL_SCREEN = "reprolib:terms/full_screen";
@@ -79,6 +80,7 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
+const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
@@ -504,6 +506,7 @@ const transformPureActivity = (activityJson) => {
       message: R.path([MESSAGE, 0, "@value"], item),
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
       outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
+      nextActivity: R.path([NEXT_ACTIVITY, 0, "@value"], item),
     }
   }, activityJson[MESSAGES]);
 
@@ -511,6 +514,7 @@ const transformPureActivity = (activityJson) => {
     id: activityJson._id,
     name: languageListToObject(activityJson[PREF_LABEL]),
     description: languageListToObject(activityJson[DESCRIPTION]),
+    splash: languageListToObject(activityJson[SPLASH]),
     schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
     version: languageListToObject(activityJson[VERSION]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
