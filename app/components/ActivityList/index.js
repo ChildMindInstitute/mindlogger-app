@@ -4,6 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import _ from 'lodash';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -19,6 +20,7 @@ import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
+import { setActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
   responseScheduleSelector,
@@ -26,9 +28,11 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ActivityList = ({
   applet,
+  activities,
   syncUploadQueue,
   appStatus,
   setConnection,
@@ -39,20 +43,43 @@ const ActivityList = ({
   setScheduleUpdated,
   responseSchedule,
   inProgress,
+  setActivities,
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
-  const [activities, setActivities] = useState([]);
+  // const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
-  const stateUpdate = () => {
+  const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
-    const appletActivities = newApplet.activities.filter(act => act.isPrize != true);
+
+    const notShownActs = [];
+    for (let index = 0; index < newApplet.activities.length; index++) {
+      const act = newApplet.activities[index];
+      if (act.messages && (act.messages[0].nextActivity || act.messages[0].nextActivity)) notShownActs.push(act);
+    }
+    const appletActivities = [];
+
+    for (let index = 0; index < newApplet.activities.length; index++) {
+      let isNextActivityShown = true;
+      const act = newApplet.activities[index];
+
+      for (let index = 0; index < notShownActs.length; index++) {
+        const notShownAct = notShownActs[index];
+        const alreadyAct = await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
+        isNextActivityShown = alreadyAct && alreadyAct === act.name.en
+          ? true
+          : checkActivityIsShown(act.name.en, notShownAct.messages)
+      }
+
+      if (act.isPrize != true && isNextActivityShown)
+        appletActivities.push(act);
+    }
 
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
@@ -60,6 +87,11 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
+
+  const checkActivityIsShown = (name, messages) => {
+    if (!name || !messages) return true;
+    return _.findIndex(messages, { nextActivity: name }) === -1;
+  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
@@ -123,7 +155,7 @@ const ActivityList = ({
 
   return (
     <View style={{ paddingBottom: 30 }}>
-      {activities.map(activity => (
+      {activities && activities.map(activity => (
         <ActivityListItem
           disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
           onPress={() => onPressActivity(activity)}
@@ -180,6 +212,7 @@ const mapStateToProps = (state) => {
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
+    activities: state.activities.activities,
 
   };
 };
@@ -197,6 +230,7 @@ const mapDispatchToProps = {
   syncUploadQueue,
   setReminder,
   cancelReminder,
+  setActivities
 };
 
 export default connect(

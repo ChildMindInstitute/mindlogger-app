@@ -56,7 +56,7 @@ export class Select extends React.Component {
       <View style={{ marginBottom: 0, height: 350 }}>
         {this.state.modalVisible ? (
           <Container style={styles.paddingContent}>
-            <Picker selectedValue={value} onValueChange={(v) => this.onSelect(v)}>
+            <Picker selectedValue={value} onValueChange={(v) => onChange({ value: v })}>
               <Picker.Item label="Select one" value={config.itemList[0].value} />
               {config.itemList.map((item, index) => (
                 <Picker.Item label={item.name.en} value={item.value} key={index} />
