@@ -22,7 +22,7 @@ const AppletImage = ({ applet, size = 64 }) => {
         source={{ uri: getURL(applet.image) }}
       />
     );
-  } 
+  }
 
   // Default to showing the first letter of the applet name
   const firstLetter = applet.name.en[0].toUpperCase();

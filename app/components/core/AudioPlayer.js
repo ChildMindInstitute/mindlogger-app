@@ -33,22 +33,21 @@ const AudioPlayer = ({ uri, content, currentMedia, setCurrentMedia}) => {
   }, []);
 
   return (
-    <Text style={{ fontSize: 20 }}>
-      {content}
-      (
-        {
-          currentMedia != uri ? (
-            <TouchableOpacity onPress={play} style={{ marginTop: -2 }}>
-              <Image source={img_play} style={{width: 20, height: 20}}/>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={pause} style={{ marginTop: -2 }}>
-              <Image source={img_pause} style={{width: 20, height: 20}}/>
-            </TouchableOpacity>
-          )
-        }
-      )
-    </Text>
+    <>
+      <Text style={{ fontSize: 20 }}>
+        {content}
+      </Text>
+      {currentMedia != uri ? (
+          <TouchableOpacity onPress={play} style={{ marginTop: 5 }}>
+            <Image source={img_play} style={{ width: 20, height: 20 }} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity onPress={pause} style={{ marginTop: 5 }}>
+            <Image source={img_pause} style={{ width: 20, height: 20 }} />
+          </TouchableOpacity>
+        )
+      }
+    </>
   )
 }
 

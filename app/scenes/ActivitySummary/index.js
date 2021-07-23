@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Parser } from 'expr-eval';
+import _ from 'lodash';
 
 import {
   SafeAreaView,
@@ -20,6 +22,9 @@ import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
+import { newAppletSelector } from '../../state/app/app.selectors';
+import { parseAppletEvents } from '../../models/json-ld';
+import { setActivities } from '../../state/activities/activities.actions';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -67,7 +72,7 @@ const DATA = [
   },
 ];
 
-const ActivitySummary = ({ responses, activity }) => {
+const ActivitySummary = ({ responses, activity, applet, setActivities, activities }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -76,10 +81,13 @@ const ActivitySummary = ({ responses, activity }) => {
       comparison: true,
     });
 
+    const newApplet = parseAppletEvents(applet);
+
     let scores = [], maxScores = [];
     for (let i = 0; i < activity.items.length; i++) {
+      if (!activity.items[i] || !responses[i]) continue;
+
       let score = getScoreFromResponse(activity.items[i], responses[i]);
-  
       scores.push(score);
 
       maxScores.push(getMaxScore(activity.items[i]))
@@ -100,9 +108,8 @@ const ActivitySummary = ({ responses, activity }) => {
     }, {});
 
     const reportMessages = [];
-    activity.messages.forEach((msg) => {
-      const { jsExpression, message, outputType } = msg;
-
+    activity.messages.forEach(async (msg) => {
+      const { jsExpression, message, outputType, nextActivity } = msg;
       const variableName = jsExpression.split(/[><]/g)[0];
       const category = variableName.trim().replace(/\s/g, '__');
       const expr = parser.parse(category + jsExpression.substr(variableName.length));
@@ -112,6 +119,9 @@ const ActivitySummary = ({ responses, activity }) => {
       }
 
       if (expr.evaluate(variableScores)) {
+        if (nextActivity)
+          AsyncStorage.setItem(`${activity.id}/nextActivity`, nextActivity)
+
         reportMessages.push({
           category,
           message,
@@ -161,9 +171,16 @@ ActivitySummary.propTypes = {
   activity: PropTypes.object.isRequired,
 };
 
-const mapDispatchToProps = {};
+const mapStateToProps = (state) => ({
+  applet: newAppletSelector(state),
+  activities: state.activities.activities,
+})
+
+const mapDispatchToProps = {
+  setActivities
+};
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(ActivitySummary);

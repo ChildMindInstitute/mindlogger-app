@@ -87,6 +87,12 @@ class Login extends Component {
         } else {
           response.user.email = body.user;
 
+          response.user.privateKey = getPrivateKey({
+            userId: response.user._id,
+            email: body.user,
+            password: body.password,
+          });
+
           signInSuccessful(response);
         }
       })
