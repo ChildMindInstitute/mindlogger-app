@@ -6,6 +6,7 @@ import responses from './responses/responses.reducer';
 import user from './user/user.reducer';
 import fcm from './fcm/fcm.reducer';
 import media from './media/media.reducer';
+import activities from './activities/activities.reducer';
 
 export default combineReducers({
   app,
@@ -15,4 +16,5 @@ export default combineReducers({
   responses,
   user,
   fcm,
+  activities
 });
