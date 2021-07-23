@@ -4,6 +4,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import _ from 'lodash';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -57,15 +58,24 @@ const ActivityList = ({
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
 
-    const notShownAct = newApplet.activities.find(act => act.messages && act.messages[0].nextActivity);
+    const notShownActs = [];
+    for (let index = 0; index < newApplet.activities.length; index++) {
+      const act = newApplet.activities[index];
+      if (act.messages && (act.messages[0].nextActivity || act.messages[0].nextActivity)) notShownActs.push(act);
+    }
     const appletActivities = [];
 
     for (let index = 0; index < newApplet.activities.length; index++) {
+      let isNextActivityShown = true;
       const act = newApplet.activities[index];
-      const alreadyAct = notShownAct && await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
-      const isNextActivityShown = alreadyAct && alreadyAct === (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity)
-        ? true
-        : act.name.en != (notShownAct && notShownAct.messages && notShownAct.messages[0].nextActivity);
+
+      for (let index = 0; index < notShownActs.length; index++) {
+        const notShownAct = notShownActs[index];
+        const alreadyAct = await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
+        isNextActivityShown = alreadyAct && alreadyAct === act.name.en
+          ? true
+          : checkActivityIsShown(act.name.en, notShownAct.messages)
+      }
 
       if (act.isPrize != true && isNextActivityShown)
         appletActivities.push(act);
@@ -77,6 +87,11 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
+
+  const checkActivityIsShown = (name, messages) => {
+    if (!name || !messages) return true;
+    return _.findIndex(messages, { nextActivity: name }) === -1;
+  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
@@ -184,7 +199,6 @@ ActivityList.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  console.log(state.activities);
   return {
     lastUpdatedTime: state.app.lastUpdatedTime,
     activityEndTimes: state.app.finishedTimes,
