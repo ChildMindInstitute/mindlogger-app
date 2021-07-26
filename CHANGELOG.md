@@ -4,11 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
-## [0.17.1] - 2021-07-4
-- Implement color palette for radio/checkbox items
+
+## [0.17.1] - 2021-07-22
+- Fixed Audio Player Widget
+- Fixed Audio Record Widget
+- Fixed Audio Link in markdown
 
 ## [0.16.40] - 2021-07-18
 - Updated images on appletList and end screens
+- Implement color palette for radio/checkbox items
 
 ## [0.16.38] - 2021-07-20
 - Fixed a condition for activitySplash component
