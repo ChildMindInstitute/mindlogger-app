@@ -56,6 +56,7 @@ const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
+const COLOR = "schema:color";
 const PRICE = "schema:price";
 const SCORE = "schema:score";
 const ALERT = "schema:alert";
@@ -82,6 +83,7 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
@@ -136,6 +138,7 @@ export const flattenItemList = (list = []) =>
   list.map((item) => ({
     name: languageListToObject(item[NAME]),
     value: R.path([VALUE, 0, "@value"], item),
+    color: R.path([COLOR, 0, "@value"], item),
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
     alert: R.path([ALERT, 0, "@value"], item),
@@ -202,6 +205,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key == COLOR_PALETTE) {
+      return {
+        ...accumulator,
+        colorPalette: R.path([key, 0, "@value"], vcObj)
       }
     }
 
@@ -741,6 +751,7 @@ export const transformApplet = (payload, currentApplets = null) => {
   }
 
   applet.groupId = payload.groups;
+  applet.theme = payload.theme;
   return applet;
 };
 
