@@ -115,7 +115,7 @@ const AppletListComponent = ({
 
   return (
     <Container style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <ImageBackground
         style={{ width: '100%', height: '100%', flex: 1 }}
         source={{
