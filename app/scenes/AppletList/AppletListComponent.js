@@ -127,11 +127,11 @@ const AppletListComponent = ({
         <Header style={{ backgroundColor: 'transparent', borderBottomWidth: 0 }}>
           <Left />
           <Body>
-            <Title>{title}</Title>
+            <Title style={{ color: '#333333' }}>{title}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
             <Button transparent onPress={onPressSettings}>
-              <Icon type="FontAwesome" name="user" />
+              <Icon style={{ color: '#333333' }} type="FontAwesome" name="user" />
             </Button>
           </Right>
         </Header>

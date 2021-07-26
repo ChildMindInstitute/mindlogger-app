@@ -30,7 +30,7 @@ export default class Consent extends Component {
     const { content, storage, contact } = this.state;
     return (
       <Container>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <View style={styles.container}>
           <View style={styles.header} />
           <Form>

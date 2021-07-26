@@ -29,7 +29,7 @@ const ActivityDetailsComponent = ({
   });
   return (
     <Container style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <Header style={{ backgroundColor: primaryColor }}>
         <Left>
           <Button transparent onPress={onPressBack}>
