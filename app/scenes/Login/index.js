@@ -120,7 +120,7 @@ class Login extends Component {
       typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <Content
           style={[styles.container, { backgroundColor: skin.colors.primary }]}
           contentContainerStyle={styles.contentContainer}

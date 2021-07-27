@@ -15,6 +15,7 @@ const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
 const BACK_DISABLED = "reprolib:terms/disable_back";
+const SUMMARY_DISABLED = "reprolib:terms/disable_summary";
 const CONTENT_URL = "schema:contentUrl";
 const DELAY = "reprolib:terms/delay";
 const DESCRIPTION = "schema:description";
@@ -428,6 +429,7 @@ export const itemTransformJson = (itemJson) => {
     skippable,
     fullScreen: allowList.includes(FULL_SCREEN),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
     media,
@@ -523,6 +525,7 @@ const transformPureActivity = (activityJson) => {
     image: languageListToObject(activityJson[IMAGE]),
     skippable: isSkippable(allowList),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
@@ -753,6 +756,7 @@ export const transformApplet = (payload, currentApplets = null) => {
   }
 
   applet.groupId = payload.groups;
+  applet.theme = payload.theme;
   return applet;
 };
 

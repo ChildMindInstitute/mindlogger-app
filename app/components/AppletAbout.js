@@ -15,6 +15,7 @@ class AppletAbout extends React.Component {
 
   async componentDidMount() {
     const { about, aboutContent } = this.props.applet;
+
     if (about && about.en) {
       await this.getMD(about.en);
     } else if (aboutContent && aboutContent.en) {
