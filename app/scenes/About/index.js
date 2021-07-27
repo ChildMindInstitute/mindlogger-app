@@ -51,7 +51,7 @@ class AboutScreen extends Component {
     const appletsWithInfo = applets.filter(applet => typeof applet.info !== 'undefined');
     return (
       <Container style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left />
           <Body>
