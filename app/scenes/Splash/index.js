@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 
 export default () => (
   <View style={styles.container}>
-    <StatusBar barStyle="light-content" />
+    <StatusBar barStyle="dark-content" />
     <ActivityIndicator color="rgba(255, 255, 255, 0.4)" size="large" />
   </View>
 );
