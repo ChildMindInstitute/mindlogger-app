@@ -142,7 +142,7 @@ class AppletDetailsComponent extends React.Component {
 
     return (
       <Container style={[styles.container, { flex: 1 }]}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <Header
           style={{
             backgroundColor,
