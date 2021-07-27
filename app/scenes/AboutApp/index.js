@@ -42,7 +42,7 @@ class AboutApp extends Component {
       if (skin.about.replace(/\s/g, '').length) {
         return (
           <Container style={styles.container}>
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="dark-content" />
             <Header hasSubtitle style={{ backgroundColor: skin.colors.primary }}>
               <Left>
                 <Button transparent onPress={this.onClose}>
@@ -68,7 +68,7 @@ class AboutApp extends Component {
     }
     return (
       <Container style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <Header
           hasSubtitle
           style={{

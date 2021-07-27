@@ -55,7 +55,7 @@ class InfoAct extends Component {
     const { index, answers } = this.state;
     return (
       <Container>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <InfoHeader title={activity.name} />
         { data.display && data.display.progress && (
           <ActProgress index={index + 1} length={data.screens.length} />

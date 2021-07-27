@@ -15,9 +15,11 @@ const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
 const BACK_DISABLED = "reprolib:terms/disable_back";
+const SUMMARY_DISABLED = "reprolib:terms/disable_summary";
 const CONTENT_URL = "schema:contentUrl";
 const DELAY = "reprolib:terms/delay";
 const DESCRIPTION = "schema:description";
+const SPLASH = "schema:splash";
 const DO_NOT_KNOW = "reprolib:terms/dont_know_answer";
 const ENCODING_FORMAT = "schema:encodingFormat";
 const FULL_SCREEN = "reprolib:terms/full_screen";
@@ -55,6 +57,7 @@ const TIMER = "reprolib:terms/timer";
 const TRANSCRIPT = "schema:transcript";
 const URL = "schema:url";
 const VALUE = "schema:value";
+const COLOR = "schema:color";
 const PRICE = "schema:price";
 const SCORE = "schema:score";
 const ALERT = "schema:alert";
@@ -78,8 +81,10 @@ const SEX = "reprolib:terms/sex";
 const T_SCORE = "reprolib:terms/tScore";
 const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
+const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
@@ -134,6 +139,7 @@ export const flattenItemList = (list = []) =>
   list.map((item) => ({
     name: languageListToObject(item[NAME]),
     value: R.path([VALUE, 0, "@value"], item),
+    color: R.path([COLOR, 0, "@value"], item),
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
     alert: R.path([ALERT, 0, "@value"], item),
@@ -200,6 +206,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key == COLOR_PALETTE) {
+      return {
+        ...accumulator,
+        colorPalette: R.path([key, 0, "@value"], vcObj)
       }
     }
 
@@ -415,6 +428,7 @@ export const itemTransformJson = (itemJson) => {
     skippable,
     fullScreen: allowList.includes(FULL_SCREEN),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
     media,
@@ -494,6 +508,7 @@ const transformPureActivity = (activityJson) => {
       message: R.path([MESSAGE, 0, "@value"], item),
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
       outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
+      nextActivity: R.path([NEXT_ACTIVITY, 0, "@value"], item),
     }
   }, activityJson[MESSAGES]);
 
@@ -501,6 +516,7 @@ const transformPureActivity = (activityJson) => {
     id: activityJson._id,
     name: languageListToObject(activityJson[PREF_LABEL]),
     description: languageListToObject(activityJson[DESCRIPTION]),
+    splash: languageListToObject(activityJson[SPLASH]),
     schemaVersion: languageListToObject(activityJson[SCHEMA_VERSION]),
     version: languageListToObject(activityJson[VERSION]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
@@ -508,6 +524,7 @@ const transformPureActivity = (activityJson) => {
     image: languageListToObject(activityJson[IMAGE]),
     skippable: isSkippable(allowList),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
@@ -737,6 +754,7 @@ export const transformApplet = (payload, currentApplets = null) => {
   }
 
   applet.groupId = payload.groups;
+  applet.theme = payload.theme;
   return applet;
 };
 

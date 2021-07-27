@@ -87,6 +87,12 @@ class Login extends Component {
         } else {
           response.user.email = body.user;
 
+          response.user.privateKey = getPrivateKey({
+            userId: response.user._id,
+            email: body.user,
+            password: body.password,
+          });
+
           signInSuccessful(response);
         }
       })
@@ -114,7 +120,7 @@ class Login extends Component {
       typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
         <Content
           style={[styles.container, { backgroundColor: skin.colors.primary }]}
           contentContainerStyle={styles.contentContainer}
