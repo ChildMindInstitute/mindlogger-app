@@ -23,7 +23,7 @@ const ActCalendar = ({ responseDates, appLanguage }) => {
           weekdaysShort: i18n.t('calendar:weekdays').split('_'),
         },
       }}
-      style={{ height: 90, width, paddingTop: 10, paddingBottom: 5 }}
+      style={{ height: 120, width, paddingTop: 7, paddingBottom: 5 }}
       // selectedDate={new Date()}
       startingDate={moment().subtract(6, 'days')}
       useIsoWeekday={false}
