@@ -44,6 +44,15 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
     onChange(finalAnswer);
   }
 
+  const invertColor = (hex) => {
+    let hexcolor = hex.replace("#", "");
+    let r = parseInt(hexcolor.substr(0, 2), 16);
+    let g = parseInt(hexcolor.substr(2, 2), 16);
+    let b = parseInt(hexcolor.substr(4, 2), 16);
+    let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#333333' : 'white';
+  }
+
   return (
     <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
@@ -57,7 +66,15 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
               <View style={{ width: '8%' }}>
                 {item.description ? (
                   <TooltipBox text={item.description}>
-                    <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
+                    <Icon
+                      type="FontAwesome"
+                      name="question-circle"
+                      style={{
+                        color: '#016fbe',
+                        fontSize: 24,
+                        marginHorizontal: 0
+                      }}
+                    />
                   </TooltipBox>
                 ) : (
                   <View />
@@ -79,9 +96,12 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                         marginLeft: '8%',
                         maxWidth: '72%',
                         justifyContent: 'center',
+                        color: config.colorPalette && item.color ? invertColor(item.color) : colors.primary
                       }}
                     >
-                      <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
+                      <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333' }}>
+                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                      </Text>
                     </View>
                   ) : (
                     <View
@@ -91,7 +111,9 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                         justifyContent: 'center',
                       }}
                     >
-                      <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
+                        <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333'}}>
+                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -102,7 +124,8 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                   onPress={() => handlePress(token ? item.name.en : item.value)}
                   checkedIcon="dot-circle-o"
                   uncheckedIcon="circle-o"
-                  checkedColor={colors.primary}
+                  checkedColor={config.colorPalette && item.color ? invertColor(item.color) : colors.primary}
+                  uncheckedColor={config.colorPalette && item.color ? invertColor(item.color) : colors.primary}
                 />
               </View>
             </ListItem>
