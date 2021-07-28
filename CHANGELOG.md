@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.4] - 2021-07-26
 - Build large text in markdown
+- Fixed camera quality
+- Fixed calendar layout
+- Fixed header and footer padding
 
 ## [0.17.3] - 2021-07-25
 - Fix status-bar color and background
