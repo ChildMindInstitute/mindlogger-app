@@ -12,8 +12,9 @@ import { skinSelector, languageSelector } from '../../state/app/app.selectors';
 import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 8 : 0;
+const isIOS = Platform.OS === 'ios';
+const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSBodyPadding = isIOS ? 8 : 0;
 
 class ForgotPassword extends Component {
   onSubmit = (body) => {
@@ -39,7 +40,7 @@ class ForgotPassword extends Component {
     const { skin } = this.props;
     return (
       <Container>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header
           style={{
             backgroundColor: skin.colors.primary,

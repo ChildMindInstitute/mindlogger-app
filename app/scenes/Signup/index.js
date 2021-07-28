@@ -13,8 +13,9 @@ import styles from './styles';
 import SignupForm from './SignupForm';
 import { getPrivateKey } from '../../services/encryption';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+const isIOS = Platform.OS === 'ios';
+const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSBodyPadding = isIOS ? 9 : 0;
 
 class SignUp extends Component {
   onSubmit = (body) => {
@@ -42,7 +43,7 @@ class SignUp extends Component {
     const { skin } = this.props;
     return (
       <Container>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header
           style={{
             backgroundColor: skin.colors.primary,
