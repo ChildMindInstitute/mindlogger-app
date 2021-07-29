@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, Platform } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import { colors } from '../../theme';
 import ActivitySummary from '../../components/ActivitySummary';
 import ActivityResponseList from '../../components/ActivityResponseList';
+
+const isIOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +31,7 @@ const ActivityDetailsComponent = ({
   });
   return (
     <Container style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
       <Header style={{ backgroundColor: primaryColor }}>
         <Left>
           <Button transparent onPress={onPressBack}>
