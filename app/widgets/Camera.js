@@ -130,8 +130,8 @@ export class Camera extends Component {
     const { video } = this.props;
     const options = {
       mediaType: video ? 'video' : 'photo',
-      videoQuality: 'low',
-      quality: 0.3,
+      videoQuality: 'high',
+      quality: 0.9,
       maxWidth: 800,
       maxHeight: 800,
     };
@@ -215,7 +215,7 @@ export class Camera extends Component {
       console.log({ video });
       const options = {
         mediaType: 'video',
-        videoQuality: 'low',
+        videoQuality: 'high',
         durationLimit: 60,
         // saveToPhotos: true,
       };
