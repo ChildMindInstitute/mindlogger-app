@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { Container, Button, Text, Item, Form, View, Row, CheckBox } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import i18n from 'i18next';
 
 import styles from './styles';
+
+const isIOS = Platform.OS === 'ios';
 
 export default class Consent extends Component {
   constructor(props) {
@@ -30,7 +32,7 @@ export default class Consent extends Component {
     const { content, storage, contact } = this.state;
     return (
       <Container>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <View style={styles.container}>
           <View style={styles.header} />
           <Form>

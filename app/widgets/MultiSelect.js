@@ -48,6 +48,15 @@ export class MultiSelectScreen extends Component {
     }
   }
 
+  invertColor = (hex) => {
+    let hexcolor = hex.replace("#", "");
+    let r = parseInt(hexcolor.substr(0, 2), 16);
+    let g = parseInt(hexcolor.substr(2, 2), 16);
+    let b = parseInt(hexcolor.substr(4, 2), 16);
+    let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#333333' : 'white';
+  }
+
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
     if (!this.finalAnswer["value"]  || (config.maxValue === 1 && config.minValue === 1)) {
@@ -120,7 +129,7 @@ export class MultiSelectScreen extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    <Text>
+                    <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333'}}>
                       {item.name.en}{" "}
                       {token
                         ? item.value < 0
@@ -135,9 +144,10 @@ export class MultiSelectScreen extends Component {
                       marginLeft: "8%",
                       maxWidth: "92%",
                       justifyContent: "center",
+                      color: colorPalette && item.color ? this.invertColor(item.color) : colors.primary
                     }}
                   >
-                    <Text>
+                      <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333' }}>
                       {item.name.en}{" "}
                       {token
                         ? item.value < 0
@@ -159,8 +169,8 @@ export class MultiSelectScreen extends Component {
                 onPress={() => this.onAnswer(token ? item.name.en : item.value)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
-                checkedColor={colors.primary}
-                uncheckedColor={colors.primary}
+                checkedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
+                uncheckedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
               />
             </View>
           </ListItem>

@@ -184,7 +184,7 @@ export class Camera extends Component {
       // saveToPhotos: true,
       maxWidth: 800,
       maxHeight: 800,
-      quality: 0.3,
+      quality: 0.9,
     };
     ImagePicker.launchCamera(options, (response) => {
       const { onChange } = this.props;
