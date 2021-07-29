@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { TouchableOpacity, Image, StatusBar } from "react-native";
+import { TouchableOpacity, Image, StatusBar, Platform } from "react-native";
 import { connect } from "react-redux";
 import {
   Container,
@@ -29,6 +29,8 @@ import { toggleMobileDataAllowed } from "../../state/app/app.actions";
 import { getPrivateKey } from "../../services/encryption";
 
 const defaultLogo = require("../../../img/CMI_white_logo.png");
+
+const isIOS = Platform.OS === 'ios';
 
 class Login extends Component {
   constructor(props) {
@@ -120,7 +122,7 @@ class Login extends Component {
       typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Content
           style={[styles.container, { backgroundColor: skin.colors.primary }]}
           contentContainerStyle={styles.contentContainer}
