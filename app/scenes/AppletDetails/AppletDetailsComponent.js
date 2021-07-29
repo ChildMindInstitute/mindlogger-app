@@ -14,8 +14,9 @@ import AppletData from '../../components/AppletData';
 
 import { contrast } from '../../utils/utils.color';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? 9 : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+const isIOS = Platform.OS === 'ios';
+const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSBodyPadding = isIOS ? 9 : 0;
 
 const styles = StyleSheet.create({
   container: {
@@ -142,7 +143,7 @@ class AppletDetailsComponent extends React.Component {
 
     return (
       <Container style={[styles.container, { flex: 1 }]}>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header
           style={{
             backgroundColor,
