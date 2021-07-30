@@ -21,6 +21,7 @@ import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
 import theme from '../../themes/base-theme';
 import FunButton from '../../components/core/FunButton';
+import { MarkdownScreen } from '../../components/core';
 import { newAppletSelector } from '../../state/app/app.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
@@ -146,7 +147,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
         <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>
           {item.score}
         </BaseText>
-        <BaseText style={{ fontSize: 15 }}>{item.message}</BaseText>
+        <MarkdownScreen>{item.message}</MarkdownScreen>
       </View>
     );
   };

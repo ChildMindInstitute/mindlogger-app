@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Platform,
   ImageBackground,
   RefreshControl,
   StatusBar,
@@ -24,6 +25,8 @@ import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
+
+const isIOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   container: {
@@ -115,7 +118,7 @@ const AppletListComponent = ({
 
   return (
     <Container style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
       <ImageBackground
         style={{ width: '100%', height: '100%', flex: 1 }}
         source={{
