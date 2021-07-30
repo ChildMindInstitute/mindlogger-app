@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 ## [0.17.7] - 2021-07-29
+- Fix date and time pickers
 - Fix video quality issues
 
 ## [0.17.6] - 2021-07-28
