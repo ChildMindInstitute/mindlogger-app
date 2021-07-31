@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.6] - 2021-07-28
 - Fixed statusBar issue on Android
+- Fix markdown issue
 
 ## [0.17.5] - 2021-07-27
 - Fixed radio/checkbox options color
