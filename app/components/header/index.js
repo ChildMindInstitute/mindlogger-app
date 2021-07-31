@@ -1,29 +1,47 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { Icon } from 'native-base';
+import { View, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import PropTypes from 'prop-types';
 import { colors } from '../../theme';
 
+const logoImage = require('../../../img/color_logo.png');
+
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    top: 30,
-    right: 20,
+    top: 50,
+    right: 15,
   },
+  logo: {
+    position: 'absolute',
+    top: 20,
+    right: 50,
+    left: 15,
+  },
+  logoImage: {
+    width: '100%',
+    height: 100,
+    resizeMode: "stretch",
+  }
 });
 
-const ActHeader = () => {
-  return (
+const ActHeader = ({ watermark, ...props }) => (
+  <>
+    {
+      <View style={styles.logo}>
+        <Image square style={styles.logoImage} source={{ uri: watermark }} />
+      </View>
+    }
     <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
       <Icon 
         type="FontAwesome" 
         name="close" 
         style={{ color: colors.tertiary }} />
     </TouchableOpacity>
-  );
-};
+  </>
+);
 
 ActHeader.propTypes = {
 };
