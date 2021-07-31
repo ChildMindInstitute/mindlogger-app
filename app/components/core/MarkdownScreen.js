@@ -9,15 +9,16 @@ import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from '
 import Mimoza from 'mimoza';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
+import { WebView } from 'react-native-webview';
 
 const { width } = Dimensions.get('window');
 
-const markdownItInstance = MarkdownIt({typographer: true})
-.use(markdownContainer)
-.use(markdownContainer, 'hljs-left') /* align left */
-.use(markdownContainer, 'hljs-center')/* align center */
-.use(markdownContainer, 'hljs-right')/* align right */
-.use(markdownIns);
+const markdownItInstance = MarkdownIt({ typographer: true })
+  .use(markdownContainer)
+  .use(markdownContainer, 'hljs-left') /* align left */
+  .use(markdownContainer, 'hljs-center')/* align center */
+  .use(markdownContainer, 'hljs-right')/* align right */
+  .use(markdownIns);
 
 const rules = {
   image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
@@ -33,7 +34,7 @@ const rules = {
           height={50}
         />
       );
-    } else if (mimeType.startsWith('video/')) {
+    } else if (mimeType.startsWith('video/') || node.attributes.src.includes('.quicktime')) {
       return (
         <View
           width={width - 20}
@@ -47,6 +48,22 @@ const rules = {
           />
         </View>
       );
+    } else if (node.attributes.src.includes('youtu')) {
+      let src = node.attributes.src.split(".be/")[1];
+      return (
+        <View
+          width={width - 20}
+          height={250}
+        >
+          <WebView
+            height={250}
+            key={node.key}
+            width={width - 20}
+            mediaPlaybackRequiresUserAction
+            source={{ uri: node.attributes.src.includes('watch?') ? node.attributes.src : `https://www.youtube.com/embed/${src}` }}
+          />
+        </View>
+      );
     }
 
     return (<Image
@@ -54,7 +71,7 @@ const rules = {
       style={{
         resizeMode: "contain",
         height: 200,
-        width: width-100
+        width: width - 100
       }}
       source={{
         uri: node.attributes.src
@@ -101,12 +118,16 @@ const rules = {
 }
 
 class MarkdownScreen extends Component {
-  shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps, nextState) {
     return nextProps.children != this.props.children;
   }
 
   render() {
-    const { mstyle, children } = this.props;
+    let { mstyle, children } = this.props;
+
+    if (children.indexOf("404:") > -1) {
+      children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
+    }
     const { heading1, heading2, heading3, heading4, heading5, heading6, paragraph } = markdownStyle;
     let alignment = 'center';
 
@@ -122,7 +143,7 @@ class MarkdownScreen extends Component {
       >
         <Markdown
           style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
-          mergeStyle={ true }
+          mergeStyle={true}
           onLinkPress={(url) => {
             Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
           }}
