@@ -24,6 +24,7 @@ const DO_NOT_KNOW = "reprolib:terms/dont_know_answer";
 const ENCODING_FORMAT = "schema:encodingFormat";
 const FULL_SCREEN = "reprolib:terms/full_screen";
 const IMAGE = "schema:image";
+const WATERMARK = "schema:watermark";
 const IMAGE_OBJECT = "schema:ImageObject";
 const INPUT_TYPE = "reprolib:terms/inputType";
 const INPUTS = "reprolib:terms/inputs";
@@ -582,6 +583,7 @@ export const appletTransformJson = (appletJson) => {
     altLabel: languageListToObject(applet[ALT_LABEL]),
     visibility: listToVisObject(applet[ADD_PROPERTIES]),
     image: applet[IMAGE],
+    watermark: applet[WATERMARK] || "",
     order: flattenIdList(applet[ORDER][0]["@list"]),
     schedule,
     contentUpdateTime: updated,
