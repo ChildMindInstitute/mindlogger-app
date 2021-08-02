@@ -1,6 +1,7 @@
 
 export const initialState = {
-  activities: []
+  activities: [],
+  cumulativeActivities: {}
 };
 
 export default (state = initialState, action = {}) => {
@@ -10,6 +11,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         activities: action.payload,
+      };
+    case "CUMULATIVE_ACTIVITIES":
+      return {
+        ...state,
+        cumulativeActivities: { ...state.cumulativeActivities, ...action.payload },
       };
 
     default:

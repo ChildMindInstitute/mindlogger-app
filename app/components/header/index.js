@@ -1,25 +1,36 @@
 import React from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Image, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import PropTypes from 'prop-types';
 import { colors } from '../../theme';
 
+const logoImage = require('../../../img/color_logo.png');
+
 const styles = StyleSheet.create({
   button: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingHorizontal: 15,
-    paddingTop: 10,
+    position: 'absolute',
+    top: 10,
+    right: 15,
+  },
+  logo: {
+    position: 'absolute',
+    top: 20,
+    right: 50,
+    left: 15,
+  },
+  logoImage: {
+    width: '100%',
+    height: 100,
+    resizeMode: "stretch",
   },
   navigations: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingTop: 5,
+    marginTop: 40,
   }
 });
 
@@ -29,6 +40,7 @@ const ActHeader = (props) => {
     nextEnabled,
     prevEnabled,
     actionLabel,
+    watermark,
     onPressNextScreen,
     onPressPrevScreen,
     onPressAction,
@@ -36,13 +48,18 @@ const ActHeader = (props) => {
 
   return (
     <>
+      {
+        <View style={styles.logo}>
+          <Image square style={styles.logoImage} source={{ uri: watermark }} />
+        </View>
+      }
       <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
         <Icon 
           type="FontAwesome"
           name="close" 
           style={{ color: colors.tertiary }} />
       </TouchableOpacity>
-      
+
       {topNavigation && 
         <View style={styles.navigations}>
           <TouchableOpacity onPress={() => onPressPrevScreen()}>

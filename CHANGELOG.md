@@ -5,8 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.8] - 2021-08-01
+- Fix delays on applet screen with Cumulative Score on Android
+
+## [0.17.7] - 2021-07-29
+- Build large text in markdown
+- Fix date and time pickers
+- Fix video quality issues
+
 ## [0.17.6] - 2021-07-28
 - Fixed statusBar issue on Android
+- Fix markdown issue
 
 ## [0.17.5] - 2021-07-27
 - Fixed radio/checkbox options color
@@ -19,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.3] - 2021-07-25
 - Fix status-bar color and background
 
-## [0.17.1] - 2021-07-22
+## [0.17.2] - 2021-07-22
 - Fixed Audio Player Widget
 - Fixed Audio Record Widget
 - Fixed Audio Link in markdown
@@ -27,6 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.16.40] - 2021-07-18
 - Updated images on appletList and end screens
 - Implement color palette for radio/checkbox items
+
+## [0.16.40] - 2021-06-28
+- Update markdown rules
+
+## [0.16.39] - 2021-06-27
+- Implemented watermark
 
 ## [0.16.38] - 2021-07-20
 - Fixed a condition for activitySplash component

@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.17.6",
+  "version": "0.17.8",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -91,6 +91,7 @@
     "react-native-markdown-renderer": "^3.2.8",
     "react-native-markdown-view": "https://github.com/shnizzedy/react-native-markdown-view.git",
     "react-native-media-controls": "^2.2.0",
+    "react-native-modal-datetime-picker": "^10.2.0",
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^2.2.2",
     "react-native-progress": "^3.4.0",

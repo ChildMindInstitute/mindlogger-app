@@ -257,6 +257,7 @@ class Activity extends React.Component {
     const {
       setAnswer,
       currentResponse,
+      currentApplet,
       authToken,
       currentScreen,
       itemVisibility,
@@ -295,6 +296,7 @@ class Activity extends React.Component {
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
+            watermark={currentApplet.watermark}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
             onPressPrevScreen={this.handlePressPrevScreen}
