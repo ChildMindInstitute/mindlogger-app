@@ -84,6 +84,7 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const TOP_NAVIGATION_OPTION = "reprolib:terms/topNavigationOption"
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
@@ -206,6 +207,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === TOP_NAVIGATION_OPTION) {
+      return {
+        ...accumulator,
+        topNavigation: R.path([key, 0, "@value"], vcObj)
       }
     }
 
