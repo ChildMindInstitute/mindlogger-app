@@ -124,7 +124,6 @@ class MarkdownScreen extends Component {
 
   render() {
     let { mstyle, children } = this.props;
-
     if (children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
     }

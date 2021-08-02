@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Parser } from 'expr-eval';
 import _ from 'lodash';
 
@@ -14,6 +12,7 @@ import {
   Dimensions,
   StatusBar,
   ImageBackground,
+  AsyncStorage
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import i18n from 'i18next';
@@ -25,7 +24,8 @@ import FunButton from '../../components/core/FunButton';
 import { MarkdownScreen } from '../../components/core';
 import { newAppletSelector } from '../../state/app/app.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
-import { setActivities } from '../../state/activities/activities.actions';
+import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
+import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -73,7 +73,7 @@ const DATA = [
   },
 ];
 
-const ActivitySummary = ({ responses, activity, applet, setActivities, activities }) => {
+const ActivitySummary = ({ responses, activity, applet, setActivities, activities, setCumulativeActivities }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -121,7 +121,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
 
       if (expr.evaluate(variableScores)) {
         if (nextActivity)
-          AsyncStorage.setItem(`${activity.id}/nextActivity`, nextActivity)
+          setCumulativeActivities({ [`${activity.id}/nextActivity`]: nextActivity })
 
         reportMessages.push({
           category,
@@ -178,7 +178,8 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-  setActivities
+  setActivities,
+  setCumulativeActivities
 };
 
 export default connect(

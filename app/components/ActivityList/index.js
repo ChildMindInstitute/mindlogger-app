@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 import _ from 'lodash';
+import moment from 'moment';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -28,7 +29,6 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ActivityList = ({
   applet,
@@ -47,6 +47,7 @@ const ActivityList = ({
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
+  cumulativeActivities
 }) => {
   // const newApplet = getActivities(applet.applet, responseSchedule);
   // const [activities, setActivities] = useState([]);
@@ -71,7 +72,7 @@ const ActivityList = ({
 
       for (let index = 0; index < notShownActs.length; index++) {
         const notShownAct = notShownActs[index];
-        const alreadyAct = await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
+        const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
         isNextActivityShown = alreadyAct && alreadyAct === act.name.en
           ? true
           : checkActivityIsShown(act.name.en, notShownAct.messages)
@@ -80,7 +81,6 @@ const ActivityList = ({
       if (act.isPrize != true && isNextActivityShown)
         appletActivities.push(act);
     }
-
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
@@ -213,7 +213,7 @@ const mapStateToProps = (state) => {
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
-
+    cumulativeActivities: state.activities.cumulativeActivities,
   };
 };
 
