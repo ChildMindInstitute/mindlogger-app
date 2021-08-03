@@ -64,7 +64,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
               key={index}
             >
               <View style={{ width: '8%' }}>
-                {item.description ? (
+                {item.description && item.description != 'false' ? (
                   <TooltipBox text={item.description}>
                     <Icon
                       type="FontAwesome"

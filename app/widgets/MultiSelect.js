@@ -103,7 +103,7 @@ export class MultiSelectScreen extends Component {
             key={index}
           >
             <View style={{ width: '8%' }}>
-              {item.description ? (
+              {item.description && item.description != 'false' ? (
                 <TooltipBox text={item.description}>
                   <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
                 </TooltipBox>
