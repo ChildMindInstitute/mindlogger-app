@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 ## [0.17.8] - 2021-08-01
+- Fixed watermark issue on Android/iOS
+
+## [0.17.8] - 2021-08-01
 - Fix delays on applet screen with Cumulative Score on Android
 
 ## [0.17.7] - 2021-07-29
