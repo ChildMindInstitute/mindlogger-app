@@ -31,13 +31,13 @@ const ActHeader = ({ watermark, ...props }) => (
   <>
     {
       <View style={styles.logo}>
-        <Image square style={styles.logoImage} source={{ uri: watermark }} />
+        <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
       </View>
     }
     <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
-      <Icon 
-        type="FontAwesome" 
-        name="close" 
+      <Icon
+        type="FontAwesome"
+        name="close"
         style={{ color: colors.tertiary }} />
     </TouchableOpacity>
   </>
