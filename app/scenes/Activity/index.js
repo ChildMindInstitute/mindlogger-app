@@ -194,7 +194,7 @@ class Activity extends React.Component {
     }
 
     const { activity, responses } = currentResponse;
-
+    const { removeUndoOption } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const prevLabel = isSummaryScreen
       ? "Back"
@@ -208,7 +208,7 @@ class Activity extends React.Component {
         responses,
         this.state.isContentError
       );
-    const actionLabel = isSummaryScreen
+    const actionLabel = (isSummaryScreen || removeUndoOption)
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
 

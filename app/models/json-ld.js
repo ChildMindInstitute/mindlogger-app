@@ -85,6 +85,7 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const REMOVE_UNDO_OPTION = "reprolib:terms/removeUndoOption";
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
@@ -207,6 +208,13 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === REMOVE_UNDO_OPTION) {
+      return {
+        ...accumulator,
+        removeUndoOption: R.path([key, 0, "@value"], vcObj)
       }
     }
 
