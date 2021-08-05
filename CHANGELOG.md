@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.10] - 2021-08-04
 - Fixed header image ratio
+- Fixed activity header component
 
 ## [0.17.9] - 2021-08-03
 - Fixed watermark issue on Android/iOS

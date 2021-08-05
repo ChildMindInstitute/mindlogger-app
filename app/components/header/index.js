@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 
 const ActHeader = ({ watermark, ...props }) => (
   <>
-    {
+    {watermark &&
       <View style={styles.logo}>
         <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
       </View>
