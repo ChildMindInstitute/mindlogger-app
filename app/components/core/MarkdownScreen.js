@@ -10,6 +10,7 @@ import Mimoza from 'mimoza';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 import { WebView } from 'react-native-webview';
+import HighlightText from '@sanar/react-native-highlight-text';
 
 const { width } = Dimensions.get('window');
 
@@ -20,7 +21,20 @@ const markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer, 'hljs-right')/* align right */
   .use(markdownIns);
 
+const regex = new RegExp(/^==(.*==)?/);
+
 const rules = {
+  text: (node, children, parent, styles, inheritedStyles = {}) => {
+    return (
+      node.content.indexOf("^") > -1
+        ?
+        checkNodeContent(node, node.content, inheritedStyles, styles)
+        :
+        <Text key={node.key} style={[inheritedStyles, styles.text]}>
+          {checkNodeContent(node, node.content)}
+        </Text>
+    )
+  },
   image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
     const mimeType = Mimoza.getMimeType(node.attributes.src) || "";
 
@@ -124,6 +138,7 @@ class MarkdownScreen extends Component {
 
   render() {
     let { mstyle, children } = this.props;
+
     if (children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
     }
@@ -138,10 +153,10 @@ class MarkdownScreen extends Component {
 
     return (
       <View
-        style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10}}
+        style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10 }}
       >
         <Markdown
-          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
+          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph, text: { flexDirection: 'row' } }}
           mergeStyle={true}
           onLinkPress={(url) => {
             Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
@@ -169,3 +184,36 @@ MarkdownScreen.propTypes = {
 };
 
 export { MarkdownScreen };
+
+
+const checkNodeContent = (node, content, inheritedStyles, styles = {}) => {
+  content = content.replace(/(<([^>]+)>)/ig, '');
+
+  if (regex.test(content.trim()))
+    return <HighlightText
+      highlightStyle={{ backgroundColor: 'yellow' }}
+      searchWords={[content.trim().replace(/==/g, "")]}
+      textToHighlight={content.replace(/==/g, "")}
+    />;
+
+  if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) {
+    return <Text key={node.key} style={[inheritedStyles, styles.text]}>{content.split("^").map((val, i) => {
+      if (i % 2 !== 0 && val.length > 0) {
+        return <Text style={{ fontSize: 13, lineHeight: 100, textAlignVertical: 'top' }}>{val}</Text>
+      } else {
+        return val
+      }
+    })}</Text>
+
+  } else if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
+    return content.split("~").map((val, i) => {
+      if (i % 2 !== 0 && val.length > 0) {
+        return <Text style={{ fontSize: 13, lineHeight: 18, textAlignVertical: "bottom" }}>{val}</Text>
+      } else {
+        return <Text key={i} style={[inheritedStyles, styles.text]}>{val}</Text>
+      }
+    })
+  }
+
+  return content;
+}
