@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
   logoImage: {
     width: '100%',
     height: 100,
-    resizeMode: "stretch",
+    resizeMode: "contain",
   }
 });
 
 const ActHeader = ({ watermark, ...props }) => (
   <>
-    {
+    {watermark &&
       <View style={styles.logo}>
         <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
       </View>

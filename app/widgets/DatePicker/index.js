@@ -52,8 +52,6 @@ export class DatePicker extends React.Component {
 
     const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
 
-
-
     if (this.finalAnswer["value"]) {
       date.setHours(this.finalAnswer["value"].hour || 0);
       date.setMinutes(this.finalAnswer["value"].minute || 0);
@@ -85,7 +83,7 @@ export class DatePicker extends React.Component {
             testID="dateTimePicker"
             value={date}
             mode={'date'}
-            display="default"
+            display={Platform.OS === 'ios' ? 'inline' : 'default'}
             onCancel={this.hideDatePicker}
             onConfirm={this.onChangeDate}
           />
