@@ -21,9 +21,10 @@ const styles = StyleSheet.create({
     left: 15,
   },
   logoImage: {
-    width: '100%',
-    height: 100,
-    resizeMode: "contain",
+    height: 80,
+    width: 80,
+    left: 0,
+    top: 0
   }
 });
 
