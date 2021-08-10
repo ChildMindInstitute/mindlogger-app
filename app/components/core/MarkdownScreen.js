@@ -197,13 +197,15 @@ const checkNodeContent = (node, content, inheritedStyles, styles = {}) => {
     />;
 
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) {
-    return <Text key={node.key} style={[inheritedStyles, styles.text]}>{content.split("^").map((val, i) => {
-      if (i % 2 !== 0 && val.length > 0) {
-        return <Text style={{ fontSize: 13, lineHeight: 100, textAlignVertical: 'top' }}>{val}</Text>
-      } else {
-        return val
-      }
-    })}</Text>
+    return <Text key={node.key} style={[inheritedStyles, styles.text]}>{
+      content.split("^").map((val, i) => {
+        if (i % 2 !== 0 && val.length > 0) {
+          return <Text style={{ fontSize: 13, lineHeight: 100, alignSelf: 'center' }}>{val}</Text>
+        } else {
+          return val
+        }
+      })
+    }</Text>;
 
   } else if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
     return content.split("~").map((val, i) => {
