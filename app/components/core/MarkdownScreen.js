@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
 import { View, Linking, Dimensions, Image, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
@@ -26,13 +25,9 @@ const regex = new RegExp(/^==(.*==)?/);
 const rules = {
   text: (node, children, parent, styles, inheritedStyles = {}) => {
     return (
-      node.content.indexOf("^") > -1
-        ?
-        checkNodeContent(node, node.content, inheritedStyles, styles)
-        :
-        <Text key={node.key} style={[inheritedStyles, styles.text]}>
-          {checkNodeContent(node, node.content)}
-        </Text>
+      <Text key={node.key} style={[inheritedStyles, styles.text]}>
+        {checkNodeContent(node.content)}
+      </Text>
     )
   },
   image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
@@ -186,7 +181,7 @@ MarkdownScreen.propTypes = {
 export { MarkdownScreen };
 
 
-const checkNodeContent = (node, content, inheritedStyles, styles = {}) => {
+const checkNodeContent = (content) => {
   content = content.replace(/(<([^>]+)>)/ig, '');
 
   if (regex.test(content.trim()))
@@ -197,22 +192,20 @@ const checkNodeContent = (node, content, inheritedStyles, styles = {}) => {
     />;
 
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) {
-    return <Text key={node.key} style={[inheritedStyles, styles.text]}>{
-      content.split("^").map((val, i) => {
-        if (i % 2 !== 0 && val.length > 0) {
-          return <Text style={{ fontSize: 13, lineHeight: 100, alignSelf: 'center' }}>{val}</Text>
-        } else {
-          return val
-        }
-      })
-    }</Text>;
+    return content.split("^").map((val, i) => {
+      if (i % 2 !== 0 && val.length > 0) {
+        return <Text style={{ fontSize: 13, lineHeight: 100, alignSelf: 'center' }}>{val}</Text>
+      } else {
+        return val
+      }
+    });
 
   } else if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
     return content.split("~").map((val, i) => {
       if (i % 2 !== 0 && val.length > 0) {
         return <Text style={{ fontSize: 13, lineHeight: 18, textAlignVertical: "bottom" }}>{val}</Text>
       } else {
-        return <Text key={i} style={[inheritedStyles, styles.text]}>{val}</Text>
+        return val
       }
     })
   }
