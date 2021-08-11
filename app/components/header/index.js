@@ -21,15 +21,16 @@ const styles = StyleSheet.create({
     left: 15,
   },
   logoImage: {
-    width: '100%',
-    height: 100,
-    resizeMode: "contain",
+    height: 80,
+    width: 80,
+    left: 0,
+    top: 0
   }
 });
 
 const ActHeader = ({ watermark, ...props }) => (
   <>
-    {watermark &&
+    {!!watermark &&
       <View style={styles.logo}>
         <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
       </View>
