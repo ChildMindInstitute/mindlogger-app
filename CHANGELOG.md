@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.14] - 2021-08-11
 - Fixed date/time picker styles on iOS14
+- Fixed applet about page issue
 
 ## [0.17.13] - 2021-08-09
 - Fixed activity header issue
