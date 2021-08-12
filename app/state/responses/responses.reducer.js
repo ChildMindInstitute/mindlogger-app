@@ -88,6 +88,24 @@ export default (state = initialState, action = {}) => {
       };
     case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
       const { activityId, screenIndex } = action.payload;
+      const { inProgress } = state;
+
+      let time = {};
+      if (activityId) {
+        time = {
+          [screenIndex]: { startTime: Date.now() }
+        }
+      }
+
+      if (inProgress[activityId] && inProgress[activityId][screenIndex - 1]) {
+        time = {
+          ...time,
+          [screenIndex - 1]: {
+            ...inProgress[activityId][screenIndex - 1],
+            endTime: Date.now()
+          },
+        }
+      }
 
       return {
         ...state,
@@ -95,7 +113,8 @@ export default (state = initialState, action = {}) => {
           ...state.inProgress,
           [activityId]: {
             ...state.inProgress[activityId],
-            screenIndex
+            screenIndex,
+            ...time
           },
         },
       };
