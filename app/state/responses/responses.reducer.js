@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import moment from "moment";
 import RESPONSES_CONSTANTS from './responses.constants';
 
 export const initialState = {
@@ -93,7 +94,7 @@ export default (state = initialState, action = {}) => {
       let time = {};
       if (activityId) {
         time = {
-          [screenIndex]: { startTime: Date.now() }
+          [screenIndex]: { startTime: moment().valueOf() }
         }
       }
 
@@ -102,7 +103,7 @@ export default (state = initialState, action = {}) => {
           ...time,
           [screenIndex - 1]: {
             ...inProgress[activityId][screenIndex - 1],
-            endTime: Date.now()
+            endTime: moment().valueOf()
           },
         }
       }
