@@ -9,7 +9,6 @@ import Mimoza from 'mimoza';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 import { WebView } from 'react-native-webview';
-import HighlightText from '@sanar/react-native-highlight-text';
 
 const { width } = Dimensions.get('window');
 
@@ -24,8 +23,9 @@ const regex = new RegExp(/^==(.*==)?/);
 
 const rules = {
   text: (node, children, parent, styles, inheritedStyles = {}) => {
+    const additionalStyling = regex.test(node.content.trim()) ? { backgroundColor: 'yellow' } : {}
     return (
-      <Text key={node.key} style={[inheritedStyles, styles.text]}>
+      <Text key={node.key} style={[inheritedStyles, styles.text, additionalStyling]}>
         {checkNodeContent(node.content)}
       </Text>
     )
@@ -184,31 +184,35 @@ export { MarkdownScreen };
 const checkNodeContent = (content) => {
   content = content.replace(/(<([^>]+)>)/ig, '');
 
-  if (regex.test(content.trim()))
-    return <HighlightText
-      highlightStyle={{ backgroundColor: 'yellow' }}
-      searchWords={[content.trim().replace(/==/g, "")]}
-      textToHighlight={content.replace(/==/g, "")}
-    />;
+  if (regex.test(content.trim())) content = content.trim().replace(/==/g, "")
+  if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) return checkSuperscript(content)
+  if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) return checkSubscript(content)
 
+  return content;
+}
+
+const checkSuperscript = (content) => {
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) {
     return content.split("^").map((val, i) => {
       if (i % 2 !== 0 && val.length > 0) {
-        return <Text style={{ fontSize: 13, lineHeight: 100, alignSelf: 'center' }}>{val}</Text>
+        return <Text style={{ fontSize: 13, lineHeight: 18 }}>{val}</Text>
       } else {
-        return val
+        return checkSubscript(val)
       }
     });
+  }
+  return content;
+}
 
-  } else if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
+const checkSubscript = (content) => {
+  if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
     return content.split("~").map((val, i) => {
       if (i % 2 !== 0 && val.length > 0) {
         return <Text style={{ fontSize: 13, lineHeight: 18, textAlignVertical: "bottom" }}>{val}</Text>
       } else {
-        return val
+        return checkSuperscript(val)
       }
     })
   }
-
   return content;
 }
