@@ -182,7 +182,7 @@ export { MarkdownScreen };
 
 
 const checkNodeContent = (content) => {
-  content = content.replace(/(<([^>]+)>)/ig, '');
+  content = content.replace(/(<([^><]+)>)/ig, '');
 
   if (regex.test(content.trim()))
     return <HighlightText
