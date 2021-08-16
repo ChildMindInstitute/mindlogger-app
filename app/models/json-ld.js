@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import moment from 'moment';
 import { Parse, Day } from 'dayspan';
+import _ from 'lodash';
 import {
   getLastScheduled,
   getStartOfInterval,
@@ -66,6 +67,8 @@ const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
 const JS_EXPRESSION = "reprolib:terms/jsExpression";
+const SCORE_OVERVIEW = "reprolib:terms/scoreOverview";
+const DIRECTION = "reprolib:terms/direction";
 const VERSION = "schema:version";
 export const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
@@ -484,7 +487,9 @@ const transformPureActivity = (activityJson) => {
   const compute = activityJson[COMPUTE] && R.map((item) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
-      variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
+      variableName: R.path([VARIABLE_NAME, 0, "@value"], item),
+      description: _.get(item, [DESCRIPTION, 0, "@value"]),
+      direction: _.get(item, [DIRECTION, 0, "@value"], true),
     }
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
@@ -530,6 +535,7 @@ const transformPureActivity = (activityJson) => {
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     compute,
+    scoreOverview: _.get(activityJson, [SCORE_OVERVIEW, 0, "@value"]),
     subScales,
     finalSubScale,
     messages,

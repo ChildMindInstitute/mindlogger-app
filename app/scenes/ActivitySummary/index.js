@@ -12,10 +12,24 @@ import {
   Dimensions,
   StatusBar,
   ImageBackground,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity,
+  Text,
+  Image,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import i18n from 'i18next';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import RNFS from 'react-native-fs';
+import FileViewer from 'react-native-file-viewer';
+import RNFetchBlob from "rn-fetch-blob";
+const fs = RNFetchBlob.fs;
+import path from 'path';
+import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from 'react-native-markdown-display';
+import markdownContainer from 'markdown-it-container';
+import markdownIns from 'markdown-it-ins';
+
+import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
 import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
@@ -26,6 +40,14 @@ import { newAppletSelector } from '../../state/app/app.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
+
+const img_score = require('../../../img/score_bar.png');
+const markdownItInstance = MarkdownIt({ typographer: true })
+  .use(markdownContainer)
+  .use(markdownContainer, 'hljs-left') /* align left */
+  .use(markdownContainer, 'hljs-center')/* align center */
+  .use(markdownContainer, 'hljs-right')/* align right */
+  .use(markdownIns);
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -53,6 +75,14 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'center',
   },
+  shareButton: {
+    paddingTop: 20,
+    paddingLeft: 35,
+  },
+  shareButtonText: {
+    fontSize: 20,
+    fontWeight: '400',
+  },
 });
 
 const DATA = [
@@ -72,6 +102,9 @@ const DATA = [
     score: '4.00',
   },
 ];
+
+const termsText = "I understand that the information provided by this questionnaire is not intended to replace the advice, diagnosis, or treatment offered by a medical or mental health professional, and that my anonymous responses may be used and shared for general research on children’s mental health.";
+const footerText = "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
 const ActivitySummary = ({ responses, activity, applet, setActivities, activities, setCumulativeActivities }) => {
   const [messages, setMessages] = useState([]);
@@ -123,10 +156,13 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
         if (nextActivity)
           setCumulativeActivities({ [`${activity.id}/nextActivity`]: nextActivity })
 
+        const compute = activity.compute.find(itemCompute => itemCompute.variableName.trim() == variableName.trim())
+
         reportMessages.push({
           category,
           message,
           score: variableScores[category] + (outputType == 'percentage' ? '%' : ''),
+          compute,
         });
       }
     });
@@ -152,11 +188,117 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
     );
   };
 
+  const shareReport = async () => {
+    const options = {
+      html: '',
+      fileName: 'report',
+      directory: 'Documents',
+    };
+
+    options.html += `
+      <p class="text-decoration-underline font-weight-bold mb-4">
+        ${ _.get(activity, 'name.en') } Report
+      </p>
+      <p class="text-body-2 mb-4">
+        ${ markdownItInstance.render(activity.scoreOverview) }
+      </p>
+    `
+
+    for (const message of messages) {
+      options.html += `
+        <p class="blue--text font-weight-bold mb-1">
+          ${ message.category.replace(/_/g, ' ') }
+        </p>
+        <p class="text-body-2 mb-4">
+          ${ markdownItInstance.render(message.compute.description) }
+        </p>
+        <p class="text-body-2 mb-4">
+          ${ message.score }
+        </p>
+        <p class="text-body-2 mb-4">
+          ${ markdownItInstance.render(message.message) }
+        </p>
+      `
+    }
+    options.html += `
+      <p class="text-footer text-body-2 mb-5">
+        ${ termsText }
+      </p>
+      <p class="text-footer">
+        ${ footerText }
+      </p>
+    `
+
+    options.html += `
+      <style>
+        html {
+          font-size: 32pt;
+        }
+        .cumulative-score-report {
+          width: 600px;
+        }
+        .text-decoration-underline {
+          text-decoration: underline;
+        }
+        .text-uppercase {
+          text-transform: uppercase;
+        }
+        .font-weight-bold {
+          font-weight: bold;
+        }
+        .font-italic {
+          font-style: italic;
+        }
+        .text-body-2 {
+          font-size: 0.9rem;
+        }
+        .blue--text {
+          color: #2196f3;
+        }
+        .mb-1 {
+          margin-bottom: 0.25em;
+        }
+        .ml-2 {
+          margin-left: 0.5em;
+        }
+        .mb-4 {
+          margin-bottom: 1em;
+        }
+        .my-4 {
+          margin-top: 1em;
+          margin-bottom: 1em;
+        }
+        .mb-5 {
+          margin-bottom: 2em;
+        }
+        .score-bar {
+          width: 400px;
+        }
+        .text-footer {
+          line-height: 2em;
+        }
+        .score-bar.reverse{
+          -webkit-transform: scaleX(-1);
+          transform: scaleX(-1);
+        }
+      </style>
+    `
+
+    const file = await RNHTMLtoPDF.convert(options)
+    FileViewer.open(file.filePath);
+  }
+
   return (
     <>
       <View style={styles.headerContainer}>
         <BaseText style={{ fontSize: 25, fontWeight: '500' }} textKey="activity_summary:summary" />
       </View>
+      <TouchableOpacity
+        style={styles.shareButton}
+        onPress={shareReport}
+      >
+        <Text style={styles.shareButtonText}>Share Report</Text>
+      </TouchableOpacity>
       <FlatList
         data={messages}
         renderItem={renderItem}
