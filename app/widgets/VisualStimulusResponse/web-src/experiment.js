@@ -6,7 +6,8 @@ function buildTimeline() {
   const trialDuration = window.CONFIG.trialDuration || 1500;
   const fixationImage = window.CONFIG.fixation || '<div class="mindlogger-fixation">+</div>';
   const samplingMethod = window.CONFIG.samplingMethod || 'default';
-  const sampleSize = window.CONFIG.samplingMethod || 1;
+  const sampleSize = 1// window.CONFIG.samplingSize || 1;
+  const minimumAccuracy = window.CONFIG.minimumAccuracy;
   const trialWeights = window.CONFIG.trials.map((trial) => {
     return trial.weight || 1;
   });
@@ -28,12 +29,12 @@ function buildTimeline() {
       correctChoice: trial.correctChoice,
     }
   }));
-  
+
   var fixation = {
     type: 'html-keyboard-response',
     stimulus: fixationImage,
     choices: jsPsych.NO_KEYS,
-    trial_duration: 1000,
+    trial_duration: 500,
   };
 
   var test = {
@@ -59,7 +60,7 @@ function buildTimeline() {
       const last = jsPsych.data.getLastTrialData().values()[0];
       if (last.rt === null) {
         return '<div class="mindlogger-message">Respond faster</div>';
-      } 
+      }
       if (last.correct === true) {
         return '<div class="mindlogger-message correct">Correct!</div>';
       }
@@ -117,7 +118,13 @@ function buildTimeline() {
       var total_trials = jsPsych.data.get().filter({ tag: 'test' }).count();
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
       const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
-      const msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p><p>Press the button below to continue.</p>";
+
+      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
+      if (accuracy > minimumAccuracy) {
+        msg = msg + '<p>Press the button below to continue.</p>';
+      } else {
+        msg = msg + '<p>Remember to respond only to the central arrow.</p><p>Press the button below to end current trial and restart.</p>'
+      }
       return msg;
     },
     choices: ['Finish']

@@ -76,9 +76,8 @@ jsPsych.plugins["html-button-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">'+trial.stimulus+'</div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
     //display buttons
     var buttons = [];
@@ -108,7 +107,7 @@ jsPsych.plugins["html-button-response"] = (function() {
 
     // start time
     var start_time = performance.now();
-    var image_time = 0;
+    var image_time = performance.now();
 
     const imgs = display_element.querySelectorAll('img');
 
