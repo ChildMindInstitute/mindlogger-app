@@ -16,59 +16,42 @@ export class TimeDuration extends React.Component {
     onChange(this.finalAnswer);
   }
 
+  capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 
-  // onChangeFrom = (newFromVal) => {
-  //   const { onChange } = this.props;
+  onChangeValue = (type, value) => {
+    const { onChange } = this.props;
 
-
-  //   this.finalAnswer["value"] = {
-  //     from: newFromVal,
-  //     to: this.finalAnswer["value"] ? this.finalAnswer["value"].to : defaultTime,
-  //   };
-
-  //   onChange(this.finalAnswer);
-
-  // }
-
-  // onChangeTo = (newToVal) => {
-  //   const { onChange } = this.props;
-
-  //   this.finalAnswer["value"] = {
-  //     from: this.finalAnswer["value"] ? this.finalAnswer["value"].from : defaultTime,
-  //     to: newToVal,
-  //   };
-  //   onChange(this.finalAnswer);
-
-  // }
+    this.finalAnswer[type] = value;
+    onChange(this.finalAnswer);
+  }
 
   renderDuration = (type) => {
     let items;
-
-    console.log('type---------------', type)
+    const { finalAnswer, onChangeValue } = this;
 
     if (type === 'hours') {
-      items = new Array(24).fill(0).map((val, index) => {
-        return { label: index, value: index }
+      items = new Array(23).fill(0).map((val, index) => {
+        return { label: index + 1, value: index + 1 }
       });
     } else if (type === 'mins') {
-      items = new Array(60).fill(0).map((val, index) => {
-        return { label: index, value: index }
+      items = new Array(59).fill(0).map((val, index) => {
+        return { label: index + 1, value: index + 1 }
       });
     } else if (type === 'secs') {
-      items = new Array(60).fill(0).map((val, index) => {
-        return { label: index, value: index }
+      items = new Array(59).fill(0).map((val, index) => {
+        return { label: index + 1, value: index + 1 }
       });
     } else {
-      items = new Array(100).fill(0).map((val, index) => {
-        return { label: index, value: index }
+      items = new Array(99).fill(0).map((val, index) => {
+        return { label: index + 1, value: index + 1 }
       });
     }
 
-    console.log('items---------', items)
-
     return (
-      <Picker onValueChange={(v) => console.log(v)}>
-        <Picker.Item label="Select one" value={items.value} />
+      <Picker selectedValue={finalAnswer[type] || ''} onValueChange={(v) => onChangeValue(type, v)}>
+        <Picker.Item label={this.capitalizeFirstLetter(type)} value={items.value} />
         {items.map((item, index) => (
           <Picker.Item label={item.label + ''} value={item.value} key={index} />
         ))}
@@ -79,8 +62,6 @@ export class TimeDuration extends React.Component {
   render() {
     const { value, config, isOptionalText, isOptionalTextRequired } = this.props;
     const valueTypes = config.timeDuration.split(' ');
-
-    console.log('valueTypes------------', valueTypes);
 
     this.finalAnswer = value ? value : {};
 
@@ -93,17 +74,15 @@ export class TimeDuration extends React.Component {
 
     return (
       <KeyboardAvoidingView>
-        <View style={{ alignItems: 'stretch' }}>
-          
+        <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1 }}>
           {valueTypes && Object.keys(valueTypes).map(type => 
-            // {valueTypes[type] !== "" && 
-              <View>
-                <Text>
-                  {valueTypes[type]}
-                </Text>
+            <>
+             {valueTypes[type] !== "" &&
+              <View style={{ flex: 1 }}>
                 {this.renderDuration(valueTypes[type])}
               </View>
-            // }
+            }
+            </>
           )}
           
           {isOptionalText &&
@@ -120,7 +99,7 @@ export class TimeDuration extends React.Component {
 }
 
 TimeDuration.defaultProps = {
-  value: undefined,
+  value: {},
 };
 
 TimeDuration.propTypes = {
