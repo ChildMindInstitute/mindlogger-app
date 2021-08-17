@@ -15,8 +15,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ScreenDisplay = ({ screen }) => {
-  return (
+const ScreenDisplay = ({ screen }) => (
   <View style={{ marginBottom: 18 }}>
     {screen.preamble && (
       <MarkdownScreen mstyle={preambleStyle}>
@@ -28,8 +27,8 @@ const ScreenDisplay = ({ screen }) => {
         {screen.question.en}
       </MarkdownScreen>
     ) || (
-      <MarkdownScreen>{screen.question.en}</MarkdownScreen>
-    ))}
+        <MarkdownScreen>{screen.question.en}</MarkdownScreen>
+      ))}
     {screen.info && (
       <View style={styles.infoTitle}>
         <MarkdownScreen>
@@ -37,8 +36,8 @@ const ScreenDisplay = ({ screen }) => {
         </MarkdownScreen>
       </View>
     )}
-  </View>)
-};
+  </View>
+)
 
 ScreenDisplay.propTypes = {
   screen: PropTypes.object.isRequired,

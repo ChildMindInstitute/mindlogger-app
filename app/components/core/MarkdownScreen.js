@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
 import { View, Linking, Dimensions, Image, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
@@ -20,7 +19,17 @@ const markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer, 'hljs-right')/* align right */
   .use(markdownIns);
 
+const regex = new RegExp(/^==(.*==)?/);
+
 const rules = {
+  text: (node, children, parent, styles, inheritedStyles = {}) => {
+    const additionalStyling = regex.test(node.content.trim()) ? { backgroundColor: 'yellow' } : {}
+    return (
+      <Text key={node.key} style={[inheritedStyles, styles.text, additionalStyling]}>
+        {checkNodeContent(node.content)}
+      </Text>
+    )
+  },
   image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
     const mimeType = Mimoza.getMimeType(node.attributes.src) || "";
 
@@ -124,6 +133,7 @@ class MarkdownScreen extends Component {
 
   render() {
     let { mstyle, children } = this.props;
+
     if (children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
     }
@@ -138,10 +148,10 @@ class MarkdownScreen extends Component {
 
     return (
       <View
-        style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10}}
+        style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10 }}
       >
         <Markdown
-          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph }}
+          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph, text: { flexDirection: 'row' } }}
           mergeStyle={true}
           onLinkPress={(url) => {
             Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
@@ -169,3 +179,40 @@ MarkdownScreen.propTypes = {
 };
 
 export { MarkdownScreen };
+
+
+const checkNodeContent = (content) => {
+  content = content.replace(/(<([^>]+)>)/ig, '');
+
+  if (regex.test(content.trim())) content = content.trim().replace(/==/g, "")
+  if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) return checkSuperscript(content)
+  if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) return checkSubscript(content)
+
+  return content;
+}
+
+const checkSuperscript = (content) => {
+  if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) {
+    return content.split("^").map((val, i) => {
+      if (i % 2 !== 0 && val.length > 0) {
+        return <Text style={{ fontSize: 13, lineHeight: 18 }}>{val}</Text>
+      } else {
+        return checkSubscript(val)
+      }
+    });
+  }
+  return content;
+}
+
+const checkSubscript = (content) => {
+  if (content.indexOf("~") > -1 && content.indexOf('~~') === -1) {
+    return content.split("~").map((val, i) => {
+      if (i % 2 !== 0 && val.length > 0) {
+        return <Text style={{ fontSize: 13, lineHeight: 18, textAlignVertical: "bottom" }}>{val}</Text>
+      } else {
+        return checkSuperscript(val)
+      }
+    })
+  }
+  return content;
+}
