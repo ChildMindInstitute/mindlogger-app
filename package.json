@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.17.14",
+  "version": "0.17.16",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -30,7 +30,6 @@
     "@react-native-community/netinfo": "^3.2.0",
     "@react-native-community/push-notification-ios": "1.8.0",
     "@react-native-community/slider": "^2.0.8",
-    "@sanar/react-native-highlight-text": "^1.0.2",
     "@sentry/react-native": "^2.2.2",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
