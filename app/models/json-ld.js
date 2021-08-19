@@ -32,6 +32,7 @@ const IS_ABOUT = "reprolib:terms/isAbout";
 const ITEM_LIST_ELEMENT = "schema:itemListElement";
 const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
+const TIME_DURATION = "schema:timeDuration";
 const MIN_VALUE = "schema:minValue";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const MIN_VALUE_IMAGE = "schema:minValueImg";
@@ -158,6 +159,9 @@ export const flattenValueConstraints = (vcObj) =>
     }
     if (key === MAX_VALUE) {
       return { ...accumulator, maxValue: R.path([key, 0, "@value"], vcObj) };
+    }
+    if (key === TIME_DURATION) {
+      return { ...accumulator, timeDuration: R.path([key, 0, "@value"], vcObj) };
     }
     if (key === MIN_VALUE) {
       return { ...accumulator, minValue: R.path([key, 0, "@value"], vcObj) };
