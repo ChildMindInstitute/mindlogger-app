@@ -22,7 +22,6 @@ import {
   TableInput,
   TextEntry,
   TimeRange,
-  TimeDuration,
   VisualStimulusResponse,
   RadioPrizes,
   StackedSlider,
@@ -107,7 +106,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'timeRange') {
     return (
       <TimeRange
-        config={screen.valueConstraints}
+       config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
@@ -115,21 +114,10 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
       />
     );
   }
-  if (screen.inputType === 'duration') {
-    return (
-      <TimeDuration
-        config={screen.valueConstraints}
-        onChange={onChange}
-        value={answer}
-        isOptionalText={screen.isOptionalText}
-        isOptionalTextRequired={screen.valueConstraints.isOptionalTextRequired || false}
-      />
-    )
-  }
   if (screen.inputType === 'date') {
     return (
       <DatePicker
-        config={screen.valueConstraints}
+      config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
