@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [Unreleased]
 
 ## [0.17.17] - 2021-08-19
+- Updated date/time picker package version
 - Fixed issue with cumulative scoring
 
 ## [0.17.16] - 2021-08-16
