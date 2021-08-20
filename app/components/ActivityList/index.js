@@ -62,7 +62,7 @@ const ActivityList = ({
     const notShownActs = [];
     for (let index = 0; index < newApplet.activities.length; index++) {
       const act = newApplet.activities[index];
-      if (act.messages && (act.messages[0].nextActivity || act.messages[0].nextActivity)) notShownActs.push(act);
+      if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
     }
     const appletActivities = [];
 
@@ -73,7 +73,8 @@ const ActivityList = ({
       for (let index = 0; index < notShownActs.length; index++) {
         const notShownAct = notShownActs[index];
         const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
-        isNextActivityShown = alreadyAct && alreadyAct === act.name.en
+
+        isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
           ? true
           : checkActivityIsShown(act.name.en, notShownAct.messages)
       }

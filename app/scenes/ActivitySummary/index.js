@@ -108,8 +108,8 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       };
     }, {});
 
-    const reportMessages = [];
-    activity.messages.forEach(async (msg) => {
+    const reportMessages = [], cumulativeActivities = [];
+    activity.messages.forEach(async (msg, i) => {
       const { jsExpression, message, outputType, nextActivity } = msg;
       const variableName = jsExpression.split(/[><]/g)[0];
       const category = variableName.trim().replace(/\s/g, '__');
@@ -120,8 +120,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       }
 
       if (expr.evaluate(variableScores)) {
-        if (nextActivity)
-          setCumulativeActivities({ [`${activity.id}/nextActivity`]: nextActivity })
+        if (nextActivity) cumulativeActivities.push(nextActivity);
 
         reportMessages.push({
           category,
@@ -130,6 +129,8 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
         });
       }
     });
+
+    setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumulativeActivities })
 
     setMessages(reportMessages);
   }, [responses]);
