@@ -53,19 +53,28 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
           const dataString = e.nativeEvent.data;
           const data = JSON.parse(dataString);
 
-          let correctCount = 0;
+          let correctCount = 0, totalCount = 0;
           for (let i = 0; i < data.length; i++) {
-            if (data[i].correct) {
-              correctCount++;
+            if (data[i].tag == 'trial') {
+              totalCount++;
+              if (data[i].correct) {
+                correctCount++;
+              }
             }
           }
 
-          if (config.minimumAccuracy && correctCount * 100 / config.minimumAccuracy < data.length && tryIndex < config.maxRetryCount)
-          {
-            setResponses(responses.concat(data));
+          if (
+            config.minimumAccuracy &&
+            correctCount * 100 / config.minimumAccuracy < totalCount && 
+            tryIndex < config.maxRetryCount
+          ) {
+            setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
             setTryIndex(tryIndex+1);
           } else {
-            onChange(responses.concat(data).map(record => ({
+            const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
+
+            onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => ({
+              trial_index: Math.ceil(record.trial_index / screenCountPerTrial),
               delay: record.rt,
               question: record.stimulus,
               button_pressed: record.button_pressed,
@@ -73,6 +82,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
               image_time: record.image_time,
               correct: record.correct,
               timestamp: record.timestamp,
+              tag: record.tag,
             })));
           }
         }}
