@@ -18,6 +18,9 @@ function buildTimeline() {
     stimulus: '<div class="mindlogger-message">Get ready</div>',
     choices: jsPsych.NO_KEYS,
     trial_duration: 1000,
+    data: {
+      tag: 'prepare',
+    }
   };
 
   /*defining stimuli*/
@@ -25,7 +28,7 @@ function buildTimeline() {
     stimulus: trial.stimulus.en,
     choices: trial.choices.map(choice => choice.name.en),
     data: {
-      tag: 'test',
+      tag: 'trial',
       correctChoice: trial.correctChoice,
     }
   }));
@@ -35,6 +38,9 @@ function buildTimeline() {
     stimulus: fixationImage,
     choices: jsPsych.NO_KEYS,
     trial_duration: 500,
+    data: {
+      tag: 'fixation',
+    }
   };
 
   var test = {
@@ -44,7 +50,6 @@ function buildTimeline() {
     stimulus: jsPsych.timelineVariable('stimulus'),
     data: jsPsych.timelineVariable('data'),
     on_finish: function (data) {
-      console.log(data);
       if (data.correctChoice === parseInt(data.button_pressed) && data.rt > -1) {
         data.correct = true;
       } else {
@@ -66,8 +71,11 @@ function buildTimeline() {
       }
       return '<div class="mindlogger-message incorrect">Incorrect</div>';
     },
+    data: {
+      tag: 'feedback',
+    },
     choices: jsPsych.NO_KEYS,
-    trial_duration: 1000,
+    trial_duration: 500,
   };
 
   /* defining test timeline */
@@ -115,7 +123,7 @@ function buildTimeline() {
   var debrief = {
     type: "html-button-response",
     stimulus: function () {
-      var total_trials = jsPsych.data.get().filter({ tag: 'test' }).count();
+      var total_trials = jsPsych.data.get().filter({ tag: 'trial' }).count();
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
       const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
 
@@ -127,7 +135,10 @@ function buildTimeline() {
       }
       return msg;
     },
-    choices: ['Finish']
+    choices: ['Finish'],
+    data: {
+      tag: 'result',
+    }
   };
 
   var end_block = {

@@ -2446,7 +2446,7 @@ jsPsych.pluginAPI = (function() {
     images = images.filter(function(x) { return x != false && x != null})
     audio = audio.filter(function(x) { return x != false && x != null})
     video = video.filter(function(x) { return x != false && x != null})
-    
+
     var total_n = images.length + audio.length + video.length;
 
     var loaded = 0;

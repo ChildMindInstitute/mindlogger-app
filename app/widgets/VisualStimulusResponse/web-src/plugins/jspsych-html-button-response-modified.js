@@ -77,7 +77,7 @@ jsPsych.plugins["html-button-response"] = (function() {
 
   plugin.trial = function(display_element, trial) {
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
     //display buttons
     var buttons = [];
