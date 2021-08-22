@@ -74,14 +74,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
             const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
             onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => ({
-              trial_index: Math.ceil(record.trial_index / screenCountPerTrial),
-              delay: record.rt,
+              trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
+              duration: record.rt,
               question: record.stimulus,
               button_pressed: record.button_pressed,
-              start_time: record.start_time,
-              image_time: record.image_time,
+              start_time: record.image_time,
               correct: record.correct,
-              timestamp: record.timestamp,
+              start_timestamp: record.start_timestamp,
               tag: record.tag,
             })));
           }

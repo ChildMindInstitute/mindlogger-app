@@ -75,7 +75,8 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       rt: null,
       key: null,
       start_time: performance.now(),
-      image_time: performance.now()
+      image_time: performance.now(),
+      start_timestamp: new Date().getTime()
     };
 
     // function to end trial when it is time
@@ -94,7 +95,7 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
         "rt": response.rt || (performance.now() - response.image_time),
         "stimulus": trial.stimulus,
         "key_press": response.key,
-        "timestamp": new Date().getTime(),
+        "start_timestamp": response.start_timestamp,
         "start_time": response.start_time,
         "image_time": response.image_time,
         "end_time": performance.now()
