@@ -130,7 +130,8 @@ jsPsych.plugins["html-button-response"] = (function() {
     // store response
     var response = {
       rt: null,
-      button: null
+      button: null,
+      start_timestamp: new Date().getTime()
     };
 
     // function to handle responses by the subject
@@ -174,7 +175,7 @@ jsPsych.plugins["html-button-response"] = (function() {
         "image_time": image_time,
         "stimulus": trial.stimulus,
         "button_pressed": response.button,
-        "timestamp": new Date().getTime()
+        "start_timestamp": response.start_timestamp
       };
 
       // clear the display

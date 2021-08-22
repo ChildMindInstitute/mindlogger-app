@@ -56,7 +56,6 @@ function buildTimeline() {
         data.correct = false;
       }
     },
-    post_trial_gap: 1000,
   };
 
   var feedback = {
@@ -149,7 +148,7 @@ function buildTimeline() {
 
   /*set up experiment structure*/
   var timeline = [];
-  timeline.push(ready);
+  // timeline.push(ready);
   timeline.push(test_procedure);
   showResults
     ? timeline.push(debrief)
