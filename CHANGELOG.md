@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.19] - 2021-08-23
+- Fixed issue with cumulative scoring
+
+## [0.17.18] - 2021-08-20
+- Fix always_available option
+
+## [0.17.17] - 2021-08-19
+- Updated date/time picker package version
+- Fixed issue with cumulative scoring
+
 ## [0.17.16] - 2021-08-16
 - Fixed date/time picker styles on iOS14
 

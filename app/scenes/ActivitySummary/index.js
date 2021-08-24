@@ -3,20 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Parser } from 'expr-eval';
 import _ from 'lodash';
-
 import {
-  SafeAreaView,
   View,
   FlatList,
   StyleSheet,
   Dimensions,
-  StatusBar,
-  ImageBackground,
-  AsyncStorage,
   TouchableOpacity,
   Text,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import i18n from 'i18next';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import FileViewer from 'react-native-file-viewer';
@@ -25,13 +19,10 @@ import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 
 import { colors } from '../../themes/colors';
-import BaseText from '../../components/base_text/base_text';
-import { BodyText, Heading } from '../../components/core';
-import theme from '../../themes/base-theme';
-import FunButton from '../../components/core/FunButton';
 import { MarkdownScreen } from '../../components/core';
-import { newAppletSelector } from '../../state/app/app.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
+import BaseText from '../../components/base_text/base_text';
+import { newAppletSelector } from '../../state/app/app.selectors';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
@@ -99,7 +90,7 @@ const DATA = [
 const termsText = "I understand that the information provided by this questionnaire is not intended to replace the advice, diagnosis, or treatment offered by a medical or mental health professional, and that my anonymous responses may be used and shared for general research on children’s mental health.";
 const footerText = "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
-const ActivitySummary = ({ responses, activity, applet, setActivities, activities, setCumulativeActivities }) => {
+const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -135,7 +126,8 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
     }, {});
 
     const reportMessages = [];
-    activity.messages.forEach(async (msg) => {
+    let cumActivities = [];
+    activity.messages.forEach(async (msg, i) => {
       const { jsExpression, message, outputType, nextActivity } = msg;
       const variableName = jsExpression.split(/[><]/g)[0];
       const category = variableName.trim().replace(/\s/g, '__');
@@ -146,8 +138,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       }
 
       if (expr.evaluate(variableScores)) {
-        if (nextActivity)
-          setCumulativeActivities({ [`${activity.id}/nextActivity`]: nextActivity })
+        if (nextActivity) cumActivities.push(nextActivity);
 
         const compute = activity.compute.find(itemCompute => itemCompute.variableName.trim() == variableName.trim())
 
@@ -160,12 +151,18 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       }
     });
 
+    if (cumulativeActivities[`${activity.id}/nextActivity`]) {
+      cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
+      if (cumActivities.length > 0) {
+        cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
+        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+      }
+    } else {
+      setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+    }
+
     setMessages(reportMessages);
   }, [responses]);
-
-  const onClose = () => {
-    Actions.push('activity_thanks');
-  };
 
   const renderItem = ({ item }) => {
     return (
@@ -311,6 +308,7 @@ ActivitySummary.propTypes = {
 const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
+  cumulativeActivities: state.activities.cumulativeActivities,
 })
 
 const mapDispatchToProps = {
