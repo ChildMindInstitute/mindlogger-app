@@ -15,21 +15,15 @@ import {
   AsyncStorage,
   TouchableOpacity,
   Text,
-  Image,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import i18n from 'i18next';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import RNFS from 'react-native-fs';
 import FileViewer from 'react-native-file-viewer';
-import RNFetchBlob from "rn-fetch-blob";
-const fs = RNFetchBlob.fs;
-import path from 'path';
-import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from 'react-native-markdown-display';
+import { MarkdownIt } from 'react-native-markdown-display';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 
-import { getURL } from '../../services/helper';
 import { colors } from '../../themes/colors';
 import BaseText from '../../components/base_text/base_text';
 import { BodyText, Heading } from '../../components/core';
@@ -41,7 +35,6 @@ import { parseAppletEvents } from '../../models/json-ld';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
-const img_score = require('../../../img/score_bar.png');
 const markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
   .use(markdownContainer, 'hljs-left') /* align left */
@@ -212,6 +205,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
         <p class="text-body-2 mb-4">
           ${ markdownItInstance.render(message.compute.description) }
         </p>
+        <img class="score-bar${message.compute.direction ? '' :' reverse'} mb-4" src="https://raw.githubusercontent.com/ChildMindInstitute/mindlogger-app/master/img/score_bar.png" />
         <p class="text-body-2 mb-4">
           ${ message.score }
         </p>
@@ -271,11 +265,11 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
         .mb-5 {
           margin-bottom: 2em;
         }
-        .score-bar {
-          width: 400px;
-        }
         .text-footer {
           line-height: 2em;
+        }
+        .score-bar {
+          width: 100%;
         }
         .score-bar.reverse{
           -webkit-transform: scaleX(-1);
