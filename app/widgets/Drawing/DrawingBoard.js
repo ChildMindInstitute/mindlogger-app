@@ -90,6 +90,8 @@ export default class DrawingBoard extends Component {
     const nowTimestamp = Date.now();
     const timeElapsed = nowTimestamp - startTime;
     const timeDelta = nowTimestamp - this.lastPressTimestamp;
+    console.log('-----timeDelta------');
+    console.log(timeDelta);
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
     const x = moveX - x0 + this.startX;
