@@ -18,7 +18,7 @@ const ActivitySplash = ({ activity }) => {
   const uri = activity.splash.en;
   const mimeType = Mimoza.getMimeType(uri) || "";
   if (mimeType.startsWith("video/")) {
-    return <VideoPlayer uri={uri} />;
+    return <VideoPlayer uri={uri} autoPlay resizeMode="contain" />;
   } else {
     return <Image source={{ uri }} style={styles.image} />;
   }
