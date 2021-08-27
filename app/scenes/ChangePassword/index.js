@@ -28,8 +28,9 @@ import { setMultipleResponseKeys } from "../../state/applets/applets.actions";
 
 import ChangePasswordForm from './ChangePasswordForm';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
+const isIOS = Platform.OS === 'ios';
+const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSBodyPadding = isIOS ? 9 : 0;
 
 class ChangePasswordScreen extends Component {
   updateUser = (firstName, lastName) => {
@@ -74,7 +75,7 @@ class ChangePasswordScreen extends Component {
     const { user, skin } = this.props;
     return (
       <Container style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header
           style={{
             backgroundColor: skin.colors.primary,

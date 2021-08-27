@@ -28,7 +28,6 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ActivityList = ({
   applet,
@@ -47,9 +46,8 @@ const ActivityList = ({
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
+  cumulativeActivities
 }) => {
-  // const newApplet = getActivities(applet.applet, responseSchedule);
-  // const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
@@ -61,7 +59,7 @@ const ActivityList = ({
     const notShownActs = [];
     for (let index = 0; index < newApplet.activities.length; index++) {
       const act = newApplet.activities[index];
-      if (act.messages && (act.messages[0].nextActivity || act.messages[0].nextActivity)) notShownActs.push(act);
+      if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
     }
     const appletActivities = [];
 
@@ -71,16 +69,16 @@ const ActivityList = ({
 
       for (let index = 0; index < notShownActs.length; index++) {
         const notShownAct = notShownActs[index];
-        const alreadyAct = await AsyncStorage.getItem(`${notShownAct.id}/nextActivity`);
-        isNextActivityShown = alreadyAct && alreadyAct === act.name.en
+        const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
+
+        isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
           ? true
           : checkActivityIsShown(act.name.en, notShownAct.messages)
       }
 
-      if (act.isPrize != true && isNextActivityShown)
+      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true)
         appletActivities.push(act);
     }
-
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
@@ -129,7 +127,6 @@ const ActivityList = ({
       }
     }
   }, [Object.keys(inProgress).length, responseSchedule, applet]);
-
 
   useEffect(() => {
     if (appStatus) {
@@ -213,14 +210,10 @@ const mapStateToProps = (state) => {
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
-
+    cumulativeActivities: state.activities.cumulativeActivities,
   };
 };
 
-// const mapDispatchToProps = dispatch => ({
-//   setUpdatedTime: updatedTime => dispatch(setUpdatedTime(updatedTime)),
-//   getSchedules,
-// });
 const mapDispatchToProps = {
   setUpdatedTime,
   getSchedules,

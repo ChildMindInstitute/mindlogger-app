@@ -15,6 +15,7 @@ const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
 const BACK_DISABLED = "reprolib:terms/disable_back";
+const SUMMARY_DISABLED = "reprolib:terms/disable_summary";
 const CONTENT_URL = "schema:contentUrl";
 const DELAY = "reprolib:terms/delay";
 const DESCRIPTION = "schema:description";
@@ -23,6 +24,7 @@ const DO_NOT_KNOW = "reprolib:terms/dont_know_answer";
 const ENCODING_FORMAT = "schema:encodingFormat";
 const FULL_SCREEN = "reprolib:terms/full_screen";
 const IMAGE = "schema:image";
+const WATERMARK = "schema:watermark";
 const IMAGE_OBJECT = "schema:ImageObject";
 const INPUT_TYPE = "reprolib:terms/inputType";
 const INPUTS = "reprolib:terms/inputs";
@@ -90,6 +92,7 @@ const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
+const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
@@ -435,6 +438,7 @@ export const itemTransformJson = (itemJson) => {
     skippable,
     fullScreen: allowList.includes(FULL_SCREEN),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     inputs: inputsObj,
     media,
@@ -530,9 +534,11 @@ const transformPureActivity = (activityJson) => {
     image: languageListToObject(activityJson[IMAGE]),
     skippable: isSkippable(allowList),
     backDisabled: allowList.includes(BACK_DISABLED),
+    summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
+    isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     compute,
     subScales,
     finalSubScale,
@@ -587,6 +593,7 @@ export const appletTransformJson = (appletJson) => {
     altLabel: languageListToObject(applet[ALT_LABEL]),
     visibility: listToVisObject(applet[ADD_PROPERTIES]),
     image: applet[IMAGE],
+    watermark: applet[WATERMARK] || "",
     order: flattenIdList(applet[ORDER][0]["@list"]),
     schedule,
     contentUpdateTime: updated,

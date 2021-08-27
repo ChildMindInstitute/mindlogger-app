@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TextInput, Platform } from 'react-native';
 import { View, Item, Input, Label, Text } from 'native-base';
 import i18n from 'i18next';
 import { colors } from '../../theme';
@@ -30,17 +30,21 @@ export const FormInputItem = ({
     <Item
       stackedLabel={stackedLabel}
       floatingLabel={floatingLabel}
-      style={itemStyle}
+      style={{ ...(itemStyle || {}), padding: Platform.OS === 'android' ? 0 : 10 }}
       error={touched && typeof error !== 'undefined'}
       last
     >
       <Label style={props.style}>{label}</Label>
-      <Input {...props} onChangeText={input.onChange} {...input} />
+      {
+        Platform.OS === 'android'
+          ? <Input {...props} onChangeText={input.onChange} {...input} />
+          : <TextInput {...props} onChangeText={input.onChange} {...input} style={{...props.style, width: '100%'}} />
+      }
     </Item>
     {touched && error && <Text style={[styles.errorText, errorStyle]}>{error}</Text>}
     {touched && warning && <Text style={[styles.errorText, errorStyle]}>{warning}</Text>}
   </View>
-);
+)
 
 export const required = value => (value ? undefined : i18n.t('form_item:required'));
 export const maxLength = max => value => (value && value.length > max

@@ -5,10 +5,68 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
-## [0.17.2] - 2021-07-25
+## [0.17.21] - 2021-07-25
 - Added age selector item type
 
-## [0.17.1] - 2021-07-22
+## [0.17.20] - 2021-08-26
+- Draw Updates
+
+## [0.17.19] - 2021-08-23
+- Fixed issue with cumulative scoring
+
+## [0.17.18] - 2021-08-20
+- Fix always_available option
+
+## [0.17.17] - 2021-08-19
+- Updated date/time picker package version
+- Fixed issue with cumulative scoring
+
+## [0.17.16] - 2021-08-16
+- Fixed date/time picker styles on iOS14
+
+## [0.17.15] - 2021-08-12
+- Fixed markdown issue
+
+## [0.17.14] - 2021-08-11
+- Fixed applet about page issue
+
+## [0.17.13] - 2021-08-09
+- Fixed activity header issue
+
+## [0.17.12] - 2021-08-05
+- Fixed date/time pickers on iOS14
+
+## [0.17.10] - 2021-08-04
+- Fixed header image ratio
+- Fixed activity header component
+
+## [0.17.9] - 2021-08-03
+- Fixed watermark issue on Android/iOS
+
+## [0.17.8] - 2021-08-01
+- Fix delays on applet screen with Cumulative Score on Android
+
+## [0.17.7] - 2021-07-29
+- Build large text in markdown
+- Fix date and time pickers
+- Fix video quality issues
+
+## [0.17.6] - 2021-07-28
+- Fixed statusBar issue on Android
+- Fix markdown issue
+
+## [0.17.5] - 2021-07-27
+- Fixed radio/checkbox options color
+
+## [0.17.4] - 2021-07-8
+- Fixed camera quality
+- Fixed calendar layout
+- Fixed header and footer padding
+
+## [0.17.3] - 2021-07-25
+- Fix status-bar color and background
+
+## [0.17.2] - 2021-07-22
 - Fixed Audio Player Widget
 - Fixed Audio Record Widget
 - Fixed Audio Link in markdown
@@ -16,6 +74,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.16.40] - 2021-07-18
 - Updated images on appletList and end screens
 - Implement color palette for radio/checkbox items
+
+## [0.16.40] - 2021-06-28
+- Update markdown rules
+
+## [0.16.39] - 2021-06-27
+- Implemented watermark
 
 ## [0.16.38] - 2021-07-20
 - Fixed a condition for activitySplash component

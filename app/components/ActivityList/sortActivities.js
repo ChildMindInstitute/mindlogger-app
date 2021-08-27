@@ -100,7 +100,13 @@ export const getPastdue = (activityList, finishedEvents) => {
         + data.timeout.hour * 3600000
         + data.timeout.minute * 60000;
 
-      if (!activity.availability
+      if (activity.availability) {
+        const pastActivity = { ...activity };
+
+        delete pastActivity.events;
+        pastActivity.event = event;
+        pastActivities.push(pastActivity);
+      } else if (!activity.availability
         && scheduledTime <= today
         && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
         && moment().isSame(moment(scheduledTime), 'day')

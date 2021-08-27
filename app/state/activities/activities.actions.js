@@ -3,3 +3,9 @@ export const setActivities = (data) => {
   type: "SET_ACTIVITIES",
   payload: data,
 })};
+
+export const setCumulativeActivities = (data) => {
+  return({
+  type: "CUMULATIVE_ACTIVITIES",
+  payload: data,
+})};

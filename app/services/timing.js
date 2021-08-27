@@ -110,7 +110,7 @@ export function delayedExec(fn, options) {
         dueDate.setTime(now.getTime() + options.every);
       }
     },
-    500, // One second.
+    300, // One second.
   );
 
   return timerId;
