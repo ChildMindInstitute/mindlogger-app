@@ -3,9 +3,8 @@ import React, { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { View, AsyncStorage } from 'react-native';
+import { View } from 'react-native';
 import _ from 'lodash';
-import moment from 'moment';
 
 // Local.
 import { delayedExec, clearExec } from '../../services/timing';
@@ -49,8 +48,6 @@ const ActivityList = ({
   onLongPressActivity,
   cumulativeActivities
 }) => {
-  // const newApplet = getActivities(applet.applet, responseSchedule);
-  // const [activities, setActivities] = useState([]);
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
@@ -79,7 +76,7 @@ const ActivityList = ({
           : checkActivityIsShown(act.name.en, notShownAct.messages)
       }
 
-      if (act.isPrize != true && isNextActivityShown)
+      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true)
         appletActivities.push(act);
     }
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
@@ -130,7 +127,6 @@ const ActivityList = ({
       }
     }
   }, [Object.keys(inProgress).length, responseSchedule, applet]);
-
 
   useEffect(() => {
     if (appStatus) {
@@ -218,10 +214,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-// const mapDispatchToProps = dispatch => ({
-//   setUpdatedTime: updatedTime => dispatch(setUpdatedTime(updatedTime)),
-//   getSchedules,
-// });
 const mapDispatchToProps = {
   setUpdatedTime,
   getSchedules,

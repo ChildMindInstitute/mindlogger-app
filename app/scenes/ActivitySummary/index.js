@@ -3,27 +3,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Parser } from 'expr-eval';
 import _ from 'lodash';
-
 import {
-  SafeAreaView,
   View,
   FlatList,
   StyleSheet,
   Dimensions,
-  StatusBar,
-  ImageBackground,
-  AsyncStorage
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import i18n from 'i18next';
+
 import { colors } from '../../themes/colors';
-import BaseText from '../../components/base_text/base_text';
-import { BodyText, Heading } from '../../components/core';
-import theme from '../../themes/base-theme';
-import FunButton from '../../components/core/FunButton';
 import { MarkdownScreen } from '../../components/core';
-import { newAppletSelector } from '../../state/app/app.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
+import BaseText from '../../components/base_text/base_text';
+import { newAppletSelector } from '../../state/app/app.selectors';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
@@ -55,25 +46,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const DATA = [
-  {
-    category: i18n.t('activity_summary:category_suicide'),
-    message: i18n.t('activity_summary:category_suicide_message'),
-    score: '2.00',
-  },
-  {
-    category: i18n.t('activity_summary:category_emotional'),
-    message: i18n.t('activity_summary:category_emotional_message'),
-    score: '10.00',
-  },
-  {
-    category: i18n.t('activity_summary:sport'),
-    message: i18n.t('activity_summary:category_sport_message'),
-    score: '4.00',
-  },
-];
-
-const ActivitySummary = ({ responses, activity, applet, setActivities, activities, setCumulativeActivities }) => {
+const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -108,7 +81,8 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       };
     }, {});
 
-    const reportMessages = [], cumulativeActivities = [];
+    const reportMessages = [];
+    let cumActivities = [];
     activity.messages.forEach(async (msg, i) => {
       const { jsExpression, message, outputType, nextActivity } = msg;
       const variableName = jsExpression.split(/[><]/g)[0];
@@ -120,7 +94,7 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       }
 
       if (expr.evaluate(variableScores)) {
-        if (nextActivity) cumulativeActivities.push(nextActivity);
+        if (nextActivity) cumActivities.push(nextActivity);
 
         reportMessages.push({
           category,
@@ -130,14 +104,18 @@ const ActivitySummary = ({ responses, activity, applet, setActivities, activitie
       }
     });
 
-    setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumulativeActivities })
+    if (cumulativeActivities[`${activity.id}/nextActivity`]) {
+      cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
+      if (cumActivities.length > 0) {
+        cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
+        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+      }
+    } else {
+      setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+    }
 
     setMessages(reportMessages);
   }, [responses]);
-
-  const onClose = () => {
-    Actions.push('activity_thanks');
-  };
 
   const renderItem = ({ item }) => {
     return (
@@ -176,6 +154,7 @@ ActivitySummary.propTypes = {
 const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
+  cumulativeActivities: state.activities.cumulativeActivities,
 })
 
 const mapDispatchToProps = {
