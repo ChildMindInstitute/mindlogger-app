@@ -63,7 +63,14 @@ export default class DrawingBoard extends Component {
         // } else {
         //
         // }
-        this.props.onResult({ ...result, svgString });
+        let line = {};
+        if (result && result.lines) {
+          const lines = result.lines.length;
+          line = { ...result.lines[lines - 1], endTime: Date.now() };
+          result.lines[lines - 1] = line;
+        }
+
+        this.props.onResult({ ...result, lines: [...this.props.lines, line], svgString });
       },
     });
     this.allowed = true;
@@ -80,7 +87,7 @@ export default class DrawingBoard extends Component {
     this.lastPressTimestamp = timestamp;
     this.startX = locationX;
     this.startY = locationY;
-    const newLine = { points: [{ x: locationX, y: locationY, time: 0 }] };
+    const newLine = { points: [{ x: locationX, y: locationY, time: 0 }], startTime: timestamp };
     this.setState({ lines: [...lines, newLine] });
   }
 
@@ -90,8 +97,6 @@ export default class DrawingBoard extends Component {
     const nowTimestamp = Date.now();
     const timeElapsed = nowTimestamp - startTime;
     const timeDelta = nowTimestamp - this.lastPressTimestamp;
-    console.log('-----timeDelta------');
-    console.log(timeDelta);
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
     const x = moveX - x0 + this.startX;
@@ -221,9 +226,9 @@ export default class DrawingBoard extends Component {
 DrawingBoard.defaultProps = {
   imageSource: null,
   lines: [],
-  onResult: () => {},
-  onPress: () => {},
-  onRelease: () => {},
+  onResult: () => { },
+  onPress: () => { },
+  onRelease: () => { },
 };
 
 DrawingBoard.propTypes = {
