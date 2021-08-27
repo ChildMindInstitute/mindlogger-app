@@ -80,7 +80,7 @@ export default class DrawingBoard extends Component {
     const { locationX, locationY } = evt.nativeEvent;
     this.startX = locationX;
     this.startY = locationY;
-    const newLine = { points: [{ x: locationX, y: locationY, time: 0 }], startTime: timestamp };
+    const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
     this.setState({ lines: [...lines, newLine] });
   }
 
