@@ -13,6 +13,7 @@ import {
   AudioStimulus,
   Camera,
   DatePicker,
+  AgeSelector,
   Drawing,
   Geolocation,
   MultiSelect,
@@ -105,7 +106,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   }
   if (screen.inputType === 'timeRange') {
     return (
-      <TimeRange
+        <TimeRange
        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
@@ -117,7 +118,18 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
   if (screen.inputType === 'date') {
     return (
       <DatePicker
-      config={screen.valueConstraints}
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={answer}
+        isOptionalText = {screen.isOptionalText}
+        isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
+      />
+    );
+  }
+  if (screen.inputType === 'ageSelector') {
+    return (
+      <AgeSelector
+        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
