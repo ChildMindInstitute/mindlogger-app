@@ -33,6 +33,8 @@ const ITEM_LIST_ELEMENT = "schema:itemListElement";
 const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
+const MIN_AGE = "schema:minAge";
+const MAX_AGE = "schema:maxAge";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const MIN_VALUE_IMAGE = "schema:minValueImg";
 const MAX_VALUE_IMAGE = "schema:maxValueImg";
@@ -162,6 +164,12 @@ export const flattenValueConstraints = (vcObj) =>
     }
     if (key === MIN_VALUE) {
       return { ...accumulator, minValue: R.path([key, 0, "@value"], vcObj) };
+    }
+    if (key === MIN_AGE) {
+      return { ...accumulator, minAge: Number(R.path([key, 0, "@value"], vcObj)) };
+    }
+    if (key === MAX_AGE) {
+      return { ...accumulator, maxAge: Number(R.path([key, 0, "@value"], vcObj)) };
     }
     if (key === MULTIPLE_CHOICE) {
       return {
