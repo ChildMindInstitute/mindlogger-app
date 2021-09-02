@@ -34,6 +34,8 @@ const ITEM_LIST_ELEMENT = "schema:itemListElement";
 const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
+const MIN_AGE = "schema:minAge";
+const MAX_AGE = "schema:maxAge";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const MIN_VALUE_IMAGE = "schema:minValueImg";
 const MAX_VALUE_IMAGE = "schema:maxValueImg";
@@ -93,6 +95,7 @@ const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
+const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
@@ -164,6 +167,12 @@ export const flattenValueConstraints = (vcObj) =>
     }
     if (key === MIN_VALUE) {
       return { ...accumulator, minValue: R.path([key, 0, "@value"], vcObj) };
+    }
+    if (key === MIN_AGE) {
+      return { ...accumulator, minAge: Number(R.path([key, 0, "@value"], vcObj)) };
+    }
+    if (key === MAX_AGE) {
+      return { ...accumulator, maxAge: Number(R.path([key, 0, "@value"], vcObj)) };
     }
     if (key === MULTIPLE_CHOICE) {
       return {
@@ -534,6 +543,7 @@ const transformPureActivity = (activityJson) => {
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
+    isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     compute,
     scoreOverview: _.get(activityJson, [SCORE_OVERVIEW, 0, "@value"]),
     subScales,

@@ -1,19 +1,17 @@
 import React, { useState, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Video from "react-native-video";
-import
-  MediaControls, {PLAYER_STATES}
-from 'react-native-media-controls';
+import MediaControls, { PLAYER_STATES } from "react-native-media-controls";
 
 const noop = () => {};
 
-export const VideoPlayer = ({ uri, width, height }) => {
+export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode = "cover" }) => {
   const videoPlayer = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [paused, setPaused] = useState(true);
+  const [paused, setPaused] = useState(!autoPlay);
   const [playerState, setPlayerState] = useState(PLAYER_STATES.PAUSED);
 
   const onSeek = (seek) => {
@@ -52,7 +50,7 @@ export const VideoPlayer = ({ uri, width, height }) => {
   const onSeeking = (currentTime) => setCurrentTime(currentTime);
 
   return (
-    <View style={{...styles.container, width, height}}>
+    <View style={{ ...styles.container, width, height }}>
       <Video
         onEnd={onEnd}
         onLoad={onLoad}
@@ -60,12 +58,11 @@ export const VideoPlayer = ({ uri, width, height }) => {
         onProgress={onProgress}
         paused={paused}
         ref={(ref) => (videoPlayer.current = ref)}
-        resizeMode="cover"
-        source={{
-          uri
-        }}
+        resizeMode={resizeMode}
+        source={{ uri }}
         style={styles.mediaPlayer}
         volume={1.0}
+        repeat={autoPlay}
       />
       <MediaControls
         isFullScreen={isFullScreen}
@@ -79,11 +76,10 @@ export const VideoPlayer = ({ uri, width, height }) => {
         onSeeking={onSeeking}
         playerState={playerState}
         progress={currentTime}
-      >
-      </MediaControls>
+      />
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
