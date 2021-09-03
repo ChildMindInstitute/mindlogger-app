@@ -8,7 +8,7 @@ const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 export const TooltipBox = ({ text, children }) => {
   const textContainer = useMemo(() => (
-    <MarkdownScreen>{text}</MarkdownScreen>
+    <MarkdownScreen textColor='white'>{text}</MarkdownScreen>
   ), [text]);
 
   return (
@@ -24,7 +24,7 @@ export const TooltipBox = ({ text, children }) => {
           margin: 0,
           overflow: 'hidden',
         }}
-        backgroundColor="#DEF"
+        backgroundColor="rgba(0, 0, 0, 0.8)"
       >
         { children }
       </CustomTooltip>
