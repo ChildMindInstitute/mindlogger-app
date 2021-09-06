@@ -116,9 +116,12 @@ class Activity extends React.Component {
     const optionalText = this.currentItem.isOptionalText
 
     responses[currentScreen] = answer;
-    const visibility = activity.items.map((item) =>
-      testVisibility(item.visibility, activity.items, responses)
-    );
+    const visibility = activity.items.map((item) => {
+      if (item.isvis) {
+        return false;
+      }
+      return testVisibility(item.visibility, activity.items, responses)
+    });
     const next = getNextPos(currentScreen, visibility);
 
     if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {

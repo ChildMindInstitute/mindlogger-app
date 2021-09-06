@@ -57,7 +57,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
     <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
         {
-          itemOrder.map((item, index) => (
+          itemOrder.filter(item => !item.isVis).map((item, index) => (
             <ListItem
               style={{ width: '90%', backgroundColor: config.colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
               onPress={() => handlePress(token ? item.name.en : item.value)}

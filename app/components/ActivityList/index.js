@@ -76,7 +76,7 @@ const ActivityList = ({
           : checkActivityIsShown(act.name.en, notShownAct.messages)
       }
 
-      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true)
+      if (act.isPrize != true && isNextActivityShown && !act.isVis && act.isReviewerActivity != true)
         appletActivities.push(act);
     }
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
