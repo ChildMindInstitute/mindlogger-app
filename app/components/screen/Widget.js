@@ -30,6 +30,7 @@ import {
   BehaviorTracker,
   TokenSummary,
   StabilityTracker,
+  MultiDropdown,
 } from '../../widgets';
 import ABTrails from '../../widgets/ABTrails';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
@@ -354,6 +355,28 @@ const Widget = ({
     return (
       <TokenSummary />
     )
+  }
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
+    const screenValue = (typeof answer === 'object') ? answer : undefined;
+    return (
+      <MultiDropdown
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={screenValue}
+        token={valueType && valueType.includes('token')}
+      />
+    );
+  }
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'itemList'], screen)) {
+    return (
+      <Select
+        onChange={onChange}
+        value={answer}
+        config={screen.valueConstraints}
+      />
+    );
   }
 
   const [oneShot, setOneShot] = useState(false);
