@@ -132,7 +132,7 @@ class MarkdownScreen extends Component {
   }
 
   render() {
-    let { mstyle, children } = this.props;
+    let { textColor, children } = this.props;
 
     if (children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
@@ -151,7 +151,7 @@ class MarkdownScreen extends Component {
         style={{ justifyContent: alignment, alignItems: alignment, marginHorizontal: 10 }}
       >
         <Markdown
-          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph, text: { flexDirection: 'row' } }}
+          style={{ heading1, heading2, heading3, heading4, heading5, heading6, paragraph, text: { flexDirection: 'row', color: textColor } }}
           mergeStyle={true}
           onLinkPress={(url) => {
             Linking.openURL(url).catch(error => console.warn('An error occurred: ', error));
@@ -169,12 +169,12 @@ class MarkdownScreen extends Component {
 }
 
 MarkdownScreen.defaultProps = {
-  mstyle: {},
+  textColor: '#000000',
   children: undefined,
 };
 
 MarkdownScreen.propTypes = {
-  mstyle: PropTypes.object,
+  textColor: PropTypes.string,
   children: PropTypes.node,
 };
 
