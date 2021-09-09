@@ -68,11 +68,16 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                   <TooltipBox text={item.description}>
                     <Icon
                       type="FontAwesome"
-                      name="question-circle"
+                      name="question"
                       style={{
-                        color: '#016fbe',
-                        fontSize: 24,
-                        marginHorizontal: 0
+                        color: 'gray',
+                        fontSize: 20,
+                        marginHorizontal: 0,
+                        borderWidth: 2,
+                        borderRadius: 12,
+                        borderColor: 'gray',
+                        paddingLeft: 4,
+                        marginRight: 2,
                       }}
                     />
                   </TooltipBox>
