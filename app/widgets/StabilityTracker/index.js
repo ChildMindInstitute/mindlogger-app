@@ -17,7 +17,7 @@ import {
 } from './calculations';
 
 import {
-  calibrationResponseSelector,
+  calibrationLambdaSelector,
 } from '../../state/responses/responses.selectors';
 
 const styles = StyleSheet.create({
@@ -28,10 +28,28 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column'
+  },
+  header: {
+    flexDirection: 'row',
+    marginBottom: 10
+  },
+  times: {
+    flex: 1,
+    textAlign: 'left'
+  },
+  score: {
+    flex: 1,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 20
+  },
+  lambda: {
+    flex: 1,
+    textAlign: 'right'
   }
 });
 
-const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
+const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
   const configObj = {
     maxOffTargetTime: config.maxOffTargetTime || 15,
     numTestTrials: config.numTestTrials || 10,
@@ -39,7 +57,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
     trackingDims: config.trackingDims || 2,
     showScore: config.showScore !== false,
     phaseType: config.phaseType || 'calibration',
-    lambdaSlope: 1.0 || config.lambdaSlope,
+    lambdaSlope: config.lambdaSlope || 1.0,
     basisFunc: config.basisFunc || 'gerono',
     noiseLevel: config.noiseLevel || 0,
     taskLoopRate: config.taskLoopRate || 0.0167, // default 60hz
@@ -50,19 +68,30 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
     initialLambda: config.initialLambda || 0.075,
     durationMins: config.durationMins || 15,
     oobDuration: config.oobDuration || 0.2,
+    trialNumber: config.trialNumber || 15,
   };
 
   const [width, setWidth] = useState(0);
   const [moving, setMoving] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [score, setScore] = useState(0);
+  const score = useRef(0);
   const userPos = useRef(null);
   const stimPos = useRef(null);
-  const maxLambda = 0;
   const isOOB = useRef(false);
+  const lambdaSlope = useRef(config.lambdaSlope);
   const oobDuration = useRef(0);
+  const trialNumber = useRef(0);
+  const responses = useRef([]);
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
+  const lambdaLimit = configObj.phaseType == 'calibration' ? 0 : maxLambda / 2;
+
+  useEffect(() => {
+    if (!isCurrent && moving) {
+      setMoving(false)
+      isOOB.current = false;
+    }
+  }, [isCurrent])
 
   const updateCursorPos = (evt) => {
     const { locationX, locationY } = evt.nativeEvent;
@@ -86,14 +115,41 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
 
+  const finishResponse = () => {
+    setMoving(false)
+
+    isOOB.current = false;
+
+    let maxLambda = 0;
+    for (const response of responses.current) {
+      if (maxLambda < response.lambda) {
+        maxLambda = response.lambda;
+      }
+    }
+
+    onChange({
+      maxLambda,
+      value: responses.current,
+      phaseType: configObj.phaseType
+    });
+  }
+
   const restartTrial = () => {
-    setScore(score => score * 3 / 4)
+    score.current = score.current * 3 / 4
     lambdaVal.current = lambdaVal.current / 5
     offTargetTimer.current = configObj.maxOffTargetTime * 1000
 
     stimPos.current = [center, center]
 
-    isOOB.current = true
+    trialNumber.current = trialNumber.current+1
+
+    if (configObj.phaseType == 'calibration') {
+      lambdaSlope.current = lambdaSlope.current / 5 * 4;
+    }
+
+    if (trialNumber.current >= configObj.trialNumber) {
+      finishResponse()
+    }
   }
 
   /** update score */
@@ -102,18 +158,19 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
     const stimToTargetDist2 = computeDistance2(stimPos.current, targetPos);
     const bonusMulti = getBonusMulti(stimToTargetDist2, innerStimRadius, outerStimRadius);
     const scoreChange = getScoreChange(Math.sqrt(stimToTargetDist2), lambdaVal.current, bonusMulti, panelRadius/2);
-    setScore(score => score + scoreChange);
+    score.current = score.current + scoreChange;
 
     if (!scoreChange) {
       offTargetTimer.current -= deltaTime;
       if (offTargetTimer.current < 0) {
-        restartTrial();
+        oobDuration.current = 0;
+        isOOB.current = true;
       }
     }
   }
 
   /** update models */
-  const updateModels = (timeElapsed, tickNumber) => {
+  const updateModels = (timeElapsed) => {
     const delta = computeDxDt(stimPos.current, userPos.current, lambdaVal.current, width/2);
     const noise = peturbDistance(width * configObj.noiseLevel);
     const center = width/2;
@@ -125,29 +182,53 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
 
     const isInBounds = isInCircle([center, center], panelRadius, stimPos.current)
     if (!isInBounds) {
-      restartTrial();
+      oobDuration.current = 0;
+      isOOB.current = true;
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000, configObj.lambdaSlope, maxLambda);
+      lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000, lambdaSlope.current, lambdaLimit);
     }
   }
 
   /** animation */
   useAnimationFrame(
     (timeElapsed, tickNumber, deltaTime) => {
+      if (timeElapsed >= configObj.durationMins * 60 * 1000 || tickNumber >= targetPoints.current.length) {
+        finishResponse();
+        return ;
+      }
       if (isOOB.current) {
         oobDuration.current += deltaTime
 
         if (oobDuration.current > configObj.oobDuration * 1000) {
           oobDuration.current = 0;
           isOOB.current = false;
+          restartTrial();
         }
       } else {
         updateScore(tickNumber, deltaTime)
-        updateModels(timeElapsed, tickNumber)
+        updateModels(timeElapsed)
       }
 
       setTickNumber(tickNumber)
       setCurrentTime(timeElapsed)
+
+      const targetPos = targetPoints.current[tickNumber];
+
+      responses.current.push({
+        timestamp: new Date().getTime(),
+        stimPos: [
+          stimPos.current[0] / panelRadius - 1,
+          stimPos.current[1] / panelRadius - 1
+        ],
+        userPos: [
+          userPos.current[0] / panelRadius - 1,
+          userPos.current[1] / panelRadius - 1
+        ],
+        targetPos,
+        lambda: lambdaVal.current,
+        score: score.current,
+        lambdaSlope: lambdaSlope.current
+      })
     },
     configObj.taskLoopRate * 1000,
     moving
@@ -224,10 +305,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
         }
       }}
     >
-      <Text>Time: { Number(currentTime/1000).toFixed(1) }</Text>
-      <Text>OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }</Text>
-      <Text>Score: { Math.round(score) }</Text>
-      <Text>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
+      <View style={styles.header}>
+        <Text style={styles.times}>
+          Time: { Number(currentTime/1000).toFixed(1) }
+          {'\n'}
+          OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }
+        </Text>
+        <Text style={styles.score}>Score: { Math.round(score.current) }</Text>
+        <Text style={styles.lambda}>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
+      </View>
 
       <View
         style={{
@@ -268,7 +354,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
 
           {
             // print target circle
-
             targetPos && <Circle
               cx={targetPos[0]}
               cy={targetPos[1]}
@@ -291,7 +376,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
         </Svg>
       </View>
 
-      <Text>Stim to Center: { Number((stimToCenter || 0) / panelRadius).toFixed(3) }</Text>
+      <Text style={{ marginTop: 10 }}>Stim to Center: { Number((stimToCenter || 0) / panelRadius).toFixed(3) }</Text>
     </View>
   )
 }
@@ -318,7 +403,7 @@ StabilityTrackerScreen.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  calibrationResponse: calibrationResponseSelector(state),
+  maxLambda: calibrationLambdaSelector(state),
 });
 
 export const StabilityTracker = connect(mapStateToProps)(StabilityTrackerScreen);

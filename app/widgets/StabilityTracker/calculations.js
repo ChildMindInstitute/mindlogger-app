@@ -88,7 +88,7 @@ export const computeDxDt = (stimPos, userPos, lambdaVal, center) => {
 }
 
 export const getNewLambda = (currentLambda, currentTs, lambdaSlope, maxLambda) => {
-  const LV = (currentLambda + currentTs / 100000) * lambdaSlope;
+  const LV = currentLambda + currentTs / 100000 * lambdaSlope;
 
   if (maxLambda > 0 && LV >= maxLambda) {
     return maxLambda;
