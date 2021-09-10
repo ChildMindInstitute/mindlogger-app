@@ -1,5 +1,6 @@
 package lab.childmindinstitute.data;
 
+import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import android.app.Application;
 import android.content.Context;
@@ -39,6 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
             packages.add(new RNFirebaseMessagingPackage());
             packages.add(new ReactVideoPackage());
             packages.add(new RNFileViewerPackage());
+            packages.add(new MainReactPackage());
+            packages.add(new RNHTMLtoPDFPackage());
           return packages;
         }
 

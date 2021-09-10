@@ -206,6 +206,7 @@ dependencies {
     // implementation project(':@react-native-community_audio-toolkit')
 
     compile project(':react-native-file-viewer')
+    compile project(':react-native-html-to-pdf')
 
 
     if (enableHermes) {
