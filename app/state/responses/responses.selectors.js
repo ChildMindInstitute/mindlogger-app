@@ -79,3 +79,16 @@ export const itemVisiblitySelector = createSelector(
     );
   }
 );
+
+export const calibrationResponseSelector = createSelector(
+  currentResponsesSelector,
+  ({ responses, screenIndex }) => {
+    for (let i = 0; i < screenIndex; i++) {
+      if (responses[i] && responses[i].phaseType == 'calibration') {
+        return responses[i].maxLambda;
+      }
+    }
+
+    return 0;
+  }
+);
