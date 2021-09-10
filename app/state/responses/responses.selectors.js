@@ -107,7 +107,7 @@ export const itemVisiblitySelector = createSelector(
   }
 );
 
-export const calibrationResponseSelector = createSelector(
+export const calibrationLambdaSelector = createSelector(
   currentResponsesSelector,
   ({ responses, screenIndex }) => {
     for (let i = 0; i < screenIndex; i++) {
