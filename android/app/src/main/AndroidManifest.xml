@@ -21,6 +21,17 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         >
+        <provider
+            android:name="com.vinzscam.reactnativefileviewer.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_viewer_provider_paths"
+            />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"

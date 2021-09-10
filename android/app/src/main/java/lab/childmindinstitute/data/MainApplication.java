@@ -1,5 +1,6 @@
 package lab.childmindinstitute.data;
 
+import com.vinzscam.reactnativefileviewer.RNFileViewerPackage;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -37,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
              packages.add(new RNFirebaseNotificationsPackage());
             packages.add(new RNFirebaseMessagingPackage());
             packages.add(new ReactVideoPackage());
+            packages.add(new RNFileViewerPackage());
           return packages;
         }
 

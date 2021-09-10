@@ -80,6 +80,7 @@
     "react-native-camera": "^3.16.0",
     "react-native-crypto": "^2.2.0",
     "react-native-elements": "^1.2.7",
+    "react-native-file-viewer": "^2.1.4",
     "react-native-firebase": "5.6.0",
     "react-native-fix-image": "^2.0.1",
     "react-native-fs": "^2.18.0",
