@@ -27,6 +27,7 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
+  MultiDropdown,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -286,6 +287,29 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
         selected={isSelected}
         tokenBalance={appletTokenBalance.cumulativeToken}
+      />
+    );
+  }
+
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
+    const screenValue = (typeof answer === 'object') ? answer : undefined;
+    return (
+      <MultiDropdown
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={screenValue}
+        token={valueType && valueType.includes('token')}
+      />
+    );
+  }
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'itemList'], screen)) {
+    return (
+      <Select
+        onChange={onChange}
+        value={answer}
+        config={screen.valueConstraints}
       />
     );
   }

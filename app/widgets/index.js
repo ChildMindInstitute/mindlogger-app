@@ -20,3 +20,4 @@ export * from './TooltipBox';
 export * from './StackedSlider';
 export * from './AgeSelector';
 export * from './StackedRadio';
+export * from './MultiDropdown';
