@@ -49,6 +49,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
     previewStepGap: config.previewStepGap || 100,
     initialLambda: config.initialLambda || 0.075,
     durationMins: config.durationMins || 15,
+    oobDuration: config.oobDuration || 0.2,
   };
 
   const [width, setWidth] = useState(0);
@@ -58,6 +59,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
   const userPos = useRef(null);
   const stimPos = useRef(null);
   const maxLambda = 0;
+  const isOOB = useRef(false);
+  const oobDuration = useRef(0);
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
 
@@ -83,6 +86,16 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
 
+  const restartTrial = () => {
+    setScore(score => score * 3 / 4)
+    lambdaVal.current = lambdaVal.current / 5
+    offTargetTimer.current = configObj.maxOffTargetTime * 1000
+
+    stimPos.current = [center, center]
+
+    isOOB.current = true
+  }
+
   /** update score */
   const updateScore = (tickNumber, deltaTime) => {
     const targetPos = targetPoints.current[tickNumber];
@@ -93,6 +106,9 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
 
     if (!scoreChange) {
       offTargetTimer.current -= deltaTime;
+      if (offTargetTimer.current < 0) {
+        restartTrial();
+      }
     }
   }
 
@@ -109,25 +125,29 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
 
     const isInBounds = isInCircle([center, center], panelRadius, stimPos.current)
     if (!isInBounds) {
-      setMoving(false)
-      setScore(score => score * 3 / 4)
-      lambdaVal.current = lambdaVal.current / 5
-      offTargetTimer.current = configObj.maxOffTargetTime * 1000
-
-      stimPos.current = [center, center]
+      restartTrial();
     } else {
       lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000, configObj.lambdaSlope, maxLambda);
     }
-
-    setTickNumber(tickNumber)
-    setCurrentTime(timeElapsed)
   }
 
   /** animation */
   useAnimationFrame(
     (timeElapsed, tickNumber, deltaTime) => {
-      updateScore(tickNumber, deltaTime)
-      updateModels(timeElapsed, tickNumber)
+      if (isOOB.current) {
+        oobDuration.current += deltaTime
+
+        if (oobDuration.current > configObj.oobDuration * 1000) {
+          oobDuration.current = 0;
+          isOOB.current = false;
+        }
+      } else {
+        updateScore(tickNumber, deltaTime)
+        updateModels(timeElapsed, tickNumber)
+      }
+
+      setTickNumber(tickNumber)
+      setCurrentTime(timeElapsed)
     },
     configObj.taskLoopRate * 1000,
     moving
@@ -153,6 +173,22 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
 
   const diskStatus = getDiskStatus(stimPos.current, targetPos, [center, center], innerStimRadius, outerStimRadius, panelRadius);
   const stimToCenter = Math.sqrt(computeDistance2(stimPos.current, targetPos));
+
+  const getBackColor = (diskStatus) => {
+    if (isOOB.current) {
+      const timeProgress = oobDuration.current / configObj.oobDuration / 1000 * 4;
+      const mixRate = [ timeProgress - Math.floor(timeProgress), Math.floor(timeProgress) + 1 - timeProgress ];
+      const colors = [ Math.floor(mixRate[0] * 255), Math.floor(mixRate[1] * 255) ]
+
+      if (Math.floor(timeProgress)%2) {
+        return `rgb(${colors[0]}, ${colors[1]}, 0)`
+      } else {
+        return `rgb(${colors[1]}, ${colors[0]}, 0)`
+      }
+    }
+
+    return diskStatus < 3 ? 'gray' : 'red'
+  }
 
   return (
     <View
@@ -205,7 +241,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent }) => {
             cx={center}
             cy={center}
             r={panelRadius}
-            fill={diskStatus < 3 ? 'gray' : 'red'}
+            fill={getBackColor(diskStatus)}
           />
 
           {
