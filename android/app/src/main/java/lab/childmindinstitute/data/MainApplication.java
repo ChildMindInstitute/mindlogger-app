@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import com.facebook.react.shell.MainReactPackage;
 
 
 
