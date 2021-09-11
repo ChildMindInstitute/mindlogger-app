@@ -187,10 +187,6 @@ android {
         pickFirst '**/x86/libjsc.so'
         pickFirst '**/armeabi-v7a/libjsc.so'
     }
-
-    dexOptions {
-        javaMaxHeapSize "8g"
-    }
 }
 
 dependencies {
