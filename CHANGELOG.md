@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.23] - 2021-09-01
 - Add pdf report feature on cumulative score summary page
 
+## [0.17.23] - 2021-09-08
+- Bug fix with acitivity schedule
+- Update ToolTip Icon
+
 ## [0.17.22] - 2021-08-30
 - Validated password fields
 
