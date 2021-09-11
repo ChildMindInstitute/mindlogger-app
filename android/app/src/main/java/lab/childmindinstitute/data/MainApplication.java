@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.brentvatne.react.ReactVideoPackage;
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
-import com.facebook.react.shell.MainReactPackage;
 
 
 
@@ -41,7 +40,6 @@ public class MainApplication extends Application implements ReactApplication {
             packages.add(new RNFirebaseMessagingPackage());
             packages.add(new ReactVideoPackage());
             packages.add(new RNFileViewerPackage());
-            packages.add(new MainReactPackage());
             packages.add(new RNHTMLtoPDFPackage());
           return packages;
         }
