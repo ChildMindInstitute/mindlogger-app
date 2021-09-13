@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput, Platform} from 'react-native';
-import { ListItem, Text, Icon , Item , Input} from 'native-base';
+import { ListItem, Text, Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
 import { OptionalText } from './OptionalText';
 import { connect } from "react-redux";
+import questionMark from "../../img/question-mark.png";
 
 import {
   currentScreenSelector,
@@ -66,20 +67,12 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
               <View style={{ width: '8%' }}>
                 {item.description ? (
                   <TooltipBox text={item.description}>
-                    <Icon
-                      type="FontAwesome"
-                      name="question"
-                      style={{
-                        color: 'gray',
-                        fontSize: 20,
-                        marginHorizontal: 0,
-                        borderWidth: 2,
-                        borderRadius: 12,
-                        borderColor: 'gray',
-                        paddingLeft: 4,
-                        marginRight: 2,
-                      }}
-                    />
+                    <View style={{ width: 22, height: 22 }}>
+                      <Image
+                        style={{ width: '100%', height: '100%' }}
+                        source={questionMark}
+                      />
+                    </View>
                   </TooltipBox>
                 ) : (
                   <View />

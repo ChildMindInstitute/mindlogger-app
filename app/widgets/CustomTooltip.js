@@ -67,10 +67,12 @@ class CustomToolTip extends React.PureComponent {
       withPointer
     );
 
+    const pastMiddleLine = yOffset > y;
+
     return {
       position: 'absolute',
       left: x,
-      top: y,
+      top: pastMiddleLine ? y - 3 : y + 3,
       width,
       height,
       backgroundColor,
