@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import WidgetError from './WidgetError';
 
-import {
-  View,
-} from "react-native";
+import WidgetError from './WidgetError';
 import {
   AudioImageRecord,
   AudioRecord,
@@ -31,6 +28,7 @@ import {
   TokenSummary,
   StabilityTracker,
   MultiDropdown,
+  SingleDropdown,
 } from '../../widgets';
 import ABTrails from '../../widgets/ABTrails';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
@@ -150,8 +148,8 @@ const Widget = ({
   }
   if (screen.inputType === 'timeRange') {
     return (
-        <TimeRange
-       config={screen.valueConstraints}
+      <TimeRange
+        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
@@ -371,10 +369,13 @@ const Widget = ({
   if (screen.inputType === 'dropdownList'
     && R.path(['valueConstraints', 'itemList'], screen)) {
     return (
-      <Select
-        onChange={onChange}
-        value={answer}
+      <SingleDropdown
         config={screen.valueConstraints}
+        onChange={onChange}
+        onSelected={setSelected}
+        value={answer}
+        selected={isSelected}
+        token={valueType && valueType.includes("token")}
       />
     );
   }
