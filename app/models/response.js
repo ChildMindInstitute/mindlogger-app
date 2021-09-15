@@ -138,9 +138,10 @@ export const prepareResponseForUpload = (
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
         ...accumulator,
-        [item.schema]: responses[index].value,
+        [item.schema]: responses[index],
       };
     }, {});
+
     responseData['responses'] = formattedResponses;
 
     if (activity.subScales) {
