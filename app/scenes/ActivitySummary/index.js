@@ -17,6 +17,8 @@ import FileViewer from 'react-native-file-viewer';
 import { MarkdownIt } from 'react-native-markdown-display';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
+import markdownEmoji from 'markdown-it-emoji';
+import markdownMark from 'markdown-it-mark';
 
 import { colors } from '../../themes/colors';
 import { MarkdownScreen } from '../../components/core';
@@ -31,7 +33,9 @@ const markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer, 'hljs-left') /* align left */
   .use(markdownContainer, 'hljs-center')/* align center */
   .use(markdownContainer, 'hljs-right')/* align right */
-  .use(markdownIns);
+  .use(markdownIns)
+  .use(markdownEmoji)
+  .use(markdownMark);
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -230,6 +234,18 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         }
         .text-decoration-underline {
           text-decoration: underline;
+        }
+        img {
+          max-width: 50%;
+        }
+        .hljs-left {
+          text-align: left;
+        }
+        .hljs-center {
+          text-align: center;
+        }
+        .hljs-right {
+          text-align: right;
         }
         .text-uppercase {
           text-transform: uppercase;
