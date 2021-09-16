@@ -10,7 +10,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Platform
 } from 'react-native';
 import i18n from 'i18next';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
@@ -29,13 +30,17 @@ import { newAppletSelector } from '../../state/app/app.selectors';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
-const markdownItInstance = MarkdownIt({ typographer: true })
+let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
   .use(markdownContainer, 'hljs-left') /* align left */
   .use(markdownContainer, 'hljs-center')/* align center */
   .use(markdownContainer, 'hljs-right')/* align right */
   .use(markdownIns)
   .use(markdownMark);
+
+if (Platform.Version != 26) {
+  markdownItInstance = markdownItInstance.use(markdownEmoji)
+}
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
