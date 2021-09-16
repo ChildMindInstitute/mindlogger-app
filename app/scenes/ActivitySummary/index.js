@@ -160,7 +160,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       }
     });
 
-    if (cumulativeActivities[`${activity.id}/nextActivity`]) {
+    if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
