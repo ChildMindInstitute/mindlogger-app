@@ -10,6 +10,8 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
+  PermissionsAndroid,
+  Platform
 } from 'react-native';
 import i18n from 'i18next';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
@@ -28,14 +30,17 @@ import { newAppletSelector } from '../../state/app/app.selectors';
 import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
 import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
 
-const markdownItInstance = MarkdownIt({ typographer: true })
+let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
   .use(markdownContainer, 'hljs-left') /* align left */
   .use(markdownContainer, 'hljs-center')/* align center */
   .use(markdownContainer, 'hljs-right')/* align right */
   .use(markdownIns)
-  .use(markdownEmoji)
   .use(markdownMark);
+
+if (Platform.Version != 26) {
+  markdownItInstance = markdownItInstance.use(markdownEmoji)
+}
 
 const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
@@ -155,7 +160,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       }
     });
 
-    if (cumulativeActivities[`${activity.id}/nextActivity`]) {
+    if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
@@ -182,7 +187,32 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     );
   };
 
+  const fRequestAndroidPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      console.error("fRequestAndroidPermission error:", err);
+      return false;
+    }
+  };
+
   const shareReport = async () => {
+    if (Platform.OS === "android") {
+      const permissionGranted = await fRequestAndroidPermission();
+      if (!permissionGranted) {
+        console.log("access was refused")
+        return;
+      }
+    }
+
     const options = {
       html: '',
       fileName: 'report',
