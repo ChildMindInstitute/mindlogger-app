@@ -89,7 +89,7 @@ class SettingsScreen extends React.Component {
         >
           <Left>
             <Button transparent onPress={Actions.pop}>
-              <Icon ios="ios-arrow-back" android="md-arrow-back" />
+              <Icon type="Entypo" ios="user" android="md-arrow-back" />
             </Button>
           </Left>
           <Body style={{ paddingTop: IOSBodyPadding }}>
