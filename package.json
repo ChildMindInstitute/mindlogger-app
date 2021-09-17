@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.17.26",
+  "version": "0.17.27",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -55,8 +55,10 @@
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.15",
     "markdown-it-container": "^3.0.0",
+    "markdown-it-emoji": "^2.0.0",
     "markdown-it-html5-media": "^0.7.0",
     "markdown-it-ins": "^3.0.1",
+    "markdown-it-mark": "^3.0.1",
     "mimoza": "^1.0.0",
     "moment": "^2.29.1",
     "native-base": "2.13.8",
