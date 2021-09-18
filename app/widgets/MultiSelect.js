@@ -103,7 +103,7 @@ export class MultiSelectScreen extends Component {
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
-            <View style={{ width: '8%' }}>
+            <View style={{ width: '10%', padding: 4 }}>
               {item.description ? (
                 <TooltipBox text={item.description}>
                   <View style={{ width: 22, height: 22 }}>
@@ -117,7 +117,7 @@ export class MultiSelectScreen extends Component {
                 <View />
               )}
             </View>
-            <View style={{ width: "77%" }}>
+            <View style={{ width: "75%" }}>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 {item.image ? (
                   <Image
