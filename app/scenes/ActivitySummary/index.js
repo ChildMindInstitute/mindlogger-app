@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Parser } from 'expr-eval';
-import _ from 'lodash';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { Parser } from "expr-eval";
+import _ from "lodash";
 import {
   View,
   FlatList,
@@ -11,48 +11,48 @@ import {
   TouchableOpacity,
   Text,
   PermissionsAndroid,
-  Platform
-} from 'react-native';
-import i18n from 'i18next';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import FileViewer from 'react-native-file-viewer';
-import { MarkdownIt } from 'react-native-markdown-display';
-import markdownContainer from 'markdown-it-container';
-import markdownIns from 'markdown-it-ins';
-import markdownEmoji from 'markdown-it-emoji';
-import markdownMark from 'markdown-it-mark';
+  Platform,
+} from "react-native";
+import i18n from "i18next";
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import FileViewer from "react-native-file-viewer";
+import { MarkdownIt } from "react-native-markdown-display";
+import markdownContainer from "markdown-it-container";
+import markdownIns from "markdown-it-ins";
+import markdownEmoji from "markdown-it-emoji";
+import markdownMark from "markdown-it-mark";
 
-import { colors } from '../../themes/colors';
-import { MarkdownScreen } from '../../components/core';
-import { parseAppletEvents } from '../../models/json-ld';
-import BaseText from '../../components/base_text/base_text';
-import { newAppletSelector } from '../../state/app/app.selectors';
-import { setActivities, setCumulativeActivities } from '../../state/activities/activities.actions';
-import { getScoreFromResponse, evaluateScore, getMaxScore } from '../../services/scoring';
+import { colors } from "../../themes/colors";
+import { MarkdownScreen } from "../../components/core";
+import { parseAppletEvents } from "../../models/json-ld";
+import BaseText from "../../components/base_text/base_text";
+import { newAppletSelector } from "../../state/app/app.selectors";
+import { setActivities, setCumulativeActivities } from "../../state/activities/activities.actions";
+import { getScoreFromResponse, evaluateScore, getMaxScore } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
-  .use(markdownContainer, 'hljs-left') /* align left */
-  .use(markdownContainer, 'hljs-center')/* align center */
-  .use(markdownContainer, 'hljs-right')/* align right */
+  .use(markdownContainer, "hljs-left") /* align left */
+  .use(markdownContainer, "hljs-center") /* align center */
+  .use(markdownContainer, "hljs-right") /* align right */
   .use(markdownIns)
   .use(markdownMark);
 
 if (Platform.Version != 26) {
-  markdownItInstance = markdownItInstance.use(markdownEmoji)
+  markdownItInstance = markdownItInstance.use(markdownEmoji);
 }
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 0,
-    backgroundColor: 'rgba(202, 202, 202, 0.2)',
+    backgroundColor: "rgba(202, 202, 202, 0.2)",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 30,
     paddingBottom: 15,
   },
@@ -63,10 +63,10 @@ const styles = StyleSheet.create({
     paddingLeft: 35,
     paddingBottom: 20,
     marginBottom: 2,
-    backgroundColor: 'white',
-    alignContent: 'center',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+    backgroundColor: "white",
+    alignContent: "center",
+    alignItems: "flex-start",
+    justifyContent: "center",
   },
   shareButton: {
     paddingTop: 20,
@@ -74,30 +74,32 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 20,
-    fontWeight: '400',
+    fontWeight: "400",
   },
 });
 
 const DATA = [
   {
-    category: i18n.t('activity_summary:category_suicide'),
-    message: i18n.t('activity_summary:category_suicide_message'),
-    score: '2.00',
+    category: i18n.t("activity_summary:category_suicide"),
+    message: i18n.t("activity_summary:category_suicide_message"),
+    score: "2.00",
   },
   {
-    category: i18n.t('activity_summary:category_emotional'),
-    message: i18n.t('activity_summary:category_emotional_message'),
-    score: '10.00',
+    category: i18n.t("activity_summary:category_emotional"),
+    message: i18n.t("activity_summary:category_emotional_message"),
+    score: "10.00",
   },
   {
-    category: i18n.t('activity_summary:sport'),
-    message: i18n.t('activity_summary:category_sport_message'),
-    score: '4.00',
+    category: i18n.t("activity_summary:sport"),
+    message: i18n.t("activity_summary:category_sport_message"),
+    score: "4.00",
   },
 ];
 
-const termsText = "I understand that the information provided by this questionnaire is not intended to replace the advice, diagnosis, or treatment offered by a medical or mental health professional, and that my anonymous responses may be used and shared for general research on children’s mental health.";
-const footerText = "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
+const termsText =
+  "I understand that the information provided by this questionnaire is not intended to replace the advice, diagnosis, or treatment offered by a medical or mental health professional, and that my anonymous responses may be used and shared for general research on children’s mental health.";
+const footerText =
+  "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
 const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
   const [messages, setMessages] = useState([]);
@@ -110,27 +112,36 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
 
     const newApplet = parseAppletEvents(applet);
 
-    let scores = [], maxScores = [];
+    let scores = [],
+      maxScores = [];
     for (let i = 0; i < activity.items.length; i++) {
       if (!activity.items[i] || !responses[i]) continue;
 
       let score = getScoreFromResponse(activity.items[i], responses[i]);
       scores.push(score);
 
-      maxScores.push(getMaxScore(activity.items[i]))
+      maxScores.push(getMaxScore(activity.items[i]));
     }
 
     const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
       return {
         ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, '__')]: evaluateScore(itemCompute.jsExpression, activity.items, scores),
+        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
+          itemCompute.jsExpression,
+          activity.items,
+          scores
+        ),
       };
     }, {});
 
     const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
       return {
         ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, '__')]: evaluateScore(itemCompute.jsExpression, activity.items, maxScores),
+        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
+          itemCompute.jsExpression,
+          activity.items,
+          maxScores
+        ),
       };
     }, {});
 
@@ -138,24 +149,36 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     let cumActivities = [];
     activity.messages.forEach(async (msg, i) => {
       const { jsExpression, message, outputType, nextActivity } = msg;
-      const variableName = jsExpression.split(/[><]/g)[0];
-      const category = variableName.trim().replace(/\s/g, '__');
+
+      const exprArr = jsExpression.split(/[><]/g);
+      const variableName = exprArr[0];
+      const exprValue = parseFloat(exprArr[1].split(" ")[1]);
+      const category = variableName.trim().replace(/\s/g, "__");
       const expr = parser.parse(category + jsExpression.substr(variableName.length));
 
       const variableScores = {
-        [category]: outputType == 'percentage' ? Math.round(cumulativeMaxScores[category] ? cumulativeScores[category] * 100 / cumulativeMaxScores[category] : 0) : cumulativeScores[category]
-      }
+        [category]:
+          outputType == "percentage"
+            ? Math.round(
+                cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
+              )
+            : cumulativeScores[category],
+      };
 
       if (expr.evaluate(variableScores)) {
         if (nextActivity) cumActivities.push(nextActivity);
 
-        const compute = activity.compute.find(itemCompute => itemCompute.variableName.trim() == variableName.trim())
+        const compute = activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
 
         reportMessages.push({
           category,
           message,
-          score: variableScores[category] + (outputType == 'percentage' ? '%' : ''),
+          score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
           compute,
+          jsExpression: jsExpression.substr(variableName.length),
+          scoreValue: cumulativeScores[category],
+          maxScoreValue: cumulativeMaxScores[category],
+          exprValue: outputType == "percentage" ? (exprValue * cumulativeMaxScores[category]) / 100 : exprValue,
         });
       }
     });
@@ -176,12 +199,8 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
   const renderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
-        <BaseText style={{ fontSize: 20, fontWeight: '200' }}>
-          {item.category.replace(/_/g, ' ')}
-        </BaseText>
-        <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>
-          {item.score}
-        </BaseText>
+        <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
+        <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>{item.score}</BaseText>
         <MarkdownScreen>{item.message}</MarkdownScreen>
       </View>
     );
@@ -189,9 +208,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
 
   const fRequestAndroidPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-      );
+      const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         return true;
@@ -208,51 +225,77 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     if (Platform.OS === "android") {
       const permissionGranted = await fRequestAndroidPermission();
       if (!permissionGranted) {
-        console.log("access was refused")
+        console.log("access was refused");
         return;
       }
     }
 
     const options = {
-      html: '',
-      fileName: 'report',
-      directory: 'Documents',
+      html: "",
+      fileName: "report",
+      directory: "Documents",
     };
 
     options.html += `
       <p class="text-decoration-underline font-weight-bold mb-4">
-        ${ _.get(activity, 'name.en') } Report
+        ${_.get(activity, "name.en")} Report
       </p>
       <p class="text-body-2 mb-4">
-        ${ markdownItInstance.render(activity.scoreOverview) }
+        ${markdownItInstance.render(activity.scoreOverview)}
       </p>
-    `
+    `;
 
     for (const message of messages) {
       options.html += `
         <p class="blue--text font-weight-bold mb-1">
-          ${ message.category.replace(/_/g, ' ') }
+          ${message.category.replace(/_/g, " ")}
+        </p>
+        <p class="text-body-2">
+          ${markdownItInstance.render(message.compute.description)}
+        </p>
+        <div class="score-area">
+          <p
+            class="score-title text-nowrap"
+            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+          >
+            Your/Your Child’s Score
+          </p>
+          <div
+            class="score-bar score-below ${message.compute.direction ? "score-positive" : "score-negative"}"
+            style="width: ${(message.exprValue / message.maxScoreValue) * 100}%"
+          ></div>
+          <div
+            class="score-bar score-above ${!message.compute.direction ? "score-positive" : "score-negative"}"
+          ></div>
+          <div
+            class="score-spliter"
+            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+          ></div>
+          <p class="score-max-value">
+            <strong>${message.maxScoreValue}</strong>
+          </p>
+        </div>
+        <p class="text-uppercase font-weight-bold font-italic mb-1">
+          If score
+          <span class="ml-2">${message.jsExpression}</span>
         </p>
         <p class="text-body-2 mb-4">
-          ${ markdownItInstance.render(message.compute.description) }
+          Your/Your child’s score on the ${message.category.replace(
+            /_/g,
+            " "
+          )} subscale was <span class="text-danger">${message.scoreValue}</span>.
+          ${markdownItInstance.render(message.message)}
         </p>
-        <img class="score-bar${message.compute.direction ? '' :' reverse'} mb-4" src="https://raw.githubusercontent.com/ChildMindInstitute/mindlogger-app/master/img/score_bar.png" />
-        <p class="text-body-2 mb-4">
-          ${ message.score }
-        </p>
-        <p class="text-body-2 mb-4">
-          ${ markdownItInstance.render(message.message) }
-        </p>
-      `
+      `;
     }
     options.html += `
       <p class="text-footer text-body-2 mb-5">
-        ${ termsText }
+        ${termsText}
       </p>
       <p class="text-footer">
-        ${ footerText }
+        ${footerText}
       </p>
-    `
+    `;
 
     options.html += `
       <style>
@@ -311,36 +354,69 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         .text-footer {
           line-height: 2em;
         }
-        .score-bar {
-          width: 100%;
+        .text-nowrap {
+          white-space: nowrap;
         }
-        .score-bar.reverse{
-          -webkit-transform: scaleX(-1);
-          transform: scaleX(-1);
+        .text-danger {
+          color: #ff0000;
+        }
+
+        .score-area {
+          position: relative;
+          display: flex;
+          width: 100%;
+          padding: 4rem 0 1rem;
+        }
+        .score-bar {
+          height: 2rem;
+        }
+        .score-positive {
+          background-color: #a1cd63;
+        }
+        .score-negative {
+          background-color: #b02318;
+        }
+        .score-above {
+          flex: 1;
+        }
+        .score-spliter {
+          position: absolute;
+          top: 3rem;
+          width: .2rem;
+          height: 4rem;
+          background-color: #000;
+        }
+        .score-title {
+          position: absolute;
+          top: 0;
+          transform: translateX(-50%);
+        }
+        .score-max-value {
+          position: absolute;
+          margin: 0;
+          right: 0;
+          bottom: 0;
         }
       </style>
-    `
+    `;
 
-    const file = await RNHTMLtoPDF.convert(options)
+    const file = await RNHTMLtoPDF.convert(options);
     FileViewer.open(file.filePath);
-  }
+  };
 
   return (
     <>
       <View style={styles.headerContainer}>
-        <BaseText style={{ fontSize: 25, fontWeight: '500' }} textKey="activity_summary:summary" />
+        <BaseText style={{ fontSize: 25, fontWeight: "500" }} textKey="activity_summary:summary" />
       </View>
-      <TouchableOpacity
-        style={styles.shareButton}
-        onPress={shareReport}
-      >
+      <TouchableOpacity style={styles.shareButton} onPress={shareReport}>
         <Text style={styles.shareButtonText}>Share Report</Text>
       </TouchableOpacity>
       <FlatList
         data={messages}
         renderItem={renderItem}
         contentContainerStyle={styles.container}
-        keyExtractor={item => item.category}
+        keyExtractor={(item) => item.category}
       />
     </>
   );
@@ -355,14 +431,14 @@ const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
   cumulativeActivities: state.activities.cumulativeActivities,
-})
+});
 
 const mapDispatchToProps = {
   setActivities,
-  setCumulativeActivities
+  setCumulativeActivities,
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(ActivitySummary);
