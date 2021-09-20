@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import {
+  ABTrails,
   AudioImageRecord,
   AudioRecord,
   AudioStimulus,
@@ -91,6 +92,15 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         value={answer}
       />
     );
+  }
+  if (screen.inputType === 'trail') {
+    return (
+      <ABTrails
+        screen={screen.variableName}
+        data={answer}
+        onChange={onChange}
+      />
+    )
   }
   if (screen.inputType === 'stackedSlider') {
     return (

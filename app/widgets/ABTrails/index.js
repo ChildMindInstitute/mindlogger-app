@@ -88,6 +88,8 @@ export class ABTrails extends React.Component {
           <TrailsBoard
             lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
             currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
+            failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
+            screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
             screen={screens[screen]}
             onResult={this.onResult}
             ref={(ref) => { this.board = ref; }}
@@ -98,8 +100,7 @@ export class ABTrails extends React.Component {
         </Container>
 
         <View style={{ marginTop: 20, alignItems: "center" }}>
-          <Text fontSize="xs">{error}</Text>
-          
+          <Text style={{ color: rgb(230, 50, 50) }} fontSize="xs">{error}</Text>
         </View>
       </View>
     );

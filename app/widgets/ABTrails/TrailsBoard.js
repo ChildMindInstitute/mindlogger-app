@@ -37,11 +37,14 @@ export default class TrailsBoard extends Component {
     super(props);
     this.state = {
       lines: [],
+      failedCnt: 0,
+      screenTime: 0,
       incorrectPoints: [],
       currentIndex: 1,
       isValid: false,
     };
     this.allowed = false;
+    this.timeInterval = 0;
     this.startX = 0;
     this.startY = 0;
     this.lastX = 0;
@@ -62,10 +65,27 @@ export default class TrailsBoard extends Component {
   }
 
   componentDidMount() {
-    const { currentIndex } = this.props;
+    const { currentIndex, failedCnt } = this.props;
+    let { screenTime } = this.props;
   
-    console.log('************************', this.props);
+    console.log('component did mount', this.props);
+    this.timeInterval = setInterval(() => {
+      screenTime = screenTime ? screenTime + 1 : 1;
+
+      if (screenTime < 180) {
+        this.setState({ screenTime });
+      }
+    }, 1000)
+    this.setState({ failedCnt: failedCnt ? failedCnt : 0 });
     this.setState({ currentIndex });
+  }
+
+  componentWillUnmount() {
+    const { failedCnt, screenTime, lines, currentIndex } = this.state;
+    const result = this.save(lines, currentIndex);
+
+    this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
+    clearInterval(this.timeInterval);
   }
 
   startLine = (evt) => {
@@ -116,8 +136,14 @@ export default class TrailsBoard extends Component {
   }
 
   releaseLine = (evt, gestureState) => {
+    const {
+      lines,
+      isValid,
+      currentIndex,
+      failedCnt,
+      screenTime,
+    } = this.state;
     const { screen } = this.props;
-    const { lines, isValid, currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid) return;
 
     const time = Date.now();
@@ -161,10 +187,14 @@ export default class TrailsBoard extends Component {
       lines[n].points.push({ x: this.lastX, y: this.lastY, time, order: endOrder });
 
       const result = this.save(lines, endOrder);
-      this.props.onResult({ ...result });
+      this.props.onResult({ ...result, failedCnt });
       this.setState({ lines, currentIndex: endOrder });
     } else {
-      this.setState({ isValid: false });
+      const result = this.save(lines, currentIndex);
+      console.log('this.state.failedCnt + 1==============', this.state.failedCnt + 1)
+
+      this.props.onResult({ ...result, screenTime, failedCnt: this.state.failedCnt + 1 });
+      this.setState({ isValid: false, screenTime, failedCnt: this.state.failedCnt + 1 });
     }
   }
 
