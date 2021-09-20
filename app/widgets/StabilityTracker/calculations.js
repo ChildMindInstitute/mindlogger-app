@@ -22,13 +22,13 @@ export const generateTargetTraj = (
 
   for (const x of linSpace) {
     if (func == "sin") {
-      targetTraj.push(Math.sin(x) * scale);
+      targetTraj.push([Math.sin(x) * scale, 0]);
     }
     else if (func == "cos") {
-      targetTraj.push(Math.cos(x) * scale);
+      targetTraj.push([Math.cos(x) * scale, 0]);
     }
     else if (func == "zeros_1d") {
-      targetTraj.push(0);
+      targetTraj.push([0, 0]);
     }
     else if (func == "zeros_2d") {
       targetTraj.push([0, 0]);
@@ -103,6 +103,10 @@ export const isInCircle = (centerPoint, radius, targetPoint) => {
   return computeDistance2(centerPoint, targetPoint) <= radius * radius;
 }
 
+export const isInRange = (value, start, end) => {
+  return value >= start && value <= end;
+}
+
 export const getScoreChange = (bonusMulti, deltaTime) => {
   return bonusMulti * deltaTime / 1000
 }
@@ -119,11 +123,7 @@ export const getBonusMulti = (stimToTargetDist2, innerStimRadius, outerStimRadiu
   return 0;
 }
 
-export const getDiskStatus = (stimPos, targetPos, centerPoint, innerStimRadius, outerStimRadius, panelRadius) => {
-  if (!isInCircle(centerPoint, panelRadius, stimPos)) {
-    return 3;
-  }
-
+export const getDiskStatus = (stimPos, targetPos, innerStimRadius, outerStimRadius) => {
   const dist2 = computeDistance2(stimPos, targetPos)
   if (dist2 <= innerStimRadius * innerStimRadius) {
     return 0
