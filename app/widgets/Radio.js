@@ -64,7 +64,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
               onPress={() => handlePress(token ? item.name.en : item.value)}
               key={index}
             >
-              <View style={{ width: '10%', padding: 4 }}>
+              <View style={{ width: '10%', marginRight: "2%", marginLeft: "2%" }}>
                 {item.description ? (
                   <TooltipBox text={item.description}>
                     <View style={{ width: 22, height: 22 }}>
@@ -78,7 +78,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                   <View />
                 )}
               </View>
-              <View style={{ width: '75%' }}>
+              <View style={{ width: '72%' }}>
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                   {item.image ? (
                     <Image
@@ -116,7 +116,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                   )}
                 </View>
               </View>
-              <View style={{ width: '15%' }}>
+              <View style={{ width: '14%' }}>
                 <CheckBox
                   checked={finalAnswer["value"] === (token ? item.name.en : item.value)}
                   onPress={() => handlePress(token ? item.name.en : item.value)}
