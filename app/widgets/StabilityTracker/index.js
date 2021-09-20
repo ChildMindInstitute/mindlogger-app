@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, PanResponder } from 'react-native';
 import { connect } from 'react-redux';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Rect } from 'react-native-svg';
 import { useAnimationFrame } from '../../services/hooks';
 import {
   generateTargetTraj,
@@ -13,7 +13,8 @@ import {
   getScoreChange,
   getDiskStatus,
   computeDistance2,
-  getBonusMulti
+  getBonusMulti,
+  isInRange
 } from './calculations';
 
 import {
@@ -31,7 +32,8 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    marginBottom: 10
+    marginBottom: 10,
+    paddingHorizontal: 10
   },
   times: {
     flex: 1,
@@ -69,6 +71,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     durationMins: config.durationMins || 15,
     oobDuration: config.oobDuration || 0.2,
     trialNumber: config.trialNumber || 15,
+    dimensionCount: config.dimensionCount || 1
   };
 
   const [width, setWidth] = useState(0);
@@ -112,6 +115,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
   const targetPoints = useRef();
   const pointRadius = width/152, outerStimRadius = width / 19, innerStimRadius = width/38, panelRadius = width/2;
+  const blockWidth = width/6/2, blockHeight = width / 3;
+
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
 
@@ -177,10 +182,18 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
     stimPos.current = [
       delta[0] + noise[0] + stimPos.current[0],
-      delta[1] + noise[1] + stimPos.current[1]
+      configObj.dimensionCount > 1 ? delta[1] + noise[1] + stimPos.current[1] : center
     ]
 
-    const isInBounds = isInCircle([center, center], panelRadius, stimPos.current)
+    let isInBounds = true;
+
+    if (configObj.dimensionCount == 1) {
+      isInBounds = isInRange(stimPos.current[0], blockWidth, width-blockWidth)
+    }
+    else {
+      isInBounds = isInCircle([center, center], panelRadius, stimPos.current)
+    }
+
     if (!isInBounds) {
       oobDuration.current = 0;
       isOOB.current = true;
@@ -214,7 +227,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
       const targetPos = targetPoints.current[tickNumber];
 
-      responses.current.push({
+      const response = {
         timestamp: new Date().getTime(),
         stimPos: [
           stimPos.current[0] / panelRadius - 1,
@@ -228,7 +241,14 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
         lambda: lambdaVal.current,
         score: score.current,
         lambdaSlope: lambdaSlope.current
-      })
+      };
+
+      if (configObj.dimensionCount == 1) {
+        response.stimPos.pop();
+        response.userPos.pop();
+      }
+
+      responses.current.push(response)
     },
     configObj.taskLoopRate * 1000,
     moving
@@ -241,21 +261,28 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
   /** get target point and points to preview */
   if (width) {
     const total = targetPoints.current.length;
+    const yDelta = Math.min(15, width / 2 / configObj.numPreviewStim);
     for (let i = 0; i < configObj.numPreviewStim; i++) {
       const index = (i + 1) * configObj.previewStepGap + tickNumber;
 
       if (index < total) {
-        previews.push(targetPoints.current[index]);
+        const pos = [...targetPoints.current[index]];
+
+        if (configObj.dimensionCount == 1) {
+          pos[1] = pos[1] - (i + 1) * yDelta;
+        }
+
+        previews.push(pos);
       }
     }
 
     targetPos = targetPoints.current[tickNumber];
   }
 
-  const diskStatus = getDiskStatus(stimPos.current, targetPos, [center, center], innerStimRadius, outerStimRadius, panelRadius);
+  const diskStatus = getDiskStatus(stimPos.current, targetPos, innerStimRadius, outerStimRadius);
   const stimToCenter = Math.sqrt(computeDistance2(stimPos.current, targetPos));
 
-  const getBackColor = (diskStatus) => {
+  const getBackColor = (defaultColor) => {
     if (isOOB.current) {
       const timeProgress = oobDuration.current / configObj.oobDuration / 1000 * 4;
       const mixRate = [ timeProgress - Math.floor(timeProgress), Math.floor(timeProgress) + 1 - timeProgress ];
@@ -268,42 +295,44 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
       }
     }
 
-    return diskStatus < 3 ? 'gray' : 'red'
+    return defaultColor
+  }
+
+  const initLayout = (evt) => {
+    /** init width and target points */
+    if (!width) {
+      const { width, height } = evt.nativeEvent.layout;
+      const panelWidth = Math.min(width - 10, height - 110);
+
+      setWidth(panelWidth)
+      stimPos.current = [panelWidth/2, panelWidth/2]
+
+      const points = generateTargetTraj(
+        configObj.durationMins,
+        configObj.cyclesPerMin,
+        configObj.basisFunc,
+        configObj.taskLoopRate,
+        panelWidth/3,
+        1
+      );
+
+      for (let i = 0; i < points.length; i++) {
+        points[i][0] += panelWidth/2;
+        if (configObj.dimensionCount == 1) {
+          points[i][1] = panelWidth/2;
+        } else {
+          points[i][1] += panelWidth/2;
+        }
+      }
+
+      targetPoints.current = points
+    }
   }
 
   return (
     <View
       style={styles.container}
-      onLayout={(evt) => {
-        /** init width and target points */
-        if (!width) {
-          const { width, height } = evt.nativeEvent.layout;
-          const panelWidth = Math.min(width - 10, height - 110);
-
-          setWidth(panelWidth)
-          stimPos.current = [panelWidth/2, panelWidth/2]
-
-          const points = generateTargetTraj(
-            configObj.durationMins,
-            configObj.cyclesPerMin,
-            configObj.basisFunc,
-            configObj.taskLoopRate,
-            panelWidth/3,
-            1
-          );
-
-          for (let i = 0; i < points.length; i++) {
-            if (Array.isArray(points[i])) { // 2d
-              points[i][0] += panelWidth/2;
-              points[i][1] += panelWidth/2;
-            } else { // 1d
-              points[i] += panelWidth/2;
-            }
-          }
-
-          targetPoints.current = points
-        }
-      }}
+      onLayout={initLayout}
     >
       <View style={styles.header}>
         <Text style={styles.times}>
@@ -311,7 +340,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
           {'\n'}
           OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }
         </Text>
-        <Text style={styles.score}>Score: {'\n'} { Math.round(score.current) }</Text>
+        <Text style={styles.score}>Score {'\n'} { Math.round(score.current) }</Text>
         <Text style={styles.lambda}>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
       </View>
 
@@ -323,12 +352,48 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
         {...panResponder.panHandlers}
       >
         <Svg width={width} height={width}>
-          <Circle
-            cx={center}
-            cy={center}
-            r={panelRadius}
-            fill={getBackColor(diskStatus)}
-          />
+          {
+            // 1d
+            configObj.dimensionCount == 1 &&
+            (
+              <>
+                <Rect
+                  x={0}
+                  y={0}
+                  width={width}
+                  height={width}
+                  fill={'rgb(150, 150, 150)'}
+                />
+
+                <Rect
+                  x={0}
+                  y={center - blockHeight/2}
+                  width={blockWidth-outerStimRadius}
+                  height={blockHeight}
+                  fill={getBackColor('green')}
+                />
+
+                <Rect
+                  x={width-blockWidth+outerStimRadius}
+                  y={center - blockHeight/2}
+                  width={blockWidth-outerStimRadius}
+                  height={blockHeight}
+                  fill={getBackColor('green')}
+                />
+              </>
+            )
+          }
+
+          {
+            // 2d
+            configObj.dimensionCount == 2 &&
+            <Circle
+              cx={center}
+              cy={center}
+              r={panelRadius}
+              fill={getBackColor('gray')}
+            />
+          }
 
           {
             stimPos.current && <Circle
