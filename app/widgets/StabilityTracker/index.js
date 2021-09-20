@@ -17,7 +17,7 @@ import {
 } from './calculations';
 
 import {
-  calibrationLambdaSelector,
+  challengePhaseLambdaSelector,
 } from '../../state/responses/responses.selectors';
 
 const styles = StyleSheet.create({
@@ -84,7 +84,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
   const responses = useRef([]);
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
-  const lambdaLimit = configObj.phaseType == 'calibration' ? 0 : maxLambda / 2;
+  const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda / 2;
 
   useEffect(() => {
     if (!isCurrent && moving) {
@@ -136,14 +136,14 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
   const restartTrial = () => {
     score.current = score.current * 3 / 4
-    lambdaVal.current = lambdaVal.current / 5
+    lambdaVal.current = lambdaVal.current / 2
     offTargetTimer.current = configObj.maxOffTargetTime * 1000
 
     stimPos.current = [center, center]
 
     trialNumber.current = trialNumber.current+1
 
-    if (configObj.phaseType == 'calibration') {
+    if (configObj.phaseType == 'challenge-phase') {
       lambdaSlope.current = lambdaSlope.current / 5 * 4;
     }
 
@@ -157,7 +157,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     const targetPos = targetPoints.current[tickNumber];
     const stimToTargetDist2 = computeDistance2(stimPos.current, targetPos);
     const bonusMulti = getBonusMulti(stimToTargetDist2, innerStimRadius, outerStimRadius);
-    const scoreChange = getScoreChange(Math.sqrt(stimToTargetDist2), lambdaVal.current, bonusMulti, panelRadius/2);
+    const scoreChange = getScoreChange(bonusMulti, deltaTime);
     score.current = score.current + scoreChange;
 
     if (!scoreChange) {
@@ -185,7 +185,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
       oobDuration.current = 0;
       isOOB.current = true;
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000, lambdaSlope.current, lambdaLimit);
+      lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
     }
   }
 
@@ -311,7 +311,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
           {'\n'}
           OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }
         </Text>
-        <Text style={styles.score}>Score: { Math.round(score.current) }</Text>
+        <Text style={styles.score}>Score: {'\n'} { Math.round(score.current) }</Text>
         <Text style={styles.lambda}>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
       </View>
 
@@ -403,7 +403,7 @@ StabilityTrackerScreen.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  maxLambda: calibrationLambdaSelector(state),
+  maxLambda: challengePhaseLambdaSelector(state),
 });
 
 export const StabilityTracker = connect(mapStateToProps)(StabilityTrackerScreen);
