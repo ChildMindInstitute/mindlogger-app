@@ -239,7 +239,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </p>
         <div class="score-area">
           <p
-            class="score-title text-nowrap"
+            class="score-title font-weight-bold text-nowrap"
             style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
           >
             Your/Your Child’s Score
