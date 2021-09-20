@@ -88,7 +88,7 @@ export const computeDxDt = (stimPos, userPos, lambdaVal, center) => {
 }
 
 export const getNewLambda = (currentLambda, currentTs, lambdaSlope, maxLambda) => {
-  const LV = currentLambda + currentTs / 100000 * lambdaSlope;
+  const LV = currentLambda + currentTs / 1000 * lambdaSlope;
 
   if (maxLambda > 0 && LV >= maxLambda) {
     return maxLambda;
@@ -103,17 +103,17 @@ export const isInCircle = (centerPoint, radius, targetPoint) => {
   return computeDistance2(centerPoint, targetPoint) <= radius * radius;
 }
 
-export const getScoreChange = (stimToTargetDist, lambda, bonusMulti, scale) => {
-  return 1 / 50 * (stimToTargetDist / scale + 1) * (20 * lambda) * bonusMulti
+export const getScoreChange = (bonusMulti, deltaTime) => {
+  return bonusMulti * deltaTime / 1000
 }
 
 export const getBonusMulti = (stimToTargetDist2, innerStimRadius, outerStimRadius) => {
   if (stimToTargetDist2 < innerStimRadius * innerStimRadius) {
-    return 5;
+    return 2;
   }
 
   if (stimToTargetDist2 < outerStimRadius * outerStimRadius) {
-    return 2;
+    return 1;
   }
 
   return 0;
