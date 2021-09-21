@@ -54,7 +54,8 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 20,
-    fontWeight: "400",
+    fontWeight: '400',
+    color: '#0067A0',
   },
   pageContainer: {
     paddingHorizontal: 35,
