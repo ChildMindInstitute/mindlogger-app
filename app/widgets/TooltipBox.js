@@ -24,7 +24,7 @@ export const TooltipBox = ({ text, children }) => {
           margin: 0,
           overflow: 'hidden',
         }}
-        backgroundColor="rgba(0, 0, 0, 0.9)"
+        backgroundColor="rgba(0, 0, 0, 1)"
       >
         { children }
       </CustomTooltip>

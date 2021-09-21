@@ -103,7 +103,13 @@ export class MultiSelectScreen extends Component {
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
-            <View style={{ width: '10%', padding: 4 }}>
+            <View style={{
+              width: '10%',
+              marginLeft: "2%",
+              marginRight: "2%",
+              justifyContent: "center",
+              flexDirection: "row"
+            }}>
               {item.description ? (
                 <TooltipBox text={item.description}>
                   <View style={{ width: 22, height: 22 }}>
@@ -117,7 +123,7 @@ export class MultiSelectScreen extends Component {
                 <View />
               )}
             </View>
-            <View style={{ width: "75%" }}>
+            <View style={{ width: "72%" }}>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 {item.image ? (
                   <Image
@@ -165,7 +171,7 @@ export class MultiSelectScreen extends Component {
                 )}
               </View>
             </View>
-            <View style={{ width: "15%" }}>
+            <View style={{ width: "14%" }}>
               <CheckBox
                 checked={
                   this.finalAnswer["value"] &&
