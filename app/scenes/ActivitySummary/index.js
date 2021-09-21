@@ -5,7 +5,7 @@ import { Parser } from "expr-eval";
 import _ from "lodash";
 import {
   View,
-  FlatList,
+  ScrollView,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
@@ -44,37 +44,28 @@ if (Platform.Version != 26) {
 
 const { width } = Dimensions.get("window");
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 0,
-    backgroundColor: "rgba(202, 202, 202, 0.2)",
-  },
   headerContainer: {
-    alignItems: "center",
     paddingTop: 30,
     paddingBottom: 15,
   },
+  shareButton: {
+    paddingHorizontal: 35,
+    marginTop: 10,
+  },
+  shareButtonText: {
+    fontSize: 20,
+    fontWeight: '400',
+    color: '#0067A0',
+  },
+  pageContainer: {
+    paddingHorizontal: 35,
+  },
   itemContainer: {
-    width,
-    paddingTop: 20,
-    paddingRight: 35,
-    paddingLeft: 35,
-    paddingBottom: 20,
-    marginBottom: 2,
+    paddingVertical: 20,
     backgroundColor: "white",
     alignContent: "center",
     alignItems: "flex-start",
     justifyContent: "center",
-  },
-  shareButton: {
-    paddingTop: 20,
-    paddingLeft: 35,
-  },
-  shareButtonText: {
-    fontSize: 20,
-    fontWeight: "400",
   },
 });
 
@@ -196,16 +187,6 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     setMessages(reportMessages);
   }, [responses]);
 
-  const renderItem = ({ item }) => {
-    return (
-      <View style={styles.itemContainer}>
-        <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
-        <BaseText style={{ fontSize: 24, color: colors.tertiary, paddingBottom: 20 }}>{item.score}</BaseText>
-        <MarkdownScreen>{item.message}</MarkdownScreen>
-      </View>
-    );
-  };
-
   const fRequestAndroidPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
@@ -234,6 +215,10 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       html: "",
       fileName: "report",
       directory: "Documents",
+      width: 800,
+      height: 1000,
+      padding: 50,
+      bgColor: "#ffffff",
     };
 
     options.html += `
@@ -255,10 +240,10 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </p>
         <div class="score-area">
           <p
-            class="score-title text-nowrap"
+            class="score-title font-weight-bold text-nowrap"
             style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
           >
-            Your/Your Child’s Score
+            Your/Your Child's Score
           </p>
           <div
             class="score-bar score-below ${message.compute.direction ? "score-positive" : "score-negative"}"
@@ -300,16 +285,10 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     options.html += `
       <style>
         html {
-          font-size: 32pt;
-        }
-        .cumulative-score-report {
-          width: 600px;
+          font-size: 16pt;
         }
         .text-decoration-underline {
           text-decoration: underline;
-        }
-        img {
-          max-width: 50%;
         }
         .hljs-left {
           text-align: left;
@@ -365,10 +344,11 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
           position: relative;
           display: flex;
           width: 100%;
-          padding: 4rem 0 1rem;
+          max-width: 600px;
+          padding: 4rem 0 2rem;
         }
         .score-bar {
-          height: 2rem;
+          height: 3rem;
         }
         .score-positive {
           background-color: #a1cd63;
@@ -381,9 +361,9 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         }
         .score-spliter {
           position: absolute;
-          top: 3rem;
+          top: 2.5rem;
           width: .2rem;
-          height: 4rem;
+          height: 6rem;
           background-color: #000;
         }
         .score-title {
@@ -407,17 +387,22 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
   return (
     <>
       <View style={styles.headerContainer}>
-        <BaseText style={{ fontSize: 25, fontWeight: "500" }} textKey="activity_summary:summary" />
+        <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
+        <TouchableOpacity style={styles.shareButton} onPress={shareReport}>
+          <Text style={styles.shareButtonText}>Share Report</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.shareButton} onPress={shareReport}>
-        <Text style={styles.shareButtonText}>Share Report</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={messages}
-        renderItem={renderItem}
-        contentContainerStyle={styles.container}
-        keyExtractor={(item) => item.category}
-      />
+      <ScrollView scrollEnabled={true} style={styles.pageContainer}>
+        <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>
+        {messages.map((item) => (
+          <View style={styles.itemContainer} key={item.category}>
+            <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
+            <MarkdownScreen>{item.compute.description}</MarkdownScreen>
+            <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
+            <MarkdownScreen>{item.message}</MarkdownScreen>
+          </View>
+        ))}
+      </ScrollView>
     </>
   );
 };
