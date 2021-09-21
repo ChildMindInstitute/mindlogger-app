@@ -298,7 +298,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     options.html += `
       <style>
         html {
-          font-size: 20pt;
+          font-size: 24pt;
         }
         .hljs-left {
           text-align: left;
