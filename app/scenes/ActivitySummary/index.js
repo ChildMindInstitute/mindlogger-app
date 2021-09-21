@@ -299,6 +299,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       <style>
         html {
           font-size: 24pt;
+          font-family: Arial, Helvetica, sans-serif;
         }
         .hljs-left {
           text-align: left;
