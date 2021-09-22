@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   },
   shareButtonText: {
     fontSize: 20,
-    fontWeight: '400',
-    color: '#0067A0',
+    fontWeight: "400",
+    color: "#0067A0",
   },
   pageContainer: {
     paddingHorizontal: 35,
@@ -217,13 +217,17 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       directory: "Documents",
       width: 800,
       height: 1000,
-      padding: 50,
+      padding: 80,
       bgColor: "#ffffff",
     };
 
     options.html += `
-      <p class="text-decoration-underline font-weight-bold mb-4">
-        ${_.get(activity, "name.en")} Report
+      <p class="mb-4">
+        <b>
+          <u>
+            ${_.get(activity, "name.en")} Report
+          </u>
+        </b>
       </p>
       <p class="text-body-2 mb-4">
         ${markdownItInstance.render(activity.scoreOverview)}
@@ -232,18 +236,22 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
 
     for (const message of messages) {
       options.html += `
-        <p class="blue--text font-weight-bold mb-1">
-          ${message.category.replace(/_/g, " ")}
+        <p class="blue--text mb-1">
+          <b>
+            ${message.category.replace(/_/g, " ")}
+          </b>
         </p>
         <p class="text-body-2">
           ${markdownItInstance.render(message.compute.description)}
         </p>
         <div class="score-area">
           <p
-            class="score-title font-weight-bold text-nowrap"
+            class="score-title text-nowrap"
             style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
           >
-            Your/Your Child's Score
+            <b>
+              Your/Your Child' Score
+            </b>
           </p>
           <div
             class="score-bar score-below ${message.compute.direction ? "score-positive" : "score-negative"}"
@@ -257,18 +265,23 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
             style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
           ></div>
           <p class="score-max-value">
-            <strong>${message.maxScoreValue}</strong>
+            <b>
+              ${message.maxScoreValue}
+            </b>
           </p>
         </div>
-        <p class="text-uppercase font-weight-bold font-italic mb-1">
-          If score
-          <span class="ml-2">${message.jsExpression}</span>
+        <p class="text-uppercase mb-1">
+          <b>
+            <i>
+              If score
+              <span class="ml-2">${message.jsExpression}</span>
+            </i>
+          </b>
         </p>
         <p class="text-body-2 mb-4">
-          Your/Your child’s score on the ${message.category.replace(
-            /_/g,
-            " "
-          )} subscale was <span class="text-danger">${message.scoreValue}</span>.
+          Your/Your child’s score on the 
+          ${message.category.replace(/_/g, " ")}
+           subscale was <span class="text-danger">${message.scoreValue}</span>.
           ${markdownItInstance.render(message.message)}
         </p>
       `;
@@ -285,10 +298,8 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
     options.html += `
       <style>
         html {
-          font-size: 16pt;
-        }
-        .text-decoration-underline {
-          text-decoration: underline;
+          font-size: 24pt;
+          font-family: Arial, Helvetica, sans-serif;
         }
         .hljs-left {
           text-align: left;
@@ -301,12 +312,6 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         }
         .text-uppercase {
           text-transform: uppercase;
-        }
-        .font-weight-bold {
-          font-weight: bold;
-        }
-        .font-italic {
-          font-style: italic;
         }
         .text-body-2 {
           font-size: 0.9rem;
