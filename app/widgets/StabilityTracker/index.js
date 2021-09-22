@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, PanResponder } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
+import { magnetometer } from "react-native-sensors";
+
 import { useAnimationFrame } from '../../services/hooks';
 import {
   generateTargetTraj,
@@ -71,7 +73,9 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     durationMins: config.durationMins || 15,
     oobDuration: config.oobDuration || 0.2,
     trialNumber: config.trialNumber || 15,
-    dimensionCount: config.dimensionCount || 1
+    dimensionCount: 1,
+    userInputType: config.userInputType || 'gyroscope',
+    maxRad: config.maxRad || (Math.PI / 6)
   };
 
   const [width, setWidth] = useState(0);
@@ -85,9 +89,18 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
   const oobDuration = useRef(0);
   const trialNumber = useRef(0);
   const responses = useRef([]);
+  const magnRef = useRef(), baseAcc = useRef();
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda / 2;
+  const center = width/2;
+
+  const targetPoints = useRef();
+  const pointRadius = width/152, outerStimRadius = width / 19, innerStimRadius = width/38, panelRadius = width/2;
+  const blockWidth = width/6/2, blockHeight = width / 3;
+
+  const [tickNumber, setTickNumber] = useState(0);
+  const lambdaVal = useRef(configObj.initialLambda);
 
   useEffect(() => {
     if (!isCurrent && moving) {
@@ -96,29 +109,63 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     }
   }, [isCurrent])
 
-  const updateCursorPos = (evt) => {
-    const { locationX, locationY } = evt.nativeEvent;
+  useEffect(() => {
+    if (configObj.userInputType == 'gyroscope') {
+      if (moving) {
+        magnRef.current = magnetometer.subscribe(({ x, y, z }) => {
+          let yRot = Math.asin(x / Math.sqrt(x*x + z*z));
+          let xRot = Math.asin(y / Math.sqrt(y*y + z*z + x*x));
 
-    userPos.current = [locationX, locationY]
-  };
+          if (y < 0) {
+            yRot += Math.PI;
+          }
+
+          if (!baseAcc.current) {
+            baseAcc.current = [xRot, yRot];
+          } else {
+            const x = center + (yRot - baseAcc.current[1]) / configObj.maxRad * panelRadius;
+            const y = center - (xRot - baseAcc.current[0]) / configObj.maxRad * panelRadius;
+
+            userPos.current = [x, y];
+          }
+        })
+      } else {
+        if (magnRef.current) {
+          magnRef.current.unsubscribe();
+        }
+      }
+    }
+
+    return () => {
+      if (magnRef.current) {
+        magnRef.current.unsubscribe();
+      }
+    }
+  }, [moving])
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: (evt) => {
-        updateCursorPos(evt);
+        if (configObj.userInputType == 'touch') {
+          userPos.current = [
+            evt.nativeEvent.locationX,
+            evt.nativeEvent.locationY
+          ];
+        }
+
         setMoving(true)
       },
-      onPanResponderMove: updateCursorPos,
+      onPanResponderMove: (evt) => {
+        if (configObj.userInputType == 'touch') {
+          userPos.current = [
+            evt.nativeEvent.locationX,
+            evt.nativeEvent.locationY
+          ];
+        }
+      },
     })
   ).current;
-
-  const targetPoints = useRef();
-  const pointRadius = width/152, outerStimRadius = width / 19, innerStimRadius = width/38, panelRadius = width/2;
-  const blockWidth = width/6/2, blockHeight = width / 3;
-
-  const [tickNumber, setTickNumber] = useState(0);
-  const lambdaVal = useRef(configObj.initialLambda);
 
   const finishResponse = () => {
     setMoving(false)
@@ -254,7 +301,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     moving
   );
 
-  const center = width/2;
   const previews = [];
   let targetPos = null;
 
@@ -306,6 +352,10 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
       setWidth(panelWidth)
       stimPos.current = [panelWidth/2, panelWidth/2]
+      userPos.current = [
+        panelWidth/2,
+        panelWidth/2
+      ];
 
       const points = generateTargetTraj(
         configObj.durationMins,
