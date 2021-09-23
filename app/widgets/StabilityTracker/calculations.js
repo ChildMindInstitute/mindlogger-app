@@ -78,8 +78,8 @@ export const peturbDistance = (minMax, maxVal=null) => {
 
 export const computeDxDt = (stimPos, userPos, lambdaVal, center) => {
   const changeRate = [0, 0]
-  const deltaX = stimPos[0]-center + (userPos[0]-center) * 1.25
-  const deltaY = stimPos[1]-center + (userPos[1]-center) * 1.25
+  const deltaX = stimPos[0]-center + (userPos[0]-center)
+  const deltaY = stimPos[1]-center + (userPos[1]-center)
 
   changeRate[0] = lambdaVal * deltaX / 10
   changeRate[1] = lambdaVal * deltaY / 10
