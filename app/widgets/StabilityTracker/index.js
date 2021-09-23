@@ -6,6 +6,8 @@ import Svg, { Circle, Rect } from 'react-native-svg';
 import { magnetometer } from "react-native-sensors";
 
 import { useAnimationFrame } from '../../services/hooks';
+import { showToast } from '../../state/app/app.thunks';
+
 import {
   generateTargetTraj,
   computeDxDt,
@@ -53,8 +55,8 @@ const styles = StyleSheet.create({
   }
 });
 
-const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
-  const configObj = {
+const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showToast }) => {
+  const configObj = useRef({
     maxOffTargetTime: config.maxOffTargetTime || 15,
     numTestTrials: config.numTestTrials || 10,
     taskMode: config.taskMode || 'pseudo_stair',
@@ -73,10 +75,10 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
     durationMins: config.durationMins || 15,
     oobDuration: config.oobDuration || 0.2,
     trialNumber: config.trialNumber || 15,
-    dimensionCount: 1,
+    dimensionCount: config.dimensionCount || 1,
     userInputType: config.userInputType || 'gyroscope',
     maxRad: config.maxRad || (Math.PI / 6)
-  };
+  }).current;
 
   const [width, setWidth] = useState(0);
   const [moving, setMoving] = useState(false);
@@ -92,7 +94,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
   const magnRef = useRef(), baseAcc = useRef();
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
-  const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda / 2;
+  const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
   const center = width/2;
 
   const targetPoints = useRef();
@@ -128,6 +130,14 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda }) => {
 
             userPos.current = [x, y];
           }
+        }, (e) => {
+          showToast({
+            text: e,
+            position: 'bottom',
+            duration: 2000,
+          });
+
+          configObj.userInputType = 'touch'
         })
       } else {
         if (magnRef.current) {
@@ -521,4 +531,9 @@ const mapStateToProps = (state) => ({
   maxLambda: challengePhaseLambdaSelector(state),
 });
 
-export const StabilityTracker = connect(mapStateToProps)(StabilityTrackerScreen);
+const mapDispatchToProps = {
+  showToast,
+};
+
+
+export const StabilityTracker = connect(mapStateToProps, mapDispatchToProps)(StabilityTrackerScreen);
