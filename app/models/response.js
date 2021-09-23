@@ -32,9 +32,6 @@ export const prepareResponseForUpload = (
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
-  console.log('-----------------------------------');
-  console.log(inProgressResponse);
-
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
@@ -174,9 +171,6 @@ export const prepareResponseForUpload = (
     i++;
   }
   responseData['nextsAt'] = nextsAt;
-
-  console.log('-------responseData-----------');
-  console.log(responseData);
 
   return responseData;
 };
