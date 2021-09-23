@@ -294,7 +294,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           userPos.current[0] / panelRadius - 1,
           userPos.current[1] / panelRadius - 1
         ],
-        targetPos,
+        targetPos: [...targetPos],
         lambda: lambdaVal.current,
         score: score.current,
         lambdaSlope: lambdaSlope.current
@@ -303,6 +303,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       if (configObj.dimensionCount == 1) {
         response.stimPos.pop();
         response.userPos.pop();
+        response.targetPos.pop();
       }
 
       responses.current.push(response)
