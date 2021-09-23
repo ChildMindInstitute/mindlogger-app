@@ -142,7 +142,7 @@ class MarkdownScreen extends Component {
       }
     }
 
-    if (children.indexOf("404:") > -1) {
+    if (children && children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
     }
     const { heading1, heading2, heading3, heading4, heading5, heading6, paragraph } = markdownStyle;
