@@ -251,7 +251,7 @@ class Activity extends React.Component {
             )}
             <ActivityButtons
               nextLabel={nextLabel}
-              nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+              nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses)}
               onPressNext={() => {
                 if (isSplashScreen) {
                   this.setState({ isSplashScreen: false })

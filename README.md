@@ -1,5 +1,4 @@
-# MindLogger 0.17.13
-
+# MindLogger 0.17.32
 _Note: v0.1 is deprecated as of June 12, 2019._
 
 This mobile app (Android ≥ 5.0 "Lollipop" and iOS ≥ 10.0 "Whitetail") is intended to build apps for collecting data.

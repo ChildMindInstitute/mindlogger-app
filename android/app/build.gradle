@@ -131,8 +131,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 385
-        versionName "0.17.13"
+        versionCode 404
+        versionName "0.17.32"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
@@ -190,6 +190,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-file-viewer')
     implementation project(':react-native-sound-player')
     implementation project(':react-native-randombytes')
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -205,6 +206,8 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.0.0"
     // implementation project(':@react-native-community_audio-toolkit')
 
+    compile project(':react-native-file-viewer')
+
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -213,6 +216,19 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // If your app supports Android versions before Ice Cream Sandwich (API level 14)
+    implementation 'com.facebook.fresco:animated-base-support:1.3.0'
+
+    // For animated GIF support
+    implementation 'com.facebook.fresco:animated-gif:2.0.0'
+
+    // For WebP support, including animated WebP
+    implementation 'com.facebook.fresco:animated-webp:2.1.0'
+    implementation 'com.facebook.fresco:webpsupport:2.0.0'
+
+    // For WebP support, without animations
+    implementation 'com.facebook.fresco:webpsupport:2.0.0'
 }
 
 configurations.all {

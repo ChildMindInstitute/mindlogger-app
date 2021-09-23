@@ -165,7 +165,12 @@ export const getScoreFromLookupTable = (
 
   if (lookupTable) {
     const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
-    const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
+    const genderResponse = responses[items.findIndex(item => item.variableName === 'gender_screen')]
+    let gender = 'undefined';
+
+    if (genderResponse) {
+      gender = genderResponse.value ? 'F' : 'M';
+    }
 
     for (let row of lookupTable) {
       if (
