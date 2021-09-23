@@ -247,7 +247,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         <div class="score-area">
           <p
             class="score-title text-nowrap"
-            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+            style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
               Your/Your Child' Score
@@ -382,6 +382,9 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
           right: 0;
           bottom: 0;
         }
+        img {
+          max-width: 100%;
+        }        
       </style>
     `;
 
