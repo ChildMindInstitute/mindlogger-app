@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
+
+## [0.17.32] - 2021-09-22
+- Fixed tooltip issue
+
+## [0.17.31] - 2021-09-21
+- Fixed tooltip issue
+
+## [0.17.30] - 2021-09-19
+- Fixed incorrect icons
+
+## [0.17.29] - 2021-09-20
+- Fixed issue with transferred applet
+
+## [0.17.28] - 2021-09-19
+- Fixed issue with PDF export
+- Update Tooltip style
+
+## [0.17.27] - 2021-09-16
+- Bug fix
+
+## [0.17.26] - 2021-09-14
+- UI tooltip icon issue
+
+## [0.17.25] - 2021-09-13
+- Add PDF report feature on cumulative score summary page
+
+## [0.17.24] - 2021-09-08
+- Fixed one-time completion issue
+
+## [0.17.23] - 2021-09-08
+- Bug fix with acitivity schedule
+- Update ToolTip Icon
+
+## [0.17.22] - 2021-08-30
+- Validated password fields
+
+## [0.17.21] - 2021-07-25
+- Added age selector item type
+
 ## [0.17.20] - 2021-08-26
 - Draw Updates
 

@@ -138,9 +138,10 @@ export const prepareResponseForUpload = (
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
         ...accumulator,
-        [item.schema]: responses[index].value,
+        [item.schema]: responses[index],
       };
     }, {});
+
     responseData['responses'] = formattedResponses;
 
     if (activity.subScales) {
@@ -259,9 +260,10 @@ export const decryptAppletResponses = (applet, responses) => {
         ) {
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
-          if (response.value && response.value.value !== undefined) {
-            response.value = response.value.value;
-          }
+        }
+
+        if (response.value && response.value.value !== undefined) {
+          response.value = response.value.value;
         }
       }
 

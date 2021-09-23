@@ -101,11 +101,15 @@ export const getPastdue = (activityList, finishedEvents) => {
         + data.timeout.minute * 60000;
 
       if (activity.availability) {
-        const pastActivity = { ...activity };
-
-        delete pastActivity.events;
-        pastActivity.event = event;
-        pastActivities.push(pastActivity);
+        if (!data.completion
+          || !finishedEvents[event.id]
+          || scheduledTime.getTime() > finishedEvents[event.id]) {
+            const pastActivity = { ...activity };
+    
+            delete pastActivity.events;
+            pastActivity.event = event;
+            pastActivities.push(pastActivity);
+        }
       } else if (!activity.availability
         && scheduledTime <= today
         && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
