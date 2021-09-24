@@ -278,6 +278,7 @@ class Activity extends React.Component {
                   }
                 }
                 this.setState({ isContentError: false });
+
                 if (
                   getNextPos(currentScreen, itemVisibility) === -1 &&
                   activity.compute &&
