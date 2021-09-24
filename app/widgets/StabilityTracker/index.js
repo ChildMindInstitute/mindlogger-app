@@ -93,7 +93,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   const responses = useRef([]);
   const magnRef = useRef(), baseAcc = useRef();
 
-  const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000);
+  const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000), lastCrashTime = useRef(0);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
   const center = width/2;
 
@@ -196,7 +196,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     });
   }
 
-  const restartTrial = () => {
+  const restartTrial = (timeElapsed) => {
     score.current = score.current * 3 / 4
     lambdaVal.current = lambdaVal.current / 2
     offTargetTimer.current = configObj.maxOffTargetTime * 1000
@@ -208,6 +208,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     if (configObj.phaseType == 'challenge-phase') {
       lambdaSlope.current = lambdaSlope.current / 5 * 4;
     }
+
+    lastCrashTime.current = timeElapsed;
 
     if (trialNumber.current >= configObj.trialNumber) {
       finishResponse()
@@ -255,7 +257,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       oobDuration.current = 0;
       isOOB.current = true;
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, timeElapsed / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
+      lambdaVal.current = getNewLambda(lambdaVal.current, (timeElapsed - lastCrashTime.current) / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
     }
   }
 
@@ -272,7 +274,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
         if (oobDuration.current > configObj.oobDuration * 1000) {
           oobDuration.current = 0;
           isOOB.current = false;
-          restartTrial();
+          restartTrial(timeElapsed);
         }
       } else {
         updateScore(tickNumber, deltaTime)
