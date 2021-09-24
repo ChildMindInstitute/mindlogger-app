@@ -206,7 +206,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     trialNumber.current = trialNumber.current+1
 
     if (configObj.phaseType == 'challenge-phase') {
-      lambdaSlope.current = lambdaSlope.current / 5 * 4;
+      lambdaSlope.current = lambdaSlope.current / 9 * 10;
     }
 
     lastCrashTime.current = timeElapsed;
