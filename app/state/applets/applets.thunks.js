@@ -41,7 +41,7 @@ import {
   loggedInSelector,
 } from "../user/user.selectors";
 import { isReminderSetSelector } from "./applets.selectors";
-import { setCurrentApplet } from "../app/app.actions";
+import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
@@ -243,9 +243,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         const userInfo = userInfoSelector(state);
         const responses = [];
         let scheduleUpdated = false;
+        let finishedEvents = {}
 
         const transformedApplets = applets
           .map((appletInfo) => {
+            Object.assign(finishedEvents, appletInfo.finishedEvents);
+
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
               if (appletInfo.schedule) {
@@ -275,26 +278,28 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
               return currentApplet;
-          } else {
-            const applet = transformApplet(appletInfo, currentApplets);
-            if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
-              const appletId = applet.id.split('/')[1];
+            } else {
+              const applet = transformApplet(appletInfo, currentApplets);
+              if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+                const appletId = applet.id.split('/')[1];
 
-              if (keys && keys[appletId]) {
-                dispatch(prepareResponseKeys(applet.id, keys[appletId]))
-                Object.assign(applet, keys[appletId]);
-              } else {
-                dispatch(updateKeys(applet, userInfo));
+                if (keys && keys[appletId]) {
+                  dispatch(prepareResponseKeys(applet.id, keys[appletId]))
+                  Object.assign(applet, keys[appletId]);
+                } else {
+                  dispatch(updateKeys(applet, userInfo));
+                }
               }
-            }
-            responses.push({
-              ...decryptAppletResponses(applet, appletInfo.responses),
-              appletId: 'applet/' + appletInfo.id
-            });
+              responses.push({
+                ...decryptAppletResponses(applet, appletInfo.responses),
+                appletId: 'applet/' + appletInfo.id
+              });
 
-            return applet;
-          }
-        });
+              return applet;
+            }
+          });
+
+        dispatch(setClosedEvents(finishedEvents));
 
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);

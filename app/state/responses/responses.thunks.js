@@ -45,7 +45,7 @@ import {
 import {
   setActivityStartTime,
   setCurrentActivity,
-  setClosedEvent,
+  setClosedEvents,
   clearActivityStartTime,
   setActivityEndTime,
   setCurrentEvent
@@ -372,6 +372,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }
 
   const responseHistory = currentAppletResponsesSelector(state);
+  const finishedTime = new Date();
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
@@ -395,13 +396,17 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
+    const preparedResponse = prepareResponseForUpload(
+      inProgressResponse, applet, responseHistory, isTimeout, finishedTime
+    );
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
 
   if (event) {
-    dispatch(setClosedEvent(event))
+    dispatch(setClosedEvents({
+      [event]: finishedTime.getTime()
+    }))
   }
 
   setTimeout(() => {
