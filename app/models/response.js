@@ -78,8 +78,8 @@ export const prepareResponseForUpload = (
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
     timeout: isTimeout ? 1 : 0,
-    event: event ? {
-      id: event.id,
+    event: activity.event ? {
+      id: activity.event.id,
       scheduledTime: new Date(scheduledTime).getTime(),
       finishedTime: finishedTime.getTime()
     } : null,
