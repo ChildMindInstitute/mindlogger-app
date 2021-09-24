@@ -125,7 +125,7 @@ class Activity extends React.Component {
       return;
     }
 
-    if ((autoAdvance || fullScreen) && !optionalText) {
+    if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);
@@ -278,6 +278,7 @@ class Activity extends React.Component {
                   }
                 }
                 this.setState({ isContentError: false });
+
                 if (
                   getNextPos(currentScreen, itemVisibility) === -1 &&
                   activity.compute &&
