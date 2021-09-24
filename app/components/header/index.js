@@ -21,9 +21,10 @@ const styles = StyleSheet.create({
     left: 15,
   },
   logoImage: {
-    width: '100%',
-    height: 100,
-    resizeMode: "stretch",
+    height: 80,
+    width: 80,
+    left: 0,
+    top: 0
   },
   navigations: {
     display: 'flex',
@@ -48,9 +49,9 @@ const ActHeader = (props) => {
 
   return (
     <>
-      {
+      {!!watermark &&
         <View style={styles.logo}>
-          <Image square style={styles.logoImage} source={{ uri: watermark }} />
+          <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
       }
       <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>

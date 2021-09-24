@@ -1,6 +1,7 @@
 import * as R from "ramda";
 import moment from 'moment';
 import { Parse, Day } from 'dayspan';
+import _ from 'lodash';
 import {
   getLastScheduled,
   getStartOfInterval,
@@ -33,6 +34,8 @@ const ITEM_LIST_ELEMENT = "schema:itemListElement";
 const MAX_VALUE = "schema:maxValue";
 const MEDIA = "reprolib:terms/media";
 const MIN_VALUE = "schema:minValue";
+const MIN_AGE = "schema:minAge";
+const MAX_AGE = "schema:maxAge";
 const MULTIPLE_CHOICE = "reprolib:terms/multipleChoice";
 const MIN_VALUE_IMAGE = "schema:minValueImg";
 const MAX_VALUE_IMAGE = "schema:maxValueImg";
@@ -66,6 +69,8 @@ const CORRECT_ANSWER = "schema:correctAnswer";
 const RESPONSE_OPTIONS = "reprolib:terms/responseOptions";
 const VARIABLE_NAME = "reprolib:terms/variableName";
 const JS_EXPRESSION = "reprolib:terms/jsExpression";
+const SCORE_OVERVIEW = "reprolib:terms/scoreOverview";
+const DIRECTION = "reprolib:terms/direction";
 const VERSION = "schema:version";
 export const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
@@ -91,6 +96,7 @@ const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
+const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
@@ -162,6 +168,12 @@ export const flattenValueConstraints = (vcObj) =>
     }
     if (key === MIN_VALUE) {
       return { ...accumulator, minValue: R.path([key, 0, "@value"], vcObj) };
+    }
+    if (key === MIN_AGE) {
+      return { ...accumulator, minAge: Number(R.path([key, 0, "@value"], vcObj)) };
+    }
+    if (key === MAX_AGE) {
+      return { ...accumulator, maxAge: Number(R.path([key, 0, "@value"], vcObj)) };
     }
     if (key === MULTIPLE_CHOICE) {
       return {
@@ -492,7 +504,9 @@ const transformPureActivity = (activityJson) => {
   const compute = activityJson[COMPUTE] && R.map((item) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
-      variableName: R.path([VARIABLE_NAME, 0, "@value"], item)
+      variableName: R.path([VARIABLE_NAME, 0, "@value"], item),
+      description: _.get(item, [DESCRIPTION, 0, "@value"]),
+      direction: _.get(item, [DIRECTION, 0, "@value"], true),
     }
   }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
@@ -537,7 +551,9 @@ const transformPureActivity = (activityJson) => {
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
+    isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     compute,
+    scoreOverview: _.get(activityJson, [SCORE_OVERVIEW, 0, "@value"]),
     subScales,
     finalSubScale,
     messages,
