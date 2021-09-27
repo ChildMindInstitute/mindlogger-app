@@ -20,6 +20,8 @@ const validate = ({ oldPassword, password }) => {
   return errors;
 };
 
+const required = value => value ? undefined : 'Required'
+
 const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
     <Field
@@ -31,6 +33,7 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
+      validate={required}
     />
     <Field
       component={FormInputItem}
@@ -41,6 +44,7 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
+      validate={required}
     />
     <Button
       warning

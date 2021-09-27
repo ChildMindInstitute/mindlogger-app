@@ -54,9 +54,9 @@ export const setActivityEndTime = status => ({
   payload: status,
 });
 
-export const setClosedEvent = eventId => ({
+export const setClosedEvents = (payload) => ({
   type: APP_ACTIONS.SET_CLOSED_EVENT,
-  payload: eventId,
+  payload
 });
 
 export const setActivityStartTime = status => ({
@@ -91,3 +91,4 @@ export const setLanguage = language => ({
   type: APP_ACTIONS.SET_APP_LANGUAGE,
   payload: language,
 });
+

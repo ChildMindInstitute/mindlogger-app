@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
-import { View, ScrollView,KeyboardAvoidingView, TextInput, Platform } from 'react-native';
+import { View, ScrollView,KeyboardAvoidingView } from 'react-native';
 import moment from 'moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import { OptionalText } from '../OptionalText';
 
 export class DatePicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      isDateTimePickerVisible: false,
     };
 
     this.onChangeDate = this.onChangeDate.bind(this);
@@ -25,35 +25,25 @@ export class DatePicker extends React.Component {
     onChange(this.finalAnswer);
   }
 
+  hideDatePicker = () => {
+    this.setState({ isDateTimePickerVisible: false });
+  };
 
   setShowPicker(visible) {
-    this.setState({ show: visible });
+    this.setState({ isDateTimePickerVisible: visible });
   }
 
-  onChangeDate (event, selectedDate) {
+  onChangeDate (selectedDate) {
     const { onChange } = this.props;
-    if (Platform.OS == 'ios') {
 
-      this.finalAnswer["value"] =
-      {
-        year: selectedDate.getFullYear(),
-        month: selectedDate.getMonth(),
-        day: selectedDate.getDate()
-      }
-      onChange(this.finalAnswer);
-    } else {
-      this.setShowPicker(false);
-
-      if (event.type == 'set') {
-        this.finalAnswer["value"] =
-        {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth(),
-          day: selectedDate.getDate()
-        }
-        onChange(this.finalAnswer);
-      }
+    this.finalAnswer["value"] = {
+      year: selectedDate.getFullYear(),
+      month: selectedDate.getMonth(),
+      day: selectedDate.getDate()
     }
+    onChange(this.finalAnswer);
+    this.setShowPicker(false);
+    
   }
 
   render() {
@@ -61,8 +51,6 @@ export class DatePicker extends React.Component {
     this.finalAnswer = value ? value : {};
 
     const date = this.finalAnswer["value"] ? new Date(this.finalAnswer["value"].year, this.finalAnswer["value"].month, this.finalAnswer["value"].day) : new Date();
-
-
 
     if (this.finalAnswer["value"]) {
       date.setHours(this.finalAnswer["value"].hour || 0);
@@ -79,7 +67,7 @@ export class DatePicker extends React.Component {
       <View style={{ marginBottom: 20 }}>
         <ListItem
           onPress={() => {
-            this.setShowPicker(!this.state.show);
+              this.setShowPicker(!this.state.isDateTimePickerVisible);
           }}
         >
           <Left>
@@ -90,16 +78,15 @@ export class DatePicker extends React.Component {
           </Right>
         </ListItem>
 
-        { this.state.show && (
           <DateTimePicker
+            isVisible={this.state.isDateTimePickerVisible}
             testID="dateTimePicker"
             value={date}
             mode={'date'}
-            is24Hour={true}
-            display="default"
-            onChange={this.onChangeDate}
+            display={Platform.OS === 'ios' ? 'inline' : 'default'}
+            onCancel={this.hideDatePicker}
+            onConfirm={this.onChangeDate}
           />
-        )}
         {
           isOptionalText &&
             <OptionalText

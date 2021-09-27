@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   View,
+  Platform,
   ImageBackground,
   RefreshControl,
   StatusBar,
@@ -24,6 +25,8 @@ import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
+
+const isIOS = Platform.OS === 'ios';
 
 const styles = StyleSheet.create({
   container: {
@@ -115,23 +118,23 @@ const AppletListComponent = ({
 
   return (
     <Container style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
       <ImageBackground
         style={{ width: '100%', height: '100%', flex: 1 }}
         source={{
           uri:
-            'https://images.unsplash.com/photo-1439853949127-fa647821eba0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=668&q=80',
+            'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
         }}
       >
         <SafeAreaView />
         <Header style={{ backgroundColor: 'transparent', borderBottomWidth: 0 }}>
           <Left />
           <Body>
-            <Title>{title}</Title>
+            <Title style={{ color: '#333333' }}>{title}</Title>
           </Body>
           <Right style={{ flexDirection: 'row' }}>
             <Button transparent onPress={onPressSettings}>
-              <Icon type="FontAwesome" name="user" />
+              <Icon style={{ color: '#333333' }} type="FontAwesome" name="user" />
             </Button>
           </Right>
         </Header>

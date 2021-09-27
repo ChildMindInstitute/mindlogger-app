@@ -24,8 +24,9 @@ import i18n from '../../i18n/i18n';
 
 const logoImage = require('../../../img/color_logo.png');
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? '3.5%' : 0;
-const IOSBodyPadding = Platform.OS === 'ios' ? 10 : 0;
+const isIOS = Platform.OS === 'ios';
+const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSBodyPadding = isIOS ? 10 : 0;
 
 class AboutApp extends Component {
   // eslint-disable-line
@@ -42,7 +43,7 @@ class AboutApp extends Component {
       if (skin.about.replace(/\s/g, '').length) {
         return (
           <Container style={styles.container}>
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
             <Header hasSubtitle style={{ backgroundColor: skin.colors.primary }}>
               <Left>
                 <Button transparent onPress={this.onClose}>
@@ -68,7 +69,7 @@ class AboutApp extends Component {
     }
     return (
       <Container style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header
           hasSubtitle
           style={{

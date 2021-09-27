@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
+import moment from "moment";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
@@ -45,7 +46,7 @@ import {
 import {
   setActivityStartTime,
   setCurrentActivity,
-  setClosedEvent,
+  setClosedEvents,
   clearActivityStartTime,
   setActivityEndTime,
   setCurrentEvent
@@ -103,6 +104,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   dispatch(
     createResponseInProgress(applet.id, activity, subjectId, timeStarted)
   );
+
   dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
   Actions.push("take_act");
@@ -211,7 +213,10 @@ export const downloadResponse = () => (dispatch, getState) => {
   const userInfo = userInfoSelector(state);
   const applet = currentAppletSelector(state);
 
-  dispatch(updateKeys(applet, userInfo));
+  if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
+    dispatch(updateKeys(applet, userInfo));
+  }
+
   dispatch(setDownloadingResponses(true));
 
   downloadAppletResponse(authToken, applet)
@@ -369,6 +374,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }
 
   const responseHistory = currentAppletResponsesSelector(state);
+  const finishedTime = new Date();
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
@@ -392,13 +398,17 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
+    const preparedResponse = prepareResponseForUpload(
+      inProgressResponse, applet, responseHistory, isTimeout, finishedTime
+    );
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
 
   if (event) {
-    dispatch(setClosedEvent(event))
+    dispatch(setClosedEvents({
+      [event]: finishedTime.getTime()
+    }))
   }
 
   setTimeout(() => {

@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import {
   currentScreenSelector,
 } from "../state/responses/responses.selectors";
+import questionMark from "../../img/question-mark.png";
 
 export class MultiSelectScreen extends Component {
   constructor() {
@@ -48,6 +49,15 @@ export class MultiSelectScreen extends Component {
     }
   }
 
+  invertColor = (hex) => {
+    let hexcolor = hex.replace("#", "");
+    let r = parseInt(hexcolor.substr(0, 2), 16);
+    let g = parseInt(hexcolor.substr(2, 2), 16);
+    let b = parseInt(hexcolor.substr(4, 2), 16);
+    let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#333333' : 'white';
+  }
+
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
     if (!this.finalAnswer["value"]  || (config.maxValue === 1 && config.minValue === 1)) {
@@ -70,7 +80,12 @@ export class MultiSelectScreen extends Component {
 
   render() {
     const {
-      config: { itemList , isOptionalText, isOptionalTextRequired},
+      config: {
+        colorPalette,
+        itemList,
+        isOptionalText,
+        isOptionalTextRequired
+      },
       token,
       value = {},
     } = this.props;
@@ -84,20 +99,31 @@ export class MultiSelectScreen extends Component {
       <View style={{ alignItems: "stretch" }}>
         {this.state.orderedItems.map((item, index) => (
           <ListItem
-            style={{ width: "90%" }}
+            style={{ width: '90%', backgroundColor: colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
-            <View style={{ width: '8%' }}>
+            <View style={{
+              width: '10%',
+              marginLeft: "2%",
+              marginRight: "2%",
+              justifyContent: "center",
+              flexDirection: "row"
+            }}>
               {item.description ? (
                 <TooltipBox text={item.description}>
-                  <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
+                  <View style={{ width: 22, height: 22 }}>
+                    <Image
+                      style={{ width: '100%', height: '100%' }}
+                      source={questionMark}
+                    />
+                  </View>
                 </TooltipBox>
               ) : (
                 <View />
               )}
             </View>
-            <View style={{ width: "85%" }}>
+            <View style={{ width: "72%" }}>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 {item.image ? (
                   <Image
@@ -115,7 +141,7 @@ export class MultiSelectScreen extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    <Text>
+                    <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333'}}>
                       {item.name.en}{" "}
                       {token
                         ? item.value < 0
@@ -130,9 +156,10 @@ export class MultiSelectScreen extends Component {
                       marginLeft: "8%",
                       maxWidth: "92%",
                       justifyContent: "center",
+                      color: colorPalette && item.color ? this.invertColor(item.color) : colors.primary
                     }}
                   >
-                    <Text>
+                      <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333' }}>
                       {item.name.en}{" "}
                       {token
                         ? item.value < 0
@@ -144,7 +171,7 @@ export class MultiSelectScreen extends Component {
                 )}
               </View>
             </View>
-            <View style={{ width: "15%" }}>
+            <View style={{ width: "14%" }}>
               <CheckBox
                 checked={
                   this.finalAnswer["value"] &&
@@ -154,8 +181,8 @@ export class MultiSelectScreen extends Component {
                 onPress={() => this.onAnswer(token ? item.name.en : item.value)}
                 checkedIcon="check-square"
                 uncheckedIcon="square-o"
-                checkedColor={colors.primary}
-                uncheckedColor={colors.primary}
+                checkedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
+                uncheckedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
               />
             </View>
           </ListItem>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar } from 'react-native';
+import { StatusBar, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -10,6 +10,8 @@ import ActProgress from './progress';
 import ActivityButtons from './ActivityButtons';
 import Screen from './screen';
 import { authTokenSelector } from '../state/user/user.selectors';
+
+const isIOS = Platform.OS === 'ios';
 
 class InfoAct extends Component {
   constructor(props) {
@@ -55,7 +57,7 @@ class InfoAct extends Component {
     const { index, answers } = this.state;
     return (
       <Container>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <InfoHeader title={activity.name} />
         { data.display && data.display.progress && (
           <ActProgress index={index + 1} length={data.screens.length} />

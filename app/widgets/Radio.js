@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput, Platform} from 'react-native';
-import { ListItem, Text, Icon , Item , Input} from 'native-base';
+import { ListItem, Text, Item , Input} from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
 import { OptionalText } from './OptionalText';
 import { connect } from "react-redux";
+import questionMark from "../../img/question-mark.png";
 
 import {
   currentScreenSelector,
@@ -44,26 +45,40 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
     onChange(finalAnswer);
   }
 
+  const invertColor = (hex) => {
+    let hexcolor = hex.replace("#", "");
+    let r = parseInt(hexcolor.substr(0, 2), 16);
+    let g = parseInt(hexcolor.substr(2, 2), 16);
+    let b = parseInt(hexcolor.substr(4, 2), 16);
+    let yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    return (yiq >= 128) ? '#333333' : 'white';
+  }
+
   return (
     <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
         {
           itemOrder.map((item, index) => (
             <ListItem
-              style={{ width: '90%' }}
+              style={{ width: '90%', backgroundColor: config.colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
               onPress={() => handlePress(token ? item.name.en : item.value)}
               key={index}
             >
-              <View style={{ width: '8%' }}>
+              <View style={{ width: '10%', marginRight: "2%", marginLeft: "2%" }}>
                 {item.description ? (
                   <TooltipBox text={item.description}>
-                    <Icon type="FontAwesome" name="question-circle" style={{color: '#016fbe', fontSize: 24, marginHorizontal: 0}} />
+                    <View style={{ width: 22, height: 22 }}>
+                      <Image
+                        style={{ width: '100%', height: '100%' }}
+                        source={questionMark}
+                      />
+                    </View>
                   </TooltipBox>
                 ) : (
                   <View />
                 )}
               </View>
-              <View style={{ width: '85%' }}>
+              <View style={{ width: '72%' }}>
                 <View style={{ width: '100%', flexDirection: 'row' }}>
                   {item.image ? (
                     <Image
@@ -79,9 +94,12 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                         marginLeft: '8%',
                         maxWidth: '72%',
                         justifyContent: 'center',
+                        color: config.colorPalette && item.color ? invertColor(item.color) : colors.primary
                       }}
                     >
-                      <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
+                      <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333' }}>
+                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                      </Text>
                     </View>
                   ) : (
                     <View
@@ -91,18 +109,21 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                         justifyContent: 'center',
                       }}
                     >
-                      <Text>{item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}</Text>
+                        <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333'}}>
+                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                      </Text>
                     </View>
                   )}
                 </View>
               </View>
-              <View style={{ width: '15%' }}>
+              <View style={{ width: '14%' }}>
                 <CheckBox
                   checked={finalAnswer["value"] === (token ? item.name.en : item.value)}
                   onPress={() => handlePress(token ? item.name.en : item.value)}
                   checkedIcon="dot-circle-o"
                   uncheckedIcon="circle-o"
-                  checkedColor={colors.primary}
+                  checkedColor={config.colorPalette && item.color ? invertColor(item.color) : colors.primary}
+                  uncheckedColor={config.colorPalette && item.color ? invertColor(item.color) : colors.primary}
                 />
               </View>
             </ListItem>

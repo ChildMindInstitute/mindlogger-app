@@ -99,6 +99,7 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
     retrieveResponses: true,
     numberOfDays: 7,
     groupByDateActivity: false,
+    retrieveLastResponseTime: true,
     currentApplet,
     nextActivity
   });
@@ -179,7 +180,6 @@ export const postResponse = ({ authToken, response }) => {
 };
 
 export const postAppletBadge = (authToken, badge) => {
-  console.log("post applet badge");
   const url = `${apiHost()}/applet/setBadge?badge=${badge}`;
   const headers = {
     "Girder-Token": authToken,

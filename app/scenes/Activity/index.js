@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, View, StyleSheet, Alert } from "react-native";
+import { StatusBar, View, Text, StyleSheet, Alert } from "react-native";
 import { Container } from "native-base";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -36,6 +36,7 @@ import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
 import ActivityTime from "./ActivityTime";
 import ActivitySummary from "../ActivitySummary";
+import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import ActivityButtons from "../../components/ActivityButtons";
@@ -68,16 +69,21 @@ class Activity extends React.Component {
       isContentError: false,
       idleTime: null,
       isSummaryScreen: false,
+      isSplashScreen: false,
     };
     this.idleTimer = new Timer();
   }
 
   componentDidMount() {
-    const { isSummaryScreen } = this.props;
+    const { isSummaryScreen, currentResponse: { activity }, currentScreen } = this.props;
     const idleTime = this.getIdleTime();
 
     this.props.setActivitySelectionDisabled(false);
-    this.setState({ isSummaryScreen, idleTime }, () => {
+    this.setState({
+      isSummaryScreen,
+      idleTime,
+      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0
+    }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
           idleTime, // Time in seconds.
@@ -119,8 +125,8 @@ class Activity extends React.Component {
       return;
     }
 
-    if ((autoAdvance || fullScreen) && !optionalText) {
-      if (next === -1 && activity.compute && !isSummaryScreen) {
+    if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
+      if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);
       } else {
@@ -161,43 +167,121 @@ class Activity extends React.Component {
     }
   }
 
+  handlePressPrevScreen = () => {
+    const { isSummaryScreen } = this.state;
+    const {
+      setSummaryScreen,
+      setCurrentActivity,
+      currentScreen,
+      prevScreen,
+      setSelected,
+      isSelected,
+    } = this.props;
+
+    if (isSummaryScreen) {
+      this.setState({ isSummaryScreen: false });
+      setSummaryScreen(false);
+      setSelected(false);
+    } else {
+      if (!currentScreen) {
+        setCurrentActivity(null);
+      }
+      prevScreen();
+      if (isSelected) {
+        setSelected(false);
+      }
+    }
+  }
+
+  handlePressNextScreen = () => {
+    const {
+      currentResponse,
+      setSummaryScreen,
+      currentScreen,
+      nextScreen,
+      setSelected,
+      itemVisibility,
+    } = this.props;
+
+    const { isSummaryScreen, isSplashScreen } = this.state;
+    const { activity, responses } = currentResponse;
+
+    if (isSplashScreen) {
+      this.setState({ isSplashScreen: false })
+      return
+    }
+    if (
+      activity.items[currentScreen].correctAnswer &&
+      activity.items[currentScreen].correctAnswer["en"]
+    ) {
+      const correctAnswer =
+        activity.items[currentScreen].correctAnswer["en"];
+      if (responses[currentScreen] !== correctAnswer) {
+        Alert.alert(
+          i18n.t("activity:failed"),
+          i18n.t("activity:incorrect_answer"),
+          [
+            {
+              text: "OK",
+              onPress: () => console.log("Incorrect!"),
+            },
+          ]
+        );
+        return;
+      }
+    }
+    this.setState({ isContentError: false });
+    if (
+      getNextPos(currentScreen, itemVisibility) === -1 &&
+      activity.compute &&
+      !activity.summaryDisabled &&
+      !isSummaryScreen
+    ) {
+      this.setState({ isSummaryScreen: true });
+      setSummaryScreen(true);
+    } else {
+      if (isSummaryScreen) {
+        this.setState({ isSummaryScreen: false });
+        setSummaryScreen(false);
+      }
+      nextScreen();
+      setSelected(false);
+    }
+  }
+
   componentWillUnmount() {
     this.idleTimer.clear();
   }
 
   render() {
     const {
-      currentApplet,
       setAnswer,
       currentResponse,
-      setSummaryScreen,
-      setCurrentActivity,
+      currentApplet,
       authToken,
       currentScreen,
-      nextScreen,
-      prevScreen,
-      setSelected,
       itemVisibility,
-      isSelected,
     } = this.props;
 
-    const { isSummaryScreen } = this.state;
-
+    const { isSummaryScreen, isSplashScreen } = this.state;
+    
+    
     if (!currentResponse) {
       return <View />;
     }
-
+    
     const { activity, responses } = currentResponse;
+    const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const nextLabel = isSummaryScreen
-    ? "Next"
-    : getNextLabel(
-      currentScreen,
-        itemVisibility,
-        activity,
-        responses,
-        this.state.isContentError
-      );
+      ? "Next"
+      : getNextLabel(
+        currentScreen,
+          itemVisibility,
+          activity,
+          responses,
+          this.state.isContentError
+        );
     const actionLabel = isSummaryScreen
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
@@ -214,10 +298,25 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
+        {!fullScreen &&
+          <ActHeader
+            title={activity.name.en}
+            actionLabel={actionLabel}
+            watermark={currentApplet.watermark}
+            topNavigation={topNavigation}
+            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            onPressPrevScreen={this.handlePressPrevScreen}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+            onPressNextScreen={this.handlePressNextScreen}
+            onPressAction={() => {
+              setAnswer(activity, currentScreen, undefined);
+            }}
+          />
+        }
         {(activity.event && activity.event.data.timedActivity.allow) &&
           <ActivityTime activity={activity} />
         }
-        {!isSummaryScreen ? (
+        {!isSummaryScreen && !isSplashScreen && (
           <ActivityScreens
             activity={activity}
             answers={responses}
@@ -230,9 +329,13 @@ class Activity extends React.Component {
             onContentError={() => this.setState({ isContentError: true })}
             onAnyTouch={this.idleTimer.resetCountdown}
           />
-        ) : (
-            <ActivitySummary responses={responses} activity={activity} />
-          )}
+        )}
+        {!!isSummaryScreen && (
+          <ActivitySummary responses={responses} activity={activity} />
+        )}
+        {!!isSplashScreen && (
+          <ActivitySplash activity={activity} />
+        )}
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
@@ -243,74 +346,24 @@ class Activity extends React.Component {
                 index={currentScreen}
                 length={activity.items.length}
               />
-            )}
-            <ActivityButtons
-              nextLabel={nextLabel}
-              nextEnabled={isNextEnabled(currentScreen, activity, responses)}
-              onPressNext={() => {
-                if (
-                  activity.items[currentScreen].correctAnswer &&
-                  activity.items[currentScreen].correctAnswer["en"]
-                ) {
-                  const correctAnswer =
-                    activity.items[currentScreen].correctAnswer["en"];
-                  if (responses[currentScreen] !== correctAnswer) {
-                    Alert.alert(
-                      i18n.t("activity:failed"),
-                      i18n.t("activity:incorrect_answer"),
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("Incorrect!"),
-                        },
-                      ]
-                    );
-                    return;
-                  }
-                }
-                this.setState({ isContentError: false });
-                if (
-                  getNextPos(currentScreen, itemVisibility) === -1 &&
-                  activity.compute &&
-                  !isSummaryScreen
-                ) {
-                  this.setState({ isSummaryScreen: true });
-                  setSummaryScreen(true);
-                } else {
-                  if (isSummaryScreen) {
-                    this.setState({ isSummaryScreen: false });
-                    setSummaryScreen(false);
-                  }
-                  nextScreen();
-                  setSelected(false);
-                }
-              }}
-              prevLabel={prevLabel}
-              prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
-              onPressPrev={() => {
-                const { isSummaryScreen } = this.state;
-                if (isSummaryScreen) {
-                  this.setState({ isSummaryScreen: false });
-                  setSummaryScreen(false);
-                  setSelected(false);
-                } else {
-                  if (!currentScreen) {
-                    setCurrentActivity(null);
-                  }
-                  prevScreen();
-                  if (isSelected) {
-                    setSelected(false);
-                  }
-                }
-              }}
-              actionLabel={actionLabel}
-              onPressAction={() => {
-                setAnswer(activity, currentScreen, undefined);
-              }}
-            />
+            )} 
+            {!topNavigation &&
+              <ActivityButtons
+                nextLabel={nextLabel}
+                nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses)}
+                onPressNext={() => this.handlePressNextScreen()}
+                prevLabel={prevLabel}
+                prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+                onPressPrev={() => this.handlePressPrevScreen()}
+                actionLabel={actionLabel}
+                onPressAction={() => {
+                  setAnswer(activity, currentScreen, undefined);
+                }}
+              />
+            }
+            
           </View>
         )}
-        {!fullScreen && <ActHeader title={activity.name.en} />}
       </Container>
     );
   }

@@ -1,4 +1,5 @@
 import { Parser } from 'expr-eval';
+import _ from "lodash";
 
 export const getScoreFromResponse = (item, value) => {
   if (value === null || item.inputType !== 'radio' && item.inputType !== 'slider') {
@@ -8,7 +9,8 @@ export const getScoreFromResponse = (item, value) => {
   const valueConstraints = item.valueConstraints || {};
   const itemList = valueConstraints.itemList || [];
 
-  if (!valueConstraints.scoring) {
+  const isScoring = valueConstraints.scoring || _.findIndex(itemList, obj => Boolean(obj.score)) > -1;
+  if (!isScoring) {
     return 0;
   }
 
@@ -81,16 +83,15 @@ export const evaluateScore = (testExpression, items = [], scores = [], subScaleR
 
   try {
     let expression = testExpression;
-
     for (const variableName in subScaleResult) {
       expression = expression.replace(
-        new RegExp(`\\(${variableName}\\)`, 'g'), subScaleResult[variableName].tScore
+        new RegExp(`\\(${variableName}\\)`, 'g'), subScaleResult[variableName].tScore ? subScaleResult[variableName].tScore : 0
       );
     }
 
     for (let i = 0; i < items.length; i++) {
       expression = expression.replace(
-        new RegExp(`\\b${items[i].variableName}\\b`, 'g'), scores[i]
+        new RegExp(`\\b${items[i].variableName}\\b`, 'g'), scores[i] ? scores[i] : 0
       );
     }
 
@@ -113,7 +114,8 @@ export const getMaxScore = (item) => {
   const valueConstraints = item.valueConstraints || {};
   const itemList = valueConstraints.itemList || [];
 
-  if (!valueConstraints.scoring) {
+  const isScoring = valueConstraints.scoring || _.findIndex(itemList, obj => Boolean(obj.score)) > -1;
+  if (!isScoring) {
     return 0;
   }
 
@@ -163,7 +165,12 @@ export const getScoreFromLookupTable = (
 
   if (lookupTable) {
     const age = responses[items.findIndex(item => item.variableName === 'age_screen')];
-    const gender = responses[items.findIndex(item => item.variableName === 'gender_screen')].value ? 'F' : 'M';
+    const genderResponse = responses[items.findIndex(item => item.variableName === 'gender_screen')]
+    let gender = 'undefined';
+
+    if (genderResponse) {
+      gender = genderResponse.value ? 'F' : 'M';
+    }
 
     for (let row of lookupTable) {
       if (
@@ -189,7 +196,7 @@ export const getSubScaleResult = (subScales, responses, items) => {
   const subScaleResult = {};
   const calculated = {};
 
-  while(true) {
+  while (true) {
     let updated = false;
 
     for (const subScale of subScales) {
@@ -225,7 +232,8 @@ export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
   for (let i = 0; i < responses.length; i++) {
     if (responses[i]) {
       total += getScoreFromResponse(items[i], responses[i].value);
-      if (items[i].valueConstraints && items[i].valueConstraints.scoring) {
+      const isScoring = items[i].valueConstraints.scoring || _.findIndex(items[i].valueConstraints.itemList, obj => Boolean(obj.score)) > -1;
+      if (items[i].valueConstraints && isScoring) {
         count++;
       }
     }

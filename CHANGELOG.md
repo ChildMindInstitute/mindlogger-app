@@ -5,8 +5,134 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
-## [0.16.36] - 2021-07-18
+## [0.17.35] - 2021-07-18
 - Implement removeBack option
+
+## [0.17.34] - 2021-08-01
+- Build top navigation option
+
+## [0.17.33] - 2021-09-23
+- Add timer
+
+## [0.17.32] - 2021-09-22
+- Fixed tooltip issue
+
+## [0.17.31] - 2021-09-21
+- Fixed tooltip issue
+
+## [0.17.30] - 2021-09-19
+- Fixed incorrect icons
+
+## [0.17.29] - 2021-09-20
+- Fixed issue with transferred applet
+
+## [0.17.28] - 2021-09-19
+- Fixed issue with PDF export
+- Update Tooltip style
+
+## [0.17.27] - 2021-09-16
+- Bug fix
+
+## [0.17.26] - 2021-09-14
+- UI tooltip icon issue
+
+## [0.17.25] - 2021-09-13
+- Add PDF report feature on cumulative score summary page
+
+## [0.17.24] - 2021-09-08
+- Fixed one-time completion issue
+
+## [0.17.23] - 2021-09-08
+- Bug fix with acitivity schedule
+- Update ToolTip Icon
+
+## [0.17.22] - 2021-08-30
+- Validated password fields
+
+## [0.17.21] - 2021-07-25
+- Added age selector item type
+
+## [0.17.20] - 2021-08-26
+- Draw Updates
+
+## [0.17.19] - 2021-08-23
+- Fixed issue with cumulative scoring
+
+## [0.17.18] - 2021-08-20
+- Fix always_available option
+
+## [0.17.17] - 2021-08-19
+- Updated date/time picker package version
+- Fixed issue with cumulative scoring
+
+## [0.17.16] - 2021-08-16
+- Fixed date/time picker styles on iOS14
+
+## [0.17.15] - 2021-08-12
+- Fixed markdown issue
+
+## [0.17.14] - 2021-08-11
+- Fixed applet about page issue
+
+## [0.17.13] - 2021-08-09
+- Fixed activity header issue
+
+## [0.17.12] - 2021-08-05
+- Fixed date/time pickers on iOS14
+
+## [0.17.10] - 2021-08-04
+- Fixed header image ratio
+- Fixed activity header component
+
+## [0.17.9] - 2021-08-03
+- Fixed watermark issue on Android/iOS
+
+## [0.17.8] - 2021-08-01
+- Fix delays on applet screen with Cumulative Score on Android
+
+## [0.17.7] - 2021-07-29
+- Build large text in markdown
+- Fix date and time pickers
+- Fix video quality issues
+
+## [0.17.6] - 2021-07-28
+- Fixed statusBar issue on Android
+- Fix markdown issue
+
+## [0.17.5] - 2021-07-27
+- Fixed radio/checkbox options color
+
+## [0.17.4] - 2021-07-8
+- Fixed camera quality
+- Fixed calendar layout
+- Fixed header and footer padding
+
+## [0.17.3] - 2021-07-25
+- Fix status-bar color and background
+
+## [0.17.2] - 2021-07-22
+- Fixed Audio Player Widget
+- Fixed Audio Record Widget
+- Fixed Audio Link in markdown
+
+## [0.16.40] - 2021-07-18
+- Updated images on appletList and end screens
+- Implement color palette for radio/checkbox items
+
+## [0.16.40] - 2021-06-28
+- Update markdown rules
+
+## [0.16.39] - 2021-06-27
+- Implemented watermark
+
+## [0.16.38] - 2021-07-20
+- Fixed a condition for activitySplash component
+
+## [0.16.37] - 2021-07-20
+- Optimize Confirmation Screen
+
+## [0.16.36] - 2021-07-13
+- Show activity based on threshold achieved in Cumulative Score
 
 ## [0.16.35] - 2021-07-13
 - Fix required text input
@@ -15,7 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix skippable option for media items
 
 ## [0.16.33] - 2021-07-11
-- Fixed sub-scales 
+- Fixed sub-scales
 
 ## [0.16.32] - 2021-07-07
 - Add arrayNotIncludes function for expr

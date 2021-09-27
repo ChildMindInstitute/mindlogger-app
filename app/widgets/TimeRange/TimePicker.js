@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Text, ListItem, Left, Right, Icon } from 'native-base';
 import { StyleSheet, View, Platform } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 import moment from 'moment';
 import { colors } from '../../theme';
@@ -34,22 +34,12 @@ const TimePicker = ({ onChange, value = {}, label }) => {
     date.setMinutes(0);
   }
 
-  const onChangeTime = (event, selectedDate) => {
-    if (Platform.OS == 'ios') {
-      onChange({
-        hour: selectedDate.getHours(),
-        minute: selectedDate.getMinutes()
-      })
-    } else {
-      setShow(false);
-
-      if (event.type == 'set') {
-        onChange({
-          hour: selectedDate.getHours(),
-          minute: selectedDate.getMinutes()
-        })
-      }
-    }
+  const onChangeTime = (selectedDate) => {
+    onChange({
+      hour: selectedDate.getHours(),
+      minute: selectedDate.getMinutes()
+    })
+    setShow(false);
   }
   return (
     <View style={{ marginBottom: 20 }}>
@@ -67,16 +57,16 @@ const TimePicker = ({ onChange, value = {}, label }) => {
         </Right>
       </ListItem>
 
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={'time'}
-          is24Hour={true}
-          display="default"
-          onChange={onChangeTime}
-        />
-      )}
+      <DateTimePicker
+        isVisible={show}
+        testID="dateTimePicker"
+        value={date}
+        mode={'time'}
+        is24Hour={true}
+        display={Platform.OS === 'ios' ? 'inline' : 'default'}
+        onCancel={() => setShow(false)}
+        onConfirm={onChangeTime}
+      />
     </View>
   );
 };

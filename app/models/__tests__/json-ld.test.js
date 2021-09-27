@@ -108,6 +108,7 @@ test('appletTransformJson: ema-hbn', () => {
     },
     image:
       "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
+    "watermark": "",
     description: {
       en: "Daily questions about your child's physical and mental health",
     },
@@ -193,12 +194,15 @@ test('activityTransformJson: ema-hbn', () => {
     compute: undefined,
     autoAdvance: false,
     backDisabled: false,
+    finalSubScale: undefined,
+    isReviewerActivity: false,
     fullScreen: false,
     messages: undefined,
     subScales: undefined,
     info: undefined,
     notification: {},
     isPrize: false,
+    summaryDisabled: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -307,6 +311,9 @@ test('activityTransformJson: nda-phq', () => {
     notification: {},
     id: 'activity/5cba3c1f86fafd5df796d913',
     isPrize: false,
+    summaryDisabled: false,
+    finalSubScale: undefined,
+    isReviewerActivity: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -359,6 +366,7 @@ test('itemTransformJson', () => {
     timer: undefined,
     delay: undefined,
     media: undefined,
+    summaryDisabled: false,
   });
 });
 

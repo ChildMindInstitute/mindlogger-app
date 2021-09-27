@@ -41,7 +41,7 @@ import {
   loggedInSelector,
 } from "../user/user.selectors";
 import { isReminderSetSelector } from "./applets.selectors";
-import { setCurrentApplet } from "../app/app.actions";
+import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
@@ -232,15 +232,23 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   dispatch(setDownloadingApplets(true));
   getApplets(auth.token, localInfo)
     .then(async (resp) => {
-      const applets = resp.data;
+      let applets = [];
+      if (resp.data)
+        applets = resp.data;
+      else
+        applets = resp;
+
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
         const responses = [];
         let scheduleUpdated = false;
+        let finishedEvents = {}
 
         const transformedApplets = applets
           .map((appletInfo) => {
+            Object.assign(finishedEvents, appletInfo.finishedEvents);
+
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
               if (appletInfo.schedule) {
@@ -291,6 +299,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
+        dispatch(setClosedEvents(finishedEvents));
+
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);
 
@@ -305,12 +315,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         }
       }
     })
-    .catch((err) => console.warn(err.message))
+    .catch ((err) => console.warn(err.message))
     .finally(() => {
-      dispatch(setDownloadingApplets(false));
-      // dispatch(scheduleAndSetNotifications());
-      // dispatch(getInvitations());
-    });
+  dispatch(setDownloadingApplets(false));
+  // dispatch(scheduleAndSetNotifications());
+  // dispatch(getInvitations());
+});
 };
 
 export const downloadTargetApplet = (appletId, cb = null) => (
@@ -381,10 +391,10 @@ export const joinOpenApplet = (appletURI) => (dispatch, getState) => {
 
 export const updateBadgeNumber = (badgeNumber) => (dispatch, getState) => {
   const state = getState();
-  const token = state.user ?.auth ?.token;
+  const token = state.user?.auth?.token;
   if (token) {
     postAppletBadge(token, badgeNumber)
-      .then((response) => {})
+      .then((response) => { })
       .catch((e) => {
         console.warn(e);
       });

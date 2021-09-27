@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StatusBar, TouchableOpacity } from 'react-native';
+import { StatusBar, TouchableOpacity, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -20,6 +20,8 @@ import styles from './styles';
 import { appletsSelector } from '../../state/applets/applets.selectors';
 import { skinSelector } from '../../state/app/app.selectors';
 import BaseText from '../../components/base_text/base_text';
+
+const isIOS = Platform.OS === 'ios';
 
 class AboutScreen extends Component {
   // eslint-disable-line
@@ -51,7 +53,7 @@ class AboutScreen extends Component {
     const appletsWithInfo = applets.filter(applet => typeof applet.info !== 'undefined');
     return (
       <Container style={styles.container}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
         <Header style={{ backgroundColor: skin.colors.primary }}>
           <Left />
           <Body>
