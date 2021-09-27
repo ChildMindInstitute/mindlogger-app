@@ -80,9 +80,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.12] - 2021-08-05
 - Fixed date/time pickers on iOS14
 
-## [0.17.11] - 2021-08-05
-- Build removeUndo option for draw items
-
 ## [0.17.10] - 2021-08-04
 - Fixed header image ratio
 - Fixed activity header component
