@@ -80,7 +80,6 @@ const ActivityList = ({
         appletActivities.push(act);
     }
 
-    console.log('appletActivities-------------------------->', appletActivities);
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {

@@ -41,9 +41,6 @@ export class ABTrails extends React.Component {
     this.finalAnswer = {};
   }
 
-  componentDidMount() {
-    console.log('data', this.props.data);
-  }
 
   handleComment = (itemValue) => {
     const { onChange } = this.props;
@@ -56,10 +53,10 @@ export class ABTrails extends React.Component {
     onChange({ value: v });
   }
 
-  onResult = (itemValue) => {
+  onResult = (itemValue, goToNext) => {
     const { onChange } = this.props;
     this.finalAnswer["value"] = itemValue;
-    onChange(this.finalAnswer);
+    onChange(this.finalAnswer, false, goToNext);
   }
 
   onPress = () => {
@@ -76,9 +73,7 @@ export class ABTrails extends React.Component {
 
   render() {
     const { error } = this.state;
-    const { onChange, value, screen, data } = this.props;
-
-    console.log('screens-----------', screens)
+    const { value, screen, data, currentScreen } = this.props;
 
     this.finalAnswer = data ? data : {};
 
@@ -90,6 +85,7 @@ export class ABTrails extends React.Component {
             currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
             failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
             screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
+            currentScreen={currentScreen}
             screen={screens[screen]}
             onResult={this.onResult}
             ref={(ref) => { this.board = ref; }}
@@ -113,6 +109,7 @@ ABTrails.defaultProps = {
 
 ABTrails.propTypes = {
   onChange: PropTypes.func.isRequired,
+  currentScreen: PropTypes.number.isRequired,
   data: PropTypes.any,
   screen: PropTypes.string.isRequired,
 };

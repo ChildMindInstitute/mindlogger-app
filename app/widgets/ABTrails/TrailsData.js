@@ -2,6 +2,7 @@
 export const screens = {
   trail1: {
     r: 14,
+    fontSize: 22,
     colors: {
       passed: 'green',
       pending: 'black',
@@ -62,6 +63,170 @@ export const screens = {
 
   trail2: {
     r: 14,
+    fontSize: 18,
+    colors: {
+      passed: 'green',
+      pending: 'black',
+      failed: 'red',
+      label: 'black',
+    },
+    items: [
+      {
+        order: 1,
+        cx: 295,
+        cy: 240,
+        label: '1',
+      },
+      {
+        order: 2,
+        cx: 40,
+        cy: 165,
+        label: '2',
+      },
+      {
+        order: 3,
+        cx: 182,
+        cy: 160,
+        label: '3',
+      },
+      {
+        order: 4,
+        cx: 55,
+        cy: 297,
+        label: '4',
+      },
+      {
+        order: 5,
+        cx: 125,
+        cy: 65,
+        label: '5',
+      },
+      {
+        order: 6,
+        cx: 55,
+        cy: 32,
+        label: '6',
+      },
+      {
+        order: 7,
+        cx: 65,
+        cy: 85,
+        label: '7',
+      },
+      {
+        order: 8,
+        cx: 272,
+        cy: 172,
+        label: '8',
+      },
+      {
+        order: 9,
+        cx: 232,
+        cy: 145,
+        label: '9',
+      },
+      {
+        order: 10,
+        cx: 267,
+        cy: 95,
+        label: '10',
+      },
+      {
+        order: 11,
+        cx: 272,
+        cy: 295,
+        label: '11',
+      },
+      {
+        order: 12,
+        cx: 190,
+        cy: 57,
+        label: '12',
+      },
+      {
+        order: 13,
+        cx: 45,
+        cy: 220,
+        label: '13',
+      },
+      {
+        order: 14,
+        cx: 20,
+        cy: 65,
+        label: '14',
+      },
+      {
+        order: 15,
+        cx: 270,
+        cy: 23,
+        label: '15',
+      },
+      {
+        order: 16,
+        cx: 220,
+        cy: 95,
+        label: '16',
+      },
+      {
+        order: 17,
+        cx: 135,
+        cy: 150,
+        label: '17',
+      },
+      {
+        order: 18,
+        cx: 95,
+        cy: 180,
+        label: '18',
+      },
+      {
+        order: 19,
+        cx: 247,
+        cy: 210,
+        label: '19',
+      },
+      {
+        order: 20,
+        cx: 217,
+        cy: 277,
+        label: '20',
+      },
+      {
+        order: 21,
+        cx: 92,
+        cy: 242,
+        label: '21',
+      },
+      {
+        order: 22,
+        cx: 307,
+        cy: 120,
+        label: '22',
+      },
+      {
+        order: 23,
+        cx: 207,
+        cy: 230,
+        label: '23',
+      },
+      {
+        order: 24,
+        cx: 165,
+        cy: 307,
+        label: '24',
+      },
+      {
+        order: 25,
+        cx: 135,
+        cy: 227,
+        label: '25',
+      },
+    ]
+  },
+
+  trail3: {
+    r: 14,
+    fontSize: 22,
     colors: {
       passed: 'green',
       pending: 'black',
@@ -116,6 +281,169 @@ export const screens = {
         cx: 135,
         cy: 150,
         label: 'D',
+      },
+    ]
+  },
+
+  trail4: {
+    r: 14,
+    fontSize: 18,
+    colors: {
+      passed: 'green',
+      pending: 'black',
+      failed: 'red',
+      label: 'black',
+    },
+    items: [
+      {
+        order: 1,
+        cx: 95,
+        cy: 180,
+        label: '1',
+      },
+      {
+        order: 2,
+        cx: 190,
+        cy: 57,
+        label: 'A',
+      },
+      {
+        order: 3,
+        cx: 182,
+        cy: 160,
+        label: '2',
+      },
+      {
+        order: 4,
+        cx: 55,
+        cy: 297,
+        label: 'B',
+      },
+      {
+        order: 5,
+        cx: 125,
+        cy: 65,
+        label: '3',
+      },
+      {
+        order: 6,
+        cx: 55,
+        cy: 32,
+        label: 'C',
+      },
+      {
+        order: 7,
+        cx: 65,
+        cy: 85,
+        label: '4',
+      },
+      {
+        order: 8,
+        cx: 272,
+        cy: 172,
+        label: 'D',
+      },
+      {
+        order: 9,
+        cx: 232,
+        cy: 145,
+        label: '5',
+      },
+      {
+        order: 10,
+        cx: 267,
+        cy: 95,
+        label: 'E',
+      },
+      {
+        order: 11,
+        cx: 272,
+        cy: 295,
+        label: '6',
+      },
+      {
+        order: 12,
+        cx: 40,
+        cy: 165,
+        label: 'F',
+      },
+      {
+        order: 13,
+        cx: 45,
+        cy: 220,
+        label: '7',
+      },
+      {
+        order: 14,
+        cx: 20,
+        cy: 65,
+        label: 'G',
+      },
+      {
+        order: 15,
+        cx: 270,
+        cy: 23,
+        label: '8',
+      },
+      {
+        order: 16,
+        cx: 220,
+        cy: 95,
+        label: 'H',
+      },
+      {
+        order: 17,
+        cx: 135,
+        cy: 150,
+        label: '9',
+      },
+      {
+        order: 18,
+        cx: 295,
+        cy: 240,
+        label: 'I',
+      },
+      {
+        order: 19,
+        cx: 247,
+        cy: 210,
+        label: '10',
+      },
+      {
+        order: 20,
+        cx: 217,
+        cy: 277,
+        label: 'J',
+      },
+      {
+        order: 21,
+        cx: 92,
+        cy: 242,
+        label: '11',
+      },
+      {
+        order: 22,
+        cx: 307,
+        cy: 120,
+        label: 'K',
+      },
+      {
+        order: 23,
+        cx: 207,
+        cy: 230,
+        label: '12',
+      },
+      {
+        order: 24,
+        cx: 165,
+        cy: 307,
+        label: 'L',
+      },
+      {
+        order: 25,
+        cx: 135,
+        cy: 227,
+        label: '13',
       },
     ]
   },

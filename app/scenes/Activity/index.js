@@ -99,7 +99,7 @@ class Activity extends React.Component {
     }
   }
 
-  handleChange(answer, goToNext) {
+  handleChange(answer, goToNext, currentAutoAdvance) {
     const { isSummaryScreen } = this.state;
     const {
       currentApplet,
@@ -112,7 +112,7 @@ class Activity extends React.Component {
     } = this.props;
     const { activity, responses } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
-    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance || currentAutoAdvance;
     const optionalText = this.currentItem.isOptionalText
 
     responses[currentScreen] = answer;
@@ -223,9 +223,9 @@ class Activity extends React.Component {
             activity={activity}
             answers={responses}
             currentScreen={currentScreen}
-            onChange={(answer, goToNext = false) => {
+            onChange={(answer, goToNext = false, currentAutoAdvance = false) => {
               setAnswer(activity, currentScreen, answer);
-              this.handleChange(answer, goToNext);
+              this.handleChange(answer, goToNext, currentAutoAdvance);
             }}
             authToken={authToken}
             onContentError={() => this.setState({ isContentError: true })}
@@ -291,7 +291,9 @@ class Activity extends React.Component {
                     this.setState({ isSummaryScreen: false });
                     setSummaryScreen(false);
                   }
-                  nextScreen();
+                  setTimeout(() => {
+                    nextScreen();
+                  });
                   setSelected(false);
                 }
               }}
@@ -314,6 +316,7 @@ class Activity extends React.Component {
                 }
               }}
               actionLabel={actionLabel}
+              actionEnabled={activity.items[currentScreen].inputType !== "trail"}
               onPressAction={() => {
                 setAnswer(activity, currentScreen, undefined);
               }}

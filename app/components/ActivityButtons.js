@@ -36,13 +36,14 @@ const ActivityButtons = ({
   prevLabel,
   prevEnabled,
   actionLabel,
+  actionEnabled,
   onPressPrev,
   onPressNext,
   onPressAction,
 }) => (
   <View style={styles.footer}>
     {renderButton(prevLabel, prevEnabled, onPressPrev)}
-    {renderButton(actionLabel, true, onPressAction)}
+    {renderButton(actionLabel, actionEnabled, onPressAction)}
     {renderButton(nextLabel, nextEnabled, onPressNext)}
   </View>
 );
@@ -53,6 +54,7 @@ ActivityButtons.defaultProps = {
   prevLabel: undefined,
   prevEnabled: true,
   actionLabel: undefined,
+  actionEnabled: true,
   onPressPrev: undefined,
   onPressNext: undefined,
   onPressAction: undefined,
@@ -64,6 +66,7 @@ ActivityButtons.propTypes = {
   prevLabel: PropTypes.string,
   prevEnabled: PropTypes.bool,
   actionLabel: PropTypes.string,
+  actionEnabled: PropTypes.bool,
   onPressPrev: PropTypes.func,
   onPressNext: PropTypes.func,
   onPressAction: PropTypes.func,

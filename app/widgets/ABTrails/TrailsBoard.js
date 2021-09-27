@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
+import { getData, storeData } from "../../services/asyncStorage";
 
 const styles = StyleSheet.create({
   picture: {
@@ -41,6 +42,7 @@ export default class TrailsBoard extends Component {
       screenTime: 0,
       incorrectPoints: [],
       currentIndex: 1,
+      currentScreen: 0,
       isValid: false,
     };
     this.allowed = false;
@@ -64,28 +66,38 @@ export default class TrailsBoard extends Component {
     this.allowed = true;
   }
 
-  componentDidMount() {
-    const { currentIndex, failedCnt } = this.props;
+  async componentDidMount() {
+    const { currentIndex, failedCnt, currentScreen } = this.props;
+    const currentIntervalId = await getData('intervalId');
     let { screenTime } = this.props;
-  
-    console.log('component did mount', this.props);
-    this.timeInterval = setInterval(() => {
-      screenTime = screenTime ? screenTime + 1 : 1;
 
-      if (screenTime < 180) {
+    if (currentIntervalId && currentScreen) {
+      clearInterval(currentIntervalId);
+    }
+
+    this.timeInterval = setInterval(() => {
+      const { currentIndex, failedCnt, currentScreen } = this.props;
+      const { lines } = this.state;
+      const result = this.save(lines, currentIndex);
+
+      screenTime = screenTime ? screenTime + 1 : 1;
+      if (currentScreen % 2 === 0 || screenTime < 180) {
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
         this.setState({ screenTime });
+      } else {
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
       }
     }, 1000)
+
+    await storeData('intervalId', this.timeInterval);
     this.setState({ failedCnt: failedCnt ? failedCnt : 0 });
-    this.setState({ currentIndex });
+    this.setState({ currentIndex, currentScreen });
   }
 
   componentWillUnmount() {
-    const { failedCnt, screenTime, lines, currentIndex } = this.state;
-    const result = this.save(lines, currentIndex);
-
-    this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
-    clearInterval(this.timeInterval);
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
   }
 
   startLine = (evt) => {
@@ -191,7 +203,6 @@ export default class TrailsBoard extends Component {
       this.setState({ lines, currentIndex: endOrder });
     } else {
       const result = this.save(lines, currentIndex);
-      console.log('this.state.failedCnt + 1==============', this.state.failedCnt + 1)
 
       this.props.onResult({ ...result, screenTime, failedCnt: this.state.failedCnt + 1 });
       this.setState({ isValid: false, screenTime, failedCnt: this.state.failedCnt + 1 });
@@ -202,14 +213,14 @@ export default class TrailsBoard extends Component {
     if (this.state.dimensions) return; // layout was already called
     const { width, height, top, left } = event.nativeEvent.layout;
     if (this.props.lines && this.props.lines.length > this.state.lines.length) {
-      const lines = this.props.lines.map(line => ({
+      const lines = this.props.lines.length ? this.props.lines.map(line => ({
         ...line,
         points: line.points.map(point => ({
           ...point,
           x: point.x * width / 100,
           y: point.y * width / 100,
         })),
-      }));
+      })) : [];
       this.setState({ dimensions: { width, height, top, left }, lines });
     } else {
       this.setState({ dimensions: { width, height, top, left } });
@@ -277,7 +288,7 @@ export default class TrailsBoard extends Component {
 
         <Text
           stroke={itemColor}
-          fontSize="22"
+          fontSize={trailsData.fontSize}
           fontWeight="bold"
           x={item.cx}
           y={item.cy + 7}
@@ -312,25 +323,6 @@ export default class TrailsBoard extends Component {
     )
   }
 
-  // childToWeb = (child) => {
-  //   const { type, props } = child;
-  //   const name = type && (type.displayName || type.name);
-  //   const Tag = name && name[0].toLowerCase() + name.slice(1);
-
-  //   console.log('props', props)
-  //   return <Tag {...props}>{this.toWeb(props.children)}</Tag>;
-  // };
-
-  // toWeb = children => React.Children.map(children, this.childToWeb);
-
-  // serialize = () => {
-  //   const element = this.renderSvg();
-  //   console.log('elements-------------', element);
-  //   const webJsx = this.toWeb(element);
-  //   console.log('webJSX=============', webJsx)
-  //   return ReactDOMServer.renderToStaticMarkup(webJsx);
-  // };
-
   renderSvg() {
     const { lines, dimensions } = this.state;
     const { screen } = this.props;
@@ -351,6 +343,7 @@ export default class TrailsBoard extends Component {
   render() {
     const { dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
+
     return (
       <View
         style={{
@@ -390,6 +383,7 @@ TrailsBoard.propTypes = {
   lines: PropTypes.array,
   screen: PropTypes.object,
   currentIndex: PropTypes.number,
+  currentScreen: PropTypes.number,
   onResult: PropTypes.func,
   onPress: PropTypes.func,
   onError: PropTypes.func,

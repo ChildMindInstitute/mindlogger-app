@@ -38,7 +38,20 @@ import {
 
 // const TOKEN_LOGGER_SCHEMA = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
-const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, appletTokenBalance }) => {
+const Widget = ({
+  screen,
+  answer,
+  onChange,
+  applet,
+  isCurrent,
+  currentScreen,
+  isSelected,
+  setSelected,
+  onPress,
+  onRelease,
+  onContentError,
+  appletTokenBalance
+}) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
   if (screen.inputType === 'radio'
@@ -97,6 +110,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     return (
       <ABTrails
         screen={screen.variableName}
+        currentScreen={currentScreen}
         data={answer}
         onChange={onChange}
       />
@@ -326,6 +340,7 @@ Widget.propTypes = {
   setSelected: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
   isSelected: PropTypes.bool.isRequired,
+  currentScreen: PropTypes.number.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
   appletTokenBalance: PropTypes.object.isRequired,
