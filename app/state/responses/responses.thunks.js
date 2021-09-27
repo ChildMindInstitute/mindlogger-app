@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
+import moment from "moment";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
@@ -103,6 +104,7 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   dispatch(
     createResponseInProgress(applet.id, activity, subjectId, timeStarted)
   );
+
   dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
   Actions.push("take_act");
