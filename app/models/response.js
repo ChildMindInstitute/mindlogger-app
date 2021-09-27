@@ -32,7 +32,7 @@ export const prepareResponseForUpload = (
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
-  const alerts = [];
+  const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
 
@@ -138,9 +138,10 @@ export const prepareResponseForUpload = (
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
         ...accumulator,
-        [item.schema]: responses[index].value,
+        [item.schema]: responses[index],
       };
     }, {});
+
     responseData['responses'] = formattedResponses;
 
     if (activity.subScales) {
@@ -163,6 +164,13 @@ export const prepareResponseForUpload = (
     };
 
   }
+
+  let i = 0;
+  for (const key in responseData.responses) {
+    nextsAt[key] = inProgressResponse[i] && inProgressResponse[i].endTime || Date.now();
+    i++;
+  }
+  responseData['nextsAt'] = nextsAt;
 
   return responseData;
 };
@@ -259,9 +267,10 @@ export const decryptAppletResponses = (applet, responses) => {
         ) {
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
-          if (response.value && response.value.value !== undefined) {
-            response.value = response.value.value;
-          }
+        }
+
+        if (response.value && response.value.value !== undefined) {
+          response.value = response.value.value;
         }
       }
 

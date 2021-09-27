@@ -131,8 +131,8 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 395
-        versionName "0.17.23"
+        versionCode 406
+        versionName "0.17.34"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
@@ -190,6 +190,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-file-viewer')
     implementation project(':react-native-sound-player')
     implementation project(':react-native-randombytes')
     implementation fileTree(dir: "libs", include: ["*.jar"])
@@ -204,6 +205,8 @@ dependencies {
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
     // implementation project(':@react-native-community_audio-toolkit')
+
+    compile project(':react-native-file-viewer')
 
 
     if (enableHermes) {

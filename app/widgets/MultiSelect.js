@@ -12,6 +12,7 @@ import { connect } from "react-redux";
 import {
   currentScreenSelector,
 } from "../state/responses/responses.selectors";
+import questionMark from "../../img/question-mark.png";
 
 export class MultiSelectScreen extends Component {
   constructor() {
@@ -102,29 +103,27 @@ export class MultiSelectScreen extends Component {
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}
             key={index}
           >
-            <View style={{ width: '8%' }}>
+            <View style={{
+              width: '10%',
+              marginLeft: "2%",
+              marginRight: "2%",
+              justifyContent: "center",
+              flexDirection: "row"
+            }}>
               {item.description ? (
                 <TooltipBox text={item.description}>
-                  <Icon
-                    type="FontAwesome"
-                    name="question"
-                    style={{
-                      color: 'gray',
-                      fontSize: 20,
-                      marginHorizontal: 0,
-                      borderWidth: 2,
-                      borderRadius: 12,
-                      borderColor: 'gray',
-                      paddingLeft: 4,
-                      marginRight: 2,
-                    }}
-                  />
+                  <View style={{ width: 22, height: 22 }}>
+                    <Image
+                      style={{ width: '100%', height: '100%' }}
+                      source={questionMark}
+                    />
+                  </View>
                 </TooltipBox>
               ) : (
                 <View />
               )}
             </View>
-            <View style={{ width: "77%" }}>
+            <View style={{ width: "72%" }}>
               <View style={{ width: "100%", flexDirection: "row" }}>
                 {item.image ? (
                   <Image
@@ -172,7 +171,7 @@ export class MultiSelectScreen extends Component {
                 )}
               </View>
             </View>
-            <View style={{ width: "15%" }}>
+            <View style={{ width: "14%" }}>
               <CheckBox
                 checked={
                   this.finalAnswer["value"] &&
