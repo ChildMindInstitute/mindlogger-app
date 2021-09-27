@@ -99,6 +99,7 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
     retrieveResponses: true,
     numberOfDays: 7,
     groupByDateActivity: false,
+    retrieveLastResponseTime: true,
     currentApplet,
     nextActivity
   });

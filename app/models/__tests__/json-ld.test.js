@@ -194,6 +194,8 @@ test('activityTransformJson: ema-hbn', () => {
     compute: undefined,
     autoAdvance: false,
     backDisabled: false,
+    finalSubScale: undefined,
+    isReviewerActivity: false,
     fullScreen: false,
     messages: undefined,
     subScales: undefined,
@@ -310,6 +312,8 @@ test('activityTransformJson: nda-phq', () => {
     id: 'activity/5cba3c1f86fafd5df796d913',
     isPrize: false,
     summaryDisabled: false,
+    finalSubScale: undefined,
+    isReviewerActivity: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);

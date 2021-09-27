@@ -186,7 +186,7 @@ export default (state = initialState, action = {}) => {
         ...state,
         finishedEvents: {
           ...state.finishedEvents,
-          [action.payload]: Date.now()
+          ...action.payload
         }
       }
     case APP_CONSTANTS.SET_CURRENT_APPLET:

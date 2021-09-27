@@ -114,27 +114,22 @@ export const markdownStyle = {
     alignSelf: 'center',
     fontSize: 22,
     fontWeight: '300',
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   listItemUnorderedContent: {
     fontSize: 20,
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   listItemOrderedContent: {
     fontSize: 18,
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   list: {
     fontSize: 22,
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   sublist: {
     fontSize: 18,
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   linkWrapper: {
@@ -149,7 +144,6 @@ export const markdownStyle = {
   text: {
     fontSize: 22,
     fontWeight: '300',
-    color: '#000000',
     fontFamily: theme.fontFamily,
   },
   image: {
