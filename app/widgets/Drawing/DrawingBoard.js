@@ -54,8 +54,21 @@ export default class DrawingBoard extends Component {
         this.props.onRelease();
         const result = this.save();
         const svgString = this.serialize();
+        // if (this.svgRef) {
+        //   this.svgRef.toDataURL((base64) => {
+        //     this.props.onResult({ ...result, base64 });
+        //   });
+        // } else {
+        //
+        // }
+        let line = {};
+        if (result && result.lines) {
+          const lines = result.lines.length;
+          line = { ...result.lines[lines - 1], endTime: Date.now() };
+          result.lines[lines - 1] = line;
+        }
 
-        this.props.onResult({ ...result, svgString });
+        this.props.onResult({ ...result, lines: [...this.props.lines, line], svgString });
       },
     });
     this.allowed = true;
@@ -67,7 +80,7 @@ export default class DrawingBoard extends Component {
     const { locationX, locationY } = evt.nativeEvent;
     this.startX = locationX;
     this.startY = locationY;
-    const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }] };
+    const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
     this.setState({ lines: [...lines, newLine] });
   }
 
@@ -202,9 +215,9 @@ export default class DrawingBoard extends Component {
 DrawingBoard.defaultProps = {
   imageSource: null,
   lines: [],
-  onResult: () => {},
-  onPress: () => {},
-  onRelease: () => {},
+  onResult: () => { },
+  onPress: () => { },
+  onRelease: () => { },
 };
 
 DrawingBoard.propTypes = {
