@@ -262,8 +262,10 @@ class ActivityScreen extends Component {
         timerActive === false
       ) {
         this.setState({ timerActive: true });
-      } else if (timeElapsed >= timerEnd) {
+      } else if (timeElapsed >= timerEnd && timerActive) {
         this.setState({ timerActive: false });
+
+        clearInterval(this.interval)
         onChange(answer, true);
       }
     }
