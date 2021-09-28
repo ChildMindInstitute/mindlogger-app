@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 import * as R from "ramda";
 import { testVisibility } from "../../services/visibility";
+import { appletsSelector } from "../applets/applets.selectors";
 import { parseAppletEvents } from '../../models/json-ld';
 import { IS_VIS } from "../../models/json-ld";
 
@@ -68,14 +69,31 @@ export const currentScreenSelector = createSelector(
 
 export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
-  (current) => {
-    if (!current) {
+  R.path(["app", "currentActivity"]),
+  R.path(['applets', 'applets']),
+  responseScheduleSelector,
+  (current, activityId, applets, responseSchedule) => {
+    const currentApplets = applets.map((applet) => parseAppletEvents(applet, responseSchedule));
+    const currentActivity = currentApplets.reduce(
+      (acc, applet) => [
+        ...acc,
+        ...applet.activities,
+      ],
+      [],
+    ).find(activity => activity.id === activityId);
+
+    if (!current && !currentActivity) {
       return [];
     }
-    const { responses, activity } = current;
 
-    return activity.addProperties.map((property) =>
-      testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
-    );
+    const responses = current ? current.responses : [];
+    const activity = current ? current.activity : currentActivity;
+
+    return activity.addProperties.map((property, index) => {
+      if (activity.items[index].isVis) {
+        return false;
+      }
+      return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
+    });
   }
 );

@@ -99,12 +99,14 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   const event = currentEventSelector(state);
   const applet = currentAppletSelector(state);
 
+  const visibilityArray = itemVisiblitySelector(state);
+  const next = getNextPos(-1, visibilityArray);
+
   // There is no response in progress, so start a new one
 
   dispatch(
     createResponseInProgress(applet.id, activity, subjectId, timeStarted)
   );
-
   dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
   Actions.push("take_act");
@@ -121,6 +123,8 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
   const index = activity.event ? activity.id + activity.event.id : activity.id;
+  const visibilityArray = itemVisiblitySelector(state);
+  const next = getNextPos(-1, visibilityArray);
   const event = currentEventSelector(state);
 
   if (activity.isPrize === true) {
@@ -129,7 +133,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
     Actions.push('take_act');
   } else if (typeof responses.inProgress[index] === "undefined") {
@@ -142,7 +146,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
       dispatch(setActivityStartTime(activity.id + activity.event.id));
     }
     dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
     Actions.push("take_act");
   } else {
@@ -179,7 +183,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
                 timeStarted
               )
             );
-            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -196,7 +200,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
             }
 
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
