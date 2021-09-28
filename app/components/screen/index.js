@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   timerView: {
     position: "absolute",
     right: 20,
-    top: 60,
+    top: 100,
   },
   delayTimerView: {
     position: "absolute",
@@ -221,7 +221,7 @@ class ActivityScreen extends Component {
   }
 
   _startClock = () => {
-    this.interval = setInterval(this._clockTick, 100);
+    this.interval = setInterval(this._clockTick, 500);
     this.startTime = Date.now();
   };
 
@@ -262,8 +262,10 @@ class ActivityScreen extends Component {
         timerActive === false
       ) {
         this.setState({ timerActive: true });
-      } else if (timeElapsed >= timerEnd) {
+      } else if (timeElapsed >= timerEnd && timerActive) {
         this.setState({ timerActive: false });
+
+        clearInterval(this.interval)
         onChange(answer, true);
       }
     }
