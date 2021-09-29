@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import Screen from '../components/screen';
+import { screens } from '../widgets/ABTrails/TrailsData';
 
 const NEXT = i18n.t('activity_navigation:next');
 const SKIP = i18n.t('activity_navigation:skip');
@@ -8,7 +9,16 @@ const BACK = i18n.t('activity_navigation:back');
 const RETURN = i18n.t('activity_navigation:return');
 const UNDO = i18n.t('activity_navigation:undo');
 
-export const checkValidity = (item, response) => Screen.isValid(response, item);
+export const checkValidity = (item, response, index) => {
+  if (item.inputType === "trail" && index >= 0 && response) {
+    const screen = screens[item.inputType + '' + (index + 1)];
+
+    if (screen.items.length !== response.value.currentIndex) {
+      return false;
+    }
+  }
+  return Screen.isValid(response, item);
+}
 
 export const checkSkippable = (activity, item) => {
   if (activity.skippable === true) {
@@ -67,12 +77,15 @@ export const getNextLabel = (index, visibility, activity, responses, isContentEr
 
 // If item has a valid response, or is skippable, then next is enabled
 export const isNextEnabled = (index, activity, responses) => {
-  const isValid = checkValidity(activity.items[index], responses[index]);
+  const isValid = checkValidity(activity.items[index], responses[index], index);
   const isSkippable = checkSkippable(activity, activity.items[index]);
   return isValid || isSkippable;
 };
 
 export const isPrevEnabled = (index, activity) => {
+  if (activity.items[index].inputType === "trail") {
+    return false;
+  }
   if (activity.items[index].backDisabled === true) {
     return false;
   }

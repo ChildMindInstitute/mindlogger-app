@@ -79,6 +79,7 @@ const ActivityList = ({
       if (act.isPrize != true && isNextActivityShown && !act.isVis && act.isReviewerActivity != true)
         appletActivities.push(act);
     }
+
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
