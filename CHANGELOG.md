@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.37] - 2021-09-28
+- Implement removeBack option
+
 ## [0.17.36] - 2021-09-27
 - Built showing/hiding activities/items/options
 

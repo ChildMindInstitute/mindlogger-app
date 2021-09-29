@@ -276,22 +276,28 @@ class Activity extends React.Component {
     const { activity, responses } = currentResponse;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
-    const prevLabel = isSummaryScreen
-      ? "Back"
-      : getPrevLabel(currentScreen, itemVisibility);
     const nextLabel = isSummaryScreen
       ? "Next"
       : getNextLabel(
         currentScreen,
-        itemVisibility,
-        activity,
-        responses,
-        this.state.isContentError
-      );
+          itemVisibility,
+          activity,
+          responses,
+          this.state.isContentError
+        );
     const actionLabel = isSummaryScreen
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
-
+    let prevLabel = isSummaryScreen
+      ? "Back"
+      : getPrevLabel(currentScreen, itemVisibility);
+    
+    if (prevLabel === "Back"
+      && this.currentItem.valueConstraints
+      && this.currentItem.valueConstraints.removeBackOption) {
+      prevLabel = "";
+    }
+      
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
