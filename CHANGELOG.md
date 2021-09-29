@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.38] - 2021-09-28
+- Build removeUndo option for draw items
+
 ## [0.17.37] - 2021-09-28
 - Implement removeBack option
 
@@ -15,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix PDF report
 
 ## [0.17.34] - 2021-09-26
+
 - Build top navigation option
 
 ## [0.17.33] - 2021-09-23

@@ -274,18 +274,19 @@ class Activity extends React.Component {
     }
     
     const { activity, responses } = currentResponse;
+    const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const nextLabel = isSummaryScreen
       ? "Next"
       : getNextLabel(
         currentScreen,
-          itemVisibility,
-          activity,
-          responses,
-          this.state.isContentError
-        );
-    const actionLabel = isSummaryScreen
+        itemVisibility,
+        activity,
+        responses,
+        this.state.isContentError
+      );
+    const actionLabel = (isSummaryScreen || removeUndoOption)
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
     let prevLabel = isSummaryScreen
