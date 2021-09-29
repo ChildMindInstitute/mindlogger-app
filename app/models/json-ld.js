@@ -90,6 +90,8 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const REMOVE_UNDO_OPTION = "reprolib:terms/removeUndoOption";
+const REMOVE_BACK_OPTION = "reprolib:terms/removeBackOption";
 const TOP_NAVIGATION_OPTION = "reprolib:terms/topNavigationOption"
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
@@ -224,6 +226,20 @@ export const flattenValueConstraints = (vcObj) =>
       }
     }
 
+    if (key === REMOVE_UNDO_OPTION) {
+      return {
+        ...accumulator,
+        removeUndoOption: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === REMOVE_BACK_OPTION) {
+      return {
+        ...accumulator,
+        removeBackOption: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+    
     if (key === TOP_NAVIGATION_OPTION) {
       return {
         ...accumulator,
