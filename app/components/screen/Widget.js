@@ -28,6 +28,7 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
+  StabilityTracker,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -80,6 +81,16 @@ const Widget = ({
         token={valueType && valueType.includes("token")}
       />
     );
+  }
+
+  if (screen.inputType == 'stabilityTracker') {
+    return (
+      <StabilityTracker
+        onChange={onChange}
+        config={screen.inputs}
+        isCurrent={isCurrent}
+      />
+    )
   }
 
   if (screen.inputType === 'stackedRadio') {

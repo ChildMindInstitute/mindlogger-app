@@ -97,3 +97,16 @@ export const itemVisiblitySelector = createSelector(
     });
   }
 );
+
+export const challengePhaseLambdaSelector = createSelector(
+  currentResponsesSelector,
+  ({ responses, screenIndex }) => {
+    for (let i = 0; i < screenIndex; i++) {
+      if (responses[i] && responses[i].phaseType == 'challenge-phase') {
+        return responses[i].maxLambda;
+      }
+    }
+
+    return 0;
+  }
+);
