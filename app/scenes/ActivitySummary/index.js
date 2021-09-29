@@ -247,7 +247,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         <div class="score-area">
           <p
             class="score-title text-nowrap"
-            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+            style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
               Your/Your Child' Score
@@ -382,6 +382,9 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
           right: 0;
           bottom: 0;
         }
+        img {
+          max-width: 100%;
+        }        
       </style>
     `;
 
@@ -401,7 +404,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>
         {messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
-            <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
+            <BaseText style={{ fontSize: 20 }}>{item.category.replace(/_/g, " ")}</BaseText>
             <MarkdownScreen>{item.compute.description}</MarkdownScreen>
             <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>

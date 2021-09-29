@@ -97,7 +97,7 @@ export class MultiSelectScreen extends Component {
     //  behavior="padding"
     >
       <View style={{ alignItems: "stretch" }}>
-        {this.state.orderedItems.map((item, index) => (
+        {this.state.orderedItems.filter(item => !item.isVis).map((item, index) => (
           <ListItem
             style={{ width: '90%', backgroundColor: colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
             onPress={() => this.onAnswer(token ? item.name.en : item.value)}

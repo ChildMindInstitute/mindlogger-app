@@ -152,6 +152,7 @@ export const flattenItemList = (list = []) =>
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
     alert: R.path([ALERT, 0, "@value"], item),
+    isVis: item[IS_VIS] ? R.path([IS_VIS, 0, "@value"], item) : false,
     description: R.path([DESCRIPTION, 0, "@value"], item),
     image: item[IMAGE],
     valueConstraints: item[RESPONSE_OPTIONS]
@@ -189,13 +190,13 @@ export const flattenValueConstraints = (vcObj) =>
         isOptionalTextRequired: R.path([key, 0, "@value"], vcObj),
       };
     }
-    if (key == SCORING) {
+    if (key === SCORING) {
       return {
         ...accumulator,
         scoring: R.path([key, 0, "@value"], vcObj),
       };
     }
-    if (key == SHOW_TICK_MARKS) {
+    if (key === SHOW_TICK_MARKS) {
       return {
         ...accumulator,
         showTickMarks: R.path([key, 0, "@value"], vcObj),
@@ -433,6 +434,7 @@ export const itemTransformJson = (itemJson) => {
 
   const valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
+  const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
 
   const inputs = R.pathOr([], [INPUTS], itemJson);
   const inputsObj = transformInputs(inputs);
@@ -453,6 +455,7 @@ export const itemTransformJson = (itemJson) => {
     preamble: languageListToObject(itemJson[PREAMBLE]),
     timer: R.path([TIMER, 0, "@value"], itemJson),
     delay: R.path([DELAY, 0, "@value"], itemJson),
+    isVis,
     valueConstraints,
     skippable,
     fullScreen: allowList.includes(FULL_SCREEN),
@@ -509,6 +512,7 @@ const transformPureActivity = (activityJson) => {
   const order = (activityJson[ORDER] && flattenIdList(activityJson[ORDER][0]["@list"])) || [];
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
+  const isVis = activityJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], activityJson) : false;
   const compute = activityJson[COMPUTE] && R.map((item) => {
     return {
       jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
@@ -560,6 +564,7 @@ const transformPureActivity = (activityJson) => {
     autoAdvance: allowList.includes(AUTO_ADVANCE),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
+    isVis,
     compute,
     scoreOverview: _.get(activityJson, [SCORE_OVERVIEW, 0, "@value"]),
     subScales,
