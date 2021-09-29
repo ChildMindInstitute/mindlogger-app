@@ -116,9 +116,12 @@ class Activity extends React.Component {
     const optionalText = this.currentItem.isOptionalText
 
     responses[currentScreen] = answer;
-    const visibility = activity.items.map((item) =>
-      testVisibility(item.visibility, activity.items, responses)
-    );
+    const visibility = activity.items.map((item) => {
+      if (item.isvis) {
+        return false;
+      }
+      return testVisibility(item.visibility, activity.items, responses)
+    });
     const next = getNextPos(currentScreen, visibility);
 
     if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
@@ -274,9 +277,6 @@ class Activity extends React.Component {
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
-    const prevLabel = isSummaryScreen
-      ? "Back"
-      : getPrevLabel(currentScreen, itemVisibility);
     const nextLabel = isSummaryScreen
       ? "Next"
       : getNextLabel(
@@ -289,7 +289,16 @@ class Activity extends React.Component {
     const actionLabel = (isSummaryScreen || removeUndoOption)
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
-
+    let prevLabel = isSummaryScreen
+      ? "Back"
+      : getPrevLabel(currentScreen, itemVisibility);
+    
+    if (prevLabel === "Back"
+      && this.currentItem.valueConstraints
+      && this.currentItem.valueConstraints.removeBackOption) {
+      prevLabel = "";
+    }
+      
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
