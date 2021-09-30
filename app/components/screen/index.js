@@ -293,7 +293,7 @@ class ActivityScreen extends Component {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={10}
+          keyboardVerticalOffset={40}
         >
           <ScrollView
             alwaysBounceVertical={false}
