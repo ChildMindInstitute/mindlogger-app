@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:158587556670:android:65cf73eef649f842f4d26f",
         "android_client_info": {
-          "package_name": "lab.childmindinstitute.data"
+          "package_name": "com.childmindinstitute.exposuretherapy"
         }
       },
       "oauth_client": [

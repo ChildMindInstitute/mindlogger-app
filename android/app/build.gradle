@@ -128,11 +128,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "lab.childmindinstitute.data"
+        applicationId "com.childmindinstitute.exposuretherapy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 409
-        versionName "0.17.37"
+        versionCode 411
+        versionName "0.17.38"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
     }
