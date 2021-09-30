@@ -302,7 +302,7 @@ class Activity extends React.Component {
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {!fullScreen &&
+        {!fullScreen && topNavigation &&
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
@@ -340,6 +340,21 @@ class Activity extends React.Component {
         {!!isSplashScreen && (
           <ActivitySplash activity={activity} />
         )}
+        {!fullScreen && !topNavigation &&
+          <ActHeader
+            title={activity.name.en}
+            actionLabel={actionLabel}
+            watermark={currentApplet.watermark}
+            topNavigation={topNavigation}
+            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            onPressPrevScreen={this.handlePressPrevScreen}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+            onPressNextScreen={this.handlePressNextScreen}
+            onPressAction={() => {
+              setAnswer(activity, currentScreen, undefined);
+            }}
+          />
+        }
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
