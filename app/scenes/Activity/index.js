@@ -347,69 +347,10 @@ class Activity extends React.Component {
             {!topNavigation && <ActivityButtons
               nextLabel={nextLabel}
               nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses)}
-              onPressNext={() => {
-                if (isSplashScreen) {
-                  this.setState({ isSplashScreen: false })
-                  return
-                }
-                if (
-                  activity.items[currentScreen].correctAnswer &&
-                  activity.items[currentScreen].correctAnswer["en"]
-                ) {
-                  const correctAnswer =
-                    activity.items[currentScreen].correctAnswer["en"];
-                  if (responses[currentScreen] !== correctAnswer) {
-                    Alert.alert(
-                      i18n.t("activity:failed"),
-                      i18n.t("activity:incorrect_answer"),
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => console.log("Incorrect!"),
-                        },
-                      ]
-                    );
-                    return;
-                  }
-                }
-                this.setState({ isContentError: false });
-                if (
-                  getNextPos(currentScreen, itemVisibility) === -1 &&
-                  activity.compute &&
-                  !activity.summaryDisabled &&
-                  !isSummaryScreen
-                ) {
-                  this.setState({ isSummaryScreen: true });
-                  setSummaryScreen(true);
-                } else {
-                  if (isSummaryScreen) {
-                    this.setState({ isSummaryScreen: false });
-                    setSummaryScreen(false);
-                  }
-                  setTimeout(() => {
-                    nextScreen();
-                  });
-                  setSelected(false);
-                }
-              }}
+              onPressNext={this.handlePressNextScreen}
               prevLabel={prevLabel}
               prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
-              onPressPrev={() => {
-                const { isSummaryScreen } = this.state;
-                if (isSummaryScreen) {
-                  this.setState({ isSummaryScreen: false });
-                  setSummaryScreen(false);
-                  setSelected(false);
-                } else {
-                  if (!currentScreen) {
-                    setCurrentActivity(null);
-                  }
-                  prevScreen();
-                  if (isSelected) {
-                    setSelected(false);
-                  }
-                }
-              }}
+              onPressPrev={this.handlePressPrevScreen}
               actionLabel={actionLabel}
               actionEnabled={activity.items[currentScreen].inputType !== "trail"}
               onPressAction={() => {
