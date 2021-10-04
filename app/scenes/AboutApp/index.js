@@ -25,7 +25,7 @@ import i18n from '../../i18n/i18n';
 const logoImage = require('../../../img/color_logo.png');
 
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSHeaderPadding = isIOS ? 20 : 0;
 const IOSBodyPadding = isIOS ? 10 : 0;
 
 class AboutApp extends Component {
