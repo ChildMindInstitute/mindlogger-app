@@ -21,118 +21,121 @@ const markdownItInstance = MarkdownIt({ typographer: true })
 
 const regex = new RegExp(/^==(.*==)?/);
 
-const rules = {
-  text: (node, children, parent, styles, inheritedStyles = {}) => {
-    const additionalStyling = regex.test(node.content.trim()) ? { backgroundColor: 'yellow' } : {}
-    return (
-      <Text key={node.key} style={[inheritedStyles, styles.text, additionalStyling]}>
-        {checkNodeContent(node.content)}
-      </Text>
-    )
-  },
-  image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
-    const mimeType = Mimoza.getMimeType(node.attributes.src) || "";
-
-    if (mimeType.startsWith('audio/')) {
-      return (
-        <AudioPlayer
-          uri={node.attributes.src}
-          key={node.key}
-          content={node.content}
-          width={width - 50}
-          height={50}
-        />
-      );
-    } else if (mimeType.startsWith('video/') || node.attributes.src.includes('.quicktime')) {
-      return (
-        <View
-          width={width - 20}
-          height={250}
-        >
-          <VideoPlayer
-            uri={node.attributes.src}
-            key={node.key}
-            width={width - 20}
-            height={250}
-          />
-        </View>
-      );
-    } else if (node.attributes.src.includes('youtu')) {
-      let src = node.attributes.src.split(".be/")[1];
-      return (
-        <View
-          width={width - 20}
-          height={250}
-        >
-          <WebView
-            height={250}
-            key={node.key}
-            width={width - 20}
-            mediaPlaybackRequiresUserAction
-            source={{ uri: node.attributes.src.includes('watch?') ? node.attributes.src : `https://www.youtube.com/embed/${src}` }}
-          />
-        </View>
-      );
-    }
-
-    return (<Image
-      key={node.key}
-      style={{
-        resizeMode: "contain",
-        height: 200,
-        width: width - 100
-      }}
-      source={{
-        uri: node.attributes.src
-      }}
-    />);
-  },
-  'container_hljs-left': (node, children, parent, styles) => {
-    const style = 'flex-start';
-
-    return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
-  },
-  'container_hljs-center': (node, children, parent, styles) => {
-    const style = 'center';
-
-    return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
-  },
-  'container_hljs-right': (node, children, parent, styles) => {
-    const style = 'flex-end';
-
-    return (<View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>);
-  },
-  'ins': (node, children) => {
-    return (<Text key={node.key} style={{ textDecorationLine: 'underline' }}>{children}</Text>)
-  },
-  paragraph: (node, children, parents, styles) => {
-    let type = null;
-
-    for (let i = 0; i < parents.length; i++) {
-      if (parents[i].type.includes('container_hljs')) {
-        type = parents[i].type;
-        break;
-      }
-    }
-
-    if (type) {
-      const style = type.endsWith('right') ? 'flex-end' : type.includes('center') ? 'center' : 'flex-start';
-      return <View key={node.key} key={node.key} style={{ justifyContent: style, alignItems: style }}>
-        {children}
-      </View>
-    }
-
-    return renderRules.paragraph(node, children, parents, styles);
-  }
-}
-
 class MarkdownScreen extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return nextProps.children != this.props.children;
   }
 
   render() {
-    let { textColor, children } = this.props;
+    let { textColor, children, maxWidth } = this.props;
+
+    if (!maxWidth) {
+      maxWidth = width - 20;
+    }
+    const rules = {
+      text: (node, children, parent, styles, inheritedStyles = {}) => {
+        const additionalStyling = regex.test(node.content.trim()) ? { backgroundColor: 'yellow' } : {}
+        return (
+          <Text key={node.key} style={[inheritedStyles, styles.text, additionalStyling]}>
+            {checkNodeContent(node.content)}
+          </Text>
+        )
+      },
+      image: (node, children, parent, styles, allowedImageHandlers, defaultImageHandler) => {
+        const mimeType = Mimoza.getMimeType(node.attributes.src) || "";
+
+        if (mimeType.startsWith('audio/')) {
+          return (
+            <AudioPlayer
+              uri={node.attributes.src}
+              key={node.key}
+              content={node.content}
+              width={maxWidth - 30}
+              height={50}
+            />
+          );
+        } else if (mimeType.startsWith('video/') || node.attributes.src.includes('.quicktime')) {
+          return (
+            <View
+              width={ maxWidth }
+              height={250}
+            >
+              <VideoPlayer
+                uri={node.attributes.src}
+                key={node.key}
+                width={maxWidth}
+                height={250}
+              />
+            </View>
+          );
+        } else if (node.attributes.src.includes('youtu')) {
+          let src = node.attributes.src.split(".be/")[1];
+          return (
+            <View
+              width={maxWidth}
+              height={250}
+            >
+              <WebView
+                height={250}
+                key={node.key}
+                width={maxWidth}
+                mediaPlaybackRequiresUserAction
+                source={{ uri: node.attributes.src.includes('watch?') ? node.attributes.src : `https://www.youtube.com/embed/${src}` }}
+              />
+            </View>
+          );
+        }
+
+        return (<Image
+          key={node.key}
+          style={{
+            resizeMode: "contain",
+            height: 200,
+            width: maxWidth - 80
+          }}
+          source={{
+            uri: node.attributes.src
+          }}
+        />);
+      },
+      'container_hljs-left': (node, children, parent, styles) => {
+        const style = 'flex-start';
+
+        return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
+      },
+      'container_hljs-center': (node, children, parent, styles) => {
+        const style = 'center';
+
+        return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>
+      },
+      'container_hljs-right': (node, children, parent, styles) => {
+        const style = 'flex-end';
+
+        return (<View key={node.key} style={{ justifyContent: style, alignItems: style }}>{children}</View>);
+      },
+      'ins': (node, children) => {
+        return (<Text key={node.key} style={{ textDecorationLine: 'underline' }}>{children}</Text>)
+      },
+      paragraph: (node, children, parents, styles) => {
+        let type = null;
+
+        for (let i = 0; i < parents.length; i++) {
+          if (parents[i].type.includes('container_hljs')) {
+            type = parents[i].type;
+            break;
+          }
+        }
+
+        if (type) {
+          const style = type.endsWith('right') ? 'flex-end' : type.includes('center') ? 'center' : 'flex-start';
+          return <View key={node.key} key={node.key} style={{ justifyContent: style, alignItems: style }}>
+            {children}
+          </View>
+        }
+
+        return renderRules.paragraph(node, children, parents, styles);
+      }
+    }
 
     if (children.indexOf("404:") > -1) {
       children = '# ¯\\\\_(ツ)_/¯ ' + '\n # \n The authors of this applet have not provided any information!'
@@ -175,6 +178,7 @@ MarkdownScreen.defaultProps = {
 
 MarkdownScreen.propTypes = {
   textColor: PropTypes.string,
+  maxWidth: PropTypes.number,
   children: PropTypes.node,
 };
 
