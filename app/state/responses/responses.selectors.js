@@ -67,6 +67,15 @@ export const currentScreenSelector = createSelector(
   R.path(["screenIndex"])
 );
 
+export const itemStartTimeSelector = createSelector(
+  currentResponsesSelector,
+  (current) => {
+    const screenIndex = current.screenIndex;
+
+    return current[screenIndex].startTime;
+  }
+)
+
 export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
   R.path(["app", "currentActivity"]),

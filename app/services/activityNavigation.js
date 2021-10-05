@@ -52,7 +52,7 @@ export const getNextLabel = (index, visibility, activity, responses, isContentEr
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index]);
   if (!isValid || isContentError) {
-    return i18n.t('activity_navigation:skip');
+    return i18n.t('activity_navigation:next');
   }
 
   // If there are visible items after this one, then label is Next

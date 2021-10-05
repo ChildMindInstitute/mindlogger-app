@@ -99,7 +99,7 @@ class Activity extends React.Component {
     }
   }
 
-  handleChange(answer, goToNext) {
+  handleChange(answer, goToNext=false, timeElapsed=0) {
     const { isSummaryScreen } = this.state;
     const {
       currentApplet,
@@ -136,7 +136,7 @@ class Activity extends React.Component {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
-        nextScreen();
+        nextScreen(timeElapsed);
         setSelected(false);
       }
     }
@@ -267,12 +267,12 @@ class Activity extends React.Component {
     } = this.props;
 
     const { isSummaryScreen, isSplashScreen } = this.state;
-    
-    
+
+
     if (!currentResponse) {
       return <View />;
     }
-    
+
     const { activity, responses } = currentResponse;
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
@@ -292,17 +292,17 @@ class Activity extends React.Component {
     let prevLabel = isSummaryScreen
       ? "Back"
       : getPrevLabel(currentScreen, itemVisibility);
-    
+
     if (prevLabel === "Back"
       && this.currentItem.valueConstraints
       && this.currentItem.valueConstraints.removeBackOption) {
       prevLabel = "";
     }
-      
+
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {!fullScreen &&
+        {!fullScreen && topNavigation &&
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
@@ -325,9 +325,9 @@ class Activity extends React.Component {
             activity={activity}
             answers={responses}
             currentScreen={currentScreen}
-            onChange={(answer, goToNext = false) => {
+            onChange={(answer, goToNext=false, timeElapsed=0) => {
               setAnswer(activity, currentScreen, answer);
-              this.handleChange(answer, goToNext);
+              this.handleChange(answer, goToNext, timeElapsed);
             }}
             authToken={authToken}
             onContentError={() => this.setState({ isContentError: true })}
@@ -340,6 +340,21 @@ class Activity extends React.Component {
         {!!isSplashScreen && (
           <ActivitySplash activity={activity} />
         )}
+        {!fullScreen && !topNavigation &&
+          <ActHeader
+            title={activity.name.en}
+            actionLabel={actionLabel}
+            watermark={currentApplet.watermark}
+            topNavigation={topNavigation}
+            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            onPressPrevScreen={this.handlePressPrevScreen}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+            onPressNextScreen={this.handlePressNextScreen}
+            onPressAction={() => {
+              setAnswer(activity, currentScreen, undefined);
+            }}
+          />
+        }
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
@@ -350,7 +365,7 @@ class Activity extends React.Component {
                 index={currentScreen}
                 length={activity.items.length}
               />
-            )} 
+            )}
             {!topNavigation &&
               <ActivityButtons
                 nextLabel={nextLabel}
@@ -365,7 +380,7 @@ class Activity extends React.Component {
                 }}
               />
             }
-            
+
           </View>
         )}
       </Container>
