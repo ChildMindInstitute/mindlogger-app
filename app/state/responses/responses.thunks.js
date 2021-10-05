@@ -200,7 +200,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
             }
 
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next, responses.inProgress[index][currentScreen].startTime));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -424,14 +424,32 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }, 300);
 };
 
-export const nextScreen = () => (dispatch, getState) => {
+export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
-  const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
-  const next = getNextPos(screenIndex, visibilityArray);
   const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
+
+  let screenIndex = currentScreenSelector(state);
+  let next = -1;
+
+  do {
+    const { timer, delay } = activity.items[screenIndex];
+    let totalTime = timer + (delay || 0);
+
+    if (next < 0 || (timer && timeElapsed >= totalTime)) {
+      next = getNextPos(screenIndex, visibilityArray, timeElapsed);
+      timeElapsed -= totalTime;
+      screenIndex = next;
+    } else {
+      break;
+    }
+  } while (next >= 0);
+
+  if (timeElapsed < 0) {
+    timeElapsed = 0;
+  }
 
   if (next === -1) {
     if (activity.nextAccess) {
@@ -441,7 +459,7 @@ export const nextScreen = () => (dispatch, getState) => {
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     Actions.push("activity_thanks");
   } else {
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
   }
 };
 
