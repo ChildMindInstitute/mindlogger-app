@@ -238,6 +238,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
       else
         applets = resp;
 
+      console.log('applets-', applets)
+
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);

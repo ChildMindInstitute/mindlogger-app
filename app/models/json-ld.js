@@ -440,7 +440,9 @@ export const itemTransformJson = (itemJson) => {
   const allowList = flattenIdList(R.path([ALLOW, 0, "@list"], itemJson));
   const skippable = isSkippable(allowList) ? true : undefined;
 
-  const valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
+  let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
+  const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
+  valueConstraintsObj = { ...valueConstraintsObj, ...optionsObj };
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
   const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
 

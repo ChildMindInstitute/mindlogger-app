@@ -272,7 +272,7 @@ class Activity extends React.Component {
     if (!currentResponse) {
       return <View />;
     }
-    
+
     const { activity, responses } = currentResponse;
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
@@ -292,13 +292,13 @@ class Activity extends React.Component {
     let prevLabel = isSummaryScreen
       ? "Back"
       : getPrevLabel(currentScreen, itemVisibility);
-    
+
     if (prevLabel === "Back"
       && this.currentItem.valueConstraints
       && this.currentItem.valueConstraints.removeBackOption) {
       prevLabel = "";
     }
-      
+
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
