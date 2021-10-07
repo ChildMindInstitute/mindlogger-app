@@ -50,18 +50,14 @@ export default class DrawingBoard extends Component {
       },
       onPanResponderGrant: this.addLine,
       onPanResponderMove: this.addPoint,
-      onPanResponderRelease: () => {
+      onPanResponderRelease: (evt, gestureState) => {
+        this.addPoint(evt, gestureState);
         this.props.onRelease();
         const result = this.save();
         const svgString = this.serialize();
-        // if (this.svgRef) {
-        //   this.svgRef.toDataURL((base64) => {
-        //     this.props.onResult({ ...result, base64 });
-        //   });
-        // } else {
-        //
-        // }
+
         let line = {};
+
         if (result && result.lines) {
           const lines = result.lines.length;
           line = { ...result.lines[lines - 1], endTime: Date.now() };
@@ -92,8 +88,14 @@ export default class DrawingBoard extends Component {
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
 
-    this.lastX = moveX - x0 + this.startX;
-    this.lastY = moveY - y0 + this.startY;
+    if (moveX === 0 && moveY === 0) {
+      this.lastX = this.startX + 2;
+      this.lastY = this.startY + 2;
+    } else {
+      this.lastX = moveX - x0 + this.startX;
+      this.lastY = moveY - y0 + this.startY;
+    }
+
     this.lastPressTimestamp = time;
     lines[n].points.push({ x: this.lastX, y: this.lastY, time });
     this.setState({ lines });

@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.41] - 2021-10-5
+- Fix drawing a line
+
+## [0.17.40] - 2021-10-4
+- Fix back button on item screen
+
 ## [0.17.39] - 2021-09-29
 - Fix close button on the header
 - Fix skip button for splash screens

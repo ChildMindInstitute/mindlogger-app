@@ -21,12 +21,16 @@ class Timer extends React.Component {
   }
 
   start = () => {
-    const { duration } = this.props;
+    const { duration, startTime } = this.props;
+    const timeElapsed = new Date().getTime() - startTime;
+
+    this.state.timeline.setValue(timeElapsed / duration);
+
     Animated.timing(
       this.state.timeline,
       {
         toValue: 1,
-        duration,
+        duration: duration - timeElapsed,
         easing: Easing.linear,
       },
     ).start();
