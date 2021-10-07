@@ -27,7 +27,7 @@ import { MarkdownScreen } from "../../components/core";
 import { parseAppletEvents } from "../../models/json-ld";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
-import { setActivities, setCumulativeActivities } from "../../state/activities/activities.actions";
+import { setActivities, setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
 import { getScoreFromResponse, evaluateScore, getMaxScore } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
@@ -92,8 +92,9 @@ const termsText =
 const footerText =
   "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
-const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
+const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
+  const { responses, activity, applet, cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = props;
 
   useEffect(() => {
     const parser = new Parser({
@@ -151,8 +152,8 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         [category]:
           outputType == "percentage"
             ? Math.round(
-                cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
-              )
+              cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
+            )
             : cumulativeScores[category],
       };
 
@@ -180,8 +181,11 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
         setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
       }
+      if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
     } else {
       setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
+        setHiddenCumulativeActivities(activity.id);
     }
 
     setMessages(reportMessages);
@@ -230,7 +234,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </b>
       </p>
       <p class="text-body-2 mb-4">
-        ${markdownItInstance.render(activity.scoreOverview)}
+        ${markdownItInstance.render(activity?.scoreOverview)}
       </p>
     `;
 
@@ -398,11 +402,11 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>
+        {activity.scoreOverview && <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>}
         {messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
-            <MarkdownScreen>{item.compute.description}</MarkdownScreen>
+            {item.compute.description && <MarkdownScreen>{item.compute.description}</MarkdownScreen>}
             <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
@@ -421,11 +425,13 @@ const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
   cumulativeActivities: state.activities.cumulativeActivities,
+  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
   setActivities,
   setCumulativeActivities,
+  setHiddenCumulativeActivities
 };
 
 export default connect(

@@ -46,7 +46,8 @@ const ActivityList = ({
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
-  cumulativeActivities
+  cumulativeActivities,
+  hiddenCumulativeActivities
 }) => {
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
@@ -61,22 +62,29 @@ const ActivityList = ({
       const act = newApplet.activities[index];
       if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
     }
+
     const appletActivities = [];
 
     for (let index = 0; index < newApplet.activities.length; index++) {
       let isNextActivityShown = true;
       const act = newApplet.activities[index];
 
-      for (let index = 0; index < notShownActs.length; index++) {
-        const notShownAct = notShownActs[index];
+      for (let j = 0; j < notShownActs.length; j++) {
+        const notShownAct = notShownActs[j];
         const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
 
-        isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
-          ? true
-          : checkActivityIsShown(act.name.en, notShownAct.messages)
+        if (isNextActivityShown !== false)
+          isNextActivityShown = alreadyAct?.includes(act.name.en)
+            ? true
+            : checkActivityIsShown(act.name.en, notShownAct.messages)
+
+        if (alreadyAct?.includes(act.name.en)) {
+          isNextActivityShown = alreadyAct?.includes(act.name.en);
+          break;
+        };
       }
 
-      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true)
+      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true && !hiddenCumulativeActivities?.includes(act.id))
         appletActivities.push(act);
     }
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
@@ -211,6 +219,7 @@ const mapStateToProps = (state) => {
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
     cumulativeActivities: state.activities.cumulativeActivities,
+    hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
   };
 };
 
