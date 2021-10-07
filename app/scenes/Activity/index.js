@@ -19,6 +19,7 @@ import {
   itemVisiblitySelector,
   isSummaryScreenSelector,
   currentScreenSelector,
+  lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
 import { currentAppletSelector } from "../../state/app/app.selectors";
 import { testVisibility } from "../../services/visibility";
@@ -109,18 +110,25 @@ class Activity extends React.Component {
       isSelected,
       setSummaryScreen,
       setSelected,
+      lastResponseTime
     } = this.props;
     const { activity, responses } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-    const optionalText = this.currentItem.isOptionalText
+    const optionalText = this.currentItem.isOptionalText;
+    const responseTimes = {};
 
     responses[currentScreen] = answer;
+
+    for (const activity of currentApplet.activities) {
+      responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
+    }
+
     const visibility = activity.items.map((item) => {
       if (item.isvis) {
         return false;
       }
-      return testVisibility(item.visibility, activity.items, responses)
+      return testVisibility(item.visibility, activity.items, responses, responseTimes)
     });
     const next = getNextPos(currentScreen, visibility);
 
@@ -416,6 +424,7 @@ const mapStateToProps = (state) => ({
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
+  lastResponseTime: lastResponseTimeSelector(state),
   isSelected: state.responses.isSelected,
 });
 

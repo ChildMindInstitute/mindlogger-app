@@ -79,8 +79,9 @@ export const itemStartTimeSelector = createSelector(
 export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
   R.path(["app", "currentActivity"]),
-  R.path(['applets', 'applets']),
-  (current, activityId, applets) => {
+  R.path(["applets", "applets"]),
+  lastResponseTimeSelector,
+  (current, activityId, applets, lastResponseTimes) => {
     const currentApplets = applets.map((applet) => parseAppletEvents(applet));
     const currentActivity = currentApplets.reduce(
       (acc, applet) => [
@@ -96,12 +97,18 @@ export const itemVisiblitySelector = createSelector(
 
     const responses = current ? current.responses : [];
     const activity = current ? current.activity : currentActivity;
+    const applet = applets.find(applet => applet.id == activity.appletId);
+    const responseTimes = {};
+
+    for (const activity of applet.activities) {
+      responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTimes[applet.id] || {})[activity.id];
+    }
 
     return activity.addProperties.map((property, index) => {
       if (activity.items[index].isVis) {
         return false;
       }
-      return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
+      return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses, responseTimes)
     });
   }
 );
