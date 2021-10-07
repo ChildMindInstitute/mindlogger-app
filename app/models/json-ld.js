@@ -97,6 +97,9 @@ const REMOVE_BACK_OPTION = "reprolib:terms/removeBackOption";
 const TOP_NAVIGATION_OPTION = "reprolib:terms/topNavigationOption"
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
+const TICK_MARK = "reprolib:terms/tickMark";
+const TICK_LABEL = "reprolib:terms/tickLabel";
+const TEXT_ANCHORS = "reprolib:terms/textAnchors";
 const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
@@ -293,32 +296,54 @@ export const flattenValueConstraints = (vcObj) =>
       }
     }
 
-    if (key == COLOR_PALETTE) {
+    if (key === COLOR_PALETTE) {
       return {
         ...accumulator,
         colorPalette: R.path([key, 0, "@value"], vcObj)
       }
     }
 
-    if (key == CONTINOUS_SLIDER) {
+    if (key === CONTINOUS_SLIDER) {
       return {
         ...accumulator,
         continousSlider: R.path([key, 0, "@value"], vcObj),
       }
     }
-    if (key == RESPONSE_ALERT_MESSAGE) {
+
+    if (key === TEXT_ANCHORS) {
+      return {
+        ...accumulator,
+        textAnchors: R.path([key, 0, "@value"], vcObj),
+      }
+    }
+    
+    if (key === TICK_LABEL) {
+      return {
+        ...accumulator,
+        tickLabel: R.path([key, 0, "@value"], vcObj),
+      }
+    }
+    
+    if (key === TICK_MARK) {
+      return {
+        ...accumulator,
+        tickMark: R.path([key, 0, "@value"], vcObj),
+      }
+    }
+    
+    if (key === RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,
         responseAlertMessage: R.path([key, 0, "@value"], vcObj),
       }
     }
-    if (key == MIN_ALERT_VALUE) {
+    if (key === MIN_ALERT_VALUE) {
       return {
         ...accumulator,
         minAlertValue: R.path([key, 0, "@value"], vcObj)
       }
     }
-    if (key == MAX_ALERT_VALUE) {
+    if (key === MAX_ALERT_VALUE) {
       return {
         ...accumulator,
         maxAlertValue: R.path([key, 0, "@value"], vcObj)
