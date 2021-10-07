@@ -23,7 +23,6 @@ import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app
 import { setActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
-  responseScheduleSelector,
   inProgressSelector,
 } from '../../state/responses/responses.selectors';
 
@@ -40,7 +39,6 @@ const ActivityList = ({
   scheduleUpdated,
   isConnected,
   setScheduleUpdated,
-  responseSchedule,
   inProgress,
   setActivities,
   finishedEvents,
@@ -126,7 +124,7 @@ const ActivityList = ({
         clearExec(updateId);
       }
     }
-  }, [Object.keys(inProgress).length, responseSchedule, applet]);
+  }, [Object.keys(inProgress).length, applet]);
 
   useEffect(() => {
     if (appStatus) {
@@ -177,7 +175,6 @@ ActivityList.propTypes = {
   appStatus: PropTypes.bool.isRequired,
   setAppStatus: PropTypes.func.isRequired,
   setConnection: PropTypes.func.isRequired,
-  responseSchedule: PropTypes.object.isRequired,
   activityAccess: PropTypes.object.isRequired,
   appletTime: PropTypes.any.isRequired,
   inProgress: PropTypes.object.isRequired,
@@ -205,7 +202,6 @@ const mapStateToProps = (state) => {
     isConnected: connectionSelector(state),
     appletTime: state.applets.currentTime,
     activitySelectionDisabled: activitySelectionDisabledSelector(state),
-    responseSchedule: responseScheduleSelector(state),
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),

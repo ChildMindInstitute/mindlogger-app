@@ -155,10 +155,10 @@ export default (state = initialState, action = {}) => {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
-    case RESPONSES_CONSTANTS.SET_SCHEDULE:
+    case RESPONSES_CONSTANTS.SET_LAST_RESPONSE_TIME:
       return {
         ...state,
-        schedule: action.payload,
+        lastResponseTime: action.payload,
       };
     default:
       return state;

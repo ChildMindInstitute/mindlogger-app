@@ -38,7 +38,7 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setSchedule,
+  setLastResponseTime,
   setSummaryScreen,
   replaceAppletResponses,
   setActivityOpened,
@@ -236,7 +236,7 @@ export const downloadResponse = () => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 }
 
@@ -268,7 +268,7 @@ export const downloadResponses = () => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 };
 
@@ -343,7 +343,7 @@ export const downloadAppletResponses = (applet) => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 };
 

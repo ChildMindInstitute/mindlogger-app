@@ -25,7 +25,7 @@ export const inProgressSelector = R.path(["responses", "inProgress"]);
 
 export const activityOpenedSelector = R.path(["responses", "activityOpened"]);
 
-export const responseScheduleSelector = R.path(["responses", "schedule"]);
+export const lastResponseTimeSelector = R.path(["responses", "lastResponseTime"]);
 
 export const currentAppletResponsesSelector = createSelector(
   responsesSelector,
@@ -80,9 +80,8 @@ export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
   R.path(["app", "currentActivity"]),
   R.path(['applets', 'applets']),
-  responseScheduleSelector,
-  (current, activityId, applets, responseSchedule) => {
-    const currentApplets = applets.map((applet) => parseAppletEvents(applet, responseSchedule));
+  (current, activityId, applets) => {
+    const currentApplets = applets.map((applet) => parseAppletEvents(applet));
     const currentActivity = currentApplets.reduce(
       (acc, applet) => [
         ...acc,

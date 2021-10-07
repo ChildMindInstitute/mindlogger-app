@@ -19,6 +19,7 @@ import { colors } from "../../theme";
 
 import {
   itemStartTimeSelector,
+  lastResponseTimeSelector
 } from "../../state/responses/responses.selectors";
 
 const styles = StyleSheet.create({
@@ -295,7 +296,7 @@ class ActivityScreen extends Component {
   };
 
   render() {
-    const { screen, answer, onChange, isCurrent, onContentError } = this.props;
+    const { activity, screen, answer, onChange, isCurrent, onContentError, lastResponseTime } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
@@ -320,7 +321,11 @@ class ActivityScreen extends Component {
               }
             }}
           >
-            <ScreenDisplay screen={screen} />
+            <ScreenDisplay
+              screen={screen}
+              activity={activity}
+              lastResponseTime={lastResponseTime[activity.appletId] || {}}
+            />
             {inputDelayed ? (
               <View pointerEvents="none" style={styles.delayView}>
                 <View style={styles.delayTimerView}>
@@ -420,6 +425,7 @@ ActivityScreen.propTypes = {
 
 const mapStateToProps = (state) => ({
   itemStartTime: itemStartTimeSelector(state),
+  lastResponseTime: lastResponseTimeSelector(state)
 });
 
 export default connect(mapStateToProps)(ActivityScreen);
