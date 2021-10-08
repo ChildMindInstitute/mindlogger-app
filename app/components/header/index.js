@@ -71,14 +71,14 @@ const ActHeader = (props) => {
                 style={{ color: colors.tertiary }} />
             }
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => onPressAction()}>
-            {actionLabel &&
-                <Icon
-                  type="FontAwesome"
-                  name="refresh"
-                  style={{ color: colors.tertiary }} />
-            }
-          </TouchableOpacity>
+          {!!actionLabel &&
+            <TouchableOpacity onPress={() => onPressAction()}>
+              <Icon
+                type="FontAwesome"
+                name="refresh"
+                style={{ color: colors.tertiary }} />
+            </TouchableOpacity>
+          }
           <TouchableOpacity onPress={() => onPressNextScreen()}>
             {nextEnabled &&
               <Icon
