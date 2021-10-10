@@ -60,6 +60,8 @@ class StackedSlider extends Component {
       }
     }
 
+    console.log('-------config--------', config);
+
     return (
         <View>
           {

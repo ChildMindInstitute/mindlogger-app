@@ -40,6 +40,8 @@ import {
 const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSelected, onPress, onRelease, onContentError, appletTokenBalance }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
+  console.log(screen);
+
   if (screen.inputType === 'radio'
     // && Array.isArray(answer)
     && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
@@ -93,6 +95,7 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     );
   }
   if (screen.inputType === 'stackedSlider') {
+    console.log('-------screen.valueConstraints------ ',  screen.valueConstraints);
     return (
       <StackedSlider
         config={screen.valueConstraints}

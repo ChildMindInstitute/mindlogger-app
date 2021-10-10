@@ -65,6 +65,9 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
     onSelected();
   };
 
+  console.log(value);
+  console.log(config);
+
   return (
     <View style={{ alignItems: 'stretch' }}>
       <ListItem

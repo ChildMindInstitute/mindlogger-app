@@ -5,11 +5,9 @@ import {
   Image,
   TouchableWithoutFeedback,
   StyleSheet,
-  ScrollView,KeyboardAvoidingView,
-  TextInput,
-  Platform
+  KeyboardAvoidingView,
 } from "react-native";
-import { Text , Item , Input} from "native-base";
+import { Text } from "native-base";
 import SliderComponent from "react-native-slider";
 import { getURL } from "../../services/helper";
 import { colors } from "../../themes/colors";
@@ -320,20 +318,24 @@ class Slider extends Component {
   render() {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
     const {
-      config: { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired },
+      config,
       onChange,
       onPress,
       value,
       onRelease,
     } = this.props;
 
+    const { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired } = config || {};
+
+    console.log('--------------------');
+    console.log(this.props);
 
     this.finalAnswer = value ? value : {};
 
     let currentVal = this.finalAnswer["value"];
     const step = itemList ? (continousSlider ? 0.01 : 1) : 0;
 
-    if (!value && value !== currentValue) {
+    if (!value && value !== currentValue) {`2`
       this.setState({ currentValue: value });
     }
 
@@ -394,11 +396,11 @@ class Slider extends Component {
 
         <View style={styles.labelContainer}>
           <View style={styles.labelBox}>
-            {itemList[0].image && (
+            {itemList[0]?.image && (
               <View style={styles.iconWrapper}>
                 <Image
                   style={styles.icon}
-                  source={{ uri: getURL(itemList[0].image) }}
+                  source={{ uri: getURL(itemList[0]?.image) }}
                 />
               </View>
             )}
@@ -407,11 +409,11 @@ class Slider extends Component {
             )}
           </View>
           <View style={styles.labelBox}>
-            {itemList[itemList.length - 1].image && (
+            {itemList[itemList.length - 1]?.image && (
               <View style={styles.iconWrapper}>
                 <Image
                   style={styles.icon}
-                  source={{ uri: getURL(itemList[itemList.length - 1].image) }}
+                  source={{ uri: getURL(itemList[itemList.length - 1]?.image) }}
                 />
               </View>
             )}
