@@ -299,8 +299,6 @@ class Activity extends React.Component {
       prevLabel = "";
     }
 
-    console.log(activity);
-
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />

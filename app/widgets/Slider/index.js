@@ -327,9 +327,6 @@ class Slider extends Component {
 
     const { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired } = config || {};
 
-    console.log('--------------------');
-    console.log(this.props);
-
     this.finalAnswer = value ? value : {};
 
     let currentVal = this.finalAnswer["value"];

@@ -444,7 +444,7 @@ export const itemTransformJson = (itemJson) => {
   const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
 
   Object.entries(optionsObj).forEach(([key, value]) => {
-    if (value && Array.isArray(value) && value.length > 0)
+    if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions'))
       valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
   })
 
