@@ -332,7 +332,7 @@ class Slider extends Component {
     let currentVal = this.finalAnswer["value"];
     const step = itemList ? (continousSlider ? 0.01 : 1) : 0;
 
-    if (!value && value !== currentValue) {`2`
+    if (!value && value !== currentValue) {
       this.setState({ currentValue: value });
     }
 
