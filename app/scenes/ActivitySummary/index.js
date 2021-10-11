@@ -27,7 +27,7 @@ import { MarkdownScreen } from "../../components/core";
 import { parseAppletEvents } from "../../models/json-ld";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
-import { setActivities, setCumulativeActivities } from "../../state/activities/activities.actions";
+import { setActivities, setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
 import { evaluateCumulatives } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
