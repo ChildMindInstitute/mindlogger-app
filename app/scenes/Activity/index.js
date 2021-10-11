@@ -268,7 +268,6 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isSplashScreen } = this.state;
 
-
     if (!currentResponse) {
       return <View />;
     }
@@ -281,6 +280,7 @@ class Activity extends React.Component {
       ? "Next"
       : getNextLabel(
         currentScreen,
+        isSplashScreen,
         itemVisibility,
         activity,
         responses,
