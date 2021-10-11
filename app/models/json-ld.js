@@ -159,7 +159,7 @@ export const flattenItemList = (list = []) =>
     valueConstraints: item[RESPONSE_OPTIONS]
       ? flattenValueConstraints(R.path([RESPONSE_OPTIONS, 0], item))
       : undefined,
-  }));
+}));
 
 export const flattenValueConstraints = (vcObj) =>
   Object.keys(vcObj).reduce((accumulator, key) => {
@@ -442,7 +442,12 @@ export const itemTransformJson = (itemJson) => {
 
   let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
   const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
-  valueConstraintsObj = { ...valueConstraintsObj, ...optionsObj };
+
+  Object.entries(optionsObj).forEach(([key, value]) => {
+    if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions'))
+      valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
+  })
+
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
   const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
 
