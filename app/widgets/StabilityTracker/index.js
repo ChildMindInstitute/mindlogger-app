@@ -41,17 +41,25 @@ const styles = StyleSheet.create({
   },
   times: {
     flex: 1,
-    textAlign: 'left'
+    textAlign: 'left',
+    transform: [{ rotate: '90deg'}]
   },
   score: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'left',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
+    transform: [{ rotate: '90deg'}]
   },
   lambda: {
     flex: 1,
-    textAlign: 'right'
+    textAlign: 'left',
+    transform: [{ rotate: '90deg'}]
+  },
+  stimToCenter: {
+    marginTop: 10,
+    textAlign: 'right',
+    transform: [{ translateY: 80 }, { rotate: '90deg'}]
   }
 });
 
@@ -403,7 +411,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           {'\n'}
           OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }
         </Text>
-        <Text style={styles.score}>Score {'\n'} { Math.round(score.current) }</Text>
+        <Text style={styles.score}>Score {'\n   '} { Math.round(score.current) }</Text>
         <Text style={styles.lambda}>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
       </View>
 
@@ -504,7 +512,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
         </Svg>
       </View>
 
-      <Text style={{ marginTop: 10 }}>Stim to Center: { Number((stimToCenter || 0) / panelRadius).toFixed(3) }</Text>
+      <Text style={styles.stimToCenter}>Stim to Center: { Number((stimToCenter || 0) / panelRadius).toFixed(3) }</Text>
     </View>
   )
 }
