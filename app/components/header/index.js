@@ -42,10 +42,13 @@ const ActHeader = (props) => {
     prevEnabled,
     actionLabel,
     watermark,
+    prevLabel,
     onPressNextScreen,
     onPressPrevScreen,
     onPressAction,
   } = props;
+
+  // console.log('prevLabel', prevLabel)
 
   return (
     <>
@@ -60,15 +63,15 @@ const ActHeader = (props) => {
           name="close" 
           style={{ color: colors.tertiary }} />
       </TouchableOpacity>
-
+ 
       {topNavigation && 
         <View style={styles.navigations}>
           <TouchableOpacity onPress={() => onPressPrevScreen()}>
-            {prevEnabled && 
+            {prevEnabled &&
               <Icon
                 type="FontAwesome"
                 name="arrow-left"
-                style={{ color: colors.tertiary }} />
+                style={{ color: prevLabel ? colors.tertiary : 'white' }} />
             }
           </TouchableOpacity>
           {!!actionLabel &&
@@ -98,6 +101,7 @@ ActHeader.propTypes = {
   actionLabel: PropTypes.string,
   nextEnabled: PropTypes.bool,
   prevEnabled: PropTypes.bool,
+  prevLabel: PropTypes.string,
   onPressNextScreen: PropTypes.func,
   onPressPrevScreen: PropTypes.func,
   onPressAction: PropTypes.func,

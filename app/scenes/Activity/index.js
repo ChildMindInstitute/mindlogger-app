@@ -293,8 +293,7 @@ class Activity extends React.Component {
       ? "Back"
       : getPrevLabel(currentScreen, itemVisibility);
 
-    if (prevLabel === "Back"
-      && this.currentItem.valueConstraints
+    if (this.currentItem.valueConstraints
       && this.currentItem.valueConstraints.removeBackOption) {
       prevLabel = "";
     }
@@ -307,6 +306,7 @@ class Activity extends React.Component {
             title={activity.name.en}
             actionLabel={actionLabel}
             watermark={currentApplet.watermark}
+            prevLabel={prevLabel}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
             onPressPrevScreen={this.handlePressPrevScreen}
