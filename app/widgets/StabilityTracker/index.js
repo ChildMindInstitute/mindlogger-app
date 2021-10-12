@@ -63,7 +63,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     trackingDims: config.trackingDims || 2,
     showScore: config.showScore !== false,
     phaseType: config.phaseType || 'calibration',
-    lambdaSlope: config.lambdaSlope || 1.0,
+    lambdaSlope: config.lambdaSlope || 20.0,
     basisFunc: config.basisFunc || 'gerono',
     noiseLevel: config.noiseLevel || 0,
     taskLoopRate: config.taskLoopRate || 0.0167, // default 60hz
@@ -99,7 +99,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
 
   const targetPoints = useRef();
   const pointRadius = width/152, outerStimRadius = width / 19, innerStimRadius = width/38, panelRadius = width/2;
-  const blockWidth = width/6/2, blockHeight = width / 3;
+  const blockHeight = width/6/2, blockWidth = width / 3;
 
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
@@ -240,14 +240,14 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     const center = width/2;
 
     stimPos.current = [
-      delta[0] + noise[0] + stimPos.current[0],
-      configObj.dimensionCount > 1 ? delta[1] + noise[1] + stimPos.current[1] : center
+      configObj.dimensionCount > 1 ? delta[0] + noise[0] + stimPos.current[0] : center,
+      delta[1] + noise[1] + stimPos.current[1]
     ]
 
     let isInBounds = true;
 
     if (configObj.dimensionCount == 1) {
-      isInBounds = isInRange(stimPos.current[0], blockWidth, width-blockWidth)
+      isInBounds = isInRange(stimPos.current[1], blockHeight, width-blockHeight)
     }
     else {
       isInBounds = isInCircle([center, center], panelRadius, stimPos.current)
@@ -303,9 +303,9 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       };
 
       if (configObj.dimensionCount == 1) {
-        response.stimPos.pop();
-        response.userPos.pop();
-        response.targetPos.pop();
+        response.stimPos.shift();
+        response.userPos.shift();
+        response.targetPos.shift();
       }
 
       responses.current.push(response)
@@ -320,7 +320,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   /** get target point and points to preview */
   if (width) {
     const total = targetPoints.current.length;
-    const yDelta = Math.min(15, width / 2 / configObj.numPreviewStim);
+    const xDelta = Math.min(15, width / 2 / configObj.numPreviewStim);
     for (let i = 0; i < configObj.numPreviewStim; i++) {
       const index = (i + 1) * configObj.previewStepGap + tickNumber;
 
@@ -328,7 +328,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
         const pos = [...targetPoints.current[index]];
 
         if (configObj.dimensionCount == 1) {
-          pos[1] = pos[1] - (i + 1) * yDelta;
+          pos[0] = pos[0] - (i + 1) * xDelta;
         }
 
         previews.push(pos);
@@ -380,11 +380,11 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       );
 
       for (let i = 0; i < points.length; i++) {
-        points[i][0] += panelWidth/2;
+        points[i][1] += panelWidth/2;
         if (configObj.dimensionCount == 1) {
-          points[i][1] = panelWidth/2;
+          points[i][0] = panelWidth/2;
         } else {
-          points[i][1] += panelWidth/2;
+          points[i][0] += panelWidth/2;
         }
       }
 
@@ -429,18 +429,18 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
                 />
 
                 <Rect
-                  x={0}
-                  y={center - blockHeight/2}
-                  width={blockWidth-outerStimRadius}
-                  height={blockHeight}
+                  y={0}
+                  x={center - blockWidth/2}
+                  height={blockHeight-outerStimRadius}
+                  width={blockWidth}
                   fill={getBackColor('green')}
                 />
 
                 <Rect
-                  x={width-blockWidth+outerStimRadius}
-                  y={center - blockHeight/2}
-                  width={blockWidth-outerStimRadius}
-                  height={blockHeight}
+                  y={width-blockHeight+outerStimRadius}
+                  x={center - blockWidth/2}
+                  height={blockHeight-outerStimRadius}
+                  width={blockWidth}
                   fill={getBackColor('green')}
                 />
               </>
