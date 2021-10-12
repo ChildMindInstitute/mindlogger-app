@@ -38,7 +38,6 @@ export default class DrawingBoard extends Component {
     this.state = {
       lines: [],
     };
-    this.allowed = false;
     this.startX = 0;
     this.startY = 0;
     this.lastX = 0;
@@ -67,12 +66,10 @@ export default class DrawingBoard extends Component {
         this.props.onResult({ ...result, lines: [...this.props.lines, line], svgString });
       },
     });
-    this.allowed = true;
   }
 
   addLine = (evt) => {
     const { lines } = this.state;
-    if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     this.startX = locationX;
     this.startY = locationY;
@@ -82,7 +79,7 @@ export default class DrawingBoard extends Component {
 
   addPoint = (evt, gestureState) => {
     const { lines } = this.state;
-    if (!this.allowed || lines.length === 0) return;
+    if (lines.length === 0) return;
 
     const time = Date.now();
     const n = lines.length - 1;
@@ -123,15 +120,6 @@ export default class DrawingBoard extends Component {
     this.setState({ lines: [] });
   }
 
-  start = () => {
-    this.reset();
-    this.allowed = true;
-  }
-
-  stop = () => {
-    this.allowed = false;
-  }
-
   save = () => {
     const { lines } = this.state;
     const { width } = this.state.dimensions;
@@ -152,7 +140,7 @@ export default class DrawingBoard extends Component {
       points={pointStr}
       fill="none"
       stroke="black"
-      strokeWidth="3"
+      strokeWidth="2"
     />
   );
 
