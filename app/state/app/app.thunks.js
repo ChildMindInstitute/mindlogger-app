@@ -68,7 +68,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearApplets());
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
-  dispatch(clearActivities());
+  // dispatch(clearActivities());
   firebase.notifications().cancelAllNotifications();
 };
 

@@ -13,7 +13,6 @@ export const setCumulativeActivities = (data) => {
 };
 
 export const setHiddenCumulativeActivities = (data) => {
-  console.log('------------called------------');
   return ({
     type: "HIDDEN_CUMULATIVE_ACTIVITIES",
     payload: data,
