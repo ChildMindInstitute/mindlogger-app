@@ -74,7 +74,7 @@ export const itemVisiblitySelector = createSelector(
     }
     const { responses, activity } = current;
 
-    return activity.addProperties.map((property) =>
+    return activity?.addProperties.map((property) =>
       testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
     );
   }

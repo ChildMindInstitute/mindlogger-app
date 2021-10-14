@@ -316,7 +316,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
-        dispatch(setCumulativeActivities(cumulativeActivities));
+        // dispatch(setCumulativeActivities(cumulativeActivities));
 
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);

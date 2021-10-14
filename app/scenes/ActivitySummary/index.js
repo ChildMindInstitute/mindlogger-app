@@ -98,7 +98,6 @@ const ActivitySummary = (props) => {
 
   useEffect(() => {
     let { reportMessages, cumActivities } = evaluateCumulatives(responses, activity)
-
     if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
@@ -111,7 +110,6 @@ const ActivitySummary = (props) => {
       if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
         setHiddenCumulativeActivities(activity.id);
     }
-
     setMessages(reportMessages);
   }, [responses]);
 

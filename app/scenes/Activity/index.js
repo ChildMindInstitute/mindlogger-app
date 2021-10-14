@@ -31,6 +31,7 @@ import {
   setSummaryScreen,
   setSelected,
 } from "../../state/responses/responses.actions";
+import { setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
 
 import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
@@ -130,6 +131,25 @@ class Activity extends React.Component {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);
       } else {
+        // NOTE: this condition is for threshold cumulative in case, summary screen disabled
+        if (next === -1 && activity.compute && !isSummaryScreen) {
+          const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
+          const cumActivities = _.compact(_.map(activity.messages, 'nextActivity'));
+
+          if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
+            cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
+            if (cumActivities.length > 0) {
+              cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
+              setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+            }
+            if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+          } else {
+            setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+            if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
+              setHiddenCumulativeActivities(activity.id);
+          }
+        }
+
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
@@ -357,6 +377,8 @@ const mapStateToProps = (state) => ({
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
   isSelected: state.responses.isSelected,
+  cumulativeActivities: state.activities.cumulativeActivities,
+  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
@@ -368,6 +390,8 @@ const mapDispatchToProps = {
   completeResponse,
   setSummaryScreen,
   setActivitySelectionDisabled,
+  setCumulativeActivities,
+  setHiddenCumulativeActivities
 };
 
 export default connect(
