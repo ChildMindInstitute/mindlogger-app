@@ -261,6 +261,7 @@ export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
 }
 
 export const evaluateCumulatives = (responses, activity) => {
+  if (!activity.messages || !activity.compute) return { cumActivities: [] };
   const parser = new Parser({
     logical: true,
     comparison: true,
@@ -277,7 +278,7 @@ export const evaluateCumulatives = (responses, activity) => {
     maxScores.push(getMaxScore(activity.items[i]));
   }
 
-  const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
+  const cumulativeScores = activity.compute && activity.compute.reduce((accumulator, itemCompute) => {
     return {
       ...accumulator,
       [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
@@ -288,7 +289,7 @@ export const evaluateCumulatives = (responses, activity) => {
     };
   }, {});
 
-  const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
+  const cumulativeMaxScores = activity.compute && activity.compute.reduce((accumulator, itemCompute) => {
     return {
       ...accumulator,
       [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
@@ -315,15 +316,15 @@ export const evaluateCumulatives = (responses, activity) => {
       [category]:
         outputType == "percentage"
           ? Math.round(
-              cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
-            )
+            cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
+          )
           : cumulativeScores[category],
     };
 
     if (expr.evaluate(variableScores)) {
       if (nextActivity) cumActivities.push(nextActivity);
 
-      const compute = activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
+      const compute = activity.compute && activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
 
       reportMessages.push({
         category,

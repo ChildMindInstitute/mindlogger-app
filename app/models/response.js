@@ -52,15 +52,20 @@ export const prepareResponseForUpload = (
         })
       }
 
-      if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
-        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
-        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
-        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
-        cumulative += positiveSum;
-        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
-          cumulative += negativeSum;
-        }
+      try {
+        if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
+          const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+          const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+          const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+          cumulative += positiveSum;
+          if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+            cumulative += negativeSum;
+          }
+        }        
+      } catch (error) {
+        console.log("ERR: ", error);
       }
+
     }
   }
 
