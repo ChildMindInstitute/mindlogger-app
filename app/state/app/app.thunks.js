@@ -95,8 +95,6 @@ export const logout = () => (dispatch, getState) => {
         doLogout(dispatch, getState);
       }
     });
-
-
 };
 
 export const removeAccount = () => (dispatch, getState) => {

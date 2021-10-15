@@ -253,7 +253,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             response[`activity/${activityId}/nextActivity`] = nextActivities[activityId].map(id => {
               const activity = applet.activities.find(activity => activity.id.split('/').pop() == id)
               return activity && activity.name.en;
-            }).filter(name => name.length)
+            }).filter(name => name?.length)
           }
 
           return response;

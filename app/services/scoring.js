@@ -339,7 +339,5 @@ export const evaluateCumulatives = (responses, activity) => {
     }
   });
 
-  return {
-    reportMessages, cumActivities
-  }
+  return { reportMessages, cumActivities }
 }

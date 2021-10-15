@@ -50,6 +50,7 @@ import {
   isPrevEnabled,
 } from "../../services/activityNavigation";
 import Timer from "../../services/timer";
+import { evaluateCumulatives } from "../../services/scoring";
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -126,30 +127,28 @@ class Activity extends React.Component {
       return;
     }
 
+    if (next === -1 && activity.compute && !isSummaryScreen) {
+      const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
+      let { cumActivities } = evaluateCumulatives(responses, activity);
+      if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
+        cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
+        if (cumActivities.length > 0) {
+          cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
+          setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+          if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+        }
+      } else {
+        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+        if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
+          setHiddenCumulativeActivities(activity.id);
+      }
+    }
+
     if ((autoAdvance || fullScreen) && !optionalText) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(true);
       } else {
-        // NOTE: this condition is for threshold cumulative in case, summary screen disabled
-        if (next === -1 && activity.compute && !isSummaryScreen) {
-          const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
-          const cumActivities = _.compact(_.map(activity.messages, 'nextActivity'));
-
-          if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
-            cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
-            if (cumActivities.length > 0) {
-              cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
-              setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-            }
-            if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
-          } else {
-            setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-            if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
-              setHiddenCumulativeActivities(activity.id);
-          }
-        }
-
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
