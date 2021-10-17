@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    right: 40,
-    top: 0,
+    left: 30,
+    top: 15,
   },
   delayTimerView: {
     position: "absolute",
