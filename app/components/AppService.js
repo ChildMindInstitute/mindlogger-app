@@ -50,7 +50,9 @@ class AppService extends Component {
     this.appState = 'active';
     this.pendingNotification = null;
     this.notificationsCount = 0;
-    this.intervalId = 0;
+    this.refreshIntervalId = 0;
+    this.tokenIntervalId = 0;
+
     // AppState.addEventListener('change', this.handleAppStateChange);
 
     if (isAndroid) {
@@ -82,7 +84,7 @@ class AppService extends Component {
   startTimer()
   {
     const { sync } = this.props;
-    const updateScheduleDelay = 24 * 3600 * 1000;
+    const day = 24 * 3600 * 1000;
 
     const currentTime = new Date();
     const nextDay = new Date(
@@ -90,15 +92,37 @@ class AppService extends Component {
       currentTime.getMonth(),
       currentTime.getDate() + 1,
     );
-    const leftTimeout = nextDay.getTime() - currentTime.getTime() + 1000;
+    const refreshTimeLeft = nextDay.getTime() - currentTime.getTime() + 1000;
 
-    this.intervalId = delayedExec(
+    this.refreshIntervalId = delayedExec(
       () => {
         sync();
-        this.intervalId = delayedExec(sync, { every: updateScheduleDelay });
+        this.refreshIntervalId = delayedExec(sync, { every: day });
       },
-      { after: leftTimeout },
+      { after: refreshTimeLeft },
     );
+
+    nextDay.setHours(3);
+    const tokenTimeLeft = nextDay.getTime() - currentTime.getTime() + Math.random() * 10 * 500;
+
+    // check timer and refresh negative tokens
+
+    this.tokenIntervalId = delayedExec(
+      () => {
+        // refresh negative tokens
+
+        this.tokenIntervalId = delayedExec(sync, { every: day })
+      },
+      { after: tokenTimeLeft }
+    )
+  }
+
+  clearTimer()
+  {
+    if (this.refreshIntervalId) {
+      clearExec(this.refreshIntervalId);
+      this.refreshIntervalId = 0;
+    }
   }
 
   /**
@@ -112,9 +136,7 @@ class AppService extends Component {
     }
     AppState.removeEventListener('change', this.handleAppStateChange);
 
-    if (this.intervalId) {
-      clearExec(this.intervalId);
-    }
+    this.clearTimer();
   }
 
   /**
@@ -606,8 +628,7 @@ class AppService extends Component {
       setAppStatus(false);
       setLastActiveTime(new Date().getTime());
 
-      clearExec(this.intervalId);
-      this.intervalId = 0;
+      this.clearTimer();
     } else if (goingToForeground) {
       setAppStatus(true);
       this.startTimer();
@@ -622,21 +643,6 @@ class AppService extends Component {
     this.appState = nextAppState;
 
     if (this.appState == 'active') {
-      /* deactivate for now
-        if (!moment().isSame(moment(new Date(lastActive)), 'day')) {
-          sync(() => {
-            if (this.pendingNotification) {
-              this.openActivityByEventId(this.pendingNotification);
-              this.pendingNotification = null;
-            }
-          })
-        } else {
-          if (this.pendingNotification) {
-            this.openActivityByEventId(this.pendingNotification);
-            this.pendingNotification = null;
-          }
-        }
-      */
       if (this.pendingNotification) {
         this.openActivityByEventId(this.pendingNotification);
         this.pendingNotification = null;

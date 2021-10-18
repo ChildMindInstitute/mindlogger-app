@@ -102,6 +102,11 @@ const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
+const NEGATIVE_BEHAVIORS = "reprolib:terms/negativeBehaviors";
+const POSITIVE_BEHAVIORS = "reprolib:terms/positiveBehaviors";
+const START_TIME = "schema:startTime";
+const END_TIME = "schema:endTime";
+const RATE = "schema:rate";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -185,6 +190,35 @@ export const flattenValueConstraints = (vcObj) =>
       };
     }
 
+    if (key === NEGATIVE_BEHAVIORS) {
+      const behaviorList = R.path([key], vcObj);
+
+      return {
+        ...accumulator,
+        negativeBehaviors: behaviorList.map(behavior => ({
+          endTime: R.path([END_TIME, 0, '@value'], behavior),
+          startTime: R.path([START_TIME, 0, '@value'], behavior),
+          name: R.path([NAME, 0, '@value'], behavior),
+          rate: Number(R.path([RATE, 0, '@value'], behavior)),
+          value: Number(R.path([VALUE, 0, '@value'], behavior)),
+          image: R.path([IMAGE], behavior),
+        }))
+      }
+    }
+
+    if (key === POSITIVE_BEHAVIORS) {
+      const behaviorList = R.path([key], vcObj);
+
+      return {
+        ...accumulator,
+        positiveBehaviors: behaviorList.map(behavior => ({
+          name: R.path([NAME, 0, '@value'], behavior),
+          value: Number(R.path([VALUE, 0, '@value'], behavior)),
+          image: R.path([IMAGE], behavior),
+        }))
+      }
+    }
+
     if (key === IS_OPTIONAL_TEXT_REQUIRED) {
       return {
         ...accumulator,
@@ -239,7 +273,7 @@ export const flattenValueConstraints = (vcObj) =>
         removeBackOption: R.path([key, 0, "@value"], vcObj)
       }
     }
-    
+
     if (key === TOP_NAVIGATION_OPTION) {
       return {
         ...accumulator,

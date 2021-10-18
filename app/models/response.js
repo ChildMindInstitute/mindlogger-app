@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -31,7 +31,7 @@ export const prepareResponseForUpload = (
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
   const scheduledTime = activity.event && activity.event.scheduledTime;
-  let cumulative = responseHistory.tokens.cumulativeToken;
+  let cumulative = responseHistory.tokens.cumulativeToken, tokenChanged = false;
 
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
@@ -55,6 +55,8 @@ export const prepareResponseForUpload = (
         const responseValues = getValuesFromResponse(item, responses[i].value) || [];
         const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
         const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+
+        tokenChanged = true;
         cumulative += positiveSum;
         if (enableNegativeTokens && cumulative + negativeSum >= 0) {
           cumulative += negativeSum;
@@ -144,9 +146,11 @@ export const prepareResponseForUpload = (
       }
     }
 
-    responseData['tokenCumulation'] = {
-      value: cumulative
-    };
+    if (tokenChanged) {
+      responseData['tokenCumulation'] = {
+        value: cumulative
+      };
+    }
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
 
@@ -175,10 +179,11 @@ export const prepareResponseForUpload = (
         getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
 
-    responseData['tokenCumulation'] = {
-      value: cumulative
-    };
-
+    if (tokenChanged) {
+      responseData['tokenCumulation'] = {
+        value: cumulative
+      };
+    }
   }
 
   let i = 0;

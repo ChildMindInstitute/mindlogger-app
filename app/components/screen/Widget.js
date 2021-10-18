@@ -27,6 +27,7 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
+  PastBehaviorTracker
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -288,6 +289,16 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         tokenBalance={appletTokenBalance.cumulativeToken}
       />
     );
+  }
+
+  if (screen.inputType == 'pastBehaviorTracker') {
+    return (
+      <PastBehaviorTracker
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={answer}
+      />
+    )
   }
 
   const [oneShot, setOneShot] = useState(false);
