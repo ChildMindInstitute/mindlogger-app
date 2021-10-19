@@ -34,12 +34,19 @@ export const BehaviorCard = (props) => {
   const [width, setWidth] = useState(0);
   const [grantTime, setGrantTime] = useState(0);
   const height = 100;
-  const imageStyle = { width: 70, height: 70 }, padding = { x: 15, y: 15 };
+  const imageDim = { width: 70, height: 70 }, padding = { x: 15, y: 15 };
   const timesStyle = { width: 100, height: 100 };
   const timeListIcon = { width: 90, height: 90 }
   const shadowColor = 'grey', shadowOpacity=0.5;
   const contentWidth = width ? width - timeListIcon.width + 5 : 0;
 
+  const imageStyle = {
+    top: padding.y,
+    left: padding.x,
+    width: imageDim.width,
+    height: imageDim.height,
+    borderRadius: imageDim.width/2,
+  }
   return (
     <View
       style={styles.container}
@@ -86,9 +93,9 @@ export const BehaviorCard = (props) => {
 
           <Mask id="imageMask">
             <Circle
-              cx={padding.x + imageStyle.width/2}
-              cy={ padding.y + imageStyle.height/2 }
-              r={ imageStyle.width }
+              cx={padding.x + imageDim.width/2}
+              cy={ padding.y + imageDim.height/2 }
+              r={ imageDim.width }
               fill="white"
             />
           </Mask>
@@ -143,7 +150,7 @@ export const BehaviorCard = (props) => {
       <View
         style={{
           position: 'absolute',
-          width: imageStyle.width + padding.x,
+          width: imageDim.width + padding.x,
           height,
           shadowColor: 'black',
           shadowOffset: { width: -2, height: -2 },
@@ -152,23 +159,27 @@ export const BehaviorCard = (props) => {
           opacity: grantTime ? 0.8 : 1
         }}
       >
-        <CachedImage
-          style={{
-            top: padding.y,
-            left: padding.x,
-            width: imageStyle.width,
-            height: imageStyle.height,
-            borderRadius: imageStyle.width/2,
-          }}
-          source={{ uri: 'https://raw.githubusercontent.com/ChildMindInstitute/tokenlogger-images/main/png/paid_attention.png' }}
-        />
+        {
+          image &&
+            <CachedImage
+              style={imageStyle}
+              source={{ uri: image }}
+            />
+          ||
+            <View
+              style={{
+                ...imageStyle,
+                backgroundColor: '#CBCBCB'
+              }}
+            />
+        }
       </View>
 
       <View
         style={{
           position: 'absolute',
-          left: padding.x + imageStyle.width,
-          width: contentWidth - imageStyle.width - padding.x - timesStyle.width,
+          left: padding.x + imageDim.width,
+          width: contentWidth - imageDim.width - padding.x - timesStyle.width,
           height,
           opacity: grantTime ? 0.8 : 1
         }}
