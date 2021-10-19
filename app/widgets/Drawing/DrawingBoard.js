@@ -22,7 +22,19 @@ const styles = StyleSheet.create({
 function chunkedPointStr(lines, chunkSize) {
   const results = [];
   lines.forEach((line) => {
-    const { length } = line.points;
+    const { points } = line;
+    let { length } = points;
+
+    if (length === 1) {
+      const point = points[0];
+      
+      points.push({
+        ...point,
+        x: point.x + 1.5,
+        y: point.y + 1.5,
+      });
+      length += 1;
+    }
     for (let index = 0; index < length; index += chunkSize) {
       const myChunk = line.points.slice(index, index + chunkSize + 1);
       // Do something if you want with the group
@@ -48,9 +60,11 @@ export default class DrawingBoard extends Component {
         return true;
       },
       onPanResponderGrant: this.addLine,
-      onPanResponderMove: this.addPoint,
+      onPanResponderMove: (evt, gestureState) => {
+        this.addPoint(gestureState);
+      },
       onPanResponderRelease: (evt, gestureState) => {
-        this.addPoint(evt, gestureState);
+        this.addPoint(gestureState);
         this.props.onRelease();
         const result = this.save();
         const svgString = this.serialize();
@@ -77,20 +91,20 @@ export default class DrawingBoard extends Component {
     this.setState({ lines: [...lines, newLine] });
   }
 
-  addPoint = (evt, gestureState) => {
+  addPoint = (gestureState) => {
     const { lines } = this.state;
-    if (lines.length === 0) return;
 
+    if (lines.length === 0) return;
     const time = Date.now();
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-
-    if (moveX === 0 && moveY === 0) {
-      this.lastX = this.startX + 2;
-      this.lastY = this.startY + 2;
-    } else {
+    
+    if (moveX === 0 && moveY === 0) return;
+    else {
       this.lastX = moveX - x0 + this.startX;
       this.lastY = moveY - y0 + this.startY;
+
+      if (this.lastX === this.startX && this.lastY === this.startY) return;
     }
 
     this.lastPressTimestamp = time;
