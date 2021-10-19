@@ -64,7 +64,11 @@ export const prepareResponseForUpload = (
       }
 
       if (item.inputType == 'pastBehaviorTracker') {
-        cumulative += getPastBehaviorTokensFromResponse(item, responses[i])
+        const newTokens = getPastBehaviorTokensFromResponse(item, responses[i])
+        if (newTokens) {
+          cumulative += newTokens;
+          tokenChanged = true;
+        }
       }
     }
   }

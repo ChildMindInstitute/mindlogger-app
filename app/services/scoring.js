@@ -133,7 +133,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, lastTokenTime, lastRe
 
       const elapsed = Math.min(timestamp, endTime.getTime()) - Math.max(lastRewardTime, startTime.getTime());
 
-      reward += behavior.value * elapsed / 1000 / 60;
+      reward += behavior.rate * elapsed / 1000 / 60;
     }
   }
 
