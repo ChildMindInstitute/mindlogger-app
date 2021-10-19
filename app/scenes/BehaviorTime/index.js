@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { TouchableOpacity, StyleSheet, View, ScrollView, Text, StatusBar } from 'react-native';
 import { Image } from 'react-native';
 import { Icon } from 'native-base';
-import Svg, { Rect, Defs, Mask, G, LinearGradient, Stop, Circle, RadialGradient } from 'react-native-svg'
+import Svg, { Rect, Defs, Mask, G, LinearGradient, Stop, Circle } from 'react-native-svg'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import moment from 'moment';
 
 import { setCurrentBehavior } from '../../state/responses/responses.actions';
 import { currentBehaviorSelector } from '../../state/responses/responses.selectors';
@@ -25,7 +27,7 @@ const styles = StyleSheet.create({
     right: 15,
   },
   card: {
-    width: '90%',
+    width: '95%',
     height: 200,
     borderRadius: 25,
     marginTop: 10,
@@ -34,6 +36,11 @@ const styles = StyleSheet.create({
   cardXButton: {
     position: 'absolute',
     left: 10,
+    top: 10
+  },
+  readyButton: {
+    position: 'absolute',
+    right: 10,
     top: 10
   },
   cardTitle: {
@@ -53,7 +60,7 @@ const styles = StyleSheet.create({
   timeText: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600'
   },
   sliderSection: {
@@ -72,11 +79,22 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   const distress = '#EC0C8B', impairment = '#0FB0EC', padding = 40;
   const borderRadius = 16;
   const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * borderRadius;
-  const [list, setList] = useState(currentBehavior.list)
+  const [list, setList] = useState(currentBehavior.list);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const currentItem = useRef(null);
+  const borderColor = '#44E7DE';
 
-  const orderedList = list.map((item, index) => ({ ...item, index })).sort((a, b) => {
-    if (!a.time || a.time > b.time) return -1;
-    if (!b.time || a.time < b.time) return 1;
+  const orderedList = list.map((item, index) => ({
+    ...item,
+    index,
+    timeStr: moment(new Date(item.time)).format('hh:mm A'),
+    ready: item.time && item.distress !== null && item.impairment !== null
+  })).sort((a, b) => {
+    if (!a.time) return -1;
+    if (!b.time) return 1;
+
+    if (a.time > b.time) return -1;
+    if (a.time < b.time) return 1;
 
     return 0;
   })
@@ -133,8 +151,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       <>
         <Defs>
           <LinearGradient id="background" x1="0%" y1="0%" x2="0%" y2="100%" >
-            <Stop offset="0" stopColor={'#0C3B61'} stopOpacity={1} key='0' />
-            <Stop offset="1" stopColor={'#0D3F69'} stopOpacity={1} key='1' />
+            <Stop offset="0" stopColor={type == 'positive' ? '#0C3B61' : '#492265'} stopOpacity={1} key='0' />
+            <Stop offset="1" stopColor={type == 'positive' ? '#0D3F69' : '#492265'} stopOpacity={1} key='1' />
           </LinearGradient>
 
           <LinearGradient id="foreground" x1={50 - direction*50 + '%'} x2={50 + direction*50 + '%'} y1="0%" y2="0%" >
@@ -144,9 +162,9 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
 
           <Mask id="foreground-mask">
             <Rect
-              x={direction < 0 ? (100-perecent) : 0 + '%'}
+              x={ (direction < 0 ? (100-perecent) : 0) + '%'}
               y="0%"
-              width ={perecent+'%'}
+              width ={ (direction < 0 ? 100 : perecent ) + '%'}
               height="100%"
               fill={'white'}
             />
@@ -159,12 +177,43 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
     )
   }
 
+  const setTime = (time) => {
+    if (time.getTime() > new Date().getTime()) {
+      time.setDate(time.getDate()-1);
+    }
+
+    const item = currentItem.current;
+
+    const items = [...list];
+    items[item.index] = {
+      time: time.getTime(),
+      distress: item.distress,
+      impairment: item.impairment,
+    }
+
+    setList(items)
+    setCurrentBehavior({
+      name,
+      type,
+      list: items
+    })
+
+    setShowTimePicker(false);
+  }
+
   return (
     <ScrollView style={{
       ...styles.container,
       backgroundColor: type == 'positive' ? '#20609D' : '#7A43A0',
     }}>
       <StatusBar hidden />
+
+      <DateTimePickerModal
+        isVisible={showTimePicker}
+        mode="time"
+        onConfirm={setTime}
+        onCancel={() => setShowTimePicker(false)}
+      />
 
       <TouchableOpacity style={styles.screenXButton} onPress={() => Actions.pop()}>
         <Icon
@@ -190,28 +239,41 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
               style={{
                 ...styles.card,
                 backgroundColor: type == 'positive' ? '#0D426D' : '#50256F',
+                borderColor: item.ready ? borderColor : 'rgba(0,0,0,0)',
+                borderWidth: 1
               }}
               key={item.index}
             >
-              <Text style={styles.cardTitle}>{ item.index+1 } out of { orderedList.length }</Text>
+              <Text style={{
+                ...styles.cardTitle,
+                color: item.ready ? borderColor : 'white'
+              }}>{ item.index+1 } out of { orderedList.length }</Text>
 
               <View style={styles.timeSection}>
                 <Image
                   source={type == 'positive' ? positive : negative }
                 />
 
-                <View
+                <TouchableOpacity
                   style={{
                     marginTop: 10,
                     borderRadius: 16,
                     height: 32,
                     width: '60%',
                     backgroundColor: type == 'positive' ? '#4AA7F5' : '#BB71F0',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    borderColor: item.time ? borderColor : 'rgba(0,0,0,0)',
+                    borderWidth: 2
+                  }}
+                  onPress={() => {
+                    currentItem.current = item;
+                    setShowTimePicker(true)
                   }}
                 >
-                  <Text style={styles.timeText}>Time</Text>
-                </View>
+                  <Text style={styles.timeText}>
+                    {!item.time ? 'Time' : item.timeStr}
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <View
@@ -443,7 +505,14 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                   }
 
                   <View
-                    style={{ position: 'absolute', width: sliderWidth, height: sliderWidth }}
+                    style={{
+                      position: 'absolute',
+                      width: sliderWidth,
+                      height: sliderWidth,
+                      borderRadius,
+                      borderColor: (item.distress !== null || item.impairment !== null) ? borderColor : 'rgba(0,0,0,0)',
+                      borderWidth: 2
+                    }}
                     onStartShouldSetResponder={() => true}
                     onResponderGrant={(evt) => {
                       const { locationX, locationY } = evt.nativeEvent;
@@ -465,9 +534,28 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                 <Icon
                   type="FontAwesome"
                   name="close"
-                  style={{ color: 'white', fontSize: 25 }}
+                  style={{ color: 'white', fontSize: 25, borderColor: 'black' }}
                 />
               </TouchableOpacity>
+
+              {
+                item.ready &&
+                  <View style={{
+                    ...styles.readyButton,
+                    borderWidth: 2,
+                    borderRadius: 15,
+                    padding: 2,
+                    borderColor,
+                  }}>
+                    <Icon
+                      type="FontAwesome"
+                      name="check"
+                      style={{ color: borderColor, fontSize: 20, borderColor: 'black' }}
+                    />
+                  </View>
+                ||
+                  <></>
+              }
             </View>
           ))
         }
