@@ -9,6 +9,8 @@ export const responsesSelector = R.path(["responses", "responseHistory"]);
 
 export const uploadQueueSelector = R.path(["responses", "uploadQueue"]);
 
+export const currentBehaviorSelector = R.path(["responses", "currentBehavior"]);
+
 export const isDownloadingResponsesSelector = R.path([
   "responses",
   "isDownloadingResponses",

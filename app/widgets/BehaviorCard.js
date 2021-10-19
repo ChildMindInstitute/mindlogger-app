@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { CachedImage } from 'react-native-img-cache';
-import Svg, { Rect, Defs, Mask, Image, LinearGradient, Stop, Circle, RadialGradient } from 'react-native-svg'
+import Svg, { Rect, Defs, Mask, LinearGradient, Stop, Circle } from 'react-native-svg'
 
 const styles = StyleSheet.create({
   container: {

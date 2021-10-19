@@ -88,3 +88,8 @@ export const setLastResponseTime = responseTimes => ({
   type: RESPONSES_CONSTANTS.SET_LAST_RESPONSE_TIME,
   payload: responseTimes,
 });
+
+export const setCurrentBehavior = behavior => ({
+  type: RESPONSES_CONSTANTS.SET_CURRENT_BEHAVIOR,
+  payload: behavior
+})

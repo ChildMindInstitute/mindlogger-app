@@ -137,6 +137,12 @@ export default (state = initialState, action = {}) => {
           },
         },
       };
+    case RESPONSES_CONSTANTS.SET_CURRENT_BEHAVIOR:
+      return {
+        ...state,
+        currentBehavior: action.payload
+      }
+
     case RESPONSES_CONSTANTS.SET_RESPONSES_DOWNLOAD_PROGRESS:
       return {
         ...state,

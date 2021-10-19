@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BehaviorCard } from '../BehaviorCard';
+import { Actions } from 'react-native-router-flux';
 
-export class PastBehaviorTracker extends Component {
+import { setCurrentBehavior } from '../../state/responses/responses.actions';
+import { currentBehaviorSelector } from '../../state/responses/responses.selectors';
+
+export class PastBehaviorTrackerComponent extends Component {
   increaseOccurrence(behavior) {
     const value = { ...this.props.value }
     if (value[behavior]) {
@@ -14,8 +19,8 @@ export class PastBehaviorTracker extends Component {
 
     value[behavior].push({
       time: 0,
-      distress: 0,
-      impairment: 0
+      distress: null,
+      impairment: null
     })
 
     this.props.onChange(value)
@@ -32,6 +37,16 @@ export class PastBehaviorTracker extends Component {
     }
   }
 
+  componentDidUpdate(oldProps) {
+    if (oldProps.currentBehavior != this.props.currentBehavior) {
+      const value = { ...this.props.value }
+      const { name, list } = this.props.currentBehavior;
+
+      value[name] = list;
+      this.props.onChange(value);
+    }
+  }
+
   render () {
     const {
       config: {
@@ -39,6 +54,7 @@ export class PastBehaviorTracker extends Component {
         negativeBehaviors
       },
       value = {},
+      setCurrentBehavior
     } = this.props;
 
     const behaviors = [];
@@ -70,6 +86,12 @@ export class PastBehaviorTracker extends Component {
                 onPress={() => this.increaseOccurrence(behavior.name)}
                 onLongPress={() => this.decreaseOccurrence(behavior.name)}
                 onTimesMenu={() => {
+                  setCurrentBehavior({
+                    name: behavior.name,
+                    list: value[behavior.name],
+                    type: behavior.type
+                  })
+                  Actions.push('set_behavior_times')
                 }}
               />
             ))
@@ -80,8 +102,23 @@ export class PastBehaviorTracker extends Component {
   }
 }
 
-PastBehaviorTracker.propTypes = {
+PastBehaviorTrackerComponent.propTypes = {
   config: PropTypes.object,
   onChange: PropTypes.func,
-  value: PropTypes.any
+  value: PropTypes.any,
+  setCurrentBehavior: PropTypes.func.isRequired,
+  currentBehavior: PropTypes.object.isRequired
 }
+
+const mapStateToProps = state => ({
+  currentBehavior: currentBehaviorSelector(state),
+});
+
+const mapDispatchToProps = dispatch => ({
+  setCurrentBehavior: (behavior) => dispatch(setCurrentBehavior(behavior))
+});
+
+export const PastBehaviorTracker = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(PastBehaviorTrackerComponent);
