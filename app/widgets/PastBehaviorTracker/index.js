@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   doneButtonStyle: {
     backgroundColor: '#20609D',
     borderRadius: 15,
-    width: 100,
+    width: 80,
     alignSelf: 'center'
   },
   buttonText: {
@@ -194,13 +194,21 @@ export class PastBehaviorTrackerComponent extends Component {
               />
             </View>
 
-            <View style={{ marginVertical: 20 }}>
+            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
               <TouchableOpacity
                 style={styles.doneButtonStyle}
                 onPress={this.onSetOccurance.bind(this)}
               >
                 <Text style={styles.buttonText}>Done</Text>
               </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.doneButtonStyle}
+                onPress={() => this.setState({ itemCount: 0 })}
+              >
+                <Text style={styles.buttonText}>Reset</Text>
+              </TouchableOpacity>
+
             </View>
           </View>
         </Modal>
