@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    right: 40,
-    top: 0,
+    left: 30,
+    top: 15,
   },
   delayTimerView: {
     position: "absolute",
@@ -294,6 +294,12 @@ class ActivityScreen extends Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
   };
 
+  handleChange(e) {
+    if (!this.props.screen.timer || this.state.timerActive) {
+      this.props.onChange(e);
+    }
+  }
+
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
@@ -334,7 +340,7 @@ class ActivityScreen extends Component {
                 <View style={{ opacity: 0.25 }}>
                   <Widget
                     answer={answer}
-                    onChange={onChange}
+                    onChange={this.handleChange.bind(this)}
                     isCurrent={isCurrent}
                     screen={screen}
                     onPress={() => {
@@ -349,7 +355,7 @@ class ActivityScreen extends Component {
             ) : (
                 <Widget
                   answer={answer}
-                  onChange={onChange}
+                  onChange={this.handleChange.bind(this)}
                   isCurrent={isCurrent}
                   screen={screen}
                   onPress={() => {
