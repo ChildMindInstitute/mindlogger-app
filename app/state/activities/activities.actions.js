@@ -12,10 +12,10 @@ export const setCumulativeActivities = (data) => {
   })
 };
 
-export const setHiddenCumulativeActivities = (data) => {
+export const setHiddenCumulativeActivities = (data, isRemove) => {
   return ({
     type: "HIDDEN_CUMULATIVE_ACTIVITIES",
-    payload: data,
+    payload: { data, isRemove },
   })
 };
 

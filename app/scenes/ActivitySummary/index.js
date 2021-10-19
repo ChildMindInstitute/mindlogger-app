@@ -98,20 +98,29 @@ const ActivitySummary = (props) => {
 
   useEffect(() => {
     let { reportMessages, cumActivities } = evaluateCumulatives(responses, activity)
+    const cumulativeActivity = findActivity(cumActivities && cumActivities[0], applet?.activities);
+
     if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
         setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
         if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+        if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
       }
     } else {
       setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
       if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
         setHiddenCumulativeActivities(activity.id);
+      if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
     }
     setMessages(reportMessages);
   }, [responses]);
+
+  const findActivity = (name, activities = []) => {
+    if (!name) return undefined;
+    return _.find(activities, { name: { en: name } });
+  }
 
   const fRequestAndroidPermission = async () => {
     try {

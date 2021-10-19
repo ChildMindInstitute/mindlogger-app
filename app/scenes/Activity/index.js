@@ -130,17 +130,21 @@ class Activity extends React.Component {
     if (next === -1 && activity.compute && !isSummaryScreen) {
       const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
       let { cumActivities } = evaluateCumulatives(responses, activity);
+      const cumulativeActivity = this.findActivity(cumActivities && cumActivities[0], currentApplet?.activities);
+
       if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
         cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
         if (cumActivities.length > 0) {
           cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
           setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
           if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+          if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
         }
       } else {
         setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
         if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
           setHiddenCumulativeActivities(activity.id);
+        if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
       }
     }
 
@@ -157,6 +161,11 @@ class Activity extends React.Component {
       }
     }
   }
+
+  findActivity = (name, activities = []) => {
+    if (!name) return undefined;
+    return _.find(activities, { name: { en: name } });
+  }  
 
   get currentItem() {
     return R.path(
@@ -189,6 +198,7 @@ class Activity extends React.Component {
   componentWillUnmount() {
     this.idleTimer.clear();
   }
+
 
   render() {
     const {

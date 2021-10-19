@@ -74,12 +74,12 @@ const ActivityList = ({
         const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
 
         if (isNextActivityShown !== false)
-          isNextActivityShown = alreadyAct?.includes(act.name.en)
+          isNextActivityShown = alreadyAct?.includes(act.name.en) || alreadyAct?.includes(act.id)
             ? true
             : checkActivityIsShown(act.name.en, notShownAct.messages)
 
-        if (alreadyAct?.includes(act.name.en)) {
-          isNextActivityShown = alreadyAct?.includes(act.name.en);
+        if (alreadyAct?.includes(act.name.en) || alreadyAct?.includes(act.id)) {
+          isNextActivityShown = true;
           break;
         };
       }
@@ -87,6 +87,7 @@ const ActivityList = ({
       if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true && !hiddenCumulativeActivities?.includes(act.id))
         appletActivities.push(act);
     }
+    appletActivities.length === 0 && appletActivities.push(newApplet.activities[0]);
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {

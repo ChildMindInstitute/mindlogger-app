@@ -1,3 +1,4 @@
+import _ from "lodash";
 
 export const initialState = {
   activities: [],
@@ -18,10 +19,11 @@ export default (state = initialState, action = {}) => {
         cumulativeActivities: { ...state.cumulativeActivities, ...action.payload },
       };
     case "HIDDEN_CUMULATIVE_ACTIVITIES":
-      console.log('HIDDEN_CUMULATIVE_ACTIVITIES: ', action.payload);
+      const hiddenCumulativeActivities = [...state.hiddenCumulativeActivities];
+      if (action.payload.isRemove) _.remove(hiddenCumulativeActivities, val => val === action.payload.data)
       return {
         ...state,
-        hiddenCumulativeActivities: [ ...state.hiddenCumulativeActivities, action.payload ],
+        hiddenCumulativeActivities: [ ...hiddenCumulativeActivities, action.payload.data ],
       };
     case "CLEAR_ACTIVITIES":
       return { ...initialState };
