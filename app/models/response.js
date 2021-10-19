@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getPastBehaviorTokensFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -61,6 +61,10 @@ export const prepareResponseForUpload = (
         if (enableNegativeTokens && cumulative + negativeSum >= 0) {
           cumulative += negativeSum;
         }
+      }
+
+      if (item.inputType == 'pastBehaviorTracker') {
+        cumulative += getPastBehaviorTokensFromResponse(item, responses[i])
       }
     }
   }
@@ -198,10 +202,10 @@ export const prepareResponseForUpload = (
 
 export const getTokenUpdateInfo = (
   offset,
-  responseHistory,
+  cumulativeToken,
   appletMetaData
 ) => {
-  const cumulative = responseHistory.tokens.cumulativeToken + offset;
+  const cumulative = cumulativeToken + offset;
 
   if (config.encryptResponse && appletMetaData.encryption) {
     return {

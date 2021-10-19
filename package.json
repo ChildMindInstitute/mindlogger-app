@@ -97,6 +97,7 @@
     "react-native-markdown-renderer": "^3.2.8",
     "react-native-markdown-view": "https://github.com/shnizzedy/react-native-markdown-view.git",
     "react-native-media-controls": "^2.2.0",
+    "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^10.2.0",
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^2.2.2",

@@ -455,7 +455,7 @@ export const getUserUpdates = ({ authToken }) => {
   }).then(res => (res.status === 200 ? res.json() : res));
 };
 
-export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey) => {
+export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey, rewardTime=0, isEndOfDay=false) => {
   const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
   const headers = {
     "Girder-Token": authToken,
@@ -470,6 +470,9 @@ export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulat
         cumulative,
         version,
         userPublicKey,
+        isReward: rewardTime ? true : false,
+        rewardTime,
+        isEndOfDay
       })
     })
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));

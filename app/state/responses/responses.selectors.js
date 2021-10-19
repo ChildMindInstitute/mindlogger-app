@@ -11,6 +11,8 @@ export const uploadQueueSelector = R.path(["responses", "uploadQueue"]);
 
 export const currentBehaviorSelector = R.path(["responses", "currentBehavior"]);
 
+export const lastTokenTimesSelector = R.path(["responses", "lastTokenTimes"]);
+
 export const isDownloadingResponsesSelector = R.path([
   "responses",
   "isDownloadingResponses",

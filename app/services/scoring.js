@@ -1,5 +1,6 @@
 import { Parser } from 'expr-eval';
 import _ from "lodash";
+import moment from 'moment';
 
 export const getScoreFromResponse = (item, value) => {
   if (value === null || item.inputType !== 'radio' && item.inputType !== 'slider') {
@@ -76,6 +77,67 @@ export const getValuesFromResponse = (item, value) => {
   }
 
   return tokenValues;
+}
+
+export const getPastBehaviorTokensFromResponse = (item, response) => {
+  const { positiveBehaviors, negativeBehaviors } = item.valueConstraints;
+
+  let token = 0;
+
+  const isBehaviorFilledOut = (list) => {
+    if (!list.length) return false;
+    for (const item of list) {
+      if (!item.time || item.distress === null || item.impairment === null ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  for (const behavior of positiveBehaviors) {
+    const list = response[behavior.name] || []
+    token += behavior.value * list.length;
+
+    if (isBehaviorFilledOut(list)) {
+      token++;
+    }
+  }
+
+  for (const behavior of negativeBehaviors) {
+    const list = response[behavior.name] || []
+    token -= behavior.value * list.length;
+
+    if (isBehaviorFilledOut(list)) {
+      token++;
+    }
+  }
+
+  return token;
+}
+
+export const getTokenIncreaseForNegativeBehaviors = (item, lastTokenTime, lastRewardTime, timestamp) => {
+  const reward = 0;
+  const { negativeBehaviors } = item.valueConstraints;
+
+  const startTime = new Date(lastTokenTime);
+  const timeStr = moment(startTime).format('hh:mm');
+
+  for (const behavior of negativeBehaviors ) {
+    if (timeStr >= behavior.startTime && timeStr < behavior.endTime) {
+      const parts = behavior.endTime.split(':');
+
+      const endTime = new Date(lastTokenTime);
+      endTime.setHours(Number(parts[0]));
+      endTime.setMinutes(Number(parts[1]));
+
+      const elapsed = Math.min(timestamp, endTime.getTime()) - Math.max(lastRewardTime, startTime.getTime());
+
+      reward += behavior.value * elapsed / 1000 / 60;
+    }
+  }
+
+  return reward;
 }
 
 export const evaluateScore = (testExpression, items = [], scores = [], subScaleResult = {}) => {
