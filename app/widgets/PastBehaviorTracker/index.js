@@ -1,15 +1,79 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { View, KeyboardAvoidingView, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BehaviorCard } from '../BehaviorCard';
 import { Actions } from 'react-native-router-flux';
+import Modal from 'react-native-modal';
 
 import { setCurrentBehavior } from '../../state/responses/responses.actions';
 import { currentBehaviorSelector } from '../../state/responses/responses.selectors';
 
+const styles = StyleSheet.create({
+  doneButtonStyle: {
+    backgroundColor: '#20609D',
+    borderRadius: 15,
+    width: 100,
+    alignSelf: 'center'
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    padding: 10,
+    fontSize: 18
+  },
+  modal: {
+    width: '70%',
+    backgroundColor: 'white',
+    alignSelf: 'center',
+    shadowColor: 'grey',
+    shadowRadius: 5,
+    borderRadius: 15
+  },
+  inputStyle: {
+    lineHeight: 20,
+    borderColor: '#ABC3DA',
+    textAlign: 'center',
+    borderWidth: 2,
+    borderRadius: 16,
+    flexGrow: 1,
+    paddingHorizontal: 5,
+    fontSize: 16,
+    maxWidth: 100
+  },
+  upButton: {
+    width: 0, height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 20, borderRightWidth: 20,
+    borderBottomWidth: 35,
+    borderLeftColor: 'transparent', borderRightColor: 'transparent',
+    borderBottomColor: '#20609D',
+    shadowColor: 'grey', shadowRadius: 2, shadowOpacity: 1
+  },
+  downButton: {
+    width: 0, height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 20, borderRightWidth: 20,
+    borderTopWidth: 35,
+    borderLeftColor: 'transparent', borderRightColor: 'transparent',
+    borderTopColor: '#FF5053',
+    shadowColor: 'grey', shadowRadius: 2, shadowOpacity: 1
+  }
+});
+
 export class PastBehaviorTrackerComponent extends Component {
-  increaseOccurrence(behavior) {
+  constructor (props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      selectedBehavior: '',
+      itemCount: 0
+    };
+  }
+
+  increaseOccurrence (behavior) {
     const value = { ...this.props.value }
     if (value[behavior]) {
       value[behavior] = [ ...value[behavior] ]
@@ -26,7 +90,28 @@ export class PastBehaviorTrackerComponent extends Component {
     this.props.onChange(value)
   }
 
-  componentDidUpdate(oldProps) {
+  onSetOccurance () {
+    this.setState({ modalVisible: false });
+    const value = { ...this.props.value };
+    const behavior = this.state.selectedBehavior;
+
+    if (value[behavior]) {
+      value[behavior] = [ ...value[behavior] ]
+    } else {
+      value[behavior] = []
+    }
+
+    while (value[behavior].length > this.state.itemCount) {
+      value[behavior].pop();
+    }
+    while (value[behavior].length < this.state.itemCount) {
+      value[behavior].push({ time: 0, distress: null, impairment: null })
+    }
+
+    this.props.onChange(value)
+  }
+
+  componentDidUpdate (oldProps) {
     if (oldProps.currentBehavior != this.props.currentBehavior) {
       const value = { ...this.props.value }
       const { name, list } = this.props.currentBehavior;
@@ -59,6 +144,10 @@ export class PastBehaviorTrackerComponent extends Component {
       setCurrentBehavior
     } = this.props;
 
+    const {
+      modalVisible, selectedBehavior, itemCount
+    } = this.state;
+
     const behaviors = [];
     for (const behavior of positiveBehaviors) {
       behaviors.push({
@@ -78,6 +167,43 @@ export class PastBehaviorTrackerComponent extends Component {
 
     return (
       <KeyboardAvoidingView>
+        <Modal
+          isVisible={modalVisible}
+          onBackdropPress={() => this.setState({ modalVisible: false })}
+        >
+          <View style={styles.modal}>
+            <View style={{ marginVertical: 20 }}>
+              <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
+            </View>
+
+            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+              <TouchableOpacity
+                style={styles.upButton}
+                onPress={() => this.setState({ itemCount: itemCount+1 })}
+              />
+
+              <TextInput
+                style={styles.inputStyle}
+                onChangeText={text => this.setState({ itemCount: isNaN(text) ? 0 : Number(text) })}
+                value={`${itemCount}`}
+              />
+
+              <TouchableOpacity
+                style={styles.downButton}
+                onPress={() => this.setState({ itemCount: Math.max(0, itemCount-1) })}
+              />
+            </View>
+
+            <View style={{ marginVertical: 20 }}>
+              <TouchableOpacity
+                style={styles.doneButtonStyle}
+                onPress={this.onSetOccurance.bind(this)}
+              >
+                <Text style={styles.buttonText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <View style={{ alignItems: 'stretch' }}>
           {
             behaviors.map((behavior, index) => (
@@ -90,7 +216,11 @@ export class PastBehaviorTrackerComponent extends Component {
                 behaviorType={behavior.type}
                 onPress={() => this.increaseOccurrence(behavior.name)}
                 onLongPress={() => {
-
+                  this.setState({
+                    modalVisible: true,
+                    selectedBehavior: behavior.name,
+                    itemCount: (value[behavior.name] || []).length
+                  })
                 }}
                 onTimesMenu={() => {
                   setCurrentBehavior({
