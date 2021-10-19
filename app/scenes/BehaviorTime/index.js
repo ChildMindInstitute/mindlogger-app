@@ -109,6 +109,10 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       type,
       list: items
     })
+
+    if (!items.length) {
+      Actions.pop()
+    }
   }
 
   const updateValues = (item, distress, impairment, submit) => {
