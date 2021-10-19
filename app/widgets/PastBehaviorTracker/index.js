@@ -26,17 +26,6 @@ export class PastBehaviorTrackerComponent extends Component {
     this.props.onChange(value)
   }
 
-  decreaseOccurrence(behavior) {
-    const value = { ...this.props.value };
-
-    if (value[behavior] && value[behavior].length) {
-      value[behavior] = [...value[behavior]];
-      value[behavior].pop();
-
-      this.props.onChange(value);
-    }
-  }
-
   componentDidUpdate(oldProps) {
     if (oldProps.currentBehavior != this.props.currentBehavior) {
       const value = { ...this.props.value }
@@ -45,6 +34,19 @@ export class PastBehaviorTrackerComponent extends Component {
       value[name] = list;
       this.props.onChange(value);
     }
+  }
+
+  isReady (behavior) {
+    if (!behavior || !behavior.length) {
+      return false;
+    }
+    for (const item of behavior) {
+      if (!item.time || item.distress === null || item.impairment === null) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   render () {
@@ -61,13 +63,15 @@ export class PastBehaviorTrackerComponent extends Component {
     for (const behavior of positiveBehaviors) {
       behaviors.push({
         ...behavior,
-        type: 'positive'
+        ready: this.isReady(value[behavior.name]),
+        type: 'positive',
       })
     }
 
     for (const behavior of negativeBehaviors) {
       behaviors.push({
         ...behavior,
+        ready: this.isReady(value[behavior.name]),
         type: 'negative'
       })
     }
@@ -82,9 +86,12 @@ export class PastBehaviorTrackerComponent extends Component {
                 name={behavior.name}
                 times={(value[behavior.name] || []).length}
                 image={behavior.image || ''}
+                ready={behavior.ready}
                 behaviorType={behavior.type}
                 onPress={() => this.increaseOccurrence(behavior.name)}
-                onLongPress={() => this.decreaseOccurrence(behavior.name)}
+                onLongPress={() => {
+
+                }}
                 onTimesMenu={() => {
                   setCurrentBehavior({
                     name: behavior.name,

@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { CachedImage } from 'react-native-img-cache';
 import Svg, { Rect, Defs, Mask, LinearGradient, Stop, Circle } from 'react-native-svg'
+import { Icon } from 'native-base';
 
 const styles = StyleSheet.create({
   container: {
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
 
 export const BehaviorCard = (props) => {
   const {
-    name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
+    ready, name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
   } = props;
 
   const timeListItems = [0, 1, 2];
@@ -238,6 +239,22 @@ export const BehaviorCard = (props) => {
             })
           }
         </Svg>
+
+        {
+          ready && (
+            <View style={{
+              position: 'absolute',
+              right: 0,
+              top: 0
+            }}>
+              <Icon
+                type="FontAwesome"
+                name="check-circle"
+                style={{ color: behaviorColor }}
+              />
+            </View>
+          ) || <></>
+        }
       </TouchableOpacity>
     </View>
   )
@@ -247,6 +264,7 @@ BehaviorCard.propTypes = {
   name: PropTypes.string,
   times: PropTypes.number,
   image: PropTypes.string,
+  ready: PropTypes.bool,
   behaviorType: PropTypes.string,
   onPress: PropTypes.func,
   onLongPress: PropTypes.func,
