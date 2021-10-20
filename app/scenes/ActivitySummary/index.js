@@ -183,7 +183,7 @@ const ActivitySummary = (props) => {
         <div class="score-area">
           <p
             class="score-title text-nowrap"
-            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+            style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
               Your/Your Child' Score

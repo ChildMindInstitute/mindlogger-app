@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Keyboard
 } from "react-native";
+import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
 import { Icon, Button } from "native-base";
@@ -15,6 +16,10 @@ import ScreenDisplay from "./ScreenDisplay";
 import Widget from "./Widget";
 import Timer from "../Timer";
 import { colors } from "../../theme";
+
+import {
+  itemStartTimeSelector,
+} from "../../state/responses/responses.selectors";
 
 const styles = StyleSheet.create({
   outer: {
@@ -49,8 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    right: 20,
-    top: 60,
+    left: 30,
+    top: 15,
   },
   delayTimerView: {
     position: "absolute",
@@ -201,12 +206,19 @@ class ActivityScreen extends Component {
     }
   }
 
-  componentDidUpdate(oldProps) {
+  componentDidUpdate(oldProps, oldState) {
     const { isCurrent } = this.props;
+
     if (isCurrent && oldProps.isCurrent === false) {
       this._startClock();
     } else if (oldProps.isCurrent && isCurrent === false) {
       this._resetClock();
+    }
+
+    if (
+      this.state.timerActive == true && oldState.timerActive == false
+    ) {
+      this._clockTick();
     }
   }
 
@@ -217,12 +229,16 @@ class ActivityScreen extends Component {
       Keyboard.removeListener('keyboardWillShow', this.keyboardWillShow)
     }
 
-    clearInterval(this.interval);
+    this._resetClock();
   }
 
   _startClock = () => {
-    this.interval = setInterval(this._clockTick, 100);
-    this.startTime = Date.now();
+    this.interval = setInterval(this._clockTick, 500);
+    this.startTime = this.props.itemStartTime;
+
+    if (this.props.screen.timer) {
+      this.setState({ timerActive: true });
+    }
   };
 
   _resetClock = () => {
@@ -256,15 +272,12 @@ class ActivityScreen extends Component {
     if (timer) {
       const safeDelay = delay || 0;
       const timerEnd = safeDelay + timer;
-      if (
-        timeElapsed > safeDelay &&
-        timeElapsed < timerEnd &&
-        timerActive === false
-      ) {
-        this.setState({ timerActive: true });
-      } else if (timeElapsed >= timerEnd) {
+
+      if (timeElapsed >= timerEnd && timerActive) {
         this.setState({ timerActive: false });
-        onChange(answer, true);
+
+        this._resetClock();
+        onChange(answer, true, timeElapsed);
       }
     }
   };
@@ -281,6 +294,12 @@ class ActivityScreen extends Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
   };
 
+  handleChange(e) {
+    if (!this.props.screen.timer || this.state.timerActive) {
+      this.props.onChange(e);
+    }
+  }
+
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
     const { scrollEnabled, inputDelayed, timerActive } = this.state;
@@ -291,7 +310,7 @@ class ActivityScreen extends Component {
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={10}
+          keyboardVerticalOffset={40}
         >
           <ScrollView
             alwaysBounceVertical={false}
@@ -321,7 +340,7 @@ class ActivityScreen extends Component {
                 <View style={{ opacity: 0.25 }}>
                   <Widget
                     answer={answer}
-                    onChange={onChange}
+                    onChange={this.handleChange.bind(this)}
                     isCurrent={isCurrent}
                     screen={screen}
                     onPress={() => {
@@ -336,7 +355,7 @@ class ActivityScreen extends Component {
             ) : (
                 <Widget
                   answer={answer}
-                  onChange={onChange}
+                  onChange={this.handleChange.bind(this)}
                   isCurrent={isCurrent}
                   screen={screen}
                   onPress={() => {
@@ -352,7 +371,7 @@ class ActivityScreen extends Component {
         </KeyboardAvoidingView>
         {timerActive && (
           <View style={styles.timerView}>
-            <Timer duration={screen.timer} color={colors.primary} size={40} />
+            <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
           </View>
         )}
         {this.state.screenHeight > height ? (
@@ -399,9 +418,14 @@ ActivityScreen.defaultProps = {
 ActivityScreen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
+  activity: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
 };
 
-export default ActivityScreen;
+const mapStateToProps = (state) => ({
+  itemStartTime: itemStartTimeSelector(state),
+});
+
+export default connect(mapStateToProps)(ActivityScreen);

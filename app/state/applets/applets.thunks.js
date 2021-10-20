@@ -42,7 +42,7 @@ import {
   loggedInSelector,
 } from "../user/user.selectors";
 import { isReminderSetSelector } from "./applets.selectors";
-import { setCurrentApplet } from "../app/app.actions";
+import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
@@ -239,11 +239,14 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
       else
         applets = resp;
 
+      console.log('applets-', applets)
+
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
         const responses = [];
         let scheduleUpdated = false;
+        let finishedEvents = {}
 
         let cumulativeActivities = {};
 
@@ -262,6 +265,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         const transformedApplets = applets
           .map((appletInfo) => {
             const nextActivities = appletInfo.cumulativeActivities;
+            Object.assign(finishedEvents, appletInfo.finishedEvents);
 
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
@@ -317,6 +321,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           });
 
         // dispatch(setCumulativeActivities(cumulativeActivities));
+        dispatch(setClosedEvents(finishedEvents));
 
         await storeData('ml_applets', transformedApplets);
         await storeData('ml_responses', responses);

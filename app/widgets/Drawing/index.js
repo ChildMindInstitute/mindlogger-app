@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView,TextInput, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import DrawingBoard from './DrawingBoard';
-import { Item , Input } from 'native-base';
+import { Item, Input } from 'native-base';
 import { getURL } from '../../services/helper';
 import { OptionalText } from '../OptionalText';
 
@@ -36,20 +36,20 @@ export class Drawing extends React.Component {
   finalAnswer = {};
 
   handleComment = (itemValue) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     this.finalAnswer["text"] = itemValue;
 
-  onChange(this.finalAnswer);
+    onChange(this.finalAnswer);
   }
 
   onResult = (itemValue) => {
-    const {onChange} = this.props;
+    const { onChange } = this.props;
     this.finalAnswer["value"] = itemValue;
     onChange(this.finalAnswer);
   }
 
   render() {
-    const { config, answer, onChange, onPress, onRelease  ,isOptionalText, isOptionalTextRequired } = this.props;
+    const { config, answer, onChange, onPress, onRelease, isOptionalText, isOptionalTextRequired } = this.props;
     const url = config.inputs.backgroundImage
       ? getURL(config.inputs.backgroundImage)
       : null;
@@ -58,21 +58,20 @@ export class Drawing extends React.Component {
 
     return (
       <KeyboardAvoidingView
-        // behavior="padding"
+      // behavior="padding"
       >
         <View>
           {
             config?.valueConstraints?.image ? (
-              <View style = {styles.imgContainer}>
+              <View style={styles.imgContainer}>
                 <Image
-                  style = {styles.img}
+                  style={styles.img}
                   source={{
                     uri: config.valueConstraints.image,
                   }}
                 />
-              </View> ): <View></View>
+              </View>) : <View></View>
           }
-
           <DrawingBoard
             imageSource={url}
             lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
@@ -84,12 +83,9 @@ export class Drawing extends React.Component {
           {config.inputs.instruction && (
             <Text style={styles.text}>{config.inputs.instruction}</Text>
           )}
-
-
-          {
-            isOptionalText &&
+          {isOptionalText &&
             <OptionalText
-              onChangeText={text=>this.handleComment(text)}
+              onChangeText={text => this.handleComment(text)}
               value={this.finalAnswer["text"]}
               isRequired={isOptionalTextRequired}
             />
@@ -102,14 +98,14 @@ export class Drawing extends React.Component {
 
 Drawing.defaultProps = {
   config: {},
-  onPress: () => {},
-  onRelease: () => {},
+  onPress: () => { },
+  onRelease: () => { },
 };
 
 Drawing.propTypes = {
   config: PropTypes.shape({
     inputs: PropTypes.object,
-    valueConstraints:  PropTypes.object,
+    valueConstraints: PropTypes.object,
   }),
   answer: PropTypes.object,
   onChange: PropTypes.func.isRequired,

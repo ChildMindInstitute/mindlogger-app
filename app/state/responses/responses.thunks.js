@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
+import moment from "moment";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
@@ -45,7 +46,7 @@ import {
 import {
   setActivityStartTime,
   setCurrentActivity,
-  setClosedEvent,
+  setClosedEvents,
   clearActivityStartTime,
   setActivityEndTime,
   setCurrentEvent
@@ -98,6 +99,9 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
   const event = currentEventSelector(state);
   const applet = currentAppletSelector(state);
 
+  const visibilityArray = itemVisiblitySelector(state);
+  const next = getNextPos(-1, visibilityArray);
+
   // There is no response in progress, so start a new one
 
   dispatch(
@@ -119,6 +123,8 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const currentScreen = currentScreenSelector(state);
   const applet = currentAppletSelector(state);
   const index = activity.event ? activity.id + activity.event.id : activity.id;
+  const visibilityArray = itemVisiblitySelector(state);
+  const next = getNextPos(-1, visibilityArray);
   const event = currentEventSelector(state);
 
   if (activity.isPrize === true) {
@@ -127,7 +133,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
     Actions.push('take_act');
   } else if (typeof responses.inProgress[index] === "undefined") {
@@ -140,7 +146,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
       dispatch(setActivityStartTime(activity.id + activity.event.id));
     }
     dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
     Actions.push("take_act");
   } else {
@@ -177,7 +183,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
                 timeStarted
               )
             );
-            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -194,7 +200,7 @@ export const startResponse = (activity) => (dispatch, getState) => {
             }
 
             dispatch(setActivityOpened(true));
-            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || 0));
+            dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next, responses.inProgress[index][currentScreen].startTime));
             dispatch(setCurrentActivity(activity.id));
             Actions.push("take_act");
           },
@@ -372,6 +378,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }
 
   const responseHistory = currentAppletResponsesSelector(state);
+  const finishedTime = new Date();
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
@@ -395,13 +402,17 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
-    const preparedResponse = prepareResponseForUpload(inProgressResponse, applet, responseHistory, isTimeout);
+    const preparedResponse = prepareResponseForUpload(
+      inProgressResponse, applet, responseHistory, isTimeout, finishedTime
+    );
     dispatch(addToUploadQueue(preparedResponse));
     dispatch(startUploadQueue());
   }
 
   if (event) {
-    dispatch(setClosedEvent(event))
+    dispatch(setClosedEvents({
+      [event]: finishedTime.getTime()
+    }))
   }
 
   setTimeout(() => {
@@ -413,14 +424,32 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }, 300);
 };
 
-export const nextScreen = () => (dispatch, getState) => {
+export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
-  const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
-  const next = getNextPos(screenIndex, visibilityArray);
   const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
+
+  let screenIndex = currentScreenSelector(state);
+  let next = -1;
+
+  do {
+    const { timer, delay } = activity.items[screenIndex];
+    let totalTime = timer + (delay || 0);
+
+    if (next < 0 || (timer && timeElapsed >= totalTime)) {
+      next = getNextPos(screenIndex, visibilityArray, timeElapsed);
+      timeElapsed -= totalTime;
+      screenIndex = next;
+    } else {
+      break;
+    }
+  } while (next >= 0);
+
+  if (timeElapsed < 0) {
+    timeElapsed = 0;
+  }
 
   if (next === -1) {
     if (activity.nextAccess) {
@@ -430,7 +459,7 @@ export const nextScreen = () => (dispatch, getState) => {
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     Actions.push("activity_thanks");
   } else {
-    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
   }
 };
 

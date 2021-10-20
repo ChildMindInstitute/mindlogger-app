@@ -24,7 +24,8 @@ export const prepareResponseForUpload = (
   inProgressResponse,
   appletMetaData,
   responseHistory,
-  isTimeout
+  isTimeout,
+  finishedTime
 ) => {
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
@@ -34,7 +35,7 @@ export const prepareResponseForUpload = (
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
-  const alerts = [];
+  const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
 
@@ -84,7 +85,11 @@ export const prepareResponseForUpload = (
     responseStarted: inProgressResponse.timeStarted,
     responseCompleted: Date.now(),
     timeout: isTimeout ? 1 : 0,
-    scheduledTime: new Date(scheduledTime).getTime(),
+    event: activity.event ? {
+      id: activity.event.id,
+      scheduledTime: new Date(scheduledTime).getTime(),
+      finishedTime: finishedTime.getTime()
+    } : null,
     client: {
       appId: "mindlogger-mobile",
       appVersion: packageJson.version,
@@ -119,7 +124,18 @@ export const prepareResponseForUpload = (
     ];
 
     const formattedResponses = activity.items.reduce(
-      (accumulator, item, index) => ({ ...accumulator, [item.schema]: mediaItems.includes(item.inputType) ? responses[index]?.value : index }),
+      (accumulator, item, index) => {
+        let response = index;
+
+        if (mediaItems.includes(item.inputType)) {
+          const d = responses[index]?.value || {};
+          response = { ...d, index };
+        }
+
+        return {
+          ...accumulator, [item.schema]: response
+        }
+      },
       {},
     );
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
@@ -175,6 +191,13 @@ export const prepareResponseForUpload = (
     };
 
   }
+
+  let i = 0;
+  for (const key in responseData.responses) {
+    nextsAt[key] = inProgressResponse[i] && inProgressResponse[i].endTime || Date.now();
+    i++;
+  }
+  responseData['nextsAt'] = nextsAt;
 
   return responseData;
 };

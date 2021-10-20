@@ -5,6 +5,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
+## [0.17.52] - 2021-10-19
+- Fix stacked items
+
+## [0.17.51] - 2021-10-18
+- Fix drawing dots
+
+## [0.17.48] - 2021-10-16
+- Fix timer overlap on radio buttons
+
+## [0.17.47] - 2021-10-13
+- Fix timer overlap and position
+
+## [0.17.45] - 2021-10-12
+- Fix drawing lines
+
+## [0.17.43] - 2021-10-11
+- Fix issue with broken stacked items
+
+## [0.17.42] - 2021-10-6
+- Fix undo on top navigation bar
+
+## [0.17.41] - 2021-10-5
+- Fix drawing a line
+
+## [0.17.40] - 2021-10-4
+- Fix back button on item screen
+
+## [0.17.39] - 2021-09-29
+- Fix close button on the header
+- Fix skip button for splash screens
+- Update style for duplicated keyboard
+
+## [0.17.38] - 2021-09-28
+- Build removeUndo option for draw items
+
+## [0.17.37] - 2021-09-28
+- Implement removeBack option
+
+## [0.17.36] - 2021-09-27
+- Built showing/hiding activities/items/options
+
+## [0.17.35] - 2021-09-27
+- Fix PDF report
+
+## [0.17.34] - 2021-09-26
+
+- Build top navigation option
+
+## [0.17.33] - 2021-09-23
+- Add timer
+
 ## [0.17.32] - 2021-09-22
 - Fixed tooltip issue
 
@@ -132,7 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix skippable option for media items
 
 ## [0.16.33] - 2021-07-11
-- Fixed sub-scales 
+- Fixed sub-scales
 
 ## [0.16.32] - 2021-07-07
 - Add arrayNotIncludes function for expr

@@ -84,7 +84,7 @@ const ActivityList = ({
         };
       }
 
-      if (act.isPrize != true && isNextActivityShown && act.isReviewerActivity != true && !hiddenCumulativeActivities?.includes(act.id))
+      if (act.isPrize != true && isNextActivityShown && !act.isVis && act.isReviewerActivity != true && !hiddenCumulativeActivities?.includes(act.id))
         appletActivities.push(act);
     }
     appletActivities.length === 0 && appletActivities.push(newApplet.activities[0]);
