@@ -101,18 +101,19 @@ const ActivitySummary = (props) => {
     const cumulativeActivity = findActivity(cumActivities && cumActivities[0], applet?.activities);
 
     if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
+      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
         setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-        if (!hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
-        if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
       }
+      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     } else {
       setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
       if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
         setHiddenCumulativeActivities(activity.id);
-      if (hiddenCumulativeActivities?.includes(cumulativeActivity.id)) setHiddenCumulativeActivities(activity.id, true);
+      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
     setMessages(reportMessages);
   }, [responses]);
@@ -336,15 +337,15 @@ const ActivitySummary = (props) => {
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        {activity.scoreOverview && <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>}
-        {messages.map((item) => (
+        {activity.scoreOverview ? <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen> : <></>}
+        {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
-            {item.compute.description && <MarkdownScreen>{item.compute.description}</MarkdownScreen>}
+            {item.compute.description ? <MarkdownScreen>{item.compute.description}</MarkdownScreen> : <></>}
             <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
-        ))}
+        )) : <></>}
       </ScrollView>
     </>
   );

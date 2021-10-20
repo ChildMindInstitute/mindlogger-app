@@ -19,11 +19,14 @@ export default (state = initialState, action = {}) => {
         cumulativeActivities: { ...state.cumulativeActivities, ...action.payload },
       };
     case "HIDDEN_CUMULATIVE_ACTIVITIES":
-      const hiddenCumulativeActivities = [...state.hiddenCumulativeActivities];
-      if (action.payload.isRemove) _.remove(hiddenCumulativeActivities, val => val === action.payload.data)
+      let hiddenCumulativeActivities = [...state.hiddenCumulativeActivities];
+      if (action.payload.isRemove) {
+        _.remove(hiddenCumulativeActivities, val => val === action.payload.data)
+      } else
+        hiddenCumulativeActivities = [...hiddenCumulativeActivities, action.payload.data];
       return {
         ...state,
-        hiddenCumulativeActivities: [ ...hiddenCumulativeActivities, action.payload.data ],
+        hiddenCumulativeActivities,
       };
     case "CLEAR_ACTIVITIES":
       return { ...initialState };
