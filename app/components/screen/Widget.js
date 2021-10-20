@@ -27,7 +27,7 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
-  PastBehaviorTracker
+  BehaviorTracker
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -291,9 +291,11 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
     );
   }
 
-  if (screen.inputType == 'pastBehaviorTracker') {
+  if (
+    screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker'
+  ) {
     return (
-      <PastBehaviorTracker
+      <BehaviorTracker
         config={screen.valueConstraints}
         onChange={onChange}
         value={answer}

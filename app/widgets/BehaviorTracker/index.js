@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export class PastBehaviorTrackerComponent extends Component {
+export class BehaviorTrackerComponent extends Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -247,7 +247,7 @@ export class PastBehaviorTrackerComponent extends Component {
   }
 }
 
-PastBehaviorTrackerComponent.propTypes = {
+BehaviorTrackerComponent.propTypes = {
   config: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.any,
@@ -263,7 +263,7 @@ const mapDispatchToProps = dispatch => ({
   setCurrentBehavior: (behavior) => dispatch(setCurrentBehavior(behavior))
 });
 
-export const PastBehaviorTracker = connect(
+export const BehaviorTracker = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(PastBehaviorTrackerComponent);
+)(BehaviorTrackerComponent);
