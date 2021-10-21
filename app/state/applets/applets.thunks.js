@@ -320,7 +320,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
-        // dispatch(setCumulativeActivities(cumulativeActivities));
+        dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));
 
         await storeData('ml_applets', transformedApplets);
