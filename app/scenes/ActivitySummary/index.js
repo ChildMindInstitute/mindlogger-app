@@ -27,8 +27,8 @@ import { MarkdownScreen } from "../../components/core";
 import { parseAppletEvents } from "../../models/json-ld";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
-import { setActivities, setCumulativeActivities } from "../../state/activities/activities.actions";
-import { getScoreFromResponse, evaluateScore, getMaxScore } from "../../services/scoring";
+import { setActivities, setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
+import { evaluateCumulatives } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
@@ -92,100 +92,36 @@ const termsText =
 const footerText =
   "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
-const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
+const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
+  const { responses, activity, applet, cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = props;
 
   useEffect(() => {
-    const parser = new Parser({
-      logical: true,
-      comparison: true,
-    });
-
-    const newApplet = parseAppletEvents(applet);
-
-    let scores = [],
-      maxScores = [];
-    for (let i = 0; i < activity.items.length; i++) {
-      if (!activity.items[i] || !responses[i]) continue;
-
-      let score = getScoreFromResponse(activity.items[i], responses[i]);
-      scores.push(score);
-
-      maxScores.push(getMaxScore(activity.items[i]));
-    }
-
-    const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
-      return {
-        ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
-          itemCompute.jsExpression,
-          activity.items,
-          scores
-        ),
-      };
-    }, {});
-
-    const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
-      return {
-        ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
-          itemCompute.jsExpression,
-          activity.items,
-          maxScores
-        ),
-      };
-    }, {});
-
-    const reportMessages = [];
-    let cumActivities = [];
-    activity.messages.forEach(async (msg, i) => {
-      const { jsExpression, message, outputType, nextActivity } = msg;
-
-      const exprArr = jsExpression.split(/[><]/g);
-      const variableName = exprArr[0];
-      const exprValue = parseFloat(exprArr[1].split(" ")[1]);
-      const category = variableName.trim().replace(/\s/g, "__");
-      const expr = parser.parse(category + jsExpression.substr(variableName.length));
-
-      const variableScores = {
-        [category]:
-          outputType == "percentage"
-            ? Math.round(
-                cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
-              )
-            : cumulativeScores[category],
-      };
-
-      if (expr.evaluate(variableScores)) {
-        if (nextActivity) cumActivities.push(nextActivity);
-
-        const compute = activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
-
-        reportMessages.push({
-          category,
-          message,
-          score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
-          compute,
-          jsExpression: jsExpression.substr(variableName.length),
-          scoreValue: cumulativeScores[category],
-          maxScoreValue: cumulativeMaxScores[category],
-          exprValue: outputType == "percentage" ? (exprValue * cumulativeMaxScores[category]) / 100 : exprValue,
-        });
-      }
-    });
+    let { reportMessages, cumActivities } = evaluateCumulatives(responses, activity)
+    const cumulativeActivity = findActivity(cumActivities && cumActivities[0], applet?.activities);
 
     if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
+      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+
       cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
       if (cumActivities.length > 0) {
         cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
         setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
       }
+      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     } else {
       setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
+        setHiddenCumulativeActivities(activity.id);
+      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
-
     setMessages(reportMessages);
   }, [responses]);
+
+  const findActivity = (name, activities = []) => {
+    if (!name) return undefined;
+    return _.find(activities, { name: { en: name } });
+  }
 
   const fRequestAndroidPermission = async () => {
     try {
@@ -230,7 +166,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </b>
       </p>
       <p class="text-body-2 mb-4">
-        ${markdownItInstance.render(activity.scoreOverview)}
+        ${markdownItInstance.render(activity?.scoreOverview)}
       </p>
     `;
 
@@ -279,7 +215,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
           </b>
         </p>
         <p class="text-body-2 mb-4">
-          Your/Your child’s score on the 
+          Your/Your child’s score on the
           ${message.category.replace(/_/g, " ")}
            subscale was <span class="text-danger">${message.scoreValue}</span>.
           ${markdownItInstance.render(message.message)}
@@ -384,7 +320,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         }
         img {
           max-width: 100%;
-        }        
+        }
       </style>
     `;
 
@@ -401,15 +337,15 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>
-        {messages.map((item) => (
+        {activity.scoreOverview ? <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen> : <></>}
+        {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
-            <BaseText style={{ fontSize: 20 }}>{item.category.replace(/_/g, " ")}</BaseText>
-            <MarkdownScreen>{item.compute.description}</MarkdownScreen>
+            <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
+            {item.compute.description ? <MarkdownScreen>{item.compute.description}</MarkdownScreen> : <></>}
             <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
-        ))}
+        )) : <></>}
       </ScrollView>
     </>
   );
@@ -424,11 +360,13 @@ const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
   cumulativeActivities: state.activities.cumulativeActivities,
+  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
   setActivities,
   setCumulativeActivities,
+  setHiddenCumulativeActivities
 };
 
 export default connect(

@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getScoreFromLookupTable, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -30,6 +30,8 @@ export const prepareResponseForUpload = (
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
+  const { cumActivities } = evaluateCumulatives(responses, activity);
+
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.tokens.cumulativeToken;
 
@@ -51,15 +53,20 @@ export const prepareResponseForUpload = (
         })
       }
 
-      if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
-        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
-        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
-        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
-        cumulative += positiveSum;
-        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
-          cumulative += negativeSum;
-        }
+      try {
+        if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
+          const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+          const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+          const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+          cumulative += positiveSum;
+          if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+            cumulative += negativeSum;
+          }
+        }        
+      } catch (error) {
+        console.log("ERR: ", error);
       }
+
     }
   }
 
@@ -91,6 +98,10 @@ export const prepareResponseForUpload = (
     },
     languageCode: languageKey,
     alerts,
+    nextActivities: cumActivities.map(name => {
+      const activity = appletMetaData.activities.find(activity => activity.name.en == name)
+      return activity && activity.id.split('/').pop()
+    }).filter(id => id)
   };
 
   let subScaleResult = [];
