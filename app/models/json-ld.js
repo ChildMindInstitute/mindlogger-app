@@ -609,7 +609,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
       return null;
     }
     const item = itemTransformJson(itemsJson[itemKey]);
-    return itemAttachExtras(item, itemKey, activity.addProperties[itemIndex]);
+    return itemAttachExtras(item, itemKey, activity.addProperties && activity.addProperties[itemIndex]);
   });
   const nonEmptyItems = R.filter(item => item, mapItems(activity.order));
   const items = attachPreamble(activity.preamble, nonEmptyItems);
