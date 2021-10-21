@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.53] - 2021-10-19
 - Fix dropdown background-color
+- Fix image above drawing item
 
 ## [0.17.52] - 2021-10-19
 - Fix stacked items
