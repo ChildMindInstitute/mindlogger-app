@@ -391,6 +391,10 @@ class AppService extends Component {
     }
 
     if (activity.status !== 'scheduled' || event.data.timeout.access) {
+      if (Actions.currentScene == 'take_act') {
+        Actions.pop();
+      }
+
       this.props.setCurrentActivity(activity.id);
       this.props.startResponse({
         ...activity,
