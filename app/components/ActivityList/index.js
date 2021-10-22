@@ -28,6 +28,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
+import { findThresholdActivity } from '../../services/helper';
 
 const ActivityList = ({
   applet,
@@ -61,6 +62,18 @@ const ActivityList = ({
     for (let index = 0; index < newApplet.activities.length; index++) {
       const act = newApplet.activities[index];
       if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
+    }
+
+    try {      
+      const firstThresholdActivity = findThresholdActivity(newApplet.activities, 'first');
+      const lastThresholdActivity = findThresholdActivity(newApplet.activities, 'last');
+      if (firstThresholdActivity && lastThresholdActivity) {
+        if (_.findIndex(lastThresholdActivity.messages, { nextActivity: firstThresholdActivity.name.en }) > -1) {
+          _.remove(notShownActs, { id: lastThresholdActivity.id })
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
 
     const appletActivities = [];
