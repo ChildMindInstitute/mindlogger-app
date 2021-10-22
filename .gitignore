@@ -27,6 +27,8 @@ Podfile.lock
 # Android/IntelliJ
 #
 android/build/
+android/app/release
+android/app/Untitled
 android/app/src/main/res/merged/release
 .idea
 .gradle
