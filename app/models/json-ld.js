@@ -107,6 +107,7 @@ const POSITIVE_BEHAVIORS = "reprolib:terms/positiveBehaviors";
 const START_TIME = "schema:startTime";
 const END_TIME = "schema:endTime";
 const RATE = "schema:rate";
+const TIME_SCREEN = "reprolib:terms/timeScreen";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -188,6 +189,13 @@ export const flattenValueConstraints = (vcObj) =>
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
       };
+    }
+
+    if (key === TIME_SCREEN) {
+      return {
+        ...accumulator,
+        timeScreen: R.path([key, 0, "@value"], vcObj),
+      }
     }
 
     if (key === NEGATIVE_BEHAVIORS) {

@@ -8,7 +8,6 @@ import _ from "lodash";
 import { Actions } from "react-native-router-flux";
 import moment from "moment";
 import i18n from "i18next";
-import { getStore } from "../../store";
 import {
   nextScreen,
   prevScreen,
@@ -40,7 +39,9 @@ import ActivitySummary from "../ActivitySummary";
 import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
+import TimerProgress from "../../components/TimerProgress";
 import ActivityButtons from "../../components/ActivityButtons";
+import { colors } from "../..//themes/colors";
 import {
   getNextPos,
   getNextLabel,
@@ -368,12 +369,18 @@ class Activity extends React.Component {
             onTouchStart={this.idleTimer.resetCountdown}
             style={styles.buttonArea}
           >
-            {activity.items.length > 1 && (
+            <TimerProgress
+              current={10}
+              length={60}
+              color={'#20609D'}
+              sliderColor={colors.primary || colors.yellow}
+            />
+            {/* {activity.items.length > 1 && (
               <ActProgress
                 index={currentScreen}
                 length={activity.items.length}
               />
-            )}
+            )} */}
             {!topNavigation &&
               <ActivityButtons
                 nextLabel={nextLabel}
@@ -383,6 +390,9 @@ class Activity extends React.Component {
                 prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
+                timerActive={true}
+                onSwitchTimer={() => {
+                }}
                 onPressAction={() => {
                   setAnswer(activity, currentScreen, undefined);
                 }}

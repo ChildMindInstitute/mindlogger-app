@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleResult, getValuesFromResponse, getPastBehaviorTokensFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getBehaviorTokensFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -63,8 +63,8 @@ export const prepareResponseForUpload = (
         }
       }
 
-      if (item.inputType == 'pastBehaviorTracker') {
-        const newTokens = getPastBehaviorTokensFromResponse(item, responses[i])
+      if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+        const newTokens = getBehaviorTokensFromResponse(item, responses[i])
         if (newTokens) {
           cumulative += newTokens;
           tokenChanged = true;

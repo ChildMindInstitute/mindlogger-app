@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, KeyboardAvoidingView, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { BehaviorCard } from '../BehaviorCard';
+import { BehaviorCard } from './BehaviorCard';
 import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modal';
 
@@ -74,7 +74,10 @@ export class BehaviorTrackerComponent extends Component {
   }
 
   increaseOccurrence (behavior) {
-    const value = { ...this.props.value }
+    const {
+      value = {}
+    } = this.props.value || {}
+
     if (value[behavior]) {
       value[behavior] = [ ...value[behavior] ]
     } else {
@@ -87,12 +90,18 @@ export class BehaviorTrackerComponent extends Component {
       impairment: null
     })
 
-    this.props.onChange(value)
+    this.props.onChange({
+      ...(this.props.value || {}),
+      value
+    })
   }
 
   onSetOccurance () {
     this.setState({ modalVisible: false });
-    const value = { ...this.props.value };
+    const {
+      value = {}
+    } = this.props.value || {};
+
     const behavior = this.state.selectedBehavior;
 
     if (value[behavior]) {
@@ -108,16 +117,25 @@ export class BehaviorTrackerComponent extends Component {
       value[behavior].push({ time: 0, distress: null, impairment: null })
     }
 
-    this.props.onChange(value)
+    this.props.onChange({
+      ...(this.props.value || {}),
+      value
+    })
   }
 
   componentDidUpdate (oldProps) {
     if (oldProps.currentBehavior != this.props.currentBehavior) {
-      const value = { ...this.props.value }
+      const {
+        value = {}
+      } = this.props.value
+
       const { name, list } = this.props.currentBehavior;
 
       value[name] = list;
-      this.props.onChange(value);
+      this.props.onChange({
+        ...this.props.value,
+        value
+      });
     }
   }
 
@@ -138,11 +156,15 @@ export class BehaviorTrackerComponent extends Component {
     const {
       config: {
         positiveBehaviors,
-        negativeBehaviors
+        negativeBehaviors,
       },
-      value = {},
       setCurrentBehavior
     } = this.props;
+
+    let {
+      value = {},
+      timerActive = true,
+    } = (this.props.value || {});
 
     const {
       modalVisible, selectedBehavior, itemCount
@@ -197,18 +219,17 @@ export class BehaviorTrackerComponent extends Component {
             <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
               <TouchableOpacity
                 style={styles.doneButtonStyle}
-                onPress={this.onSetOccurance.bind(this)}
-              >
-                <Text style={styles.buttonText}>Done</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.doneButtonStyle}
                 onPress={() => this.setState({ itemCount: 0 })}
               >
                 <Text style={styles.buttonText}>Reset</Text>
               </TouchableOpacity>
 
+              <TouchableOpacity
+                style={styles.doneButtonStyle}
+                onPress={this.onSetOccurance.bind(this)}
+              >
+                <Text style={styles.buttonText}>Done</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -222,13 +243,19 @@ export class BehaviorTrackerComponent extends Component {
                 image={behavior.image || ''}
                 ready={behavior.ready}
                 behaviorType={behavior.type}
-                onPress={() => this.increaseOccurrence(behavior.name)}
+                onPress={() => {
+                  if (timerActive) {
+                    this.increaseOccurrence(behavior.name)
+                  }
+                }}
                 onLongPress={() => {
-                  this.setState({
-                    modalVisible: true,
-                    selectedBehavior: behavior.name,
-                    itemCount: (value[behavior.name] || []).length
-                  })
+                  if (timerActive) {
+                    this.setState({
+                      modalVisible: true,
+                      selectedBehavior: behavior.name,
+                      itemCount: (value[behavior.name] || []).length
+                    })
+                  }
                 }}
                 onTimesMenu={() => {
                   setCurrentBehavior({

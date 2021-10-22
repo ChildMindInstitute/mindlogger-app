@@ -79,10 +79,15 @@ export const getValuesFromResponse = (item, value) => {
   return tokenValues;
 }
 
-export const getPastBehaviorTokensFromResponse = (item, response) => {
+export const getBehaviorTokensFromResponse = (item, response) => {
   const { positiveBehaviors, negativeBehaviors } = item.valueConstraints;
+  const { value } = (response || {});
 
   let token = 0;
+
+  if (!value) {
+    return 0
+  }
 
   const isBehaviorFilledOut = (list) => {
     if (!list.length) return false;
