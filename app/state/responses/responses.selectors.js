@@ -72,7 +72,7 @@ export const itemStartTimeSelector = createSelector(
   (current) => {
     const screenIndex = current.screenIndex;
 
-    return current[screenIndex].startTime;
+    return current[screenIndex] && current[screenIndex].startTime || 0;
   }
 )
 
