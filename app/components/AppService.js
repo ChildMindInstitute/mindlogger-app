@@ -132,7 +132,9 @@ class AppService extends Component {
     try {
       await fMessaging.requestPermission();
     } catch (error) {
-      // If the user denied permissions.
+    }
+
+    if (!await fMessaging.hasPermission()) {
       Alert.alert(
         i18n.t('firebase_messaging:alert_title'),
         i18n.t('firebase_messaging:alert_message'),
