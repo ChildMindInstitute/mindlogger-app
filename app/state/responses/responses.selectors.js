@@ -72,7 +72,7 @@ export const itemStartTimeSelector = createSelector(
   (current) => {
     const screenIndex = current.screenIndex;
 
-    return current[screenIndex].startTime;
+    return current[screenIndex] && current[screenIndex].startTime || 0;
   }
 )
 
@@ -98,11 +98,11 @@ export const itemVisiblitySelector = createSelector(
     const responses = current ? current.responses : [];
     const activity = current ? current.activity : currentActivity;
 
-    return activity.addProperties.map((property, index) => {
+    return activity?.addProperties.map((property, index) => {
       if (activity.items[index].isVis) {
         return false;
       }
-      return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses)
+      return testVisibility(property[IS_VIS][0]['@value'], activity?.items, responses)
     });
   }
 );

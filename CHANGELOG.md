@@ -5,8 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### [Unreleased]
 
-## [0.17.43] - 2021-10-10
+## [0.17.56] - 2021-10-24
 - Fix style issues on camera widget
+
+## [0.17.55] - 2021-10-22
+- Fix response timer position
+
+## [0.17.54] - 2021-10-21
+- Fix notification issue
+
+## [0.17.53] - 2021-10-19
+- Fix dropdown background-color
+- Fix image above drawing item
+
+## [0.17.52] - 2021-10-19
+- Fix stacked items
+
+## [0.17.51] - 2021-10-18
+- Fix drawing dots
+
+## [0.17.48] - 2021-10-16
+- Fix timer overlap on radio buttons
+
+## [0.17.47] - 2021-10-13
+- Fix timer overlap and position
+
+## [0.17.45] - 2021-10-12
+- Fix drawing lines
+
+## [0.17.43] - 2021-10-11
+- Fix issue with broken stacked items
 
 ## [0.17.42] - 2021-10-6
 - Fix undo on top navigation bar

@@ -54,8 +54,10 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    right: 20,
-    top: 100,
+    top: 15,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   delayTimerView: {
     position: "absolute",
@@ -170,6 +172,7 @@ class ActivityScreen extends Component {
       inputDelayed: false,
       timerActive: false,
       screenHeight: 0,
+      orientation: 'portrait'
     };
     this.interval = null;
     this.startTime = null;
@@ -179,11 +182,19 @@ class ActivityScreen extends Component {
     this.keyboardVisible = false;
   }
 
+  determineAndSetOrientation () {
+    const { width, height } = Dimensions.get('window');
+    this.setState({ orientation: width < height ? 'portrait' : 'landscape' });
+  }
+
   componentDidMount() {
     const { isCurrent } = this.props;
     if (isCurrent) {
       this._startClock();
     }
+
+    this.determineAndSetOrientation();
+    Dimensions.addEventListener('change', this.determineAndSetOrientation.bind(this));
 
     if (Platform.OS === "ios") {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
@@ -294,12 +305,21 @@ class ActivityScreen extends Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
   };
 
+  handleChange(e) {
+    if (!this.props.screen.timer || this.state.timerActive) {
+      this.props.onChange(e);
+    }
+  }
+
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
-    const { scrollEnabled, inputDelayed, timerActive } = this.state;
+    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
-      <View style={styles.outer}>
+      <View
+        style={styles.outer}
+        key={orientation}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
@@ -334,7 +354,7 @@ class ActivityScreen extends Component {
                 <View style={{ opacity: 0.25 }}>
                   <Widget
                     answer={answer}
-                    onChange={onChange}
+                    onChange={this.handleChange.bind(this)}
                     isCurrent={isCurrent}
                     screen={screen}
                     onPress={() => {
@@ -349,7 +369,7 @@ class ActivityScreen extends Component {
             ) : (
                 <Widget
                   answer={answer}
-                  onChange={onChange}
+                  onChange={this.handleChange.bind(this)}
                   isCurrent={isCurrent}
                   screen={screen}
                   onPress={() => {
