@@ -54,10 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    top: 15,
-    width: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    top: 45,
+    right: 10,
   },
   delayTimerView: {
     position: "absolute",
