@@ -132,7 +132,9 @@ class AppService extends Component {
     try {
       await fMessaging.requestPermission();
     } catch (error) {
-      // If the user denied permissions.
+    }
+
+    if (!await fMessaging.hasPermission()) {
       Alert.alert(
         i18n.t('firebase_messaging:alert_title'),
         i18n.t('firebase_messaging:alert_message'),
@@ -391,6 +393,10 @@ class AppService extends Component {
     }
 
     if (activity.status !== 'scheduled' || event.data.timeout.access) {
+      if (Actions.currentScene == 'take_act') {
+        Actions.pop();
+      }
+
       this.props.setCurrentActivity(activity.id);
       this.props.startResponse({
         ...activity,
