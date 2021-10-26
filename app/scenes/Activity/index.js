@@ -20,7 +20,7 @@ import {
   currentScreenSelector,
   lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
-import { currentAppletSelector } from "../../state/app/app.selectors";
+import { currentAppletSelector, appStatusSelector } from "../../state/app/app.selectors";
 import { testVisibility } from "../../services/visibility";
 import {
   setCurrentActivity,
@@ -39,7 +39,6 @@ import ActivitySummary from "../ActivitySummary";
 import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
-import TimerProgress from "../../components/TimerProgress";
 import ActivityButtons from "../../components/ActivityButtons";
 import Modal from 'react-native-modal';
 import { colors } from "../..//themes/colors";
@@ -65,9 +64,11 @@ const styles = StyleSheet.create({
   },
   modal: {
     borderRadius: 10,
-    padding: 10,
+    padding: 5,
     backgroundColor: 'black',
     opacity: 0.8,
+    width: '75%',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center'
@@ -286,10 +287,12 @@ class Activity extends React.Component {
       authToken,
       currentScreen,
       itemVisibility,
+      appStatus,
     } = this.props;
 
     const { isSummaryScreen, isSplashScreen, modalVisible } = this.state;
 
+    const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
 
     if (!currentResponse) {
       return <View />;
@@ -382,18 +385,14 @@ class Activity extends React.Component {
             onTouchStart={this.idleTimer.resetCountdown}
             style={styles.buttonArea}
           >
-            <TimerProgress
-              current={10}
-              length={60}
-              color={'#20609D'}
-              sliderColor={colors.primary || colors.yellow}
-            />
-            {/* {activity.items.length > 1 && (
-              <ActProgress
-                index={currentScreen}
-                length={activity.items.length}
-              />
-            )} */}
+            {
+              !timerEnabled && activity.items.length > 1 && (
+                <ActProgress
+                  index={currentScreen}
+                  length={activity.items.length}
+                />
+              )
+            }
             {!topNavigation &&
               <ActivityButtons
                 nextLabel={nextLabel}
@@ -403,9 +402,19 @@ class Activity extends React.Component {
                 prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
-                timerActive={true}
-                onSwitchTimer={() => {
-                  this.setState({ modalVisible: true })
+                timerEnabled={timerEnabled}
+                timeLeft={timerEnabled && responses[currentScreen].timeLeft || -1}
+                timeLimit={timerEnabled && responses[currentScreen].timeLimit || 0}
+                appStatus={appStatus}
+                setTimerStatus={(timerActive, timeLeft) => {
+                  const response = responses[currentScreen] || {};
+
+                  setAnswer(activity, currentScreen, {
+                    value: response.value,
+                    timerActive,
+                    timeLeft,
+                    timeLimit: response.timeLimit
+                  })
                 }}
                 onPressAction={() => {
                   setAnswer(activity, currentScreen, undefined);
@@ -463,6 +472,7 @@ const mapStateToProps = (state) => ({
   isSummaryScreen: isSummaryScreenSelector(state),
   lastResponseTime: lastResponseTimeSelector(state),
   isSelected: state.responses.isSelected,
+  appStatus: appStatusSelector(state),
 });
 
 const mapDispatchToProps = {

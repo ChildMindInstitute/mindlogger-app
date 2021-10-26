@@ -43,6 +43,7 @@ import {
   replaceAppletResponses,
   setActivityOpened,
   setLastTokenTimes,
+  setAnswer,
 } from "./responses.actions";
 import {
   setActivityStartTime,
@@ -518,6 +519,7 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
   const visibilityArray = itemVisiblitySelector(state);
   const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
+  const inProgress = currentResponsesSelector(state);
 
   let screenIndex = currentScreenSelector(state);
   let next = -1;
@@ -548,6 +550,21 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
+
+    const item = activity.items[next];
+
+    if (item.inputType == 'futureBehaviorTracker') {
+      const { timeScreen } = item.valueConstraints;
+      const index = activity.items.findIndex(item => item.variableName == timeScreen);
+      const timeLimit = inProgress.responses[index] && inProgress.responses[index].value || 0;
+
+      dispatch(setAnswer(activity, next, {
+        timerActive: true,
+        value: {},
+        timeLeft: !timeLimit ? -1 : timeLimit * 60 * 1000,
+        timeLimit: timeLimit * 60 * 1000
+      }))
+    }
   }
 };
 

@@ -50,7 +50,7 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
 
   const getTimeStr = (total) => {
     const mins = Math.floor(total / 60);
-    const secs = total % 60;
+    const secs = Math.floor(total) % 60;
 
     return mins + ':' + `0${secs}`.substr(-2)
   }
@@ -85,9 +85,11 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
           <Text style={{ ...styles.text, color }}>{getTimeStr(current)}</Text>
         </View>
 
-        <View style={styles.timeLeft}>
-          <Text style={{ ...styles.text, color }}>-{getTimeStr(length-current)}</Text>
-        </View>
+        {
+          length && <View style={styles.timeLeft}>
+            <Text style={{ ...styles.text, color }}>-{getTimeStr(length-current)}</Text>
+          </View> || <></>
+        }
         <View style={styles.bottom} />
       </View>
 
@@ -100,7 +102,7 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         </Defs>
 
         <Rect x={0} y={0} width={width} height={10} fill='url(#background)' />
-        <Rect x={0} y={0} width={width * current / length} height={10} fill={sliderColor} />
+        <Rect x={0} y={0} width={length && width * current / length} height={10} fill={sliderColor} />
       </Svg>
     </View>
   );
