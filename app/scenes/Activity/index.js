@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
   modal: {
     borderRadius: 10,
     padding: 5,
-    backgroundColor: 'black',
-    opacity: 0.8,
+    backgroundColor: 'grey',
+    opacity: 0.9,
     width: '75%',
     alignSelf: 'center',
     flexDirection: 'row',
