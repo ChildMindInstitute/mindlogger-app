@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, View, Text, StyleSheet, Alert } from "react-native";
+import { StatusBar, View, Text, StyleSheet, Alert, Image } from "react-native";
 import { Container } from "native-base";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -41,6 +41,7 @@ import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import TimerProgress from "../../components/TimerProgress";
 import ActivityButtons from "../../components/ActivityButtons";
+import Modal from 'react-native-modal';
 import { colors } from "../..//themes/colors";
 import {
   getNextPos,
@@ -62,7 +63,18 @@ const styles = StyleSheet.create({
     elevation: 2,
     zIndex: -1,
   },
+  modal: {
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: 'black',
+    opacity: 0.8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
+
+const clock = require('../../../img/clock.png');
 
 class Activity extends React.Component {
   constructor() {
@@ -72,6 +84,7 @@ class Activity extends React.Component {
       idleTime: null,
       isSummaryScreen: false,
       isSplashScreen: false,
+      modalVisible: false
     };
     this.idleTimer = new Timer();
   }
@@ -275,7 +288,7 @@ class Activity extends React.Component {
       itemVisibility,
     } = this.props;
 
-    const { isSummaryScreen, isSplashScreen } = this.state;
+    const { isSummaryScreen, isSplashScreen, modalVisible } = this.state;
 
 
     if (!currentResponse) {
@@ -392,6 +405,7 @@ class Activity extends React.Component {
                 actionLabel={actionLabel}
                 timerActive={true}
                 onSwitchTimer={() => {
+                  this.setState({ modalVisible: true })
                 }}
                 onPressAction={() => {
                   setAnswer(activity, currentScreen, undefined);
@@ -401,6 +415,19 @@ class Activity extends React.Component {
 
           </View>
         )}
+
+        <Modal
+          isVisible={modalVisible}
+          onBackdropPress={() => this.setState({ modalVisible: false })}
+          backdropOpacity={0}
+        >
+          <View style={styles.modal}>
+            <Image
+              source={ clock }
+            />
+            <Text style={{ color: 'white', fontSize: 25, marginLeft: 10 }}>Time's up!</Text>
+          </View>
+        </Modal>
       </Container>
     );
   }
