@@ -560,7 +560,7 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
 
       dispatch(setAnswer(activity, next, {
         timerActive: true,
-        value: {},
+        value: undefined,
         timeLeft: !timeLimit ? -1 : timeLimit * 60 * 1000,
         timeLimit: timeLimit * 60 * 1000
       }))

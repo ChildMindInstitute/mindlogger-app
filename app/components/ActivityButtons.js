@@ -214,7 +214,13 @@ const ActivityButtons = ({
               renderTimer(timerActive.current, switchTimer)
           }
           {renderButton(actionLabel, true, onPressAction)}
-          {renderButton(nextLabel, nextEnabled, onPressNext)}
+          {renderButton(nextLabel, nextEnabled, () => {
+            if (timerActive.current) {
+              switchTimer();
+            }
+
+            onPressNext()
+          })}
         </View>
       </View>
     </View>

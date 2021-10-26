@@ -292,11 +292,11 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isSplashScreen, modalVisible } = this.state;
 
-    const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
-
     if (!currentResponse) {
       return <View />;
     }
+
+    const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
 
     const { activity, responses } = currentResponse;
     const { removeUndoOption } = this.currentItem.valueConstraints;
@@ -409,6 +409,12 @@ class Activity extends React.Component {
                 setTimerStatus={(timerActive, timeLeft) => {
                   const response = responses[currentScreen] || {};
 
+                  if (timeLeft <= 0 && response.timeLimit) {
+                    this.setState({
+                      modalVisible: true
+                    })
+                  }
+
                   setAnswer(activity, currentScreen, {
                     value: response.value,
                     timerActive,
@@ -417,7 +423,11 @@ class Activity extends React.Component {
                   })
                 }}
                 onPressAction={() => {
-                  setAnswer(activity, currentScreen, undefined);
+                  if (timerEnabled) {
+                    setAnswer(activity, currentScreen, { ...responses[currentScreen], value: undefined })
+                  } else {
+                    setAnswer(activity, currentScreen, undefined);
+                  }
                 }}
               />
             }

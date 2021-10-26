@@ -101,5 +101,8 @@ export const getActionLabel = (index, responses, items) => {
   if (items[index].inputType === 'audioStimulus') {
     return undefined;
   }
+  if (items[index].inputType === 'futureBehaviorTracker' && response && !response.value) {
+    return undefined;
+  }
   return i18n.t('activity_navigation:undo');
 };

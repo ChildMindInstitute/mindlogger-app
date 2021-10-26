@@ -91,8 +91,8 @@ class ActivityScreen extends Component {
       return true;
     }
 
-    if ((screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker') && answer) {
-      return true;
+    if (screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker') {
+      return answer && answer.value && Object.keys(answer.value).length;
     }
 
     if (screen.valueConstraints && screen.valueConstraints.isOptionalTextRequired) {
