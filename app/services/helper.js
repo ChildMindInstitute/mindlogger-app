@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import RNFetchBlob from 'rn-fetch-blob';
 import { Platform } from 'react-native';
 import { getStore } from '../store';
@@ -44,7 +45,7 @@ export const atob = (input = '') => {
   for (let bc = 0, bs = 0, buffer, i = 0; buffer = str.charAt(i++);
 
     ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
   ) {
     buffer = chars.indexOf(buffer);
   }
@@ -85,3 +86,12 @@ export const getURL = (url) => {
 export const truncateString = (str, len, dots = true) => {
   return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
 };
+
+export const findThresholdActivity = (activities, find) => {
+  let activity = {};
+  if (find === 'first')
+    activity = _.find(activities, act => act.messages && act.messages[0]?.nextActivity);
+  if (find === 'last')
+    activity = _.find(activities.reverse(), act => act.messages && act.messages[0]?.nextActivity);
+  return activity;
+}

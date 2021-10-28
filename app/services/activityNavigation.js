@@ -15,7 +15,7 @@ export const checkSkippable = (activity, item) => {
     return true;
   }
 
-  if (item.valueConstraints && item.valueConstraints.isOptionalTextRequired) {
+  if (item.valueConstraints?.isOptionalTextRequired) {
     return false;
   }
 
