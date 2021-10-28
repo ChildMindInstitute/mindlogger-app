@@ -48,11 +48,15 @@ export const getLastPos = (index, ar) => {
   return -1;
 };
 
-export const getNextLabel = (index, visibility, activity, responses, isContentError) => {
+export const getNextLabel = (index, isSplashScreen, visibility, activity, responses, isContentError) => {
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index]);
-  if (!isValid || isContentError) {
+
+  if (isSplashScreen) {
     return i18n.t('activity_navigation:next');
+  }
+  if (!isValid || isContentError) {
+    return i18n.t('activity_navigation:skip');
   }
 
   // If there are visible items after this one, then label is Next
