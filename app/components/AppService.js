@@ -129,6 +129,11 @@ class AppService extends Component {
 
     if (permissionGranted) return;
 
+    try {
+      await fMessaging.requestPermission();
+    } catch (error) {
+    }
+
     if (!await fMessaging.hasPermission()) {
       Alert.alert(
         i18n.t('firebase_messaging:alert_title'),
