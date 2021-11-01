@@ -139,74 +139,59 @@ export default class TrailsBoard extends Component {
       this.lastX = moveX - x0 + this.startX;
       this.lastY = moveY - y0 + this.startY;
       this.lastPressTimestamp = time;
-      if (lines[n].points.length > 1) {
-        lines[n].points.pop();
-      }
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time });
+
+      lines[n].points.push({ x: this.lastX, y: this.lastY, time, isValid: false });
       this.setState({ lines });
     }
   }
 
   releaseLine = (evt, gestureState) => {
-    const {
-      lines,
-      isValid,
-      currentIndex,
-      failedCnt,
-      screenTime,
-    } = this.state;
     const { screen } = this.props;
+    const { lines, isValid } = this.state;
+    let { currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid) return;
 
-    const time = Date.now();
-    const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-    let isValidPoint = false;
-    let endOrder = 0;
+    const n = lines.length - 1;
+    let validIndex = -1;
+    let isValidLine = true;
 
     this.lastX = moveX - x0 + this.startX;
     this.lastY = moveY - y0 + this.startY;
-    this.lastPressTimestamp = time;
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time: Date.now(), valid: false });
 
-    screen.items.forEach(({ cx, cy, order }) => {
-      const distance = Math.sqrt(Math.pow(cx - this.lastX, 2) + Math.pow(cy - this.lastY, 2));
-      if (distance <= screen.r) {
-        this.lastX = cx;
-        this.lastY = cy;
-        endOrder = order;
-        isValidPoint = true;
+    lines[n].points.forEach((point, index) => {
+      if (index === 0 && point.order !== currentIndex) {
+        isValidLine = false;
       }
-    });
+      if (index && isValidLine) {
+        const item = screen.items.find(({ cx, cy }) => 
+          Math.sqrt(Math.pow(cx - point.x, 2) + Math.pow(cy - point.y, 2)) < screen.r
+        );
 
-    if (lines[n].points.length > 1) {
-      lines[n].points.pop();
-    }
-    
-    if (lines[n].points[0].order !== currentIndex || endOrder !== currentIndex + 1) {
-      let incorrectPoints = [];
+        if (item && item.order !== currentIndex) {
+          if (item.order === currentIndex + 1) {
+            validIndex = index;
+            currentIndex += 1;
+          } else {
+            isValidLine = false;
+            validIndex = -1;
+          }
+        }
+      }
+    })
 
-      if (lines[n].points[0].order !== currentIndex) incorrectPoints.push(lines[n].points[0].order);
-      if (endOrder !== currentIndex + 1) incorrectPoints.push(endOrder);
-
-      isValidPoint = false;
-      this.setState({ incorrectPoints });
+    if (validIndex === -1) {
+      lines.pop();
       this.props.onError("Incorrect line!");
     } else {
-      this.setState({ incorrectPoints: [] });
+      for (let i = 0; i < lines[n].points.length && i <= validIndex; i += 1) {
+        lines[n].points[i].valid = true;
+      }
     }
 
-    if (isValidPoint) {
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, order: endOrder });
-
-      const result = this.save(lines, endOrder);
-      this.props.onResult({ ...result, failedCnt });
-      this.setState({ lines, currentIndex: endOrder });
-    } else {
-      const result = this.save(lines, currentIndex);
-
-      this.props.onResult({ ...result, screenTime, failedCnt: this.state.failedCnt + 1 });
-      this.setState({ isValid: false, screenTime, failedCnt: this.state.failedCnt + 1 });
-    }
+    this.props.onResult({ ...this.save(lines, currentIndex) });
+    this.setState({ lines, currentIndex });
   }
 
   onLayout = (event) => {
@@ -278,7 +263,7 @@ export default class TrailsBoard extends Component {
     return (
       <>
         <Circle
-          fill="white"
+          fill={itemColor}
           stroke={itemColor}
           strokeWidth="1.2"
           cx={item.cx}
@@ -287,9 +272,9 @@ export default class TrailsBoard extends Component {
         />
 
         <Text
-          stroke={itemColor}
+          stroke="white"
           fontSize={trailsData.fontSize}
-          fontWeight="bold"
+          fill="white"
           x={item.cx}
           y={item.cy + 7}
           textAnchor="middle"
