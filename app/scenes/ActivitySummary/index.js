@@ -115,6 +115,7 @@ const ActivitySummary = (props) => {
         setHiddenCumulativeActivities(activity.id);
       if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
+    console.log('reportMessages-----', reportMessages)
     setMessages(reportMessages);
   }, [responses]);
 
@@ -186,7 +187,7 @@ const ActivitySummary = (props) => {
             style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
-              Your/Your Child' Score
+              Your Child' Score
             </b>
           </p>
           <div
@@ -206,16 +207,8 @@ const ActivitySummary = (props) => {
             </b>
           </p>
         </div>
-        <p class="text-uppercase mb-1">
-          <b>
-            <i>
-              If score
-              <span class="ml-2">${message.jsExpression}</span>
-            </i>
-          </b>
-        </p>
         <p class="text-body-2 mb-4">
-          Your/Your child’s score on the
+          Your child’s score on the
           ${message.category.replace(/_/g, " ")}
            subscale was <span class="text-danger">${message.scoreValue}</span>.
           ${markdownItInstance.render(message.message)}
@@ -337,12 +330,10 @@ const ActivitySummary = (props) => {
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        {activity.scoreOverview ? <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen> : <></>}
         {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
-            {item.compute.description ? <MarkdownScreen>{item.compute.description}</MarkdownScreen> : <></>}
-            <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
+            <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.scoreValue}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
         )) : <></>}
