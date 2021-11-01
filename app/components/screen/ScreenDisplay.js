@@ -74,13 +74,12 @@ const ScreenDisplay = ({ screen, activity, lastResponseTime }) => {
           {screen.preamble.en}
         </MarkdownScreen>
       )}
-      {screen.question && (screen.inputType === 'markdownMessage' && (
-        <MarkdownScreen>
-          {markdown}
-        </MarkdownScreen>
-      ) || (
-          <MarkdownScreen>{markdown}</MarkdownScreen>
-        ))}
+      <MarkdownScreen>
+        {
+          screen.inputType === 'futureBehaviorTracker' || screen.inputType == 'pastBehaviorTracker' ?
+          `::: hljs-left\r\n${markdown}\r\n:::` : markdown
+        }
+      </MarkdownScreen>
       {screen.info && (
         <View style={styles.infoTitle}>
           <MarkdownScreen>
