@@ -158,6 +158,29 @@ const ActivitySummary = (props) => {
       bgColor: "#ffffff",
     };
 
+    const isSplashScreen = activity.splash && activity.splash.en;
+
+    if (isSplashScreen) {
+      const uri = activity.splash.en;
+      const mimeType = Mimoza.getMimeType(uri) || "";
+
+      if (mimeType.startsWith("video/")) {
+        options.html += `
+          <div style="height: 100%;">
+            <video width="1000" controls autoplay>
+              <source src="${uri}" type="video/mp4" />
+            </video>
+          </div>
+        `;
+      } else {
+        options.html += `
+          <div style="height: 100%;">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          </div>
+        `;
+      }
+    }
+
     options.html += `
       <p class="mb-4">
         <b>
