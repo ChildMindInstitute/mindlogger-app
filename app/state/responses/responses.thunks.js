@@ -22,7 +22,6 @@ import {
   currentScreenSelector,
   itemVisiblitySelector,
   currentAppletTokenBalanceSelector,
-  lastTokenTimesSelector,
 } from "./responses.selectors";
 import {
   authTokenSelector,
@@ -42,7 +41,6 @@ import {
   setSummaryScreen,
   replaceAppletResponses,
   setActivityOpened,
-  setLastTokenTimes,
   setAnswer,
 } from "./responses.actions";
 import {
@@ -61,7 +59,7 @@ import {
   currentActivitySelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
-import { getTokenIncreaseForNegativeBehaviors } from "../../services/scoring";
+import { getTokenIncreaseForBehaviors } from "../../services/scoring";
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
@@ -284,7 +282,6 @@ export const replaceReponses = (user) => (dispatch, getState) => {
   const uploadData = [];
   for (const response of responses) {
     const dataSources = {};
-    const tokenUpdates = {};
 
     const applet = applets.find((applet) => applet.id === response.appletId);
 
@@ -297,23 +294,11 @@ export const replaceReponses = (user) => (dispatch, getState) => {
       }
     }
 
-    if (response.tokens && response.tokens.tokenUpdates) {
-      for (let tokenUpdate of response.tokens.tokenUpdates) {
-        tokenUpdates[tokenUpdate.id] = getEncryptedData(
-          {
-            value: tokenUpdate.value
-          },
-          applet.AESKey
-        )
-      }
-    }
-
-    if (Object.keys(dataSources).length || Object.keys(tokenUpdates).length) {
+    if (Object.keys(dataSources).length) {
       uploadData.push({
         userPublicKey: applet.userPublicKey,
         appletId: applet.id.split("/").pop(),
         dataSources,
-        tokenUpdates,
       });
     }
   }
@@ -368,86 +353,72 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const refreshNegativeBehaviors = (endOfDay=false, appletId=null) => (dispatch, getState) => {
+export const refreshNegativeBehaviors = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
-  const lastTokenTimes = lastTokenTimesSelector(state);
   const responseHistory = responsesSelector(state);
-  const now = new Date(), processes = [], newTokenTimes = {};
+  const now = new Date(), processes = [];
 
   for (let i = 0; i < applets.length; i++) {
     const applet = applets[i];
 
-    newTokenTimes[applet.id] = { ...lastTokenTimes[appletId] }
+    const { lastRewardTime, tokenTimes } = responseHistory[i].token;
 
-    if (appletId && applet.id !== appletId) {
+    if (!tokenTimes.length) {
       continue;
     }
 
-    const { lastTokenTime, lastRewardTime } = lastTokenTimes[applet.id];
+    const lastTokenTime = new Date(tokenTimes[tokenTimes.length-1])
 
-    const refreshTime = new Date();
-    refreshTime.setHours(3);
-    refreshTime.setMinutes(0)
+    let refreshTime = new Date(
+      lastTokenTime.getFullYear(),
+      lastTokenTime.getMonth(),
+      lastTokenTime.getDate(),
+      3
+    );
 
-    if (endOfDay) {
-      if(
-        !lastRewardTime ||
-        (lastRewardTime >= refreshTime.getTime() || now.getTime() <= refreshTime.getTime()) &&
-        lastRewardTime >= refreshTime.getTime() - 86400 * 1000
-      ) {
-        continue;
-      }
+    if (refreshTime < lastTokenTime) {
+      refreshTime.setDate(refreshTime.getDate() + 1)
+    }
+
+    if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
+      continue;
     }
 
     let offset = 0;
 
     for (const activity of applet.activities) {
       for (const item of activity.items) {
-        if (item.inputType == 'pastBehaviorTracker') {
-          offset += getTokenIncreaseForNegativeBehaviors(item, lastTokenTime, lastRewardTime, now.getTime());
+        if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+          offset += getTokenIncreaseForBehaviors(item, tokenTimes, refreshTime, responseHistory[i].responses[item.schema]);
         }
       }
     }
 
     const updates = getTokenUpdateInfo(
       offset,
-      responseHistory[i].tokens.cumulativeToken,
+      responseHistory[i].tokens,
       applet,
+      refreshTime.getTime()
     );
 
-    if (offset) {
-      processes.push(updateUserTokenBalance(
+    processes.push(
+      updateUserTokenBalance(
         authToken,
         applet.id.split('/').pop(),
-        updates.offset,
         updates.cumulative,
+        updates.changes,
         applet.schemaVersion.en,
         updates.userPublicKey || null,
-        now.getTime(),
-        endOfDay
-      ))
-
-      responseHistory[i].tokens.cumulativeToken = updates.cumulative;
-    }
-
-    newTokenTimes[applet.id].lastRewardTime = now.getTime();
-
-    if (!endOfDay) {
-      newTokenTimes[applet.id].lastTokenTime = now.getTime();
-    }
+        refreshTime.getTime()
+      )
+    )
   }
 
   return Promise.all(processes).then(() => {
-    dispatch(setLastTokenTimes(newTokenTimes));
-
-    if (endOfDay) {
-      if (processes.length) {
-        dispatch(downloadResponses());
-      }
-    } else {
-      dispatch(replaceResponses(responseHistory))
+    if (processes.length) {
+      dispatch(downloadResponses());
     }
   })
 }
@@ -466,43 +437,41 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
 
   const finishedTime = new Date();
 
-  dispatch(refreshNegativeBehaviors(false, applet.id)).then(() => {
-    const responseHistory = currentAppletResponsesSelector(state);
+  const responseHistory = currentAppletResponsesSelector(state);
 
-    if (activity.isPrize === true) {
-      const selectedPrizeIndex = inProgressResponse["responses"][0];
-      const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
+  if (activity.isPrize === true) {
+    const selectedPrizeIndex = inProgressResponse["responses"][0];
+    const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
 
-      const updates = getTokenUpdateInfo(
-        -selectedPrize.price,
-        responseHistory[i].tokens.cumulativeToken,
-        applet,
-      );
+    const updates = getTokenUpdateInfo(
+      -selectedPrize.price,
+      responseHistory[i].tokens,
+      applet,
+    );
 
-      updateUserTokenBalance(
-        authToken,
-        applet.id.split('/').pop(),
-        updates.offset,
-        updates.cumulative,
-        applet.schemaVersion.en,
-        updates.userPublicKey || null
-      ).then(() => {
-        dispatch(downloadResponses())
-      })
-    } else {
-      const preparedResponse = prepareResponseForUpload(
-        inProgressResponse, applet, responseHistory, isTimeout, finishedTime
-      );
-      dispatch(addToUploadQueue(preparedResponse));
-      dispatch(startUploadQueue());
-    }
+    updateUserTokenBalance(
+      authToken,
+      applet.id.split('/').pop(),
+      updates.cumulative,
+      updates.changes,
+      applet.schemaVersion.en,
+      updates.userPublicKey || null
+    ).then(() => {
+      dispatch(downloadResponses())
+    })
+  } else {
+    const preparedResponse = prepareResponseForUpload(
+      inProgressResponse, applet, responseHistory, isTimeout, finishedTime
+    );
+    dispatch(addToUploadQueue(preparedResponse));
+    dispatch(startUploadQueue());
+  }
 
-    if (event) {
-      dispatch(setClosedEvents({
-        [event]: finishedTime.getTime()
-      }))
-    }
-  })
+  if (event) {
+    dispatch(setClosedEvents({
+      [event]: finishedTime.getTime()
+    }))
+  }
 
   setTimeout(() => {
     const { activity } = inProgressResponse;

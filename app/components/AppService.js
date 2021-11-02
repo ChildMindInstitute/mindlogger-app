@@ -103,13 +103,13 @@ class AppService extends Component {
     );
 
     nextDay.setHours(3);
-    const tokenTimeLeft = nextDay.getTime() - currentTime.getTime() + Math.random() * 10 * 500;
+    const tokenTimeLeft = nextDay.getTime() - currentTime.getTime();
 
-    refreshNegativeBehaviors(true);
+    refreshNegativeBehaviors();
 
     this.tokenIntervalId = delayedExec(
       () => {
-        refreshNegativeBehaviors(true);
+        refreshNegativeBehaviors();
         this.tokenIntervalId = delayedExec(sync, { every: day })
       },
       { after: tokenTimeLeft }
@@ -699,7 +699,7 @@ const mapDispatchToProps = dispatch => ({
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
   setLastActiveTime: time => dispatch(setLastActiveTime(time)),
-  refreshNegativeBehaviors: (endOfDay) => dispatch(refreshNegativeBehaviors(endOfDay))
+  refreshNegativeBehaviors: () => dispatch(refreshNegativeBehaviors())
 });
 
 export default connect(

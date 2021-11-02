@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleResult, getValuesFromResponse, getBehaviorTokensFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -12,6 +12,7 @@ import {
   itemAttachExtras,
   ORDER,
 } from "./json-ld";
+import moment from 'moment';
 
 // Convert ids like "applet/some-id" to just "some-id"
 const trimId = (typedId) => typedId.split("/").pop();
@@ -31,7 +32,7 @@ export const prepareResponseForUpload = (
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
   const scheduledTime = activity.event && activity.event.scheduledTime;
-  let cumulative = responseHistory.tokens.cumulativeToken, tokenChanged = false;
+  let cumulative = responseHistory.token.cumulative, tokenChanged = false;
 
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
@@ -64,9 +65,8 @@ export const prepareResponseForUpload = (
       }
 
       if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-        const newTokens = getBehaviorTokensFromResponse(item, responses[i])
-        if (newTokens) {
-          cumulative += newTokens;
+        const { value } = (responses[i] || {});
+        if (value && Object.keys(value).length) {
           tokenChanged = true;
         }
       }
@@ -112,6 +112,19 @@ export const prepareResponseForUpload = (
     )
   }
 
+  if (tokenChanged) {
+    const now = moment().format('YYYY-MM-DD')
+    const changes = responseHistory.token.tokens.find(change => change.date == now) || { data: [], id: 0, date: now };
+
+    const offset = cumulative - responseHistory.token.cumulative;
+
+    if (offset) {
+      changes.data.push({ time: new Date().getTime(), value: offset })
+    }
+
+    responseData['token'] = { cumulative, changes };
+  }
+
   /** process for encrypting response */
   if (config.encryptResponse && appletMetaData.encryption) {
     const mediaItems = [
@@ -154,14 +167,11 @@ export const prepareResponseForUpload = (
       }
     }
 
-    if (tokenChanged) {
-      responseData['tokenCumulation'] = {
-        value: cumulative
-      };
+    if (responseData['token']) {
+      responseData['token'].changes.data = getEncryptedData(responseData['token'].changes.data, appletMetaData.AESKey)
     }
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
-
   } else {
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
       return {
@@ -186,12 +196,6 @@ export const prepareResponseForUpload = (
       responseData['subScales'][activity.finalSubScale.variableName] =
         getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable);
     }
-
-    if (tokenChanged) {
-      responseData['tokenCumulation'] = {
-        value: cumulative
-      };
-    }
   }
 
   let i = 0;
@@ -206,29 +210,34 @@ export const prepareResponseForUpload = (
 
 export const getTokenUpdateInfo = (
   offset,
-  cumulativeToken,
-  appletMetaData
+  tokens,
+  appletMetaData,
+  rewardTime=0
 ) => {
-  const cumulative = cumulativeToken + offset;
+  const cumulative = tokens.cumulative + offset;
+
+  const now = moment().format('YYYY-MM-DD')
+  const changes = rewardTime && tokens.changes.find(change => change.date == now) || { data: [], id: 0, date: now };
+
+  if (rewardTime) {
+    changes.data = { time: rewardTime, value: offset }
+  }
+  else if (offset) {
+    changes.data.push({ time: new Date().getTime(), value: offset })
+  }
 
   if (config.encryptResponse && appletMetaData.encryption) {
+    changes.data = getEncryptedData(changes.data, appletMetaData.AESKey)
+
     return {
-      offset: getEncryptedData(
-        {
-          value: offset
-        },
-        appletMetaData.AESKey
-      ),
-      cumulative: {
-        value: cumulative
-      },
+      cumulative,
+      changes,
       userPublicKey: appletMetaData['userPublicKey']
     }
   }
 
   return {
-    offset: { value: offset },
-    cumulative: { value: cumulative }
+    cumulative,
   }
 };
 
@@ -249,40 +258,38 @@ export const decryptAppletResponses = (applet, responses) => {
     });
   }
 
-  responses.tokens = responses.tokens || {};
   if (applet.encryption) {
-    if (responses.tokens.cumulativeToken) {
+    responses.token.tokens.forEach(change => {
       try {
-        const cumulative = typeof responses.tokens.cumulativeToken.data !== 'object' ? JSON.parse(
+        const data = typeof change.data !== 'object' ? JSON.parse(
           decryptData({
             key: applet.AESKey,
-            text: responses.tokens.cumulativeToken.data,
+            text: change.data,
           })
-        ) : responses.tokens.cumulativeToken.data;
+        ) : change.data;
 
-        responses.tokens.cumulativeToken = cumulative.value || 0;
+        change.data = data;
       } catch {
-        responses.tokens.cumulativeToken = 0;
-      }
-    } else {
-      responses.tokens.cumulativeToken = 0;
-    }
-
-    responses.tokens.tokenUpdates = responses.tokens.tokenUpdates || [];
-    responses.tokens.tokenUpdates.forEach(tokenUse => {
-      try {
-        const tokenUpdate = typeof tokenUse.data !== 'object' ? JSON.parse(
-          decryptData({
-            key: applet.AESKey,
-            text: tokenUse.data,
-          })
-        ) : tokenUse.data;
-
-        tokenUse.value = tokenUpdate.value || 0;
-      } catch {
-        tokenUse.value = 0;
+        change.data = []
       }
     })
+
+    responses.token.trackers.forEach(tracker => {
+      try {
+        const data = typeof tracker.data !== 'object' ? JSON.parse(
+          decryptData({
+            key: applet.AESKey,
+            text: tracker.data,
+          })
+        ) : tracker.data;
+
+        tracker.data = data;
+      } catch {
+        tracker.data = null
+      }
+    })
+
+    responses.token.trackers = responses.token.trackers.filter(tracker => tracker.data)
   }
 
   /** replace response to plain format */
@@ -349,32 +356,5 @@ export const decryptAppletResponses = (applet, responses) => {
     }
   }
 
-  if (responses.cumulatives) {
-    Object.keys(responses.cumulatives).forEach((itemIRI) => {
-      const cumulative = responses.cumulatives[itemIRI];
-      if (
-        cumulative.src &&
-        cumulative.ptr !== undefined
-      ) {
-        cumulative.value = responses.dataSources[cumulative.src][cumulative.ptr];
-      }
-
-      const oldItem = responses.itemReferences[cumulative.version] &&
-        responses.itemReferences[cumulative.version][itemIRI];
-      if (oldItem) {
-        const currentActivity = applet.activities.find(activity => activity.id.split('/').pop() == oldItem.original.activityId)
-
-        if (currentActivity) {
-          const currentItem = activity.items.find(item => item.id.split('/').pop() === oldItem.original.screenId);
-
-          if (currentItem && currentItem.schema !== itemIRI) {
-            responses.cumulatives[currentItem.schema] = responses.cumulatives[itemIRI];
-
-            delete responses.cumulatives[itemIRI];
-          }
-        }
-      }
-    })
-  }
   return { ...responses };
 }

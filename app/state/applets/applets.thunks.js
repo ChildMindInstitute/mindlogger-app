@@ -42,7 +42,7 @@ import {
 } from "../user/user.selectors";
 import { isReminderSetSelector } from "./applets.selectors";
 import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
-import { replaceResponses, setLastResponseTime, setLastTokenTimes } from "../responses/responses.actions";
+import { replaceResponses, setLastResponseTime } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
@@ -245,17 +245,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         let scheduleUpdated = false;
         let finishedEvents = {};
         let lastResponseTime = {};
-        let lastTokenTimes = {};
 
         const transformedApplets = applets
           .map((appletInfo) => {
             Object.assign(finishedEvents, appletInfo.finishedEvents);
 
             lastResponseTime[`applet/${appletInfo.id}`] = appletInfo.lastResponses;
-            lastTokenTimes[`applet/${appletInfo.id}`] = {
-              lastRewardTime: new Date(appletInfo.lastRewardTime).getTime(),
-              lastTokenTime: new Date(appletInfo.lastTokenTime).getTime()
-            };
 
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
@@ -307,7 +302,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
-        dispatch(setLastTokenTimes(lastTokenTimes));
         dispatch(setLastResponseTime(lastResponseTime));
         dispatch(setClosedEvents(finishedEvents));
 

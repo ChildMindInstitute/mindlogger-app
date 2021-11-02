@@ -89,11 +89,6 @@ export const setLastResponseTime = responseTimes => ({
   payload: responseTimes,
 });
 
-export const setLastTokenTimes = tokenTimes => ({
-  type: RESPONSES_CONSTANTS.SET_LAST_TOKEN_TIMES,
-  payload: tokenTimes
-})
-
 export const setCurrentBehavior = behavior => ({
   type: RESPONSES_CONSTANTS.SET_CURRENT_BEHAVIOR,
   payload: behavior

@@ -117,6 +117,10 @@ export class BehaviorTrackerComponent extends Component {
       value[behavior].push({ time: 0, distress: null, impairment: null })
     }
 
+    if (!value[behavior].length) {
+      delete value[behavior];
+    }
+
     this.props.onChange({
       ...(this.props.value || {}),
       value

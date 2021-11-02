@@ -142,11 +142,6 @@ export default (state = initialState, action = {}) => {
         ...state,
         currentBehavior: action.payload
       }
-    case RESPONSES_CONSTANTS.SET_LAST_TOKEN_TIMES:
-      return {
-        ...state,
-        lastTokenTimes: action.payload,
-      }
     case RESPONSES_CONSTANTS.SET_RESPONSES_DOWNLOAD_PROGRESS:
       return {
         ...state,
