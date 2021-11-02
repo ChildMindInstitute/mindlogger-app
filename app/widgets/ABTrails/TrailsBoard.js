@@ -44,6 +44,7 @@ export default class TrailsBoard extends Component {
       currentIndex: 1,
       currentScreen: 0,
       isValid: false,
+      rate: 1,
     };
     this.allowed = false;
     this.timeInterval = 0;
@@ -102,7 +103,7 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines } = this.state;
+    const { lines, rate } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
@@ -110,11 +111,11 @@ export default class TrailsBoard extends Component {
 
     this.props.onError();
     screen.items.forEach((item) => {
-      const distance = Math.sqrt(Math.pow(item.cx - locationX, 2) + Math.pow(item.cy - locationY, 2));
+      const distance = Math.sqrt(Math.pow(item.cx * rate - locationX, 2) + Math.pow(item.cy * rate - locationY, 2));
 
-      if (distance <= screen.r) {
-        this.startX = item.cx;
-        this.startY = item.cy;
+      if (distance <= screen.r * rate) {
+        this.startX = item.cx * rate;
+        this.startY = item.cy * rate;
         order = item.order;
         isValid = true;
       }
@@ -147,7 +148,7 @@ export default class TrailsBoard extends Component {
 
   releaseLine = (evt, gestureState) => {
     const { screen } = this.props;
-    const { lines, isValid } = this.state;
+    const { lines, isValid, rate } = this.state;
     let { currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid) return;
 
@@ -166,7 +167,7 @@ export default class TrailsBoard extends Component {
       }
       if (index && isValidLine) {
         const item = screen.items.find(({ cx, cy }) => 
-          Math.sqrt(Math.pow(cx - point.x, 2) + Math.pow(cy - point.y, 2)) < screen.r
+          Math.sqrt(Math.pow(cx * rate - point.x, 2) + Math.pow(cy * rate - point.y, 2)) < screen.r * rate
         );
 
         if (item && item.order !== currentIndex) {
@@ -197,6 +198,7 @@ export default class TrailsBoard extends Component {
   onLayout = (event) => {
     if (this.state.dimensions) return; // layout was already called
     const { width, height, top, left } = event.nativeEvent.layout;
+
     if (this.props.lines && this.props.lines.length > this.state.lines.length) {
       const lines = this.props.lines.length ? this.props.lines.map(line => ({
         ...line,
@@ -206,9 +208,9 @@ export default class TrailsBoard extends Component {
           y: point.y * width / 100,
         })),
       })) : [];
-      this.setState({ dimensions: { width, height, top, left }, lines });
+      this.setState({ rate: width / 335, dimensions: { width, height, top, left }, lines });
     } else {
-      this.setState({ dimensions: { width, height, top, left } });
+      this.setState({ rate: width / 335, dimensions: { width, height, top, left } });
     }
   }
 
@@ -251,7 +253,7 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentIndex, incorrectPoints } = this.state;
+    const { currentIndex, incorrectPoints, rate } = this.state;
     let itemColor = trailsData.colors.pending;
 
     if (incorrectPoints.includes(index + 1)) {
@@ -266,17 +268,17 @@ export default class TrailsBoard extends Component {
           fill={itemColor}
           stroke={itemColor}
           strokeWidth="1.2"
-          cx={item.cx}
-          cy={item.cy}
-          r={trailsData.r}
+          cx={item.cx * rate}
+          cy={item.cy * rate}
+          r={trailsData.r * rate}
         />
 
         <Text
           stroke="white"
-          fontSize={trailsData.fontSize}
+          fontSize={trailsData.fontSize * rate}
           fill="white"
-          x={item.cx}
-          y={item.cy + 7}
+          x={item.cx * rate}
+          y={(item.cy + 7) * rate}
           textAnchor="middle"
         >
           {item.label}
@@ -284,10 +286,10 @@ export default class TrailsBoard extends Component {
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
-          fontSize="12"
+          fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
-          x={item.cx}
-          y={item.cy - 20}
+          x={item.cx * rate}
+          y={(item.cy - 20) * rate}
           textAnchor="middle"
         >
           {`Begin`}
@@ -296,10 +298,10 @@ export default class TrailsBoard extends Component {
         {index === screen.items.length - 1 && <Text
           fill="white"
           stroke={trailsData.colors.pending}
-          fontSize="12"
+          fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
-          x={item.cx}
-          y={item.cy - 20}
+          x={item.cx * rate}
+          y={(item.cy - 20) * rate}
           textAnchor="middle"
         >
           {`End`}
