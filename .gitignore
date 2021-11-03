@@ -32,7 +32,8 @@ android/app/src/main/res/merged/release
 .gradle
 local.properties
 *.iml
-
+android/app/Untitled
+android/app/release
 # node.js
 #
 node_modules/
