@@ -20,5 +20,6 @@ export * from './VisualStimulusResponse';
 export * from './RadioPrizes';
 export * from './TooltipBox';
 export * from './StackedSlider';
+export * from './AgeSelector';
 export * from './StackedRadio';
 export * from './StabilityTracker';
