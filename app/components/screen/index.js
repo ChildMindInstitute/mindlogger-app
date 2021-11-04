@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Keyboard
 } from "react-native";
+import { connect } from "react-redux";
 
 import PropTypes from "prop-types";
 import { Icon, Button } from "native-base";
@@ -15,6 +16,10 @@ import ScreenDisplay from "./ScreenDisplay";
 import Widget from "./Widget";
 import Timer from "../Timer";
 import { colors } from "../../theme";
+
+import {
+  itemStartTimeSelector,
+} from "../../state/responses/responses.selectors";
 
 const styles = StyleSheet.create({
   outer: {
@@ -49,8 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    right: 20,
-    top: 100,
+    top: 45,
+    right: 10,
   },
   delayTimerView: {
     position: "absolute",
@@ -165,6 +170,7 @@ class ActivityScreen extends Component {
       inputDelayed: false,
       timerActive: false,
       screenHeight: 0,
+      orientation: 'portrait'
     };
     this.interval = null;
     this.startTime = null;
@@ -174,11 +180,19 @@ class ActivityScreen extends Component {
     this.keyboardVisible = false;
   }
 
+  determineAndSetOrientation () {
+    const { width, height } = Dimensions.get('window');
+    this.setState({ orientation: width < height ? 'portrait' : 'landscape' });
+  }
+
   componentDidMount() {
     const { isCurrent } = this.props;
     if (isCurrent) {
       this._startClock();
     }
+
+    this.determineAndSetOrientation();
+    Dimensions.addEventListener('change', this.determineAndSetOrientation.bind(this));
 
     if (Platform.OS === "ios") {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
@@ -201,12 +215,19 @@ class ActivityScreen extends Component {
     }
   }
 
-  componentDidUpdate(oldProps) {
+  componentDidUpdate(oldProps, oldState) {
     const { isCurrent } = this.props;
+
     if (isCurrent && oldProps.isCurrent === false) {
       this._startClock();
     } else if (oldProps.isCurrent && isCurrent === false) {
       this._resetClock();
+    }
+
+    if (
+      this.state.timerActive == true && oldState.timerActive == false
+    ) {
+      this._clockTick();
     }
   }
 
@@ -217,12 +238,16 @@ class ActivityScreen extends Component {
       Keyboard.removeListener('keyboardWillShow', this.keyboardWillShow)
     }
 
-    clearInterval(this.interval);
+    this._resetClock();
   }
 
   _startClock = () => {
     this.interval = setInterval(this._clockTick, 500);
-    this.startTime = Date.now();
+    this.startTime = this.props.itemStartTime;
+
+    if (this.props.screen.timer) {
+      this.setState({ timerActive: true });
+    }
   };
 
   _resetClock = () => {
@@ -256,17 +281,12 @@ class ActivityScreen extends Component {
     if (timer) {
       const safeDelay = delay || 0;
       const timerEnd = safeDelay + timer;
-      if (
-        timeElapsed > safeDelay &&
-        timeElapsed < timerEnd &&
-        timerActive === false
-      ) {
-        this.setState({ timerActive: true });
-      } else if (timeElapsed >= timerEnd && timerActive) {
+
+      if (timeElapsed >= timerEnd && timerActive) {
         this.setState({ timerActive: false });
 
-        clearInterval(this.interval)
-        onChange(answer, true);
+        this._resetClock();
+        onChange(answer, true, timeElapsed);
       }
     }
   };
@@ -283,17 +303,26 @@ class ActivityScreen extends Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
   };
 
+  handleChange(e) {
+    if (!this.props.screen.timer || this.state.timerActive) {
+      this.props.onChange(e);
+    }
+  }
+
   render() {
     const { screen, currentScreen, answer, onChange, isCurrent, onContentError } = this.props;
-    const { scrollEnabled, inputDelayed, timerActive } = this.state;
+    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
-      <View style={styles.outer}>
+      <View
+        style={styles.outer}
+        key={orientation}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}
           enabled
-          keyboardVerticalOffset={10}
+          keyboardVerticalOffset={40}
         >
           <ScrollView
             alwaysBounceVertical={false}
@@ -323,7 +352,7 @@ class ActivityScreen extends Component {
                 <View style={{ opacity: 0.25 }}>
                   <Widget
                     answer={answer}
-                    onChange={onChange}
+                    onChange={this.handleChange.bind(this)}
                     isCurrent={isCurrent}
                     currentScreen={currentScreen}
                     screen={screen}
@@ -339,7 +368,7 @@ class ActivityScreen extends Component {
             ) : (
                 <Widget
                   answer={answer}
-                  onChange={onChange}
+                  onChange={this.handleChange.bind(this)}
                   isCurrent={isCurrent}
                   currentScreen={currentScreen}
                   screen={screen}
@@ -356,7 +385,7 @@ class ActivityScreen extends Component {
         </KeyboardAvoidingView>
         {timerActive && (
           <View style={styles.timerView}>
-            <Timer duration={screen.timer} color={colors.primary} size={40} />
+            <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
           </View>
         )}
         {this.state.screenHeight > height ? (
@@ -403,10 +432,15 @@ ActivityScreen.defaultProps = {
 ActivityScreen.propTypes = {
   screen: PropTypes.object.isRequired,
   answer: PropTypes.any,
+  activity: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   currentScreen: PropTypes.number.isRequired,
   onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
 };
 
-export default ActivityScreen;
+const mapStateToProps = (state) => ({
+  itemStartTime: itemStartTimeSelector(state),
+});
+
+export default connect(mapStateToProps)(ActivityScreen);

@@ -703,18 +703,18 @@
 				CODE_SIGN_ENTITLEMENTS = MDCApp/MDCApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 410;
+				CURRENT_PROJECT_VERSION = 425;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.14.15;
+				MARKETING_VERSION = 0.17.53;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.childmindinstitute.exposuretherapy;
+				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data;
 				PRODUCT_NAME = MDCApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -730,17 +730,17 @@
 				CODE_SIGN_ENTITLEMENTS = MDCApp/MDCApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 410;
+				CURRENT_PROJECT_VERSION = 425;
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.14.15;
+				MARKETING_VERSION = 0.17.53;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.childmindinstitute.exposuretherapy;
+				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data;
 				PRODUCT_NAME = MDCApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";

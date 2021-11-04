@@ -18,7 +18,8 @@ import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
-import { prepareResponseKeys } from "../applets/applets.actions";
+import { prepareResponseKeys } from "./applets.actions";
+import { setCumulativeActivities } from "../activities/activities.actions";
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
@@ -238,6 +239,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
       else
         applets = resp;
 
+      console.log('applets-', applets)
+
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
         const userInfo = userInfoSelector(state);
@@ -245,8 +248,23 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         let scheduleUpdated = false;
         let finishedEvents = {}
 
+        let cumulativeActivities = {};
+
+        const getCumulativeActivities = (applet, nextActivities) => {
+          const response = {};
+          for (const activityId in nextActivities) {
+            response[`activity/${activityId}/nextActivity`] = nextActivities[activityId].map(id => {
+              const activity = applet.activities.find(activity => activity.id.split('/').pop() == id)
+              return activity && activity.name.en;
+            }).filter(name => name?.length)
+          }
+
+          return response;
+        }
+
         const transformedApplets = applets
           .map((appletInfo) => {
+            const nextActivities = appletInfo.cumulativeActivities;
             Object.assign(finishedEvents, appletInfo.finishedEvents);
 
             if (!appletInfo.applet) {
@@ -277,6 +295,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 currentApplet.schedule.events = events;
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
+
+              Object.assign(cumulativeActivities, getCumulativeActivities(currentApplet, nextActivities))
               return currentApplet;
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
@@ -295,10 +315,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 appletId: 'applet/' + appletInfo.id
               });
 
+              Object.assign(cumulativeActivities, getCumulativeActivities(applet, nextActivities))
               return applet;
             }
           });
 
+        dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));
 
         await storeData('ml_applets', transformedApplets);

@@ -3,6 +3,7 @@ import * as R from 'ramda';
 // import PushNotification from 'react-native-push-notification';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
+
 import { clearApplets } from '../applets/applets.actions';
 import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks';
 import { clearResponses } from '../responses/responses.actions';
@@ -14,6 +15,7 @@ import { signOut, deleteUserAccount, postAppletBadge } from '../../services/netw
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
+import { clearActivities } from '../activities/activities.actions';
 
 export const showToast = toast => () => {
   Toast.show(toast);
@@ -66,6 +68,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearApplets());
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
+  // dispatch(clearActivities());
   firebase.notifications().cancelAllNotifications();
 };
 
@@ -92,8 +95,6 @@ export const logout = () => (dispatch, getState) => {
         doLogout(dispatch, getState);
       }
     });
-
-
 };
 
 export const removeAccount = () => (dispatch, getState) => {

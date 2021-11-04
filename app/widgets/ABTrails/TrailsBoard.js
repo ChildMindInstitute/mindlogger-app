@@ -44,6 +44,7 @@ export default class TrailsBoard extends Component {
       currentIndex: 1,
       currentScreen: 0,
       isValid: false,
+      rate: 1,
     };
     this.allowed = false;
     this.timeInterval = 0;
@@ -102,7 +103,7 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines } = this.state;
+    const { lines, rate } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
@@ -110,11 +111,11 @@ export default class TrailsBoard extends Component {
 
     this.props.onError();
     screen.items.forEach((item) => {
-      const distance = Math.sqrt(Math.pow(item.cx - locationX, 2) + Math.pow(item.cy - locationY, 2));
+      const distance = Math.sqrt(Math.pow(item.cx * rate - locationX, 2) + Math.pow(item.cy * rate - locationY, 2));
 
-      if (distance <= screen.r) {
-        this.startX = item.cx;
-        this.startY = item.cy;
+      if (distance <= screen.r * rate) {
+        this.startX = item.cx * rate;
+        this.startY = item.cy * rate;
         order = item.order;
         isValid = true;
       }
@@ -139,79 +140,65 @@ export default class TrailsBoard extends Component {
       this.lastX = moveX - x0 + this.startX;
       this.lastY = moveY - y0 + this.startY;
       this.lastPressTimestamp = time;
-      if (lines[n].points.length > 1) {
-        lines[n].points.pop();
-      }
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time });
+
+      lines[n].points.push({ x: this.lastX, y: this.lastY, time, isValid: false });
       this.setState({ lines });
     }
   }
 
   releaseLine = (evt, gestureState) => {
-    const {
-      lines,
-      isValid,
-      currentIndex,
-      failedCnt,
-      screenTime,
-    } = this.state;
     const { screen } = this.props;
+    const { lines, isValid, rate } = this.state;
+    let { currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid) return;
 
-    const time = Date.now();
-    const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-    let isValidPoint = false;
-    let endOrder = 0;
+    const n = lines.length - 1;
+    let validIndex = -1;
+    let isValidLine = true;
 
     this.lastX = moveX - x0 + this.startX;
     this.lastY = moveY - y0 + this.startY;
-    this.lastPressTimestamp = time;
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time: Date.now(), valid: false });
 
-    screen.items.forEach(({ cx, cy, order }) => {
-      const distance = Math.sqrt(Math.pow(cx - this.lastX, 2) + Math.pow(cy - this.lastY, 2));
-      if (distance <= screen.r) {
-        this.lastX = cx;
-        this.lastY = cy;
-        endOrder = order;
-        isValidPoint = true;
+    lines[n].points.forEach((point, index) => {
+      if (index === 0 && point.order !== currentIndex) {
+        isValidLine = false;
       }
-    });
+      if (index && isValidLine) {
+        const item = screen.items.find(({ cx, cy }) => 
+          Math.sqrt(Math.pow(cx * rate - point.x, 2) + Math.pow(cy * rate - point.y, 2)) < screen.r * rate
+        );
 
-    if (lines[n].points.length > 1) {
-      lines[n].points.pop();
-    }
-    
-    if (lines[n].points[0].order !== currentIndex || endOrder !== currentIndex + 1) {
-      let incorrectPoints = [];
+        if (item && item.order !== currentIndex) {
+          if (item.order === currentIndex + 1) {
+            validIndex = index;
+            currentIndex += 1;
+          } else {
+            isValidLine = false;
+            validIndex = -1;
+          }
+        }
+      }
+    })
 
-      if (lines[n].points[0].order !== currentIndex) incorrectPoints.push(lines[n].points[0].order);
-      if (endOrder !== currentIndex + 1) incorrectPoints.push(endOrder);
-
-      isValidPoint = false;
-      this.setState({ incorrectPoints });
+    if (validIndex === -1) {
+      lines.pop();
       this.props.onError("Incorrect line!");
     } else {
-      this.setState({ incorrectPoints: [] });
+      for (let i = 0; i < lines[n].points.length && i <= validIndex; i += 1) {
+        lines[n].points[i].valid = true;
+      }
     }
 
-    if (isValidPoint) {
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, order: endOrder });
-
-      const result = this.save(lines, endOrder);
-      this.props.onResult({ ...result, failedCnt });
-      this.setState({ lines, currentIndex: endOrder });
-    } else {
-      const result = this.save(lines, currentIndex);
-
-      this.props.onResult({ ...result, screenTime, failedCnt: this.state.failedCnt + 1 });
-      this.setState({ isValid: false, screenTime, failedCnt: this.state.failedCnt + 1 });
-    }
+    this.props.onResult({ ...this.save(lines, currentIndex) });
+    this.setState({ lines, currentIndex });
   }
 
   onLayout = (event) => {
     if (this.state.dimensions) return; // layout was already called
     const { width, height, top, left } = event.nativeEvent.layout;
+
     if (this.props.lines && this.props.lines.length > this.state.lines.length) {
       const lines = this.props.lines.length ? this.props.lines.map(line => ({
         ...line,
@@ -221,9 +208,9 @@ export default class TrailsBoard extends Component {
           y: point.y * width / 100,
         })),
       })) : [];
-      this.setState({ dimensions: { width, height, top, left }, lines });
+      this.setState({ rate: width / 335, dimensions: { width, height, top, left }, lines });
     } else {
-      this.setState({ dimensions: { width, height, top, left } });
+      this.setState({ rate: width / 335, dimensions: { width, height, top, left } });
     }
   }
 
@@ -266,7 +253,7 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentIndex, incorrectPoints } = this.state;
+    const { currentIndex, incorrectPoints, rate } = this.state;
     let itemColor = trailsData.colors.pending;
 
     if (incorrectPoints.includes(index + 1)) {
@@ -278,20 +265,20 @@ export default class TrailsBoard extends Component {
     return (
       <>
         <Circle
-          fill="white"
+          fill={itemColor}
           stroke={itemColor}
           strokeWidth="1.2"
-          cx={item.cx}
-          cy={item.cy}
-          r={trailsData.r}
+          cx={item.cx * rate}
+          cy={item.cy * rate}
+          r={trailsData.r * rate}
         />
 
         <Text
-          stroke={itemColor}
-          fontSize={trailsData.fontSize}
-          fontWeight="bold"
-          x={item.cx}
-          y={item.cy + 7}
+          stroke="white"
+          fontSize={trailsData.fontSize * rate}
+          fill="white"
+          x={item.cx * rate}
+          y={(item.cy + 7) * rate}
           textAnchor="middle"
         >
           {item.label}
@@ -299,10 +286,10 @@ export default class TrailsBoard extends Component {
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
-          fontSize="12"
+          fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
-          x={item.cx}
-          y={item.cy - 20}
+          x={item.cx * rate}
+          y={(item.cy - 20) * rate}
           textAnchor="middle"
         >
           {`Begin`}
@@ -311,10 +298,10 @@ export default class TrailsBoard extends Component {
         {index === screen.items.length - 1 && <Text
           fill="white"
           stroke={trailsData.colors.pending}
-          fontSize="12"
+          fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
-          x={item.cx}
-          y={item.cy - 20}
+          x={item.cx * rate}
+          y={(item.cy - 20) * rate}
           textAnchor="middle"
         >
           {`End`}

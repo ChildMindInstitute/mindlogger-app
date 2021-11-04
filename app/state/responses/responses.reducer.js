@@ -88,13 +88,13 @@ export default (state = initialState, action = {}) => {
         },
       };
     case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
-      const { activityId, screenIndex } = action.payload;
+      const { activityId, screenIndex, startTime } = action.payload;
       const { inProgress } = state;
 
       let time = {};
       if (activityId) {
         time = {
-          [screenIndex]: { startTime: moment().valueOf() }
+          [screenIndex]: { startTime: startTime || moment().valueOf() }
         }
       }
 
