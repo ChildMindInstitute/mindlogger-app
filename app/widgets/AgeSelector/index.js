@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   dropDown: {
-    backgroundColor: 'transparent',
+    backgroundColor: 'white',
     borderBottomWidth: 1.5,
     borderBottomColor: colors.lightGrey,
     color: 'white',

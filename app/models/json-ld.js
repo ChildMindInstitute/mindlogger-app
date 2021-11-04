@@ -90,6 +90,8 @@ const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
+const REMOVE_UNDO_OPTION = "reprolib:terms/removeUndoOption";
+const REMOVE_BACK_OPTION = "reprolib:terms/removeBackOption";
 const TOP_NAVIGATION_OPTION = "reprolib:terms/topNavigationOption"
 const COLOR_PALETTE = "reprolib:terms/colorPalette";
 const CONTINOUS_SLIDER = "reprolib:terms/continousSlider";
@@ -157,7 +159,7 @@ export const flattenItemList = (list = []) =>
     valueConstraints: item[RESPONSE_OPTIONS]
       ? flattenValueConstraints(R.path([RESPONSE_OPTIONS, 0], item))
       : undefined,
-  }));
+}));
 
 export const flattenValueConstraints = (vcObj) =>
   Object.keys(vcObj).reduce((accumulator, key) => {
@@ -221,6 +223,20 @@ export const flattenValueConstraints = (vcObj) =>
       return {
         ...accumulator,
         randomizeOptions: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === REMOVE_UNDO_OPTION) {
+      return {
+        ...accumulator,
+        removeUndoOption: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === REMOVE_BACK_OPTION) {
+      return {
+        ...accumulator,
+        removeBackOption: R.path([key, 0, "@value"], vcObj)
       }
     }
 
@@ -424,7 +440,14 @@ export const itemTransformJson = (itemJson) => {
   const allowList = flattenIdList(R.path([ALLOW, 0, "@list"], itemJson));
   const skippable = isSkippable(allowList) ? true : undefined;
 
-  const valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
+  let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
+  const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
+
+  Object.entries(optionsObj).forEach(([key, value]) => {
+    if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions') && !key.includes('itemListElement'))
+      valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
+  })
+
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
   const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
 
@@ -586,7 +609,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
       return null;
     }
     const item = itemTransformJson(itemsJson[itemKey]);
-    return itemAttachExtras(item, itemKey, activity.addProperties[itemIndex]);
+    return itemAttachExtras(item, itemKey, activity.addProperties && activity.addProperties[itemIndex]);
   });
   const nonEmptyItems = R.filter(item => item, mapItems(activity.order));
   const items = attachPreamble(activity.preamble, nonEmptyItems);
@@ -694,6 +717,7 @@ export const transformApplet = (payload, currentApplets = null) => {
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
                 const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+
                 item.variableName = payload.items[dataKey]['@id'];
 
                 let updated = false;

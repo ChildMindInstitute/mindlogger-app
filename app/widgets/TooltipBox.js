@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { View, Dimensions, ScrollView } from 'react-native';
 import CustomTooltip from './CustomTooltip';
@@ -7,15 +7,26 @@ import { MarkdownScreen } from '../components/core';
 const { width: windowWidth, height: windowHeight } = Dimensions.get('window');
 
 export const TooltipBox = ({ text, children }) => {
+  const [height, setHeight] = useState(150);
+  const [width, ] = useState(windowWidth * 2 / 3);
   const textContainer = useMemo(() => (
-    <MarkdownScreen textColor='white'>{text}</MarkdownScreen>
+    <View
+      onLayout={
+        (evt) => {
+          const { height } = evt.nativeEvent.layout;
+          setHeight(Math.min(height + 20, 150));
+        }
+      }
+    >
+      <MarkdownScreen maxWidth={width} textColor='white'>{text}</MarkdownScreen>
+    </View>
   ), [text]);
 
   return (
     <View>
       <CustomTooltip
-        width={windowWidth*2/3}
-        height={200}
+        width={width}
+        height={height}
         popover={textContainer}
         toggleOnPress={true}
         withOverlay={false}

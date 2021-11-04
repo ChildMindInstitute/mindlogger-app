@@ -304,7 +304,7 @@ export class Camera extends Component {
         {isOptionalText ?
           (
             <View style={{
-              marginTop: '8%',
+              marginTop: '12%',
               width: '100%',
             }}
             >

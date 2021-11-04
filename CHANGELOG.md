@@ -3,13 +3,72 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-### [Unreleased]
 
-## [0.17.39] - 2021-11-02
-- Fix A/B Trails issues
+## [0.17.62] - 2021-11-4
+- Merge A/B Trails and Cog tasks
 
-## [0.17.37] - 2021-09-29
-- Built A/B Trails widget
+## [0.17.61] - 2021-10-31
+- Fix issues on PDF export
+
+## [0.17.59] - 2021-10-31
+- Fix an issue with notfications are being turned on automatically
+
+## [0.17.58] - 2021-10-10
+- Fix skippable button
+
+## [0.17.57] - 2021-10-25
+- Fix response timer position
+
+## [0.17.56] - 2021-10-24
+- Fix style issues on camera widget
+
+## [0.17.55] - 2021-10-22
+- Fix response timer position
+
+## [0.17.54] - 2021-10-21
+- Fix notification issue
+
+## [0.17.53] - 2021-10-19
+- Fix dropdown background-color
+- Fix image above drawing item
+
+## [0.17.52] - 2021-10-19
+- Fix stacked items
+
+## [0.17.51] - 2021-10-18
+- Fix drawing dots
+
+## [0.17.48] - 2021-10-16
+- Fix timer overlap on radio buttons
+
+## [0.17.47] - 2021-10-13
+- Fix timer overlap and position
+
+## [0.17.45] - 2021-10-12
+- Fix drawing lines
+
+## [0.17.43] - 2021-10-11
+- Fix issue with broken stacked items
+
+## [0.17.42] - 2021-10-6
+- Fix undo on top navigation bar
+
+## [0.17.41] - 2021-10-5
+- Fix drawing a line
+
+## [0.17.40] - 2021-10-4
+- Fix back button on item screen
+
+## [0.17.39] - 2021-09-29
+- Fix close button on the header
+- Fix skip button for splash screens
+- Update style for duplicated keyboard
+
+## [0.17.38] - 2021-09-28
+- Build removeUndo option for draw items
+
+## [0.17.37] - 2021-09-28
+- Implement removeBack option
 
 ## [0.17.36] - 2021-09-27
 - Built showing/hiding activities/items/options
@@ -18,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix PDF report
 
 ## [0.17.34] - 2021-09-26
+
 - Build top navigation option
 
 ## [0.17.33] - 2021-09-23

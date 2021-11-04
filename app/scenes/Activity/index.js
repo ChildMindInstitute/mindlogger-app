@@ -31,6 +31,7 @@ import {
   setSummaryScreen,
   setSelected,
 } from "../../state/responses/responses.actions";
+import { setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
 
 import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
@@ -49,6 +50,7 @@ import {
   isPrevEnabled,
 } from "../../services/activityNavigation";
 import Timer from "../../services/timer";
+import { evaluateCumulatives } from "../../services/scoring";
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -99,7 +101,7 @@ class Activity extends React.Component {
     }
   }
 
-  handleChange(answer, goToNext, currentAutoAdvance) {
+  handleChange(answer, goToNext=false, timeElapsed=0) {
     const { isSummaryScreen } = this.state;
     const {
       currentApplet,
@@ -112,7 +114,7 @@ class Activity extends React.Component {
     } = this.props;
     const { activity, responses } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
-    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance || currentAutoAdvance;
+    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText
 
     responses[currentScreen] = answer;
@@ -128,6 +130,28 @@ class Activity extends React.Component {
       return;
     }
 
+    if (next === -1 && activity.compute && !isSummaryScreen) {
+      const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
+      let { cumActivities } = evaluateCumulatives(responses, activity);
+      const cumulativeActivity = this.findActivity(cumActivities && cumActivities[0], currentApplet ?.activities) || {};
+
+      if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
+        if (cumActivities.length > 0 && !hiddenCumulativeActivities ?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
+
+        cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
+        if (cumActivities.length > 0) {
+          cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
+          setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+        }
+        if (hiddenCumulativeActivities ?.includes(cumulativeActivity ?.id)) setHiddenCumulativeActivities(cumulativeActivity ?.id, true);
+      } else {
+        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
+        if (cumActivities.length > 0 && !hiddenCumulativeActivities ?.includes(activity.id))
+          setHiddenCumulativeActivities(activity.id);
+        if (hiddenCumulativeActivities ?.includes(cumulativeActivity ?.id)) setHiddenCumulativeActivities(cumulativeActivity ?.id, true);
+      }
+    }
+
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
@@ -136,10 +160,15 @@ class Activity extends React.Component {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
-        nextScreen();
+        nextScreen(timeElapsed);
         setSelected(false);
       }
     }
+  }
+
+  findActivity = (name, activities = []) => {
+    if (!name) return undefined;
+    return _.find(activities, { name: { en: name } });
   }
 
   get currentItem() {
@@ -256,6 +285,7 @@ class Activity extends React.Component {
     this.idleTimer.clear();
   }
 
+
   render() {
     const {
       setAnswer,
@@ -267,39 +297,46 @@ class Activity extends React.Component {
     } = this.props;
 
     const { isSummaryScreen, isSplashScreen } = this.state;
-    
-    
+
     if (!currentResponse) {
       return <View />;
     }
-    
+
     const { activity, responses } = currentResponse;
+    const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
-    const prevLabel = isSummaryScreen
-      ? "Back"
-      : getPrevLabel(currentScreen, itemVisibility);
     const nextLabel = isSummaryScreen
       ? "Next"
       : getNextLabel(
         currentScreen,
+        isSplashScreen,
         itemVisibility,
         activity,
         responses,
         this.state.isContentError
       );
-    const actionLabel = isSummaryScreen
+    const actionLabel = (isSummaryScreen || removeUndoOption)
       ? ""
       : getActionLabel(currentScreen, responses, activity.items);
+    let prevLabel = isSummaryScreen
+      ? "Back"
+      : getPrevLabel(currentScreen, itemVisibility);
+
+    if (this.currentItem.valueConstraints
+      && this.currentItem.valueConstraints.removeBackOption) {
+      prevLabel = "";
+    }
 
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {!fullScreen &&
+        {!fullScreen && topNavigation &&
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
             watermark={currentApplet.watermark}
+            prevLabel={prevLabel}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
             onPressPrevScreen={this.handlePressPrevScreen}
@@ -318,9 +355,9 @@ class Activity extends React.Component {
             activity={activity}
             answers={responses}
             currentScreen={currentScreen}
-            onChange={(answer, goToNext = false, currentAutoAdvance = false) => {
+            onChange={(answer, goToNext=false, timeElapsed=0) => {
               setAnswer(activity, currentScreen, answer);
-              this.handleChange(answer, goToNext, currentAutoAdvance);
+              this.handleChange(answer, goToNext, timeElapsed);
             }}
             authToken={authToken}
             onContentError={() => this.setState({ isContentError: true })}
@@ -333,6 +370,21 @@ class Activity extends React.Component {
         {!!isSplashScreen && (
           <ActivitySplash activity={activity} />
         )}
+        {!fullScreen && !topNavigation &&
+          <ActHeader
+            title={activity.name.en}
+            actionLabel={actionLabel}
+            watermark={currentApplet.watermark}
+            topNavigation={topNavigation}
+            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            onPressPrevScreen={this.handlePressPrevScreen}
+            nextEnabled={isNextEnabled(currentScreen, activity, responses)}
+            onPressNextScreen={this.handlePressNextScreen}
+            onPressAction={() => {
+              setAnswer(activity, currentScreen, undefined);
+            }}
+          />
+        }
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
@@ -394,6 +446,8 @@ const mapStateToProps = (state) => ({
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
   isSelected: state.responses.isSelected,
+  cumulativeActivities: state.activities.cumulativeActivities,
+  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
@@ -405,6 +459,8 @@ const mapDispatchToProps = {
   completeResponse,
   setSummaryScreen,
   setActivitySelectionDisabled,
+  setCumulativeActivities,
+  setHiddenCumulativeActivities
 };
 
 export default connect(
