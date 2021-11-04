@@ -118,9 +118,7 @@ export const prepareResponseForUpload = (
 
     const offset = cumulative - responseHistory.token.cumulative;
 
-    if (offset) {
-      changes.data.push({ time: new Date().getTime(), value: offset })
-    }
+    changes.data.push({ time: new Date().getTime(), value: offset, spend: false })
 
     responseData['token'] = { cumulative, changes };
   }
@@ -223,7 +221,7 @@ export const getTokenUpdateInfo = (
     changes.data = { time: rewardTime, value: offset }
   }
   else if (offset) {
-    changes.data.push({ time: new Date().getTime(), value: offset })
+    changes.data.push({ time: new Date().getTime(), value: offset, spend: true })
   }
 
   if (config.encryptResponse && appletMetaData.encryption) {
