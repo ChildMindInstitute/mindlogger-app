@@ -155,7 +155,7 @@ class Activity extends React.Component {
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
-        setSummaryScreen(true);
+        setSummaryScreen(activity, true);
       } else {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
@@ -208,11 +208,13 @@ class Activity extends React.Component {
       prevScreen,
       setSelected,
       isSelected,
+      currentResponse
     } = this.props;
+    const { activity, responses } = currentResponse;
 
     if (isSummaryScreen) {
       this.setState({ isSummaryScreen: false });
-      setSummaryScreen(false);
+      setSummaryScreen(activity, false);
       setSelected(false);
     } else {
       if (!currentScreen) {
@@ -270,11 +272,11 @@ class Activity extends React.Component {
       !isSummaryScreen
     ) {
       this.setState({ isSummaryScreen: true });
-      setSummaryScreen(true);
+      setSummaryScreen(activity, true);
     } else {
       if (isSummaryScreen) {
         this.setState({ isSummaryScreen: false });
-        setSummaryScreen(false);
+        setSummaryScreen(activity, false);
       }
       nextScreen();
       setSelected(false);
