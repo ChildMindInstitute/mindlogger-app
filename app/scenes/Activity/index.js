@@ -84,7 +84,7 @@ class Activity extends React.Component {
     this.setState({
       isSummaryScreen,
       idleTime,
-      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0
+      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen
     }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
@@ -336,6 +336,7 @@ class Activity extends React.Component {
             title={activity.name.en}
             actionLabel={actionLabel}
             watermark={currentApplet.watermark}
+            isSummaryScreen={isSummaryScreen}
             prevLabel={prevLabel}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
@@ -374,6 +375,7 @@ class Activity extends React.Component {
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
+            isSummaryScreen={isSummaryScreen}
             watermark={currentApplet.watermark}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}

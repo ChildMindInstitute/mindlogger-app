@@ -115,7 +115,6 @@ const ActivitySummary = (props) => {
         setHiddenCumulativeActivities(activity.id);
       if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
-    console.log('reportMessages-----', reportMessages)
     setMessages(reportMessages);
   }, [responses]);
 
@@ -159,6 +158,18 @@ const ActivitySummary = (props) => {
     };
 
     const isSplashScreen = activity.splash && activity.splash.en;
+
+    if (applet.image) {
+      options.html += `
+        <div style="position: absolute; top: 0; right: 5px">
+          <img 
+            src="${applet.image}"
+            height="100" 
+            alt='' 
+          />
+        </div>
+      `;
+    }
 
     if (isSplashScreen) {
       const uri = activity.splash.en;
