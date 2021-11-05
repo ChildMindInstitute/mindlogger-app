@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.62] - 2021-11-01
 - Fix issues on PDF export
+- Add applet images on PDF export 
 
 ## [0.17.61] - 2021-10-31
 - Fix issues on PDF export
