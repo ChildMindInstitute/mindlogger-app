@@ -115,7 +115,6 @@ const ActivitySummary = (props) => {
         setHiddenCumulativeActivities(activity.id);
       if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
-    console.log('reportMessages-----', reportMessages)
     setMessages(reportMessages);
   }, [responses]);
 
@@ -157,6 +156,41 @@ const ActivitySummary = (props) => {
       padding: 80,
       bgColor: "#ffffff",
     };
+
+    const isSplashScreen = activity.splash && activity.splash.en;
+
+    if (applet.image) {
+      options.html += `
+        <div style="position: absolute; top: 0; right: 5px">
+          <img 
+            src="${applet.image}"
+            height="100" 
+            alt='' 
+          />
+        </div>
+      `;
+    }
+
+    if (isSplashScreen) {
+      const uri = activity.splash.en;
+      const mimeType = Mimoza.getMimeType(uri) || "";
+
+      if (mimeType.startsWith("video/")) {
+        options.html += `
+          <div style="height: 100%;">
+            <video width="1000" controls autoplay>
+              <source src="${uri}" type="video/mp4" />
+            </video>
+          </div>
+        `;
+      } else {
+        options.html += `
+          <div style="height: 100%;">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          </div>
+        `;
+      }
+    }
 
     options.html += `
       <p class="mb-4">
