@@ -250,18 +250,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
         let cumulativeActivities = {};
 
-        const getCumulativeActivities = (applet, nextActivities) => {
-          const response = {};
-          for (const activityId in nextActivities) {
-            response[`activity/${activityId}/nextActivity`] = nextActivities[activityId].map(id => {
-              const activity = applet.activities.find(activity => activity.id.split('/').pop() == id)
-              return activity && activity.name.en;
-            }).filter(name => name?.length)
-          }
-
-          return response;
-        }
-
         const transformedApplets = applets
           .map((appletInfo) => {
             const nextActivities = appletInfo.cumulativeActivities;
@@ -296,7 +284,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
 
-              Object.assign(cumulativeActivities, getCumulativeActivities(currentApplet, nextActivities))
+              cumulativeActivities[currentApplet.id] = nextActivities;
               return currentApplet;
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
@@ -315,7 +303,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 appletId: 'applet/' + appletInfo.id
               });
 
-              Object.assign(cumulativeActivities, getCumulativeActivities(applet, nextActivities))
+              cumulativeActivities[applet.id] = nextActivities
               return applet;
             }
           });

@@ -24,10 +24,9 @@ import markdownMark from "markdown-it-mark";
 
 import { colors } from "../../themes/colors";
 import { MarkdownScreen } from "../../components/core";
-import { parseAppletEvents } from "../../models/json-ld";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
-import { setActivities, setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
+import { setActivities } from "../../state/activities/activities.actions";
 import { evaluateCumulatives } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
@@ -94,9 +93,10 @@ const footerText =
 
 const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
-  const { responses, activity, applet, cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = props;
+  const { responses, activity } = props;
 
   useEffect(() => {
+<<<<<<< HEAD
     let { reportMessages, cumActivities } = evaluateCumulatives(responses, activity)
     const cumulativeActivity = findActivity(cumActivities && cumActivities[0], applet?.activities);
 
@@ -115,13 +115,11 @@ const ActivitySummary = (props) => {
         setHiddenCumulativeActivities(activity.id);
       if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
     }
+=======
+    let { reportMessages } = evaluateCumulatives(responses, activity)
+>>>>>>> update logic for showing/hiding cumulative activities
     setMessages(reportMessages);
   }, [responses]);
-
-  const findActivity = (name, activities = []) => {
-    if (!name) return undefined;
-    return _.find(activities, { name: { en: name } });
-  }
 
   const fRequestAndroidPermission = async () => {
     try {
@@ -384,14 +382,10 @@ ActivitySummary.propTypes = {
 const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
-  cumulativeActivities: state.activities.cumulativeActivities,
-  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
   setActivities,
-  setCumulativeActivities,
-  setHiddenCumulativeActivities
 };
 
 export default connect(

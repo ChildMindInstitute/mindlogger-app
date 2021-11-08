@@ -7,6 +7,7 @@ import moment from "moment";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
+import { evaluateCumulatives } from '../../services/scoring';
 import {
   prepareResponseForUpload,
   getEncryptedData,
@@ -15,6 +16,7 @@ import {
 import { scheduleAndSetNotifications } from "../applets/applets.thunks";
 import { storeData } from "../../services/asyncStorage";
 import { appletsSelector } from "../applets/applets.selectors";
+import { setCumulativeActivities } from "../activities/activities.actions";
 import {
   responsesSelector,
   uploadQueueSelector,
@@ -172,7 +174,6 @@ export const startResponse = (activity) => (dispatch, getState) => {
             }
 
             cleanFiles(itemResponses);
-            dispatch(setSummaryScreen(false));
             dispatch(setActivityOpened(true));
 
             dispatch(
@@ -402,6 +403,27 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       dispatch(downloadResponses())
     })
   } else {
+    let { cumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
+    const cumulativeActivities = state.activities.cumulativeActivities;
+
+    if (cumActivities.length) {
+      const availableActivities = (cumulativeActivities[applet.id] || [])
+        .concat(
+          cumActivities.map(name => {
+            const activity = applet.activities.find(activity => activity.name.en == name)
+            return activity && activity.id.split('/').pop()
+          }).filter(id => id)
+        )
+        .filter(id => id != activity.id.split('/').pop())
+
+      dispatch(
+        setCumulativeActivities({
+          ...cumulativeActivities,
+          [applet.id]: availableActivities
+        })
+      );
+    }
+
     const preparedResponse = prepareResponseForUpload(
       inProgressResponse, applet, responseHistory, isTimeout, finishedTime
     );
