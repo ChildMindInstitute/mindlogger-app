@@ -68,11 +68,13 @@ const ActivityList = ({
 
     for (let i = 0; i < newApplet.activities.length; i++) {
       const activity = newApplet.activities[i];
-      for (const message of activity.messages) {
-        if (message.nextActivity) {
-          const index = findActivityFromName(newApplet.activities, message.nextActivity)
-          if (index >= 0) {
-            dependency[index].push(i);
+      if (activity.messages) {
+        for (const message of activity.messages) {
+          if (message.nextActivity) {
+            const index = findActivityFromName(newApplet.activities, message.nextActivity)
+            if (index >= 0) {
+              dependency[index].push(i);
+            }
           }
         }
       }

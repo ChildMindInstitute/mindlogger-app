@@ -96,28 +96,7 @@ const ActivitySummary = (props) => {
   const { responses, activity } = props;
 
   useEffect(() => {
-<<<<<<< HEAD
-    let { reportMessages, cumActivities } = evaluateCumulatives(responses, activity)
-    const cumulativeActivity = findActivity(cumActivities && cumActivities[0], applet?.activities);
-
-    if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
-      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
-
-      cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
-      if (cumActivities.length > 0) {
-        cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
-        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-      }
-      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
-    } else {
-      setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-      if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
-        setHiddenCumulativeActivities(activity.id);
-      if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
-    }
-=======
     let { reportMessages } = evaluateCumulatives(responses, activity)
->>>>>>> update logic for showing/hiding cumulative activities
     setMessages(reportMessages);
   }, [responses]);
 
@@ -160,10 +139,10 @@ const ActivitySummary = (props) => {
     if (applet.image) {
       options.html += `
         <div style="position: absolute; top: 0; right: 5px">
-          <img 
+          <img
             src="${applet.image}"
-            height="100" 
-            alt='' 
+            height="100"
+            alt=''
           />
         </div>
       `;
