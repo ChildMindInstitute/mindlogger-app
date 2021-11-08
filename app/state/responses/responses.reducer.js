@@ -15,6 +15,7 @@ export const initialState = {
   uploadQueue: [],
   schedule: {},
   activityOpened: false,
+  currentBehavior: {},
 };
 
 const replaceAppletResponses = (state, action) => {
