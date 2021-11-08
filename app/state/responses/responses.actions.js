@@ -9,9 +9,9 @@ export const setSelected = (isSelected = false) => ({
   payload: isSelected,
 });
 
-export const setSummaryScreen = (isSummaryScreen = false) => ({
+export const setSummaryScreen = (activity, isSummaryScreen = false) => ({
   type: RESPONSES_CONSTANTS.SET_SUMMARYSCREEN,
-  payload: isSummaryScreen,
+  payload: { activity, isSummaryScreen },
 });
 
 export const replaceResponses = responses => ({
