@@ -57,6 +57,7 @@ test('it creates a response in progress', () => {
         screenIndex: 0,
         subjectId: undefined,
         timeStarted: undefined,
+        isSummaryScreen: false
       },
     }
   });
@@ -75,6 +76,7 @@ test('it removes response in progress', () => {
         screenIndex: 0,
         subjectId: undefined,
         timeStarted: undefined,
+        isSummaryScreen: false
       },
     }
   });
@@ -91,6 +93,7 @@ test('it sets an answer', () => {
         activity,
         responses: ['foobar'],
         screenIndex: 0,
+        isSummaryScreen: false
       },
     },
   });
