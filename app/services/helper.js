@@ -87,11 +87,53 @@ export const truncateString = (str, len, dots = true) => {
   return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
 };
 
-export const findThresholdActivity = (activities, find) => {
-  let activity = {};
-  if (find === 'first')
-    activity = _.find(activities, act => act.messages && act.messages[0]?.nextActivity);
-  if (find === 'last')
-    activity = _.find(activities.reverse(), act => act.messages && act.messages[0]?.nextActivity);
-  return activity;
+export const getActivityAvailabilityFromDependency = (g, availableActivities) => {
+  const marked = [], activities = [];
+  let markedCount = 0;
+
+  for (let i = 0; i < g.length; i++) {
+    marked.push(false)
+  }
+
+  for (let i = 0; i < g.length; i++) {
+    if (!g[i].length) {
+      activities.push(i);
+      markedCount++;
+      marked[i] = true;
+    }
+  }
+
+  for (let index of availableActivities) {
+    if (!marked[index]) {
+      markedCount++;
+      marked[index] = true;
+      activities.push(index);
+    }
+  }
+
+  while ( markedCount < g.length ) {
+    let updated = false;
+
+    for (let i = 0; i < g.length; i++) {
+      if (!marked[i] && g[i].some(dependency => marked[dependency])) {
+        marked[i] = true;
+        markedCount++;
+        updated = true;
+      }
+    }
+
+    if (!updated) {
+      // in case of a circular dependency exists
+      for (let i = 0; i < g.length; i++) {
+        if (!marked[i]) {
+          marked[i] = true;
+          markedCount++;
+          activities.push(i);
+          break;
+        }
+      }
+    }
+  }
+
+  return activities;
 }

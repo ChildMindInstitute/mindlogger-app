@@ -31,7 +31,6 @@ import {
   setSummaryScreen,
   setSelected,
 } from "../../state/responses/responses.actions";
-import { setCumulativeActivities, setHiddenCumulativeActivities } from "../../state/activities/activities.actions";
 
 import { authTokenSelector } from "../../state/user/user.selectors";
 import ActivityScreens from "../../components/ActivityScreens";
@@ -50,7 +49,6 @@ import {
   isPrevEnabled,
 } from "../../services/activityNavigation";
 import Timer from "../../services/timer";
-import { evaluateCumulatives } from "../../services/scoring";
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -130,28 +128,6 @@ class Activity extends React.Component {
       return;
     }
 
-    if (next === -1 && activity.compute && !isSummaryScreen) {
-      const { cumulativeActivities, hiddenCumulativeActivities, setCumulativeActivities, setHiddenCumulativeActivities } = this.props;
-      let { cumActivities } = evaluateCumulatives(responses, activity);
-      const cumulativeActivity = this.findActivity(cumActivities && cumActivities[0], currentApplet?.activities) || {};
-
-      if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
-        if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id)) setHiddenCumulativeActivities(activity.id);
-
-        cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
-        if (cumActivities.length > 0) {
-          cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
-          setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-        }
-        if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
-      } else {
-        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-        if (cumActivities.length > 0 && !hiddenCumulativeActivities?.includes(activity.id))
-          setHiddenCumulativeActivities(activity.id);
-        if (hiddenCumulativeActivities?.includes(cumulativeActivity?.id)) setHiddenCumulativeActivities(cumulativeActivity?.id, true);
-      }
-    }
-
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
@@ -160,6 +136,7 @@ class Activity extends React.Component {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
+
         nextScreen(timeElapsed);
         setSelected(false);
       }
@@ -451,8 +428,6 @@ const mapStateToProps = (state) => ({
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
   isSelected: state.responses.isSelected,
-  cumulativeActivities: state.activities.cumulativeActivities,
-  hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
 });
 
 const mapDispatchToProps = {
@@ -464,8 +439,6 @@ const mapDispatchToProps = {
   completeResponse,
   setSummaryScreen,
   setActivitySelectionDisabled,
-  setCumulativeActivities,
-  setHiddenCumulativeActivities
 };
 
 export default connect(

@@ -12,13 +12,6 @@ export const setCumulativeActivities = (data) => {
   })
 };
 
-export const setHiddenCumulativeActivities = (data, isRemove) => {
-  return ({
-    type: "HIDDEN_CUMULATIVE_ACTIVITIES",
-    payload: { data, isRemove },
-  })
-};
-
 export const clearActivities = () => {
   return ({
     type: "CLEAR_ACTIVITIES",
