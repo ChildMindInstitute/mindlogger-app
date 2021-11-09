@@ -14,8 +14,6 @@ export const isDownloadingResponsesSelector = R.path([
   "isDownloadingResponses",
 ]);
 
-export const isSummaryScreenSelector = R.path(["responses", "isSummaryScreen"]);
-
 export const downloadProgressSelector = R.path([
   "responses",
   "downloadProgress",
@@ -61,6 +59,10 @@ export const currentResponsesSelector = createSelector(
   }
 );
 
+export const isSummaryScreenSelector = createSelector(
+  currentResponsesSelector,
+  (responses) => responses?.isSummaryScreen || false
+)
 
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,

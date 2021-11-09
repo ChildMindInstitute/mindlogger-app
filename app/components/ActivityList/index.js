@@ -28,7 +28,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { findThresholdActivity } from '../../services/helper';
+import { getActivityAvailabilityFromDependency } from '../../services/helper';
 
 const ActivityList = ({
   applet,
@@ -47,71 +47,62 @@ const ActivityList = ({
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
-  cumulativeActivities,
-  hiddenCumulativeActivities
+  cumulativeActivities
 }) => {
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
+  const findActivityFromName = (activities, name) => {
+    return activities.findIndex(activity => activity.name.en == name)
+  }
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
 
-    const notShownActs = [];
-    for (let index = 0; index < newApplet.activities.length; index++) {
-      const act = newApplet.activities[index];
-      if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
+    const dependency = []
+
+    for (let i = 0; i < newApplet.activities.length; i++) {
+      dependency.push([])
     }
 
-    try {      
-      const firstThresholdActivity = findThresholdActivity(newApplet.activities, 'first');
-      const lastThresholdActivity = findThresholdActivity(newApplet.activities, 'last');
-      if (firstThresholdActivity && lastThresholdActivity) {
-        if (_.findIndex(lastThresholdActivity.messages, { nextActivity: firstThresholdActivity.name.en }) > -1) {
-          _.remove(notShownActs, { id: lastThresholdActivity.id })
+    for (let i = 0; i < newApplet.activities.length; i++) {
+      const activity = newApplet.activities[i];
+      if (activity.messages) {
+        for (const message of activity.messages) {
+          if (message.nextActivity) {
+            const index = findActivityFromName(newApplet.activities, message.nextActivity)
+            if (index >= 0) {
+              dependency[index].push(i);
+            }
+          }
         }
       }
-    } catch (error) {
-      console.log(error);
     }
 
-    const appletActivities = [];
+    const availableActivites = (cumulativeActivities[applet.id] || [])
+      .map(id => {
+        const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
+        return index;
+      })
+      .filter(index => index >= 0)
 
-    for (let index = 0; index < newApplet.activities.length; index++) {
-      let isNextActivityShown = true;
-      const act = newApplet.activities[index];
+    let appletActivities = getActivityAvailabilityFromDependency(dependency, availableActivites)
 
-      for (let j = 0; j < notShownActs.length; j++) {
-        const notShownAct = notShownActs[j];
-        const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
+    appletActivities = appletActivities
+      .map(index => newApplet.activities[index])
+      .filter(
+        activity =>
+          activity.isPrize != true &&
+          !activity.isVis && activity.isReviewerActivity != true
+      )
 
-        if (isNextActivityShown !== false)
-          isNextActivityShown = alreadyAct?.includes(act.name.en) || alreadyAct?.includes(act.id)
-            ? true
-            : checkActivityIsShown(act.name.en, notShownAct.messages)
-
-        if (alreadyAct?.includes(act.name.en) || alreadyAct?.includes(act.id)) {
-          isNextActivityShown = true;
-          break;
-        };
-      }
-
-      if (act.isPrize != true && isNextActivityShown && !act.isVis && act.isReviewerActivity != true && !hiddenCumulativeActivities?.includes(act.id))
-        appletActivities.push(act);
-    }
-    appletActivities.length === 0 && appletActivities.push(newApplet.activities[0]);
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
     }
   };
-
-  const checkActivityIsShown = (name, messages) => {
-    if (!name || !messages) return true;
-    return _.findIndex(messages, { nextActivity: name }) === -1;
-  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
@@ -233,7 +224,6 @@ const mapStateToProps = (state) => {
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
     cumulativeActivities: state.activities.cumulativeActivities,
-    hiddenCumulativeActivities: state.activities.hiddenCumulativeActivities,
   };
 };
 
