@@ -23,9 +23,10 @@ const styles = StyleSheet.create({
 function chunkedPointStr(lines, chunkSize) {
   const results = [];
   lines.forEach((line) => {
-    const { length } = line.points;
+    const points = line.points.filter(({ valid }) => valid);
+    const { length } = points;
     for (let index = 0; index < length; index += chunkSize) {
-      const myChunk = line.points.slice(index, index + chunkSize + 1);
+      const myChunk = points.slice(index, index + chunkSize + 1);
       // Do something if you want with the group
       results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
     }
@@ -42,6 +43,7 @@ export default class TrailsBoard extends Component {
       screenTime: 0,
       incorrectPoints: [],
       currentIndex: 1,
+      validIndex: -1,
       currentScreen: 0,
       isValid: false,
       rate: 1,
@@ -60,8 +62,10 @@ export default class TrailsBoard extends Component {
       onPanResponderGrant: this.startLine,
       onPanResponderMove: this.movePoint,
       onPanResponderRelease: (evt, gestureState) => {
+        const { lines, currentIndex } = this.state;
         this.props.onRelease();
-        this.releaseLine(evt, gestureState);
+        this.movePoint(evt, gestureState);
+        this.props.onResult({ ...this.save(lines, currentIndex) });
       },
     });
     this.allowed = true;
@@ -103,7 +107,7 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines, rate } = this.state;
+    const { lines, rate, currentIndex } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
@@ -116,82 +120,65 @@ export default class TrailsBoard extends Component {
       if (distance <= screen.r * rate) {
         this.startX = item.cx * rate;
         this.startY = item.cy * rate;
-        order = item.order;
-        isValid = true;
+
+        if (currentIndex === item.order) {
+          isValid = true;
+        } else {
+          isValid = false;
+          this.props.onError("Incorrect start point!");
+          return;
+        }
       }
     });
     
-    this.setState({ isValid });
+    this.setState({ isValid, validIndex: -1 });
     if (isValid) {
-      const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), order }] };
+      const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true }] };
       this.setState({ lines: [...lines, newLine] });
     }
   }
 
   movePoint = (evt, gestureState) => {
-    const { lines, isValid } = this.state;
-    if (!this.allowed || lines.length === 0) return;
-
-    const time = Date.now();
-    const n = lines.length - 1;
-    const { moveX, moveY, x0, y0 } = gestureState;
-
-    if (isValid) {
-      this.lastX = moveX - x0 + this.startX;
-      this.lastY = moveY - y0 + this.startY;
-      this.lastPressTimestamp = time;
-
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, isValid: false });
-      this.setState({ lines });
-    }
-  }
-
-  releaseLine = (evt, gestureState) => {
     const { screen } = this.props;
     const { lines, isValid, rate } = this.state;
     let { currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid) return;
 
-    const { moveX, moveY, x0, y0 } = gestureState;
+    const time = Date.now();
     const n = lines.length - 1;
-    let validIndex = -1;
-    let isValidLine = true;
+    let valid = true;
+    const { moveX, moveY, x0, y0 } = gestureState;
 
     this.lastX = moveX - x0 + this.startX;
     this.lastY = moveY - y0 + this.startY;
-    lines[n].points.push({ x: this.lastX, y: this.lastY, time: Date.now(), valid: false });
+    this.lastPressTimestamp = time;
 
-    lines[n].points.forEach((point, index) => {
-      if (index === 0 && point.order !== currentIndex) {
-        isValidLine = false;
-      }
-      if (index && isValidLine) {
-        const item = screen.items.find(({ cx, cy }) => 
-          Math.sqrt(Math.pow(cx * rate - point.x, 2) + Math.pow(cy * rate - point.y, 2)) < screen.r * rate
-        );
+    const item = screen.items.find(({ cx, cy }) =>
+      Math.sqrt(Math.pow(cx * rate - this.lastX, 2) + Math.pow(cy * rate - this.lastY, 2)) < screen.r * rate
+    );
 
-        if (item && item.order !== currentIndex) {
-          if (item.order === currentIndex + 1) {
-            validIndex = index;
-            currentIndex += 1;
-          } else {
-            isValidLine = false;
-            validIndex = -1;
-          }
-        }
-      }
-    })
-
-    if (validIndex === -1) {
-      lines.pop();
-      this.props.onError("Incorrect line!");
-    } else {
-      for (let i = 0; i < lines[n].points.length && i <= validIndex; i += 1) {
-        lines[n].points[i].valid = true;
+    if (item && item.order !== currentIndex) {
+      if (item.order === currentIndex + 1) {
+        currentIndex += 1;
+        this.setState({ validIndex: lines[n].points.length });
+      } else {
+        valid = false;
       }
     }
 
-    this.props.onResult({ ...this.save(lines, currentIndex) });
+    if (!valid) {
+      const { validIndex } = this.state;
+
+      lines[n].points.forEach((point, index) => {
+        if (index > validIndex) {
+          point.valid = false;
+        }
+      })
+      this.setState({ lines, isValid: false });
+      this.props.onError("Incorrect line!");
+    }
+
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
     this.setState({ lines, currentIndex });
   }
 

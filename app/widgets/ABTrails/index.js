@@ -79,6 +79,9 @@ export class ABTrails extends React.Component {
 
     return (
       <View style={{ marginBottom: 0, height: 350 }}>
+        <View style={{ marginBottom: 20, alignItems: "center" }}>
+          <Text style={{ color: rgb(230, 50, 50) }} fontSize="xs">{error}</Text>
+        </View>
         <Container style={styles.paddingContent}>
           <TrailsBoard
             lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
@@ -95,9 +98,6 @@ export class ABTrails extends React.Component {
           />
         </Container>
 
-        <View style={{ marginTop: 20, alignItems: "center" }}>
-          <Text style={{ color: rgb(230, 50, 50) }} fontSize="xs">{error}</Text>
-        </View>
       </View>
     );
   }
