@@ -61,11 +61,8 @@ export const currentResponsesSelector = createSelector(
 
 export const isSummaryScreenSelector = createSelector(
   currentResponsesSelector,
-  (responses) => {
-    return responses && responses.isSummaryScreen || false;
-  }
+  (responses) => responses?.isSummaryScreen || false
 )
-
 
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,
