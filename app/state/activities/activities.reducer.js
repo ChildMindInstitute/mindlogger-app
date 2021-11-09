@@ -3,7 +3,6 @@ import _ from "lodash";
 export const initialState = {
   activities: [],
   cumulativeActivities: {},
-  hiddenCumulativeActivities: [],
 };
 
 export default (state = initialState, action = {}) => {
@@ -16,17 +15,7 @@ export default (state = initialState, action = {}) => {
     case "CUMULATIVE_ACTIVITIES":
       return {
         ...state,
-        cumulativeActivities: { ...state.cumulativeActivities, ...action.payload },
-      };
-    case "HIDDEN_CUMULATIVE_ACTIVITIES":
-      let hiddenCumulativeActivities = [...state.hiddenCumulativeActivities];
-      if (action.payload.isRemove) {
-        _.remove(hiddenCumulativeActivities, val => val === action.payload.data)
-      } else
-        hiddenCumulativeActivities = [...hiddenCumulativeActivities, action.payload.data];
-      return {
-        ...state,
-        hiddenCumulativeActivities,
+        cumulativeActivities: { ...action.payload },
       };
     case "CLEAR_ACTIVITIES":
       return { ...initialState };
