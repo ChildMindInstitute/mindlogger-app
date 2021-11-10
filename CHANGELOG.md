@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.17.63] - 2021-11-08
+## [0.17.66] - 2021-11-09
+- Fix daisy chain applet issue
+
+## [0.17.64] - 2021-11-08
 - Fix app crashing issue after completing an activity
 
 ## [0.17.63] - 2021-11-07

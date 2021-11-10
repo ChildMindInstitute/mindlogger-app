@@ -56,6 +56,7 @@ const ActivityList = ({
   const findActivityFromName = (activities, name) => {
     return activities.findIndex(activity => activity.name.en == name)
   }
+
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
@@ -80,14 +81,18 @@ const ActivityList = ({
       }
     }
 
-    const availableActivites = (cumulativeActivities[applet.id] || [])
+    const convertToIndexes = (activities) => activities
       .map(id => {
         const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
         return index;
       })
       .filter(index => index >= 0)
 
-    let appletActivities = getActivityAvailabilityFromDependency(dependency, availableActivites)
+    let appletActivities = getActivityAvailabilityFromDependency(
+      dependency,
+      convertToIndexes(cumulativeActivities[applet.id].available),
+      convertToIndexes(cumulativeActivities[applet.id].archieved)
+    )
 
     appletActivities = appletActivities
       .map(index => newApplet.activities[index])

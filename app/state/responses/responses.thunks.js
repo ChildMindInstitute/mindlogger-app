@@ -407,19 +407,27 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     const cumulativeActivities = state.activities.cumulativeActivities;
 
     if (cumActivities.length) {
-      const availableActivities = (cumulativeActivities[applet.id] || [])
-        .concat(
-          cumActivities.map(name => {
-            const activity = applet.activities.find(activity => activity.name.en == name)
-            return activity && activity.id.split('/').pop()
-          }).filter(id => id)
-        )
-        .filter(id => id != activity.id.split('/').pop())
+      const archieved = cumulativeActivities[applet.id].archieved;
+      const activityId = activity.id.split('/').pop();
+
+      if (archieved.indexOf(activityId) < 0) {
+        archieved.push(activityId);
+      }
 
       dispatch(
         setCumulativeActivities({
           ...cumulativeActivities,
-          [applet.id]: availableActivities
+          [applet.id]: {
+            available: cumulativeActivities[applet.id].available
+              .concat(
+                cumActivities.map(name => {
+                  const activity = applet.activities.find(activity => activity.name.en == name)
+                  return activity && activity.id.split('/').pop()
+                }).filter(id => id)
+              )
+              .filter(id => id != activityId),
+            archieved
+          }
         })
       );
     }
