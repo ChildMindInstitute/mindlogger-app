@@ -1,5 +1,5 @@
 // Third-party libraries.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -120,23 +120,33 @@ const ActivityList = ({
     }
   }
 
-  useEffect(() => {
-    let updateId;
+  const isMounted = useRef(false), timers = useRef([])
 
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { isMounted.current = false }
+  }, []);
+
+  useEffect(() => {
     stateUpdate();
     const leftTime = (60 - new Date().getSeconds()) * 1000;
-    const leftOutId = delayedExec(
-      () => {
-        stateUpdate();
-        updateId = delayedExec(stateUpdate, { every: updateStatusDelay });
-      },
-      { after: leftTime },
-    );
+
+    if (isMounted.current) {
+      timers.current.push(delayedExec(
+        () => {
+          if (isMounted.current) {
+            stateUpdate();
+            timers.current.push(delayedExec(stateUpdate, { every: updateStatusDelay }));
+          }
+        },
+        { after: leftTime },
+      ));
+    }
 
     return () => {
-      clearExec(leftOutId);
-      if (updateId) {
-        clearExec(updateId);
+      while (timers.current.length) {
+        clearExec(timers.current[0])
+        timers.current.shift()
       }
     }
   }, [Object.keys(inProgress).length, responseSchedule, applet]);
