@@ -93,7 +93,7 @@ const footerText =
 
 const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
-  const { responses, activity } = props;
+  const { responses, applet, activity } = props;
 
   useEffect(() => {
     let { reportMessages } = evaluateCumulatives(responses, activity)
