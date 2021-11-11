@@ -21,7 +21,7 @@ import markdownContainer from "markdown-it-container";
 import markdownIns from "markdown-it-ins";
 import markdownEmoji from "markdown-it-emoji";
 import markdownMark from "markdown-it-mark";
-
+import Mimoza from "mimoza";
 import { colors } from "../../themes/colors";
 import { MarkdownScreen } from "../../components/core";
 import BaseText from "../../components/base_text/base_text";
@@ -138,7 +138,7 @@ const ActivitySummary = (props) => {
 
     if (applet.image) {
       options.html += `
-        <div style="position: absolute; top: 0; right: 5px">
+        <div style="float: right; margin-left: 10px">
           <img
             src="${applet.image}"
             height="100"
@@ -152,21 +152,7 @@ const ActivitySummary = (props) => {
       const uri = activity.splash.en;
       const mimeType = Mimoza.getMimeType(uri) || "";
 
-      if (mimeType.startsWith("video/")) {
-        options.html += `
-          <div style="height: 100%;">
-            <video width="1000" controls autoplay>
-              <source src="${uri}" type="video/mp4" />
-            </video>
-          </div>
-        `;
-      } else {
-        options.html += `
-          <div style="height: 100%;">
-            <img style="width: 100%" src="${uri}" alt="Splash Activity">
-          </div>
-        `;
-      }
+
     }
 
     options.html += `
@@ -227,10 +213,11 @@ const ActivitySummary = (props) => {
       `;
     }
     options.html += `
+      <div class="divider-line"></div>
       <p class="text-footer text-body-2 mb-5">
         ${termsText}
       </p>
-      <p class="text-footer">
+      <p class="text-footer text-body-2">
         ${footerText}
       </p>
     `;
@@ -310,6 +297,9 @@ const ActivitySummary = (props) => {
           width: .2rem;
           height: 6rem;
           background-color: #000;
+        }
+        .divider-line {
+          border: 1px solid black;
         }
         .score-title {
           position: absolute;
