@@ -152,7 +152,13 @@ const ActivitySummary = (props) => {
       const uri = activity.splash.en;
       const mimeType = Mimoza.getMimeType(uri) || "";
 
-
+      if (!mimeType.startsWith("video/")) {
+        options.html += `
+          <div style="height: 100%;">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          </div>
+        `;
+      }
     }
 
     options.html += `
