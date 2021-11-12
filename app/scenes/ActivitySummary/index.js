@@ -156,13 +156,6 @@ const ActivitySummary = (props) => {
     }
 
     options.html += `
-      <p class="mb-4">
-        <b>
-          <u>
-            ${_.get(activity, "name.en")} Report
-          </u>
-        </b>
-      </p>
       <p class="text-body-2 mb-4">
         ${markdownItInstance.render(activity?.scoreOverview)}
       </p>
