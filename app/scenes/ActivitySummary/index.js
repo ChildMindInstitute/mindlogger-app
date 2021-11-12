@@ -136,18 +136,6 @@ const ActivitySummary = (props) => {
 
     const isSplashScreen = activity.splash && activity.splash.en;
 
-    if (applet.image) {
-      options.html += `
-        <div style="float: right; margin-left: 10px">
-          <img
-            src="${applet.image}"
-            height="100"
-            alt=''
-          />
-        </div>
-      `;
-    }
-
     if (isSplashScreen) {
       const uri = activity.splash.en;
       const mimeType = Mimoza.getMimeType(uri) || "";
@@ -159,6 +147,18 @@ const ActivitySummary = (props) => {
           </div>
         `;
       }
+    }
+
+    if (applet.image) {
+      options.html += `
+        <div style="float: right; margin-left: 10px">
+          <img
+            src="${applet.image}"
+            height="100"
+            alt=''
+          />
+        </div>
+      `;
     }
 
     options.html += `
