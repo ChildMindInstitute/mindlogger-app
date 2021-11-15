@@ -80,14 +80,18 @@ const ActivityList = ({
       }
     }
 
-    const availableActivites = (cumulativeActivities[applet.id] || [])
+    const convertToIndexes = (activities) => (activities || [])
       .map(id => {
         const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
         return index;
       })
       .filter(index => index >= 0)
 
-    let appletActivities = getActivityAvailabilityFromDependency(dependency, availableActivites)
+    let appletActivities = getActivityAvailabilityFromDependency(
+      dependency,
+      convertToIndexes(cumulativeActivities[applet.id].available),
+      convertToIndexes(cumulativeActivities[applet.id].archieved)
+    )
 
     appletActivities = appletActivities
       .map(index => newApplet.activities[index])
