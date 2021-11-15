@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.72] - 2021-11-15
+- Fix displaying activity list
+
 ## [0.17.65] - 2021-11-8
 - Fix displaying errors and drawing lines
 
@@ -12,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.63] - 2021-11-07
 - Fix issues on PDF export
-- Add applet images on PDF export 
+- Add applet images on PDF export
 
 ## [0.17.62] - 2021-11-4
 - Merge A/B Trails and Cog tasks
