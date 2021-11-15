@@ -264,6 +264,7 @@ export class BehaviorTrackerComponent extends Component {
                 onTimesMenu={() => {
                   setCurrentBehavior({
                     name: behavior.name,
+                    image: behavior.image,
                     list: value[behavior.name],
                     type: behavior.type
                   })

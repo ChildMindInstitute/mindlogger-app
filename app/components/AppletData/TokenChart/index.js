@@ -5,7 +5,7 @@ import { Dimensions, View, Text, Image, StyleSheet, ActivityIndicator } from 're
 import { Svg, Line, Path, Polygon, Circle } from 'react-native-svg';
 import { getTokenResponses } from '../../../services/api';
 import moment from 'moment';
-import TokenHeader from './Header';
+import TokenHeader from './header';
 import RangeSelector from './RangeSelector';
 import BehaviorAggregation from './BehaviorAggregation';
 import { authTokenSelector } from '../../../state/user/user.selectors';

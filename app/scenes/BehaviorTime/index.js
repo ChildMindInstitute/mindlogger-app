@@ -6,12 +6,10 @@ import { Icon } from 'native-base';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
 import Slider2D from '../../components/Slider2D';
+import { CachedImage } from 'react-native-img-cache';
 
 import { setCurrentBehavior } from '../../state/responses/responses.actions';
 import { currentBehaviorSelector } from '../../state/responses/responses.selectors';
-
-const negative = require('../../../img/negative.png');
-const positive = require('../../../img/positive.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -54,6 +52,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  imageStyle: {
+    width: 50,
+    height: 50,
+    resizeMode: 'cover',
+    backgroundColor: '#EFEFEF',
+    borderRadius: 25,
+  },
   timeText: {
     textAlign: 'center',
     color: 'white',
@@ -71,7 +76,7 @@ const styles = StyleSheet.create({
 })
 
 const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
-  const { name, type } = currentBehavior;
+  const { name, type, image } = currentBehavior;
   const [sliderWidth, setSliderWidth] = useState(0);
   const padding = 40;
   const borderRadius = 16;
@@ -104,6 +109,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
     setCurrentBehavior({
       name,
       type,
+      image,
       list: items
     })
 
@@ -136,6 +142,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       setCurrentBehavior({
         name,
         type,
+        image,
         list: items
       })
     }
@@ -159,6 +166,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
     setCurrentBehavior({
       name,
       type,
+      image,
       list: items
     })
 
@@ -214,8 +222,9 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
               }}>{ item.index+1 } out of { orderedList.length }</Text>
 
               <View style={styles.timeSection}>
-                <Image
-                  source={type == 'positive' ? positive : negative }
+                <CachedImage
+                  style={styles.imageStyle}
+                  source={{ uri: image }}
                 />
 
                 <TouchableOpacity
