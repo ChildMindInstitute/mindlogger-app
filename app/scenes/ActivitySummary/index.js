@@ -136,6 +136,19 @@ const ActivitySummary = (props) => {
 
     const isSplashScreen = activity.splash && activity.splash.en;
 
+    if (isSplashScreen) {
+      const uri = activity.splash.en;
+      const mimeType = Mimoza.getMimeType(uri) || "";
+
+      if (!mimeType.startsWith("video/")) {
+        options.html += `
+          <div style="height: 100%;">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          </div>
+        `;
+      }
+    }
+
     if (applet.image) {
       options.html += `
         <div style="float: right; margin-left: 10px">
@@ -148,21 +161,7 @@ const ActivitySummary = (props) => {
       `;
     }
 
-    if (isSplashScreen) {
-      const uri = activity.splash.en;
-      const mimeType = Mimoza.getMimeType(uri) || "";
-
-
-    }
-
     options.html += `
-      <p class="mb-4">
-        <b>
-          <u>
-            ${_.get(activity, "name.en")} Report
-          </u>
-        </b>
-      </p>
       <p class="text-body-2 mb-4">
         ${markdownItInstance.render(activity?.scoreOverview)}
       </p>
