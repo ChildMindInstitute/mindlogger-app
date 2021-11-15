@@ -80,7 +80,6 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   const [sliderWidth, setSliderWidth] = useState(0);
   const padding = 40;
   const borderRadius = 16;
-  const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * borderRadius;
   const [list, setList] = useState(currentBehavior.list);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const currentItem = useRef(null);
@@ -119,11 +118,6 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   }
 
   const updateValues = (item, distress, impairment, submit) => {
-    const rate = (sliderWidth - delta*2) / (axis.length-1);
-
-    distress = axis.length - 1 - Math.round((distress-delta) / rate)
-    impairment = axis.length - 1 - Math.round((impairment-delta) / rate)
-
     if (!submit && item.distress == distress && item.impairment == impairment) {
       return
     }
@@ -262,8 +256,6 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                   sliderWidth={sliderWidth}
                   padding={padding}
                   item={item}
-                  delta={delta}
-                  axis={axis}
                   type={type}
                   disabled={false}
                   onChange={(distress, impairment, submit) => updateValues(item, distress, impairment, submit)}

@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 40,
-    backgroundColor: 'grey',
-    height: 80,
-    width: 80
+    backgroundColor: '#EFEFEF',
+    height: 60,
+    width: 60
   },
   text: {
     color: '#B7C7D4',
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
 
 const BehaviorAggregation = ({ range, aggregation, applet }) => {
   const options = [];
-  const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * 5;
 
   for (const activity of applet.activities) {
     for (const item of activity.items) {
@@ -95,7 +94,7 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
             <View style={{ width: 100, height: '100%', padding: 10 }}>
               <Slider2D
                 borderRadius={5}
-                borderColor={'#44E7DE'}
+                borderColor={'rgba(0,0,0,0)'}
                 sliderWidth={55}
                 padding={20}
                 item={
@@ -104,8 +103,6 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
                     impairment: getAverage(aggregation[option.itemId][option.name].impairment)
                   } : { distress: null, impairment: null }
                 }
-                delta={delta}
-                axis={axis}
                 type={option.type}
                 disabled={true}
                 axisHeight={4}

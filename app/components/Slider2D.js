@@ -5,8 +5,9 @@ import { View, Text, Image } from 'react-native';
 const doubleArrow = require('../../img/double-arrow.png');
 const pointer = require('../../img/pointer.png');
 
-const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, delta, axis, type, borderColor, disabled, axisHeight=10 }) => {
+const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, borderColor, disabled, axisHeight=10 }) => {
   const distress = '#EC0C8B', impairment = '#0FB0EC';
+  const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * borderRadius;
 
   const renderMainAxis = (direction, value, color) => {
     const perecent = value*100/(axis.length-1);
@@ -49,6 +50,15 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, delta, a
     return (sliderWidth - delta*2) / (axis.length-1) * index + delta;
   }
 
+  const updateValues = (distress, impairment, submit) => {
+    const rate = (sliderWidth - delta*2) / (axis.length-1);
+
+    distress = axis.length - 1 - Math.round((distress-delta) / rate)
+    impairment = axis.length - 1 - Math.round((impairment-delta) / rate)
+
+    onChange(distress, impairment, submit)
+  }
+
   return (
     <View
       style={{
@@ -66,19 +76,19 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, delta, a
           onResponderGrant={(evt) => {
             const { locationX, locationY } = evt.nativeEvent;
             if (!disabled) {
-              onChange(locationX, locationY, false)
+              updateValues(locationX, locationY, false)
             }
           }}
           onResponderMove={(evt) => {
             const { locationX, locationY } = evt.nativeEvent;
             if (!disabled) {
-              onChange(locationX, locationY, false)
+              updateValues(locationX, locationY, false)
             }
           }}
           onResponderRelease={(evt) => {
             const { locationX, locationY } = evt.nativeEvent;
             if (!disabled) {
-              onChange(locationX, locationY, true)
+              updateValues(locationX, locationY, true)
             }
           }}
         >
@@ -154,19 +164,32 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, delta, a
             {
               item.distress !== null && item.impairment !== null &&
                 <G>
-                  <Circle
-                    cx={getX(sliderWidth, axis.length-1-item.distress)}
-                    cy={getX(sliderWidth, axis.length-1-item.impairment)}
-                    r={8}
-                    fill={'white'}
-                    fillOpacity={0.5}
-                  />
-                  <Circle
-                    cx={getX(sliderWidth, axis.length-1-item.distress)}
-                    cy={getX(sliderWidth, axis.length-1-item.impairment)}
-                    r={6}
-                    fill={'white'}
-                  />
+                  {
+                    !disabled && (
+                      <>
+                        <Circle
+                          cx={getX(sliderWidth, axis.length-1-item.distress)}
+                          cy={getX(sliderWidth, axis.length-1-item.impairment)}
+                          r={8}
+                          fill={'white'}
+                          fillOpacity={0.5}
+                        />
+                        <Circle
+                          cx={getX(sliderWidth, axis.length-1-item.distress)}
+                          cy={getX(sliderWidth, axis.length-1-item.impairment)}
+                          r={6}
+                          fill={'white'}
+                        />
+                      </>
+                    ) || (
+                      <Circle
+                        cx={getX(sliderWidth, axis.length-1-item.distress)}
+                        cy={getX(sliderWidth, axis.length-1-item.impairment)}
+                        r={6}
+                        fill={'black'}
+                      />
+                    )
+                  }
                   <Circle
                     cx={getX(sliderWidth, axis.length-1-item.distress)}
                     cy={getX(sliderWidth, axis.length-1-item.impairment)}
@@ -299,20 +322,20 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, delta, a
           const { locationX, locationY } = evt.nativeEvent;
 
           if (!disabled) {
-            onChange(locationX, locationY, false)
+            updateValues(locationX, locationY, false)
           }
         }}
         onResponderMove={(evt) => {
           const { locationX, locationY } = evt.nativeEvent;
           if (!disabled) {
-            onChange(locationX, locationY, false)
+            updateValues(locationX, locationY, false)
           }
         }}
         onResponderRelease={(evt) => {
           const { locationX, locationY } = evt.nativeEvent;
 
           if (!disabled) {
-            onChange(locationX, locationY, true)
+            updateValues(locationX, locationY, true)
           }
         }}
       ></View>
