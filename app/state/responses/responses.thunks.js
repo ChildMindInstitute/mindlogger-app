@@ -391,7 +391,12 @@ export const refreshNegativeBehaviors = () => (dispatch, getState) => {
     for (const activity of applet.activities) {
       for (const item of activity.items) {
         if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-          offset += getTokenIncreaseForBehaviors(item, tokenTimes, refreshTime, responseHistory[i].responses[item.schema]);
+          offset += getTokenIncreaseForBehaviors(
+            item,
+            tokenTimes,
+            refreshTime,
+            responseHistory[i].responses[item.schema] || []
+          );
         }
       }
     }

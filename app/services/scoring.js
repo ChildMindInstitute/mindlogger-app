@@ -121,6 +121,38 @@ export const getBehaviorTokensFromResponse = (item, response) => {
   return token;
 }
 
+export const updateTrackerAggregation = (aggregation, id, response) => {
+  aggregation[id] = aggregation[id] || {};
+
+  for (const option in response) {
+    aggregation[id][option] = aggregation[id][option] || {};
+
+    let {
+      count = 0,
+      distress = { total: 0, count: 0 },
+      impairment = { total: 0, count: 0 }
+    } = aggregation[id][option];
+
+    distress = response[option].reduce((prev, d) => {
+      if (d.distress === null) {
+        return prev;
+      }
+
+      return { total: prev.total + d.distress, count: prev.count + 1 }
+    }, distress)
+
+    impairment = response[option].reduce((prev, d) => {
+      if (d.impairment === null) {
+        return prev;
+      }
+
+      return { total: prev.total + d.impairment, count: prev.count + 1 }
+    }, impairment)
+
+    aggregation[id][option] = { count: count + response[option].length, distress, impairment }
+  }
+}
+
 export const getTokenIncreaseForBehaviors = (item, tokenTimes, refreshTime, responses) => {
   let result = 0;
 

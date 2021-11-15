@@ -5,6 +5,7 @@ import { StyleSheet, FlatList, Dimensions, View } from "react-native";
 // VictoryTheme, VictoryAxis, VictoryLabel } from 'victory-native';
 import moment from "moment";
 import ItemChart from "./ItemChart";
+import TokenChart from "./TokenChart";
 import { colors } from "../../themes/colors";
 import AppletCalendar from "../AppletCalendar";
 import SvgGenerator from "./SvgGenerator";
@@ -12,7 +13,6 @@ import BaseText from "../base_text/base_text";
 // import ActivityChart from './ActivityChart';
 
 const { width } = Dimensions.get("window");
-// const tokenSchema = 'https://raw.githubusercontent.com/ChildMindInstitute/TokenLogger_applet/master/protocols/TokenLogger/TokenLogger_schema';
 
 const styles = StyleSheet.create({
   container: {
@@ -45,8 +45,6 @@ class AppletData extends React.Component {
     const appletVersion = Object.values(applet.version)[0];
 
     /** show deleted activites for one weeek */
-    // TODO sometimes no activities property in appletData object
-    // crash reproduce
     Object.values(appletData.activities).forEach((activity) => {
       if (
         !activities.some(
@@ -84,6 +82,26 @@ class AppletData extends React.Component {
           itemId,
         });
       }
+    }
+
+    let hasTokenItem = false;
+    for (const activity of activities) {
+      const tokenItem = activity.items.find(item => {
+        const { valueType } = (item.valueConstraints || {});
+
+        return valueType && valueType.includes("token") ||
+          item.inputType == 'pastBehaviorTracker' ||
+          item.inputType == 'futureBehaviorTracker';
+      })
+
+      if (tokenItem) {
+        hasTokenItem = true;
+        break;
+      }
+    }
+
+    if (hasTokenItem) {
+      data.push({ type: "TokenChartItem", data: appletData.token })
     }
 
     activities.forEach((activity) => {
@@ -448,11 +466,6 @@ class AppletData extends React.Component {
     return { ...item, additionalParams: { activeCount } };
   };
 
-  // renderItem = ({ item }) => {
-  //   const { appletData } = this.props;
-  //   return <ActivityChart activity={item} appletData={appletData} />;
-  // };
-
   renderEmptyActivityChart = (activity) => {
     return (
       <View
@@ -507,38 +520,11 @@ class AppletData extends React.Component {
         )}
       </View>
     );
-  };
+  }
 
-  renderActivityChartItem = ({ item, data }, type) => {
+  renderActivityChartItem = ({ item, data }) => {
     const dataObj = data;
-    const { appletData } = this.props;
-    const tokens = appletData.tokens || {};
 
-    if (type === "TokenLogger") {
-      data.forEach((itemData, itemIndex) => {
-        if (Array.isArray(itemData.value)) {
-          const newData = [];
-          itemData.value.forEach((valueData) => {
-            item.valueConstraints.itemList.forEach((option) => {
-              if (option.name.en === valueData) {
-                newData.push(option.value);
-              }
-            });
-          });
-          if (newData.length) {
-            dataObj[itemIndex].value = newData;
-          }
-        } else {
-          let newValue = itemData.value;
-          item.valueConstraints.itemList.forEach((option) => {
-            if (option.name.en === newValue) {
-              newValue = option.value;
-            }
-          });
-          dataObj[itemIndex].value = newValue;
-        }
-      });
-    }
     return (
       <View
         style={{
@@ -550,14 +536,40 @@ class AppletData extends React.Component {
           justifyContent: "center",
         }}
       >
-        <ItemChart item={item} data={dataObj} type={type} tokens={tokens} />
+        <ItemChart item={item} data={dataObj} />
       </View>
     );
-  };
+  }
+
+  renderTokenChartItem = ({ data }) => {
+    const { applet } = this.props;
+    const behaviorItems = [];
+
+    for (const activity of applet.activities) {
+      for (const item of activity.items) {
+        if (item.inputType == 'futureBehaviorTracker' || item.inputType == 'pastBehaviorTracker') {
+          behaviorItems.push(item);
+        }
+      }
+    }
+
+    return (
+      <View
+        style={{
+          width,
+          backgroundColor: "white",
+          alignSelf: "stretch",
+          alignContent: "center",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <TokenChart data={data} applet={applet} behaviorItems={behaviorItems} />
+      </View>
+    )
+  }
 
   renderItem = ({ item, index }) => {
-    const { applet } = this.props;
-
     if (item.type === "EmptyActivityChart") {
       const { activity } = item;
       return this.renderEmptyActivityChart(activity, index);
@@ -567,13 +579,14 @@ class AppletData extends React.Component {
       return this.renderActivityChartHeader(activity, index);
     }
     if (item.type === "ActivityChartItem") {
-      const { valueType } = item.item.valueConstraints;
-      const type =
-        valueType && valueType.includes("token") ? "TokenLogger" : "";
-      return this.renderActivityChartItem(item, type);
+      return this.renderActivityChartItem(item);
     }
+
+    if (item.type == "TokenChartItem") {
+      return this.renderTokenChartItem(item);
+    }
+
     return null;
-    // return <ActivityChart activity={item} appletData={appletData} />;
   };
 
   FlatListHeader = () => {

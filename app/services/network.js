@@ -454,6 +454,23 @@ export const getUserUpdates = ({ authToken }) => {
   }).then(res => (res.status === 200 ? res.json() : res));
 };
 
+export const downloadTokenResponses = (authToken, appletId, startDate) => {
+  let url = `${apiHost()}/response/tokens/${appletId}`;
+  const headers = {
+    "Girder-Token": authToken
+  };
+
+  if (startDate) {
+    url += `?startDate=${startDate}`;
+  }
+
+  return fetch(url, {
+    method: "get",
+    mode: "cors",
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : res))
+}
+
 export const updateUserTokenBalance = (authToken, appletId, cumulative, changes, version, userPublicKey, rewardTime=0) => {
   const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
   const headers = {

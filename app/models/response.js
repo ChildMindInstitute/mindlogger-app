@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getFinalSubScale, updateTrackerAggregation } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -32,7 +32,10 @@ export const prepareResponseForUpload = (
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
   const scheduledTime = activity.event && activity.event.scheduledTime;
-  let cumulative = responseHistory.token.cumulative, tokenChanged = false;
+  let cumulative = responseHistory.token.cumulative, tokenChanged = false, trackerChanged = false;
+  const now = moment().format('YYYY-MM-DD')
+
+  const trackerAggregation = responseHistory.token.trackerAggregation.find(d => d.date == now) || { data: {}, id: 0, date: now };
 
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
@@ -67,7 +70,8 @@ export const prepareResponseForUpload = (
       if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
         const { value } = (responses[i] || {});
         if (value && Object.keys(value).length) {
-          tokenChanged = true;
+          trackerChanged = true;
+          updateTrackerAggregation(trackerAggregation.data, item.id.split('/').pop(), value)
         }
       }
     }
@@ -112,15 +116,20 @@ export const prepareResponseForUpload = (
     )
   }
 
-  if (tokenChanged) {
-    const now = moment().format('YYYY-MM-DD')
+  if (tokenChanged || trackerChanged) {
     const changes = responseHistory.token.tokens.find(change => change.date == now) || { data: [], id: 0, date: now };
 
     const offset = cumulative - responseHistory.token.cumulative;
 
     changes.data.push({ time: new Date().getTime(), value: offset, spend: false })
 
-    responseData['token'] = { cumulative, changes };
+    responseData['token'] = {};
+
+    if (tokenChanged) {
+      responseData['token'] = { cumulative, changes }
+    } else {
+      responseData['token'] = { trackerAggregation }
+    }
   }
 
   /** process for encrypting response */
@@ -166,7 +175,13 @@ export const prepareResponseForUpload = (
     }
 
     if (responseData['token']) {
-      responseData['token'].changes.data = getEncryptedData(responseData['token'].changes.data, appletMetaData.AESKey)
+      if (tokenChanged) {
+        responseData['token'].changes.data = getEncryptedData(responseData['token'].changes.data, appletMetaData.AESKey)
+      }
+
+      if (trackerChanged) {
+        responseData['token'].trackerAggregation.data = getEncryptedData(responseData['token'].trackerAggregation.data, appletMetaData.AESKey)
+      }
     }
 
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
@@ -256,38 +271,26 @@ export const decryptAppletResponses = (applet, responses) => {
     });
   }
 
-  if (applet.encryption) {
-    responses.token.tokens.forEach(change => {
-      try {
-        const data = typeof change.data !== 'object' ? JSON.parse(
-          decryptData({
-            key: applet.AESKey,
-            text: change.data,
-          })
-        ) : change.data;
+  if (applet.encryption && responses.token) {
+    for (const key of ['tokens', 'trackers', 'trackerAggregation']) {
+      responses.token[key].forEach(change => {
+        try {
+          const data = typeof change.data !== 'object' ? JSON.parse(
+            decryptData({
+              key: applet.AESKey,
+              text: change.data,
+            })
+          ) : change.data;
 
-        change.data = data;
-      } catch {
-        change.data = []
-      }
-    })
+          change.data = data;
+        } catch {
+          change.data = []
+        }
+      })
+    }
 
-    responses.token.trackers.forEach(tracker => {
-      try {
-        const data = typeof tracker.data !== 'object' ? JSON.parse(
-          decryptData({
-            key: applet.AESKey,
-            text: tracker.data,
-          })
-        ) : tracker.data;
-
-        tracker.data = data;
-      } catch {
-        tracker.data = null
-      }
-    })
-
-    responses.token.trackers = responses.token.trackers.filter(tracker => tracker.data)
+    responses.token.trackers = responses.token.trackers.filter(tracker => Array.isArray(tracker.data) && !tracker.data.length)
+    responses.token.trackerAggregation = responses.token.trackerAggregation.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
   }
 
   /** replace response to plain format */

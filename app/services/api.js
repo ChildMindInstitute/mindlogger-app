@@ -6,10 +6,12 @@ import {
   getLast7DaysData,
   postResponse,
   postFile,
+  downloadTokenResponses
 } from "./network";
 import { getData } from "./asyncStorage";
 import { cleanFiles } from "./file";
 import { transformResponses, decryptAppletResponses } from "../models/response";
+import { decryptData } from "./encryption";
 
 export const downloadAppletResponse = async (authToken, applet) => {
   const currentResponses = await getData('ml_responses');
@@ -34,6 +36,34 @@ export const downloadAppletResponse = async (authToken, applet) => {
 
     return currentResponses;
   });
+}
+
+export const getTokenResponses = (authToken, applet, startDate=null) => {
+  const appletId = applet.id.split('/').pop();
+
+  return downloadTokenResponses(authToken, appletId, startDate ? startDate.toISOString() : null).then(token => {
+    for (const key of ['tokens', 'trackers', 'trackerAggregation']) {
+      token[key].forEach(change => {
+        try {
+          const data = typeof change.data !== 'object' ? JSON.parse(
+            decryptData({
+              key: applet.AESKey,
+              text: change.data,
+            })
+          ) : change.data;
+
+          change.data = data;
+        } catch {
+          change.data = []
+        }
+      })
+    }
+
+    token.trackers = token.trackers.filter(tracker => Array.isArray(tracker.data) && !tracker.data.length)
+    token.trackerAggregation = token.trackerAggregation.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
+
+    return token;
+  })
 }
 
 export const downloadAllResponses = async (authToken, applets, onProgress) => {
