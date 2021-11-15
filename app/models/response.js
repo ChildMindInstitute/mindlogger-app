@@ -223,14 +223,14 @@ export const prepareResponseForUpload = (
 
 export const getTokenUpdateInfo = (
   offset,
-  tokens,
+  data,
   appletMetaData,
   rewardTime=0
 ) => {
-  const cumulative = tokens.cumulative + offset;
+  const cumulative = data.cumulative + offset;
 
   const now = moment().format('YYYY-MM-DD')
-  const changes = rewardTime && tokens.changes.find(change => change.date == now) || { data: [], id: 0, date: now };
+  const changes = rewardTime && data.tokens.find(change => change.date == now) || { data: [], id: 0, date: now };
 
   if (rewardTime) {
     changes.data = { time: rewardTime, value: offset }
@@ -251,6 +251,7 @@ export const getTokenUpdateInfo = (
 
   return {
     cumulative,
+    changes,
   }
 };
 
@@ -289,7 +290,7 @@ export const decryptAppletResponses = (applet, responses) => {
       })
     }
 
-    responses.token.trackers = responses.token.trackers.filter(tracker => Array.isArray(tracker.data) && !tracker.data.length)
+    responses.token.trackers = responses.token.trackers.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
     responses.token.trackerAggregation = responses.token.trackerAggregation.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
   }
 

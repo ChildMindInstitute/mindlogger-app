@@ -59,7 +59,7 @@ export const getTokenResponses = (authToken, applet, startDate=null) => {
       })
     }
 
-    token.trackers = token.trackers.filter(tracker => Array.isArray(tracker.data) && !tracker.data.length)
+    token.trackers = token.trackers.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
     token.trackerAggregation = token.trackerAggregation.filter(tracker => !Array.isArray(tracker.data) || tracker.data.length)
 
     return token;

@@ -12,7 +12,7 @@ import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
 import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
-import { startResponse, refreshNegativeBehaviors } from '../state/responses/responses.thunks';
+import { startResponse, refreshTokenBehaviors } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
@@ -83,7 +83,7 @@ class AppService extends Component {
    */
   startTimer()
   {
-    const { sync, refreshNegativeBehaviors } = this.props;
+    const { sync, refreshTokenBehaviors } = this.props;
     const day = 24 * 3600 * 1000;
 
     const currentTime = new Date();
@@ -105,11 +105,11 @@ class AppService extends Component {
     nextDay.setHours(3);
     const tokenTimeLeft = nextDay.getTime() - currentTime.getTime();
 
-    refreshNegativeBehaviors();
+    refreshTokenBehaviors();
 
     this.tokenIntervalId = delayedExec(
       () => {
-        refreshNegativeBehaviors();
+        refreshTokenBehaviors();
         this.tokenIntervalId = delayedExec(sync, { every: day })
       },
       { after: tokenTimeLeft }
@@ -699,7 +699,7 @@ const mapDispatchToProps = dispatch => ({
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
   setLastActiveTime: time => dispatch(setLastActiveTime(time)),
-  refreshNegativeBehaviors: () => dispatch(refreshNegativeBehaviors())
+  refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors())
 });
 
 export default connect(

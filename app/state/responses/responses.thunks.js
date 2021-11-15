@@ -353,7 +353,7 @@ export const startUploadQueue = () => (dispatch, getState) => {
   });
 };
 
-export const refreshNegativeBehaviors = () => (dispatch, getState) => {
+export const refreshTokenBehaviors = () => (dispatch, getState) => {
   const state = getState();
   const authToken = authTokenSelector(state);
   const applets = appletsSelector(state);
@@ -403,7 +403,7 @@ export const refreshNegativeBehaviors = () => (dispatch, getState) => {
 
     const updates = getTokenUpdateInfo(
       offset,
-      responseHistory[i].tokens,
+      responseHistory[i].token,
       applet,
       refreshTime.getTime()
     );
@@ -450,7 +450,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
 
     const updates = getTokenUpdateInfo(
       -selectedPrize.price,
-      responseHistory[i].tokens,
+      responseHistory[i].token,
       applet,
     );
 
