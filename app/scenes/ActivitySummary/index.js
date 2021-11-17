@@ -213,10 +213,10 @@ const ActivitySummary = (props) => {
     }
     options.html += `
       <div class="divider-line"></div>
-      <p class="text-footer text-body-2 mb-5">
+      <p class="text-footer text-body mb-5">
         ${termsText}
       </p>
-      <p class="text-footer text-body-2">
+      <p class="text-footer text-body">
         ${footerText}
       </p>
     `;
@@ -241,6 +241,9 @@ const ActivitySummary = (props) => {
         }
         .text-body-2 {
           font-size: 0.9rem;
+        }
+        .text-body {
+          font-size: 0.75rem;
         }
         .blue--text {
           color: #2196f3;
@@ -298,6 +301,8 @@ const ActivitySummary = (props) => {
           background-color: #000;
         }
         .divider-line {
+          margin-top: 2em;
+          margin-bottom: 2em;
           border: 1px solid black;
         }
         .score-title {
