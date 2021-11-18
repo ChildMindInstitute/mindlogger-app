@@ -12,7 +12,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [paused, setPaused] = useState(!autoPlay);
-  const [playerState, setPlayerState] = useState(PLAYER_STATES.PAUSED);
+  const [playerState, setPlayerState] = useState(autoPlay ? PLAYER_STATES.PLAYING : PLAYER_STATES.PAUSED);
 
   const onSeek = (seek) => {
     videoPlayer?.current.seek(seek);
@@ -62,7 +62,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
         source={{ uri }}
         style={styles.mediaPlayer}
         volume={1.0}
-        repeat={autoPlay}
+        repeat={false}
       />
       <MediaControls
         isFullScreen={isFullScreen}
