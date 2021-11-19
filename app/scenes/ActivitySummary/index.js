@@ -183,7 +183,7 @@ const ActivitySummary = (props) => {
             style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
-              Your Child' Score
+              Your Child's Score
             </b>
           </p>
           <div

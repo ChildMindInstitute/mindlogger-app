@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import Video from "react-native-video";
 import MediaControls, { PLAYER_STATES } from "react-native-media-controls";
 
@@ -12,7 +12,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [paused, setPaused] = useState(!autoPlay);
-  const [playerState, setPlayerState] = useState(PLAYER_STATES.PAUSED);
+  const [playerState, setPlayerState] = useState(autoPlay ? PLAYER_STATES.PLAYING : PLAYER_STATES.PAUSED);
 
   const onSeek = (seek) => {
     videoPlayer?.current.seek(seek);
@@ -62,7 +62,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
         source={{ uri }}
         style={styles.mediaPlayer}
         volume={1.0}
-        repeat={autoPlay}
+        repeat={false}
       />
       <MediaControls
         isFullScreen={isFullScreen}
@@ -81,6 +81,35 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
   );
 };
 
+export const GifPlayer = ({ uri, width, height }) => {
+  const [key, setKey] = useState(0);
+
+  const replay = () => {
+    setKey(key+1);
+  };
+
+  return (
+    <View style={{ ...styles.container, width, height }}>
+      <Image key={key} source={{ uri }} style={styles.image} />
+      <MediaControls
+        isFullScreen={false}
+        duration={0}
+        isLoading={false}
+        mainColor="orange"
+        onFullScreen={noop}
+        onReplay={replay}
+        playerState={PLAYER_STATES.ENDED}
+        progress={0}
+        sliderStyle={{
+          containerStyle: {
+            display: 'none'
+          }
+        }}
+      />
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -98,5 +127,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     backgroundColor: "black",
+  },
+  image: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "black",
+    resizeMode: "contain",
   },
 });
