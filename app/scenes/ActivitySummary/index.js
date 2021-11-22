@@ -143,7 +143,7 @@ const ActivitySummary = (props) => {
       if (!mimeType.startsWith("video/")) {
         options.html += `
           <div style="height: 100%; display: flex; justify-content: center">
-            <img style="object-fit: contain; height: 40%; margin-top: 30%" src="${uri}" alt="Splash Activity">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
           </div>
         `;
       }
@@ -239,7 +239,7 @@ const ActivitySummary = (props) => {
         .text-uppercase {
           text-transform: uppercase;
         }
-        .text-body-2 {
+        .text-body-1 {
           font-size: 0.7rem;
         }
         .text-body-2 {
