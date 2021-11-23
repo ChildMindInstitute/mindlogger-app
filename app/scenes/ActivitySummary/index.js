@@ -143,7 +143,7 @@ const ActivitySummary = (props) => {
       if (!mimeType.startsWith("video/")) {
         options.html += `
           <div style="height: 100%; display: flex; justify-content: center">
-            <img style="object-fit: contain; height: 40%; margin-top: 30%" src="${uri}" alt="Splash Activity">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
           </div>
         `;
       }
@@ -216,7 +216,7 @@ const ActivitySummary = (props) => {
       <p class="text-footer text-body mb-5">
         ${termsText}
       </p>
-      <p class="text-footer text-body">
+      <p class="text-footer text-body-1">
         ${footerText}
       </p>
     `;
@@ -239,11 +239,14 @@ const ActivitySummary = (props) => {
         .text-uppercase {
           text-transform: uppercase;
         }
+        .text-body-1 {
+          font-size: 0.7rem;
+        }
         .text-body-2 {
           font-size: 0.9rem;
         }
         .text-body {
-          font-size: 0.75rem;
+          font-size: 0.8rem;
         }
         .blue--text {
           color: #2196f3;
