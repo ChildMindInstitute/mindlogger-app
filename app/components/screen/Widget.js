@@ -27,7 +27,8 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
-  BehaviorTracker
+  BehaviorTracker,
+  TokenSummary,
 } from '../../widgets';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
@@ -300,6 +301,14 @@ const Widget = ({ screen, answer, onChange, applet, isCurrent, isSelected, setSe
         onChange={onChange}
         value={answer}
       />
+    )
+  }
+
+  if (
+    screen.inputType == 'tokenSummary'
+  ) {
+    return (
+      <TokenSummary />
     )
   }
 
