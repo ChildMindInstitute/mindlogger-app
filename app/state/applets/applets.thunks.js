@@ -1,6 +1,7 @@
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
+import _ from 'lodash';
 import {
   getApplets,
   registerOpenApplet,
@@ -49,6 +50,7 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses } from "../../models/response";
 import config from "../../config";
+import { waitFor } from "../../services/helper";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -95,12 +97,15 @@ export const setReminder = () => async (dispatch, getState) => {
 
   applets.forEach((applet, i) => {
     const validEvents = [];
+
     Object.keys(applet.schedule.events).forEach(key => {
       const event = applet.schedule.events[key];
 
       Object.keys(applet.schedule.data).forEach(date => {
         const data = applet.schedule.data[date];
-        const isValid = data.find(d => d.id === key && d.valid);
+
+        // const isValid = data.find(d => d.id === key && d.valid);
+        const isValid = data.find(d => d.id === key);
         if (isValid) {
           const validEvent = {
             ...event,
@@ -111,7 +116,7 @@ export const setReminder = () => async (dispatch, getState) => {
       })
     });
 
-    validEvents.forEach(event => {
+    _.uniqBy(validEvents, 'id').forEach(event => {
       event.data.notifications.forEach(notification => {
         if (notification.start) {
           const values = notification.start.split(':');
@@ -119,6 +124,7 @@ export const setReminder = () => async (dispatch, getState) => {
 
           date.setHours(values[0]);
           date.setMinutes(values[1]);
+
           if (date.getTime() > Date.now()) {
             notifications.push({
               eventId: event.id,
@@ -135,10 +141,12 @@ export const setReminder = () => async (dispatch, getState) => {
 
   if (!isReminderSet) {
     if (notifications.length) dispatch(setNotificationReminder());
+    const AndroidChannelId = 'MindLoggerChannelId';
+    const settings = { showInForeground: true };
 
-    notifications.forEach(notification => {
-      const settings = { showInForeground: true };
-      const AndroidChannelId = 'MindLoggerChannelId';
+    for (let index = 0; index < notifications.length; index++) {
+      const notification = notifications[index];
+
       const localNotification = new firebase.notifications.Notification(settings)
         .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
         .setTitle(notification.activityName) // Title of the notification
@@ -159,7 +167,9 @@ export const setReminder = () => async (dispatch, getState) => {
           exact: true,
         })
         .catch(err => console.error(err));
-    })
+
+      await waitFor(0.1);
+    }
   }
 };
 
@@ -277,6 +287,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                     delete events[eventId];
                   }
                 }
+
                 currentApplet.schedule.events = events;
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
