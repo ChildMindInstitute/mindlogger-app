@@ -77,7 +77,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     taskLoopRate: config.taskLoopRate || 0.0167, // default 60hz
     cyclesPerMin: config.cyclesPerMin || 2,
     showPreview: config.showPreview || true,
-    numPreviewStim: config.numPreviewStim || 3,
+    numPreviewStim: config.numPreviewStim,
     previewStepGap: config.previewStepGap || 100,
     initialLambda: config.initialLambda || 0.075,
     durationMins: config.durationMins || 15,
