@@ -81,8 +81,8 @@ export const computeDxDt = (stimPos, userPos, lambdaVal, center) => {
   const deltaX = stimPos[0]-center + (userPos[0]-center)
   const deltaY = stimPos[1]-center + (userPos[1]-center)
 
-  changeRate[0] = lambdaVal * deltaX / 10
-  changeRate[1] = lambdaVal * deltaY / 10
+  changeRate[0] = lambdaVal * deltaX
+  changeRate[1] = lambdaVal * deltaY
 
   return changeRate
 }

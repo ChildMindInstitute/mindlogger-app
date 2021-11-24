@@ -313,7 +313,10 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           userPos.current[0] / panelRadius - 1,
           userPos.current[1] / panelRadius - 1
         ],
-        targetPos: [...targetPos],
+        targetPos: [
+          targetPos[0] / panelRadius - 1,
+          targetPos[1] / panelRadius - 1,
+        ],
         lambda: lambdaVal.current,
         score: score.current,
         lambdaSlope: lambdaSlope.current
