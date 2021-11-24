@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, PanResponder } from 'react-native';
+import { View, Text, StyleSheet, PanResponder, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
 import { magnetometer } from "react-native-sensors";
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   times: {
     flex: 1,
     textAlign: 'left',
-    transform: [{ rotate: '90deg'}]
+    transform: [{ rotate: '90deg'}],
   },
   score: {
     flex: 1,
@@ -82,7 +82,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     initialLambda: config.initialLambda || 0.075,
     durationMins: config.durationMins || 15,
     oobDuration: config.oobDuration || 0.2,
-    trialNumber: config.trialNumber || 15,
+    trialNumber: config.trialNumber,
     dimensionCount: config.dimensionCount || 1,
     userInputType: config.userInputType || 'gyroscope',
     maxRad: config.maxRad || (Math.PI / 6)
@@ -202,6 +202,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       value: responses.current,
       phaseType: configObj.phaseType
     });
+
+    // reset values
+    trialNumber.current = 0;
+    score.current = 0;
+    lambdaVal.current = configObj.initialLambda;
+    offTargetTimer.current = configObj.maxOffTargetTime * 1000;
+    stimPos.current = [center, center]
+    lambdaSlope.current = config.lambdaSlope;
+    lastCrashTime.current = 0;
   }
 
   const restartTrial = (timeElapsed) => {
@@ -219,7 +228,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
 
     lastCrashTime.current = timeElapsed;
 
-    if (trialNumber.current >= configObj.trialNumber) {
+    if (trialNumber.current >= configObj.trialNumber && configObj.trialNumber) {
       finishResponse()
     }
   }
@@ -407,12 +416,9 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     >
       <View style={styles.header}>
         <Text style={styles.times}>
-          Time: { Number(currentTime/1000).toFixed(1) }
-          {'\n'}
-          OTCD: { Number(offTargetTimer.current / 1000).toFixed(1) }
         </Text>
         <Text style={styles.score}>Score {'\n   '} { Math.round(score.current) }</Text>
-        <Text style={styles.lambda}>Lambda: { Math.round(lambdaVal.current * 1000) }</Text>
+        <Text style={styles.lambda}></Text>
       </View>
 
       <View
@@ -511,8 +517,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           }
         </Svg>
       </View>
-
-      <Text style={styles.stimToCenter}>Stim to Center: { Number((stimToCenter || 0) / panelRadius).toFixed(3) }</Text>
     </View>
   )
 }
