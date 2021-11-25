@@ -3,10 +3,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
 import i18n from 'i18next';
-import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 
-import { finishActivity } from '../../state/responses/responses.thunks';
 import { startedTimesSelector } from '../../state/app/app.selectors';
 
 const styles = StyleSheet.create({
@@ -108,12 +106,7 @@ const mapStateToProps = state => ({
   startedTimes: startedTimesSelector(state),
 });
 
-const mapDispatchToProps = {
-  finishActivity,
-};
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
 )(ActivityTime);
 
