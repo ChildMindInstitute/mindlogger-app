@@ -439,14 +439,17 @@ export const itemTransformJson = (itemJson) => {
   // For items, 'skippable' is undefined if there's no ALLOW prop
   const allowList = flattenIdList(R.path([ALLOW, 0, "@list"], itemJson));
   const skippable = isSkippable(allowList) ? true : undefined;
+  const inputType = listToValue(itemJson[INPUT_TYPE]);
 
   let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
   const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
 
-  Object.entries(optionsObj).forEach(([key, value]) => {
-    if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions') && !key.includes('itemListElement'))
-      valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
-  })
+  if (inputType != 'stackedRadio') {
+    Object.entries(optionsObj).forEach(([key, value]) => {
+      if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions') && !key.includes('itemListElement'))
+        valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
+    })
+  }
 
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
   const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
@@ -464,7 +467,7 @@ export const itemTransformJson = (itemJson) => {
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
     altLabel: languageListToObject(itemJson[ALT_LABEL]),
-    inputType: listToValue(itemJson[INPUT_TYPE]),
+    inputType,
     isOptionalText : listToValue(itemJson[IS_OPTIONAL_TEXT]),
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
