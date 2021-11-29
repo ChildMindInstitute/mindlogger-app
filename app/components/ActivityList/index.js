@@ -81,7 +81,7 @@ const ActivityList = ({
       }
     }
 
-    const convertToIndexes = (activities) => activities
+    const convertToIndexes = (activities) => (activities || [])
       .map(id => {
         const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
         return index;
