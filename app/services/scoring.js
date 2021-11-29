@@ -169,8 +169,10 @@ export const getTokenIncreaseForBehaviors = (item, tokenTimes, refreshTime, resp
         const data = response.value[behavior.name] || [];
         count += data.length;
 
-        if (data.length && data.every(d => d.distress !== null && d.impairment !== null && d.time)) {
-          reward++;
+        for (const d of data) {
+          if (d.distress !== null && d.impairment !== null && d.time) {
+            reward++;
+          }
         }
       }
     }

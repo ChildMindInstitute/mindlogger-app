@@ -1,6 +1,6 @@
 import React from 'react'
-import Svg, { Rect, Defs, Mask, G, LinearGradient, Stop, Circle } from 'react-native-svg'
-import { View, Text, Image } from 'react-native';
+import Svg, { Rect, Text, Defs, Mask, G, LinearGradient, Stop, Circle } from 'react-native-svg'
+import { View, Image } from 'react-native';
 
 const doubleArrow = require('../../img/double-arrow.png');
 const pointer = require('../../img/pointer.png');
@@ -211,16 +211,35 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, bo
 
         {
           !disabled && (
-            <Text
-              style={{
-                textAlign: 'center',
-                color: distress,
-                fontWeight: '600',
-                fontSize: 15
-              }}
-            >
-              Distress
-            </Text>
+            <Svg width={sliderWidth} height={20}>
+              <Defs>
+                <LinearGradient id="left-to-right" x1="0%" x2="100%" y1="0%" y2="0%">
+                  <Stop offset="0" stopColor={distress} stopOpacity={1} key='0' />
+                  <Stop offset="0.6" stopColor={'white'} stopOpacity={1} key='1' />
+                </LinearGradient>
+
+                <Mask id="text-mask">
+                  <Text
+                    x={sliderWidth/2}
+                    y={15}
+                    textAnchor="middle"
+                    fontSize="15"
+                    fontWeight="600"
+                    fill={'white'}
+                  >
+                    Distress
+                  </Text>
+                </Mask>
+              </Defs>
+              <Rect
+                x={0}
+                y={0}
+                width={'100%'}
+                height={'100%'}
+                fill="url(#left-to-right)"
+                mask="url(#text-mask)"
+              />
+            </Svg>
           )
         }
       </View>
@@ -252,15 +271,34 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, bo
 
           {
             !disabled && (
-              <Text
-                style={{
-                  color: impairment,
-                  fontWeight: '600',
-                  fontSize: 15,
-                  width: sliderWidth,
-                  textAlign: 'center',
-                }}
-              >Impairment</Text>
+              <Svg width={sliderWidth} height={20}>
+                <Defs>
+                  <LinearGradient id="left-to-right" x1="0%" x2="100%" y1="0%" y2="0%">
+                    <Stop offset="0.2" stopColor={'white'} stopOpacity={1} key='0' />
+                    <Stop offset="1" stopColor={impairment} stopOpacity={1} key='1' />
+                  </LinearGradient>
+
+                  <Mask id="text-mask">
+                    <Text
+                      fill={'white'}
+                      fontWeight="600"
+                      fontSize="15"
+                      x={sliderWidth/2}
+                      y={15}
+                      textAnchor="middle"
+                    >Impairment</Text>
+                  </Mask>
+                </Defs>
+
+                <Rect
+                  x={0}
+                  y={0}
+                  width={'100%'}
+                  height={'100%'}
+                  fill="url(#left-to-right)"
+                  mask="url(#text-mask)"
+                />
+              </Svg>
             )
           }
         </View>
