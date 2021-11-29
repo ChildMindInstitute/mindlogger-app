@@ -181,7 +181,9 @@ const ActivityList = ({
 
   return (
     <View style={{ paddingBottom: 30 }}>
-      <LiveConnection applet={applet} />
+      {
+        applet.streamEnabled && <LiveConnection applet={applet} /> || <></>
+      }
 
       {activities && activities.map(activity => (
         <ActivityListItem

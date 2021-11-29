@@ -79,7 +79,7 @@ const LiveConnection = ({
 
   return (
     <View style={styles.sectionHeading}>
-      <Text style={styles.title}>Connection:</Text>
+      <Text style={styles.title}>Live Connection:</Text>
       <Text
         style={[
           styles.status,
@@ -171,7 +171,7 @@ const LiveConnection = ({
                   })
                 }).catch(() => {
                   setStatus(false)
-                  setError('connection failed. please double check ip and port')
+                  setError('Connection failed. Please double check ip and port')
                 })
               }}
             />

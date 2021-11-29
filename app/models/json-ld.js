@@ -102,6 +102,7 @@ const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
+const STREAM_ENABLED = "reprolib:terms/streamEnabled";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -644,7 +645,9 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet)
   };
+
   if (applet.encryption && Object.keys(applet.encryption).length) {
     res.encryption = applet.encryption;
   }
