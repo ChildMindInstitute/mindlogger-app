@@ -273,6 +273,7 @@ class Activity extends React.Component {
 
   updateStore () {
     const { currentScreen } = this.props;
+    if (!this.props.currentResponse) return;
 
     this.props.setAnswer(
       this.props.currentResponse.activity,
