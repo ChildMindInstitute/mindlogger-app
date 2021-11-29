@@ -386,6 +386,7 @@ class Activity extends React.Component {
             title={activity.name.en}
             actionLabel={actionLabel}
             isSummaryScreen={isSummaryScreen}
+            isSplashScreen={!!isSplashScreen}
             watermark={currentApplet.watermark}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
