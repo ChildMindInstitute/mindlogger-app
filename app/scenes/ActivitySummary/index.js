@@ -142,7 +142,7 @@ const ActivitySummary = (props) => {
 
       if (!mimeType.startsWith("video/")) {
         options.html += `
-          <div style="height: 100%;">
+          <div style="height: 100%; display: flex; justify-content: center">
             <img style="width: 100%" src="${uri}" alt="Splash Activity">
           </div>
         `;
@@ -183,7 +183,7 @@ const ActivitySummary = (props) => {
             style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
-              Your Child' Score
+              Your Child's Score
             </b>
           </p>
           <div
@@ -213,10 +213,10 @@ const ActivitySummary = (props) => {
     }
     options.html += `
       <div class="divider-line"></div>
-      <p class="text-footer text-body-2 mb-5">
+      <p class="text-footer text-body mb-5">
         ${termsText}
       </p>
-      <p class="text-footer text-body-2">
+      <p class="text-footer text-body-1">
         ${footerText}
       </p>
     `;
@@ -239,8 +239,14 @@ const ActivitySummary = (props) => {
         .text-uppercase {
           text-transform: uppercase;
         }
+        .text-body-1 {
+          font-size: 0.7rem;
+        }
         .text-body-2 {
           font-size: 0.9rem;
+        }
+        .text-body {
+          font-size: 0.8rem;
         }
         .blue--text {
           color: #2196f3;
@@ -298,6 +304,8 @@ const ActivitySummary = (props) => {
           background-color: #000;
         }
         .divider-line {
+          margin-top: 2em;
+          margin-bottom: 2em;
           border: 1px solid black;
         }
         .score-title {

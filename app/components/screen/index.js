@@ -381,12 +381,13 @@ class ActivityScreen extends Component {
               />
             )}
           </ScrollView>
+
+          {timerActive && (
+            <View style={styles.timerView}>
+              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
+            </View>
+          )}
         </KeyboardAvoidingView>
-        {timerActive && (
-          <View style={styles.timerView}>
-            <Timer duration={screen.timer} color={colors.primary} size={40} startTime={hasSplashScreen ? startTime : this.startTime} />
-          </View>
-        )}
         {this.state.screenHeight > height ? (
           <View
             style={{

@@ -84,6 +84,11 @@ export class DatePicker extends React.Component {
             value={date}
             mode={'date'}
             display={Platform.OS === 'ios' ? 'inline' : 'default'}
+            modalStyleIOS={{
+              datePicker: {
+                justifyContet: 'center',
+              }
+            }}
             onCancel={this.hideDatePicker}
             onConfirm={this.onChangeDate}
           />

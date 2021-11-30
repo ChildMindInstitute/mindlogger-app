@@ -92,7 +92,8 @@ export const setReminder = () => async (dispatch, getState) => {
   const notifications = [];
 
   cancelReminder();
-  applets.forEach(applet => {
+
+  applets.forEach((applet, i) => {
     const validEvents = [];
     Object.keys(applet.schedule.events).forEach(key => {
       const event = applet.schedule.events[key];
@@ -133,9 +134,7 @@ export const setReminder = () => async (dispatch, getState) => {
   });
 
   if (!isReminderSet) {
-    if (notifications.length) {
-      dispatch(setNotificationReminder());
-    }
+    if (notifications.length) dispatch(setNotificationReminder());
 
     notifications.forEach(notification => {
       const settings = { showInForeground: true };
@@ -201,8 +200,9 @@ export const cancelReminder = () => (dispatch, getState) => {
 export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  const currentApplets = await getData('ml_applets');
-  const currentResponses = await getData('ml_responses');
+  let currentApplets = await getData('ml_applets', allAppletsSelector(state));
+  let currentResponses = await getData('ml_responses');
+
   let localInfo = {};
 
   if (currentApplets) {
@@ -238,8 +238,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         applets = resp.data;
       else
         applets = resp;
-
-      console.log('applets-', applets)
 
       if (loggedInSelector(getState())) {
         // Check that we are still logged in when fetch finishes
@@ -325,12 +323,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         }
       }
     })
-    .catch ((err) => console.warn(err.message))
+    .catch((err) => console.warn(err.message))
     .finally(() => {
-  dispatch(setDownloadingApplets(false));
-  // dispatch(scheduleAndSetNotifications());
-  // dispatch(getInvitations());
-});
+      dispatch(setDownloadingApplets(false));
+      // dispatch(scheduleAndSetNotifications());
+      // dispatch(getInvitations());
+    });
 };
 
 export const downloadTargetApplet = (appletId, cb = null) => (
