@@ -43,6 +43,7 @@ const ActHeader = (props) => {
     actionLabel,
     watermark,
     isSummaryScreen,
+    isSplashScreen,
     prevLabel,
     onPressNextScreen,
     onPressPrevScreen,
@@ -51,19 +52,19 @@ const ActHeader = (props) => {
 
   return (
     <>
-      {!!watermark && !isSummaryScreen &&
+      {!!watermark && !isSummaryScreen && !isSplashScreen &&
         <View style={styles.logo}>
           <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
       }
       <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
-        <Icon 
+        <Icon
           type="FontAwesome"
-          name="close" 
+          name="close"
           style={{ color: colors.tertiary }} />
       </TouchableOpacity>
- 
-      {topNavigation && 
+
+      {topNavigation &&
         <View style={styles.navigations}>
           <TouchableOpacity onPress={() => onPressPrevScreen()}>
             {prevEnabled &&
@@ -101,6 +102,7 @@ ActHeader.propTypes = {
   nextEnabled: PropTypes.bool,
   prevEnabled: PropTypes.bool,
   isSummaryScreen: PropTypes.bool,
+  isSplashScreen: PropTypes.bool,
   prevLabel: PropTypes.string,
   onPressNextScreen: PropTypes.func,
   onPressPrevScreen: PropTypes.func,
