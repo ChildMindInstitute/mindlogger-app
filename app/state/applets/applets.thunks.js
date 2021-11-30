@@ -200,8 +200,9 @@ export const cancelReminder = () => (dispatch, getState) => {
 export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  const currentApplets = await getData('ml_applets');
-  const currentResponses = await getData('ml_responses');
+  let currentApplets = await getData('ml_applets', allAppletsSelector(state));
+  let currentResponses = await getData('ml_responses');
+
   let localInfo = {};
 
   if (currentApplets) {
