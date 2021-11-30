@@ -69,6 +69,10 @@ export class ABTrails extends React.Component {
 
   onError = (errorMsg) => {
     this.setState({ error: errorMsg ? errorMsg : ' ' });
+
+    setTimeout(() => {
+      this.setState({ error: ' ' });
+    }, 2000)
   }
 
   render() {

@@ -41,7 +41,7 @@ export default class TrailsBoard extends Component {
       lines: [],
       failedCnt: 0,
       screenTime: 0,
-      incorrectPoints: [],
+      errorPoint: null,
       currentIndex: 1,
       validIndex: -1,
       currentScreen: 0,
@@ -168,18 +168,36 @@ export default class TrailsBoard extends Component {
 
     if (!valid) {
       const { validIndex } = this.state;
+      const currentItem = screen.items.find(({ order }) => order === currentIndex);
+      const currentPos = {
+        x: (currentItem.cx + item.cx) / 2,
+        y: (currentItem.cy + item.cy) / 2,
+      }
+      let position = lines[n].points[0];
 
-      lines[n].points.forEach((point, index) => {
-        if (index > validIndex) {
-          point.valid = false;
+      lines[n].points.forEach(point => {
+        const d1 = Math.pow(currentPos.x * rate - point.x, 2) + Math.pow(currentPos.y * rate - point.y, 2);
+        const d2 = Math.pow(currentPos.x * rate - position.x, 2) + Math.pow(currentPos.y * rate - position.y, 2);
+        if (d1 < d2) {
+          position = point;
         }
-      })
-      this.setState({ lines, isValid: false });
-      this.props.onError("Incorrect line!");
-    }
+      });
 
-    lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
-    this.setState({ lines, currentIndex });
+
+      this.props.onError("Incorrect line!");
+      this.setState({ errorPoint: position });
+      setTimeout(() => {
+        lines[n].points.forEach((point, index) => {
+          if (index > validIndex) {
+            point.valid = false;
+          }
+        })
+        this.setState({ lines, isValid: false, errorPoint: null });
+      }, 2000);
+    } else {
+      lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
+      this.setState({ lines: [...lines], currentIndex });
+    }
   }
 
   onLayout = (event) => {
@@ -240,12 +258,10 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentIndex, incorrectPoints, rate } = this.state;
+    const { currentIndex, rate, errorPoint } = this.state;
     let itemColor = trailsData.colors.pending;
 
-    if (incorrectPoints.includes(index + 1)) {
-      itemColor = trailsData.colors.failed;
-    } else if (index < currentIndex) {
+    if (index === 0) {
       itemColor = trailsData.colors.passed;
     }
 
@@ -270,6 +286,17 @@ export default class TrailsBoard extends Component {
         >
           {item.label}
         </Text>
+
+        {errorPoint && <Text
+          stroke={trailsData.colors.failed}
+          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontWeight="200"
+          x={errorPoint.x * rate}
+          y={errorPoint.y * rate}
+          textAnchor="middle"
+        >
+          {`X`}
+        </Text>}
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
