@@ -291,8 +291,8 @@ export default class TrailsBoard extends Component {
           stroke={trailsData.colors.failed}
           fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
-          x={errorPoint.x * rate}
-          y={errorPoint.y * rate}
+          x={errorPoint.x}
+          y={errorPoint.y}
           textAnchor="middle"
         >
           {`X`}
