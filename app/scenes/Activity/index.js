@@ -72,6 +72,8 @@ class Activity extends React.Component {
       idleTime: null,
       isSummaryScreen: false,
       isSplashScreen: false,
+      isActivityShow: false,
+      hasSplashScreen: false,
       responses: []
     };
     this.idleTimer = new Timer();
@@ -85,8 +87,9 @@ class Activity extends React.Component {
     this.setState({
       isSummaryScreen,
       idleTime,
+      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
+      hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
-      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen
     }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
@@ -94,6 +97,9 @@ class Activity extends React.Component {
           this.handleTimeIsUp // Callback.
         );
       }
+      this.setState({
+        isActivityShow: true
+      })
     });
   }
 
@@ -297,7 +303,7 @@ class Activity extends React.Component {
       itemVisibility,
     } = this.props;
 
-    const { isSummaryScreen, isSplashScreen } = this.state;
+    const { isSummaryScreen, isSplashScreen, isActivityShow, hasSplashScreen } = this.state;
 
     if (!currentResponse) {
       return <View />;
@@ -360,11 +366,12 @@ class Activity extends React.Component {
             }}
           />
         }
-        {!isSummaryScreen && !isSplashScreen && (
+        {!isSummaryScreen && !isSplashScreen && isActivityShow && (
           <ActivityScreens
             activity={activity}
             answers={responses}
             currentScreen={currentScreen}
+            hasSplashScreen={hasSplashScreen}
             onChange={(answer, goToNext=false, timeElapsed=0) => {
               responses[currentScreen] = answer;
               this.setState({ responses })

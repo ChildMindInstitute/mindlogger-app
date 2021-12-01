@@ -341,7 +341,7 @@ const ActivitySummary = (props) => {
         {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
-            <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.scoreValue}</BaseText>
+            <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
         )) : <></>}

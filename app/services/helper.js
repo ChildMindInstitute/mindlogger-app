@@ -142,3 +142,9 @@ export const getActivityAvailabilityFromDependency = (g, availableActivities, ar
 
   return activities;
 }
+
+export const waitFor = (sec = 1) => {
+  return new Promise(res => {
+    setTimeout(() => res(), sec * 1000)
+  })
+}
