@@ -87,7 +87,7 @@ export const truncateString = (str, len, dots = true) => {
   return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
 };
 
-export const getActivityAvailabilityFromDependency = (g, availableActivities) => {
+export const getActivityAvailabilityFromDependency = (g, availableActivities, archievedActivities) => {
   const marked = [], activities = [];
   let markedCount = 0;
 
@@ -95,19 +95,24 @@ export const getActivityAvailabilityFromDependency = (g, availableActivities) =>
     marked.push(false)
   }
 
-  for (let i = 0; i < g.length; i++) {
-    if (!g[i].length) {
-      activities.push(i);
+  for (let index of availableActivities) {
+    markedCount++;
+    marked[index] = true;
+    activities.push(index);
+  }
+
+  for (let index of archievedActivities) {
+    if (!marked[index]) {
+      marked[index] = true;
       markedCount++;
-      marked[i] = true;
     }
   }
 
-  for (let index of availableActivities) {
-    if (!marked[index]) {
+  for (let i = 0; i < g.length; i++) {
+    if (!g[i].length && !marked[i]) {
+      activities.push(i);
       markedCount++;
-      marked[index] = true;
-      activities.push(index);
+      marked[i] = true;
     }
   }
 

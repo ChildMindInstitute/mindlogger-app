@@ -4,9 +4,9 @@ body {
 }
 
 .jspsych-btn {
-  margin: 1rem 0;
+  margin: .5rem 0;
   padding: 0.75rem 0;
-  font-size: 1.2rem;
+  font-size: 3.5rem;
   width: 100%;
   background: #0067A0;
   border: none;
@@ -64,8 +64,9 @@ body {
   box-sizing: border-box;
 }
 
-#jspsych-html-button-response-stimulus img{
-  max-width: 95%;
+#jspsych-html-button-response-stimulus .question {
+  font-size: 6em;
+  font-weight: bold;
 }
 
 .jspsych-image-button-response-button, .jspsych-html-button-response-button {

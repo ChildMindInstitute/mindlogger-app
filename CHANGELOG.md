@@ -4,8 +4,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.5] - 2021-11-30
+- Update all the points with new instructins in A/B Trails
+
+## [0.18.4] - 2021-11-30
+- Original Flanker
+
+## [0.18.3] - 2021-11-29
+- Fix App crashing issue when completing an activity.
+
+## [0.18.2] - 2021-11-28
+- Update CMI Logo
+- Fix timer issue
+- Fix refreshing issue in main screen
+- Fix missing response option image issue
+
+## [0.18.1] - 2021-11-25
+- Fix date picker issues on ios 14
+
+## [0.17.76] - 2021-11-21
+- Fix full splash image
+
+## [0.17.75] - 2021-11-18
+- Fix font-size on footer
+
+## [0.17.74] - 2021-11-18
+- Fix video player
+- Add git player
+- Fix spelling issue in pdf report
+
+## [0.17.73] - 2021-11-17
+- Modified divier line in PDF report
+
 ## [0.17.72] - 2021-11-15
 - Fix displaying activity list
+
+## [0.17.71] - 2021-11-12
+- Swapped applet logo for splash screen
+
+## [0.17.70] - 2021-11-11
+- Fix splash screen issues
+
+## [0.17.69] - 2021-11-11
+- Fix issue with activity
+
+## [0.17.68] - 2021-11-10
+- Fix splash screen issues
+
+## [0.17.67] - 2021-11-09
+- Fix pdf report issue 
+
+## [0.17.66] - 2021-11-09
+- Fix daisy chain applet issue
 
 ## [0.17.65] - 2021-11-8
 - Fix displaying errors and drawing lines

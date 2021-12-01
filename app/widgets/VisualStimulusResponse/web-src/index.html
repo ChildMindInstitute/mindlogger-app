@@ -20,9 +20,8 @@ function start() {
     jsPsych.init({
         timeline: buildTimeline(),
         on_finish: function (data) {
-            const onlyTests = data.filter({ tag: 'test' });
             if (window.ReactNativeWebView) {
-                const serialized = JSON.stringify(onlyTests.values());
+                const serialized = JSON.stringify(data.values());
                 window.ReactNativeWebView.postMessage(serialized);
             }
         }
@@ -99,10 +98,10 @@ function start() {
 //         "correctChoice": 1,
 //         "weight": 1
 //     }],
-//     "showFixation": "true",
-//     "showFeedback": "true",
-//     "showResults": "true",
-//     "trialDuration": 1500,
+//     "showFixation": true,
+//     "showFeedback": true,
+//     "showResults": true,
+//     "trialDuration": 5000,
 //     "samplingMethod": "fixed-repetitions"
 // };
 // start();

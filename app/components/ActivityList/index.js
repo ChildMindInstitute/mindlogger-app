@@ -56,6 +56,7 @@ const ActivityList = ({
   const findActivityFromName = (activities, name) => {
     return activities.findIndex(activity => activity.name.en == name)
   }
+
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
