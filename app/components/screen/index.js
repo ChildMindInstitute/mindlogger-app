@@ -384,7 +384,7 @@ class ActivityScreen extends Component {
 
           {timerActive && (
             <View style={styles.timerView}>
-              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
+              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={hasSplashScreen ? startTime : this.startTime} />
             </View>
           )}
         </KeyboardAvoidingView>
