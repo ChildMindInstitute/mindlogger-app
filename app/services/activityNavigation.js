@@ -61,7 +61,7 @@ export const getNextLabel = (index, isSplashScreen, visibility, activity, respon
 
   // If there are visible items after this one, then label is Next
   const nextPos = getNextPos(index, visibility);
-  if (nextPos !== -1) {
+  if (nextPos !== -1 || activity.compute && !activity.summaryDisabled) {
     return i18n.t('activity_navigation:next');
   }
 

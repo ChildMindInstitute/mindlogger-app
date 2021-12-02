@@ -319,7 +319,7 @@ class Activity extends React.Component {
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const nextLabel = isSummaryScreen
-      ? "Next"
+      ? i18n.t('activity_navigation:done')
       : getNextLabel(
         currentScreen,
         isSplashScreen,
