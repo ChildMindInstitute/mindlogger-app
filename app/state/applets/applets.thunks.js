@@ -95,49 +95,54 @@ export const setReminder = () => async (dispatch, getState) => {
 
   cancelReminder();
 
-  applets.forEach((applet, i) => {
-    const validEvents = [];
+  try {
+    applets.forEach((applet, i) => {
+      const validEvents = [];
 
-    Object.keys(applet.schedule.events).forEach(key => {
-      const event = applet.schedule.events[key];
+      Object.keys(applet.schedule.events).forEach(key => {
+        const event = applet.schedule.events[key];
 
-      Object.keys(applet.schedule.data).forEach(date => {
-        const data = applet.schedule.data[date];
+        Object.keys(applet.schedule.data).forEach(date => {
+          const data = applet.schedule.data[date];
 
-        // const isValid = data.find(d => d.id === key && d.valid);
-        const isValid = data.find(d => d.id === key);
-        if (isValid) {
-          const validEvent = {
-            ...event,
-            date,
+          // const isValid = data.find(d => d.id === key && d.valid);
+          const isValid = data.find(d => d.id === key);
+          if (isValid) {
+            const validEvent = {
+              ...event,
+              date,
+            }
+            validEvents.push(validEvent);
           }
-          validEvents.push(validEvent);
-        }
+        })
+      });
+
+      _.uniqBy(validEvents, 'id').forEach(event => {
+        event.data.notifications.forEach(notification => {
+          if (notification.start) {
+            const values = notification.start.split(':');
+            const date = new Date(event.date);
+
+            date.setHours(values[0]);
+            date.setMinutes(values[1]);
+
+            if (date.getTime() > Date.now()) {
+              notifications.push({
+                eventId: event.id,
+                appletId: applet.id.split('/').pop(),
+                activityId: event.data.activity_id,
+                activityName: event.data.title,
+                date: date.getTime()
+              });
+            }
+          }
+        })
       })
     });
 
-    _.uniqBy(validEvents, 'id').forEach(event => {
-      event.data.notifications.forEach(notification => {
-        if (notification.start) {
-          const values = notification.start.split(':');
-          const date = new Date(event.date);
-
-          date.setHours(values[0]);
-          date.setMinutes(values[1]);
-
-          if (date.getTime() > Date.now()) {
-            notifications.push({
-              eventId: event.id,
-              appletId: applet.id.split('/').pop(),
-              activityId: event.data.activity_id,
-              activityName: event.data.title,
-              date: date.getTime()
-            });
-          }
-        }
-      })
-    })
-  });
+  } catch (error) {
+    console.log(error)
+  }
 
   if (!isReminderSet) {
     if (notifications.length) dispatch(setNotificationReminder());
