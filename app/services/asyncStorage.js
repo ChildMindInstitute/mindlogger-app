@@ -10,13 +10,15 @@ export const storeData = async (storageKey, value) => {
   }
 }
 
-export const getData = async (storageKey) => {
+export const getData = async (storageKey, defaultValue=null) => {
   try {
     const jsonValue = await AsyncStorage.getItem(storageKey)
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {
     // error reading value
     console.log(e)
+
+    return defaultValue
   }
 }
 

@@ -170,7 +170,8 @@ class ActivityScreen extends Component {
       inputDelayed: false,
       timerActive: false,
       screenHeight: 0,
-      orientation: 'portrait'
+      orientation: 'portrait',
+      startTime: Date.now(),
     };
     this.interval = null;
     this.startTime = null;
@@ -180,7 +181,7 @@ class ActivityScreen extends Component {
     this.keyboardVisible = false;
   }
 
-  determineAndSetOrientation () {
+  determineAndSetOrientation() {
     const { width, height } = Dimensions.get('window');
     this.setState({ orientation: width < height ? 'portrait' : 'landscape' });
   }
@@ -263,10 +264,10 @@ class ActivityScreen extends Component {
   };
 
   _clockTick = () => {
-    const { onChange, screen, answer } = this.props;
+    const { onChange, screen, answer, hasSplashScreen } = this.props;
     const { delay, timer } = screen;
     const { inputDelayed, timerActive } = this.state;
-    const timeElapsed = Date.now() - this.startTime;
+    const timeElapsed = Date.now() - (hasSplashScreen ? this.state.startTime : this.startTime);
 
     // Set inputDelayed to true if we're in the delay period
     if (delay) {
@@ -310,8 +311,8 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { screen, answer, onChange, isCurrent, onContentError } = this.props;
-    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
+    const { screen, answer, onChange, isCurrent, onContentError, hasSplashScreen } = this.props;
+    const { orientation, scrollEnabled, inputDelayed, timerActive, startTime } = this.state;
 
     return (
       <View
@@ -365,27 +366,28 @@ class ActivityScreen extends Component {
                 </View>
               </View>
             ) : (
-                <Widget
-                  answer={answer}
-                  onChange={this.handleChange.bind(this)}
-                  isCurrent={isCurrent}
-                  screen={screen}
-                  onPress={() => {
-                    this.setState({ scrollEnabled: false });
-                  }}
-                  onRelease={() => {
-                    this.setState({ scrollEnabled: true });
-                  }}
-                  onContentError={onContentError}
-                />
-              )}
+              <Widget
+                answer={answer}
+                onChange={this.handleChange.bind(this)}
+                isCurrent={isCurrent}
+                screen={screen}
+                onPress={() => {
+                  this.setState({ scrollEnabled: false });
+                }}
+                onRelease={() => {
+                  this.setState({ scrollEnabled: true });
+                }}
+                onContentError={onContentError}
+              />
+            )}
           </ScrollView>
+
+          {timerActive && (
+            <View style={styles.timerView}>
+              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
+            </View>
+          )}
         </KeyboardAvoidingView>
-        {timerActive && (
-          <View style={styles.timerView}>
-            <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
-          </View>
-        )}
         {this.state.screenHeight > height ? (
           <View
             style={{

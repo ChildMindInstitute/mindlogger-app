@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { StyleSheet, Image } from "react-native";
-import { VideoPlayer } from "../../components/core/VideoPlayer";
+import { VideoPlayer, GifPlayer } from "../../components/core/VideoPlayer";
 import Mimoza from "mimoza";
 
 const styles = StyleSheet.create({
@@ -17,8 +17,11 @@ const styles = StyleSheet.create({
 const ActivitySplash = ({ activity }) => {
   const uri = activity.splash.en;
   const mimeType = Mimoza.getMimeType(uri) || "";
+
   if (mimeType.startsWith("video/")) {
     return <VideoPlayer uri={uri} autoPlay resizeMode="contain" />;
+  } else if (mimeType.includes('gif')) {
+    return <GifPlayer uri={uri} />;
   } else {
     return <Image source={{ uri }} style={styles.image} />;
   }

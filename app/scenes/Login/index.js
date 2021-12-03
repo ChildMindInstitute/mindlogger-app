@@ -119,7 +119,7 @@ class Login extends Component {
     const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
     const title = skin.name;
     const logo =
-      typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
+      typeof skin.logo !== "undefined" ? { uri: skin.logo } : { uri: 'https://cmi-logos.s3.amazonaws.com/ChildMindInstitute_Logo_Vertical_KO.png' };
     return (
       <Container>
         <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
