@@ -15,7 +15,7 @@ import AppletData from '../../components/AppletData';
 import { contrast } from '../../utils/utils.color';
 
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSHeaderPadding = isIOS ? 20 : 0;
 const IOSBodyPadding = isIOS ? 9 : 0;
 
 const styles = StyleSheet.create({
@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.alert,
     position: 'absolute',
   },
+  home: {
+
+  }
 });
 
 // eslint-disable-next-line
@@ -152,7 +155,7 @@ class AppletDetailsComponent extends React.Component {
         >
           <Left>
             <Button transparent onPress={() => this.handlePress()}>
-              <Icon ios="ios-home" android="md-home" />
+              <Icon style={styles.home} ios="ios-home" android="md-home" />
               {hasInvites ? <View style={styles.circle} /> : null}
             </Button>
           </Left>

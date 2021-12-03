@@ -25,7 +25,7 @@ import { showToast } from "../../state/app/app.thunks";
 import ChangeStudyForm from "./ChangeStudyForm";
 import config from "../../config";
 
-const IOSHeaderPadding = Platform.OS === "ios" ? 9 : 0;
+const IOSHeaderPadding = Platform.OS === "ios" ? 20 : 0;
 const IOSBodyPadding = Platform.OS === "ios" ? 9 : 0;
 
 class ChangeStudy extends Component {

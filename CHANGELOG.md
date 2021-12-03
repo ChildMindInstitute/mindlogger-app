@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [Unreleased]
 
+## [0.18.8] - 2021-12-2
+- Fix localization issues
+- Fix notch issues on app header
+
 ## [0.17.72] - 2021-11-15
 - Fixed margin issues on camera widget
 

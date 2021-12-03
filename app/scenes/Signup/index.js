@@ -14,7 +14,7 @@ import SignupForm from './SignupForm';
 import { getPrivateKey } from '../../services/encryption';
 
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSHeaderPadding = isIOS ? 20 : 0;
 const IOSBodyPadding = isIOS ? 9 : 0;
 
 class SignUp extends Component {
