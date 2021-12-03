@@ -280,17 +280,20 @@ export class Camera extends Component {
               <View style={styles.videoConfirmed}>
                 <Icon type="Entypo" name="check" style={styles.greenIcon} />
               </View>
-            ) : (                       // Android
-                <VideoPlayer
-                  video={{ uri: this.finalAnswer["value"].uri }}
-                  videoWidth={width}
-                  videoHeight={360}
-                  resizeMode="contain"
-                />
-              )
-          ) : (
-              <Image source={{ uri: Platform.OS === 'android' ? `file://${this.finalAnswer["value"].uri}` : this.finalAnswer["value"].uri }} style={styles.image} />
+            ) : ( // Android
+              <VideoPlayer
+                video={{ uri: this.finalAnswer["value"].uri }}
+                videoWidth={width}
+                videoHeight={360}
+                resizeMode="contain"
+              />
             )
+          ) : (
+            <Image
+              source={{ uri: Platform.OS === 'android' ? `file://${this.finalAnswer["value"].uri}` : this.finalAnswer["value"].uri }}
+              style={styles.image}
+            />
+          )
         ) : (
             <View>
               <TouchableOpacity
@@ -304,7 +307,7 @@ export class Camera extends Component {
         {isOptionalText ?
           (
             <View style={{
-              marginTop: '12%',
+              marginTop: '4%',
               width: '100%',
             }}
             >

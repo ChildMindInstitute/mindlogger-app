@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, ScrollView, TextInput } from "react-native";
+import { View, Platform, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView } from "react-native";
 import NativeGeolocation from "@react-native-community/geolocation";
-import { Icon , Item , Input} from "native-base";
+import { Icon } from "native-base";
 import Permissions, { PERMISSIONS } from "react-native-permissions";
+import _ from "lodash";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
-import { getURL } from '../services/helper';
-import { OptionalText } from './OptionalText';
+import { OptionalText } from "./OptionalText";
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -34,48 +34,40 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     alignItems: "center",
-    textAlign: "center"
+    textAlign: "center",
   },
   imgContainer: {
     padding: 20,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    textAlign: "center"
-
+    textAlign: "center",
   },
   img: {
     width: 300,
     height: 300,
-
-
   },
   infoText: {
     color: colors.tertiary,
     fontSize: 16,
     marginTop: 16,
   },
-
 });
 
-export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptionalTextRequired}) => {
+export const Geolocation = ({ config, value, onChange, isOptionalText, isOptionalTextRequired }) => {
   const [locationPermission, setLocationPermission] = useState("undetermined");
   const permission = Platform.select({
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
   });
 
-
-
-  let finalAnswer= value ? value :{};
-
+  let finalAnswer = value ? _.cloneDeep(value) : {};
 
   handleComment = (itemValue) => {
-
     finalAnswer["text"] = itemValue;
 
     onChange(finalAnswer);
-  }
+  };
 
   useEffect(() => {
     Permissions.check(permission).then(setLocationPermission);
@@ -83,7 +75,6 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
 
   const onPress = () => {
     Permissions.request(permission).then((response) => {
-      // console.log(response);
       setLocationPermission(response);
       if (response === Permissions.RESULTS.GRANTED) {
         NativeGeolocation.getCurrentPosition(
@@ -91,7 +82,7 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
             finalAnswer["value"] = {
               latitude: successResponse.coords.latitude,
               longitude: successResponse.coords.longitude,
-            } ;
+            };
 
             onChange(finalAnswer);
           },
@@ -105,70 +96,48 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
 
   return (
     <KeyboardAvoidingView
-   // behavior="padding"
-  >
-    <View style={styles.container}>
-      <TouchableOpacity onPress={onPress}>
-        <View style={styles.locationButton}>
-          <BaseText
-            style={styles.buttonText}
-            textKey="geolocation:get_location"
-          />
-          <Icon
-            style={styles.buttonText}
-            type="FontAwesome"
-            name="map-marker"
-          />
-        </View>
-      </TouchableOpacity>
+    // behavior="padding"
+    >
+      <View style={styles.container}>
+        <TouchableOpacity onPress={onPress}>
+          <View style={styles.locationButton}>
+            <BaseText style={styles.buttonText} textKey="geolocation:get_location" />
+            <Icon style={styles.buttonText} type="FontAwesome" name="map-marker" />
+          </View>
+        </TouchableOpacity>
 
-      {locationPermission === "denied" && Platform.OS === "ios" && (
         <View>
-          <BaseText
-            style={styles.infoText}
-            textKey="geolocation:must_enable_location"
-          />
+          {typeof finalAnswer["value"]?.latitude !== "undefined" ? (
+            <BaseText style={styles.infoText} textKey="geolocation:location_saved" />
+          ) : (
+            locationPermission === "denied" &&
+            (Platform.OS === "ios" ? (
+              <BaseText style={styles.infoText} textKey="geolocation:must_enable_location" />
+            ) : (
+              <BaseText style={styles.infoText} textKey="geolocation:must_enable_location_subtitle" />
+            ))
+          )}
         </View>
-      )}
-      {locationPermission === "denied" && Platform.OS === "android" && (
-        <View>
-          <BaseText
-            style={styles.infoText}
-            textKey="geolocation:must_enable_location_subtitle"
-          />
-        </View>
-      )}
-      {locationPermission !== "denied" &&
-        typeof finalAnswer["value"]?.latitude !== "undefined" && (
-          <View>
-            <BaseText
-              style={styles.infoText}
-              textKey="geolocation:location_saved"
+
+        {config?.image && (
+          <View style={styles.imgContainer}>
+            <Image
+              style={styles.img}
+              source={{
+                uri: config.image,
+              }}
             />
           </View>
         )}
 
-
-      {config?.image ? (
-        <View style = {styles.imgContainer}>
-        <Image
-         style = {styles.img}
-        source={{
-          uri: config.image,
-        }}
-      />
-       </View> ) :<View></View>
-       }
-
-
-      {isOptionalText &&
-        <OptionalText
-          isRequired={isOptionalTextRequired}
-          value={finalAnswer["text"]}
-          onChangeText={text=>handleComment(text)}
-        />
-      }
-    </View>
+        {isOptionalText && (
+          <OptionalText
+            isRequired={isOptionalTextRequired}
+            value={finalAnswer["text"]}
+            onChangeText={(text) => handleComment(text)}
+          />
+        )}
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -176,7 +145,6 @@ export const Geolocation = ({ config,value, onChange ,isOptionalText, isOptional
 Geolocation.defaultProps = {
   value: {},
   onChange: () => {},
- // isOptionalText,
 };
 
 Geolocation.propTypes = {
@@ -184,5 +152,5 @@ Geolocation.propTypes = {
   value: PropTypes.object,
   onChange: PropTypes.func,
   isOptionalText: PropTypes.bool,
-  isOptionalTextRequired: PropTypes.bool
+  isOptionalTextRequired: PropTypes.bool,
 };

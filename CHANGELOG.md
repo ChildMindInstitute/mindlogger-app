@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.8] - 2021-12-2
+- Fix localization issues
+- Fix notch issues on app header
+
 ## [0.18.7] - 2021-12-1
 - Fix activity submission issue
 
@@ -14,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.4] - 2021-11-30
 - Original Flanker
-
+`
 ## [0.18.3] - 2021-11-29
 - Fix App crashing issue when completing an activity.
 
@@ -26,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.1] - 2021-11-25
 - Fix date picker issues on ios 14
+
+### [Unreleased]
 
 ## [0.17.76] - 2021-11-21
 - Fix full splash image
@@ -40,6 +46,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.73] - 2021-11-17
 - Modified divier line in PDF report
+
+## [0.17.72] - 2021-11-15
+- Fixed margin issues on camera widget
 
 ## [0.17.71] - 2021-11-12
 - Swapped applet logo for splash screen
@@ -75,8 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.58] - 2021-10-10
 - Fix skippable button
 
-### [Unreleased]
-
 ## [0.17.57] - 2021-10-25
 - Fix response timer position
 
@@ -98,6 +105,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.51] - 2021-10-18
 - Fix drawing dots
+
+## [0.17.49] - 2021-10-17
+- Fix alert message in geolocation items
 
 ## [0.17.48] - 2021-10-16
 - Fix timer overlap on radio buttons
