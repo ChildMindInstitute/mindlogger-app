@@ -42,17 +42,16 @@ const ActHeader = (props) => {
     prevEnabled,
     actionLabel,
     watermark,
+    isSummaryScreen,
     prevLabel,
     onPressNextScreen,
     onPressPrevScreen,
     onPressAction,
   } = props;
 
-  // console.log('prevLabel', prevLabel)
-
   return (
     <>
-      {!!watermark &&
+      {!!watermark && !isSummaryScreen &&
         <View style={styles.logo}>
           <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
@@ -101,6 +100,7 @@ ActHeader.propTypes = {
   actionLabel: PropTypes.string,
   nextEnabled: PropTypes.bool,
   prevEnabled: PropTypes.bool,
+  isSummaryScreen: PropTypes.bool,
   prevLabel: PropTypes.string,
   onPressNextScreen: PropTypes.func,
   onPressPrevScreen: PropTypes.func,

@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   },
   timerView: {
     position: "absolute",
-    left: 30,
-    top: 15,
+    top: 45,
+    right: 10,
   },
   delayTimerView: {
     position: "absolute",
@@ -170,6 +170,7 @@ class ActivityScreen extends Component {
       inputDelayed: false,
       timerActive: false,
       screenHeight: 0,
+      orientation: 'portrait'
     };
     this.interval = null;
     this.startTime = null;
@@ -179,11 +180,19 @@ class ActivityScreen extends Component {
     this.keyboardVisible = false;
   }
 
+  determineAndSetOrientation () {
+    const { width, height } = Dimensions.get('window');
+    this.setState({ orientation: width < height ? 'portrait' : 'landscape' });
+  }
+
   componentDidMount() {
     const { isCurrent } = this.props;
     if (isCurrent) {
       this._startClock();
     }
+
+    this.determineAndSetOrientation();
+    Dimensions.addEventListener('change', this.determineAndSetOrientation.bind(this));
 
     if (Platform.OS === "ios") {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
@@ -302,10 +311,13 @@ class ActivityScreen extends Component {
 
   render() {
     const { screen, answer, onChange, isCurrent, onContentError } = this.props;
-    const { scrollEnabled, inputDelayed, timerActive } = this.state;
+    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
-      <View style={styles.outer}>
+      <View
+        style={styles.outer}
+        key={orientation}
+      >
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardContainer}

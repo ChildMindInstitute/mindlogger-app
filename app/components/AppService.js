@@ -11,7 +11,7 @@ import moment from 'moment';
 import i18n from 'i18next';
 import { setFcmToken } from '../state/fcm/fcm.actions';
 import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
+import { setCurrentApplet, setCurrentActivity, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
 import { startResponse } from '../state/responses/responses.thunks';
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
@@ -132,7 +132,9 @@ class AppService extends Component {
     try {
       await fMessaging.requestPermission();
     } catch (error) {
-      // If the user denied permissions.
+    }
+
+    if (!await fMessaging.hasPermission()) {
       Alert.alert(
         i18n.t('firebase_messaging:alert_title'),
         i18n.t('firebase_messaging:alert_message'),
@@ -391,6 +393,11 @@ class AppService extends Component {
     }
 
     if (activity.status !== 'scheduled' || event.data.timeout.access) {
+      if (Actions.currentScene == 'take_act') {
+        Actions.pop();
+      }
+
+      this.props.setCurrentActivity(activity.id);
       this.props.startResponse({
         ...activity,
         event
@@ -694,6 +701,7 @@ const mapDispatchToProps = dispatch => ({
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: toast => dispatch(showToast(toast)),
   setLastActiveTime: time => dispatch(setLastActiveTime(time)),
+  setCurrentActivity: activityId => dispatch(setCurrentActivity(activityId))
 });
 
 export default connect(

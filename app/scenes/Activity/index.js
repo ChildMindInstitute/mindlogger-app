@@ -82,7 +82,7 @@ class Activity extends React.Component {
     this.setState({
       isSummaryScreen,
       idleTime,
-      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0
+      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen
     }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
@@ -131,15 +131,21 @@ class Activity extends React.Component {
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
-        setSummaryScreen(true);
+        setSummaryScreen(activity, true);
       } else {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
         }
+
         nextScreen(timeElapsed);
         setSelected(false);
       }
     }
+  }
+
+  findActivity = (name, activities = []) => {
+    if (!name) return undefined;
+    return _.find(activities, { name: { en: name } });
   }
 
   get currentItem() {
@@ -179,11 +185,13 @@ class Activity extends React.Component {
       prevScreen,
       setSelected,
       isSelected,
+      currentResponse
     } = this.props;
+    const { activity, responses } = currentResponse;
 
     if (isSummaryScreen) {
       this.setState({ isSummaryScreen: false });
-      setSummaryScreen(false);
+      setSummaryScreen(activity, false);
       setSelected(false);
     } else {
       if (!currentScreen) {
@@ -241,11 +249,11 @@ class Activity extends React.Component {
       !isSummaryScreen
     ) {
       this.setState({ isSummaryScreen: true });
-      setSummaryScreen(true);
+      setSummaryScreen(activity, true);
     } else {
       if (isSummaryScreen) {
         this.setState({ isSummaryScreen: false });
-        setSummaryScreen(false);
+        setSummaryScreen(activity, false);
       }
       nextScreen();
       setSelected(false);
@@ -255,6 +263,7 @@ class Activity extends React.Component {
   componentWillUnmount() {
     this.idleTimer.clear();
   }
+
 
   render() {
     const {
@@ -268,7 +277,6 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isSplashScreen } = this.state;
 
-
     if (!currentResponse) {
       return <View />;
     }
@@ -281,6 +289,7 @@ class Activity extends React.Component {
       ? "Next"
       : getNextLabel(
         currentScreen,
+        isSplashScreen,
         itemVisibility,
         activity,
         responses,
@@ -306,6 +315,7 @@ class Activity extends React.Component {
             title={activity.name.en}
             actionLabel={actionLabel}
             watermark={currentApplet.watermark}
+            isSummaryScreen={isSummaryScreen}
             prevLabel={prevLabel}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
@@ -344,6 +354,7 @@ class Activity extends React.Component {
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
+            isSummaryScreen={isSummaryScreen}
             watermark={currentApplet.watermark}
             topNavigation={topNavigation}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}

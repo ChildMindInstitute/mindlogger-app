@@ -3,7 +3,67 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ### [Unreleased]
+
+## [0.17.72] - 2021-11-15
+- Fixed margin issues on camera widget
+
+## [0.17.71] - 2021-11-12
+- Swapped applet logo for splash screen
+
+## [0.17.70] - 2021-11-11
+- Fix splash screen issues
+
+## [0.17.69] - 2021-11-11
+- Fix issue with activity
+
+## [0.17.68] - 2021-11-10
+- Fix splash screen issues
+
+## [0.17.67] - 2021-11-09
+- Fix pdf report issue 
+
+## [0.17.66] - 2021-11-09
+- Fix daisy chain applet issue
+
+## [0.17.64] - 2021-11-08
+- Fix app crashing issue after completing an activity
+
+## [0.17.63] - 2021-11-07
+- Fix issues on PDF export
+- Add applet images on PDF export 
+
+## [0.17.61] - 2021-10-31
+- Fix issues on PDF export
+
+## [0.17.59] - 2021-10-31
+- Fix an issue with notfications are being turned on automatically
+
+## [0.17.58] - 2021-10-10
+- Fix skippable button
+
+## [0.17.57] - 2021-10-25
+- Fix response timer position
+
+## [0.17.56] - 2021-10-24
+- Fix style issues on camera widget
+
+## [0.17.55] - 2021-10-22
+- Fix response timer position
+
+## [0.17.54] - 2021-10-21
+- Fix notification issue
+
+## [0.17.53] - 2021-10-19
+- Fix dropdown background-color
+- Fix image above drawing item
+
+## [0.17.52] - 2021-10-19
+- Fix stacked items
+
+## [0.17.51] - 2021-10-18
+- Fix drawing dots
 
 ## [0.17.49] - 2021-10-17
 - Fix alert message in geolocation items
