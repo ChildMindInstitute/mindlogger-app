@@ -206,6 +206,8 @@ class Activity extends React.Component {
     } = this.props;
     const { activity, responses } = currentResponse;
 
+    this.updateStore();
+
     if (isSummaryScreen) {
       this.setState({ isSummaryScreen: false });
       setSummaryScreen(activity, false);
@@ -233,6 +235,8 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isSplashScreen } = this.state;
     const { activity, responses } = currentResponse;
+
+    this.updateStore();
 
     if (isSplashScreen) {
       this.setState({ isSplashScreen: false })
