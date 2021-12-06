@@ -279,7 +279,7 @@
   },
   "camera": {
     "choose":"Choisir",
-    "take_a_new":"Take a new",
+    "take_a_new":"Prends-en un nouveau", 
     "or_choose": "ou en choisir un dans votre bibliothèque.",
     "camera": "Appareil photo",
     "library": "Choisir dans la bibliothèque"
