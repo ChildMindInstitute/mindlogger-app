@@ -17,6 +17,7 @@ import {
   currentResponsesSelector,
   itemVisiblitySelector,
   isSummaryScreenSelector,
+  isSplashScreenSelector,
   currentScreenSelector,
 } from "../../state/responses/responses.selectors";
 import { currentAppletSelector } from "../../state/app/app.selectors";
@@ -31,7 +32,9 @@ import {
 import {
   setAnswer,
   setSummaryScreen,
+  setSplashScreen,
   setSelected,
+  setCurrentScreen,
 } from "../../state/responses/responses.actions";
 
 import { authTokenSelector } from "../../state/user/user.selectors";
@@ -80,14 +83,14 @@ class Activity extends React.Component {
   }
 
   componentDidMount() {
-    const { isSummaryScreen, currentResponse: { activity, responses }, currentScreen } = this.props;
+    const { isSummaryScreen, isSplashScreen, currentResponse: { activity, responses }, currentScreen } = this.props;
     const idleTime = this.getIdleTime();
 
     this.props.setActivitySelectionDisabled(false);
     this.setState({
       isSummaryScreen,
       idleTime,
-      isSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
+      isSplashScreen,
       hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
     }, () => {
@@ -231,6 +234,8 @@ class Activity extends React.Component {
       nextScreen,
       setSelected,
       itemVisibility,
+      setSplashScreen,
+      setCurrentScreen,
     } = this.props;
 
     const { isSummaryScreen, isSplashScreen } = this.state;
@@ -239,7 +244,8 @@ class Activity extends React.Component {
     this.updateStore();
 
     if (isSplashScreen) {
-      this.setState({ isSplashScreen: false })
+      setSplashScreen(activity, false);
+      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, 0)
       return
     }
     if (
@@ -305,9 +311,10 @@ class Activity extends React.Component {
       authToken,
       currentScreen,
       itemVisibility,
+      isSplashScreen
     } = this.props;
 
-    const { isSummaryScreen, isSplashScreen, isActivityShow, hasSplashScreen } = this.state;
+    const { isSummaryScreen, isActivityShow, hasSplashScreen } = this.state;
 
     if (!currentResponse) {
       return <View />;
@@ -472,6 +479,7 @@ const mapStateToProps = (state) => ({
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
+  isSplashScreen: isSplashScreenSelector(state),
   isSelected: state.responses.isSelected,
   appStatus: appStatusSelector(state),
 });
@@ -484,6 +492,8 @@ const mapDispatchToProps = {
   prevScreen,
   completeResponse,
   setSummaryScreen,
+  setSplashScreen,
+  setCurrentScreen,
   setActivitySelectionDisabled,
   finishActivity
 };
