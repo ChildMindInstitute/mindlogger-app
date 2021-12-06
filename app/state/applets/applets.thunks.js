@@ -19,6 +19,7 @@ import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
+import { responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys } from "./applets.actions";
 import { setCumulativeActivities } from "../activities/activities.actions";
 
@@ -210,8 +211,9 @@ export const cancelReminder = () => (dispatch, getState) => {
 export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  let currentApplets = await getData('ml_applets', allAppletsSelector(state));
-  let currentResponses = await getData('ml_responses');
+  const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
+  let currentApplets = allApplets && allApplets.length ? allApplets : await getData('ml_applets');
+  let currentResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
 
   let localInfo = {};
 

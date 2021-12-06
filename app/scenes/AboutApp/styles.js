@@ -43,7 +43,7 @@ export default {
     fontSize: 16,
   },
   logo: {
-    marginTop: 14,
+    marginTop: 20,
     height: 63,
     width: 78,
     resizeMode: 'contain',
