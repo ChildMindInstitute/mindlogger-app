@@ -177,13 +177,12 @@ export default class DrawingBoard extends Component {
 
   renderSvg() {
     const { lines, dimensions } = this.state;
-    const width = dimensions ? dimensions.width : 300;
     const strArray = chunkedPointStr(lines, 50);
     return (
       <Svg
         ref={(ref) => { this.svgRef = ref; }}
-        height={width}
-        width={width}
+        width={dimensions.width}
+        height={dimensions.height}
       >
         {strArray.map(this.renderLine)}
       </Svg>
