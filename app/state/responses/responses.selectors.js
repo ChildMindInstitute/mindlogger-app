@@ -64,6 +64,11 @@ export const isSummaryScreenSelector = createSelector(
   (responses) => responses?.isSummaryScreen || false
 )
 
+export const isSplashScreenSelector = createSelector(
+  currentResponsesSelector,
+  (responses) => responses?.isSplashScreen || false
+)
+
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,
   R.path(["screenIndex"])

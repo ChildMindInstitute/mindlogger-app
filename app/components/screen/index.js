@@ -267,7 +267,7 @@ class ActivityScreen extends Component {
     const { onChange, screen, answer, hasSplashScreen } = this.props;
     const { delay, timer } = screen;
     const { inputDelayed, timerActive } = this.state;
-    const timeElapsed = Date.now() - (hasSplashScreen ? this.state.startTime : this.startTime);
+    const timeElapsed = Date.now() - this.startTime;
 
     // Set inputDelayed to true if we're in the delay period
     if (delay) {
