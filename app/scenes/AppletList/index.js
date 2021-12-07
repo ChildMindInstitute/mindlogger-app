@@ -83,6 +83,7 @@ class AppletList extends Component {
       skin,
       mobileDataAllowed,
       toggleMobileDataAllowed,
+      appLanguage,
       user,
     } = this.props;
 
@@ -93,7 +94,7 @@ class AppletList extends Component {
         invites={invites}
         isDownloadingApplets={isDownloadingApplets}
         isDownloadingTargetApplet={isDownloadingTargetApplet}
-        title={`${i18n.t('additional:hi')} ${user ? user.firstName : ''}!`}
+        title={`${i18n.t('additional:hi')} ${user ? user.firstName : ''}${appLanguage === 'fr' ? ' ' : ''}!`}
         primaryColor={skin.colors.primary}
         onPressDrawer={() => Actions.push('settings')}
         onPressRefresh={this.refresh}
@@ -132,6 +133,7 @@ const mapStateToProps = state => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   user: userInfoSelector(state),
+  appLanguage: state.app.appLanguage,
 });
 
 const mapDispatchToProps = {
