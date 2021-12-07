@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.10] - 2021-12-6
 - Fix Incorrect punctuation spacing
+- Added French version
 
 ## [0.18.9] - 2021-12-5
 - Fix French translation
