@@ -251,14 +251,14 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   }
 
   /** update models */
-  const updateModels = (timeElapsed) => {
+  const updateModels = (timeElapsed, deltaTime) => {
     const delta = computeDxDt(stimPos.current, userPos.current, lambdaVal.current, width/2);
     const noise = peturbDistance(width * configObj.noiseLevel);
     const center = width/2;
 
     stimPos.current = [
-      configObj.dimensionCount > 1 ? delta[0] + noise[0] + stimPos.current[0] : center,
-      delta[1] + noise[1] + stimPos.current[1]
+      configObj.dimensionCount > 1 ? (delta[0] + noise[0]) * deltaTime / 1000 + stimPos.current[0] : center,
+      (delta[1] + noise[1]) * deltaTime / 1000 + stimPos.current[1]
     ]
 
     let isInBounds = true;
@@ -295,7 +295,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
         }
       } else {
         updateScore(tickNumber, deltaTime)
-        updateModels(timeElapsed)
+        updateModels(timeElapsed, deltaTime)
       }
 
       setTickNumber(tickNumber)
