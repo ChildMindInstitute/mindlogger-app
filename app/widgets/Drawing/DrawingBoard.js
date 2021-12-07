@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, PanResponder, StyleSheet, Image } from 'react-native';
+import { View, PanResponder, StyleSheet, Image, Dimensions } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
+
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   picture: {
@@ -27,7 +29,7 @@ function chunkedPointStr(lines, chunkSize) {
 
     if (length === 1) {
       const point = points[0];
-      
+
       points.push({
         ...point,
         x: point.x + 1.5,
@@ -98,7 +100,7 @@ export default class DrawingBoard extends Component {
     const time = Date.now();
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-    
+
     if (moveX === 0 && moveY === 0) return;
     else {
       this.lastX = moveX - x0 + this.startX;
@@ -190,12 +192,12 @@ export default class DrawingBoard extends Component {
 
   render() {
     const { dimensions } = this.state;
-    const width = dimensions ? dimensions.width : 300;
+
     return (
       <View
         style={{
           width: '100%',
-          height: width || 300,
+          height: height / 3,
           alignItems: 'center',
           backgroundColor: 'white',
         }}
