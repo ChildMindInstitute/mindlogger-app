@@ -171,10 +171,9 @@ class ActivityScreen extends Component {
       timerActive: false,
       screenHeight: 0,
       orientation: 'portrait',
-      startTime: Date.now(),
     };
     this.interval = null;
-    this.startTime = null;
+    this.startTime = Date.now();
     this.scrollToBottom = this.scrollToBottom.bind(this);
     this.keyboardWillHide = this.keyboardWillHide.bind(this);
     this.keyboardWillShow = this.keyboardWillShow.bind(this);
@@ -312,7 +311,7 @@ class ActivityScreen extends Component {
 
   render() {
     const { screen, answer, onChange, isCurrent, onContentError, hasSplashScreen } = this.props;
-    const { orientation, scrollEnabled, inputDelayed, timerActive, startTime } = this.state;
+    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
       <View
@@ -384,7 +383,7 @@ class ActivityScreen extends Component {
 
           {timerActive && (
             <View style={styles.timerView}>
-              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={hasSplashScreen ? startTime : this.startTime} />
+              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
             </View>
           )}
         </KeyboardAvoidingView>
