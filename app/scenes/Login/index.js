@@ -116,7 +116,12 @@ class Login extends Component {
   };
 
   render() {
-    const { skin, mobileDataAllowed, toggleMobileDataAllowed } = this.props;
+    const {
+      skin,
+      mobileDataAllowed,
+      toggleMobileDataAllowed,
+      appLanguage
+    } = this.props;
     const title = skin.name;
     const logo =
       typeof skin.logo !== "undefined" ? { uri: skin.logo } : { uri: 'https://cmi-logos.s3.amazonaws.com/ChildMindInstitute_Logo_Vertical_KO.png' };
@@ -151,7 +156,7 @@ class Login extends Component {
             <TouchableOpacity onPress={this.onAbout}>
               <Text style={styles.whiteText}>{`${i18n.t(
                 "login:what_is"
-              )} ${title}?`}</Text>
+              )} ${title}${appLanguage === 'fr' ? ' ' : ''}?`}</Text>
             </TouchableOpacity>
           </View>
           <View>
@@ -193,6 +198,7 @@ const mapStateToProps = (state) => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   fcmToken: fcmFcmTokenSelector(state),
+  appLanguage: state.app.appLanguage, 
 });
 
 const mapDispatchToProps = {

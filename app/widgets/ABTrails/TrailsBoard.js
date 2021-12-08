@@ -42,6 +42,7 @@ export default class TrailsBoard extends Component {
       failedCnt: 0,
       screenTime: 0,
       errorPoint: null,
+      currentPoint: -1,
       currentIndex: 1,
       validIndex: -1,
       currentScreen: 0,
@@ -140,9 +141,9 @@ export default class TrailsBoard extends Component {
 
   movePoint = (evt, gestureState) => {
     const { screen } = this.props;
-    const { lines, isValid, rate } = this.state;
+    const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
-    if (!this.allowed || !lines.length || !isValid) return;
+    if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
 
     const time = Date.now();
     const n = lines.length - 1;
@@ -183,17 +184,22 @@ export default class TrailsBoard extends Component {
         }
       });
 
-
       this.props.onError("Incorrect line!");
       this.setState({ errorPoint: position });
       setTimeout(() => {
+        this.props.onError("Please start here and continue.");
         lines[n].points.forEach((point, index) => {
           if (index > validIndex) {
             point.valid = false;
           }
         })
-        this.setState({ lines, isValid: false, errorPoint: null });
+        this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
+        setTimeout(() => {
+          this.props.onError(" ");
+          this.setState({ currentPoint: -1 });
+        }, 2000);
       }, 2000);
+
     } else {
       lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
       this.setState({ lines: [...lines], currentIndex });
@@ -258,10 +264,10 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentIndex, rate, errorPoint } = this.state;
+    const { currentPoint, rate, errorPoint } = this.state;
     let itemColor = trailsData.colors.pending;
 
-    if (index === 0) {
+    if (index === 0 || index === currentPoint - 1) {
       itemColor = trailsData.colors.passed;
     }
 

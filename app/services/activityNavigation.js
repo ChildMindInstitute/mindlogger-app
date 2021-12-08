@@ -9,7 +9,10 @@ const BACK = i18n.t('activity_navigation:back');
 const RETURN = i18n.t('activity_navigation:return');
 const UNDO = i18n.t('activity_navigation:undo');
 
-export const checkValidity = (item, response, index) => {
+export const checkValidity = (item, response, index, tutorialStatus = 0) => { 
+  if (item.inputType === "trail" && tutorialStatus !== 0) {
+    return true;
+  }
   if (item.inputType === "trail" && index >= 0 && response) {
     const screen = screens[item.inputType + '' + (index + 1)];
 
@@ -58,9 +61,21 @@ export const getLastPos = (index, ar) => {
   return -1;
 };
 
-export const getNextLabel = (index, isSplashScreen, visibility, activity, responses, isContentError) => {
+export const getNextLabel = (
+  index,
+  isSplashScreen,
+  visibility,
+  activity,
+  responses,
+  isContentError,
+  tutorialStatus
+) => {
   // If the screen is not valid, then the label is Skip
-  const isValid = checkValidity(activity.items[index], responses[index]);
+  const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
+
+  if (activity.items[index].inputType === "trail" && tutorialStatus === 1) {
+    return i18n.t('activity_navigation:skip');
+  }
 
   if (isSplashScreen) {
     return i18n.t('activity_navigation:next');
@@ -71,7 +86,7 @@ export const getNextLabel = (index, isSplashScreen, visibility, activity, respon
 
   // If there are visible items after this one, then label is Next
   const nextPos = getNextPos(index, visibility);
-  if (nextPos !== -1) {
+  if (nextPos !== -1 || activity.compute && !activity.summaryDisabled) {
     return i18n.t('activity_navigation:next');
   }
 
@@ -80,8 +95,8 @@ export const getNextLabel = (index, isSplashScreen, visibility, activity, respon
 };
 
 // If item has a valid response, or is skippable, then next is enabled
-export const isNextEnabled = (index, activity, responses) => {
-  const isValid = checkValidity(activity.items[index], responses[index], index);
+export const isNextEnabled = (index, activity, responses, tutorialStatus) => {
+  const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
   const isSkippable = checkSkippable(activity, activity.items[index]);
   return isValid || isSkippable;
 };

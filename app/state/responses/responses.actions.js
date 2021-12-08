@@ -14,6 +14,11 @@ export const setSummaryScreen = (activity, isSummaryScreen = false) => ({
   payload: { activity, isSummaryScreen },
 });
 
+export const setSplashScreen = (activity, isSplashScreen = false) => ({
+  type: RESPONSES_CONSTANTS.SET_SPLASHSCREEN,
+  payload: { activity, isSplashScreen }
+})
+
 export const replaceResponses = responses => ({
   type: RESPONSES_CONSTANTS.REPLACE_RESPONSES,
   payload: responses,

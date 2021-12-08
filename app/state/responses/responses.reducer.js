@@ -60,6 +60,20 @@ export default (state = initialState, action = {}) => {
           },
         },
       };
+    case RESPONSES_CONSTANTS.SET_SPLASHSCREEN:
+      activity = action.payload.activity;
+      activityId = activity.event ? activity.id + activity.event.id : activity.id;
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [activityId]: {
+            ...state.inProgress[activityId],
+            isSplashScreen: action.payload.isSplashScreen,
+          },
+        },
+      }
     case RESPONSES_CONSTANTS.OPEN_ACTIVITY:
       return {
         ...state,
@@ -95,7 +109,8 @@ export default (state = initialState, action = {}) => {
             subjectId: action.payload.subjectId,
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
-            isSummaryScreen: false
+            isSummaryScreen: false,
+            isSplashScreen: activity.splash && activity.splash.en
           },
         },
       };

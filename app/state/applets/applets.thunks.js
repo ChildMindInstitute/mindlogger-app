@@ -1,6 +1,7 @@
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
+import _ from 'lodash';
 import {
   getApplets,
   registerOpenApplet,
@@ -18,6 +19,7 @@ import { getData, storeData } from "../../services/asyncStorage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
+import { responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys } from "./applets.actions";
 import { setCumulativeActivities } from "../activities/activities.actions";
 
@@ -49,6 +51,7 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses } from "../../models/response";
 import config from "../../config";
+import { waitFor } from "../../services/helper";
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -93,52 +96,63 @@ export const setReminder = () => async (dispatch, getState) => {
 
   cancelReminder();
 
-  applets.forEach((applet, i) => {
-    const validEvents = [];
-    Object.keys(applet.schedule.events).forEach(key => {
-      const event = applet.schedule.events[key];
+  try {
+    applets.forEach((applet, i) => {
+      const validEvents = [];
 
-      Object.keys(applet.schedule.data).forEach(date => {
-        const data = applet.schedule.data[date];
-        const isValid = data.find(d => d.id === key && d.valid);
-        if (isValid) {
-          const validEvent = {
-            ...event,
-            date,
+      Object.keys(applet.schedule.events).forEach(key => {
+        const event = applet.schedule.events[key];
+
+        Object.keys(applet.schedule.data).forEach(date => {
+          const data = applet.schedule.data[date];
+
+          // const isValid = data.find(d => d.id === key && d.valid);
+          const isValid = data.find(d => d.id === key);
+          if (isValid) {
+            const validEvent = {
+              ...event,
+              date,
+            }
+            validEvents.push(validEvent);
           }
-          validEvents.push(validEvent);
-        }
+        })
+      });
+
+      _.uniqBy(validEvents, 'id').forEach(event => {
+        event.data.notifications.forEach(notification => {
+          if (notification.start) {
+            const values = notification.start.split(':');
+            const date = new Date(event.date);
+
+            date.setHours(values[0]);
+            date.setMinutes(values[1]);
+
+            if (date.getTime() > Date.now()) {
+              notifications.push({
+                eventId: event.id,
+                appletId: applet.id.split('/').pop(),
+                activityId: event.data.activity_id,
+                activityName: event.data.title,
+                date: date.getTime()
+              });
+            }
+          }
+        })
       })
     });
 
-    validEvents.forEach(event => {
-      event.data.notifications.forEach(notification => {
-        if (notification.start) {
-          const values = notification.start.split(':');
-          const date = new Date(event.date);
-
-          date.setHours(values[0]);
-          date.setMinutes(values[1]);
-          if (date.getTime() > Date.now()) {
-            notifications.push({
-              eventId: event.id,
-              appletId: applet.id.split('/').pop(),
-              activityId: event.data.activity_id,
-              activityName: event.data.title,
-              date: date.getTime()
-            });
-          }
-        }
-      })
-    })
-  });
+  } catch (error) {
+    console.log(error)
+  }
 
   if (!isReminderSet) {
     if (notifications.length) dispatch(setNotificationReminder());
+    const AndroidChannelId = 'MindLoggerChannelId';
+    const settings = { showInForeground: true };
 
-    notifications.forEach(notification => {
-      const settings = { showInForeground: true };
-      const AndroidChannelId = 'MindLoggerChannelId';
+    for (let index = 0; index < notifications.length; index++) {
+      const notification = notifications[index];
+
       const localNotification = new firebase.notifications.Notification(settings)
         .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
         .setTitle(notification.activityName) // Title of the notification
@@ -159,7 +173,9 @@ export const setReminder = () => async (dispatch, getState) => {
           exact: true,
         })
         .catch(err => console.error(err));
-    })
+
+      await waitFor(0.1);
+    }
   }
 };
 
@@ -200,8 +216,9 @@ export const cancelReminder = () => (dispatch, getState) => {
 export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
-  let currentApplets = await getData('ml_applets', allAppletsSelector(state));
-  let currentResponses = await getData('ml_responses');
+  const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
+  let currentApplets = allApplets && allApplets.length ? allApplets : await getData('ml_applets');
+  let currentResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
 
   let localInfo = {};
 
@@ -278,6 +295,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                     delete events[eventId];
                   }
                 }
+
                 currentApplet.schedule.events = events;
               }
               responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));

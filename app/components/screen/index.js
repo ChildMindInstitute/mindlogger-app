@@ -170,7 +170,8 @@ class ActivityScreen extends Component {
       inputDelayed: false,
       timerActive: false,
       screenHeight: 0,
-      orientation: 'portrait'
+      orientation: 'portrait',
+      startTime: Date.now(),
     };
     this.interval = null;
     this.startTime = null;
@@ -180,7 +181,7 @@ class ActivityScreen extends Component {
     this.keyboardVisible = false;
   }
 
-  determineAndSetOrientation () {
+  determineAndSetOrientation() {
     const { width, height } = Dimensions.get('window');
     this.setState({ orientation: width < height ? 'portrait' : 'landscape' });
   }
@@ -263,7 +264,7 @@ class ActivityScreen extends Component {
   };
 
   _clockTick = () => {
-    const { onChange, screen, answer } = this.props;
+    const { onChange, screen, answer, hasSplashScreen } = this.props;
     const { delay, timer } = screen;
     const { inputDelayed, timerActive } = this.state;
     const timeElapsed = Date.now() - this.startTime;
@@ -310,8 +311,8 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { screen, currentScreen, answer, onChange, isCurrent, onContentError } = this.props;
-    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
+    const { screen, currentScreen, answer, onChange, isCurrent, onContentError, hasSplashScreen } = this.props;
+    const { orientation, scrollEnabled, inputDelayed, timerActive, startTime } = this.state;
 
     return (
       <View
@@ -385,7 +386,7 @@ class ActivityScreen extends Component {
 
           {timerActive && (
             <View style={styles.timerView}>
-              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={this.startTime} />
+              <Timer duration={screen.timer} color={colors.primary} size={40} startTime={hasSplashScreen ? startTime : this.startTime} />
             </View>
           )}
         </KeyboardAvoidingView>

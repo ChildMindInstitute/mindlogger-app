@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import {
-  ABTrails,
   AudioImageRecord,
   AudioRecord,
   AudioStimulus,
@@ -30,6 +29,7 @@ import {
   StackedRadio,
   StabilityTracker,
 } from '../../widgets';
+import ABTrails from '../../widgets/ABTrails';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
 import { setSelected } from '../../state/responses/responses.actions';
 import { currentAppletSelector } from '../../state/app/app.selectors';

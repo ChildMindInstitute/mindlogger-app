@@ -22,10 +22,8 @@ import { Markdown } from '../../components/core';
 import BaseText from '../../components/base_text/base_text';
 import i18n from '../../i18n/i18n';
 
-const logoImage = require('../../../img/color_logo.png');
-
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 9 : 0;
+const IOSHeaderPadding = isIOS ? 20 : 0;
 const IOSBodyPadding = isIOS ? 10 : 0;
 
 class AboutApp extends Component {
@@ -94,7 +92,9 @@ class AboutApp extends Component {
             <Markdown>{mindloggerAbout}</Markdown>
             <BaseText textKey="about_app:subtitle" />
             <View>
-              <Image square style={styles.logo} source={logoImage} />
+              <Image square style={styles.logo} source={{
+                uri: 'https://cmi-logos.s3.amazonaws.com/ChildMindInstitute_Logo_Vertical_RGB.png'
+              }} />
             </View>
           </View>
         </Content>

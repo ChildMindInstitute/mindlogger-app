@@ -40,6 +40,7 @@ class ActivityScreens extends React.PureComponent {
       onChange,
       authToken,
       onContentError,
+      hasSplashScreen,
     } = this.props;
     const { activeScreens, direction } = this.state;
     
@@ -63,6 +64,7 @@ class ActivityScreens extends React.PureComponent {
               onChange={onChange}
               authToken={authToken}
               currentScreen={currentScreen}
+              hasSplashScreen={hasSplashScreen}
               isCurrent={index === currentScreen}
               onContentError={onContentError}
             />
