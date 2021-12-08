@@ -20,7 +20,9 @@ import {
   isSplashScreenSelector,
   currentScreenSelector,
 } from "../../state/responses/responses.selectors";
+import { tutorialStatusSelector } from '../../state/app/app.selectors';
 import { currentAppletSelector } from "../../state/app/app.selectors";
+import { setTutorialStatus } from '../../state/app/app.actions';
 import { testVisibility } from "../../services/visibility";
 import {
   setCurrentActivity,
@@ -82,7 +84,7 @@ class Activity extends React.Component {
   }
 
   componentDidMount() {
-    const { isSummaryScreen, currentResponse: { activity, responses }, currentScreen } = this.props;
+    const { isSummaryScreen, isSplashScreen, currentResponse: { activity, responses }, currentScreen } = this.props;
     const idleTime = this.getIdleTime();
 
     this.props.setActivitySelectionDisabled(false);
@@ -188,7 +190,6 @@ class Activity extends React.Component {
   handleTimeIsUp = () => {
     if (this.props.currentResponse) {
       this.updateStore();
-
       this.props.completeResponse(true);
       Actions.replace("activity_thanks")
     }
@@ -228,6 +229,8 @@ class Activity extends React.Component {
     const {
       currentResponse,
       setSummaryScreen,
+      setTutorialStatus,
+      tutorialStatus,
       currentScreen,
       nextScreen,
       setSelected,
@@ -240,6 +243,14 @@ class Activity extends React.Component {
     const { isSummaryScreen } = this.state;
     const { activity, responses } = currentResponse;
 
+    if (activity.items[currentScreen].inputType === "trail") {
+      if (tutorialStatus !== 0) {
+        setTutorialStatus(0);
+        return;
+      } else {
+        setTutorialStatus(1);
+      }
+    }
     this.updateStore();
 
     if (isSplashScreen) {
@@ -300,12 +311,14 @@ class Activity extends React.Component {
   componentWillUnmount() {
     this.updateStore();
     this.idleTimer.clear();
+    this.props.setTutorialStatus(1);
   }
 
   render() {
     const {
       setAnswer,
       currentResponse,
+      tutorialStatus,
       currentApplet,
       authToken,
       currentScreen,
@@ -332,7 +345,8 @@ class Activity extends React.Component {
         itemVisibility,
         activity,
         responses,
-        this.state.isContentError
+        this.state.isContentError,
+        tutorialStatus
       );
     const actionLabel = (isSummaryScreen || removeUndoOption)
       ? ""
@@ -430,7 +444,7 @@ class Activity extends React.Component {
             {!topNavigation &&
               <ActivityButtons
                 nextLabel={nextLabel}
-                nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses)}
+                nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses, tutorialStatus)}
                 onPressNext={() => this.handlePressNextScreen()}
                 prevLabel={prevLabel}
                 prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
@@ -442,7 +456,6 @@ class Activity extends React.Component {
                 }}
               />
             }
-
           </View>
         )}
       </Container>
@@ -452,18 +465,21 @@ class Activity extends React.Component {
 
 Activity.defaultProps = {
   currentResponse: undefined,
+  tutorialStatus: 1,
   currentScreen: null,
 };
 
 Activity.propTypes = {
   currentApplet: PropTypes.object.isRequired,
   currentResponse: PropTypes.object,
+  tutorialStatus: PropTypes.number.isRequired,
   setAnswer: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
   currentScreen: PropTypes.number,
   setSelected: PropTypes.func.isRequired,
   nextScreen: PropTypes.func.isRequired,
   prevScreen: PropTypes.func.isRequired,
+  setTutorialStatus: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
@@ -474,6 +490,7 @@ Activity.propTypes = {
 const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   currentResponse: currentResponsesSelector(state),
+  tutorialStatus: tutorialStatusSelector(state),
   authToken: authTokenSelector(state),
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
@@ -489,6 +506,7 @@ const mapDispatchToProps = {
   setSelected,
   nextScreen,
   prevScreen,
+  setTutorialStatus,
   completeResponse,
   setSummaryScreen,
   setSplashScreen,

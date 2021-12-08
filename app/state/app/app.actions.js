@@ -24,6 +24,11 @@ export const setCurrentApplet = appletId => ({
   payload: appletId,
 });
 
+export const setTutorialStatus = status => ({
+  type: APP_ACTIONS.SET_TUTORIAL_STATUS,
+  payload: status,
+});
+
 export const setConnection = status => ({
   type: APP_ACTIONS.SET_CONNECTION,
   payload: status,
