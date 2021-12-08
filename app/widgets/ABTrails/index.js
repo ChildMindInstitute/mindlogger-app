@@ -139,6 +139,10 @@ class ABTrails extends React.Component {
 
     this.finalAnswer = data ? data : {};
 
+    if (tutorialStatus === 0 && messageColor === "#2e2e2e" && message !== " ") {
+      this.setState({ message: " " })
+    }
+
     return (
       <View style={{ marginBottom: 0, height: 400 }}>
         <View style={{ marginBottom: 10, height: 80, alignItems: "center", justifyContent: 'center' }}>

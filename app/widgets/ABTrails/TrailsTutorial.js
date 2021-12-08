@@ -49,7 +49,7 @@ export default class TrailsTutorial extends Component {
         }
         i += 1;
       }
-    }, 1000);
+    }, 3000);
   }
 
   componentWillUnmount() {

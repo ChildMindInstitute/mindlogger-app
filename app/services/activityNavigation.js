@@ -72,7 +72,6 @@ export const getNextLabel = (
 ) => {
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
-
   if (activity.items[index].inputType === "trail" && tutorialStatus === 1) {
     return i18n.t('activity_navigation:skip');
   }
