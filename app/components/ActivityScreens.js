@@ -63,7 +63,6 @@ class ActivityScreens extends React.PureComponent {
               answer={answers[index]}
               onChange={onChange}
               authToken={authToken}
-              currentScreen={currentScreen}
               hasSplashScreen={hasSplashScreen}
               isCurrent={index === currentScreen}
               onContentError={onContentError}

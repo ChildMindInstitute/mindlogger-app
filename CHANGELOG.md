@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.11] - 2021-11-30
+## [0.18.12] - 2021-12-8
 - Update all the points with new instructins in A/B Trails
+
+## [0.18.11] - 2021-12-7
+- Fix splash+cumulative+text item issue
+- Fix 'done' button issue on summary screen
+- Fix an issue that next screen isn't automatically opeened when time is finished
 
 ## [0.18.10] - 2021-12-6
 - Fix Incorrect punctuation spacing
@@ -59,7 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified divier line in PDF report
 
 ## [0.17.72] - 2021-11-15
+<<<<<<< HEAD
 - Fix displaying activity list
+=======
+>>>>>>> 3ded1eb77175cf62bcff5a89b1732466402e052c
 - Fixed margin issues on camera widget
 
 ## [0.17.71] - 2021-11-12

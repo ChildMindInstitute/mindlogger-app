@@ -76,7 +76,6 @@ class Activity extends React.Component {
       isContentError: false,
       idleTime: null,
       isSummaryScreen: false,
-      isSplashScreen: false,
       isActivityShow: false,
       hasSplashScreen: false,
       responses: []
@@ -92,7 +91,6 @@ class Activity extends React.Component {
     this.setState({
       isSummaryScreen,
       idleTime,
-      isSplashScreen,
       hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
     }, () => {
@@ -239,9 +237,10 @@ class Activity extends React.Component {
       itemVisibility,
       setSplashScreen,
       setCurrentScreen,
+      isSplashScreen,
     } = this.props;
 
-    const { isSummaryScreen, isSplashScreen } = this.state;
+    const { isSummaryScreen } = this.state;
     const { activity, responses } = currentResponse;
 
     if (activity.items[currentScreen].inputType === "trail") {
