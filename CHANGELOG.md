@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.12] - 2021-12-8
+## [0.18.13] - 2021-12-8
 - Modify French translations to be idiomatic
+
+## [0.18.12] - 2021-12-8
+- Update all the points with new instructins in A/B Trails
 
 ## [0.18.11] - 2021-12-7
 - Fix splash+cumulative+text item issue
@@ -64,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified divier line in PDF report
 
 ## [0.17.72] - 2021-11-15
+- Fix displaying activity list
 - Fixed margin issues on camera widget
 
 ## [0.17.71] - 2021-11-12
@@ -84,12 +88,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.17.66] - 2021-11-09
 - Fix daisy chain applet issue
 
+## [0.17.65] - 2021-11-8
+- Fix displaying errors and drawing lines
+
 ## [0.17.64] - 2021-11-08
 - Fix app crashing issue after completing an activity
 
 ## [0.17.63] - 2021-11-07
 - Fix issues on PDF export
-- Add applet images on PDF export 
+- Add applet images on PDF export
+
+## [0.17.62] - 2021-11-4
+- Merge A/B Trails and Cog tasks
 
 ## [0.17.61] - 2021-10-31
 - Fix issues on PDF export

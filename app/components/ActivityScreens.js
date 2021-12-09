@@ -43,6 +43,7 @@ class ActivityScreens extends React.PureComponent {
       hasSplashScreen,
     } = this.props;
     const { activeScreens, direction } = this.state;
+    
     return (
       <View onTouchStart={this.props.onAnyTouch} style={{ flex: 1, width: '100%', position: 'relative' }}>
         {activeScreens.map(index => (

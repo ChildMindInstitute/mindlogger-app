@@ -354,6 +354,7 @@ class ActivityScreen extends Component {
                     answer={answer}
                     onChange={this.handleChange.bind(this)}
                     isCurrent={isCurrent}
+                    currentScreen={currentScreen}
                     screen={screen}
                     onPress={() => {
                       this.setState({ scrollEnabled: false });
@@ -433,6 +434,7 @@ ActivityScreen.propTypes = {
   answer: PropTypes.any,
   activity: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  currentScreen: PropTypes.number.isRequired,
   onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
 };
