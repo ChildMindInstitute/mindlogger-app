@@ -30,6 +30,13 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
         default: jsPsych.ALL_KEYS,
         description: 'The keys the subject is allowed to press to respond to the stimulus.'
       },
+      button_html: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Button HTML',
+        default: '<button class="jspsych-btn">%choice%</button>',
+        array: true,
+        description: 'The html of the button. Can create own style.'
+      },
       prompt: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Prompt',
@@ -48,13 +55,24 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
         default: null,
         description: 'How long to show trial before it ends.'
       },
+      margin_vertical: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Margin vertical',
+        default: '0px',
+        description: 'The vertical margin of the button.'
+      },
+      margin_horizontal: {
+        type: jsPsych.plugins.parameterType.STRING,
+        pretty_name: 'Margin horizontal',
+        default: '8px',
+        description: 'The horizontal margin of the button.'
+      },
       response_ends_trial: {
         type: jsPsych.plugins.parameterType.BOOL,
         pretty_name: 'Response ends trial',
         default: true,
         description: 'If true, trial will end when subject makes a response.'
       },
-
     }
   }
 
@@ -66,6 +84,13 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
     if(trial.prompt !== null){
       new_html += trial.prompt;
     }
+
+    new_html += '<div id="jspsych-html-button-response-btngroup">';
+    for (var i = 0; i < trial.choices.length; i++) {
+      var str = trial.button_html.replace(/%choice%/g, trial.choices[i]);
+      new_html += '<div class="jspsych-html-button-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+    }
+    new_html += '</div>';
 
     // draw
     display_element.innerHTML = new_html;
