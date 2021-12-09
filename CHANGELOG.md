@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.13] - 2021-12-8
+- Modify French translations to be idiomatic
+
 ## [0.18.12] - 2021-12-8
 - Update all the points with new instructins in A/B Trails
 
@@ -64,10 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified divier line in PDF report
 
 ## [0.17.72] - 2021-11-15
-<<<<<<< HEAD
 - Fix displaying activity list
-=======
->>>>>>> 3ded1eb77175cf62bcff5a89b1732466402e052c
 - Fixed margin issues on camera widget
 
 ## [0.17.71] - 2021-11-12

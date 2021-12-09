@@ -284,9 +284,10 @@
     "every_number":"Expected options.every to be a number"
   },
   "camera": {
-    "choose":"Choose",
-    "take_a_new":"Take a new",
-    "or_choose": "or choose one from your library.",
+    "choose_photo": "Choose photo",
+    "choose_video": "Choose video",
+    "take_a_photo": "Take a new photo or choose one from your library",
+    "take_a_video": "Take a new video or choose one from your library",
     "camera": "Camera",
     "library": "Library"
   },

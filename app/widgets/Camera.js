@@ -98,10 +98,8 @@ export class Camera extends Component {
     const mediaType = video ? 'video' : 'photo';
 
     Alert.alert(
-      `${i18n.t('camera:choose')} ${mediaType}`,
-      `${i18n.t('camera:take_a_new')} ${mediaType} ${i18n.t(
-        'camera:or_choose',
-      )}`,
+      i18n.t(`camera:choose_${mediaType}`),
+      i18n.t(`camera:take_a_${mediaType}`),
       [
         {
           text: i18n.t('camera:camera'),
