@@ -28,6 +28,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       trialDuration: config.trialDuration || 1500,
       samplingMethod: config.samplingMethod,
       samplingSize: config.sampleSize,
+      buttonLabel: config.nextButton || 'Finish',
       minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
     };
 

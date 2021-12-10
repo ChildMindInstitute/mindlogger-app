@@ -134,7 +134,7 @@ function buildTimeline() {
       }
       return msg;
     },
-    choices: ['Finish'],
+    choices: [window.CONFIG.buttonLabel],
     data: {
       tag: 'result',
     }
@@ -143,7 +143,7 @@ function buildTimeline() {
   var end_block = {
     type: "html-button-response",
     stimulus: "<p>The experiment is complete.</p><p>Press the button below to continue.</p>",
-    choices: ['Finish']
+    choices: [window.CONFIG.buttonLabel]
   };
 
   /*set up experiment structure*/
