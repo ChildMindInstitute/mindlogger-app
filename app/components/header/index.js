@@ -21,10 +21,11 @@ const styles = StyleSheet.create({
     left: 15,
   },
   logoImage: {
-    height: 80,
-    width: 80,
+    height: 65,
+    width: 65,
     left: 0,
-    top: 0
+    top: 0,
+    resizeMode: 'contain',
   },
   navigations: {
     display: 'flex',
