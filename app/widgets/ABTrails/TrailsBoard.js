@@ -64,7 +64,6 @@ export default class TrailsBoard extends Component {
       onPanResponderMove: this.movePoint,
       onPanResponderRelease: (evt, gestureState) => {
         const { lines, currentIndex } = this.state;
-        this.props.onRelease();
         this.movePoint(evt, gestureState);
         this.props.onResult({ ...this.save(lines, currentIndex) });
       },
@@ -108,11 +107,15 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines, rate, currentIndex } = this.state;
+    const { lines, rate, currentIndex, currentPoint } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
     let order = 0;
+
+    if (currentPoint !== -1) {
+      this.setState({ currentPoint: -1 });
+    }
 
     this.props.onError();
     screen.items.forEach((item) => {
@@ -140,7 +143,7 @@ export default class TrailsBoard extends Component {
   }
 
   movePoint = (evt, gestureState) => {
-    const { screen } = this.props;
+    const { screen, onRelease } = this.props;
     const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
     if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
@@ -161,6 +164,10 @@ export default class TrailsBoard extends Component {
     if (item && item.order !== currentIndex) {
       if (item.order === currentIndex + 1) {
         currentIndex += 1;
+
+        if (currentIndex === screen.items.length) {
+          onRelease();
+        }
         this.setState({ validIndex: lines[n].points.length });
       } else {
         valid = false;
@@ -196,7 +203,6 @@ export default class TrailsBoard extends Component {
         this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
         setTimeout(() => {
           this.props.onError(" ");
-          this.setState({ currentPoint: -1 });
         }, 2000);
       }, 2000);
 
