@@ -55,25 +55,30 @@ export const postFile = async ({ authToken, file, appletId, activityId }) => {
 
   const headers = {
     "Girder-Token": authToken,
-    // "Content-Type": file.type,
   };
-  const metadata = {
+
+  const form = new FormData();
+
+  form.append(file.key, {
+    name: file.filename,
+    type: file.type,
+    uri: Platform.OS === 'ios' ?
+         file.uri.replace('file://', '')
+         : file.uri,
+  });
+
+  form.append('metadata', JSON.stringify({
     "applet": { "schemaVersion": "1.0" },
     "subject": { "@id": "asasa", "timezone": "US" },
     "responses": {
       [file.key]: { "size": file.size, "type": file.type }
     }
-  };
-
-  const base64String = await RNFS.readFile(file.uri, 'base64');
+  }))
 
   return fetch(url, {
     method: 'post',
     headers,
-    body: objectToFormData({
-      "metadata": JSON.stringify(metadata),
-      [file.key]: base64String
-    })
+    body: form
   })
     .then(async res => {
       return res.status === 200 ? await res.json() : Promise.reject(res);
