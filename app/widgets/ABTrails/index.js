@@ -91,21 +91,6 @@ class ABTrails extends React.Component {
     };
   }
 
-  componentDidMount() {
-
-  }
-
-  handleComment = (itemValue) => {
-    const { onChange } = this.props;
-    this.finalAnswer["text"] = itemValue;
-    onChange(this.finalAnswer);
-  }
-
-  onSelect(v) {
-    const { onChange } = this.props;
-    onChange({ value: v });
-  }
-
   onResult = (itemValue, goToNext) => {
     const { onChange } = this.props;
     this.finalAnswer["value"] = itemValue;
@@ -147,6 +132,8 @@ class ABTrails extends React.Component {
       tutorialStatus
     } = this.props;
 
+    // console.log('currentScreen', screen)
+
     this.finalAnswer = data ? data : {};
 
     if (
@@ -170,7 +157,7 @@ class ABTrails extends React.Component {
               currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
               failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
               screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
-              currentScreen={currentScreen}
+              currentScreen={Number(screen.slice(-1))}
               screen={screens[screen]}
               onResult={this.onResult}
               ref={(ref) => { this.board = ref; }}
@@ -182,7 +169,7 @@ class ABTrails extends React.Component {
               <TrailsTutorial
                 currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
                 tutorial={this.tutorials[screen]}
-                currentScreen={currentScreen}
+                currentScreen={Number(screen.slice(-1))}
                 screen={screens[screen]}
                 ref={(ref) => { this.board = ref; }}
                 onNext={this.onNextTutorial}

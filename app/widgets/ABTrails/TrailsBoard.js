@@ -47,6 +47,7 @@ export default class TrailsBoard extends Component {
       validIndex: -1,
       currentScreen: 0,
       isValid: false,
+      isStopped: false,
       rate: 1,
     };
     this.allowed = false;
@@ -64,7 +65,7 @@ export default class TrailsBoard extends Component {
       onPanResponderMove: this.movePoint,
       onPanResponderRelease: (evt, gestureState) => {
         const { lines, currentIndex } = this.state;
-        this.movePoint(evt, gestureState);
+        this.endLine(evt, gestureState);
         this.props.onResult({ ...this.save(lines, currentIndex) });
       },
     });
@@ -77,6 +78,7 @@ export default class TrailsBoard extends Component {
     let { screenTime } = this.props;
 
     if (currentIntervalId && currentScreen) {
+      console.log('0000')
       clearInterval(currentIntervalId);
     }
 
@@ -135,10 +137,35 @@ export default class TrailsBoard extends Component {
       }
     });
     
-    this.setState({ isValid, validIndex: -1 });
+    this.setState({ isValid, validIndex: -1, isStopped: true });
     if (isValid) {
       const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true }] };
       this.setState({ lines: [...lines, newLine] });
+    }
+  }
+
+  endLine = (evt, gestureState) => {
+    const { screen } = this.props;
+    const { lines, rate, currentIndex, isStopped } = this.state;
+    const n = lines.length - 1;
+    let isValidLine = false;
+
+    console.log('isStopped', isStopped)
+    if (!isStopped) return;
+
+    lines[n].points.forEach((point) => {
+      const { x, y } = point;
+      const item = screen.items.find(({ cx, cy }) =>
+        Math.sqrt(Math.pow(cx * rate - x, 2) + Math.pow(cy * rate - y, 2)) < screen.r * rate
+      );
+
+      if (item && item.order !== currentIndex) isValidLine = true;
+    });
+
+    if (!isValidLine && lines.length) {
+      lines[n].points.forEach((point) => {
+        point.valid = false;
+      })
     }
   }
 
@@ -146,6 +173,8 @@ export default class TrailsBoard extends Component {
     const { screen, onRelease } = this.props;
     const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
+    let isFinished = false;
+
     if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
 
     const time = Date.now();
@@ -164,14 +193,15 @@ export default class TrailsBoard extends Component {
     if (item && item.order !== currentIndex) {
       if (item.order === currentIndex + 1) {
         currentIndex += 1;
-
+        
         if (currentIndex === screen.items.length) {
-          onRelease();
+          isFinished = true;
         }
         this.setState({ validIndex: lines[n].points.length });
       } else {
         valid = false;
       }
+      this.setState({ isStopped: false });
     }
 
     if (!valid) {
@@ -209,6 +239,9 @@ export default class TrailsBoard extends Component {
     } else {
       lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
       this.setState({ lines: [...lines], currentIndex });
+    }
+    if (isFinished) {
+      onRelease();
     }
   }
 
