@@ -126,7 +126,7 @@ function buildTimeline() {
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
       const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
 
-      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
+      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of blocks.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
       if (accuracy > minimumAccuracy) {
         msg = msg + '<p>Press the button below to continue.</p>';
       } else {
