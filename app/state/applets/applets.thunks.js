@@ -2,6 +2,7 @@ import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
 import _ from 'lodash';
+import moment from "moment";
 import {
   getApplets,
   registerOpenApplet,
@@ -20,7 +21,7 @@ import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { responsesSelector } from '../responses/responses.selectors';
-import { prepareResponseKeys } from "./applets.actions";
+import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNotificationsReminder } from "./applets.actions";
 import { setCumulativeActivities } from "../activities/activities.actions";
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
@@ -43,7 +44,7 @@ import {
   userInfoSelector,
   loggedInSelector,
 } from "../user/user.selectors";
-import { isReminderSetSelector } from "./applets.selectors";
+import { isReminderSetSelector, timersSelector } from "./applets.selectors";
 import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses } from "../responses/responses.actions";
 
@@ -94,7 +95,7 @@ export const setReminder = () => async (dispatch, getState) => {
   const isReminderSet = isReminderSetSelector(state);
   const notifications = [];
 
-  cancelReminder();
+  dispatch(cancelReminder());
 
   try {
     applets.forEach((applet, i) => {
@@ -166,26 +167,42 @@ export const setReminder = () => async (dispatch, getState) => {
         .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
         .android.setAutoCancel(true); // To remove notification when tapped on it
 
-      firebase.notifications()
-        .scheduleNotification(localNotification, {
-          fireDate: notification.date,
-          repeatInterval: 'day',
-          exact: true,
-        })
-        .catch(err => console.error(err));
+      // firebase.notifications()
+      //   .scheduleNotification(localNotification, {
+      //     fireDate: notification.date,
+      //     repeatInterval: 'day',
+      //     exact: true,
+      //   })
+      //   .catch(err => {
+      //     console.error(err)
+      //   });
+
+      const timer = scheduleNotificationsRN(localNotification, notification.date - moment().valueOf());
+      dispatch(addScheduleNotificationsReminder(timer));
 
       await waitFor(0.1);
     }
   }
 };
 
-export const cancelReminder = () => (dispatch, getState) => {
+export const scheduleNotificationsRN = (notification, ms) => {
+  return setTimeout(() => {
+    firebase.notifications().displayNotification(notification)
+  }, ms);
+}
+
+export const cancelReminder = () => async (dispatch, getState) => {
   const state = getState();
+  const timers = timersSelector(state);
   const isReminderSet = isReminderSetSelector(state);
 
-  if (isReminderSet) {
+  if (isReminderSet && timers) {
     firebase.notifications().cancelAllNotifications();
+    for (const timer of timers) {
+      clearTimeout(timer);
+    }
     dispatch(clearNotificationReminder());
+    dispatch(clearScheduleNotificationsReminder());
   }
 }
 

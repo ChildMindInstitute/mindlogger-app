@@ -76,12 +76,7 @@
   border-color: #ccc;
 }
 
-.jspsych-btn:hover {
-  background-color: #ddd;
-  border-color: #aaa;
-}
-
-.jspsych-btn:disabled {
+.jspsych-btn.disabled {
   background-color: #eee;
   color: #aaa;
   border-color: #ccc;

@@ -21,6 +21,7 @@ export const initialState = {
   currentInvite: '',
   appletResponseData: {},
   activityAccess: {},
+  timers: []
 };
 
 export default (state = initialState, action = {}) => {
@@ -53,6 +54,16 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isReminderSet: false,
+      };
+    case APPLET_CONSTANTS.CLEAR_SCHEDULED_NOTIFICATIONS:
+      return {
+        ...state,
+        timers: [],
+      };
+    case APPLET_CONSTANTS.SCHEDULED_NOTIFICATIONS:
+      return {
+        ...state,
+        timers: [...state.timers, action.payload],
       };
     case APPLET_CONSTANTS.REPLACE_TARGET_APPLET:
       return {

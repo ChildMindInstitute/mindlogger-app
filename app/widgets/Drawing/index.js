@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import DrawingBoard from './DrawingBoard';
 import { Item, Input } from 'native-base';
 import { getURL } from '../../services/helper';
 import { OptionalText } from '../OptionalText';
-
-const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   text: {
@@ -21,8 +19,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   img: {
-    width,
-    height: height/3,
+    width: 300,
+    height: 300,
     resizeMode: 'contain',
   },
 });
