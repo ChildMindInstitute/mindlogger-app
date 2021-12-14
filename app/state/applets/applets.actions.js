@@ -19,6 +19,15 @@ export const clearNotificationReminder = applets => ({
   payload: applets,
 });
 
+export const clearScheduleNotificationsReminder = () => ({
+  type: APPLET_CONSTANTS.CLEAR_SCHEDULED_NOTIFICATIONS,
+});
+
+export const addScheduleNotificationsReminder = timer => ({
+  type: APPLET_CONSTANTS.SCHEDULED_NOTIFICATIONS,
+  payload: timer,
+});
+
 export const prepareResponseKeys = (appletId, keys) => ({
   type: APPLET_CONSTANTS.SET_ENCRYPTION_KEY,
   payload: { appletId, keys }
