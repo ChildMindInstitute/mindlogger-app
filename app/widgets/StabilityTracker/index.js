@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     marginBottom: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   times: {
     flex: 1,
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontWeight: 'bold',
     fontSize: 20,
-    transform: [{ rotate: '90deg'}]
+    transform: [{ rotate: '90deg'}, { translateX: 15 }]
   },
   lambda: {
     flex: 1,
@@ -176,14 +176,23 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     }
   };
 
+  const captured = useRef(false);
   const onResponderGrant = useCallback(evt => {
+    if (controlBar.current) {
+      captured.current = true;
+    }
+
     if (configObj.userInputType == 'touch' && controlBar.current == false) {
       updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
     }
   }, [width])
 
   const onResponderRelease = useCallback(() => {
-    controlBar.current = false;
+    if (captured.current) {
+      controlBar.current = false;
+      captured.current = false;
+    }
+
     setMoving(true)
   }, [width])
 
@@ -286,7 +295,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       controlBar.current = true;
       userPos.current = [width/2, width/2];
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, (timeElapsed - lastCrashTime.current) / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
+      lambdaVal.current = getNewLambda(lambdaVal.current, deltaTime / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
     }
   }
 
@@ -554,17 +563,18 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
                       transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
                     }
                   ]}>Tap here to {moving ? 're' : ''}start</Text>
-                ) || (
-                  <View
-                    style={{
-                      position: 'absolute',
-                      width: '100%',
-                      top: userPos.current ? userPos.current[1]-blockHeight+outerStimRadius-5 : 0,
-                      height: 10,
-                      backgroundColor: 'green'
-                    }}
-                  />
-                )
+                ) || <></>
+                // (
+                //   <View
+                //     style={{
+                //       position: 'absolute',
+                //       width: '100%',
+                //       top: userPos.current ? userPos.current[1]-blockHeight+outerStimRadius-5 : 0,
+                //       height: 10,
+                //       backgroundColor: 'green'
+                //     }}
+                //   />
+                // )
               }
             </View>
           ) || <></>
