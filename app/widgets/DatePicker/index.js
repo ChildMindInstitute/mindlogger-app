@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Text, ListItem, Left, Right, Icon , Item , Input } from 'native-base';
 import { View, ScrollView,KeyboardAvoidingView } from 'react-native';
 import moment from 'moment';
-import DateTimePicker from 'react-native-modal-datetime-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { OptionalText } from '../OptionalText';
 
 export class DatePicker extends React.Component {
@@ -78,16 +78,14 @@ export class DatePicker extends React.Component {
           </Right>
         </ListItem>
 
-          <DateTimePicker
+          <DateTimePickerModal
             isVisible={this.state.isDateTimePickerVisible}
             testID="dateTimePicker"
             value={date}
             mode={'date'}
             display={Platform.OS === 'ios' ? 'inline' : 'default'}
-            modalStyleIOS={{
-              datePicker: {
-                justifyContet: 'center',
-              }
+            pickerContainerStyleIOS={{
+              paddingHorizontal: 40
             }}
             onCancel={this.hideDatePicker}
             onConfirm={this.onChangeDate}
