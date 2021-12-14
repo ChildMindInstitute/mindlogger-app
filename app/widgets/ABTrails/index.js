@@ -132,8 +132,6 @@ class ABTrails extends React.Component {
       tutorialStatus
     } = this.props;
 
-    // console.log('currentScreen', screen)
-
     this.finalAnswer = data ? data : {};
 
     if (

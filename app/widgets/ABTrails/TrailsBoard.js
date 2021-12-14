@@ -82,21 +82,23 @@ export default class TrailsBoard extends Component {
       clearInterval(currentIntervalId);
     }
 
-    this.timeInterval = setInterval(() => {
-      const { currentIndex, failedCnt, currentScreen } = this.props;
-      const { lines } = this.state;
-      const result = this.save(lines, currentIndex);
+    if (currentScreen % 2 === 0) {
+      this.timeInterval = setInterval(() => {
+        const { currentIndex, failedCnt, currentScreen } = this.props;
+        const { lines } = this.state;
+        const result = this.save(lines, currentIndex);
 
-      screenTime = screenTime ? screenTime + 1 : 1;
-      if (currentScreen % 2 === 0 || screenTime < 180) {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
-        this.setState({ screenTime });
-      } else {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
-      }
-    }, 1000)
-
-    await storeData('intervalId', this.timeInterval);
+        screenTime = screenTime ? screenTime + 2 : 2;
+        if ((currentScreen === 2 && screenTime >= 10) ||
+           (currentScreen === 4 && screenTime >= 20)) {
+          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
+        } else {
+          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
+          this.setState({ screenTime });
+        }
+      }, 2000)
+      await storeData('intervalId', this.timeInterval);
+    }
     this.setState({ failedCnt: failedCnt ? failedCnt : 0 });
     this.setState({ currentIndex, currentScreen });
   }
