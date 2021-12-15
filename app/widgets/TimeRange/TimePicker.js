@@ -64,6 +64,9 @@ const TimePicker = ({ onChange, value = {}, label }) => {
         mode={'time'}
         is24Hour={true}
         display={Platform.OS === 'ios' ? 'inline' : 'default'}
+        pickerContainerStyleIOS={{
+          paddingHorizontal: 40
+        }}
         onCancel={() => setShow(false)}
         onConfirm={onChangeTime}
       />
