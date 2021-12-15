@@ -21,6 +21,14 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
     }));
 
+    const continueText = [
+      `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`
+    ];
+    const restartText = [
+      'Remember to respond only to the central arrow.',
+      'Press the button below to end current block and restart.'
+    ];
+
     const configObj = {
       trials,
       showFixation: config.showFixation !== false,
@@ -28,9 +36,11 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       showResults: config.showResults !== false,
       trialDuration: config.trialDuration || 1500,
       samplingMethod: config.samplingMethod,
-      samplingSize: config.sampleSize,
+      samplingSize: 1,
       buttonLabel: config.nextButton || 'Finish',
       minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
+      continueText,
+      restartText: tryIndex < config.maxRetryCount ? restartText : continueText
     };
 
     const injectConfig = `
@@ -82,16 +92,20 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
             } else {
               const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
-              onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => ({
-                trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
-                duration: record.rt,
-                question: record.stimulus,
-                button_pressed: record.button_pressed,
-                start_time: record.image_time,
-                correct: record.correct,
-                start_timestamp: record.start_timestamp,
-                tag: record.tag,
-              })), true);
+              setLoading(true);
+
+              setTimeout(() => {
+                onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => ({
+                  trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
+                  duration: record.rt,
+                  question: record.stimulus,
+                  button_pressed: record.button_pressed,
+                  start_time: record.image_time,
+                  correct: record.correct,
+                  start_timestamp: record.start_timestamp,
+                  tag: record.tag,
+                })), true);
+              })
             }
           }}
         />
