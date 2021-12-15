@@ -104,9 +104,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
                   correct: record.correct,
                   start_timestamp: record.start_timestamp,
                   tag: record.tag,
-                })), true),
-                0
-              })
+                })), true);
+              }, 0)
             }
           }}
         />
