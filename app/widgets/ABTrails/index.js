@@ -41,7 +41,8 @@ class ABTrails extends React.Component {
     super(props);
     this.state = {
       message: " ",
-      messageColor: '#2e2e2e'
+      messageColor: '#2e2e2e',
+      isFinished: false,
     };
     this.finalAnswer = {};
     this.tutorials = {
@@ -54,6 +55,7 @@ class ABTrails extends React.Component {
         { text: "Please try not to lift the pen as you move from one number to the next. Work as quickly as you can.", },
         { text: "Begin here.", number: 1 },
         { text: "And end here.", number: 11 },
+        { text: "Click next to start" }
       ],
       trail2: [
         { text: "On this screen are more numbers in circles." },
@@ -61,7 +63,8 @@ class ABTrails extends React.Component {
         { text: "Start at 1.", number: 1 },
         { text: "And End here.", number: 11 },
         { text: "Please try not to lift the pen as you move from one circle to the next." },
-        { text: "Work as quickly as you can." }
+        { text: "Work as quickly as you can." },
+        { text: "Click next to start" }
       ],
       trail3: [
         { text: "There are numbers and letters in circles on this screen." },
@@ -73,6 +76,7 @@ class ABTrails extends React.Component {
         { text: "Please try not to lift the pen as you move from one number to the next. Work as quickly as you can." },
         { text: "Begin here.", number: 1 },
         { text: "And end here.", number: 6 },
+        { text: "Click next to start" }
       ],
       trail4: [
         { text: "On this screen there are more numbers and letters in circles." },
@@ -82,23 +86,9 @@ class ABTrails extends React.Component {
         { text: "And end here.", number: 6 },
         { text: "Please try not to lift the pen as you move from one circle to the next." },
         { text: "Work as quickly as you can." },
+        { text: "Click next to start" }
       ],
     };
-  }
-
-  componentDidMount() {
-
-  }
-
-  handleComment = (itemValue) => {
-    const { onChange } = this.props;
-    this.finalAnswer["text"] = itemValue;
-    onChange(this.finalAnswer);
-  }
-
-  onSelect(v) {
-    const { onChange } = this.props;
-    onChange({ value: v });
   }
 
   onResult = (itemValue, goToNext) => {
@@ -112,7 +102,11 @@ class ABTrails extends React.Component {
   }
 
   onRelease = () => {
-
+    this.setState({
+      message: 'Finished. Click next to continue.',
+      messageColor: '#2e2e2e',
+      isFinished: true,
+    });
   }
 
   onNextTutorial = (text) => {
@@ -121,6 +115,7 @@ class ABTrails extends React.Component {
 
   onEndTutorial = () => {
     this.props.setTutorialStatus(2);
+    this.setState({ isFinished: false })
   }
 
   onError = (errorMsg) => {
@@ -128,7 +123,7 @@ class ABTrails extends React.Component {
   }
 
   render() {
-    const { message, messageColor } = this.state;
+    const { message, messageColor, isFinished } = this.state;
     const {
       value,
       screen,
@@ -139,7 +134,12 @@ class ABTrails extends React.Component {
 
     this.finalAnswer = data ? data : {};
 
-    if (tutorialStatus === 0 && messageColor === "#2e2e2e" && message !== " ") {
+    if (
+      tutorialStatus === 0 &&
+      !isFinished &&
+      messageColor === "#2e2e2e" &&
+      message !== " "
+    ) {
       this.setState({ message: " " })
     }
 
@@ -155,7 +155,7 @@ class ABTrails extends React.Component {
               currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
               failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
               screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
-              currentScreen={currentScreen}
+              currentScreen={Number(screen.slice(-1))}
               screen={screens[screen]}
               onResult={this.onResult}
               ref={(ref) => { this.board = ref; }}
@@ -167,7 +167,7 @@ class ABTrails extends React.Component {
               <TrailsTutorial
                 currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
                 tutorial={this.tutorials[screen]}
-                currentScreen={currentScreen}
+                currentScreen={Number(screen.slice(-1))}
                 screen={screens[screen]}
                 ref={(ref) => { this.board = ref; }}
                 onNext={this.onNextTutorial}

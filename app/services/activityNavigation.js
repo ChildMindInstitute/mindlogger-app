@@ -72,8 +72,12 @@ export const getNextLabel = (
 ) => {
   // If the screen is not valid, then the label is Skip
   const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
-  if (activity.items[index].inputType === "trail" && tutorialStatus === 1) {
-    return i18n.t('activity_navigation:skip');
+  if (activity.items[index].inputType === "trail") {
+    if (tutorialStatus === 1) {
+      return i18n.t('activity_navigation:skip');
+    } else if (tutorialStatus === 2) {
+      return i18n.t('activity_navigation:next');
+    }
   }
 
   if (isSplashScreen) {
@@ -129,7 +133,8 @@ export const getActionLabel = (index, responses, items) => {
   if (response === null || typeof response === 'undefined') {
     return undefined;
   }
-  if (items[index].inputType === 'audioStimulus') {
+  if (items[index].inputType === 'audioStimulus' || 
+    items[index].inputType === 'trail') {
     return undefined;
   }
   return i18n.t('activity_navigation:undo');

@@ -303,7 +303,7 @@ class ActivityScreen extends Component {
     return layoutMeasurement.height + contentOffset.y >= contentSize.height - 1;
   };
 
-  handleChange(e, goToNext) {
+  handleChange(e, timer, goToNext) {
     if (!this.props.screen.timer || this.state.timerActive) {
       this.props.onChange(e, goToNext);
     }
