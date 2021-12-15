@@ -64,7 +64,7 @@ class TokenChart extends React.Component {
       { range: 'All' }
     ];
 
-    this.cumulative = props.data.cumulative;
+    this.cumulative = props.data.cumulative || 0;
   }
 
   formatResponses (data) {
@@ -185,6 +185,10 @@ class TokenChart extends React.Component {
         minimumDate = new Date(change.time);
       }
     }
+    if (!minimumDate) {
+      minimumDate = new Date();
+    }
+
     minimumDate.setDate(minimumDate.getDate() - 1);
 
     switch (range) {

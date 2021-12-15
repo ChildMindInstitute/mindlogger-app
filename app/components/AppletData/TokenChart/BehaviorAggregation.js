@@ -88,7 +88,7 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
 
             <View style={{ flexGrow: 1, height: '100%', justifyContent: 'space-around', paddingVertical: 20 }}>
               <Text style={styles.text}>{option.name}</Text>
-              <Text style={styles.text}>{(aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
+              <Text style={styles.text}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
             </View>
 
             <View style={{ width: 100, height: '100%', padding: 10 }}>
