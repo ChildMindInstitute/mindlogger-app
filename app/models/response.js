@@ -62,7 +62,7 @@ export const prepareResponseForUpload = (
           if (enableNegativeTokens && cumulative + negativeSum >= 0) {
             cumulative += negativeSum;
           }
-        }        
+        }
       } catch (error) {
         console.log("ERR: ", error);
       }
@@ -285,6 +285,13 @@ export const decryptAppletResponses = (applet, responses) => {
 
   /** replace response to plain format */
   if (responses.responses) {
+    const items = [];
+    for (const activity of applet.activities) {
+      for (const item of activity.items) {
+        items[item.schema] = item;
+      }
+    }
+
     Object.keys(responses.responses).forEach((item) => {
       for (let response of responses.responses[item]) {
         if (
@@ -305,6 +312,10 @@ export const decryptAppletResponses = (applet, responses) => {
         (response) => response.value !== undefined && response.value !== null
       );
       if (responses.responses[item].length === 0) {
+        delete responses.responses[item];
+      }
+
+      if (items[item] && (items[item].inputType == 'stabilityTracker' || items[item].inputType == 'visual-stimulus-response')) {
         delete responses.responses[item];
       }
     });
