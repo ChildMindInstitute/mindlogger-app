@@ -182,15 +182,19 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       captured.current = true;
     }
 
-    if (configObj.userInputType == 'touch' && controlBar.current == false) {
+    if (configObj.userInputType == 'touch') {
       updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
     }
   }, [width])
 
-  const onResponderRelease = useCallback(() => {
+  const onResponderRelease = useCallback((evt) => {
     if (captured.current) {
       controlBar.current = false;
       captured.current = false;
+    }
+
+    if (configObj.userInputType == 'touch') {
+      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
     }
 
     setMoving(true)
@@ -218,7 +222,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       maxLambda,
       value: responses.current,
       phaseType: configObj.phaseType
-    });
+    }, true);
 
     // reset values
     trialNumber.current = 0;
@@ -549,33 +553,37 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           configObj.dimensionCount == 1 && (
             <View
               style={{ position: 'absolute', width: "10%", height: width-blockHeight*2+outerStimRadius*2, top: blockHeight-outerStimRadius, left: 10, backgroundColor: 'white' }}
-              onStartShouldSetResponder={() => true}
-              onResponderGrant={onResponderGrant}
-              onResponderMove={onResponderMove}
-              onResponderRelease={onResponderRelease}
             >
-              {
-                controlBar.current && (
-                  <Text style={[
-                    styles.controlBarText,
-                    {
-                      width,
-                      transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
-                    }
-                  ]}>Tap here to {moving ? 're' : ''}start</Text>
-                ) || <></>
-                // (
-                //   <View
-                //     style={{
-                //       position: 'absolute',
-                //       width: '100%',
-                //       top: userPos.current ? userPos.current[1]-blockHeight+outerStimRadius-5 : 0,
-                //       height: 10,
-                //       backgroundColor: 'green'
-                //     }}
-                //   />
-                // )
-              }
+                {
+                  controlBar.current && (
+                    <Text style={[
+                      styles.controlBarText,
+                      {
+                        width,
+                        transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
+                      }
+                    ]}>Tap here to {moving ? 're' : ''}start</Text>
+                  ) || <></>
+                }
+
+                <View
+                  style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0 }}
+                  onStartShouldSetResponder={() => true}
+                  onResponderGrant={onResponderGrant}
+                  onResponderMove={onResponderMove}
+                  onResponderRelease={onResponderRelease}
+                />
+                {/* (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      top: userPos.current ? userPos.current[1]-blockHeight+outerStimRadius-5 : 0,
+                      height: 10,
+                      backgroundColor: 'green'
+                    }}
+                  />
+                ) */}
             </View>
           ) || <></>
         }
