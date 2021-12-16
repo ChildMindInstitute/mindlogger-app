@@ -262,9 +262,8 @@ class Activity extends React.Component {
       activity.items[currentScreen].correctAnswer &&
       activity.items[currentScreen].correctAnswer["en"]
     ) {
-      const correctAnswer =
-        activity.items[currentScreen].correctAnswer["en"];
-      if (responses[currentScreen] !== correctAnswer) {
+      const correctAnswer = activity.items[currentScreen].correctAnswer["en"];
+      if (this.state.responses[currentScreen] !== correctAnswer) {
         Alert.alert(
           i18n.t("activity:failed"),
           i18n.t("activity:incorrect_answer"),
