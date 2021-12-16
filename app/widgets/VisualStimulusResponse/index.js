@@ -36,7 +36,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       showResults: config.showResults !== false,
       trialDuration: config.trialDuration || 1500,
       samplingMethod: config.samplingMethod,
-      samplingSize: 1,
+      samplingSize: config.sampleSize,
       buttonLabel: config.nextButton || 'Finish',
       minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
       continueText,
@@ -105,7 +105,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
                   start_timestamp: record.start_timestamp,
                   tag: record.tag,
                 })), true);
-              })
+              }, 0)
             }
           }}
         />
