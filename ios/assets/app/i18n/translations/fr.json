@@ -280,8 +280,8 @@
   "camera": {
     "choose_photo": "Choisir photo",
     "choose_video": "Choisir vidéo",
-    "take_a_photo": "Prenez un nouvelle photo, ou choisissez-en une dans votre bibliothèque",
-    "take_a_video": "Prenez un nouvelle vidéo, ou choisissez-en une dans votre bibliothèque",
+    "take_a_photo": "Prenez une nouvelle photo, ou choisissez-en une dans votre bibliothèque",
+    "take_a_video": "Prenez une nouvelle vidéo, ou choisissez-en une dans votre bibliothèque",
     "camera": "Appareil photo",
     "library": "Bibliothèque"
   },
