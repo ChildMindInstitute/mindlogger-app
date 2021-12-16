@@ -124,13 +124,13 @@ function buildTimeline() {
     stimulus: function () {
       var total_trials = jsPsych.data.get().filter({ tag: 'trial' }).count();
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
-      const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
+      const rt = Math.round(jsPsych.data.get().filter({ tag: 'trial' }).select('rt').mean());
 
-      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of blocks.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
+      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
       if (accuracy > minimumAccuracy) {
-        msg = msg + '<p>Press the button below to continue.</p>';
+        msg = msg + window.CONFIG.continueText.map(txt => `<p>${txt}</p>`).join('');
       } else {
-        msg = msg + '<p>Remember to respond only to the central arrow.</p><p>Press the button below to end current trial and restart.</p>'
+        msg = msg + window.CONFIG.restartText.map(txt => `<p>${txt}</p>`).join('');
       }
       return msg;
     },
