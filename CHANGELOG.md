@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.17] - 2021-12-14
+## [0.18.18] - 2021-12-16
 - Modify French translations for popup
+
+
+## [0.18.17] - 2021-12-15
+- Fix flanker
 
 ## [0.18.16] - 2021-12-14
 - Fix timer and action buttons in A/B Trails
@@ -97,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix splash screen issues
 
 ## [0.17.67] - 2021-11-09
-- Fix pdf report issue 
+- Fix pdf report issue
 
 ## [0.17.66] - 2021-11-09
 - Fix daisy chain applet issue
