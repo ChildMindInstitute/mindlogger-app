@@ -78,7 +78,6 @@ export default class TrailsBoard extends Component {
     let { screenTime } = this.props;
 
     if (currentIntervalId && currentScreen) {
-      console.log('0000')
       clearInterval(currentIntervalId);
     }
 
@@ -89,8 +88,8 @@ export default class TrailsBoard extends Component {
         const result = this.save(lines, currentIndex);
 
         screenTime = screenTime ? screenTime + 2 : 2;
-        if ((currentScreen === 2 && screenTime >= 10) ||
-           (currentScreen === 4 && screenTime >= 20)) {
+        if ((currentScreen === 2 && screenTime >= 150) ||
+           (currentScreen === 4 && screenTime >= 300)) {
           this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
         } else {
           this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
@@ -152,8 +151,7 @@ export default class TrailsBoard extends Component {
     const n = lines.length - 1;
     let isValidLine = false;
 
-    console.log('isStopped', isStopped)
-    if (!isStopped) return;
+    if (!isStopped || !lines.length) return;
 
     lines[n].points.forEach((point) => {
       const { x, y } = point;
@@ -172,7 +170,7 @@ export default class TrailsBoard extends Component {
   }
 
   movePoint = (evt, gestureState) => {
-    const { screen, onRelease } = this.props;
+    const { screen, onRelease, currentScreen } = this.props;
     const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
     let isFinished = false;
@@ -243,7 +241,9 @@ export default class TrailsBoard extends Component {
       this.setState({ lines: [...lines], currentIndex });
     }
     if (isFinished) {
-      onRelease();
+      onRelease(currentScreen === 4
+        ? 'Finished. Click Done to complete.'
+        : 'Finished. Click next to continue.');
     }
   }
 
@@ -396,7 +396,7 @@ export default class TrailsBoard extends Component {
       <View
         style={{
           width: '100%',
-          height: width || 300,
+          height: width,
           alignItems: 'center',
           backgroundColor: 'white',
         }}
