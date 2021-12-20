@@ -118,14 +118,12 @@ class Activity extends React.Component {
   handleChange(responses, goToNext=false, timeElapsed=0) {
     const { isSummaryScreen } = this.state;
     const {
-      currentApplet,
       currentResponse,
       currentScreen,
       nextScreen,
-      isSelected,
+      setTutorialStatus,
       setSummaryScreen,
       setSelected,
-      setAnswer
     } = this.props;
     const { activity } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
@@ -153,6 +151,9 @@ class Activity extends React.Component {
       } else {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
+        }
+        if (activity.items[currentScreen].inputType === "trail") {
+          setTutorialStatus(1);
         }
 
         nextScreen(timeElapsed);
@@ -247,7 +248,7 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         setTutorialStatus(0);
         return;
-      } else {
+      } else if (currentScreen !== 3) {
         setTutorialStatus(1);
       }
     }
