@@ -331,7 +331,7 @@ export const screens = {
         {
           order: 1,
           cx: 160,
-          cy: 205,
+          cy: 200,
           label: '1',
         },
         {
@@ -343,7 +343,7 @@ export const screens = {
         {
           order: 3,
           cx: 295,
-          cy: 210,
+          cy: 205,
           label: '3',
         },
         {
@@ -361,13 +361,13 @@ export const screens = {
         {
           order: 6,
           cx: 55,
-          cy: 270,
+          cy: 275,
           label: '6',
         },
         {
           order: 7,
           cx: 35,
-          cy: 140,
+          cy: 135,
           label: '7',
         },
         {
@@ -554,7 +554,7 @@ export const screens = {
       items: [
         {
           order: 1,
-          cx: 145,
+          cx: 150,
           cy: 200,
           label: '1',
         },
@@ -573,12 +573,12 @@ export const screens = {
         {
           order: 4,
           cx: 225,
-          cy: 150,
+          cy: 140,
           label: 'B',
         },
         {
           order: 5,
-          cx: 230,
+          cx: 225,
           cy: 255,
           label: '3',
         },
@@ -640,7 +640,7 @@ export const screens = {
         {
           order: 5,
           cx: 150,
-          cy: 120,
+          cy: 110,
           label: '3',
         },
         {

@@ -231,9 +231,6 @@ export default class TrailsBoard extends Component {
           }
         })
         this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
-        setTimeout(() => {
-          this.props.onError(" ");
-        }, 2000);
       }, 2000);
 
     } else {
