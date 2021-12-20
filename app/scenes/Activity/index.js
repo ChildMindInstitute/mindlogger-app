@@ -248,7 +248,7 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         setTutorialStatus(0);
         return;
-      } else {
+      } else if (currentScreen !== 3) {
         setTutorialStatus(1);
       }
     }

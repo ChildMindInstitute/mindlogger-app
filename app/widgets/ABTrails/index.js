@@ -76,7 +76,15 @@ class ABTrails extends React.Component {
   }
 
   onError = (errorMsg) => {
-    this.setState({ message: errorMsg ? errorMsg : ' ', messageColor: 'rgb(230, 50, 50)' });
+    this.setState({ 
+      message: errorMsg ? errorMsg : ' ', 
+      messageColor: 'rgb(230, 50, 50)',
+    });
+
+    setTimeout(() => {
+      const { isFinished } = this.state;
+      if (!isFinished) this.setState({ message: ' ' });
+    }, 2000);
   }
 
   onLayout = (event) => {
