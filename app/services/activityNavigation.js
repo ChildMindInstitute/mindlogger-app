@@ -9,13 +9,18 @@ const BACK = i18n.t('activity_navigation:back');
 const RETURN = i18n.t('activity_navigation:return');
 const UNDO = i18n.t('activity_navigation:undo');
 
-export const checkValidity = (item, response, index, tutorialStatus = 0) => { 
+export const checkValidity = (item, activityName, response, index, tutorialStatus = 0) => { 
   if (item.inputType === "trail" && tutorialStatus !== 0) {
     return true;
   }
   if (item.inputType === "trail" && index >= 0 && response) {
-    const screen = screens[item.inputType + '' + (index + 1)];
-
+    let currentActivity = 'activity1';
+  
+    if (activityName.includes('v2')) {
+      currentActivity = 'activity2';
+    }
+    
+    const screen = screens[currentActivity][item.inputType + '' + (index + 1)];
     if (screen.items.length !== response.value.currentIndex) {
       return false;
     }
@@ -71,9 +76,13 @@ export const getNextLabel = (
   tutorialStatus
 ) => {
   // If the screen is not valid, then the label is Skip
-  const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
-  if (activity.items[index].inputType === "trail" && tutorialStatus === 1) {
-    return i18n.t('activity_navigation:skip');
+  const isValid = checkValidity(activity.items[index], activity.name.en, responses[index], index, tutorialStatus);
+  if (activity.items[index].inputType === "trail") {
+    if (tutorialStatus === 1) {
+      return i18n.t('activity_navigation:skip');
+    } else if (tutorialStatus === 2) {
+      return i18n.t('activity_navigation:next');
+    }
   }
 
   if (isSplashScreen) {
@@ -95,7 +104,7 @@ export const getNextLabel = (
 
 // If item has a valid response, or is skippable, then next is enabled
 export const isNextEnabled = (index, activity, responses, tutorialStatus) => {
-  const isValid = checkValidity(activity.items[index], responses[index], index, tutorialStatus);
+  const isValid = checkValidity(activity.items[index], activity.name.en, responses[index], index, tutorialStatus);
   const isSkippable = checkSkippable(activity, activity.items[index]);
   return isValid || isSkippable;
 };
@@ -129,7 +138,8 @@ export const getActionLabel = (index, responses, items) => {
   if (response === null || typeof response === 'undefined') {
     return undefined;
   }
-  if (items[index].inputType === 'audioStimulus') {
+  if (items[index].inputType === 'audioStimulus' || 
+    items[index].inputType === 'trail') {
     return undefined;
   }
   return i18n.t('activity_navigation:undo');

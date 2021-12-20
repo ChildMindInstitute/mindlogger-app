@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, PanResponder, BackHandler } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
 import { magnetometer } from "react-native-sensors";
@@ -37,19 +37,23 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     marginBottom: 10,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   times: {
     flex: 1,
     textAlign: 'left',
     transform: [{ rotate: '90deg'}],
   },
+  controlBarText: {
+    flex: 1,
+    textAlign: 'center',
+  },
   score: {
     flex: 1,
     textAlign: 'left',
     fontWeight: 'bold',
     fontSize: 20,
-    transform: [{ rotate: '90deg'}]
+    transform: [{ rotate: '90deg'}, { translateX: 15 }]
   },
   lambda: {
     flex: 1,
@@ -99,6 +103,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   const oobDuration = useRef(0);
   const trialNumber = useRef(0);
   const responses = useRef([]);
+  const controlBar = useRef(true);
   const magnRef = useRef(), baseAcc = useRef();
 
   const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000), lastCrashTime = useRef(0);
@@ -161,29 +166,45 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     }
   }, [moving])
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: (evt) => {
-        if (configObj.userInputType == 'touch') {
-          userPos.current = [
-            evt.nativeEvent.locationX,
-            evt.nativeEvent.locationY
-          ];
-        }
+  const updateUserPos = (x, y) => {
+    userPos.current = [x, y];
 
-        setMoving(true)
-      },
-      onPanResponderMove: (evt) => {
-        if (configObj.userInputType == 'touch') {
-          userPos.current = [
-            evt.nativeEvent.locationX,
-            evt.nativeEvent.locationY
-          ];
-        }
-      },
-    })
-  ).current;
+    if (config.dimensionCount == 1) {
+      userPos.current[1] = Math.max(0, userPos.current[1]);
+      userPos.current[1] = Math.min(userPos.current[1], width-blockHeight*2+outerStimRadius*2);
+      userPos.current[1] += blockHeight-outerStimRadius
+    }
+  };
+
+  const captured = useRef(false);
+  const onResponderGrant = useCallback(evt => {
+    if (controlBar.current) {
+      captured.current = true;
+    }
+
+    if (configObj.userInputType == 'touch') {
+      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+    }
+  }, [width])
+
+  const onResponderRelease = useCallback((evt) => {
+    if (captured.current) {
+      controlBar.current = false;
+      captured.current = false;
+    }
+
+    if (configObj.userInputType == 'touch') {
+      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+    }
+
+    setMoving(true)
+  }, [width])
+
+  const onResponderMove = useCallback(evt => {
+    if (configObj.userInputType == 'touch' && controlBar.current == false) {
+      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+    }
+  }, [width])
 
   const finishResponse = () => {
     setMoving(false)
@@ -201,7 +222,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       maxLambda,
       value: responses.current,
       phaseType: configObj.phaseType
-    });
+    }, true);
 
     // reset values
     trialNumber.current = 0;
@@ -246,6 +267,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       if (offTargetTimer.current < 0) {
         oobDuration.current = 0;
         isOOB.current = true;
+        controlBar.current = true;
+        userPos.current = [width/2, width/2];
       }
     }
   }
@@ -273,8 +296,10 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     if (!isInBounds) {
       oobDuration.current = 0;
       isOOB.current = true;
+      controlBar.current = true;
+      userPos.current = [width/2, width/2];
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, (timeElapsed - lastCrashTime.current) / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
+      lambdaVal.current = getNewLambda(lambdaVal.current, deltaTime / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
     }
   }
 
@@ -293,7 +318,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
           isOOB.current = false;
           restartTrial(timeElapsed);
         }
-      } else {
+      } else if (!controlBar.current) {
         updateScore(tickNumber, deltaTime)
         updateModels(timeElapsed, deltaTime)
       }
@@ -428,8 +453,12 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
         style={{
           width,
           height: width,
+          position: 'relative'
         }}
-        {...panResponder.panHandlers}
+        onStartShouldSetResponder={() => configObj.dimensionCount==2}
+        onResponderGrant={onResponderGrant}
+        onResponderMove={onResponderMove}
+        onResponderRelease={onResponderRelease}
       >
         <Svg width={width} height={width}>
           {
@@ -519,6 +548,45 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
               ))
           }
         </Svg>
+
+        {
+          configObj.dimensionCount == 1 && (
+            <View
+              style={{ position: 'absolute', width: "10%", height: width-blockHeight*2+outerStimRadius*2, top: blockHeight-outerStimRadius, left: 10, backgroundColor: 'white' }}
+            >
+                {
+                  controlBar.current && (
+                    <Text style={[
+                      styles.controlBarText,
+                      {
+                        width,
+                        transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
+                      }
+                    ]}>Tap here to {moving ? 're' : ''}start</Text>
+                  ) || <></>
+                }
+
+                <View
+                  style={{ position: 'absolute', width: '100%', height: '100%', opacity: 0 }}
+                  onStartShouldSetResponder={() => true}
+                  onResponderGrant={onResponderGrant}
+                  onResponderMove={onResponderMove}
+                  onResponderRelease={onResponderRelease}
+                />
+                {/* (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      top: userPos.current ? userPos.current[1]-blockHeight+outerStimRadius-5 : 0,
+                      height: 10,
+                      backgroundColor: 'green'
+                    }}
+                  />
+                ) */}
+            </View>
+          ) || <></>
+        }
       </View>
     </View>
   )

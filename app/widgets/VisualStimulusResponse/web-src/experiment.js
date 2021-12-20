@@ -4,7 +4,7 @@ function buildTimeline() {
   const showFeedback = window.CONFIG.showFeedback === false ? false : true;
   const showResults = window.CONFIG.showResults === false ? false : true;
   const trialDuration = window.CONFIG.trialDuration || 1500;
-  const fixationImage = window.CONFIG.fixation || '<div class="mindlogger-fixation">+</div>';
+  const fixationImage = window.CONFIG.fixation || '<div class="mindlogger-fixation">-----</div>';
   const samplingMethod = window.CONFIG.samplingMethod || 'default';
   const sampleSize = window.CONFIG.samplingSize || 1;
   const minimumAccuracy = window.CONFIG.minimumAccuracy;
@@ -36,7 +36,7 @@ function buildTimeline() {
   var fixation = {
     type: 'html-keyboard-response',
     stimulus: fixationImage,
-    choices: jsPsych.NO_KEYS,
+    choices: window.CONFIG.trials[0].choices.map(choice => choice.name.en),
     trial_duration: 500,
     data: {
       tag: 'fixation',
@@ -73,7 +73,7 @@ function buildTimeline() {
     data: {
       tag: 'feedback',
     },
-    choices: jsPsych.NO_KEYS,
+    choices: window.CONFIG.trials[0].choices.map(choice => choice.name.en),
     trial_duration: 500,
   };
 
@@ -124,17 +124,17 @@ function buildTimeline() {
     stimulus: function () {
       var total_trials = jsPsych.data.get().filter({ tag: 'trial' }).count();
       var accuracy = Math.round(jsPsych.data.get().filter({ correct: true }).count() / total_trials * 100);
-      const rt = Math.round(jsPsych.data.get().filter({ correct: true }).select('rt').mean());
+      const rt = Math.round(jsPsych.data.get().filter({ tag: 'trial' }).select('rt').mean());
 
-      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of the trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
+      let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
       if (accuracy > minimumAccuracy) {
-        msg = msg + '<p>Press the button below to continue.</p>';
+        msg = msg + window.CONFIG.continueText.map(txt => `<p>${txt}</p>`).join('');
       } else {
-        msg = msg + '<p>Remember to respond only to the central arrow.</p><p>Press the button below to end current trial and restart.</p>'
+        msg = msg + window.CONFIG.restartText.map(txt => `<p>${txt}</p>`).join('');
       }
       return msg;
     },
-    choices: ['Finish'],
+    choices: [window.CONFIG.buttonLabel],
     data: {
       tag: 'result',
     }
@@ -143,7 +143,7 @@ function buildTimeline() {
   var end_block = {
     type: "html-button-response",
     stimulus: "<p>The experiment is complete.</p><p>Press the button below to continue.</p>",
-    choices: ['Finish']
+    choices: [window.CONFIG.buttonLabel]
   };
 
   /*set up experiment structure*/

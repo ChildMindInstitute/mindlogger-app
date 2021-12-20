@@ -47,6 +47,7 @@ export default class TrailsBoard extends Component {
       validIndex: -1,
       currentScreen: 0,
       isValid: false,
+      isStopped: false,
       rate: 1,
     };
     this.allowed = false;
@@ -64,8 +65,7 @@ export default class TrailsBoard extends Component {
       onPanResponderMove: this.movePoint,
       onPanResponderRelease: (evt, gestureState) => {
         const { lines, currentIndex } = this.state;
-        this.props.onRelease();
-        this.movePoint(evt, gestureState);
+        this.endLine(evt, gestureState);
         this.props.onResult({ ...this.save(lines, currentIndex) });
       },
     });
@@ -81,21 +81,23 @@ export default class TrailsBoard extends Component {
       clearInterval(currentIntervalId);
     }
 
-    this.timeInterval = setInterval(() => {
-      const { currentIndex, failedCnt, currentScreen } = this.props;
-      const { lines } = this.state;
-      const result = this.save(lines, currentIndex);
+    if (currentScreen % 2 === 0) {
+      this.timeInterval = setInterval(() => {
+        const { currentIndex, failedCnt, currentScreen } = this.props;
+        const { lines } = this.state;
+        const result = this.save(lines, currentIndex);
 
-      screenTime = screenTime ? screenTime + 1 : 1;
-      if (currentScreen % 2 === 0 || screenTime < 180) {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
-        this.setState({ screenTime });
-      } else {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
-      }
-    }, 1000)
-
-    await storeData('intervalId', this.timeInterval);
+        screenTime = screenTime ? screenTime + 2 : 2;
+        if ((currentScreen === 2 && screenTime >= 150) ||
+           (currentScreen === 4 && screenTime >= 300)) {
+          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
+        } else {
+          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
+          this.setState({ screenTime });
+        }
+      }, 2000)
+      await storeData('intervalId', this.timeInterval);
+    }
     this.setState({ failedCnt: failedCnt ? failedCnt : 0 });
     this.setState({ currentIndex, currentScreen });
   }
@@ -108,11 +110,15 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines, rate, currentIndex } = this.state;
+    const { lines, rate, currentIndex, currentPoint } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
     let order = 0;
+
+    if (currentPoint !== -1) {
+      this.setState({ currentPoint: -1 });
+    }
 
     this.props.onError();
     screen.items.forEach((item) => {
@@ -132,17 +138,43 @@ export default class TrailsBoard extends Component {
       }
     });
     
-    this.setState({ isValid, validIndex: -1 });
+    this.setState({ isValid, validIndex: -1, isStopped: true });
     if (isValid) {
       const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true }] };
       this.setState({ lines: [...lines, newLine] });
     }
   }
 
-  movePoint = (evt, gestureState) => {
+  endLine = (evt, gestureState) => {
     const { screen } = this.props;
+    const { lines, rate, currentIndex, isStopped } = this.state;
+    const n = lines.length - 1;
+    let isValidLine = false;
+
+    if (!isStopped || !lines.length) return;
+
+    lines[n].points.forEach((point) => {
+      const { x, y } = point;
+      const item = screen.items.find(({ cx, cy }) =>
+        Math.sqrt(Math.pow(cx * rate - x, 2) + Math.pow(cy * rate - y, 2)) < screen.r * rate
+      );
+
+      if (item && item.order !== currentIndex) isValidLine = true;
+    });
+
+    if (!isValidLine && lines.length) {
+      lines[n].points.forEach((point) => {
+        point.valid = false;
+      })
+    }
+  }
+
+  movePoint = (evt, gestureState) => {
+    const { screen, onRelease, currentScreen } = this.props;
     const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
+    let isFinished = false;
+
     if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
 
     const time = Date.now();
@@ -161,10 +193,15 @@ export default class TrailsBoard extends Component {
     if (item && item.order !== currentIndex) {
       if (item.order === currentIndex + 1) {
         currentIndex += 1;
+        
+        if (currentIndex === screen.items.length) {
+          isFinished = true;
+        }
         this.setState({ validIndex: lines[n].points.length });
       } else {
         valid = false;
       }
+      this.setState({ isStopped: false });
     }
 
     if (!valid) {
@@ -194,15 +231,16 @@ export default class TrailsBoard extends Component {
           }
         })
         this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
-        setTimeout(() => {
-          this.props.onError(" ");
-          this.setState({ currentPoint: -1 });
-        }, 2000);
       }, 2000);
 
     } else {
       lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
       this.setState({ lines: [...lines], currentIndex });
+    }
+    if (isFinished) {
+      onRelease(currentScreen === 4
+        ? 'Finished. Click Done to complete.'
+        : 'Finished. Click next to continue.');
     }
   }
 
@@ -355,7 +393,7 @@ export default class TrailsBoard extends Component {
       <View
         style={{
           width: '100%',
-          height: width || 300,
+          height: width,
           alignItems: 'center',
           backgroundColor: 'white',
         }}
