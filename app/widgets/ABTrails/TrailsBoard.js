@@ -116,6 +116,9 @@ export default class TrailsBoard extends Component {
     let isValid = false;
     let order = 0;
 
+    const currentItem = screen.items.find(({ order }) => order === currentIndex);
+    const nextItem = screen.items.find(({ order }) => order === currentIndex+1);
+
     if (currentPoint !== -1) {
       this.setState({ currentPoint: -1 });
     }
@@ -137,10 +140,10 @@ export default class TrailsBoard extends Component {
         }
       }
     });
-    
+
     this.setState({ isValid, validIndex: -1, isStopped: true });
     if (isValid) {
-      const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true }] };
+      const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true, start: currentItem.label, end: nextItem.label }] };
       this.setState({ lines: [...lines, newLine] });
     }
   }
@@ -153,9 +156,10 @@ export default class TrailsBoard extends Component {
 
     if (!isStopped || !lines.length) return;
 
+    let item = null;
     lines[n].points.forEach((point) => {
       const { x, y } = point;
-      const item = screen.items.find(({ cx, cy }) =>
+      item = screen.items.find(({ cx, cy }) =>
         Math.sqrt(Math.pow(cx * rate - x, 2) + Math.pow(cy * rate - y, 2)) < screen.r * rate
       );
 
@@ -165,6 +169,7 @@ export default class TrailsBoard extends Component {
     if (!isValidLine && lines.length) {
       lines[n].points.forEach((point) => {
         point.valid = false;
+        point.actual = item && item.label || 'none';
       })
     }
   }
@@ -176,6 +181,11 @@ export default class TrailsBoard extends Component {
     let isFinished = false;
 
     if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
+
+    const currentItem = screen.items.find(({ order }) => order === currentIndex);
+    const nextItem = screen.items.find(({ order }) => order === currentIndex+1);
+
+    if (!nextItem) return ;
 
     const time = Date.now();
     const n = lines.length - 1;
@@ -193,7 +203,7 @@ export default class TrailsBoard extends Component {
     if (item && item.order !== currentIndex) {
       if (item.order === currentIndex + 1) {
         currentIndex += 1;
-        
+
         if (currentIndex === screen.items.length) {
           isFinished = true;
         }
@@ -206,7 +216,6 @@ export default class TrailsBoard extends Component {
 
     if (!valid) {
       const { validIndex } = this.state;
-      const currentItem = screen.items.find(({ order }) => order === currentIndex);
       const currentPos = {
         x: (currentItem.cx + item.cx) / 2,
         y: (currentItem.cy + item.cy) / 2,
@@ -228,13 +237,14 @@ export default class TrailsBoard extends Component {
         lines[n].points.forEach((point, index) => {
           if (index > validIndex) {
             point.valid = false;
+            point.actual = item.label;
           }
         })
         this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
       }, 2000);
 
     } else {
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid });
+      lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
       this.setState({ lines: [...lines], currentIndex });
     }
     if (isFinished) {
