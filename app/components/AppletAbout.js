@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import i18n from "i18next";
 import { AboutView } from "./core/AboutView";
 
@@ -44,9 +44,21 @@ ${i18n.t("applet_about:no_info")}
 
   render() {
     const { markdown } = this.state;
+    const { landingPageType } = this.props.applet;
+
     return (
-      <View style={{ padding: 10, backgroundColor: "white" }}>
-        <AboutView>{markdown}</AboutView>
+      <View style={{ padding: 10, backgroundColor: "white", height: '100%' }}>
+        {
+          (landingPageType == 'markdown' || landingPageType == 'text') && (
+            <AboutView>{markdown}</AboutView>
+          ) || (
+            <Image source={{ uri: markdown }} style={{
+              flex: 1,
+              width: "100%",
+              resizeMode: "contain",
+            }} />
+          )
+        }
       </View>
     );
   }
