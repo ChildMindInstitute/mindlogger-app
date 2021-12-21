@@ -335,7 +335,7 @@ export default class TrailsBoard extends Component {
           fontSize={trailsData.fontSize * rate}
           fill="white"
           x={item.cx * rate}
-          y={(item.cy + 7) * rate}
+          y={(item.cy + trailsData.fontSize / 2) * rate}
           textAnchor="middle"
         >
           {item.label}
@@ -357,7 +357,7 @@ export default class TrailsBoard extends Component {
           fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - 20) * rate}
+          y={(item.cy - trailsData.r - 5) * rate}
           textAnchor="middle"
         >
           {`Begin`}
@@ -369,7 +369,7 @@ export default class TrailsBoard extends Component {
           fontSize={12 * ((rate - 1) / 2 + 1)}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - 20) * rate}
+          y={(item.cy - trailsData.r - 5) * rate}
           textAnchor="middle"
         >
           {`End`}
