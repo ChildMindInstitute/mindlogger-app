@@ -92,8 +92,8 @@ export default class TrailsBoard extends Component {
       const result = this.save(lines, currentIndex);
 
       screenTime = screenTime ? screenTime + 1 : 1;
-      if ((currentScreen === 2 && screenTime >= 20) ||
-        (currentScreen === 4 && screenTime >= 40)) {
+      if ((currentScreen === 2 && screenTime >= 150) ||
+        (currentScreen === 4 && screenTime >= 300)) {
         this.setState({ screenTime: 0 });
         this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
       } else {
