@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import TrailsBoard from './TrailsBoard';
 import TrailsTutorial from './TrailsTutorial';
 import { screens, tutorials } from './TrailsData';
-import { setTutorialStatus } from '../../state/app/app.actions';
-import { tutorialStatusSelector } from '../../state/app/app.selectors';
+import { setTutorialStatus, setTrailsTimerId } from '../../state/app/app.actions';
+import { tutorialStatusSelector, trailsTimerIdSelector } from '../../state/app/app.selectors';
 import { currentResponsesSelector } from "../../state/responses/responses.selectors";
 import i18n from 'i18next';
 
@@ -48,10 +48,19 @@ class ABTrails extends React.Component {
     this.finalAnswer = {};
   }
 
-  onResult = (itemValue, goToNext) => {
+  shouldComponentUpdate(nextProps, nextState) {
+    const { screen, currentScreen } = nextProps;
+
+    if (Number(screen.slice(-1)) !== currentScreen + 1) {
+      return false;
+    }
+    return true;
+  }
+
+  onResult = (itemValue, goToNext = false) => {
     const { onChange } = this.props;
     this.finalAnswer["value"] = itemValue;
-    onChange(this.finalAnswer, false, goToNext);
+    onChange(this.finalAnswer, goToNext);
   }
 
   onPress = () => {
@@ -104,7 +113,10 @@ class ABTrails extends React.Component {
     const {
       screen,
       data,
-      tutorialStatus
+      tutorialStatus,
+      trailsTimerId,
+      setTrailsTimerId,
+      currentScreen,
     } = this.props;
     const { activity } = this.props.currentResponse;
     let currentActivity = 'activity1';
@@ -140,11 +152,12 @@ class ABTrails extends React.Component {
               currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
               failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
               screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
-              currentScreen={Number(screen.slice(-1))}
+              currentScreen={currentScreen + 1}
+              setTrailsTimerId={setTrailsTimerId}
+              trailsTimerId={trailsTimerId}
               screen={screens[currentActivity][screen]}
               onResult={this.onResult}
               ref={(ref) => { this.board = ref; }}
-              onPress={this.onPress}
               onError={this.onError}
               onRelease={this.onRelease}
             />
@@ -152,7 +165,7 @@ class ABTrails extends React.Component {
               <TrailsTutorial
                 currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
                 tutorial={tutorials[currentActivity][screen]}
-                currentScreen={Number(screen.slice(-1))}
+                currentScreen={currentScreen + 1}
                 screen={screens[currentActivity][screen]}
                 ref={(ref) => { this.board = ref; }}
                 onNext={this.onNextTutorial}
@@ -175,8 +188,10 @@ ABTrails.propTypes = {
   currentScreen: PropTypes.number.isRequired,
   tutorialStatus: PropTypes.number.isRequired,
   setTutorialStatus: PropTypes.func.isRequired,
+  setTrailsTimerId: PropTypes.func.isRequired,
   currentResponse: PropTypes.object.isRequired,
   data: PropTypes.any,
+  trailsTimerId: PropTypes.number.isRequired,
   screen: PropTypes.string.isRequired,
 };
 
@@ -184,11 +199,13 @@ const mapStateToProps = (state) => {
   return {
     tutorialStatus: tutorialStatusSelector(state),
     currentResponse: currentResponsesSelector(state),
+    trailsTimerId: trailsTimerIdSelector(state),
   };
 };
 
 const mapDispatchToProps = {
   setTutorialStatus,
+  setTrailsTimerId,
 };
 
 export default connect(

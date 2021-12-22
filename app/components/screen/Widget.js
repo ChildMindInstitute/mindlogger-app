@@ -122,6 +122,7 @@ const Widget = ({
       <ABTrails
         screen={screen.variableName}
         currentScreen={currentScreen}
+        isCurrent={isCurrent}
         data={answer}
         onChange={onChange}
       />

@@ -310,7 +310,7 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { screen, answer, onChange, isCurrent, onContentError, hasSplashScreen } = this.props;
+    const { screen, answer, onChange, isCurrent, onContentError, currentScreen } = this.props;
     const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
@@ -370,6 +370,7 @@ class ActivityScreen extends Component {
                 answer={answer}
                 onChange={this.handleChange.bind(this)}
                 isCurrent={isCurrent}
+                currentScreen={currentScreen}
                 screen={screen}
                 onPress={() => {
                   this.setState({ scrollEnabled: false });
