@@ -56,6 +56,7 @@ import {
   isPrevEnabled,
 } from "../../services/activityNavigation";
 import Timer from "../../services/timer";
+import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -192,6 +193,13 @@ class Activity extends React.Component {
     if (this.props.currentResponse) {
       this.updateStore();
       this.props.completeResponse(true);
+
+      sendData(
+        'finish_activity',
+        this.props.currentResponse.activity.id,
+        this.props.currentApplet.id
+      );
+
       Actions.replace("activity_thanks")
     }
   }
@@ -301,11 +309,13 @@ class Activity extends React.Component {
     const { currentScreen } = this.props;
     if (!this.props.currentResponse) return;
 
-    this.props.setAnswer(
-      this.props.currentResponse.activity,
-      currentScreen,
-      this.state.responses[currentScreen]
-    );
+    if (this.props.currentResponse) {
+      this.props.setAnswer(
+        this.props.currentResponse.activity,
+        currentScreen,
+        this.state.responses[currentScreen]
+      );
+    }
   }
 
   componentWillUnmount() {
@@ -377,7 +387,9 @@ class Activity extends React.Component {
             onPressNextScreen={this.handlePressNextScreen}
             onPressAction={() => {
               responses[currentScreen] = undefined;
-              this.setState({ responses })
+              this.setState({ responses });
+
+              sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
             }}
           />
         }
@@ -387,6 +399,8 @@ class Activity extends React.Component {
             finishActivity={(activity) => {
               this.updateStore();
               this.props.finishActivity(activity);
+
+              sendData('finish_activity', activity.id, currentApplet.id);
             }}
           />
         }
@@ -398,6 +412,9 @@ class Activity extends React.Component {
             hasSplashScreen={hasSplashScreen}
             onChange={(answer, goToNext=false, timeElapsed=0) => {
               responses[currentScreen] = answer;
+
+              sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
+
               this.setState({ responses })
               this.handleChange(answer, goToNext, timeElapsed);
             }}
@@ -427,6 +444,8 @@ class Activity extends React.Component {
             onPressAction={() => {
               responses[currentScreen] = undefined;
               this.setState({ responses });
+
+              sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
             }}
           />
         }
@@ -453,6 +472,8 @@ class Activity extends React.Component {
                 onPressAction={() => {
                   responses[currentScreen] = undefined;
                   this.setState({ responses });
+
+                  sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
                 }}
               />
             }

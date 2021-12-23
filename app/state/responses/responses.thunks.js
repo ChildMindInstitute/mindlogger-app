@@ -65,6 +65,7 @@ import { getNextPos, getLastPos } from "../../services/activityNavigation";
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
 import { getAESKey, getPublicKey } from "../../services/encryption";
+import { sendData } from "../../services/socket";
 import config from "../../config";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
@@ -137,6 +138,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
+
+    sendData('start_activity', activity.id, applet.id);
+
     Actions.push('take_act');
   } else if (typeof responses.inProgress[index] === "undefined") {
     // There is no response in progress, so start a new one
@@ -150,6 +154,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
     dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
+
+    sendData('start_activity', activity.id, applet.id);
+
     Actions.push("take_act");
   } else {
     Alert.alert(
@@ -186,6 +193,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
             );
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
             dispatch(setCurrentActivity(activity.id));
+
+            sendData('restart_activity', activity.id, applet.id);
+
             Actions.push("take_act");
           },
         },
@@ -203,6 +213,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next, responses.inProgress[index][currentScreen].startTime));
             dispatch(setCurrentActivity(activity.id));
+
+            sendData('resume_activity', activity.id, applet.id);
+
             Actions.push("take_act");
           },
         },
@@ -485,6 +498,9 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
     if (activity.nextAccess) {
       dispatch(setActivityAccess(applet.id + activity.id));
     }
+
+    sendData('finish_activity', activity.id, applet.id);
+
     dispatch(completeResponse());
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     Actions.push("activity_thanks");
