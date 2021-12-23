@@ -29,6 +29,7 @@ import {
 
 import { parseAppletEvents } from '../../models/json-ld';
 import { getActivityAvailabilityFromDependency } from '../../services/helper';
+import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
   applet,
@@ -180,6 +181,10 @@ const ActivityList = ({
 
   return (
     <View style={{ paddingBottom: 30 }}>
+      {
+        applet.streamEnabled && <LiveConnection applet={applet} /> || <></>
+      }
+
       {activities && activities.map(activity => (
         <ActivityListItem
           disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
