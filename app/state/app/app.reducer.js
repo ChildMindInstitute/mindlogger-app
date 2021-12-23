@@ -112,6 +112,20 @@ export const initialState = {
   isConnected: true,
 
   /**
+   * A/BTrails tutorial status
+   *
+   * @type {boolean}
+   */
+  isTutorial: 1,
+
+  /**
+   * A/BTrails timer id
+   *
+   * @type {number}
+   */
+  trailsTimerId: null,
+
+  /**
    * Completed events
    *
    * @type {object}
@@ -131,6 +145,16 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isConnected: action.payload,
+      }
+    case APP_CONSTANTS.SET_TRAILS_TIMER_ID:
+      return {
+        ...state,
+        trailsTimerId: action.payload,
+      }
+    case APP_CONSTANTS.SET_TUTORIAL_STATUS:
+      return {
+        ...state,
+        isTutorial: action.payload,
       }
     case APP_CONSTANTS.SET_UPDATED_TIME:
       return {

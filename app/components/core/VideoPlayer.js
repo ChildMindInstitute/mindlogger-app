@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { StyleSheet, View, Image, TouchableOpacity, Animated } from "react-native";
 import Video from "react-native-video";
 import MediaControls, { PLAYER_STATES } from "react-native-media-controls";
 
 const noop = () => {};
+const image_replay = require('../../../img/replay.png');
 
 export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode = "cover" }) => {
   const videoPlayer = useRef(null);
@@ -12,7 +13,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [paused, setPaused] = useState(!autoPlay);
-  const [playerState, setPlayerState] = useState(PLAYER_STATES.PAUSED);
+  const [playerState, setPlayerState] = useState(autoPlay ? PLAYER_STATES.PLAYING : PLAYER_STATES.PAUSED);
 
   const onSeek = (seek) => {
     videoPlayer?.current.seek(seek);
@@ -62,7 +63,7 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
         source={{ uri }}
         style={styles.mediaPlayer}
         volume={1.0}
-        repeat={autoPlay}
+        repeat={false}
       />
       <MediaControls
         isFullScreen={isFullScreen}
@@ -80,6 +81,48 @@ export const VideoPlayer = ({ uri, width, height, autoPlay = false, resizeMode =
     </View>
   );
 };
+
+export const GifPlayer = ({ uri, width, height }) => {
+  const [key, setKey] = useState(0);
+  const [active, setActive] = useState(true);
+  const opacity = useRef(new Animated.Value(0.2)).current
+
+  const replay = () => {
+    setKey(key+1);
+  };
+
+  useEffect(() => {
+    Animated.timing(
+      opacity,
+      {
+        toValue: active ? 0.2 : 0,
+        duration: 500,
+      }
+    ).start();
+  }, [active])
+
+  return (
+    <View style={{ ...styles.container, width, height }}>
+      <Image key={key} source={{ uri }} style={styles.image} />
+      <Animated.View
+        style={[styles.gifController, { opacity }]}
+        onStartShouldSetResponder={() => true}
+        onResponderGrant={() => setActive(!active)}
+      />
+
+      {
+        active &&
+          <TouchableOpacity
+            style={styles.replayButton}
+            onPress={replay}
+          >
+            <Image source={image_replay} />
+          </TouchableOpacity>
+        || <></>
+      }
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -99,4 +142,24 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "black",
   },
+  image: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "black",
+    resizeMode: "contain",
+  },
+  gifController: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    width: '100%',
+    height: '100%',
+  },
+  replayButton: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    backgroundColor: '#FFA426',
+    padding: 4,
+    borderRadius: 5
+  }
 });

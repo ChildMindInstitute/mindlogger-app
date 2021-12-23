@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { getSubScaleResult, getValuesFromResponse, getFinalSubScale, updateTrackerAggregation } from '../services/scoring';
+import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale, updateTrackerAggregation } from '../services/scoring';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -31,6 +31,8 @@ export const prepareResponseForUpload = (
   const languageKey = "en";
   const { activity, responses, subjectId } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
+  const { cumActivities } = evaluateCumulatives(responses, activity);
+
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.token.cumulative, tokenChanged = false, trackerChanged = false;
   const now = moment().format('YYYY-MM-DD')
@@ -55,16 +57,18 @@ export const prepareResponseForUpload = (
         })
       }
 
-      if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
-        const responseValues = getValuesFromResponse(item, responses[i].value) || [];
-        const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
-        const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
-
-        tokenChanged = true;
-        cumulative += positiveSum;
-        if (enableNegativeTokens && cumulative + negativeSum >= 0) {
-          cumulative += negativeSum;
+      try {
+        if (valueType && valueType.includes('token') && responses[i] !== undefined && responses[i] !== null) {
+          const responseValues = getValuesFromResponse(item, responses[i].value) || [];
+          const positiveSum = responseValues.filter(v => v >= 0).reduce((a, b) => a + b, 0);
+          const negativeSum = responseValues.filter(v => v < 0).reduce((a, b) => a + b, 0);
+          cumulative += positiveSum;
+          if (enableNegativeTokens && cumulative + negativeSum >= 0) {
+            cumulative += negativeSum;
+          }
         }
+      } catch (error) {
+        console.log("ERR: ", error);
       }
 
       if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
@@ -105,6 +109,10 @@ export const prepareResponseForUpload = (
     },
     languageCode: languageKey,
     alerts,
+    nextActivities: cumActivities.map(name => {
+      const activity = appletMetaData.activities.find(activity => activity.name.en == name)
+      return activity && activity.id.split('/').pop()
+    }).filter(id => id)
   };
 
   let subScaleResult = [];
@@ -296,13 +304,26 @@ export const decryptAppletResponses = (applet, responses) => {
 
   /** replace response to plain format */
   if (responses.responses) {
+    const items = [];
+    for (const activity of applet.activities) {
+      for (const item of activity.items) {
+        items[item.schema] = item;
+      }
+    }
+
     Object.keys(responses.responses).forEach((item) => {
       for (let response of responses.responses[item]) {
+        const inputType = items[item] && items[item].inputType;
+
         if (
           response.value &&
           response.value.src &&
           response.value.ptr !== undefined
         ) {
+          if (inputType == 'stabilityTracker' || inputType == 'visual-stimulus-response') {
+            responses.dataSources[response.value.src][response.value.ptr] = null;
+          }
+
           response.value =
             responses.dataSources[response.value.src][response.value.ptr];
         }

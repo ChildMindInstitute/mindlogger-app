@@ -3,7 +3,170 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.18.22] - 2021-12-22
+- Update A/B Trails timer
+
+## [0.18.21] - 2021-12-20
+- Update X and Y coordinates in A/B Trails
+
+## [0.18.20] - 2021-12-19
+- Update screen names in A/B Trails
+
+## [0.18.19] - 2021-12-16
+- Build a new version of A/B Trails
+
+## [0.18.18] - 2021-12-16
+- Modify French translations for popup
+
+## [0.18.17] - 2021-12-15
+- Fix flanker
+
+## [0.18.16] - 2021-12-14
+- Fix timer and action buttons in A/B Trails
+- Fix styling issues on date/time pickers
+- Fix original flanker
+
+## [0.18.15] - 2021-12-13
+- Fix offline notification
+
+## [0.18.14] - 2021-12-10
+- Fix trimmed watermark
+
+## [0.18.13] - 2021-12-8
+- Modify French translations to be idiomatic
+
+## [0.18.12] - 2021-12-8
+- Update all the points with new instructins in A/B Trails
+
+## [0.18.11] - 2021-12-7
+- Fix splash+cumulative+text item issue
+- Fix 'done' button issue on summary screen
+- Fix an issue that next screen isn't automatically opeened when time is finished
+
+## [0.18.10] - 2021-12-6
+- Fix Incorrect punctuation spacing
+- Added French version
+
+## [0.18.9] - 2021-12-5
+- Fix French translation
+- Fix stacked items
+
+## [0.18.8] - 2021-12-2
+- Fix localization issues
+- Fix notch issues on app header
+
+## [0.18.7] - 2021-12-1
+- Fix activity submission issue
+
+## [0.18.5] - 2021-12-1
+- Fix offline notification
+- Fix cumulative activity issue
+- Fix timer issue
+
+## [0.18.4] - 2021-11-30
+- Original Flanker
+`
+## [0.18.3] - 2021-11-29
+- Fix App crashing issue when completing an activity.
+
+## [0.18.2] - 2021-11-28
+- Update CMI Logo
+- Fix timer issue
+- Fix refreshing issue in main screen
+- Fix missing response option image issue
+
+## [0.18.1] - 2021-11-25
+- Fix date picker issues on ios 14
+
 ### [Unreleased]
+
+## [0.17.76] - 2021-11-21
+- Fix full splash image
+
+## [0.17.75] - 2021-11-18
+- Fix font-size on footer
+
+## [0.17.74] - 2021-11-18
+- Fix video player
+- Add git player
+- Fix spelling issue in pdf report
+
+## [0.17.73] - 2021-11-17
+- Modified divier line in PDF report
+
+## [0.17.72] - 2021-11-15
+- Fix displaying activity list
+- Fixed margin issues on camera widget
+
+## [0.17.71] - 2021-11-12
+- Swapped applet logo for splash screen
+
+## [0.17.70] - 2021-11-11
+- Fix splash screen issues
+
+## [0.17.69] - 2021-11-11
+- Fix issue with activity
+
+## [0.17.68] - 2021-11-10
+- Fix splash screen issues
+
+## [0.17.67] - 2021-11-09
+- Fix pdf report issue
+
+## [0.17.66] - 2021-11-09
+- Fix daisy chain applet issue
+
+## [0.17.65] - 2021-11-8
+- Fix displaying errors and drawing lines
+
+## [0.17.64] - 2021-11-08
+- Fix app crashing issue after completing an activity
+
+## [0.17.63] - 2021-11-07
+- Fix issues on PDF export
+- Add applet images on PDF export
+
+## [0.17.62] - 2021-11-4
+- Merge A/B Trails and Cog tasks
+
+## [0.17.61] - 2021-10-31
+- Fix issues on PDF export
+
+## [0.17.59] - 2021-10-31
+- Fix an issue with notfications are being turned on automatically
+
+## [0.17.58] - 2021-10-10
+- Fix skippable button
+
+## [0.17.57] - 2021-10-25
+- Fix response timer position
+
+## [0.17.56] - 2021-10-24
+- Fix style issues on camera widget
+
+## [0.17.55] - 2021-10-22
+- Fix response timer position
+
+## [0.17.54] - 2021-10-21
+- Fix notification issue
+
+## [0.17.53] - 2021-10-19
+- Fix dropdown background-color
+- Fix image above drawing item
+
+## [0.17.52] - 2021-10-19
+- Fix stacked items
+
+## [0.17.51] - 2021-10-18
+- Fix drawing dots
+
+## [0.17.49] - 2021-10-17
+- Fix alert message in geolocation items
+
+## [0.17.48] - 2021-10-16
+- Fix timer overlap on radio buttons
+
 ## [0.17.47] - 2021-10-13
 - Fix timer overlap and position
 

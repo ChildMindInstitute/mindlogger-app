@@ -21,10 +21,11 @@ const styles = StyleSheet.create({
     left: 15,
   },
   logoImage: {
-    height: 80,
-    width: 80,
+    height: 65,
+    width: 65,
     left: 0,
-    top: 0
+    top: 0,
+    resizeMode: 'contain',
   },
   navigations: {
     display: 'flex',
@@ -42,29 +43,29 @@ const ActHeader = (props) => {
     prevEnabled,
     actionLabel,
     watermark,
+    isSummaryScreen,
+    isSplashScreen,
     prevLabel,
     onPressNextScreen,
     onPressPrevScreen,
     onPressAction,
   } = props;
 
-  // console.log('prevLabel', prevLabel)
-
   return (
     <>
-      {!!watermark &&
+      {!!watermark && !isSummaryScreen && !isSplashScreen &&
         <View style={styles.logo}>
           <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
       }
       <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
-        <Icon 
+        <Icon
           type="FontAwesome"
-          name="close" 
+          name="close"
           style={{ color: colors.tertiary }} />
       </TouchableOpacity>
- 
-      {topNavigation && 
+
+      {topNavigation &&
         <View style={styles.navigations}>
           <TouchableOpacity onPress={() => onPressPrevScreen()}>
             {prevEnabled &&
@@ -101,6 +102,8 @@ ActHeader.propTypes = {
   actionLabel: PropTypes.string,
   nextEnabled: PropTypes.bool,
   prevEnabled: PropTypes.bool,
+  isSummaryScreen: PropTypes.bool,
+  isSplashScreen: PropTypes.bool,
   prevLabel: PropTypes.string,
   onPressNextScreen: PropTypes.func,
   onPressPrevScreen: PropTypes.func,

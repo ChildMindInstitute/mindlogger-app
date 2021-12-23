@@ -1,5 +1,5 @@
 // Third-party libraries.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -27,6 +27,8 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
+import { getActivityAvailabilityFromDependency } from '../../services/helper';
+import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
   applet,
@@ -50,44 +52,61 @@ const ActivityList = ({
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
+  const findActivityFromName = (activities, name) => {
+    return activities.findIndex(activity => activity.name.en == name)
+  }
+
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
 
-    const notShownActs = [];
-    for (let index = 0; index < newApplet.activities.length; index++) {
-      const act = newApplet.activities[index];
-      if (act.messages && (act.messages[0].nextActivity || act.messages[1].nextActivity)) notShownActs.push(act);
+    const dependency = []
+
+    for (let i = 0; i < newApplet.activities.length; i++) {
+      dependency.push([])
     }
-    const appletActivities = [];
 
-    for (let index = 0; index < newApplet.activities.length; index++) {
-      let isNextActivityShown = true;
-      const act = newApplet.activities[index];
-
-      for (let index = 0; index < notShownActs.length; index++) {
-        const notShownAct = notShownActs[index];
-        const alreadyAct = cumulativeActivities[`${notShownAct.id}/nextActivity`];
-
-        isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
-          ? true
-          : checkActivityIsShown(act.name.en, notShownAct.messages)
+    for (let i = 0; i < newApplet.activities.length; i++) {
+      const activity = newApplet.activities[i];
+      if (activity.messages) {
+        for (const message of activity.messages) {
+          if (message.nextActivity) {
+            const index = findActivityFromName(newApplet.activities, message.nextActivity)
+            if (index >= 0) {
+              dependency[index].push(i);
+            }
+          }
+        }
       }
-
-      if (act.isPrize != true && isNextActivityShown && !act.isVis && act.isReviewerActivity != true)
-        appletActivities.push(act);
     }
+
+    const convertToIndexes = (activities) => (activities || [])
+      .map(id => {
+        const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
+        return index;
+      })
+      .filter(index => index >= 0)
+
+    let appletActivities = getActivityAvailabilityFromDependency(
+      dependency,
+      convertToIndexes(cumulativeActivities[applet.id].available),
+      convertToIndexes(cumulativeActivities[applet.id].archieved)
+    )
+
+    appletActivities = appletActivities
+      .map(index => newApplet.activities[index])
+      .filter(
+        activity =>
+          activity.isPrize != true &&
+          !activity.isVis && activity.isReviewerActivity != true
+      )
+
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
     }
   };
-
-  const checkActivityIsShown = (name, messages) => {
-    if (!name || !messages) return true;
-    return _.findIndex(messages, { nextActivity: name }) === -1;
-  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
@@ -105,23 +124,33 @@ const ActivityList = ({
     }
   }
 
-  useEffect(() => {
-    let updateId;
+  const isMounted = useRef(false), timers = useRef([])
 
+  useEffect(() => {
+    isMounted.current = true;
+    return () => { isMounted.current = false }
+  }, []);
+
+  useEffect(() => {
     stateUpdate();
     const leftTime = (60 - new Date().getSeconds()) * 1000;
-    const leftOutId = delayedExec(
-      () => {
-        stateUpdate();
-        updateId = delayedExec(stateUpdate, { every: updateStatusDelay });
-      },
-      { after: leftTime },
-    );
+
+    if (isMounted.current) {
+      timers.current.push(delayedExec(
+        () => {
+          if (isMounted.current) {
+            stateUpdate();
+            timers.current.push(delayedExec(stateUpdate, { every: updateStatusDelay }));
+          }
+        },
+        { after: leftTime },
+      ));
+    }
 
     return () => {
-      clearExec(leftOutId);
-      if (updateId) {
-        clearExec(updateId);
+      while (timers.current.length) {
+        clearExec(timers.current[0])
+        timers.current.shift()
       }
     }
   }, [Object.keys(inProgress).length, applet]);
@@ -150,6 +179,10 @@ const ActivityList = ({
 
   return (
     <View style={{ paddingBottom: 30 }}>
+      {
+        applet.streamEnabled && <LiveConnection applet={applet} /> || <></>
+      }
+
       {activities && activities.map(activity => (
         <ActivityListItem
           disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}

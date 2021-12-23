@@ -48,10 +48,10 @@
     "icons_title":"Les icônes NounProject ont été créées par Alina Oleynik (enquête), Beth Bolton (livre), et\nShakeel (graphique)"
   },
   "about_app": {
-    "title_with_version": "Qu'est-ce que MindLogger?",
+    "title_with_version": "Qu'est-ce que MindLogger ?",
     "title":"Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
     "subtitle": "Sauf indication contraire, les icônes sont tirées de OpenMoji et Nounproject.",
-    "mindlogger_about": "### Qu'est-ce que MindLogger?\n\nCette application fait partie de la plateforme open source de collecte et d'analyse de données MindLogger conçue par le MATTER Lab du Child Mind Institute (https://matter.childmind.org).\n### Que peut faire MindLogger ? L'ensemble des fonctionnalités de MindLogger se développe, et prend actuellement en charge une grande variété de types d'entrées. Chaque écran d'une activité de MindLogger peut comprendre l'un des éléments suivants :\n - Texte, image et audio\n - Question suivie d'une option de répose en image et/ou textuelle\n -Curseur\n - Entrée textuelle\n - Saisie sous forme de tableau\n - Enregistrement audio\n - Capture photo/vidéo\n - Dessin ou tapotement\n - Géolocalisation\n - Tâche cognitive simple\n - Délai avant réponse\n - Minuterie\n - Logique conditionnelle pour déterminer la suite\n\n### Où puis-je en apprendre davantage ? \n\nVeuillez consulter le site https://mindlogger.org pour plus d'informations. \n\n Santé, \nMindLogger Team, \n Child Mind Institute"
+    "mindlogger_about": "### Qu'est-ce que MindLogger ?\n\nCette application fait partie de la plateforme open source de collecte et d'analyse de données MindLogger conçue par le MATTER Lab du Child Mind Institute (https://matter.childmind.org).\n### Que peut faire MindLogger ? L'ensemble des fonctionnalités de MindLogger se développe, et prend actuellement en charge une grande variété de types d'entrées. Chaque écran d'une activité de MindLogger peut comprendre l'un des éléments suivants :\n - Texte, image et audio\n - Question suivie d'une option de répose en image et/ou textuelle\n -Curseur\n - Entrée textuelle\n - Saisie sous forme de tableau\n - Enregistrement audio\n - Capture photo/vidéo\n - Dessin ou tapotement\n - Géolocalisation\n - Tâche cognitive simple\n - Délai avant réponse\n - Minuterie\n - Logique conditionnelle pour déterminer la suite\n\n### Où puis-je en apprendre davantage ? \n\nVeuillez consulter le site https://mindlogger.org pour plus d'informations. \n\n Santé, \nMindLogger Team, \n Child Mind Institute"
   },
   "applet_footer": {
     "surveys": "Enquêtes",
@@ -278,11 +278,12 @@
     "every_number":"Expected options.every to be a number"
   },
   "camera": {
-    "choose":"Choisir",
-    "take_a_new":"Take a new",
-    "or_choose": "ou en choisir un dans votre bibliothèque.",
+    "choose_photo": "Choisir photo",
+    "choose_video": "Choisir vidéo",
+    "take_a_photo": "Prenez une nouvelle photo, ou choisissez-en une dans votre bibliothèque",
+    "take_a_video": "Prenez une nouvelle vidéo, ou choisissez-en une dans votre bibliothèque",
     "camera": "Appareil photo",
-    "library": "Veuiller saisir du texte"
+    "library": "Bibliothèque"
   },
   "text_entry": {
     "type_placeholder": "Veuiller saisir du texte"

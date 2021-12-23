@@ -1,7 +1,8 @@
+import _ from "lodash";
 
 export const initialState = {
   activities: [],
-  cumulativeActivities: {}
+  cumulativeActivities: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -14,8 +15,10 @@ export default (state = initialState, action = {}) => {
     case "CUMULATIVE_ACTIVITIES":
       return {
         ...state,
-        cumulativeActivities: { ...state.cumulativeActivities, ...action.payload },
+        cumulativeActivities: { ...action.payload },
       };
+    case "CLEAR_ACTIVITIES":
+      return { ...initialState };
 
     default:
       return state;

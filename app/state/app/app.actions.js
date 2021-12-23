@@ -24,6 +24,16 @@ export const setCurrentApplet = appletId => ({
   payload: appletId,
 });
 
+export const setTrailsTimerId = timerId => ({
+  type: APP_ACTIONS.SET_TRAILS_TIMER_ID,
+  payload: timerId,
+})
+
+export const setTutorialStatus = status => ({
+  type: APP_ACTIONS.SET_TUTORIAL_STATUS,
+  payload: status,
+});
+
 export const setConnection = status => ({
   type: APP_ACTIONS.SET_CONNECTION,
   payload: status,

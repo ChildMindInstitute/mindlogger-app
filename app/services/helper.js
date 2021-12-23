@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import RNFetchBlob from 'rn-fetch-blob';
 import { Platform } from 'react-native';
 import { getStore } from '../store';
@@ -44,7 +45,7 @@ export const atob = (input = '') => {
   for (let bc = 0, bs = 0, buffer, i = 0; buffer = str.charAt(i++);
 
     ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+      bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
   ) {
     buffer = chars.indexOf(buffer);
   }
@@ -85,3 +86,65 @@ export const getURL = (url) => {
 export const truncateString = (str, len, dots = true) => {
   return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
 };
+
+export const getActivityAvailabilityFromDependency = (g, availableActivities, archievedActivities) => {
+  const marked = [], activities = [];
+  let markedCount = 0;
+
+  for (let i = 0; i < g.length; i++) {
+    marked.push(false)
+  }
+
+  for (let index of availableActivities) {
+    markedCount++;
+    marked[index] = true;
+    activities.push(index);
+  }
+
+  for (let index of archievedActivities) {
+    if (!marked[index]) {
+      marked[index] = true;
+      markedCount++;
+    }
+  }
+
+  for (let i = 0; i < g.length; i++) {
+    if (!g[i].length && !marked[i]) {
+      activities.push(i);
+      markedCount++;
+      marked[i] = true;
+    }
+  }
+
+  while ( markedCount < g.length ) {
+    let updated = false;
+
+    for (let i = 0; i < g.length; i++) {
+      if (!marked[i] && g[i].some(dependency => marked[dependency])) {
+        marked[i] = true;
+        markedCount++;
+        updated = true;
+      }
+    }
+
+    if (!updated) {
+      // in case of a circular dependency exists
+      for (let i = 0; i < g.length; i++) {
+        if (!marked[i]) {
+          marked[i] = true;
+          markedCount++;
+          activities.push(i);
+          break;
+        }
+      }
+    }
+  }
+
+  return activities;
+}
+
+export const waitFor = (sec = 1) => {
+  return new Promise(res => {
+    setTimeout(() => res(), sec * 1000)
+  })
+}

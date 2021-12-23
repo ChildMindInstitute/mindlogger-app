@@ -16,8 +16,6 @@ export const isDownloadingResponsesSelector = R.path([
   "isDownloadingResponses",
 ]);
 
-export const isSummaryScreenSelector = R.path(["responses", "isSummaryScreen"]);
-
 export const downloadProgressSelector = R.path([
   "responses",
   "downloadProgress",
@@ -63,6 +61,15 @@ export const currentResponsesSelector = createSelector(
   }
 );
 
+export const isSummaryScreenSelector = createSelector(
+  currentResponsesSelector,
+  (responses) => responses?.isSummaryScreen || false
+)
+
+export const isSplashScreenSelector = createSelector(
+  currentResponsesSelector,
+  (responses) => responses?.isSplashScreen || false
+)
 
 export const currentScreenSelector = createSelector(
   currentResponsesSelector,
@@ -106,11 +113,24 @@ export const itemVisiblitySelector = createSelector(
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTimes[applet.id] || {})[activity.id];
     }
 
-    return activity.addProperties.map((property, index) => {
-      if (activity.items[index].isVis) {
+    return activity ?.addProperties.map((property, index) => {
+      if (!activity.items[index] || activity.items[index].isVis) {
         return false;
       }
       return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses, responseTimes)
     });
+  }
+);
+
+export const challengePhaseLambdaSelector = createSelector(
+  currentResponsesSelector,
+  ({ responses, screenIndex }) => {
+    for (let i = 0; i < screenIndex; i++) {
+      if (responses[i] && responses[i].phaseType == 'challenge-phase') {
+        return responses[i].maxLambda;
+      }
+    }
+
+    return 0;
   }
 );

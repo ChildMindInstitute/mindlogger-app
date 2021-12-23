@@ -37,6 +37,8 @@ const replaceAppletResponses = (state, action) => {
 };
 
 export default (state = initialState, action = {}) => {
+  let activity, activityId;
+
   switch (action.type) {
     case RESPONSES_CONSTANTS.CLEAR:
       return initialState;
@@ -46,10 +48,33 @@ export default (state = initialState, action = {}) => {
         isSelected: action.payload,
       };
     case RESPONSES_CONSTANTS.SET_SUMMARYSCREEN:
+      activity = action.payload.activity;
+      activityId = activity.event ? activity.id + activity.event.id : activity.id;
+
       return {
         ...state,
-        isSummaryScreen: action.payload,
+        inProgress: {
+          ...state.inProgress,
+          [activityId]: {
+            ...state.inProgress[activityId],
+            isSummaryScreen: action.payload.isSummaryScreen
+          },
+        },
       };
+    case RESPONSES_CONSTANTS.SET_SPLASHSCREEN:
+      activity = action.payload.activity;
+      activityId = activity.event ? activity.id + activity.event.id : activity.id;
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [activityId]: {
+            ...state.inProgress[activityId],
+            isSplashScreen: action.payload.isSplashScreen,
+          },
+        },
+      }
     case RESPONSES_CONSTANTS.OPEN_ACTIVITY:
       return {
         ...state,
@@ -73,7 +98,7 @@ export default (state = initialState, action = {}) => {
         inProgress: R.omit([action.payload], state.inProgress),
       };
     case RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS:
-      const { activity } = action.payload;
+      activity = action.payload.activity;
 
       return {
         ...state,
@@ -85,12 +110,16 @@ export default (state = initialState, action = {}) => {
             subjectId: action.payload.subjectId,
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
+            isSummaryScreen: false,
+            isSplashScreen: activity.splash && activity.splash.en
           },
         },
       };
     case RESPONSES_CONSTANTS.SET_CURRENT_SCREEN:
-      const { activityId, screenIndex, startTime } = action.payload;
+      const { screenIndex, startTime } = action.payload;
       const { inProgress } = state;
+
+      activityId = action.payload.activityId;
 
       let time = {};
       if (activityId) {

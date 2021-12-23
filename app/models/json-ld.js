@@ -108,6 +108,7 @@ const START_TIME = "schema:startTime";
 const END_TIME = "schema:endTime";
 const RATE = "schema:rate";
 const TIME_SCREEN = "reprolib:terms/timeScreen";
+const STREAM_ENABLED = "reprolib:terms/streamEnabled";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -481,14 +482,17 @@ export const itemTransformJson = (itemJson) => {
   // For items, 'skippable' is undefined if there's no ALLOW prop
   const allowList = flattenIdList(R.path([ALLOW, 0, "@list"], itemJson));
   const skippable = isSkippable(allowList) ? true : undefined;
+  const inputType = listToValue(itemJson[INPUT_TYPE]);
 
   let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
   const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
 
-  Object.entries(optionsObj).forEach(([key, value]) => {
-    if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions'))
-      valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
-  })
+  if (inputType != 'stackedRadio') {
+    Object.entries(optionsObj).forEach(([key, value]) => {
+      if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions') && !key.includes('itemListElement'))
+        valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
+    })
+  }
 
   const valueConstraints = flattenValueConstraints(valueConstraintsObj);
   const isVis = itemJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], itemJson) : false;
@@ -506,7 +510,7 @@ export const itemTransformJson = (itemJson) => {
     schemaVersion: languageListToObject(itemJson[SCHEMA_VERSION]),
     version: languageListToObject(itemJson[VERSION]),
     altLabel: languageListToObject(itemJson[ALT_LABEL]),
-    inputType: listToValue(itemJson[INPUT_TYPE]),
+    inputType,
     isOptionalText : listToValue(itemJson[IS_OPTIONAL_TEXT]),
     question: languageListToObject(itemJson[QUESTION]),
     preamble: languageListToObject(itemJson[PREAMBLE]),
@@ -651,7 +655,7 @@ export const activityTransformJson = (activityJson, itemsJson) => {
       return null;
     }
     const item = itemTransformJson(itemsJson[itemKey]);
-    return itemAttachExtras(item, itemKey, activity.addProperties[itemIndex]);
+    return itemAttachExtras(item, itemKey, activity.addProperties && activity.addProperties[itemIndex]);
   });
   const nonEmptyItems = R.filter(item => item, mapItems(activity.order));
   const items = attachPreamble(activity.preamble, nonEmptyItems);
@@ -683,7 +687,9 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet)
   };
+
   if (applet.encryption && Object.keys(applet.encryption).length) {
     res.encryption = applet.encryption;
   }
@@ -759,6 +765,7 @@ export const transformApplet = (payload, currentApplets = null) => {
             applet.activities.forEach((act, index) => {
               if (act.id.substring(9) === keys[0]) {
                 const item = itemAttachExtras(itemTransformJson(payload.items[dataKey]), dataKey);
+
                 item.variableName = payload.items[dataKey]['@id'];
 
                 let updated = false;

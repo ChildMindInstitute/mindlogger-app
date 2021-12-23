@@ -114,13 +114,13 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
                 <Text
                   style={styles.itemText}
                   allowFontScaling={false}
-                >{ item.name.en }<Text style={styles.tooltip}>*</Text></Text>
+                >{item.name ? item.name.en : '' }<Text style={styles.tooltip}>*</Text></Text>
               </TooltipBox>
             ) : (
               <Text
                 style={styles.itemText}
                 allowFontScaling={false}
-              >{ item.name.en }</Text>
+              >{item.name ? item.name.en : '' }</Text>
             )}
             {item.image ? (
                 <Image

@@ -14,9 +14,13 @@ export const connectionSelector = R.path(['app', 'isConnected']);
 
 export const appStatusSelector = R.path(['app', 'appStatus']);
 
+export const tutorialStatusSelector = R.path(['app', 'isTutorial']);
+
 export const lastActiveTimeSelector = R.path(['app', 'lastActive']);
 
 export const activities = R.path(['app', 'activities']);
+
+export const trailsTimerIdSelector = R.path(['app', 'trailsTimerId']);
 
 export const currentActivityIdSelector = R.path(['app', 'currentActivity']);
 

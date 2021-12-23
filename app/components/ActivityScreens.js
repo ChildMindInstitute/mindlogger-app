@@ -40,8 +40,10 @@ class ActivityScreens extends React.PureComponent {
       onChange,
       authToken,
       onContentError,
+      hasSplashScreen,
     } = this.props;
     const { activeScreens, direction } = this.state;
+    
     return (
       <View onTouchStart={this.props.onAnyTouch} style={{ flex: 1, width: '100%', position: 'relative' }}>
         {activeScreens.map(index => (
@@ -61,6 +63,8 @@ class ActivityScreens extends React.PureComponent {
               answer={answers[index]}
               onChange={onChange}
               authToken={authToken}
+              hasSplashScreen={hasSplashScreen}
+              currentScreen={currentScreen}
               isCurrent={index === currentScreen}
               onContentError={onContentError}
             />

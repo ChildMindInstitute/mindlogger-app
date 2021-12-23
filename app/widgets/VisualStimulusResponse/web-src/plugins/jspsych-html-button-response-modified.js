@@ -76,9 +76,8 @@ jsPsych.plugins["html-button-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">'+trial.stimulus+'</div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
     //display buttons
     var buttons = [];
@@ -96,7 +95,7 @@ jsPsych.plugins["html-button-response"] = (function() {
     html += '<div id="jspsych-html-button-response-btngroup">';
     for (var i = 0; i < trial.choices.length; i++) {
       var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      html += '<div class="jspsych-html-button-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+      html += '<div class="jspsych-html-button-response-button ' + trial.data.tag + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     html += '</div>';
 
@@ -108,7 +107,15 @@ jsPsych.plugins["html-button-response"] = (function() {
 
     // start time
     var start_time = performance.now();
+    var image_time = performance.now();
 
+    const imgs = display_element.querySelectorAll('img');
+
+    for (var i = 0; i < imgs.length; i++) {
+      imgs[i].addEventListener('load', (event) => {
+        image_time = performance.now();
+      });
+    }
     // add event listeners to buttons
     for (var i = 0; i < trial.choices.length; i++) {
       const el = display_element.querySelector('#jspsych-html-button-response-button-' + i);
@@ -123,7 +130,8 @@ jsPsych.plugins["html-button-response"] = (function() {
     // store response
     var response = {
       rt: null,
-      button: null
+      button: null,
+      start_timestamp: new Date().getTime()
     };
 
     // function to handle responses by the subject
@@ -131,9 +139,11 @@ jsPsych.plugins["html-button-response"] = (function() {
 
       // measure rt
       var end_time = performance.now();
-      var rt = end_time - start_time;
       response.button = choice;
-      response.rt = rt;
+      response.start_time = start_time;
+      response.end_time = end_time;
+      response.image_time = image_time;
+      response.rt = end_time - image_time;
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
@@ -160,8 +170,12 @@ jsPsych.plugins["html-button-response"] = (function() {
       // gather the data to store for the trial
       var trial_data = {
         "rt": response.rt,
+        "start_time": start_time,
+        "end_time": performance.now(),
+        "image_time": image_time,
         "stimulus": trial.stimulus,
-        "button_pressed": response.button
+        "button_pressed": response.button,
+        "start_timestamp": response.start_timestamp
       };
 
       // clear the display

@@ -21,14 +21,13 @@ import markdownContainer from "markdown-it-container";
 import markdownIns from "markdown-it-ins";
 import markdownEmoji from "markdown-it-emoji";
 import markdownMark from "markdown-it-mark";
-
+import Mimoza from "mimoza";
 import { colors } from "../../themes/colors";
 import { MarkdownScreen } from "../../components/core";
-import { parseAppletEvents } from "../../models/json-ld";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
-import { setActivities, setCumulativeActivities } from "../../state/activities/activities.actions";
-import { getScoreFromResponse, evaluateScore, getMaxScore } from "../../services/scoring";
+import { setActivities } from "../../state/activities/activities.actions";
+import { evaluateCumulatives } from "../../services/scoring";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
@@ -92,98 +91,12 @@ const termsText =
 const footerText =
   "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
 
-const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, setCumulativeActivities }) => {
+const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
+  const { responses, applet, activity } = props;
 
   useEffect(() => {
-    const parser = new Parser({
-      logical: true,
-      comparison: true,
-    });
-
-    const newApplet = parseAppletEvents(applet);
-
-    let scores = [],
-      maxScores = [];
-    for (let i = 0; i < activity.items.length; i++) {
-      if (!activity.items[i] || !responses[i]) continue;
-
-      let score = getScoreFromResponse(activity.items[i], responses[i]);
-      scores.push(score);
-
-      maxScores.push(getMaxScore(activity.items[i]));
-    }
-
-    const cumulativeScores = activity.compute.reduce((accumulator, itemCompute) => {
-      return {
-        ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
-          itemCompute.jsExpression,
-          activity.items,
-          scores
-        ),
-      };
-    }, {});
-
-    const cumulativeMaxScores = activity.compute.reduce((accumulator, itemCompute) => {
-      return {
-        ...accumulator,
-        [itemCompute.variableName.trim().replace(/\s/g, "__")]: evaluateScore(
-          itemCompute.jsExpression,
-          activity.items,
-          maxScores
-        ),
-      };
-    }, {});
-
-    const reportMessages = [];
-    let cumActivities = [];
-    activity.messages.forEach(async (msg, i) => {
-      const { jsExpression, message, outputType, nextActivity } = msg;
-
-      const exprArr = jsExpression.split(/[><]/g);
-      const variableName = exprArr[0];
-      const exprValue = parseFloat(exprArr[1].split(" ")[1]);
-      const category = variableName.trim().replace(/\s/g, "__");
-      const expr = parser.parse(category + jsExpression.substr(variableName.length));
-
-      const variableScores = {
-        [category]:
-          outputType == "percentage"
-            ? Math.round(
-                cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
-              )
-            : cumulativeScores[category],
-      };
-
-      if (expr.evaluate(variableScores)) {
-        if (nextActivity) cumActivities.push(nextActivity);
-
-        const compute = activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
-
-        reportMessages.push({
-          category,
-          message,
-          score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
-          compute,
-          jsExpression: jsExpression.substr(variableName.length),
-          scoreValue: cumulativeScores[category],
-          maxScoreValue: cumulativeMaxScores[category],
-          exprValue: outputType == "percentage" ? (exprValue * cumulativeMaxScores[category]) / 100 : exprValue,
-        });
-      }
-    });
-
-    if (cumulativeActivities && cumulativeActivities[`${activity.id}/nextActivity`]) {
-      cumActivities = _.difference(cumActivities, cumulativeActivities[`${activity.id}/nextActivity`]);
-      if (cumActivities.length > 0) {
-        cumActivities = [...cumulativeActivities[`${activity.id}/nextActivity`], ...cumActivities];
-        setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-      }
-    } else {
-      setCumulativeActivities({ [`${activity.id}/nextActivity`]: cumActivities });
-    }
-
+    let { reportMessages } = evaluateCumulatives(responses, activity)
     setMessages(reportMessages);
   }, [responses]);
 
@@ -221,16 +134,36 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       bgColor: "#ffffff",
     };
 
+    const isSplashScreen = activity.splash && activity.splash.en;
+
+    if (isSplashScreen) {
+      const uri = activity.splash.en;
+      const mimeType = Mimoza.getMimeType(uri) || "";
+
+      if (!mimeType.startsWith("video/")) {
+        options.html += `
+          <div style="height: 100%; display: flex; justify-content: center">
+            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          </div>
+        `;
+      }
+    }
+
+    if (applet.image) {
+      options.html += `
+        <div style="float: right; margin-left: 10px">
+          <img
+            src="${applet.image}"
+            height="100"
+            alt=''
+          />
+        </div>
+      `;
+    }
+
     options.html += `
-      <p class="mb-4">
-        <b>
-          <u>
-            ${_.get(activity, "name.en")} Report
-          </u>
-        </b>
-      </p>
       <p class="text-body-2 mb-4">
-        ${markdownItInstance.render(activity.scoreOverview)}
+        ${markdownItInstance.render(activity?.scoreOverview)}
       </p>
     `;
 
@@ -250,7 +183,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
             style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
-              Your/Your Child' Score
+              Your Child's Score
             </b>
           </p>
           <div
@@ -270,16 +203,8 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
             </b>
           </p>
         </div>
-        <p class="text-uppercase mb-1">
-          <b>
-            <i>
-              If score
-              <span class="ml-2">${message.jsExpression}</span>
-            </i>
-          </b>
-        </p>
         <p class="text-body-2 mb-4">
-          Your/Your child’s score on the 
+          Your child’s score on the
           ${message.category.replace(/_/g, " ")}
            subscale was <span class="text-danger">${message.scoreValue}</span>.
           ${markdownItInstance.render(message.message)}
@@ -287,10 +212,11 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
       `;
     }
     options.html += `
-      <p class="text-footer text-body-2 mb-5">
+      <div class="divider-line"></div>
+      <p class="text-footer text-body mb-5">
         ${termsText}
       </p>
-      <p class="text-footer">
+      <p class="text-footer text-body-1">
         ${footerText}
       </p>
     `;
@@ -313,8 +239,14 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         .text-uppercase {
           text-transform: uppercase;
         }
+        .text-body-1 {
+          font-size: 0.7rem;
+        }
         .text-body-2 {
           font-size: 0.9rem;
+        }
+        .text-body {
+          font-size: 0.8rem;
         }
         .blue--text {
           color: #2196f3;
@@ -371,6 +303,11 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
           height: 6rem;
           background-color: #000;
         }
+        .divider-line {
+          margin-top: 2em;
+          margin-bottom: 2em;
+          border: 1px solid black;
+        }
         .score-title {
           position: absolute;
           top: 0;
@@ -384,7 +321,7 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         }
         img {
           max-width: 100%;
-        }        
+        }
       </style>
     `;
 
@@ -401,15 +338,13 @@ const ActivitySummary = ({ responses, activity, applet, cumulativeActivities, se
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>
-        {messages.map((item) => (
+        {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
-            <BaseText style={{ fontSize: 20 }}>{item.category.replace(/_/g, " ")}</BaseText>
-            <MarkdownScreen>{item.compute.description}</MarkdownScreen>
+            <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>
             <BaseText style={{ fontSize: 24, color: colors.tertiary }}>{item.score}</BaseText>
             <MarkdownScreen>{item.message}</MarkdownScreen>
           </View>
-        ))}
+        )) : <></>}
       </ScrollView>
     </>
   );
@@ -423,12 +358,10 @@ ActivitySummary.propTypes = {
 const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
-  cumulativeActivities: state.activities.cumulativeActivities,
 });
 
 const mapDispatchToProps = {
   setActivities,
-  setCumulativeActivities,
 };
 
 export default connect(

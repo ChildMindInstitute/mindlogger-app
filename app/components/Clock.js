@@ -17,7 +17,7 @@ class Clock extends React.Component {
           fill="transparent"
           stroke="rgba(0, 0, 0, 0.1)"
           strokeWidth={strokeWidth}
-        />
+        /> 
         <Circle
           rotation={-90}
           originX={size / 2}
@@ -26,7 +26,7 @@ class Clock extends React.Component {
           cy={size / 2}
           r={(size - strokeWidth) / 2}
           fill="transparent"
-          stroke={color}
+          stroke="rgba(0, 103, 160, 0.4)"
           strokeWidth={strokeWidth}
           strokeDashoffset={Math.PI * (size - strokeWidth) * (1 - percentComplete)}
           strokeDasharray={Math.PI * (size - strokeWidth)}

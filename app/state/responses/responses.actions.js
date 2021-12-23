@@ -9,10 +9,15 @@ export const setSelected = (isSelected = false) => ({
   payload: isSelected,
 });
 
-export const setSummaryScreen = (isSummaryScreen = false) => ({
+export const setSummaryScreen = (activity, isSummaryScreen = false) => ({
   type: RESPONSES_CONSTANTS.SET_SUMMARYSCREEN,
-  payload: isSummaryScreen,
+  payload: { activity, isSummaryScreen },
 });
+
+export const setSplashScreen = (activity, isSplashScreen = false) => ({
+  type: RESPONSES_CONSTANTS.SET_SPLASHSCREEN,
+  payload: { activity, isSplashScreen }
+})
 
 export const replaceResponses = responses => ({
   type: RESPONSES_CONSTANTS.REPLACE_RESPONSES,
