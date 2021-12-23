@@ -87,7 +87,7 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus") {
+    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus" || screen.inputType == "tokenSummary") {
       return true;
     }
 
