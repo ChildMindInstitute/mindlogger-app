@@ -72,38 +72,45 @@ export default class TrailsBoard extends Component {
     this.allowed = true;
   }
 
-  async componentDidMount() {
-    const { currentIndex, failedCnt, currentScreen } = this.props;
-    const currentIntervalId = await getData('intervalId');
+  componentDidMount() {
+    const {
+      currentIndex,
+      failedCnt,
+      currentScreen,
+      trailsTimerId,
+      setTrailsTimerId,
+    } = this.props;
     let { screenTime } = this.props;
 
-    if (currentIntervalId && currentScreen) {
-      clearInterval(currentIntervalId);
+    if (trailsTimerId && currentScreen) {
+      clearInterval(trailsTimerId);
     }
+    
+    this.timeInterval = setInterval(() => {
+      const { currentIndex, failedCnt, currentScreen } = this.props;
+      const { lines } = this.state;
+      const result = this.save(lines, currentIndex);
 
-    if (currentScreen % 2 === 0) {
-      this.timeInterval = setInterval(() => {
-        const { currentIndex, failedCnt, currentScreen } = this.props;
-        const { lines } = this.state;
-        const result = this.save(lines, currentIndex);
-
-        screenTime = screenTime ? screenTime + 2 : 2;
-        if ((currentScreen === 2 && screenTime >= 150) ||
-           (currentScreen === 4 && screenTime >= 300)) {
-          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
-        } else {
-          this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
-          this.setState({ screenTime });
-        }
-      }, 2000)
-      await storeData('intervalId', this.timeInterval);
-    }
+      screenTime = screenTime ? screenTime + 1 : 1;
+      if ((currentScreen === 2 && screenTime >= 150) ||
+        (currentScreen === 4 && screenTime >= 300)) {
+        this.setState({ screenTime: 0 });
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
+      } else {
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
+        this.setState({ screenTime });
+      }
+    }, 1000)
+    setTrailsTimerId(this.timeInterval)
     this.setState({ failedCnt: failedCnt ? failedCnt : 0 });
     this.setState({ currentIndex, currentScreen });
   }
 
   componentWillUnmount() {
+    const { setTrailsTimerId } = this.props;
+    
     if (this.timeInterval) {
+      setTrailsTimerId(null);
       clearInterval(this.timeInterval);
     }
   }
@@ -142,7 +149,7 @@ export default class TrailsBoard extends Component {
     });
 
     this.setState({ isValid, validIndex: -1, isStopped: true });
-    if (isValid) {
+    if (isValid && currentItem.order !== screen.items.length) {
       const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true, start: currentItem.label, end: nextItem.label }] };
       this.setState({ lines: [...lines, newLine] });
     }
@@ -440,6 +447,8 @@ TrailsBoard.propTypes = {
   currentIndex: PropTypes.number,
   currentScreen: PropTypes.number,
   onResult: PropTypes.func,
+  setTrailsTimerId: PropTypes.func,
+  trailsTimerId: PropTypes.number,
   onPress: PropTypes.func,
   onError: PropTypes.func,
   onRelease: PropTypes.func,
