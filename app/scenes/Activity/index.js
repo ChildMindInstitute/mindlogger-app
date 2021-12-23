@@ -30,9 +30,6 @@ import {
   setActivitySelectionDisabled,
 } from "../../state/app/app.actions";
 import {
-  appStatusSelector
-} from "../../state/app/app.selectors";
-import {
   setAnswer,
   setSummaryScreen,
   setSplashScreen,
@@ -131,6 +128,9 @@ class Activity extends React.Component {
     if (oldProps.appStatus != this.props.appStatus && oldProps.appStatus == true) {
       this.updateStore();
     }
+    if (oldProps.currentResponse.responses != this.props.currentResponse.responses) {
+      this.setState({ responses: this.props.currentResponse.responses })
+    }
   }
 
   handleChange(responses, goToNext=false, timeElapsed=0) {
@@ -142,6 +142,7 @@ class Activity extends React.Component {
       setTutorialStatus,
       setSummaryScreen,
       setSelected,
+      currentApplet,
       lastResponseTime
     } = this.props;
     const { activity } = currentResponse;
@@ -149,8 +150,6 @@ class Activity extends React.Component {
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText;
     const responseTimes = {};
-
-    responses[currentScreen] = answer;
 
     for (const activity of currentApplet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
@@ -275,7 +274,7 @@ class Activity extends React.Component {
     } = this.props;
 
     const { isSummaryScreen } = this.state;
-    const { activity, responses } = currentResponse;
+    const { activity } = currentResponse;
 
     if (activity.items[currentScreen].inputType === "trail") {
       if (tutorialStatus !== 0) {
@@ -359,17 +358,20 @@ class Activity extends React.Component {
       currentScreen,
       itemVisibility,
       appStatus,
+      isSplashScreen,
     } = this.props;
 
-    const { isSummaryScreen, isActivityShow, hasSplashScreen } = this.state;
+    const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
     if (!currentResponse) {
       return <View />;
     }
 
     const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
+
     const { activity } = currentResponse;
     const { responses } = this.state;
+
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
@@ -498,8 +500,8 @@ class Activity extends React.Component {
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
                 timerEnabled={timerEnabled}
-                timeLeft={timerEnabled && responses[currentScreen].timeLeft || -1}
-                timeLimit={timerEnabled && responses[currentScreen].timeLimit || 0}
+                timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || -1}
+                timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
                 appStatus={appStatus}
                 setTimerStatus={(timerActive, timeLeft) => {
                   const response = responses[currentScreen] || {};
@@ -510,12 +512,14 @@ class Activity extends React.Component {
                     })
                   }
 
-                  setAnswer(activity, currentScreen, {
+                  responses[currentScreen] = {
                     value: response.value,
                     timerActive,
                     timeLeft,
                     timeLimit: response.timeLimit
-                  })
+                  };
+
+                  this.setState({ responses });
                 }}
                 onPressAction={() => {
                   if (timerEnabled) {
