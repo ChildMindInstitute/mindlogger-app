@@ -647,7 +647,7 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
-    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet)
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false
   };
 
   if (applet.encryption && Object.keys(applet.encryption).length) {
