@@ -11,6 +11,7 @@ import {
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
+const LANDING_PAGE_TYPE = "reprolib:terms/landingPageType";
 const ABOUT_CONTENT = "reprolib:terms/landingPageContent";
 const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
@@ -676,6 +677,7 @@ export const appletTransformJson = (appletJson) => {
     description: languageListToObject(applet[DESCRIPTION]),
     about: languageListToObject(applet[ABOUT]),
     aboutContent: languageListToObject(applet[ABOUT_CONTENT]),
+    landingPageType: listToValue(applet[LANDING_PAGE_TYPE] || []) || 'markdown',
     schemaVersion: languageListToObject(applet[SCHEMA_VERSION]),
     version: languageListToObject(applet[VERSION]),
     altLabel: languageListToObject(applet[ALT_LABEL]),
@@ -687,7 +689,7 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
-    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet)
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false
   };
 
   if (applet.encryption && Object.keys(applet.encryption).length) {
