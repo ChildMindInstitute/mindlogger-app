@@ -8,6 +8,7 @@ import ActivityDueDate from './ActivityDueDate';
 import TimedActivity from './TimedActivity';
 import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
+import { CachedImage } from 'react-native-img-cache';
 
 const styles = StyleSheet.create({
   box: {
@@ -50,6 +51,14 @@ const styles = StyleSheet.create({
     flex: 0,
     paddingLeft: 16,
   },
+  image: {
+    flex: 0,
+    marginRight: 16,
+    width: 64,
+    height: 64,
+    resizeMode: 'cover',
+    borderRadius: 32
+  },
   icon: {
     color: '#AAA',
     fontSize: 18,
@@ -73,6 +82,13 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
         onLongPress={() => onLongPress(activity)}
       >
         <View style={styles.layout}>
+          {
+            activity.image &&
+            <CachedImage
+              style={styles.image}
+              source={{ uri: activity.image }}
+            />
+          }
           <View style={styles.left}>
             <SubHeading
               style={{
