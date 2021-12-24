@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, View, Text, StyleSheet, Alert } from "react-native";
+import { StatusBar, View, Text, StyleSheet, Alert, Image } from "react-native";
 import { Container } from "native-base";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -19,18 +19,16 @@ import {
   isSummaryScreenSelector,
   isSplashScreenSelector,
   currentScreenSelector,
+  lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
 import { tutorialStatusSelector } from '../../state/app/app.selectors';
-import { currentAppletSelector } from "../../state/app/app.selectors";
+import { currentAppletSelector, appStatusSelector } from "../../state/app/app.selectors";
 import { setTutorialStatus } from '../../state/app/app.actions';
 import { testVisibility } from "../../services/visibility";
 import {
   setCurrentActivity,
   setActivitySelectionDisabled,
 } from "../../state/app/app.actions";
-import {
-  appStatusSelector
-} from "../../state/app/app.selectors";
 import {
   setAnswer,
   setSummaryScreen,
@@ -47,6 +45,8 @@ import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import ActivityButtons from "../../components/ActivityButtons";
+import Modal from 'react-native-modal';
+import { colors } from "../..//themes/colors";
 import {
   getNextPos,
   getNextLabel,
@@ -68,7 +68,20 @@ const styles = StyleSheet.create({
     elevation: 2,
     zIndex: -1,
   },
+  modal: {
+    borderRadius: 10,
+    padding: 5,
+    backgroundColor: 'grey',
+    opacity: 0.9,
+    width: '75%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
+
+const clock = require('../../../img/clock.png');
 
 class Activity extends React.Component {
   constructor() {
@@ -78,6 +91,7 @@ class Activity extends React.Component {
       idleTime: null,
       isSummaryScreen: false,
       isActivityShow: false,
+      modalVisible: false,
       hasSplashScreen: false,
       responses: []
     };
@@ -114,6 +128,9 @@ class Activity extends React.Component {
     if (oldProps.appStatus != this.props.appStatus && oldProps.appStatus == true) {
       this.updateStore();
     }
+    if (oldProps.currentResponse.responses != this.props.currentResponse.responses) {
+      this.setState({ responses: this.props.currentResponse.responses })
+    }
   }
 
   handleChange(responses, goToNext=false, timeElapsed=0) {
@@ -125,17 +142,24 @@ class Activity extends React.Component {
       setTutorialStatus,
       setSummaryScreen,
       setSelected,
+      currentApplet,
+      lastResponseTime
     } = this.props;
     const { activity } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-    const optionalText = this.currentItem.isOptionalText
+    const optionalText = this.currentItem.isOptionalText;
+    const responseTimes = {};
+
+    for (const activity of currentApplet.activities) {
+      responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
+    }
 
     const visibility = activity.items.map((item) => {
       if (item.isvis) {
         return false;
       }
-      return testVisibility(item.visibility, activity.items, responses)
+      return testVisibility(item.visibility, activity.items, responses, responseTimes)
     });
     const next = getNextPos(currentScreen, visibility);
 
@@ -250,7 +274,7 @@ class Activity extends React.Component {
     } = this.props;
 
     const { isSummaryScreen } = this.state;
-    const { activity, responses } = currentResponse;
+    const { activity } = currentResponse;
 
     if (activity.items[currentScreen].inputType === "trail") {
       if (tutorialStatus !== 0) {
@@ -333,17 +357,21 @@ class Activity extends React.Component {
       authToken,
       currentScreen,
       itemVisibility,
-      isSplashScreen
+      appStatus,
+      isSplashScreen,
     } = this.props;
 
-    const { isSummaryScreen, isActivityShow, hasSplashScreen } = this.state;
+    const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
     if (!currentResponse) {
       return <View />;
     }
 
+    const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
+
     const { activity } = currentResponse;
     const { responses } = this.state;
+
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
@@ -454,12 +482,14 @@ class Activity extends React.Component {
             onTouchStart={this.idleTimer.resetCountdown}
             style={styles.buttonArea}
           >
-            {activity.items.length > 1 && (
-              <ActProgress
-                index={currentScreen}
-                length={activity.items.length}
-              />
-            )}
+            {
+              !timerEnabled && activity.items.length > 1 && (
+                <ActProgress
+                  index={currentScreen}
+                  length={activity.items.length}
+                />
+              )
+            }
             {!topNavigation &&
               <ActivityButtons
                 nextLabel={nextLabel}
@@ -469,16 +499,55 @@ class Activity extends React.Component {
                 prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
-                onPressAction={() => {
-                  responses[currentScreen] = undefined;
-                  this.setState({ responses });
+                timerEnabled={timerEnabled}
+                timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || -1}
+                timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
+                appStatus={appStatus}
+                setTimerStatus={(timerActive, timeLeft) => {
+                  const response = responses[currentScreen] || {};
 
-                  sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
+                  if (timeLeft <= 0 && response.timeLimit) {
+                    this.setState({
+                      modalVisible: true
+                    })
+                  }
+
+                  responses[currentScreen] = {
+                    value: response.value,
+                    timerActive,
+                    timeLeft,
+                    timeLimit: response.timeLimit
+                  };
+
+                  this.setState({ responses });
+                }}
+                onPressAction={() => {
+                  if (timerEnabled) {
+                    responses[currentScreen] = { ...responses[currentScreen], value: undefined };
+                  } else {
+                    responses[currentScreen] = undefined;
+                  }
+
+                  this.setState({ responses });
+                  sendData('set_response', { [activity.items[currentScreen].id]: responses[currentScreen] }, currentApplet.id);
                 }}
               />
             }
           </View>
         )}
+
+        <Modal
+          isVisible={modalVisible}
+          onBackdropPress={() => this.setState({ modalVisible: false })}
+          backdropOpacity={0}
+        >
+          <View style={styles.modal}>
+            <Image
+              source={ clock }
+            />
+            <Text style={{ color: 'white', fontSize: 25, marginLeft: 10 }}>Time's up!</Text>
+          </View>
+        </Modal>
       </Container>
     );
   }
@@ -516,6 +585,7 @@ const mapStateToProps = (state) => ({
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
   isSummaryScreen: isSummaryScreenSelector(state),
+  lastResponseTime: lastResponseTimeSelector(state),
   isSplashScreen: isSplashScreenSelector(state),
   isSelected: state.responses.isSelected,
   appStatus: appStatusSelector(state),

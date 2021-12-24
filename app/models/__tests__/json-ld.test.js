@@ -133,6 +133,8 @@ test('appletTransformJson: ema-hbn', () => {
     image:
       "https://childmindinstitute.github.io/mindlogger-assets/illustrations/undraw/hbn_ema_image.svg",
     "watermark": "",
+    landingPageType: "markdown",
+    streamEnabled: false,
     description: {
       en: "Daily questions about your child's physical and mental health",
     },

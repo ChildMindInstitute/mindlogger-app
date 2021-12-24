@@ -9,6 +9,8 @@ export const responsesSelector = R.path(["responses", "responseHistory"]);
 
 export const uploadQueueSelector = R.path(["responses", "uploadQueue"]);
 
+export const currentBehaviorSelector = R.path(["responses", "currentBehavior"]);
+
 export const isDownloadingResponsesSelector = R.path([
   "responses",
   "isDownloadingResponses",
@@ -23,7 +25,7 @@ export const inProgressSelector = R.path(["responses", "inProgress"]);
 
 export const activityOpenedSelector = R.path(["responses", "activityOpened"]);
 
-export const responseScheduleSelector = R.path(["responses", "schedule"]);
+export const lastResponseTimeSelector = R.path(["responses", "lastResponseTime"]);
 
 export const currentAppletResponsesSelector = createSelector(
   responsesSelector,
@@ -86,10 +88,10 @@ export const itemStartTimeSelector = createSelector(
 export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
   R.path(["app", "currentActivity"]),
-  R.path(['applets', 'applets']),
-  responseScheduleSelector,
-  (current, activityId, applets, responseSchedule) => {
-    const currentApplets = applets.map((applet) => parseAppletEvents(applet, responseSchedule));
+  R.path(["applets", "applets"]),
+  lastResponseTimeSelector,
+  (current, activityId, applets, lastResponseTimes) => {
+    const currentApplets = applets.map((applet) => parseAppletEvents(applet));
     const currentActivity = currentApplets.reduce(
       (acc, applet) => [
         ...acc,
@@ -104,12 +106,18 @@ export const itemVisiblitySelector = createSelector(
 
     const responses = current ? current.responses : [];
     const activity = current ? current.activity : currentActivity;
+    const applet = applets.find(applet => applet.id == activity.appletId);
+    const responseTimes = {};
+
+    for (const activity of applet.activities) {
+      responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTimes[applet.id] || {})[activity.id];
+    }
 
     return activity ?.addProperties.map((property, index) => {
       if (!activity.items[index] || activity.items[index].isVis) {
         return false;
       }
-      return testVisibility(property[IS_VIS][0]['@value'], activity?.items, responses)
+      return testVisibility(property[IS_VIS][0]['@value'], activity.items, responses, responseTimes)
     });
   }
 );

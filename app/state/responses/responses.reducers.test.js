@@ -115,9 +115,3 @@ test('it adds to the upload queue', () => {
   });
 });
 
-test('it sets the schedule', () => {
-  expect(responsesReducer(initialState, setSchedule('schedule'))).toEqual({
-    ...initialState,
-    schedule: 'schedule',
-  });
-});

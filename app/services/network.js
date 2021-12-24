@@ -406,8 +406,7 @@ export const replaceResponseData = ({
   authToken,
   userPublicKey,
   appletId,
-  dataSources,
-  tokenUpdates
+  dataSources
 }) => {
   let url = `${apiHost()}/response/${appletId}`;
   const headers = {
@@ -419,7 +418,7 @@ export const replaceResponseData = ({
     mode: "cors",
     headers,
     body: objectToFormData({
-      responses: JSON.stringify({ tokenUpdates, dataSources, userPublicKey }),
+      responses: JSON.stringify({ dataSources, userPublicKey }),
     }),
   }).then((res) => (res.status === 200 ? res.json() : res));
 };
@@ -455,7 +454,24 @@ export const getUserUpdates = ({ authToken }) => {
   }).then(res => (res.status === 200 ? res.json() : res));
 };
 
-export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulative, version, userPublicKey) => {
+export const downloadTokenResponses = (authToken, appletId, startDate) => {
+  let url = `${apiHost()}/response/tokens/${appletId}`;
+  const headers = {
+    "Girder-Token": authToken
+  };
+
+  if (startDate) {
+    url += `?startDate=${startDate}`;
+  }
+
+  return fetch(url, {
+    method: "get",
+    mode: "cors",
+    headers,
+  }).then(res => (res.status === 200 ? res.json() : res))
+}
+
+export const updateUserTokenBalance = (authToken, appletId, cumulative, changes, version, userPublicKey, rewardTime=0) => {
   const url = `${apiHost()}/response/${appletId}/updateResponseToken`;
   const headers = {
     "Girder-Token": authToken,
@@ -466,10 +482,12 @@ export const updateUserTokenBalance = (authToken, appletId, tokenUpdate, cumulat
     headers,
     body: objectToFormData({
       updateInfo: JSON.stringify({
-        tokenUpdate,
         cumulative,
+        changes,
         version,
         userPublicKey,
+        isReward: rewardTime ? true : false,
+        rewardTime,
       })
     })
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));

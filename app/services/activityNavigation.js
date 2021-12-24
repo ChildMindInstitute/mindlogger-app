@@ -142,5 +142,8 @@ export const getActionLabel = (index, responses, items) => {
     items[index].inputType === 'trail') {
     return undefined;
   }
+  if (items[index].inputType === 'futureBehaviorTracker' && response && !response.value) {
+    return undefined;
+  }
   return i18n.t('activity_navigation:undo');
 };
