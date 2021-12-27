@@ -7,6 +7,7 @@ export const initialState = {
    * @type {object}.
    */
   applets: [],
+  profiles: {},
   isReminderSet: false,
   scheduleUpdated: false,
   currentTime: new Date(),
@@ -97,6 +98,11 @@ export default (state = initialState, action = {}) => {
           })
         ]
       }
+    case APPLET_CONSTANTS.SET_PROFILES:
+      return {
+        ...state,
+        profiles: action.payload
+      };
     case APPLET_CONSTANTS.SET_SCHEDULE_UPDATED:
       return {
         ...state,
