@@ -58,7 +58,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
             keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
             value={text}
             autoCorrect={false}
-            multiline={true}
+            multiline={false}
             onBlur={() => setFocused(false)}
             onFocus={() => setFocused(true)}
             onContentSizeChange={(e) => updateHeight(e.nativeEvent.contentSize.height)}
