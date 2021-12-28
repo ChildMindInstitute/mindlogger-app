@@ -27,6 +27,8 @@ import {
   RadioPrizes,
   StackedSlider,
   StackedRadio,
+  BehaviorTracker,
+  TokenSummary,
   StabilityTracker,
 } from '../../widgets';
 import ABTrails from '../../widgets/ABTrails';
@@ -122,6 +124,7 @@ const Widget = ({
       <ABTrails
         screen={screen.variableName}
         currentScreen={currentScreen}
+        isCurrent={isCurrent}
         data={answer}
         onChange={onChange}
       />
@@ -323,6 +326,26 @@ const Widget = ({
         tokenBalance={appletTokenBalance.cumulativeToken}
       />
     );
+  }
+
+  if (
+    screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker'
+  ) {
+    return (
+      <BehaviorTracker
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={answer}
+      />
+    )
+  }
+
+  if (
+    screen.inputType == 'tokenSummary'
+  ) {
+    return (
+      <TokenSummary />
+    )
   }
 
   const [oneShot, setOneShot] = useState(false);

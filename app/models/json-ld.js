@@ -11,6 +11,7 @@ import {
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
+const LANDING_PAGE_TYPE = "reprolib:terms/landingPageType";
 const ABOUT_CONTENT = "reprolib:terms/landingPageContent";
 const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
@@ -102,6 +103,12 @@ const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
+const NEGATIVE_BEHAVIORS = "reprolib:terms/negativeBehaviors";
+const POSITIVE_BEHAVIORS = "reprolib:terms/positiveBehaviors";
+const START_TIME = "schema:startTime";
+const END_TIME = "schema:endTime";
+const RATE = "schema:rate";
+const TIME_SCREEN = "reprolib:terms/timeScreen";
 const STREAM_ENABLED = "reprolib:terms/streamEnabled";
 
 export const ORDER = "reprolib:terms/order";
@@ -184,6 +191,42 @@ export const flattenValueConstraints = (vcObj) =>
         ...accumulator,
         multipleChoice: R.path([key, 0, "@value"], vcObj),
       };
+    }
+
+    if (key === TIME_SCREEN) {
+      return {
+        ...accumulator,
+        timeScreen: R.path([key, 0, "@value"], vcObj),
+      }
+    }
+
+    if (key === NEGATIVE_BEHAVIORS) {
+      const behaviorList = R.path([key], vcObj);
+
+      return {
+        ...accumulator,
+        negativeBehaviors: behaviorList.map(behavior => ({
+          endTime: R.path([END_TIME, 0, '@value'], behavior),
+          startTime: R.path([START_TIME, 0, '@value'], behavior),
+          name: R.path([NAME, 0, '@value'], behavior),
+          rate: Number(R.path([RATE, 0, '@value'], behavior)),
+          value: Number(R.path([VALUE, 0, '@value'], behavior)),
+          image: R.path([IMAGE], behavior),
+        }))
+      }
+    }
+
+    if (key === POSITIVE_BEHAVIORS) {
+      const behaviorList = R.path([key], vcObj);
+
+      return {
+        ...accumulator,
+        positiveBehaviors: behaviorList.map(behavior => ({
+          name: R.path([NAME, 0, '@value'], behavior),
+          value: Number(R.path([VALUE, 0, '@value'], behavior)),
+          image: R.path([IMAGE], behavior),
+        }))
+      }
     }
 
     if (key === IS_OPTIONAL_TEXT_REQUIRED) {
@@ -575,7 +618,7 @@ const transformPureActivity = (activityJson) => {
     version: languageListToObject(activityJson[VERSION]),
     altLabel: languageListToObject(activityJson[ALT_LABEL]),
     shuffle: R.path([SHUFFLE, 0, "@value"], activityJson),
-    image: languageListToObject(activityJson[IMAGE]),
+    image: activityJson[IMAGE],
     skippable: isSkippable(allowList),
     backDisabled: allowList.includes(BACK_DISABLED),
     summaryDisabled: allowList.includes(SUMMARY_DISABLED),
@@ -634,6 +677,7 @@ export const appletTransformJson = (appletJson) => {
     description: languageListToObject(applet[DESCRIPTION]),
     about: languageListToObject(applet[ABOUT]),
     aboutContent: languageListToObject(applet[ABOUT_CONTENT]),
+    landingPageType: listToValue(applet[LANDING_PAGE_TYPE] || []) || 'markdown',
     schemaVersion: languageListToObject(applet[SCHEMA_VERSION]),
     version: languageListToObject(applet[VERSION]),
     altLabel: languageListToObject(applet[ALT_LABEL]),
@@ -645,7 +689,7 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
-    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet)
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false
   };
 
   if (applet.encryption && Object.keys(applet.encryption).length) {

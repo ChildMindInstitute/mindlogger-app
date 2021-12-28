@@ -32,6 +32,7 @@ import ChangePassword from "./ChangePassword";
 import Signup from "./Signup";
 import Splash from "./Splash";
 import VolumeInfo from "./VolumeInfo";
+import BehaviorTime from "./BehaviorTime";
 // import { colors } from '../themes/colors';
 import AppletInviteFlow from "./AppletInviteFlow";
 import AppletSettings from "./AppletSettings";
@@ -70,6 +71,7 @@ const Navigator = Actions.create(
         {/* </Drawer> */}
       </Scene>
       <Scene key="take_act" component={Activity} />
+      <Scene key="set_behavior_times" component={BehaviorTime} />
       <Scene key="invite" component={AppletInviteFlow} />
       <Scene key="activity_summary" component={ActivitySummary} />
       <Scene key="activity_thanks" component={ActivityThanks} />

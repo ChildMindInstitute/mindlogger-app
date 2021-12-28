@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.23] - 2021-12-23
+- Upload Image for about Page in TokenLogger
+- Fix millisecond dealy in displaying CMI logo on Login Screen
+- Past Behavior Tracker
+- Future Behavior Tracker
+- Token Chart Refresh
+- Summary Screen for all Token Activities
+- Update Color of the Anchor Text on Sliders for TokenLogger
+
+## [0.18.22] - 2021-12-22
+- Update A/B Trails timer
+
 ## [0.18.21] - 2021-12-20
 - Update X and Y coordinates in A/B Trails
 
