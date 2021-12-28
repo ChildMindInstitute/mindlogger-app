@@ -8,6 +8,7 @@ import _ from "lodash";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { OptionalText } from "./OptionalText";
+import { Toast } from 'native-base';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -87,7 +88,11 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
             onChange(finalAnswer);
           },
           (errorResponse) => {
-            console.warn(errorResponse);
+            Toast.show({
+              text: errorResponse.message,
+              position: 'bottom',
+              duration: 2000,
+            });
           }
         );
       }
