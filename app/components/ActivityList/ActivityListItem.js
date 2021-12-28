@@ -87,7 +87,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
             <CachedImage
               style={styles.image}
               source={{ uri: activity.image }}
-            />
+            /> || <></>
           }
           <View style={styles.left}>
             <SubHeading
@@ -105,7 +105,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
                 }}>
                 {activity.description.en}
               </BodyText>
-            )}
+            ) || <></>}
             <ActivityDueDate activity={activity} />
             <TimedActivity activity={activity} />
             {/* <Hyperlink
