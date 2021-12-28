@@ -43,6 +43,23 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
 
   const maxWidthStyle = applet && applet.theme && applet.theme.logo ? { maxWidth: '72%' } : {};
 
+  const ThemeLogo = () => {
+    if (applet && applet.theme) {
+      if (applet.theme.smallLogo) {
+        return <CachedImage
+          style={{ width: 60, height: 30, resizeMode: 'contain', marginTop: -5 }}
+          source={{ uri: applet.theme.smallLogo }}
+        />
+      } else if (applet.theme.logo) {
+        return <CachedImage
+          style={{ width: 32, height: 32, resizeMode: 'cover', borderRadius: 32 / 2 }}
+          source={{ uri: applet.theme.logo }}
+        />
+      }
+      return null;
+    }
+  }
+
   return (
     <View style={styles.box}>
       <TouchBox onPress={() => onPress(applet)} disabled={disabled}>
@@ -53,15 +70,8 @@ const AppletListItem = ({ applet, disabled, onPress }) => {
               <SubHeading style={{ fontFamily: theme.fontFamily, ...maxWidthStyle }}>
                 {applet.name.en}
               </SubHeading>
-
-              { applet && applet.theme && applet.theme.logo ? (
-                <CachedImage
-                  style={{ width: 32, height: 32, resizeMode: 'cover', borderRadius: 32 / 2 }}
-                  source={{ uri: applet.theme.logo }}
-                />
-              ) : undefined }
+              {ThemeLogo()}
             </View>
-
             {applet.description && (
               <BodyText style={{ fontFamily: theme.fontFamily }}>
                 {applet.description.en}
