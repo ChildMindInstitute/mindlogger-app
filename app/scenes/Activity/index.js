@@ -128,7 +128,11 @@ class Activity extends React.Component {
     if (oldProps.appStatus != this.props.appStatus && oldProps.appStatus == true) {
       this.updateStore();
     }
-    if (oldProps.currentResponse.responses != this.props.currentResponse.responses) {
+
+    if (
+      this.props.currentResponse &&
+      oldProps.currentResponse.responses != this.props.currentResponse.responses
+    ) {
       this.setState({ responses: this.props.currentResponse.responses })
     }
   }
