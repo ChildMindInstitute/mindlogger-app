@@ -86,14 +86,12 @@ const DATA = [
   },
 ];
 
-const termsText =
-  "I understand that the information provided by this questionnaire is not intended to replace the advice, diagnosis, or treatment offered by a medical or mental health professional, and that my anonymous responses may be used and shared for general research on children’s mental health.";
-const footerText =
-  "CHILD MIND INSTITUTE, INC. AND CHILD MIND MEDICAL PRACTICE, PLLC (TOGETHER, “CMI”) DOES NOT DIRECTLY OR INDIRECTLY PRACTICE MEDICINE OR DISPENSE MEDICAL ADVICE AS PART OF THIS QUESTIONNAIRE. CMI ASSUMES NO LIABILITY FOR ANY DIAGNOSIS, TREATMENT, DECISION MADE, OR ACTION TAKEN IN RELIANCE UPON INFORMATION PROVIDED BY THIS QUESTIONNAIRE, AND ASSUMES NO RESPONSIBILITY FOR YOUR USE OF THIS QUESTIONNAIRE.";
-
 const ActivitySummary = (props) => {
   const [messages, setMessages] = useState([]);
   const { responses, applet, activity } = props;
+
+  const termsText = i18n.t("activity_summary:terms_text");
+  const footerText = i18n.t("activity_summary:footer_text");
 
   useEffect(() => {
     let { reportMessages } = evaluateCumulatives(responses, activity)
@@ -183,7 +181,7 @@ const ActivitySummary = (props) => {
             style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
           >
             <b>
-              Your Child's Score
+              ${i18n.t("activity_summary:child_score")}
             </b>
           </p>
           <div
@@ -204,9 +202,8 @@ const ActivitySummary = (props) => {
           </p>
         </div>
         <p class="text-body-2 mb-4">
-          Your child’s score on the
-          ${message.category.replace(/_/g, " ")}
-           subscale was <span class="text-danger">${message.scoreValue}</span>.
+          ${i18n.t("activity_summary:child_score_on_subscale", { name: message.category.replace(/_/g, " ") })}
+          <span class="text-danger">${message.scoreValue}</span>.
           ${markdownItInstance.render(message.message)}
         </p>
       `;
