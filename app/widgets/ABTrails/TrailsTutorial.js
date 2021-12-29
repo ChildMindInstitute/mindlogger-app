@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Image } from 'react-native';
 import Svg, { Circle, Text } from 'react-native-svg';
-import { getData, storeData } from "../../services/asyncStorage";
 
 const styles = StyleSheet.create({
   picture: {
