@@ -165,8 +165,8 @@ const ActivityButtons = ({
           <TimerProgress
             current={timeElapsed.current / 1000}
             length={timeLimit / 1000}
-            color={'#20609D'}
-            sliderColor={colors.primary || colors.yellow}
+            color={timerActive.current ? colors.primary : colors.yellow}
+            sliderColor={timerActive.current ? colors.primary : colors.yellow}
           /> : <></>
       }
       <View
