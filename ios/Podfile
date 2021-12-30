@@ -65,8 +65,6 @@ target 'MDCApp' do
 
   pod 'RNFileViewer', :path => '../node_modules/react-native-file-viewer'
 
-  pod 'react-native-blob-util', :path => '../node_modules/react-native-blob-util'
-
   target 'MDCAppTests' do
     inherit! :search_paths
     # Pods for testing
