@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
-import { getData, storeData } from "../../services/asyncStorage";
 
 const styles = StyleSheet.create({
   picture: {
@@ -85,7 +84,7 @@ export default class TrailsBoard extends Component {
     if (trailsTimerId && currentScreen) {
       clearInterval(trailsTimerId);
     }
-    
+
     this.timeInterval = setInterval(() => {
       const { currentIndex, failedCnt, currentScreen } = this.props;
       const { lines } = this.state;
@@ -108,7 +107,7 @@ export default class TrailsBoard extends Component {
 
   componentWillUnmount() {
     const { setTrailsTimerId } = this.props;
-    
+
     if (this.timeInterval) {
       setTrailsTimerId(null);
       clearInterval(this.timeInterval);

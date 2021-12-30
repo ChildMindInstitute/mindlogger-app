@@ -16,7 +16,7 @@ import {
   getTargetApplet,
   getAppletSchedule,
 } from "../../services/network";
-import { getData, storeData } from "../../services/asyncStorage";
+import { getData, storeData } from "../../services/storage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
@@ -348,8 +348,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));
 
-        await storeData('ml_applets', transformedApplets);
-        await storeData('ml_responses', responses);
+        // await storeData('ml_applets', transformedApplets);
+        // await storeData('ml_responses', responses);
 
         if (scheduleUpdated) {
           dispatch(setScheduleUpdated(true));
