@@ -256,6 +256,11 @@ export class BehaviorTrackerComponent extends Component {
                 onPress={() => {
                   if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
+                  } else {
+                    this.props.onChange({
+                      ...(this.props.value || {}),
+                      timerActive: true
+                    })
                   }
                 }}
                 onLongPress={() => {
