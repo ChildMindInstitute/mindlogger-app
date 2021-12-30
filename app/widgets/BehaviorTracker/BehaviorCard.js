@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 import { CachedImage } from 'react-native-img-cache';
-import Svg, { Rect, Defs, Mask, LinearGradient, Stop, Circle } from 'react-native-svg'
+import Svg, { Rect, Defs, Mask, LinearGradient, Stop, Circle, G } from 'react-native-svg'
 import { Icon } from 'native-base';
 
 const styles = StyleSheet.create({
@@ -242,10 +242,10 @@ export const BehaviorCard = (props) => {
               const dx = (timeListIcon.width/2 - 14) / 2;
               const dy = (timeListIcon.height - timeListItems.length * 14)/2 + 7;
               return (
-                <>
+                <G key={index}>
                   <Rect x={dx} y={index*14 + dy} width={8} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : behaviorColor} />
                   <Rect x={dx+14} y={index*14 + dy} width={timeListIcon.width/2} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : behaviorColor} />
-                </>
+                </G>
               )
             })
           }
