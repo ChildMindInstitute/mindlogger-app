@@ -86,9 +86,9 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         </View>
 
         {
-          length && <View style={styles.timeLeft}>
-            <Text style={{ ...styles.text, color }}>-{getTimeStr(length-current)}</Text>
-          </View> || <></>
+          <View style={styles.timeLeft}>
+            <Text style={{ ...styles.text, color }}>{length ? '-' + getTimeStr(length-current) : ''}</Text>
+          </View>
         }
         <View style={styles.bottom} />
       </View>
@@ -102,7 +102,7 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         </Defs>
 
         <Rect x={0} y={0} width={width} height={10} fill='url(#background)' />
-        <Rect x={0} y={0} width={length && width * current / length} height={10} fill={sliderColor} />
+        <Rect x={0} y={0} width={length ? width * current / length : width} height={10} fill={sliderColor} />
       </Svg>
     </View>
   );
