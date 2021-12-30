@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.25] - 2021-12-29
+- Fix app crashes after completing an token logger activity
+- Fix app crashes after tapping the return buttonon token logger activity
+- CST remove off target crash
+- Fix localization
+
 ## [0.18.24] - 2021-12-27
 - Update tooltip for Stacked Items
 - Fix small issues with localization

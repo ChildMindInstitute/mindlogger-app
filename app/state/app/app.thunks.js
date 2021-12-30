@@ -9,7 +9,7 @@ import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks
 import { clearResponses } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
-import { clearAsyncStorage } from "../../services/asyncStorage";
+import { clearStorage } from "../../services/storage";
 import { clearUser } from '../user/user.actions';
 import { signOut, deleteUserAccount, postAppletBadge } from '../../services/network';
 import { uploadQueueSelector, inProgressSelector } from '../responses/responses.selectors';
@@ -79,7 +79,7 @@ export const logout = () => (dispatch, getState) => {
   }
   const uploadQueue = uploadQueueSelector(state);
 
-  clearAsyncStorage()
+  clearStorage()
     .then(() => {
       if (uploadQueue.length > 0) {
         Actions.push('logout_warning', {

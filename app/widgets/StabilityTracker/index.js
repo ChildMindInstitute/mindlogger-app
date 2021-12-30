@@ -69,7 +69,6 @@ const styles = StyleSheet.create({
 
 const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showToast }) => {
   const configObj = useRef({
-    maxOffTargetTime: config.maxOffTargetTime || 15,
     numTestTrials: config.numTestTrials || 10,
     taskMode: config.taskMode || 'pseudo_stair',
     trackingDims: config.trackingDims || 2,
@@ -106,7 +105,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   const controlBar = useRef(true);
   const magnRef = useRef(), baseAcc = useRef();
 
-  const offTargetTimer = useRef(configObj.maxOffTargetTime * 1000), lastCrashTime = useRef(0);
+  const lastCrashTime = useRef(0);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
   const center = width/2;
 
@@ -228,7 +227,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     trialNumber.current = 0;
     score.current = 0;
     lambdaVal.current = configObj.initialLambda;
-    offTargetTimer.current = configObj.maxOffTargetTime * 1000;
     stimPos.current = [center, center]
     lambdaSlope.current = config.lambdaSlope;
     lastCrashTime.current = 0;
@@ -237,7 +235,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
   const restartTrial = (timeElapsed) => {
     score.current = score.current * 3 / 4
     lambdaVal.current = lambdaVal.current / 2
-    offTargetTimer.current = configObj.maxOffTargetTime * 1000
 
     stimPos.current = [center, center]
 
@@ -261,16 +258,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
     const bonusMulti = getBonusMulti(stimToTargetDist2, innerStimRadius, outerStimRadius);
     const scoreChange = getScoreChange(bonusMulti, deltaTime);
     score.current = score.current + scoreChange;
-
-    if (!scoreChange) {
-      offTargetTimer.current -= deltaTime;
-      if (offTargetTimer.current < 0) {
-        oobDuration.current = 0;
-        isOOB.current = true;
-        controlBar.current = true;
-        userPos.current = [width/2, width/2];
-      }
-    }
   }
 
   /** update models */
@@ -594,7 +581,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
 
 StabilityTrackerScreen.propTypes = {
   config: PropTypes.shape({
-    maxOffTargetTime: PropTypes.number,
     numTestTrials: PropTypes.number,
     taskMode: PropTypes.string,
     trackingDims: PropTypes.number,
