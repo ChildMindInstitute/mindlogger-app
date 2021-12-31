@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix app crashes after tapping the return buttonon token logger activity
 - CST remove off target crash
 - Fix localization
+- Fix number keyboard for numeric input
 
 ## [0.18.24] - 2021-12-27
 - Update tooltip for Stacked Items
