@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, KeyboardAvoidingView, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, KeyboardAvoidingView, Text, Platform, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BehaviorCard } from './BehaviorCard';
@@ -210,6 +210,7 @@ export class BehaviorTrackerComponent extends Component {
 
               <TextInput
                 style={styles.inputStyle}
+                keyboardType={"numeric"}
                 onChangeText={text => this.setState({ itemCount: isNaN(text) ? 0 : Number(text) })}
                 value={`${itemCount}`}
               />
