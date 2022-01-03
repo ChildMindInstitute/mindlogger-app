@@ -110,7 +110,6 @@ ActHeader.propTypes = {
   onPressAction: PropTypes.func,
 };
 
-const mapDispatchToProps = {
-};
+const mapDispatchToProps = {};
 
 export default connect(null, mapDispatchToProps)(ActHeader);
