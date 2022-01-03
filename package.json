@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.18.25",
+  "version": "0.18.26",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -126,6 +126,7 @@
     "redux-form": "^8.2.6",
     "redux-logger": "^3.0.6",
     "redux-persist": "^5.10.0",
+    "redux-persist-filesystem-storage": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "rn-fetch-blob": "^0.12.0",

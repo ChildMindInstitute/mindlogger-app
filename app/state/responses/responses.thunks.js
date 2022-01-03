@@ -13,7 +13,7 @@ import {
   getEncryptedData,
   getTokenUpdateInfo,
 } from "../../models/response";
-import { storeData } from "../../services/asyncStorage";
+import { storeData } from "../../services/storage";
 import { appletsSelector } from "../applets/applets.selectors";
 import { setCumulativeActivities } from "../activities/activities.actions";
 import {
@@ -241,7 +241,7 @@ export const downloadResponse = () => (dispatch, getState) => {
   downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        await storeData('ml_responses', responses);
+        // await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })
@@ -273,7 +273,7 @@ export const downloadResponses = () => (dispatch, getState) => {
   })
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        await storeData('ml_responses', responses);
+        // await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })

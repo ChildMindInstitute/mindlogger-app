@@ -1,16 +1,20 @@
 import { createStore, applyMiddleware, compose } from 'redux';
+import { Platform } from 'react-native';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger/src';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import FilesystemStorage from 'redux-persist-filesystem-storage'
 import rootReducer from './state/root.reducer';
+
+const isAndroid = Platform.OS === 'android';
 
 let store;
 
 export default function configureStore(onCompletion) {
   const persistConfig = {
     key: 'root-v3',
-    storage,
+    storage: isAndroid ? FilesystemStorage : storage,
     // whitelist: [],
     blacklist: ['form'],
   };

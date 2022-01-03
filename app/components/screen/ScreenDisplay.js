@@ -65,7 +65,7 @@ const parseMarkdown = (markdown, lastResponseTime) => {
 };
 
 const ScreenDisplay = ({ screen, activity, lastResponseTime }) => {
-  const markdown = useRef(parseMarkdown(screen.question.en, lastResponseTime[activity.id] || null)).current;
+  const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null)).current;
 
   return (
     <View style={{ marginBottom: 18 }}>

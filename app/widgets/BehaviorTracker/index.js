@@ -71,6 +71,8 @@ export class BehaviorTrackerComponent extends Component {
       selectedBehavior: '',
       itemCount: 0
     };
+
+    this.maxOccurrence = 100;
   }
 
   increaseOccurrence (behavior) {
@@ -97,6 +99,10 @@ export class BehaviorTrackerComponent extends Component {
   }
 
   onSetOccurance () {
+    if (this.state.itemCount > this.maxOccurrence || this.state.itemCount < 0) {
+      return ;
+    }
+
     this.setState({ modalVisible: false });
     const {
       value = {}
@@ -205,13 +211,13 @@ export class BehaviorTrackerComponent extends Component {
             <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
               <TouchableOpacity
                 style={styles.upButton}
-                onPress={() => this.setState({ itemCount: itemCount+1 })}
+                onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
               />
 
               <TextInput
                 style={styles.inputStyle}
+                onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
                 keyboardType={"numeric"}
-                onChangeText={text => this.setState({ itemCount: isNaN(text) ? 0 : Number(text) })}
                 value={`${itemCount}`}
               />
 
@@ -249,7 +255,7 @@ export class BehaviorTrackerComponent extends Component {
                 ready={behavior.ready}
                 behaviorType={behavior.type}
                 onPress={() => {
-                  if (timerActive) {
+                  if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
                   }
                 }}
