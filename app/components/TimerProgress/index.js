@@ -70,7 +70,9 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         >
           <Defs>
             <Mask id="region">
-              <Rect x={width-styles.timeLeft.width-r} y={r} width={r} height={r} fill="white" />
+              {
+                length && <Rect x={width-styles.timeLeft.width-r} y={r} width={r} height={r} fill="white" /> || <></>
+              }
               <Rect x={styles.timeElapsed.width} y={r} width={r} height={r} fill="white" />
 
               <Circle x={width-styles.timeLeft.width-r} y={r} r={r} fill="black" />
@@ -86,9 +88,11 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         </View>
 
         {
-          <View style={styles.timeLeft}>
-            <Text style={{ ...styles.text, color }}>{length ? '-' + getTimeStr(length-current) : ''}</Text>
-          </View>
+          length && (
+            <View style={styles.timeLeft}>
+              <Text style={{ ...styles.text, color }}>{'-' + getTimeStr(length-current)}</Text>
+            </View>
+          ) || <></>
         }
         <View style={styles.bottom} />
       </View>
