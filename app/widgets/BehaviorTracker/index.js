@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     fontSize: 18
   },
   modal: {
-    width: '70%',
+    width: '80%',
     backgroundColor: 'white',
     alignSelf: 'center',
     shadowColor: 'grey',
@@ -198,7 +198,7 @@ export class BehaviorTrackerComponent extends Component {
           onBackdropPress={() => this.setState({ modalVisible: false })}
         >
           <View style={styles.modal}>
-            <View style={{ marginVertical: 20 }}>
+            <View style={{ margin: 20 }}>
               <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
             </View>
 
