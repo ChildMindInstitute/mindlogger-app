@@ -119,6 +119,10 @@ const TokenSummaryComponent = ({ currentResponse }) => {
     }
   }
 
+  if (!timeReward) {
+    timeReward = 2;
+  }
+
   return (
     <View>
       <View style={[styles.main, { borderRadius: expanded ? 0 : 10 }]}>
@@ -232,7 +236,7 @@ const TokenSummaryComponent = ({ currentResponse }) => {
                     color: 'white',
                     marginLeft: 5
                   }}
-                >Completing activity ({timeLimit ? timeLimit + 'mins' : 'No limit'})</Text>
+                >Completing activity ({timeLimit ? timeLimit + 'mins' : 'recall'})</Text>
               </View>
             </View>
           ) || (
@@ -274,7 +278,7 @@ const TokenSummaryComponent = ({ currentResponse }) => {
                         }
 
                         <View style={[styles.optionCount, { backgroundColor: color }]}>
-                          <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{option.count}</Text>
+                          <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>{option.value}</Text>
                         </View>
                       </View>
                       <View style={{ width: '40%', paddingHorizontal: 10 }}>
