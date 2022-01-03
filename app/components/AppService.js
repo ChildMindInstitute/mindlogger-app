@@ -76,6 +76,8 @@ class AppService extends Component {
     }
 
     this.startTimer();
+
+    this.props.setAppStatus(true);
   }
 
   /**
