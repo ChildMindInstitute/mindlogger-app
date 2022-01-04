@@ -16,6 +16,7 @@ export const initialState = {
   schedule: {},
   activityOpened: false,
   currentBehavior: {},
+  lastResponseTime: {}
 };
 
 const replaceAppletResponses = (state, action) => {

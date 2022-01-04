@@ -19,8 +19,12 @@ import { colors } from "../../theme";
 
 import {
   itemStartTimeSelector,
-  lastResponseTimeSelector
+  lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
+
+import {
+  profilesSelector,
+} from "../../state/applets/applets.selectors";
 
 const styles = StyleSheet.create({
   outer: {
@@ -315,7 +319,7 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { activity, screen, answer, onChange, isCurrent, onContentError, currentScreen, lastResponseTime } = this.props;
+    const { activity, screen, answer, onChange, isCurrent, onContentError, currentScreen, lastResponseTime, profiles } = this.props;
     const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
@@ -347,6 +351,7 @@ class ActivityScreen extends Component {
               screen={screen}
               activity={activity}
               lastResponseTime={lastResponseTime[activity.appletId] || {}}
+              profile={profiles[activity.appletId] || {}}
             />
             {inputDelayed ? (
               <View pointerEvents="none" style={styles.delayView}>
@@ -451,7 +456,8 @@ ActivityScreen.propTypes = {
 
 const mapStateToProps = (state) => ({
   itemStartTime: itemStartTimeSelector(state),
-  lastResponseTime: lastResponseTimeSelector(state)
+  lastResponseTime: lastResponseTimeSelector(state),
+  profiles: profilesSelector(state)
 });
 
 export default connect(mapStateToProps)(ActivityScreen);

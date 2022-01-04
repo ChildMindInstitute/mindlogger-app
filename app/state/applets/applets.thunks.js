@@ -37,7 +37,8 @@ import {
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
-  setScheduleUpdated
+  setScheduleUpdated,
+  setUserProfiles
 } from "./applets.actions";
 import {
   authSelector,
@@ -279,7 +280,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         const responses = [];
         let scheduleUpdated = false;
         let finishedEvents = {};
-        let lastResponseTime = {};
+        let lastResponseTime = {}, profiles = {};
 
         let cumulativeActivities = {};
 
@@ -289,6 +290,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             Object.assign(finishedEvents, appletInfo.finishedEvents);
 
             lastResponseTime[`applet/${appletInfo.id}`] = appletInfo.lastResponses;
+            profiles[`applet/${appletInfo.id}`] = appletInfo.profile;
 
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
@@ -344,6 +346,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
+        dispatch(setUserProfiles(profiles));
         dispatch(setLastResponseTime(lastResponseTime));
         dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));

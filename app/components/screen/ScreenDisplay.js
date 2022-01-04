@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const parseMarkdown = (markdown, lastResponseTime) => {
+const parseMarkdown = (markdown, lastResponseTime, profile) => {
   if (!lastResponseTime) {
     return markdown;
   }
@@ -61,11 +61,12 @@ const parseMarkdown = (markdown, lastResponseTime) => {
   return markdown
           .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
           .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
-          .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(moment(responseTime), moment(now)));
+          .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(moment(responseTime), moment(now)))
+          .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
 };
 
 const ScreenDisplay = ({ screen, activity, lastResponseTime }) => {
-  const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null)).current;
+  const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null, profile)).current;
 
   return (
     <View style={{ marginBottom: 18 }}>
@@ -94,6 +95,7 @@ const ScreenDisplay = ({ screen, activity, lastResponseTime }) => {
 ScreenDisplay.propTypes = {
   screen: PropTypes.object.isRequired,
   lastResponseTime: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
   activity: PropTypes.object.isRequired
 };
 
