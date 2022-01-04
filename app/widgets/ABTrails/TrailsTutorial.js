@@ -25,41 +25,8 @@ export default class TrailsTutorial extends Component {
     this.state = {
       lines: [],
       currentIndex: 1,
-      currentNumber: 0,
       rate: 1,
     };
-    this.tutorialInterval = 0;
-  }
-
-  componentDidMount() {
-    const { tutorial } = this.props;
-    let i = 1;
-
-    this.props.onNext(tutorial[0].text);
-    this.tutorialInterval = setInterval(() => {
-      if (i === tutorial.length) {
-        this.props.onEnd();
-        clearInterval(this.tutorialInterval);
-      } else {
-        this.props.onNext(tutorial[i].text);
-        if (tutorial[i].number) {
-          this.setState({ currentNumber: tutorial[i].number });
-        } else {
-          this.setState({ currentNumber: 0 });
-        }
-        i += 1;
-      }
-    }, 3000);
-  }
-
-  componentWillUnmount() {
-    if (this.tutorialInterval) {
-      clearInterval(this.tutorialInterval);
-    }
-  }
-
-  reset = () => {
-    this.setState({ lines: [] });
   }
 
   onLayout = (event) => {
@@ -82,10 +49,10 @@ export default class TrailsTutorial extends Component {
   }
 
   renderTrailsData = (item, index, trailsData) => {
-    const { screen } = this.props;
-    const { rate, currentNumber } = this.state;
+    const { screen, currentNumber } = this.props;
+    const { rate } = this.state;
     let itemColor = trailsData.colors.pending;
-
+    
     if (item.label == currentNumber) {
       itemColor = trailsData.colors.passed;
     }
@@ -155,6 +122,7 @@ export default class TrailsTutorial extends Component {
 
   render() {
     const { dimensions } = this.state;
+    const { tutorial, onNext } = this.props;
     const width = dimensions ? dimensions.width : 300;
 
     return (
@@ -195,7 +163,6 @@ TrailsTutorial.propTypes = {
   screen: PropTypes.object,
   currentIndex: PropTypes.number,
   currentScreen: PropTypes.number,
-  tutorial: PropTypes.array,
-  onNext: PropTypes.func,
+  currentNumber: PropTypes.number,
   onEnd: PropTypes.func,
 };

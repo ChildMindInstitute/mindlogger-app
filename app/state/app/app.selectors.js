@@ -16,6 +16,8 @@ export const appStatusSelector = R.path(['app', 'appStatus']);
 
 export const tutorialStatusSelector = R.path(['app', 'isTutorial']);
 
+export const tutorialIndexSelector = R.path(['app', 'tutorialIndex']);
+
 export const lastActiveTimeSelector = R.path(['app', 'lastActive']);
 
 export const activities = R.path(['app', 'activities']);

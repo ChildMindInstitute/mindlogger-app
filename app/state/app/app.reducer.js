@@ -114,9 +114,16 @@ export const initialState = {
   /**
    * A/BTrails tutorial status
    *
-   * @type {boolean}
+   * @type {number}
    */
   isTutorial: 1,
+
+  /**
+   * A/BTrails tutorial index
+   *
+   * @type {number}
+   */
+  tutorialIndex: 0,
 
   /**
    * A/BTrails timer id
@@ -150,6 +157,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         trailsTimerId: action.payload,
+      }
+    case APP_CONSTANTS.SET_TUTORIAL_INDEX:
+      return {
+        ...state,
+        tutorialIndex: action.payload,
       }
     case APP_CONSTANTS.SET_TUTORIAL_STATUS:
       return {
