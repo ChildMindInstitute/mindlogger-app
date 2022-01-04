@@ -78,7 +78,9 @@ export class BehaviorTrackerComponent extends Component {
   increaseOccurrence (behavior) {
     const {
       value = {}
-    } = this.props.value || {}
+    } = this.props.value || {};
+
+    const { inputType } = this.props;
 
     if (value[behavior]) {
       value[behavior] = [ ...value[behavior] ]
@@ -87,7 +89,7 @@ export class BehaviorTrackerComponent extends Component {
     }
 
     value[behavior].push({
-      time: 0,
+      time: inputType == 'pastBehaviorTracker' ?  0 : new Date().getTime(),
       distress: null,
       impairment: null
     })
@@ -168,6 +170,7 @@ export class BehaviorTrackerComponent extends Component {
         positiveBehaviors,
         negativeBehaviors,
       },
+      inputType,
       setCurrentBehavior
     } = this.props;
 
@@ -257,10 +260,15 @@ export class BehaviorTrackerComponent extends Component {
                 onPress={() => {
                   if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
+                  } else {
+                    this.props.onChange({
+                      ...(this.props.value || {}),
+                      timerActive: true
+                    })
                   }
                 }}
                 onLongPress={() => {
-                  if (timerActive) {
+                  if (timerActive && inputType == 'pastBehaviorTracker') {
                     this.setState({
                       modalVisible: true,
                       selectedBehavior: behavior.name,
@@ -273,7 +281,8 @@ export class BehaviorTrackerComponent extends Component {
                     name: behavior.name,
                     image: behavior.image,
                     list: value[behavior.name],
-                    type: behavior.type
+                    type: behavior.type,
+                    inputType
                   })
                   Actions.push('set_behavior_times')
                 }}
@@ -288,6 +297,7 @@ export class BehaviorTrackerComponent extends Component {
 
 BehaviorTrackerComponent.propTypes = {
   config: PropTypes.object,
+  inputType: PropTypes.string,
   onChange: PropTypes.func,
   value: PropTypes.any,
   setCurrentBehavior: PropTypes.func.isRequired,

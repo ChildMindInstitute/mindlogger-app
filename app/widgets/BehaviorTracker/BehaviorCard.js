@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { CachedImage } from 'react-native-img-cache';
 import Svg, { Rect, Defs, Mask, LinearGradient, Stop, Circle, G } from 'react-native-svg'
 import { Icon } from 'native-base';
+import { useAnimationFrame } from '../../services/hooks';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,8 +30,6 @@ export const BehaviorCard = (props) => {
   } = props;
 
   const timeListItems = [0, 1, 2];
-  const behaviorColor = behaviorType == 'positive' ? '#20609D' : '#50256F';
-
   const [width, setWidth] = useState(0);
   const [grantTime, setGrantTime] = useState(0);
   const height = 100;
@@ -40,6 +39,31 @@ export const BehaviorCard = (props) => {
   const shadowColor = 'grey', shadowOpacity=0.5;
   const contentWidth = width ? width - timeListIcon.width + 5 : 0;
 
+  const behaviorColor = behaviorType == 'positive' ? '#20609D' : '#50256F';
+
+  const menuColorStops = {
+    positive: [[31, 95, 157], [74, 167, 246]],
+    negative: [[55, 10, 91], [187, 112, 240]],
+  };
+
+  const [menuColor, setMenuColor] = useState(menuColorStops[behaviorType]);
+
+  const mixColors = (colorA, colorB, rateA, rateB) => {
+    return `rgb(${colorA.map((d, index) => Math.floor((d * rateA + colorB[index] * rateB) / (rateA + rateB)))})`;
+  }
+
+  useAnimationFrame(
+    (timeElapsed) => {
+      const elapsed = timeElapsed % 1000;
+      const index = Math.floor(elapsed / 500);
+      setMenuColor(mixColors(
+        menuColorStops[behaviorType][index],
+        menuColorStops[behaviorType][1-index],
+        (index+1)*500-elapsed, elapsed-index*500
+      ));
+    }, 25, !ready
+  );
+
   const imageStyle = {
     top: padding.y,
     left: padding.x,
@@ -47,6 +71,7 @@ export const BehaviorCard = (props) => {
     height: imageDim.height,
     borderRadius: imageDim.width/2,
   }
+
   return (
     <View
       style={styles.container}
@@ -243,8 +268,8 @@ export const BehaviorCard = (props) => {
               const dy = (timeListIcon.height - timeListItems.length * 14)/2 + 7;
               return (
                 <G key={index}>
-                  <Rect x={dx} y={index*14 + dy} width={8} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : behaviorColor} />
-                  <Rect x={dx+14} y={index*14 + dy} width={timeListIcon.width/2} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : behaviorColor} />
+                  <Rect x={dx} y={index*14 + dy} width={8} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : ready ? behaviorColor : menuColor} />
+                  <Rect x={dx+14} y={index*14 + dy} width={timeListIcon.width/2} height={8} rx={4} fill={!times ? 'url(#topToBottom)' : ready ? behaviorColor : menuColor} />
                 </G>
               )
             })

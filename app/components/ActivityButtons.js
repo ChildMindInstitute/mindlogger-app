@@ -117,37 +117,25 @@ const ActivityButtons = ({
   timeLimit,
   timeLeft,
   appStatus,
+  timerActive,
   setTimerStatus
 }) => {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  const timeElapsed = useRef(timeLimit - timeLeft), timerActive = useRef(timerEnabled)
-  const [, setKey] = useState(0)
+  const timeElapsed = useRef(timeLimit - timeLeft);
 
   const switchTimer = () => {
-    timerActive.current = !timerActive.current;
-    setTimerStatus(timerActive.current, timeLimit - timeElapsed.current)
-    setKey(key => key+1)
+    setTimerStatus(!timerActive, timeLimit - timeElapsed.current)
   }
 
   useEffect(() => {
-    return () => {
-      if (timerActive.current) {
-        switchTimer();
-      }
-    }
-  }, [appStatus])
-
-  useEffect(() => {
     timeElapsed.current = timeLimit - timeLeft
-    timerActive.current = timerEnabled
-    setKey(key => key+1)
-  }, [timerEnabled])
+  }, [timeLeft])
 
   useEffect(() => {
     let timerId = 0;
 
-    if (timerActive.current) {
+    if (timerActive && appStatus) {
       let prevTime = Date.now() + 1000;
 
       const updateClock = () => {
@@ -159,8 +147,8 @@ const ActivityButtons = ({
           switchTimer()
           timerId = 0
         } else {
+          setTimerStatus(timerActive, timeLimit - timeElapsed.current)
           timerId = setTimeout(updateClock, prevTime - Date.now())
-          setKey(key => key+1)
         }
       }
 
@@ -172,7 +160,7 @@ const ActivityButtons = ({
         clearTimeout(timerId)
       }
     }
-  }, [timerActive.current])
+  }, [timerActive, appStatus])
 
   const timerDisabled = timeElapsed.current >= timeLimit && timeLimit;
 
@@ -234,7 +222,7 @@ const ActivityButtons = ({
           }
           {renderButton(actionLabel, true, onPressAction)}
           {renderButton(nextLabel, nextEnabled, () => {
-            if (timerActive.current) {
+            if (timerActive) {
               switchTimer();
             }
 
@@ -268,6 +256,7 @@ ActivityButtons.propTypes = {
   prevEnabled: PropTypes.bool,
   actionLabel: PropTypes.string,
   timerEnabled: PropTypes.bool,
+  timerActive: PropTypes.bool,
   timeLimit: PropTypes.number,
   timeLeft: PropTypes.number,
   appStatus: PropTypes.bool,

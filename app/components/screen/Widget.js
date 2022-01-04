@@ -333,6 +333,7 @@ const Widget = ({
   ) {
     return (
       <BehaviorTracker
+        inputType={screen.inputType}
         config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
