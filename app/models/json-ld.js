@@ -488,7 +488,7 @@ export const itemTransformJson = (itemJson) => {
   let valueConstraintsObj = R.pathOr({}, [RESPONSE_OPTIONS, 0], itemJson);
   const optionsObj = R.pathOr({}, [OPTIONS, 0], itemJson);
 
-  if (inputType != 'stackedRadio') {
+  if (inputType != 'stackedRadio' && inputType != 'futureBehaviorTracker' && inputType != 'pastBehaviorTracker') {
     Object.entries(optionsObj).forEach(([key, value]) => {
       if (value && Array.isArray(value) && value.length > 0 && !key.includes('sliderOptions') && !key.includes('itemListElement'))
         valueConstraintsObj = { ...valueConstraintsObj, [key]: value }
