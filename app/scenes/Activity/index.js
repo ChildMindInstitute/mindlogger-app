@@ -506,6 +506,7 @@ class Activity extends React.Component {
                 timerEnabled={timerEnabled}
                 timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || -1}
                 timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
+                timerActive={responses[currentScreen]?.timerActive}
                 appStatus={appStatus}
                 setTimerStatus={(timerActive, timeLeft) => {
                   const response = responses[currentScreen] || {};
