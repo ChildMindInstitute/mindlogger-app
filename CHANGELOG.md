@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.27] - 2022-1-3
 - Fix padding issues on behavior tracker
+- Fix token logger issues
 
 ## [0.18.26] - 2021-1-2
 - Fix app crashes after completing an token logger activity
