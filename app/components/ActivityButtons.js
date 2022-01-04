@@ -171,8 +171,8 @@ const ActivityButtons = ({
           <TimerProgress
             current={timeElapsed.current / 1000}
             length={timeLimit / 1000}
-            color={(timerActive.current || timerDisabled) ? colors.primary : colors.yellow}
-            sliderColor={(timerActive.current || timerDisabled) ? colors.primary : colors.yellow}
+            color={(timerActive || timerDisabled) ? colors.primary : colors.yellow}
+            sliderColor={(timerActive || timerDisabled) ? colors.primary : colors.yellow}
           /> : <></>
       }
       <View
@@ -218,7 +218,7 @@ const ActivityButtons = ({
           {
             !timerEnabled ?
               renderButton(prevLabel, prevEnabled, onPressPrev) :
-              renderTimer(timerActive.current, timerDisabled, switchTimer)
+              renderTimer(timerActive, timerDisabled, switchTimer)
           }
           {renderButton(actionLabel, true, onPressAction)}
           {renderButton(nextLabel, nextEnabled, () => {
