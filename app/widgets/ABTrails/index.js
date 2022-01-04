@@ -84,11 +84,13 @@ class ABTrails extends React.Component {
     this.setState({ isFinished: false })
   }
 
-  onError = (errorMsg) => {
-    this.setState({ 
-      message: errorMsg ? errorMsg : ' ', 
+  onError = (errorMsg, flag = false) => {
+    this.setState({
+      message: errorMsg ? errorMsg : ' ',
       messageColor: 'rgb(230, 50, 50)',
     });
+
+    if (!flag) return;
 
     setTimeout(() => {
       const { isFinished } = this.state;
@@ -171,7 +173,7 @@ class ABTrails extends React.Component {
                 onNext={this.onNextTutorial}
                 onEnd={this.onEndTutorial}
               />
-          )}
+            )}
         </Container>
 
       </View>

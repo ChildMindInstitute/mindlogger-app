@@ -772,7 +772,7 @@ export const tutorials = {
   activity1: {
     trail1: [
       { text: "There are numbers in circles on this screen." },
-      { text: "Please take the pen and draw a line from one number to the next, in order." },
+      { text: "You will take a pen and draw a line from one number to the next, in order." },
       { text: "Start at 1.", number: 1 },
       { text: "Then go to 2.", number: 2 },
       { text: "Then 3, and so on.", number: 3 },
@@ -783,7 +783,7 @@ export const tutorials = {
     ],
     trail2: [
       { text: "On this screen are more numbers in circles." },
-      { text: "Please take the pen and draw a line from one circle to the next, in order." },
+      { text: "You will take a pen and draw a line from one circle to the next, in order." },
       { text: "Start at 1.", number: 1 },
       { text: "And End here.", number: 11 },
       { text: "Please try not to lift the pen as you move from one circle to the next." },
@@ -792,7 +792,7 @@ export const tutorials = {
     ],
     trail3: [
       { text: "There are numbers and letters in circles on this screen." },
-      { text: "Please take the pen and draw a line alternating in order between the numbers and letters." },
+      { text: "You will take a pen and draw a line alternating in order between the numbers and letters." },
       { text: "Start at number 1.", number: 1 },
       { text: "Then go to the first letter, A.", number: 'A' },
       { text: "Then go to the next number, 2.", number: 2 },
@@ -804,7 +804,7 @@ export const tutorials = {
     ],
     trail4: [
       { text: "On this screen there are more numbers and letters in circles." },
-      { text: "Please take the pen and draw a line from one circle to the next." },
+      { text: "You will take a pen and draw a line from one circle to the next." },
       { text: "Alternating in order between the numbers and letters." },
       { text: "Start at 1.", number: 1 },
       { text: "And end here.", number: 6 },
@@ -816,7 +816,7 @@ export const tutorials = {
   activity2: {
     trail1: [
       { text: "There are numbers in circles on this screen." },
-      { text: "Please take the pen and draw a line from one number to the next, in order." },
+      { text: "You will take a pen and draw a line from one number to the next, in order." },
       { text: "Start at 1.", number: 1 },
       { text: "Then go to 2.", number: 2 },
       { text: "Then 3, and so on.", number: 3 },
@@ -827,7 +827,7 @@ export const tutorials = {
     ],
     trail2: [
       { text: "On this screen are more numbers in circles." },
-      { text: "Please take the pen and draw a line from one circle to the next, in order." },
+      { text: "You will take a pen and draw a line from one circle to the next, in order." },
       { text: "Start at 1.", number: 1 },
       { text: "And End here.", number: 25 },
       { text: "Please try not to lift the pen as you move from one circle to the next." },
@@ -836,7 +836,7 @@ export const tutorials = {
     ],
     trail3: [
       { text: "There are numbers and letters in circles on this screen." },
-      { text: "Please take the pen and draw a line alternating in order between the numbers and letters." },
+      { text: "You will take a pen and draw a line alternating in order between the numbers and letters." },
       { text: "Start at number 1.", number: 1 },
       { text: "Then go to the first letter, A.", number: 'A' },
       { text: "Then go to the next number, 2.", number: 2 },
@@ -848,7 +848,7 @@ export const tutorials = {
     ],
     trail4: [
       { text: "On this screen there are more numbers and letters in circles." },
-      { text: "Please take the pen and draw a line from one circle to the next." },
+      { text: "You will take a pen and draw a line from one circle to the next." },
       { text: "Alternating in order between the numbers and letters." },
       { text: "Start at 1.", number: 1 },
       { text: "And end here.", number: 25 },

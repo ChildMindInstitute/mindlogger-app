@@ -108,7 +108,7 @@ export default class TrailsBoard extends Component {
 
   componentWillUnmount() {
     const { setTrailsTimerId } = this.props;
-    
+
     if (this.timeInterval) {
       setTrailsTimerId(null);
       clearInterval(this.timeInterval);
@@ -124,7 +124,7 @@ export default class TrailsBoard extends Component {
     let order = 0;
 
     const currentItem = screen.items.find(({ order }) => order === currentIndex);
-    const nextItem = screen.items.find(({ order }) => order === currentIndex+1);
+    const nextItem = screen.items.find(({ order }) => order === currentIndex + 1);
 
     if (currentPoint !== -1) {
       this.setState({ currentPoint: -1 });
@@ -142,7 +142,7 @@ export default class TrailsBoard extends Component {
           isValid = true;
         } else {
           isValid = false;
-          this.props.onError("Incorrect start point!");
+          this.props.onError("Incorrect start point!", true);
           return;
         }
       }
@@ -190,9 +190,9 @@ export default class TrailsBoard extends Component {
     if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
 
     const currentItem = screen.items.find(({ order }) => order === currentIndex);
-    const nextItem = screen.items.find(({ order }) => order === currentIndex+1);
+    const nextItem = screen.items.find(({ order }) => order === currentIndex + 1);
 
-    if (!nextItem) return ;
+    if (!nextItem) return;
 
     const time = Date.now();
     const n = lines.length - 1;
@@ -229,25 +229,24 @@ export default class TrailsBoard extends Component {
       }
       let position = lines[n].points[0];
 
-      lines[n].points.forEach(point => {
+      lines[n].points.forEach((point, index) => {
         const d1 = Math.pow(currentPos.x * rate - point.x, 2) + Math.pow(currentPos.y * rate - point.y, 2);
         const d2 = Math.pow(currentPos.x * rate - position.x, 2) + Math.pow(currentPos.y * rate - position.y, 2);
+
         if (d1 < d2) {
           position = point;
+        }
+        if (index > validIndex) {
+          point.valid = false;
+          point.actual = item.label;
         }
       });
 
       this.props.onError("Incorrect line!");
-      this.setState({ errorPoint: position });
+      this.setState({ lines, isValid: false, currentPoint: currentIndex, errorPoint: position });
       setTimeout(() => {
-        this.props.onError("Please start here and continue.");
-        lines[n].points.forEach((point, index) => {
-          if (index > validIndex) {
-            point.valid = false;
-            point.actual = item.label;
-          }
-        })
-        this.setState({ lines, isValid: false, errorPoint: null, currentPoint: currentIndex });
+        this.props.onError("Please start here and continue.", true);
+        this.setState({ errorPoint: null });
       }, 2000);
 
     } else {
@@ -270,8 +269,8 @@ export default class TrailsBoard extends Component {
         ...line,
         points: line.points.map(point => ({
           ...point,
-          x: point.x * width / 100,
-          y: point.y * width / 100,
+          x: point.x * width / 335,
+          y: point.y * width / 335,
         })),
       })) : [];
       this.setState({ rate: width / 335, dimensions: { width, height, top, left }, lines });
@@ -299,8 +298,8 @@ export default class TrailsBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 100,
-        y: point.y / width * 100,
+        x: point.x / width * 335,
+        y: point.y / width * 335,
       })),
     }));
 
@@ -322,7 +321,7 @@ export default class TrailsBoard extends Component {
     const { currentPoint, rate, errorPoint } = this.state;
     let itemColor = trailsData.colors.pending;
 
-    if (index === 0 || index === currentPoint - 1) {
+    if (index === currentPoint - 1) {
       itemColor = trailsData.colors.passed;
     }
 
@@ -435,9 +434,9 @@ TrailsBoard.defaultProps = {
   imageSource: null,
   lines: [],
   currentIndex: 1,
-  onResult: () => {},
-  onPress: () => {},
-  onRelease: () => {},
+  onResult: () => { },
+  onPress: () => { },
+  onRelease: () => { },
 };
 
 TrailsBoard.propTypes = {
