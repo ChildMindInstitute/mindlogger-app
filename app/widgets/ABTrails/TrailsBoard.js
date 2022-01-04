@@ -85,7 +85,7 @@ export default class TrailsBoard extends Component {
     if (trailsTimerId && currentScreen) {
       clearInterval(trailsTimerId);
     }
-    
+
     this.timeInterval = setInterval(() => {
       const { currentIndex, failedCnt, currentScreen } = this.props;
       const { lines } = this.state;
@@ -108,7 +108,7 @@ export default class TrailsBoard extends Component {
 
   componentWillUnmount() {
     const { setTrailsTimerId } = this.props;
-    
+
     if (this.timeInterval) {
       setTrailsTimerId(null);
       clearInterval(this.timeInterval);
@@ -299,8 +299,8 @@ export default class TrailsBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 100,
-        y: point.y / width * 100,
+        x: point.x / width - 0.5,
+        y: 0.5 - point.y / width,
       })),
     }));
 
