@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
 const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   const { name, type, image, inputType } = currentBehavior;
   const [sliderWidth, setSliderWidth] = useState(0);
+  const [cancelContentTouches, setCancelContentTouches] = useState(true);
   const padding = 40;
   const borderRadius = 16;
   const [list, setList] = useState(currentBehavior.list);
@@ -170,11 +171,18 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
     setShowTimePicker(false);
   }
 
+  const toggleContentTouches = (value) => {
+    setCancelContentTouches(value);
+  }
+
   return (
-    <ScrollView style={{
-      ...styles.container,
-      backgroundColor: type == 'positive' ? '#20609D' : '#7A43A0',
-    }}>
+    <ScrollView
+      style={{
+        ...styles.container,
+        backgroundColor: type == 'positive' ? '#20609D' : '#7A43A0',
+      }}
+      canCancelContentTouches={cancelContentTouches}
+    >
       <StatusBar hidden />
 
       <DateTimePickerModal
@@ -262,6 +270,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                   item={item}
                   type={type}
                   disabled={false}
+                  onToggle={toggleContentTouches}
                   onChange={(distress, impairment, submit) => updateValues(item, distress, impairment, submit)}
                 />
               </View>
