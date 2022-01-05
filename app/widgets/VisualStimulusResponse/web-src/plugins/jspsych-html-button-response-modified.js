@@ -76,6 +76,8 @@ jsPsych.plugins["html-button-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
+    var start_time = performance.now();
+
     // display stimulus
     var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
@@ -105,17 +107,8 @@ jsPsych.plugins["html-button-response"] = (function() {
     }
     display_element.innerHTML = html;
 
-    // start time
-    var start_time = performance.now();
     var image_time = performance.now();
 
-    const imgs = display_element.querySelectorAll('img');
-
-    for (var i = 0; i < imgs.length; i++) {
-      imgs[i].addEventListener('load', (event) => {
-        image_time = performance.now();
-      });
-    }
     // add event listeners to buttons
     for (var i = 0; i < trial.choices.length; i++) {
       const el = display_element.querySelector('#jspsych-html-button-response-button-' + i);
