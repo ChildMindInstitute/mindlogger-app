@@ -504,7 +504,7 @@ class Activity extends React.Component {
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
                 timerEnabled={timerEnabled}
-                timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || -1}
+                timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || 0}
                 timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
                 timerActive={responses[currentScreen]?.timerActive}
                 appStatus={appStatus}
