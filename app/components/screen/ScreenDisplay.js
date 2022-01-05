@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
 const parseMarkdown = (markdown, lastResponseTime, profile) => {
   if (!lastResponseTime) {
-    return markdown;
+    return markdown.replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
   }
 
   const now = new Date();
