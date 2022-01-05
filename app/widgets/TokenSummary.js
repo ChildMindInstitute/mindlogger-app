@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { currentResponsesSelector } from '../state/responses/responses.selectors';
 import { CachedImage } from 'react-native-img-cache';
+import { getTokenSummary } from '../services/tokens';
 
 const coin = require('../../img/coin.png');
 const coins = require('../../img/coins.png');
@@ -60,68 +61,7 @@ const TokenSummaryComponent = ({ currentResponse }) => {
   const { activity, responses } = currentResponse;
   const [expanded, setExpanded] = useState(false);
 
-  let timeReward = 0, timeLimit = 0, trackingBehaviors = 0, backgroundTokens = 0;
-
-  const options = [];
-
-  const parseResponse = (response, behavior) => {
-    let count = 0, reward = 0;
-
-    if (response && response[behavior.name]) {
-      for (const data of response[behavior.name]) {
-        count++;
-        if (data.time && data.distress !== null & data.impairment !== null) {
-          reward++;
-        }
-      }
-    }
-
-    return { count, reward }
-  }
-
-  for (let i = 0; i < activity.items.length; i++) {
-    const item = activity.items[i];
-    const response = (responses[i] || {}).value;
-
-    if (item.inputType == 'futureBehaviorTracker' || item.inputType == 'pastBehaviorTracker') {
-      const { negativeBehaviors, positiveBehaviors, timeScreen } = item.valueConstraints;
-
-      if (timeScreen && item.inputType == 'futureBehaviorTracker') {
-        const timeIndex = activity.items.findIndex(item => item.variableName == timeScreen);
-        const timeResponse = (responses[timeIndex] || {}).value;
-
-        timeReward += Math.max(2, 2 * Math.floor((responses[i].timeLimit - responses[i].timeLeft) / 60000 / 5));
-        timeLimit = timeResponse || 0;
-      }
-
-      for (const behavior of positiveBehaviors) {
-        options.push({
-          ...behavior,
-          type: 'positive',
-          ...parseResponse(response, behavior)
-        })
-      }
-
-      for (const behavior of negativeBehaviors) {
-        options.push({
-          ...behavior,
-          type: 'negative',
-          ...parseResponse(response, behavior)
-        })
-      }
-    }
-  }
-
-  for (const option of options) {
-    if (option.type == 'positive') {
-      trackingBehaviors += option.value * option.count;
-      backgroundTokens += option.reward;
-    }
-  }
-
-  if (!timeReward) {
-    timeReward = 2;
-  }
+  const { options, timeReward, timeLimit, trackingBehaviors, backgroundTokens, total } = getTokenSummary(activity, responses);
 
   return (
     <View>
@@ -150,7 +90,7 @@ const TokenSummaryComponent = ({ currentResponse }) => {
               color: tokenColor,
               marginLeft: 5
             }}
-          >{timeReward + backgroundTokens + trackingBehaviors}</Text>
+          >{total}</Text>
         </View>
 
         <Text
