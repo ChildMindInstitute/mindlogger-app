@@ -19,7 +19,12 @@ import { colors } from "../../theme";
 
 import {
   itemStartTimeSelector,
+  lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
+
+import {
+  profilesSelector,
+} from "../../state/applets/applets.selectors";
 
 const styles = StyleSheet.create({
   outer: {
@@ -86,8 +91,12 @@ const { height } = Dimensions.get("window");
 
 class ActivityScreen extends Component {
   static isValid(answer, screen) {
-    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus") {
+    if (screen.inputType === "markdownMessage" || screen.inputType === "audioStimulus" || screen.inputType == "tokenSummary") {
       return true;
+    }
+
+    if (screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker') {
+      return answer && answer.value && Object.keys(answer.value).length;
     }
 
     if (screen.valueConstraints && screen.valueConstraints.isOptionalTextRequired) {
@@ -310,7 +319,7 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { screen, answer, onChange, isCurrent, onContentError, currentScreen } = this.props;
+    const { activity, screen, answer, onChange, isCurrent, onContentError, currentScreen, lastResponseTime, profiles } = this.props;
     const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
@@ -338,7 +347,12 @@ class ActivityScreen extends Component {
               }
             }}
           >
-            <ScreenDisplay screen={screen} />
+            <ScreenDisplay
+              screen={screen}
+              activity={activity}
+              lastResponseTime={lastResponseTime[activity.appletId] || {}}
+              profile={profiles[activity.appletId] || {}}
+            />
             {inputDelayed ? (
               <View pointerEvents="none" style={styles.delayView}>
                 <View style={styles.delayTimerView}>
@@ -442,6 +456,8 @@ ActivityScreen.propTypes = {
 
 const mapStateToProps = (state) => ({
   itemStartTime: itemStartTimeSelector(state),
+  lastResponseTime: lastResponseTimeSelector(state),
+  profiles: profilesSelector(state)
 });
 
 export default connect(mapStateToProps)(ActivityScreen);

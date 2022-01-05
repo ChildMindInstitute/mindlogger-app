@@ -16,7 +16,7 @@ import {
   getTargetApplet,
   getAppletSchedule,
 } from "../../services/network";
-import { getData, storeData } from "../../services/asyncStorage";
+import { getData, storeData } from "../../services/storage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
@@ -37,7 +37,8 @@ import {
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
-  setScheduleUpdated
+  setScheduleUpdated,
+  setUserProfiles
 } from "./applets.actions";
 import {
   authSelector,
@@ -46,7 +47,7 @@ import {
 } from "../user/user.selectors";
 import { isReminderSetSelector, timersSelector } from "./applets.selectors";
 import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
-import { replaceResponses } from "../responses/responses.actions";
+import { replaceResponses, setLastResponseTime } from "../responses/responses.actions";
 
 import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
@@ -278,7 +279,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         const userInfo = userInfoSelector(state);
         const responses = [];
         let scheduleUpdated = false;
-        let finishedEvents = {}
+        let finishedEvents = {};
+        let lastResponseTime = {}, profiles = {};
 
         let cumulativeActivities = {};
 
@@ -286,6 +288,9 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           .map((appletInfo) => {
             const nextActivities = appletInfo.cumulativeActivities;
             Object.assign(finishedEvents, appletInfo.finishedEvents);
+
+            lastResponseTime[`applet/${appletInfo.id}`] = appletInfo.lastResponses;
+            profiles[`applet/${appletInfo.id}`] = appletInfo.profile;
 
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
@@ -341,11 +346,13 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
           });
 
+        dispatch(setUserProfiles(profiles));
+        dispatch(setLastResponseTime(lastResponseTime));
         dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));
 
-        await storeData('ml_applets', transformedApplets);
-        await storeData('ml_responses', responses);
+        // await storeData('ml_applets', transformedApplets);
+        // await storeData('ml_responses', responses);
 
         if (scheduleUpdated) {
           dispatch(setScheduleUpdated(true));

@@ -13,8 +13,7 @@ import {
   getEncryptedData,
   getTokenUpdateInfo,
 } from "../../models/response";
-import { scheduleAndSetNotifications } from "../applets/applets.thunks";
-import { storeData } from "../../services/asyncStorage";
+import { storeData } from "../../services/storage";
 import { appletsSelector } from "../applets/applets.selectors";
 import { setCumulativeActivities } from "../activities/activities.actions";
 import {
@@ -40,10 +39,11 @@ import {
   addToUploadQueue,
   shiftUploadQueue,
   setCurrentScreen,
-  setSchedule,
+  setLastResponseTime,
   setSummaryScreen,
   replaceAppletResponses,
   setActivityOpened,
+  setAnswer,
 } from "./responses.actions";
 import {
   setActivityStartTime,
@@ -61,10 +61,12 @@ import {
   currentActivitySelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
+import { getTokenIncreaseForBehaviors } from "../../services/scoring";
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
 import { getAESKey, getPublicKey } from "../../services/encryption";
+import { sendData } from "../../services/socket";
 import config from "../../config";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
@@ -137,6 +139,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
+
+    sendData('start_activity', activity.id, applet.id);
+
     Actions.push('take_act');
   } else if (typeof responses.inProgress[index] === "undefined") {
     // There is no response in progress, so start a new one
@@ -150,6 +155,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
     dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
     dispatch(setCurrentActivity(activity.id));
+
+    sendData('start_activity', activity.id, applet.id);
+
     Actions.push("take_act");
   } else {
     Alert.alert(
@@ -186,6 +194,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
             );
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
             dispatch(setCurrentActivity(activity.id));
+
+            sendData('restart_activity', activity.id, applet.id);
+
             Actions.push("take_act");
           },
         },
@@ -203,6 +214,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next, responses.inProgress[index][currentScreen].startTime));
             dispatch(setCurrentActivity(activity.id));
+
+            sendData('resume_activity', activity.id, applet.id);
+
             Actions.push("take_act");
           },
         },
@@ -227,7 +241,7 @@ export const downloadResponse = () => (dispatch, getState) => {
   downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        await storeData('ml_responses', responses);
+        // await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })
@@ -237,7 +251,7 @@ export const downloadResponse = () => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 }
 
@@ -259,7 +273,7 @@ export const downloadResponses = () => (dispatch, getState) => {
   })
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        await storeData('ml_responses', responses);
+        // await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })
@@ -269,7 +283,7 @@ export const downloadResponses = () => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 };
 
@@ -282,7 +296,6 @@ export const replaceReponses = (user) => (dispatch, getState) => {
   const uploadData = [];
   for (const response of responses) {
     const dataSources = {};
-    const tokenUpdates = {};
 
     const applet = applets.find((applet) => applet.id === response.appletId);
 
@@ -295,23 +308,11 @@ export const replaceReponses = (user) => (dispatch, getState) => {
       }
     }
 
-    if (response.tokens && response.tokens.tokenUpdates) {
-      for (let tokenUpdate of response.tokens.tokenUpdates) {
-        tokenUpdates[tokenUpdate.id] = getEncryptedData(
-          {
-            value: tokenUpdate.value
-          },
-          applet.AESKey
-        )
-      }
-    }
-
-    if (Object.keys(dataSources).length || Object.keys(tokenUpdates).length) {
+    if (Object.keys(dataSources).length) {
       uploadData.push({
         userPublicKey: applet.userPublicKey,
         appletId: applet.id.split("/").pop(),
         dataSources,
-        tokenUpdates,
       });
     }
   }
@@ -344,7 +345,7 @@ export const downloadAppletResponses = (applet) => (dispatch, getState) => {
 
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setSchedule(schedule));
+    dispatch(setLastResponseTime(schedule));
   });
 };
 
@@ -354,7 +355,7 @@ export const startUploadQueue = () => (dispatch, getState) => {
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
 
-  uploadResponseQueue(authToken, uploadQueue, () => {
+  return uploadResponseQueue(authToken, uploadQueue, () => {
     // Progress - a response was uploaded
     dispatch(shiftUploadQueue());
   }).finally(() => {
@@ -365,6 +366,81 @@ export const startUploadQueue = () => (dispatch, getState) => {
     }
   });
 };
+
+export const refreshTokenBehaviors = () => (dispatch, getState) => {
+  const state = getState();
+  const authToken = authTokenSelector(state);
+  const applets = appletsSelector(state);
+  const responseHistory = responsesSelector(state);
+  const now = new Date(), processes = [];
+
+  for (let i = 0; i < applets.length; i++) {
+    const applet = applets[i];
+
+    const { lastRewardTime, tokenTimes } = responseHistory[i].token;
+
+    if (!tokenTimes.length) {
+      continue;
+    }
+
+    const lastTokenTime = new Date(tokenTimes[tokenTimes.length-1])
+
+    let refreshTime = new Date(
+      lastTokenTime.getFullYear(),
+      lastTokenTime.getMonth(),
+      lastTokenTime.getDate(),
+      3
+    );
+
+    if (refreshTime < lastTokenTime) {
+      refreshTime.setDate(refreshTime.getDate() + 1)
+    }
+
+    if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
+      continue;
+    }
+
+    let offset = 0;
+
+    for (const activity of applet.activities) {
+      for (const item of activity.items) {
+        if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+          offset += getTokenIncreaseForBehaviors(
+            item,
+            tokenTimes,
+            refreshTime,
+            responseHistory[i].responses[item.schema] || []
+          );
+        }
+      }
+    }
+
+    const updates = getTokenUpdateInfo(
+      offset,
+      responseHistory[i].token,
+      applet,
+      refreshTime.getTime()
+    );
+
+    processes.push(
+      updateUserTokenBalance(
+        authToken,
+        applet.id.split('/').pop(),
+        updates.cumulative,
+        updates.changes,
+        applet.schemaVersion.en,
+        updates.userPublicKey || null,
+        refreshTime.getTime()
+      )
+    )
+  }
+
+  return Promise.all(processes).then(() => {
+    if (processes.length) {
+      dispatch(downloadResponses());
+    }
+  })
+}
 
 export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const state = getState();
@@ -378,26 +454,26 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
-  const responseHistory = currentAppletResponsesSelector(state);
   const finishedTime = new Date();
+
+  const responseHistory = currentAppletResponsesSelector(state);
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
-    const version = inProgressResponse["activity"].schemaVersion['en'];
     const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
 
     const updates = getTokenUpdateInfo(
       -selectedPrize.price,
-      responseHistory,
+      responseHistory[i].token,
       applet,
     );
 
     updateUserTokenBalance(
       authToken,
       applet.id.split('/').pop(),
-      updates.offset,
       updates.cumulative,
-      version,
+      updates.changes,
+      applet.schemaVersion.en,
       updates.userPublicKey || null
     ).then(() => {
       dispatch(downloadResponses())
@@ -460,6 +536,7 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
   const visibilityArray = itemVisiblitySelector(state);
   const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
+  const inProgress = currentResponsesSelector(state);
 
   let screenIndex = currentScreenSelector(state);
   let next = -1;
@@ -485,11 +562,29 @@ export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
     if (activity.nextAccess) {
       dispatch(setActivityAccess(applet.id + activity.id));
     }
+
+    sendData('finish_activity', activity.id, applet.id);
+
     dispatch(completeResponse());
     dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
+
+    const item = activity.items[next];
+
+    if (item.inputType == 'futureBehaviorTracker') {
+      const { timeScreen } = item.valueConstraints;
+      const index = activity.items.findIndex(item => item.variableName == timeScreen);
+      const timeLimit = inProgress.responses[index] && inProgress.responses[index].value || 0;
+
+      dispatch(setAnswer(activity, next, {
+        timerActive: true,
+        value: undefined,
+        timeLeft: !timeLimit ? -1 : timeLimit * 60 * 1000,
+        timeLimit: timeLimit * 60 * 1000
+      }))
+    }
   }
 };
 

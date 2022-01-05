@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
 import * as R from 'ramda';
-import { responseScheduleSelector } from '../responses/responses.selectors';
 import { parseAppletEvents } from '../../models/json-ld';
 
 // Attach some info to each activity
 export const appletsSelector = createSelector(
   R.path(['applets', 'applets']),
-  responseScheduleSelector,
-  (applets, responseSchedule) => applets.map((applet) => parseAppletEvents(applet, responseSchedule)),
+  (applets) => applets.map((applet) => parseAppletEvents(applet)),
 );
+
+export const profilesSelector = R.path(['applets', 'profiles']);
 
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 

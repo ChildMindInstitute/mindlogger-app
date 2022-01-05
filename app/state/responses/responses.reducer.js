@@ -15,6 +15,8 @@ export const initialState = {
   uploadQueue: [],
   schedule: {},
   activityOpened: false,
+  currentBehavior: {},
+  lastResponseTime: {}
 };
 
 const replaceAppletResponses = (state, action) => {
@@ -166,6 +168,11 @@ export default (state = initialState, action = {}) => {
           },
         },
       };
+    case RESPONSES_CONSTANTS.SET_CURRENT_BEHAVIOR:
+      return {
+        ...state,
+        currentBehavior: action.payload
+      }
     case RESPONSES_CONSTANTS.SET_RESPONSES_DOWNLOAD_PROGRESS:
       return {
         ...state,
@@ -184,10 +191,10 @@ export default (state = initialState, action = {}) => {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
-    case RESPONSES_CONSTANTS.SET_SCHEDULE:
+    case RESPONSES_CONSTANTS.SET_LAST_RESPONSE_TIME:
       return {
         ...state,
-        schedule: action.payload,
+        lastResponseTime: action.payload,
       };
     default:
       return state;

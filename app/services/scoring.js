@@ -1,5 +1,6 @@
 import { Parser } from 'expr-eval';
 import _ from "lodash";
+import moment from 'moment';
 
 export const getScoreFromResponse = (item, value) => {
   if (value === null || item.inputType !== 'radio' && item.inputType !== 'slider') {
@@ -76,6 +77,156 @@ export const getValuesFromResponse = (item, value) => {
   }
 
   return tokenValues;
+}
+
+export const getBehaviorTokensFromResponse = (item, response) => {
+  const { positiveBehaviors, negativeBehaviors } = item.valueConstraints;
+  const { value } = (response || {});
+
+  let token = 0;
+
+  if (!value) {
+    return 0
+  }
+
+  const isBehaviorFilledOut = (list) => {
+    if (!list.length) return false;
+    for (const item of list) {
+      if (!item.time || item.distress === null || item.impairment === null ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  for (const behavior of positiveBehaviors) {
+    const list = response[behavior.name] || []
+    token += behavior.value * list.length;
+
+    if (isBehaviorFilledOut(list)) {
+      token++;
+    }
+  }
+
+  for (const behavior of negativeBehaviors) {
+    const list = response[behavior.name] || []
+    token -= behavior.value * list.length;
+
+    if (isBehaviorFilledOut(list)) {
+      token++;
+    }
+  }
+
+  return token;
+}
+
+export const updateTrackerAggregation = (aggregation, id, response) => {
+  aggregation[id] = aggregation[id] || {};
+
+  for (const option in response) {
+    aggregation[id][option] = aggregation[id][option] || {};
+
+    let {
+      count = 0,
+      distress = { total: 0, count: 0 },
+      impairment = { total: 0, count: 0 }
+    } = aggregation[id][option];
+
+    distress = response[option].reduce((prev, d) => {
+      if (d.distress === null) {
+        return prev;
+      }
+
+      return { total: prev.total + d.distress, count: prev.count + 1 }
+    }, distress)
+
+    impairment = response[option].reduce((prev, d) => {
+      if (d.impairment === null) {
+        return prev;
+      }
+
+      return { total: prev.total + d.impairment, count: prev.count + 1 }
+    }, impairment)
+
+    aggregation[id][option] = { count: count + response[option].length, distress, impairment }
+  }
+}
+
+export const getTokenIncreaseForBehaviors = (item, tokenTimes, refreshTime, responses) => {
+  let result = 0;
+
+  const { negativeBehaviors, positiveBehaviors } = item.valueConstraints;
+  const timestamp = refreshTime.getTime(), day = 24 * 3600 * 1000
+  const times = tokenTimes.map(time => new Date(time).getTime()).sort()
+
+  const getTokens = (behavior, positive=true) => {
+    let count = 0, reward = 0;
+
+    for (const response of responses) {
+      const time = new Date(response.datetime).getTime()
+      if (time >= timestamp - day && time < timestamp) {
+        const data = response.value[behavior.name] || [];
+        count += data.length;
+
+        for (const d of data) {
+          if (d.distress !== null && d.impairment !== null && d.time) {
+            reward++;
+          }
+        }
+      }
+    }
+
+    return count * behavior.value * ( positive ? 1 : -1 ) + reward;
+  }
+
+  for (const behavior of positiveBehaviors) {
+    result += getTokens(behavior);
+  }
+
+  const getTrackedMinutes = (startTime, endTime, date) => {
+    if (startTime <= endTime) return 0;
+
+    for (const time of times) {
+      if (time >= date + startTime && time < date + endTime) {
+        return (date + endTime - time) / 60 / 1000;
+      }
+    }
+
+    return 0;
+  }
+
+  const getMilliseconds = (timeStr) => {
+    const parts = timeStr.split(':')
+    return Number(parts[0]) * 60 * 1000 + Number(parts[1]) * 1000
+  }
+
+  for (const behavior of negativeBehaviors ) {
+    let reward = getTokens(behavior, false);
+
+    let { startTime, endTime, rate, value } = behavior;
+
+    startTime = getMilliseconds(startTime);
+    endTime = getMilliseconds(endTime);
+
+    const today = timestamp - 3 * 3600 * 1000;
+
+    let duration = getTrackedMinutes( // 3am yesterday to 12am today
+      Math.max(3 * 3600 * 1000, startTime), endTime, today - day
+    ) + getTrackedMinutes(  // 12am today to 3am today
+      startTime, Math.min(endTime, 3 * 3600 * 1000), today
+    );
+
+    reward += value * duration / rate;
+
+    if (reward < 0) {
+      reward = 0;
+    }
+
+    result += Math.round(reward);
+  }
+
+  return result;
 }
 
 export const evaluateScore = (testExpression, items = [], scores = [], subScaleResult = {}) => {

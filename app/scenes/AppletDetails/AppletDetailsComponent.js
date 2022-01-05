@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, StatusBar, View, ImageBackground, Platform } from 'react-native';
 import { Container, Header, Title, Content, Button, Icon, Left, Body, Right } from 'native-base';
 import _ from 'lodash';
+import { CachedImage } from 'react-native-img-cache';
 import { colors } from '../../theme';
 import ActivityList from '../../components/ActivityList';
 // import AppletSummary from '../../components/AppletSummary';
@@ -117,9 +118,9 @@ class AppletDetailsComponent extends React.Component {
         );
       case 'about':
         return (
-          <Content>
+          <View style={{ height: '100%', flex: 1 }}>
             <AppletAbout applet={applet} />
-          </Content>
+          </View>
         );
       default:
         break;
@@ -162,17 +163,26 @@ class AppletDetailsComponent extends React.Component {
           <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title style={{ color }}>{applet.name.en}</Title>
           </Body>
-          <Right style={{ flexDirection: 'row' }}>
-            <Button
-              disabled
-              transparent
-              onPress={() => {
-                this.handlePressSettings();
-              }}
-            >
-              {/* <Icon type="FontAwesome" name="gear" /> */}
-            </Button>
-          </Right>
+          {applet.theme.smallLogo ?
+            <Right>
+              <CachedImage
+                style={{ marginTop: Platform.OS === 'ios' ? 10 : 0, width: 90, height: 32, resizeMode: 'cover', borderRadius: 60 / 2, backgroundColor: "#fff" }}
+                source={{ uri: applet.theme.smallLogo }}
+              />
+            </Right>
+            :
+            <Right style={{ flexDirection: 'row' }}>
+              <Button
+                disabled
+                transparent
+                onPress={() => {
+                  this.handlePressSettings();
+                }}
+              >
+                {/* <Icon type="FontAwesome" name="gear" /> */}
+              </Button>
+            </Right>
+          }
         </Header>
         <ImageBackground
           style={{ width: '100%', height: '100%', flex: 1 }}

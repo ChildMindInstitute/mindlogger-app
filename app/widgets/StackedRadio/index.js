@@ -15,7 +15,8 @@ const styles = StyleSheet.create({
     fontSize: 10
   },
   tooltip: {
-    color: 'red'
+    textDecorationLine: 'underline',
+    color: '#53B5E0'
   }
 });
 
@@ -80,9 +81,9 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
               {option.description ? (
                 <TooltipBox text={option.description}>
                   <Text
-                    style={styles.optionText}
+                    style={[styles.optionText, styles.tooltip]}
                     allowFontScaling={false}
-                  >{ option.name.en }<Text style={styles.tooltip}>*</Text></Text>
+                  >{ option.name.en }</Text>
                 </TooltipBox>
               ) : (
                 <Text
@@ -112,9 +113,9 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
             {item.description ? (
               <TooltipBox text={item.description}>
                 <Text
-                  style={styles.itemText}
+                  style={[styles.itemText, styles.tooltip]}
                   allowFontScaling={false}
-                >{item.name ? item.name.en : '' }<Text style={styles.tooltip}>*</Text></Text>
+                >{item.name ? item.name.en : '' }</Text>
               </TooltipBox>
             ) : (
               <Text

@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.28] - 2022-1-4
+- Update instructions with next button
+
+## [0.18.27] - 2022-1-3
+- Fix padding issues on behavior tracker
+- Fix token logger issues
+
+## [0.18.26] - 2021-1-2
+- Fix app crashes after completing an token logger activity
+- Fix app crashes after tapping the return buttonon token logger activity
+- CST remove off target crash
+- Fix localization
+
+## [0.18.25] - 2021-12-29
+- Fix number keyboard for numeric input
+
+## [0.18.24] - 2021-12-27
+- Update tooltip for Stacked Items
+- Fix small issues with localization
+- Fix an issue with text input field
+- Fix timer
+
+## [0.18.23] - 2021-12-23
+- Upload Image for about Page in TokenLogger
+- Fix millisecond dealy in displaying CMI logo on Login Screen
+- Past Behavior Tracker
+- Future Behavior Tracker
+- Token Chart Refresh
+- Summary Screen for all Token Activities
+- Update Color of the Anchor Text on Sliders for TokenLogger
+
 ## [0.18.22] - 2021-12-22
 - Update A/B Trails timer
 

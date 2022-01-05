@@ -14,6 +14,11 @@ export const setNotificationReminder = applets => ({
   payload: applets,
 });
 
+export const setUserProfiles = profiles => ({
+  type: APPLET_CONSTANTS.SET_PROFILES,
+  payload: profiles
+})
+
 export const clearNotificationReminder = applets => ({
   type: APPLET_CONSTANTS.CLEAR_REMINDER,
   payload: applets,

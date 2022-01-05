@@ -67,7 +67,7 @@ export const initialState = {
    *
    * @type {boolean}
    */
-  appStatus: false,
+  appStatus: true,
 
   /**
    * timestamp for app was open last time

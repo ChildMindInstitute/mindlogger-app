@@ -9,17 +9,17 @@ const BACK = i18n.t('activity_navigation:back');
 const RETURN = i18n.t('activity_navigation:return');
 const UNDO = i18n.t('activity_navigation:undo');
 
-export const checkValidity = (item, activityName, response, index, tutorialStatus = 0) => { 
+export const checkValidity = (item, activityName, response, index, tutorialStatus = 0) => {
   if (item.inputType === "trail" && tutorialStatus !== 0) {
     return true;
   }
   if (item.inputType === "trail" && index >= 0 && response) {
     let currentActivity = 'activity1';
-  
+
     if (activityName.includes('v2')) {
       currentActivity = 'activity2';
     }
-    
+
     const screen = screens[currentActivity][item.inputType + '' + (index + 1)];
     if (screen.items.length !== response.value.currentIndex) {
       return false;
@@ -108,7 +108,7 @@ export const isNextEnabled = (index, activity, responses, tutorialStatus) => {
 };
 
 export const isPrevEnabled = (index, activity) => {
-  if (activity.items[index].inputType === "trail") {
+  if (activity.items[index].inputType === "trail" || activity.items[index].inputType == "tokenSummary") {
     return false;
   }
   if (activity.items[index].backDisabled === true) {
@@ -136,8 +136,11 @@ export const getActionLabel = (index, responses, items) => {
   if (response === null || typeof response === 'undefined') {
     return undefined;
   }
-  if (items[index].inputType === 'audioStimulus' || 
+  if (items[index].inputType === 'audioStimulus' ||
     items[index].inputType === 'trail') {
+    return undefined;
+  }
+  if (items[index].inputType === 'futureBehaviorTracker' && response && !response.value) {
     return undefined;
   }
   return i18n.t('activity_navigation:undo');

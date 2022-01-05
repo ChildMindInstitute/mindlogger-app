@@ -124,7 +124,7 @@ class Login extends Component {
     } = this.props;
     const title = skin.name;
     const logo =
-      typeof skin.logo !== "undefined" ? { uri: skin.logo } : { uri: 'https://cmi-logos.s3.amazonaws.com/ChildMindInstitute_Logo_Vertical_KO.png' };
+      typeof skin.logo !== "undefined" ? { uri: skin.logo } : defaultLogo;
     return (
       <Container>
         <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
@@ -198,7 +198,7 @@ const mapStateToProps = (state) => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   fcmToken: fcmFcmTokenSelector(state),
-  appLanguage: state.app.appLanguage, 
+  appLanguage: state.app.appLanguage,
 });
 
 const mapDispatchToProps = {
