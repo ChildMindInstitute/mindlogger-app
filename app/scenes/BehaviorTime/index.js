@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
 })
 
 const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
-  const { name, type, image } = currentBehavior;
+  const { name, type, image, inputType } = currentBehavior;
   const [sliderWidth, setSliderWidth] = useState(0);
   const padding = 40;
   const borderRadius = 16;
@@ -109,7 +109,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       name,
       type,
       image,
-      list: items
+      list: items,
+      inputType
     })
 
     if (!items.length) {
@@ -137,7 +138,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
         name,
         type,
         image,
-        list: items
+        list: items,
+        inputType
       })
     }
   }
@@ -161,7 +163,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       name,
       type,
       image,
-      list: items
+      list: items,
+      inputType
     })
 
     setShowTimePicker(false);
@@ -236,6 +239,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                     currentItem.current = item;
                     setShowTimePicker(true)
                   }}
+                  disabled={inputType != 'pastBehaviorTracker'}
                 >
                   <Text style={styles.timeText}>
                     {!item.time ? 'Time' : item.timeStr}

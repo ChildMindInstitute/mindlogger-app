@@ -8,6 +8,8 @@ export const appletsSelector = createSelector(
   (applets) => applets.map((applet) => parseAppletEvents(applet)),
 );
 
+export const profilesSelector = R.path(['applets', 'profiles']);
+
 export const isDownloadingAppletsSelector = R.path(['applets', 'isDownloadingApplets']);
 
 export const isDownloadingTargetAppletSelector = R.path(['applets', 'isDownloadingTargetApplet']);

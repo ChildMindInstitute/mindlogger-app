@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import ScreenButton from "./screen/ScreenButton";
 import { colors } from "../themes/colors";
-import Svg, { Rect, Mask, Circle, Defs } from "react-native-svg";
+import Svg, { Rect, Mask, Circle, Defs, RadialGradient, Stop } from "react-native-svg";
 import TimerProgress from './TimerProgress';
 
 const styles = StyleSheet.create({
@@ -41,7 +41,22 @@ const renderButton = (label, enabled, onPress) => {
   );
 };
 
-const renderTimer = (timerActive, switchTimer) => {
+const renderTimer = (timerActive, timerDisabled, switchTimer) => {
+  const renderActionButton = (timerDisabled) => {
+    return (
+      <Svg width={10} height={32}>
+        <Defs>
+          <RadialGradient id="grad" cx={5} cy={16} rx={10} ry={32} gradientUnits="userSpaceOnUse">
+            <Stop offset="0" stopColor="white" stopOpacity="1" />
+            <Stop offset="1" stopColor="#DDDDDD" stopOpacity="1" />
+          </RadialGradient>
+        </Defs>
+
+        <Rect x={0} y={0} width={10} height={32} fill={timerDisabled ? "url(#grad)" : colors.primary} />
+      </Svg>
+    )
+  };
+
   return (
     <View
       style={{
@@ -57,14 +72,14 @@ const renderTimer = (timerActive, switchTimer) => {
             borderRadius: 24,
             paddingVertical: 10
           },
-          !timerActive ? {
+          !timerActive && !timerDisabled ? {
             paddingLeft: 20,
             paddingRight: 15,
           } : { justifyContent: 'center', paddingHorizontal: 23 }
         ]}
       >
         {
-          !timerActive &&
+          !timerActive && !timerDisabled &&
             <TouchableOpacity
               style={{
                 borderTopWidth: 16,
@@ -77,9 +92,10 @@ const renderTimer = (timerActive, switchTimer) => {
               }}
               onPress={switchTimer}
             /> ||
-          <TouchableOpacity onPress={switchTimer} style={{ flexDirection: 'row' }}>
-            <View style={{ width: 10, backgroundColor: colors.primary, height: 32, marginRight: 6 }} />
-            <View style={{ width: 10, backgroundColor: colors.primary, height: 32 }} />
+          <TouchableOpacity onPress={switchTimer} style={{ flexDirection: 'row' }} disabled={timerDisabled}>
+            { renderActionButton(timerDisabled) }
+            <View style={{ width: 6 }} />
+            { renderActionButton(timerDisabled) }
           </TouchableOpacity>
         }
       </View>
@@ -101,37 +117,25 @@ const ActivityButtons = ({
   timeLimit,
   timeLeft,
   appStatus,
+  timerActive,
   setTimerStatus
 }) => {
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
-  const timeElapsed = useRef(timeLimit - timeLeft), timerActive = useRef(timerEnabled)
-  const [, setKey] = useState(0)
+  const timeElapsed = useRef(timeLimit - timeLeft);
 
   const switchTimer = () => {
-    timerActive.current = !timerActive.current;
-    setTimerStatus(timerActive.current, timeLimit - timeElapsed.current)
-    setKey(key => key+1)
+    setTimerStatus(!timerActive, timeLimit - timeElapsed.current)
   }
 
   useEffect(() => {
-    return () => {
-      if (timerActive.current) {
-        switchTimer();
-      }
-    }
-  }, [appStatus])
-
-  useEffect(() => {
     timeElapsed.current = timeLimit - timeLeft
-    timerActive.current = timerEnabled
-    setKey(key => key+1)
-  }, [timerEnabled])
+  }, [timeLeft])
 
   useEffect(() => {
     let timerId = 0;
 
-    if (timerActive.current) {
+    if (timerActive && appStatus) {
       let prevTime = Date.now() + 1000;
 
       const updateClock = () => {
@@ -143,8 +147,8 @@ const ActivityButtons = ({
           switchTimer()
           timerId = 0
         } else {
+          setTimerStatus(timerActive, timeLimit - timeElapsed.current)
           timerId = setTimeout(updateClock, prevTime - Date.now())
-          setKey(key => key+1)
         }
       }
 
@@ -156,7 +160,9 @@ const ActivityButtons = ({
         clearTimeout(timerId)
       }
     }
-  }, [timerActive.current])
+  }, [timerActive, appStatus])
+
+  const timerDisabled = timeElapsed.current >= timeLimit && timeLimit;
 
   return (
     <View>
@@ -165,8 +171,8 @@ const ActivityButtons = ({
           <TimerProgress
             current={timeElapsed.current / 1000}
             length={timeLimit / 1000}
-            color={'#20609D'}
-            sliderColor={colors.primary || colors.yellow}
+            color={(timerActive || timerDisabled) ? colors.primary : colors.yellow}
+            sliderColor={(timerActive || timerDisabled) ? colors.primary : colors.yellow}
           /> : <></>
       }
       <View
@@ -212,11 +218,11 @@ const ActivityButtons = ({
           {
             !timerEnabled ?
               renderButton(prevLabel, prevEnabled, onPressPrev) :
-              renderTimer(timerActive.current, switchTimer)
+              renderTimer(timerActive, timerDisabled, switchTimer)
           }
           {renderButton(actionLabel, true, onPressAction)}
           {renderButton(nextLabel, nextEnabled, () => {
-            if (timerActive.current) {
+            if (timerActive) {
               switchTimer();
             }
 
@@ -250,6 +256,7 @@ ActivityButtons.propTypes = {
   prevEnabled: PropTypes.bool,
   actionLabel: PropTypes.string,
   timerEnabled: PropTypes.bool,
+  timerActive: PropTypes.bool,
   timeLimit: PropTypes.number,
   timeLeft: PropTypes.number,
   appStatus: PropTypes.bool,

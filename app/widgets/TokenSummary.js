@@ -90,7 +90,7 @@ const TokenSummaryComponent = ({ currentResponse }) => {
         const timeIndex = activity.items.findIndex(item => item.variableName == timeScreen);
         const timeResponse = (responses[timeIndex] || {}).value;
 
-        timeReward = timeResponse ? timeResponse / 5 : 5;
+        timeReward += Math.max(2, 2 * Math.floor((responses[i].timeLimit - responses[i].timeLeft) / 60000 / 5));
         timeLimit = timeResponse || 0;
       }
 
