@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, KeyboardAvoidingView, Text, Platform, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { Input } from 'native-base';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { BehaviorCard } from './BehaviorCard';
@@ -177,6 +178,7 @@ export class BehaviorTrackerComponent extends Component {
     let {
       value = {},
       timerActive = true,
+      timeLeft = 1,
     } = (this.props.value || {});
 
     const {
@@ -217,7 +219,7 @@ export class BehaviorTrackerComponent extends Component {
                 onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
               />
 
-              <TextInput
+              <Input
                 style={styles.inputStyle}
                 onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
                 keyboardType={"numeric"}
@@ -260,7 +262,7 @@ export class BehaviorTrackerComponent extends Component {
                 onPress={() => {
                   if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
-                  } else {
+                  } else if (timeLeft > 0) {
                     this.props.onChange({
                       ...(this.props.value || {}),
                       timerActive: true
