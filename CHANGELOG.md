@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.29] - 2022-1-5
 - Fix timer issues on behavior tracker
+- Update coin icons
 
 ## [0.18.28] - 2022-1-4
 - Fix some crashing issues
