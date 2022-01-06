@@ -237,7 +237,7 @@ const ActivityButtons = ({
 ActivityButtons.defaultProps = {
   timerEnabled: undefined,
   timeLimit: 0,
-  timeLeft: -1,
+  timeLeft: 0,
   nextLabel: undefined,
   nextEnabled: true,
   prevLabel: undefined,

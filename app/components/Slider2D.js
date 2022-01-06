@@ -5,7 +5,7 @@ import { View, Image } from 'react-native';
 const doubleArrow = require('../../img/double-arrow.png');
 const pointer = require('../../img/pointer.png');
 
-const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, borderColor, disabled, axisHeight=10 }) => {
+const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange, type, borderColor, disabled, axisHeight=10 }) => {
   const distress = '#EC0C8B', impairment = '#0FB0EC';
   const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * borderRadius;
 
@@ -362,13 +362,19 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, bo
           if (!disabled) {
             updateValues(locationX, locationY, false)
           }
+          onToggle(false);
         }}
         onResponderMove={(evt) => {
           const { locationX, locationY } = evt.nativeEvent;
           if (!disabled) {
             updateValues(locationX, locationY, false)
           }
+          onToggle(false);
         }}
+        onPanResponderTerminate={() => {
+          onToggle(true);
+        }}
+
         onResponderRelease={(evt) => {
           const { locationX, locationY } = evt.nativeEvent;
 
@@ -376,6 +382,7 @@ const Slider2D = ({ sliderWidth, padding, item, borderRadius, onChange, type, bo
             updateValues(locationX, locationY, true)
           }
         }}
+        
       ></View>
     </View>
   )

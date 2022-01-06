@@ -103,6 +103,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
                   start_time: record.image_time,
                   correct: record.correct,
                   start_timestamp: record.start_timestamp,
+                  offset: record.start_timestamp - record.start_time,
                   tag: record.tag,
                 })), true);
               }, 0)
