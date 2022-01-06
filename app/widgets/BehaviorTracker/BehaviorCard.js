@@ -32,12 +32,22 @@ export const BehaviorCard = (props) => {
   const timeListItems = [0, 1, 2];
   const [width, setWidth] = useState(0);
   const [grantTime, setGrantTime] = useState(0);
-  const height = 100;
-  const imageDim = { width: 70, height: 70 }, padding = { x: 15, y: 15 };
-  const timesStyle = { width: 100, height: 100 };
-  const timeListIcon = { width: 90, height: 90 }
-  const shadowColor = 'grey', shadowOpacity=0.5;
+
+  const height = Math.max(width / 4, 80);
+  const timeListIcon = { width: height * 0.9, height: height * 0.9 };
   const contentWidth = width ? width - timeListIcon.width + 5 : 0;
+
+  const imageDim = {
+    width: height * 0.7,
+    height: height * 0.7
+  };
+  const padding = {
+    x: height * 0.15,
+    y: height * 0.15
+  };
+
+  const timesStyle = { width: height, height: height };
+  const shadowColor = 'grey', shadowOpacity = 0.5;
 
   const behaviorColor = behaviorType == 'positive' ? '#20609D' : '#50256F';
 
@@ -215,7 +225,7 @@ export const BehaviorCard = (props) => {
         }}
       >
         <Text style={{
-          fontSize: 20, paddingLeft: 5, paddingTop: padding.y,
+          fontSize: Math.min(height / 5, 20), paddingLeft: 5, paddingTop: padding.y,
         }}>{ name }</Text>
       </View>
 
@@ -231,7 +241,7 @@ export const BehaviorCard = (props) => {
         }}
       >
         <Text style={styles.timesText}>{times}</Text>
-        <Text style={{...styles.timesText, fontSize: 15}}>Times</Text>
+        <Text style={{...styles.timesText, fontSize: Math.min(height * 0.15, 15)}}>Times</Text>
       </View>
 
       <TouchableOpacity
