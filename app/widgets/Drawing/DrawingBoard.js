@@ -27,7 +27,7 @@ function chunkedPointStr(lines, chunkSize) {
 
     if (length === 1) {
       const point = points[0];
-      
+
       points.push({
         ...point,
         x: point.x + 1.5,
@@ -98,7 +98,7 @@ export default class DrawingBoard extends Component {
     const time = Date.now();
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
-    
+
     if (moveX === 0 && moveY === 0) return;
     else {
       this.lastX = moveX - x0 + this.startX;
@@ -141,8 +141,8 @@ export default class DrawingBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 100,
-        y: point.y / width * 100,
+        x: point.x / width - 0.5,
+        y: 0.5 - point.y / width,
       })),
     }));
     return { lines: results };
