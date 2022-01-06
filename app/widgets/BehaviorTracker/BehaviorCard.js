@@ -181,7 +181,8 @@ export const BehaviorCard = (props) => {
           shadowOffset: { width: -2, height: -2 },
           shadowOpacity: 0.5,
           shadowRadius: 2,
-          opacity: grantTime ? 0.8 : 1
+          opacity: grantTime ? 0.8 : 1,
+          elevation: 5
         }}
       >
         {
@@ -242,6 +243,7 @@ export const BehaviorCard = (props) => {
           shadowOffset: {width: 0, height: 6},
           shadowOpacity: 0.2,
           shadowRadius: 5,
+          elevation: 5,
           flex: 1,
           flexDirection: 'column',
           alignItems: 'center',
