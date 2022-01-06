@@ -53,7 +53,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
   }
 
   const getTrackedMinutes = (startTime, endTime, date) => {
-    if (startTime <= endTime) return 0;
+    if (startTime >= endTime) return 0;
 
     for (const time of times) {
       if (time >= date + startTime && time < date + endTime) {
@@ -66,7 +66,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
 
   const getMilliseconds = (timeStr) => {
     const parts = timeStr.split(':')
-    return Number(parts[0]) * 60 * 1000 + Number(parts[1]) * 1000
+    return (Number(parts[0]) * 60 + Number(parts[1])) * 60 * 1000
   }
 
   for (const behavior of negativeBehaviors ) {
