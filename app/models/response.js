@@ -3,7 +3,8 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale, updateTrackerAggregation } from '../services/scoring';
+import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { updateTrackerAggregation, getTokenSummary, getTokenIncreaseForNegativeBehaviors } from '../services/tokens';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -66,6 +67,8 @@ export const prepareResponseForUpload = (
           if (enableNegativeTokens && cumulative + negativeSum >= 0) {
             cumulative += negativeSum;
           }
+
+          tokenChanged = true;
         }
       } catch (error) {
         console.log("ERR: ", error);
@@ -79,6 +82,12 @@ export const prepareResponseForUpload = (
         }
       }
     }
+  }
+
+  const tokenSummary = getTokenSummary(activity, responses);
+  if (tokenSummary.total > 0) {
+    tokenChanged = true;
+    cumulative += tokenSummary.total;
   }
 
   const responseData = {
@@ -135,8 +144,10 @@ export const prepareResponseForUpload = (
 
     if (tokenChanged) {
       responseData['token'] = { cumulative, changes }
-    } else {
-      responseData['token'] = { trackerAggregation }
+    }
+
+    if (trackerChanged) {
+      responseData['token'].trackerAggregation = trackerAggregation;
     }
   }
 

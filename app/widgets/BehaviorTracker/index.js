@@ -178,6 +178,7 @@ export class BehaviorTrackerComponent extends Component {
     let {
       value = {},
       timerActive = true,
+      timeLeft = 1,
     } = (this.props.value || {});
 
     const {
@@ -261,7 +262,7 @@ export class BehaviorTrackerComponent extends Component {
                 onPress={() => {
                   if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
-                  } else {
+                  } else if (timeLeft > 0) {
                     this.props.onChange({
                       ...(this.props.value || {}),
                       timerActive: true
