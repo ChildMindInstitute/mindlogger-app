@@ -31,7 +31,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
 
     let str = '';
     if (hours > 0) {
-      str = hours == 1 ? `an hour` : `${hours} hours`;
+      str = hours == 1 ? `hour` : `${hours} hours`;
     }
 
     if (minutes > 0) {
@@ -39,11 +39,11 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
         str += ' and ';
       }
 
-      str += minutes == 1 ? 'one minute' : `${minutes} minutes`;
+      str += minutes == 1 ? 'one minute' : minutes == 59 ? "hour" : `${minutes} minutes`;
     }
 
     if (!str.length) {
-      return 'just now'
+      return 'minute'
     }
     return str;
   };
