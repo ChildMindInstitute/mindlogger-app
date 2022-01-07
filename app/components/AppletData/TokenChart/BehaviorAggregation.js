@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 40,
-    backgroundColor: '#EFEFEF',
     height: 60,
     width: 60
   },
@@ -73,16 +72,22 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
             ...styles.card,
             backgroundColor: option.type == 'positive' ? '#0D426D' : '#50256F',
           }}>
-            <View style={{
-              width: 100, alignItems: 'center', height: '100%', justifyContent: 'center', flexGrow: 0
-            }}>
+            <View
+              style={{
+                width: 100,
+                alignItems: 'center',
+                height: '100%',
+                justifyContent: 'center',
+                flexGrow: 0
+              }}
+            >
               {
-                option.image && (
+                option.image ? (
                   <Image
                     style={styles.image}
-                    source={option.image }
+                    source={{ uri: option.image }}
                   />
-                ) || <View style={styles.image}/>
+                ) : <View style={{ ...styles.image, backgroundColor: '#EFEFEF' }}/>
               }
             </View>
 
