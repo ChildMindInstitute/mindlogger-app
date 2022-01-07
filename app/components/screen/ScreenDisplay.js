@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
 
 const parseMarkdown = (markdown, lastResponseTime, profile) => {
   if (!lastResponseTime) {
-    return markdown;
+    return markdown.replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
   }
 
   const now = new Date();
@@ -65,7 +65,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
           .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
 };
 
-const ScreenDisplay = ({ screen, activity, lastResponseTime }) => {
+const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
   const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null, profile)).current;
 
   return (

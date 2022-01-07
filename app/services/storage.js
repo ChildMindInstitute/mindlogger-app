@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import FilesystemStorage from 'redux-persist-filesystem-storage';
+import FilesystemStorage from './fileSystemStorage';
 import { Platform } from 'react-native';
 
 const isAndroid = Platform.OS === 'android';
@@ -21,7 +21,7 @@ export const storeData = async (storageKey, value) => {
 
 export const getData = async (storageKey, defaultValue=null) => {
   try {
-    const jsonValue = isAndroid ? FilesystemStorage.getItem(storageKey) : await AsyncStorage.getItem(storageKey);
+    const jsonValue = isAndroid ? await FilesystemStorage.getItem(storageKey) : await AsyncStorage.getItem(storageKey);
 
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch (e) {

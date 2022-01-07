@@ -22,8 +22,8 @@ export const downloadAppletResponse = async (authToken, applet) => {
   return getLast7DaysData({
     authToken,
     appletId,
-    localItems: Object.keys(response.items),
-    localActivities: Object.keys(response.activities),
+    localItems: response ? Object.keys(response.items) : null,
+    localActivities: response ? Object.keys(response.activities) : null,
     startDate: response ? response['schema:startDate'] : null,
     groupByDateActivity: false,
   }).then((responses) => {

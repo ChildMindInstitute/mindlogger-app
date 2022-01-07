@@ -61,7 +61,7 @@ import {
   currentActivitySelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
-import { getTokenIncreaseForBehaviors } from "../../services/scoring";
+import { getTokenIncreaseForNegativeBehaviors } from "../../services/tokens";
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
@@ -241,7 +241,7 @@ export const downloadResponse = () => (dispatch, getState) => {
   downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        // await storeData('ml_responses', responses);
+        await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })
@@ -273,7 +273,7 @@ export const downloadResponses = () => (dispatch, getState) => {
   })
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
-        // await storeData('ml_responses', responses);
+        await storeData('ml_responses', responses);
         dispatch(replaceResponses(responses));
       }
     })
@@ -405,7 +405,7 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
     for (const activity of applet.activities) {
       for (const item of activity.items) {
         if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-          offset += getTokenIncreaseForBehaviors(
+          offset += getTokenIncreaseForNegativeBehaviors(
             item,
             tokenTimes,
             refreshTime,

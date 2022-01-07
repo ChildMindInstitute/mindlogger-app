@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger/src';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import FilesystemStorage from 'redux-persist-filesystem-storage'
+import FilesystemStorage from './services/fileSystemStorage';
 import rootReducer from './state/root.reducer';
 
 const isAndroid = Platform.OS === 'android';

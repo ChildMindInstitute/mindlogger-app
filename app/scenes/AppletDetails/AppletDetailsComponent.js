@@ -163,7 +163,7 @@ class AppletDetailsComponent extends React.Component {
           <Body style={{ paddingTop: IOSBodyPadding }}>
             <Title style={{ color }}>{applet.name.en}</Title>
           </Body>
-          {applet.theme.smallLogo ?
+          {applet.theme?.smallLogo ?
             <Right>
               <CachedImage
                 style={{ marginTop: Platform.OS === 'ios' ? 10 : 0, width: 90, height: 32, resizeMode: 'cover', borderRadius: 60 / 2, backgroundColor: "#fff" }}
