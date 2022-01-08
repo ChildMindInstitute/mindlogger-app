@@ -55,7 +55,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
       return responseTime.format('hh:mm A') + ' yesterday';
     }
 
-    return responseTime.format('hh:mm A');
+    return responseTime.format('hh:mm A DD/MM');
   }
 
   return markdown
