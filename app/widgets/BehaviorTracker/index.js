@@ -73,7 +73,7 @@ export class BehaviorTrackerComponent extends Component {
       itemCount: 0
     };
 
-    this.maxOccurrence = 100;
+    this.maxOccurrence = 99;
   }
 
   increaseOccurrence (behavior) {
@@ -221,6 +221,7 @@ export class BehaviorTrackerComponent extends Component {
 
               <Input
                 style={styles.inputStyle}
+                maxLength={2}
                 onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
                 keyboardType={"numeric"}
                 value={`${itemCount}`}

@@ -138,6 +138,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                       width={1}
                       height={sliderWidth}
                       fill={'white'}
+                      fillOpacity={0.4}
                     />
                   )
                 }) || []
@@ -155,6 +156,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                       width={sliderWidth}
                       height={1}
                       fill={'white'}
+                      fillOpacity={0.4}
                     />
                   )
                 }) || []
