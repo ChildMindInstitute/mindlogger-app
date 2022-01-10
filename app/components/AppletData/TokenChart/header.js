@@ -8,8 +8,13 @@ const coin = require('../../../../img/coin.png');
 const coins = require('../../../../img/coins.png');
 
 const TokenHeader = (props) => {
-  const { textColor, cumulative, tokensYesterday } = props;
-
+  const {
+    textColor,
+    cumulative,
+    pastTokensLabel,
+    tokensYesterday
+  } = props;
+ 
   return (
     <View style={{ marginVertical: 20 }}>
       <BaseText
@@ -58,13 +63,14 @@ const TokenHeader = (props) => {
             color: textColor,
             fontWeight: '500'
           }}
-        >yesterday</BaseText>
+        >{pastTokensLabel}</BaseText>
       </View>
     </View>
   );
 };
 
 TokenHeader.propTypes = {
+  pastTokensLabel: PropTypes.string.isRequired,
   textColor: PropTypes.string.isRequired,
   cumulative: PropTypes.number.isRequired,
   tokensYesterday: PropTypes.number.isRequired,
