@@ -226,7 +226,7 @@ export const BehaviorCard = (props) => {
       >
         <Text style={{
           fontSize: Math.min(height / 5, 20), paddingLeft: 5, paddingTop: padding.y,
-        }}>{ name }</Text>
+        }}>{ name.length > 32 ? name.slice(0, 28) + ' ...' : name }</Text>
       </View>
 
       <View
