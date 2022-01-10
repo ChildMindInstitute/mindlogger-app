@@ -7,6 +7,11 @@ import i18n from "i18next";
 import { BodyText, Heading } from "../../components/core";
 import theme from "../../themes/base-theme";
 import FunButton from "../../components/core/FunButton";
+import { isTokenLoggerApplet } from '../../services/tokens';
+import {
+  currentAppletSelector,
+} from "../../state/app/app.selectors";
+import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
 
 const styles = StyleSheet.create({
   box: {
@@ -19,7 +24,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityThanks = () => {
+const ActivityThanks = ({ currentApplet }) => {
+  const tokenLogger = isTokenLoggerApplet(currentApplet);
+
   const onClose = () => {
     Actions.replace("applet_details");
   };
@@ -27,10 +34,11 @@ const ActivityThanks = () => {
   return (
     <ImageBackground
       style={{ width: "100%", height: "100%", flex: 1 }}
-      source={{
-        uri:
-          "https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80",
-      }}
+      source={
+        tokenLogger ? TokenLoggerBackground : {
+          uri: "https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80",
+        }
+      }
     >
       <View style={styles.box}>
         <Heading style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
@@ -48,9 +56,13 @@ const ActivityThanks = () => {
 
 ActivityThanks.propTypes = {};
 
+const mapStateToProps = (state) => ({
+  currentApplet: currentAppletSelector(state),
+});
+
 const mapDispatchToProps = {};
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(ActivityThanks);

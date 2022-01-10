@@ -14,6 +14,9 @@ import AppletAbout from '../../components/AppletAbout';
 import AppletData from '../../components/AppletData';
 
 import { contrast } from '../../utils/utils.color';
+import { isTokenLoggerApplet } from '../../services/tokens';
+
+import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
 
 const isIOS = Platform.OS === 'ios';
 const IOSHeaderPadding = isIOS ? 20 : 0;
@@ -141,6 +144,7 @@ class AppletDetailsComponent extends React.Component {
     const { applet, hasInvites, primaryColor } = this.props;
 
     const { selectedTab } = this.state;
+    const tokenLogger = isTokenLoggerApplet(applet);
 
     const backgroundColor = applet && applet.theme && applet.theme.primaryColor ? applet.theme.primaryColor : primaryColor;
     const color = contrast(backgroundColor);
@@ -186,10 +190,11 @@ class AppletDetailsComponent extends React.Component {
         </Header>
         <ImageBackground
           style={{ width: '100%', height: '100%', flex: 1 }}
-          source={{
-            // uri: 'https://images.unsplash.com/photo-1517639493569-5666a7b2f494?ixlib=rb-1.2.1&auto=format&fit=crop&w=668&q=80'
-            uri: applet && applet.theme && applet.theme.backgroundImage ? applet.theme.backgroundImage : 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
-          }}
+          source={
+            tokenLogger ? TokenLoggerBackground : {
+              uri: applet && applet.theme && applet.theme.backgroundImage ? applet.theme.backgroundImage : 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80',
+            }
+          }
         >
           {this.renderActiveTab()}
         </ImageBackground>
