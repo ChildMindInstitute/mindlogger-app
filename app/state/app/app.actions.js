@@ -34,6 +34,11 @@ export const setTutorialStatus = status => ({
   payload: status,
 });
 
+export const setTutorialIndex = status => ({
+  type: APP_ACTIONS.SET_TUTORIAL_INDEX,
+  payload: status,
+});
+
 export const setConnection = status => ({
   type: APP_ACTIONS.SET_CONNECTION,
   payload: status,

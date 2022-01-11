@@ -21,9 +21,14 @@ import {
   currentScreenSelector,
   lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
-import { tutorialStatusSelector } from '../../state/app/app.selectors';
-import { currentAppletSelector, appStatusSelector } from "../../state/app/app.selectors";
-import { setTutorialStatus } from '../../state/app/app.actions';
+import { tutorials } from '../../widgets/ABTrails/TrailsData';
+import {
+  currentAppletSelector,
+  appStatusSelector,
+  tutorialStatusSelector,
+  tutorialIndexSelector,
+} from "../../state/app/app.selectors";
+import { setTutorialStatus, setTutorialIndex } from '../../state/app/app.actions';
 import { testVisibility } from "../../services/visibility";
 import {
   setCurrentActivity,
@@ -267,7 +272,9 @@ class Activity extends React.Component {
       currentResponse,
       setSummaryScreen,
       setTutorialStatus,
+      setTutorialIndex,
       tutorialStatus,
+      tutorialIndex,
       currentScreen,
       nextScreen,
       setSelected,
@@ -276,17 +283,27 @@ class Activity extends React.Component {
       setCurrentScreen,
       isSplashScreen,
     } = this.props;
-
+ 
     const { isSummaryScreen } = this.state;
     const { activity } = currentResponse;
+    const screen = activity.items[currentScreen].variableName;
+    let currentActivity = 'activity1';
 
+    if (activity.name && activity.name.en.includes('v2')) {
+      currentActivity = 'activity2';
+    }
     if (activity.items[currentScreen].inputType === "trail") {
       if (tutorialStatus !== 0) {
-        setTutorialStatus(0);
+        if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
+          setTutorialIndex(tutorialIndex + 1);
+        } else {
+          setTutorialStatus(0);
+          setTutorialIndex(0);
+        }
         return;
       } else if (currentScreen !== 3) {
         setTutorialStatus(1);
-      }
+      } 
     }
     this.updateStore();
 
@@ -350,6 +367,7 @@ class Activity extends React.Component {
     this.updateStore();
     this.idleTimer.clear();
     this.props.setTutorialStatus(1);
+    this.props.setTutorialIndex(0);
   }
 
   render() {
@@ -568,6 +586,7 @@ Activity.propTypes = {
   currentApplet: PropTypes.object.isRequired,
   currentResponse: PropTypes.object,
   tutorialStatus: PropTypes.number.isRequired,
+  tutorialIndex: PropTypes.number.isRequired,
   setAnswer: PropTypes.func.isRequired,
   authToken: PropTypes.string.isRequired,
   currentScreen: PropTypes.number,
@@ -575,6 +594,7 @@ Activity.propTypes = {
   nextScreen: PropTypes.func.isRequired,
   prevScreen: PropTypes.func.isRequired,
   setTutorialStatus: PropTypes.func.isRequired,
+  setTutorialIndex: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
@@ -586,6 +606,7 @@ const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   currentResponse: currentResponsesSelector(state),
   tutorialStatus: tutorialStatusSelector(state),
+  tutorialIndex: tutorialIndexSelector(state),
   authToken: authTokenSelector(state),
   currentScreen: currentScreenSelector(state),
   itemVisibility: itemVisiblitySelector(state),
@@ -603,6 +624,7 @@ const mapDispatchToProps = {
   nextScreen,
   prevScreen,
   setTutorialStatus,
+  setTutorialIndex,
   completeResponse,
   setSummaryScreen,
   setSplashScreen,

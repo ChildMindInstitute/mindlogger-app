@@ -7,7 +7,11 @@ import TrailsBoard from './TrailsBoard';
 import TrailsTutorial from './TrailsTutorial';
 import { screens, tutorials } from './TrailsData';
 import { setTutorialStatus, setTrailsTimerId } from '../../state/app/app.actions';
-import { tutorialStatusSelector, trailsTimerIdSelector } from '../../state/app/app.selectors';
+import {
+  tutorialStatusSelector,
+  trailsTimerIdSelector,
+  tutorialIndexSelector,
+} from '../../state/app/app.selectors';
 import { currentResponsesSelector } from "../../state/responses/responses.selectors";
 import i18n from 'i18next';
 
@@ -84,11 +88,13 @@ class ABTrails extends React.Component {
     this.setState({ isFinished: false })
   }
 
-  onError = (errorMsg) => {
-    this.setState({ 
-      message: errorMsg ? errorMsg : ' ', 
+  onError = (errorMsg, flag = false) => {
+    this.setState({
+      message: errorMsg ? errorMsg : ' ',
       messageColor: 'rgb(230, 50, 50)',
     });
+
+    if (!flag) return;
 
     setTimeout(() => {
       const { isFinished } = this.state;
@@ -114,6 +120,7 @@ class ABTrails extends React.Component {
       screen,
       data,
       tutorialStatus,
+      tutorialIndex,
       trailsTimerId,
       setTrailsTimerId,
       currentScreen,
@@ -126,6 +133,7 @@ class ABTrails extends React.Component {
     }
 
     this.finalAnswer = data ? data : {};
+    const tutorial = tutorials[currentActivity][screen][tutorialIndex];
     const height = dimensions ? dimensions.width + 100 : 400;
 
     if (
@@ -135,6 +143,10 @@ class ABTrails extends React.Component {
       message !== " "
     ) {
       this.setState({ message: " " })
+    }
+
+    if (tutorialStatus !== 0 && message !== tutorial.text) {
+      this.setState({ message: tutorial.text, messageColor: '#2e2e2e' });
     }
 
     return (
@@ -162,15 +174,15 @@ class ABTrails extends React.Component {
               onRelease={this.onRelease}
             />
           ) : (
-              <TrailsTutorial
-                currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
-                tutorial={tutorials[currentActivity][screen]}
-                currentScreen={currentScreen + 1}
-                screen={screens[currentActivity][screen]}
-                ref={(ref) => { this.board = ref; }}
-                onNext={this.onNextTutorial}
-                onEnd={this.onEndTutorial}
-              />
+            <TrailsTutorial
+              currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
+              currentNumber={tutorial.number ? tutorial.number : 0}
+              currentScreen={currentScreen + 1}
+              screen={screens[currentActivity][screen]}
+              ref={(ref) => { this.board = ref; }}
+              onNext={this.onNextTutorial}
+              onEnd={this.onEndTutorial}
+            />
           )}
         </Container>
 
@@ -187,6 +199,7 @@ ABTrails.propTypes = {
   onChange: PropTypes.func.isRequired,
   currentScreen: PropTypes.number.isRequired,
   tutorialStatus: PropTypes.number.isRequired,
+  tutorialIndex: PropTypes.number.isRequired,
   setTutorialStatus: PropTypes.func.isRequired,
   setTrailsTimerId: PropTypes.func.isRequired,
   currentResponse: PropTypes.object.isRequired,
@@ -198,6 +211,7 @@ ABTrails.propTypes = {
 const mapStateToProps = (state) => {
   return {
     tutorialStatus: tutorialStatusSelector(state),
+    tutorialIndex: tutorialIndexSelector(state),
     currentResponse: currentResponsesSelector(state),
     trailsTimerId: trailsTimerIdSelector(state),
   };

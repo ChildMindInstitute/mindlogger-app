@@ -28,7 +28,7 @@ class MarkdownScreen extends Component {
   }
 
   render() {
-    let { textColor, children, maxWidth } = this.props;
+    let { textColor, children, maxWidth, height } = this.props;
 
     if (!maxWidth) {
       maxWidth = width - 20;
@@ -95,7 +95,7 @@ class MarkdownScreen extends Component {
           key={node.key}
           style={{
             resizeMode: "contain",
-            height: 200,
+            height,
             width: maxWidth - 80
           }}
           source={{
@@ -178,12 +178,14 @@ class MarkdownScreen extends Component {
 
 MarkdownScreen.defaultProps = {
   textColor: '#000000',
+  height: 200,
   children: undefined,
 };
 
 MarkdownScreen.propTypes = {
   textColor: PropTypes.string,
   maxWidth: PropTypes.number,
+  height: PropTypes.number,
   children: PropTypes.node,
 };
 

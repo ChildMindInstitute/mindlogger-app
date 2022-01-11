@@ -1,53 +1,35 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ImageBackground, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
-import { Dimensions } from 'react-native';
 import Svg, { Rect, Circle, Mask, Defs, LinearGradient, Stop } from 'react-native-svg';
+import TimerBackground from '../../../img/behavior_timer.png';
+import TimerNoLimit from '../../../img/behavior_timer_no_limit.png';
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-  container: {
-    shadowColor: 'grey',
-    shadowRadius: 4,
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: -4 },
-    height: 36
-  },
   timeElapsed: {
     position: 'absolute',
-    width: 100,
+    bottom: 0,
+    width: width / 6,
     height: 36,
-    borderTopRightRadius: 18,
-    marginBottom: 5,
-    backgroundColor: 'white',
     justifyContent: 'center'
   },
   timeLeft: {
     position: 'absolute',
-    width: 100,
-    height: 36,
+    bottom: 0,
     right: 0,
-    borderTopLeftRadius: 18,
-    backgroundColor: 'white',
+    width: width / 6,
+    height: 36,
     justifyContent: 'center'
   },
-  bottom: {
-    position: 'absolute',
-    left: 0,
-    width: '100%',
-    height: 5,
-    bottom: 0,
-    backgroundColor: 'white'
-  },
   text: {
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
   }
 });
 
 const TimerProgress = ({ current, length, color, sliderColor }) => {
-  const { width } = Dimensions.get('window');
-  const r = 18;
-
   const getTimeStr = (total) => {
     const mins = Math.floor(total / 60);
     const secs = Math.floor(total) % 60;
@@ -56,32 +38,14 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
   }
 
   return (
-    <View style={{ paddingTop: 10 }}>
-      <View
-        style={{
-          width,
-          ...styles.container,
-        }}
-      >
-        <Svg
-          styles={{ position: 'absolute' }}
-          width={width}
-          height={styles.container.height}
-        >
-          <Defs>
-            <Mask id="region">
-              {
-                length && <Rect x={width-styles.timeLeft.width-r} y={r} width={r} height={r} fill="white" /> || <></>
-              }
-              <Rect x={styles.timeElapsed.width} y={r} width={r} height={r} fill="white" />
-
-              <Circle x={width-styles.timeLeft.width-r} y={r} r={r} fill="black" />
-              <Circle x={styles.timeElapsed.width+r} y={r} r={r} fill="black" />
-            </Mask>
-          </Defs>
-
-          <Rect x={0} width={width} y={0} height={styles.container.height} fill="white" mask="url(#region)" fill="white" />
-        </Svg>
+    <View>
+      <View>
+        <ImageBackground
+          style={{
+            width: '100%', height: 36, marginBottom: 5
+          }}
+          source={length ? TimerBackground : TimerNoLimit}
+        />
 
         <View style={styles.timeElapsed}>
           <Text style={{ ...styles.text, color }}>{getTimeStr(current)}</Text>
@@ -94,7 +58,6 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
             </View>
           ) || <></>
         }
-        <View style={styles.bottom} />
       </View>
 
       <Svg width={width} height={10}>
