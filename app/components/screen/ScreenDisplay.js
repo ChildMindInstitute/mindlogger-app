@@ -31,7 +31,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
 
     let str = '';
     if (hours > 0) {
-      str = hours == 1 ? `an hour` : `${hours} hours`;
+      str = hours == 1 ? `hour` : `${hours} hours`;
     }
 
     if (minutes > 0) {
@@ -39,11 +39,11 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
         str += ' and ';
       }
 
-      str += minutes == 1 ? 'one minute' : `${minutes} minutes`;
+      str += minutes == 1 ? 'one minute' : minutes == 59 ? "hour" : `${minutes} minutes`;
     }
 
     if (!str.length) {
-      return 'just now'
+      return 'minute'
     }
     return str;
   };
@@ -55,19 +55,26 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
       return responseTime.format('hh:mm A') + ' yesterday';
     }
 
-    return responseTime.format('hh:mm A');
+    return responseTime.format('hh:mm A DD/MM');
+  }
+
+  const markdownSplit = markdown?.split('\n');
+  if (markdownSplit?.includes('[Time_Activity_Last_Completed] to [Now]')) {
+    const index = markdownSplit.findIndex(v => v === '[Time_Activity_Last_Completed] to [Now]');
+    markdownSplit[index] = `[blue]${markdownSplit[index]}`
+    markdown = markdownSplit.join('\n');
   }
 
   return markdown
-          .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
-          .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
-          .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(moment(responseTime), moment(now)))
-          .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
+    .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
+    .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
+    .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(moment(responseTime), moment(now)))
+    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
 };
 
 const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
   const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null, profile)).current;
-
+  
   return (
     <View style={{ marginBottom: 18 }}>
       {screen.preamble && (
@@ -78,7 +85,7 @@ const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
       <MarkdownScreen height={78}>
         {
           screen.inputType === 'futureBehaviorTracker' || screen.inputType == 'pastBehaviorTracker' ?
-          `::: hljs-left\r\n${markdown}\r\n:::` : markdown
+            `::: hljs-left\r\n${markdown}\r\n:::` : markdown
         }
       </MarkdownScreen>
       {screen.info && (

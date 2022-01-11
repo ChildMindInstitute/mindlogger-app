@@ -195,7 +195,7 @@ class ActivityScreen extends Component {
   }
 
   componentDidMount() {
-    const { isCurrent } = this.props;
+    const { isCurrent, screen } = this.props;
     if (isCurrent) {
       this._startClock();
     }
@@ -203,7 +203,7 @@ class ActivityScreen extends Component {
     this.determineAndSetOrientation();
     Dimensions.addEventListener('change', this.determineAndSetOrientation.bind(this));
 
-    if (Platform.OS === "ios") {
+    if (Platform.OS === "ios" && screen.inputType != 'pastBehaviorTracker') {
       Keyboard.addListener('keyboardDidShow', this.scrollToBottom)
       Keyboard.addListener('keyboardWillHide', this.keyboardWillHide)
       Keyboard.addListener('keyboardWillShow', this.keyboardWillShow)
@@ -338,6 +338,7 @@ class ActivityScreen extends Component {
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             scrollEnabled={scrollEnabled}
+            keyboardShouldPersistTaps={screen.inputType == 'pastBehaviorTracker' ? 'always' : 'never'}
             // eslint-disable-next-line no-return-assign
             ref={(scrollView) => (this.scrollView = scrollView)}
             onContentSizeChange={this.onContentSizeChange}

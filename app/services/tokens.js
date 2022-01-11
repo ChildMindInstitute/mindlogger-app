@@ -170,3 +170,15 @@ export const getTokenSummary = (activity, responses) => {
     total: timeReward + trackingBehaviors + backgroundTokens
   }
 }
+
+export const isTokenLoggerApplet = (applet) => {
+  for (const activity of applet.activities) {
+    for (const item of activity.items) {
+      if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

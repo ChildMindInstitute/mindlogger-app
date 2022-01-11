@@ -9,6 +9,7 @@ import Mimoza from 'mimoza';
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 import { WebView } from 'react-native-webview';
+import { colors } from "../../themes/colors";
 
 const { width } = Dimensions.get('window');
 
@@ -35,6 +36,10 @@ class MarkdownScreen extends Component {
     const rules = {
       text: (node, children, parent, styles, inheritedStyles = {}) => {
         const additionalStyling = regex.test(node.content.trim()) ? { backgroundColor: 'yellow' } : {}
+        if (node.content?.includes('[blue]')) {
+          additionalStyling['color'] = colors.primary;
+          node.content = node.content?.replace('[blue]', '');
+        }
         return (
           <Text key={node.key} style={[inheritedStyles, styles.text, additionalStyling]}>
             {checkNodeContent(node.content)}
@@ -57,7 +62,7 @@ class MarkdownScreen extends Component {
         } else if (mimeType.startsWith('video/') || node.attributes.src.includes('.quicktime')) {
           return (
             <View
-              width={ maxWidth }
+              width={maxWidth}
               height={250}
             >
               <VideoPlayer
