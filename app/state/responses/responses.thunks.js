@@ -4,6 +4,7 @@ import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
 import moment from "moment";
+import NetInfo from "@react-native-community/netinfo";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
@@ -24,6 +25,7 @@ import {
   currentScreenSelector,
   itemVisiblitySelector,
   currentAppletTokenBalanceSelector,
+  lastResponseTimeSelector,
 } from "./responses.selectors";
 import {
   authTokenSelector,
@@ -249,6 +251,7 @@ export const downloadResponse = () => (dispatch, getState) => {
       dispatch(setDownloadingResponses(false));
     });
 
+
   const timezone = RNLocalize.getTimeZone();
   getSchedule(authToken, timezone).then((schedule) => {
     dispatch(setLastResponseTime(schedule));
@@ -349,11 +352,12 @@ export const downloadAppletResponses = (applet) => (dispatch, getState) => {
   });
 };
 
-export const startUploadQueue = () => (dispatch, getState) => {
+export const startUploadQueue = (activityId) => (dispatch, getState) => {
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
+  const lastResponseTime = lastResponseTimeSelector(state);
 
   return uploadResponseQueue(authToken, uploadQueue, () => {
     // Progress - a response was uploaded
@@ -363,6 +367,16 @@ export const startUploadQueue = () => (dispatch, getState) => {
       dispatch(downloadResponse());
     } else {
       dispatch(downloadResponses());
+    }
+
+    try {
+      NetInfo.fetch().then(state => {
+        if (!state.isConnected && activityId) {
+          dispatch(setLastResponseTime({ ...lastResponseTime, [applet.id]: { ...lastResponseTime[applet.id], [activityId]: new Date().toISOString() } }));
+        }
+      });
+    } catch (error) {
+      console.warn(error);
     }
   });
 };
@@ -383,7 +397,7 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
       continue;
     }
 
-    const lastTokenTime = new Date(tokenTimes[tokenTimes.length-1])
+    const lastTokenTime = new Date(tokenTimes[tokenTimes.length - 1])
 
     let refreshTime = new Date(
       lastTokenTime.getFullYear(),
@@ -511,8 +525,9 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     const preparedResponse = prepareResponseForUpload(
       inProgressResponse, applet, responseHistory, isTimeout, finishedTime
     );
+
     dispatch(addToUploadQueue(preparedResponse));
-    dispatch(startUploadQueue());
+    dispatch(startUploadQueue(inProgressResponse?.activity?.id));
   }
 
   if (event) {
@@ -530,7 +545,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }, 300);
 };
 
-export const nextScreen = (timeElapsed=0) => (dispatch, getState) => {
+export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
