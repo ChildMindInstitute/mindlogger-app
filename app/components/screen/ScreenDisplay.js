@@ -82,7 +82,7 @@ const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
           {screen.preamble.en}
         </MarkdownScreen>
       )}
-      <MarkdownScreen>
+      <MarkdownScreen height={78}>
         {
           screen.inputType === 'futureBehaviorTracker' || screen.inputType == 'pastBehaviorTracker' ?
             `::: hljs-left\r\n${markdown}\r\n:::` : markdown

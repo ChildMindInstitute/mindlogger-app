@@ -387,6 +387,25 @@ class TokenChart extends React.Component {
     return tokens;
   }
 
+  getPastTokensLabel() {
+    const { range } = this.state;
+  
+    switch (range) {
+      case 'Today':
+        return 'yesterday';
+      case '1w':
+        return 'past week';
+      case '2w':
+        return 'past 2 weeks';
+      case '1m':
+        return 'past month';
+      case '3m':
+        return 'past 3 months';
+      case '1y':
+        return 'past year';
+    }
+  }
+
   render () {
     const { applet } = this.props;
     const {
@@ -415,6 +434,7 @@ class TokenChart extends React.Component {
     return (
       <View style={{ width: windowDimension.width - 50 }}>
         <TokenHeader
+          pastTokensLabel={this.getPastTokensLabel()}
           textColor={this.constants.textColor}
           cumulative={this.cumulative}
           tokensYesterday={this.tokensForDateRange(yesterday.getTime(), day)}
