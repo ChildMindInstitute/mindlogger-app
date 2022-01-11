@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 
 export const BehaviorCard = (props) => {
   const {
-    ready, name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
+    ready, active, name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
   } = props;
 
   const timeListItems = [0, 1, 2];
@@ -81,16 +81,20 @@ export const BehaviorCard = (props) => {
       }}
       onStartShouldSetResponder={() => true}
       onResponderGrant={() => {
-        setGrantTime(new Date().getTime());
+        if (active) {
+          setGrantTime(new Date().getTime());
+        }
       }}
       onResponderRelease={() => {
-        const interval = new Date().getTime() - grantTime;
-        if (interval > 400) {
-          onLongPress();
-        } else {
-          onPress();
+        if (active) {
+          const interval = new Date().getTime() - grantTime;
+          if (interval > 400) {
+            onLongPress();
+          } else {
+            onPress();
+          }
+          setGrantTime(0);
         }
-        setGrantTime(0);
       }}
     >
       <Svg width={'100%'} height={height+2}>
@@ -167,7 +171,7 @@ export const BehaviorCard = (props) => {
           height={timesStyle.height}
           rx="5"
           ry="5"
-          opacity={grantTime ? 0.8 : 1}
+          opacity={!active ? 0.6 : grantTime ? 0.8 : 1}
           mask="url(#timesMask)"
         />
       </Svg>
@@ -181,7 +185,8 @@ export const BehaviorCard = (props) => {
           shadowOffset: { width: -2, height: -2 },
           shadowOpacity: 0.5,
           shadowRadius: 2,
-          opacity: grantTime ? 0.8 : 1
+          opacity: grantTime ? 0.8 : 1,
+          elevation: 5
         }}
       >
         {
@@ -206,7 +211,7 @@ export const BehaviorCard = (props) => {
           left: padding.x + imageDim.width,
           width: contentWidth - imageDim.width - padding.x - timesStyle.width,
           height,
-          opacity: grantTime ? 0.8 : 1
+          opacity: !active ? 0.6 : grantTime ? 0.8 : 1
         }}
       >
         <Text style={{
@@ -242,6 +247,7 @@ export const BehaviorCard = (props) => {
           shadowOffset: {width: 0, height: 6},
           shadowOpacity: 0.2,
           shadowRadius: 5,
+          elevation: 5,
           flex: 1,
           flexDirection: 'column',
           alignItems: 'center',
@@ -301,6 +307,7 @@ BehaviorCard.propTypes = {
   times: PropTypes.number,
   image: PropTypes.string,
   ready: PropTypes.bool,
+  active: PropTypes.bool,
   behaviorType: PropTypes.string,
   onPress: PropTypes.func,
   onLongPress: PropTypes.func,
