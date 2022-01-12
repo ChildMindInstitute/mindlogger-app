@@ -16,7 +16,7 @@ export const checkValidity = (item, activityName, response, index, tutorialStatu
   if (item.inputType === "trail" && index >= 0 && response) {
     let currentActivity = 'activity1';
 
-    if (activityName.includes('v2')) {
+    if (activityName.includes('iPad')) {
       currentActivity = 'activity2';
     }
 
