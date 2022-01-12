@@ -18,13 +18,12 @@ const styles = StyleSheet.create({
   },
   image: {
     borderRadius: 40,
-    backgroundColor: '#EFEFEF',
     height: 60,
     width: 60
   },
   text: {
     color: '#B7C7D4',
-    fontSize: 20
+    fontSize: 16,
   }
 })
 
@@ -73,20 +72,26 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
             ...styles.card,
             backgroundColor: option.type == 'positive' ? '#0D426D' : '#50256F',
           }}>
-            <View style={{
-              width: 100, alignItems: 'center', height: '100%', justifyContent: 'center', flexGrow: 0
-            }}>
+            <View
+              style={{
+                width: 100,
+                alignItems: 'center',
+                height: '100%',
+                justifyContent: 'center',
+                flexGrow: 0
+              }}
+            >
               {
-                option.image && (
+                option.image ? (
                   <Image
                     style={styles.image}
-                    source={option.image }
+                    source={{ uri: option.image }}
                   />
-                ) || <View style={styles.image}/>
+                ) : <View style={{ ...styles.image, backgroundColor: '#EFEFEF' }}/>
               }
             </View>
 
-            <View style={{ flexGrow: 1, height: '100%', justifyContent: 'space-around', paddingVertical: 20 }}>
+            <View style={{ flexGrow: 1, flexShrink: 1, height: '100%', justifyContent: 'space-around', paddingVertical: 20 }}>
               <Text style={styles.text}>{option.name}</Text>
               <Text style={styles.text}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
             </View>

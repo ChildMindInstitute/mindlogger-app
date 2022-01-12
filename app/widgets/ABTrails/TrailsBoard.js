@@ -44,6 +44,7 @@ export default class TrailsBoard extends Component {
       currentPoint: -1,
       currentIndex: 1,
       validIndex: -1,
+      startTime: 0,
       currentScreen: 0,
       isStarted: false,
       isStopped: false,
@@ -66,7 +67,7 @@ export default class TrailsBoard extends Component {
       onPanResponderRelease: (evt, gestureState) => {
         const { lines, currentIndex } = this.state;
         this.endLine(evt, gestureState);
-        this.props.onResult({ ...this.save(lines, currentIndex) });
+        this.props.onResult({ ...this.save(lines, currentIndex), startTime: this.state.startTime });
       },
     });
     this.allowed = true;
@@ -86,6 +87,8 @@ export default class TrailsBoard extends Component {
       clearInterval(trailsTimerId);
     }
 
+    this.setState({ startTime: new Date().getTime() });
+
     this.timeInterval = setInterval(() => {
       const { currentIndex, failedCnt, currentScreen } = this.props;
       const { lines } = this.state;
@@ -95,9 +98,9 @@ export default class TrailsBoard extends Component {
       if ((currentScreen === 2 && screenTime >= 150) ||
         (currentScreen === 4 && screenTime >= 300)) {
         this.setState({ screenTime: 0 });
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt }, true);
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt, startTime: this.state.startTime }, true);
       } else {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt });
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt, startTime: this.state.startTime });
         this.setState({ screenTime });
       }
     }, 1000)

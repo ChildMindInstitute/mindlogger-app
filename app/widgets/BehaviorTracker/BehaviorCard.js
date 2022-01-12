@@ -26,18 +26,28 @@ const styles = StyleSheet.create({
 
 export const BehaviorCard = (props) => {
   const {
-    ready, name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
+    ready, active, name, times, image, behaviorType, onPress, onLongPress, onTimesMenu
   } = props;
 
   const timeListItems = [0, 1, 2];
   const [width, setWidth] = useState(0);
   const [grantTime, setGrantTime] = useState(0);
-  const height = 100;
-  const imageDim = { width: 70, height: 70 }, padding = { x: 15, y: 15 };
-  const timesStyle = { width: 100, height: 100 };
-  const timeListIcon = { width: 90, height: 90 }
-  const shadowColor = 'grey', shadowOpacity=0.5;
+
+  const height = Math.max(width / 4, 80);
+  const timeListIcon = { width: height * 0.9, height: height * 0.9 };
   const contentWidth = width ? width - timeListIcon.width + 5 : 0;
+
+  const imageDim = {
+    width: height * 0.7,
+    height: height * 0.7
+  };
+  const padding = {
+    x: height * 0.15,
+    y: height * 0.15
+  };
+
+  const timesStyle = { width: height, height: height };
+  const shadowColor = 'grey', shadowOpacity = 0.5;
 
   const behaviorColor = behaviorType == 'positive' ? '#20609D' : '#50256F';
 
@@ -81,16 +91,20 @@ export const BehaviorCard = (props) => {
       }}
       onStartShouldSetResponder={() => true}
       onResponderGrant={() => {
-        setGrantTime(new Date().getTime());
+        if (active) {
+          setGrantTime(new Date().getTime());
+        }
       }}
       onResponderRelease={() => {
-        const interval = new Date().getTime() - grantTime;
-        if (interval > 400) {
-          onLongPress();
-        } else {
-          onPress();
+        if (active) {
+          const interval = new Date().getTime() - grantTime;
+          if (interval > 400) {
+            onLongPress();
+          } else {
+            onPress();
+          }
+          setGrantTime(0);
         }
-        setGrantTime(0);
       }}
     >
       <Svg width={'100%'} height={height+2}>
@@ -167,7 +181,7 @@ export const BehaviorCard = (props) => {
           height={timesStyle.height}
           rx="5"
           ry="5"
-          opacity={grantTime ? 0.8 : 1}
+          opacity={!active ? 0.6 : grantTime ? 0.8 : 1}
           mask="url(#timesMask)"
         />
       </Svg>
@@ -181,7 +195,8 @@ export const BehaviorCard = (props) => {
           shadowOffset: { width: -2, height: -2 },
           shadowOpacity: 0.5,
           shadowRadius: 2,
-          opacity: grantTime ? 0.8 : 1
+          opacity: grantTime ? 0.8 : 1,
+          elevation: 5
         }}
       >
         {
@@ -206,12 +221,12 @@ export const BehaviorCard = (props) => {
           left: padding.x + imageDim.width,
           width: contentWidth - imageDim.width - padding.x - timesStyle.width,
           height,
-          opacity: grantTime ? 0.8 : 1
+          opacity: !active ? 0.6 : grantTime ? 0.8 : 1
         }}
       >
         <Text style={{
-          fontSize: 20, paddingLeft: 5, paddingTop: padding.y,
-        }}>{ name }</Text>
+          fontSize: Math.min(height / 5, 20), paddingLeft: 5, paddingTop: padding.y,
+        }}>{ name.length > 32 ? name.slice(0, 28) + ' ...' : name }</Text>
       </View>
 
       <View
@@ -226,7 +241,7 @@ export const BehaviorCard = (props) => {
         }}
       >
         <Text style={styles.timesText}>{times}</Text>
-        <Text style={{...styles.timesText, fontSize: 15}}>Times</Text>
+        <Text style={{...styles.timesText, fontSize: Math.min(height * 0.15, 15)}}>Times</Text>
       </View>
 
       <TouchableOpacity
@@ -242,6 +257,7 @@ export const BehaviorCard = (props) => {
           shadowOffset: {width: 0, height: 6},
           shadowOpacity: 0.2,
           shadowRadius: 5,
+          elevation: 5,
           flex: 1,
           flexDirection: 'column',
           alignItems: 'center',
@@ -301,6 +317,7 @@ BehaviorCard.propTypes = {
   times: PropTypes.number,
   image: PropTypes.string,
   ready: PropTypes.bool,
+  active: PropTypes.bool,
   behaviorType: PropTypes.string,
   onPress: PropTypes.func,
   onLongPress: PropTypes.func,

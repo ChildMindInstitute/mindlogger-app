@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '50%',
     height: '100%',
-    right: 0,
+    right: 2,
     justifyContent: 'center',
     alignItems: 'center'
   }
@@ -259,7 +259,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                 style={styles.sliderSection}
                 onLayout={(evt) => {
                   const { width, height } = evt.nativeEvent.layout;
-                  setSliderWidth(Math.min(width, height) / 1.2 - padding)
+                  setSliderWidth(Math.min(width, height) / 1.25 - padding)
                 }}
               >
                 <Slider2D

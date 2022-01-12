@@ -234,7 +234,7 @@ class TokenChart extends React.Component {
       }
     }
 
-    let unit = 'months', ticks = [];
+    let unit = 'months', value = 1, ticks = [];
 
     if (range == 'Today') {
       const date = moment(startDate).format('YYYY-MM-DD')
@@ -244,9 +244,7 @@ class TokenChart extends React.Component {
           time: moment(startDate),
           text: moment(startDate).format('ddd M/DD'),
         },
-        { time: moment(`${date} 09:00`, 'YYYY-MM-DD HH:mm'), text: 'Morning' },
         { time: moment(`${date} 12:00`, 'YYYY-MM-DD HH:mm'), text: 'Noon' },
-        { time: moment(`${date} 18:00`, 'YYYY-MM-DD HH:mm'), text: 'Evening' },
         {
           time: moment(endDate),
           text: moment(endDate).format('ddd M/DD'),
@@ -254,14 +252,23 @@ class TokenChart extends React.Component {
       ]
     } else {
       switch (range) {
-        case '1w': case '2w':
+        case '1w': 
           unit = 'days';
           break;
-        case '1m': case '3m':
+        case '2w':
+          unit = 'days';
+          value = 2;
+          break;          
+        case '1m':
           unit = 'weeks';
+          break;
+        case '3m':
+          unit = 'weeks';
+          value = 3;
           break;
         case '1y':
           unit = 'months';
+          value = 2;
           break;
       }
 
@@ -279,7 +286,7 @@ class TokenChart extends React.Component {
           })
         }
 
-        tick = tick.add(1, unit)
+        tick = tick.add(value, unit)
       }
 
       ticks = ticks.map((tick, index) => {
@@ -380,6 +387,25 @@ class TokenChart extends React.Component {
     return tokens;
   }
 
+  getPastTokensLabel() {
+    const { range } = this.state;
+  
+    switch (range) {
+      case 'Today':
+        return 'yesterday';
+      case '1w':
+        return 'past week';
+      case '2w':
+        return 'past 2 weeks';
+      case '1m':
+        return 'past month';
+      case '3m':
+        return 'past 3 months';
+      case '1y':
+        return 'past year';
+    }
+  }
+
   render () {
     const { applet } = this.props;
     const {
@@ -408,6 +434,7 @@ class TokenChart extends React.Component {
     return (
       <View style={{ width: windowDimension.width - 50 }}>
         <TokenHeader
+          pastTokensLabel={this.getPastTokensLabel()}
           textColor={this.constants.textColor}
           cumulative={this.cumulative}
           tokensYesterday={this.tokensForDateRange(yesterday.getTime(), day)}
@@ -486,7 +513,7 @@ class TokenChart extends React.Component {
             ) || <ActivityIndicator size="large" />
           }
 
-          <RangeSelector
+          <RangeSelector 
             value={this.state.range}
             disabled={this.state.downloading}
             onChange={(value) => this.updateRange(value)}

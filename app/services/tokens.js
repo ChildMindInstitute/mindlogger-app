@@ -133,6 +133,8 @@ export const getTokenSummary = (activity, responses) => {
 
         timeReward += Math.max(2, 2 * Math.floor((responses[i].timeLimit - responses[i].timeLeft) / 60000 / 5));
         timeLimit = timeResponse || 0;
+      } else {
+        timeReward += 2;
       }
 
       for (const behavior of positiveBehaviors) {
@@ -169,4 +171,16 @@ export const getTokenSummary = (activity, responses) => {
     backgroundTokens,
     total: timeReward + trackingBehaviors + backgroundTokens
   }
+}
+
+export const isTokenLoggerApplet = (applet) => {
+  for (const activity of applet.activities) {
+    for (const item of activity.items) {
+      if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }

@@ -138,6 +138,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                       width={1}
                       height={sliderWidth}
                       fill={'white'}
+                      fillOpacity={0.4}
                     />
                   )
                 }) || []
@@ -155,6 +156,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                       width={sliderWidth}
                       height={1}
                       fill={'white'}
+                      fillOpacity={0.4}
                     />
                   )
                 }) || []
@@ -361,18 +363,20 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
 
           if (!disabled) {
             updateValues(locationX, locationY, false)
+            onToggle(false);
           }
-          onToggle(false);
         }}
         onResponderMove={(evt) => {
           const { locationX, locationY } = evt.nativeEvent;
           if (!disabled) {
             updateValues(locationX, locationY, false)
+            onToggle(false);
           }
-          onToggle(false);
         }}
         onPanResponderTerminate={() => {
-          onToggle(true);
+          if (!disabled) {
+            onToggle(true);
+          }
         }}
 
         onResponderRelease={(evt) => {
@@ -382,7 +386,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
             updateValues(locationX, locationY, true)
           }
         }}
-        
+
       ></View>
     </View>
   )
