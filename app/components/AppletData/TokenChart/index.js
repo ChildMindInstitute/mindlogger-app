@@ -252,13 +252,13 @@ class TokenChart extends React.Component {
       ]
     } else {
       switch (range) {
-        case '1w': 
+        case '1w':
           unit = 'days';
           break;
         case '2w':
           unit = 'days';
           value = 2;
-          break;          
+          break;
         case '1m':
           unit = 'weeks';
           break;
@@ -379,7 +379,7 @@ class TokenChart extends React.Component {
     let tokens = 0;
 
     for (const change of changes) {
-      if (change.time > start && change.time < start + range) {
+      if (change.time > start && change.time < start + range && !change.isTracker) {
         tokens += change.value;
       }
     }
@@ -389,7 +389,7 @@ class TokenChart extends React.Component {
 
   getPastTokensLabel() {
     const { range } = this.state;
-  
+
     switch (range) {
       case 'Today':
         return 'yesterday';
@@ -462,13 +462,19 @@ class TokenChart extends React.Component {
                   }
                 </View>
 
-                <View style={styles.tooltip}>
-                  <Text>Today you'll earn at least:</Text>
-                  <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                    <Image source={coin} style={{ width: 25, height: 25 }} />
-                    <Text>{this.tokensForDateRange(yesterday.getTime() + day, day)} from {applet.activities.length} activities</Text>
-                  </View>
-                </View>
+                {
+                  this.state.range == 'Today' && (
+                    <View style={styles.tooltip}>
+                      <Text>Today you'll earn at least:</Text>
+                      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                        <Image source={coin} style={{ width: 25, height: 25 }} />
+                        <Text style={{ color: '#FDC440' }}>
+                          <Text style={{ fontWeight: 'bold' }}>{this.tokensForDateRange(yesterday.getTime() + day, day)}</Text> from {applet.activities.length} {applet.activities.length > 1 ? 'activities' : 'activity'}
+                        </Text>
+                      </View>
+                    </View>
+                  ) || <></>
+                }
 
                 <Svg
                   width={SVGWidth}
@@ -513,7 +519,7 @@ class TokenChart extends React.Component {
             ) || <ActivityIndicator size="large" />
           }
 
-          <RangeSelector 
+          <RangeSelector
             value={this.state.range}
             disabled={this.state.downloading}
             onChange={(value) => this.updateRange(value)}
