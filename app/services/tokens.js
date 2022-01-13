@@ -54,7 +54,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
       const start = Math.max(time, startTime + date), end = Math.min(time + day, endTime + date);
 
       if (start < end) {
-        if (!last || last.end > start) {
+        if (last && last.end >= start) {
           last.end = Math.max(last.end, end);
         } else {
           last = { start, end };
@@ -68,7 +68,10 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     // tokens_rewarded = TV*(duration(ETR) / RATE) – TV*behavior_frequency
 
     for (const range of timeRanges) {
-      reward += Math.floor((range.end - range.start) / behavior.rate) * behavior.value;
+      const start = Math.ceil(range.start / 3600000) * 3600000;
+      const end = range.end - range.end % 3600000;
+
+      reward += (end - start) / (behavior.rate * 60 * 1000) * behavior.value;
     }
 
     for (const response of responses) {
@@ -115,7 +118,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     result += reward;
   }
 
-  return result;
+  return Math.round(Math.max(result, 0));
 }
 
 export const getTokenSummary = (activity, responses) => {
