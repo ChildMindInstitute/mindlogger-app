@@ -84,8 +84,10 @@ export class DatePicker extends React.Component {
             value={date}
             mode={'date'}
             display={Platform.OS === 'ios' ? 'inline' : 'default'}
-            pickerContainerStyleIOS={{
-              paddingHorizontal: 40
+            pickerStyleIOS={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              width: 345,
             }}
             onCancel={this.hideDatePicker}
             onConfirm={this.onChangeDate}
