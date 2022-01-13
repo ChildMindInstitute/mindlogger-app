@@ -429,6 +429,11 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
       }
     }
 
+    // cumulative graph can't go under 0
+    if (offset < 0 && offset + responseHistory[i].token.cumulative < 0) {
+      offset = -responseHistory[i].token.cumulative;
+    }
+
     const updates = getTokenUpdateInfo(
       offset,
       responseHistory[i].token,
