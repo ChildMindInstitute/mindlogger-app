@@ -68,7 +68,7 @@ class TokenChart extends React.Component {
   }
 
   formatResponses (data) {
-    const changes = [], aggregation = {};
+    const changes = [];
 
     for (const token of data.tokens) {
       for (const change of token.data) {
@@ -96,36 +96,7 @@ class TokenChart extends React.Component {
       return 0;
     })
 
-    for (const tracker of data.trackerAggregation) {
-      const { data } = tracker;
-
-      for (const itemId in data) {
-        aggregation[itemId] = aggregation[itemId] || {}
-
-        for (const option in data[itemId]) {
-          aggregation[itemId][option] = aggregation[itemId][option] || {}
-
-          let value = data[itemId][option]
-          let count = aggregation[itemId][option].count || 0;
-          let distress = aggregation[itemId][option].distress || { total: 0, count: 0 }
-          let impairment = aggregation[itemId][option].impairment || { total: 0, count: 0 }
-
-          aggregation[itemId][option] = {
-            count: count + value.count,
-            distress: {
-              total: distress.total + value.distress.total,
-              count: distress.count + value.distress.count
-            },
-            impairment: {
-              total: impairment.total + value.impairment.total,
-              count: impairment.count + value.impairment.count
-            }
-          }
-        }
-      }
-    }
-
-    return { changes, aggregation };
+    return { changes, trackerAggregation: data.trackerAggregation };
   }
 
   compareRanges (a, b) {
@@ -252,13 +223,13 @@ class TokenChart extends React.Component {
       ]
     } else {
       switch (range) {
-        case '1w': 
+        case '1w':
           unit = 'days';
           break;
         case '2w':
           unit = 'days';
           value = 2;
-          break;          
+          break;
         case '1m':
           unit = 'weeks';
           break;
@@ -389,7 +360,7 @@ class TokenChart extends React.Component {
 
   getPastTokensLabel() {
     const { range } = this.state;
-  
+
     switch (range) {
       case 'Today':
         return 'yesterday';
@@ -414,6 +385,7 @@ class TokenChart extends React.Component {
       },
       graphMargin
     } = this.constants;
+    const aggregation = {};
 
     const windowDimension = Dimensions.get('window');
     const SVGWidth = Math.round(windowDimension.width * 0.95) - graphMargin.horizontal * 2;
@@ -430,6 +402,40 @@ class TokenChart extends React.Component {
     const startDate = this.startDate(endDate, this.state.range);
 
     const ticks = this.getTicks(startDate, endDate, SVGWidth);
+
+    for (const tracker of this.state.trackerAggregation) {
+      const { data, created } = tracker;
+      const time = new Date(created).getTime();
+
+      if (time < startDate.getTime() || time > endDate.getTime()) {
+        continue;
+      }
+
+      for (const itemId in data) {
+        aggregation[itemId] = aggregation[itemId] || {}
+
+        for (const option in data[itemId]) {
+          aggregation[itemId][option] = aggregation[itemId][option] || {}
+
+          let value = data[itemId][option]
+          let count = aggregation[itemId][option].count || 0;
+          let distress = aggregation[itemId][option].distress || { total: 0, count: 0 }
+          let impairment = aggregation[itemId][option].impairment || { total: 0, count: 0 }
+
+          aggregation[itemId][option] = {
+            count: count + value.count,
+            distress: {
+              total: distress.total + value.distress.total,
+              count: distress.count + value.distress.count
+            },
+            impairment: {
+              total: impairment.total + value.impairment.total,
+              count: impairment.count + value.impairment.count
+            }
+          }
+        }
+      }
+    }
 
     return (
       <View style={{ width: windowDimension.width - 50 }}>
@@ -513,7 +519,7 @@ class TokenChart extends React.Component {
             ) || <ActivityIndicator size="large" />
           }
 
-          <RangeSelector 
+          <RangeSelector
             value={this.state.range}
             disabled={this.state.downloading}
             onChange={(value) => this.updateRange(value)}
@@ -523,8 +529,8 @@ class TokenChart extends React.Component {
           {
             !this.state.downloading &&
             <BehaviorAggregation
-              aggregation={this.state.aggregation}
               pastTokensLabel={this.getPastTokensLabel()}
+              aggregation={aggregation}
               applet={this.props.applet}
             /> || <></>
           }
