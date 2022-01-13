@@ -289,7 +289,7 @@ class Activity extends React.Component {
     const screen = activity.items[currentScreen].variableName;
     let currentActivity = 'activity1';
 
-    if (activity.name && activity.name.en.includes('v2')) {
+    if (activity.name && activity.name.en.includes('iPad')) {
       currentActivity = 'activity2';
     }
     if (activity.items[currentScreen].inputType === "trail") {

@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.33] - 2022-1-12
 - Fix behavior section header
+- Fix showing errors in A/B Trails
 
 ## [0.18.32] - 2022-1-11
 - Fix past behavor tracker issue
