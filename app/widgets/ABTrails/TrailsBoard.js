@@ -304,8 +304,8 @@ export default class TrailsBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 335,
-        y: point.y / width * 335,
+        x: point.x / width - 0.5,
+        y: 0.5 - point.y / width,
       })),
     }));
 
