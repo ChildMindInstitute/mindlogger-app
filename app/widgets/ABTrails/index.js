@@ -128,7 +128,7 @@ class ABTrails extends React.Component {
     const { activity } = this.props.currentResponse;
     let currentActivity = 'activity1';
 
-    if (activity.name && activity.name.en.includes('v2')) {
+    if (activity.name && activity.name.en.includes('iPad')) {
       currentActivity = 'activity2';
     }
 

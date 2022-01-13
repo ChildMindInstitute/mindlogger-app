@@ -523,8 +523,8 @@ class TokenChart extends React.Component {
           {
             !this.state.downloading &&
             <BehaviorAggregation
-              range={this.state.range}
               aggregation={this.state.aggregation}
+              pastTokensLabel={this.getPastTokensLabel()}
               applet={this.props.applet}
             /> || <></>
           }
