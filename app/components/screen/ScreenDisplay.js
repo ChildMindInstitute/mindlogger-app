@@ -48,14 +48,15 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
     return str;
   };
 
-  const formatLastResponseTime = (responseTime, now) => {
+  const formatLastResponseTime = (time, now) => {
+    const responseTime = moment(time);
     if (responseTime.isSame(now, 'day')) {
       return responseTime.format('hh:mm A') + ' today';
     } else if (responseTime.add(1, 'days').isSame(now, 'day')) {
       return responseTime.format('hh:mm A') + ' yesterday';
     }
 
-    return responseTime.format('hh:mm A DD/MM');
+    return moment(time).format('hh:mm A DD/MM');
   }
 
   const markdownSplit = markdown?.split('\n');
@@ -68,7 +69,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
   return markdown
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
-    .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(moment(responseTime), moment(now)))
+    .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
     .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
 };
 

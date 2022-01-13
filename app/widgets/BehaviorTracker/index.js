@@ -260,7 +260,7 @@ export class BehaviorTrackerComponent extends Component {
                 image={behavior.image || ''}
                 ready={behavior.ready}
                 behaviorType={behavior.type}
-                active={timeLeft > 0}
+                active={timeLeft > 0 || timerActive}
                 onPress={() => {
                   if (timerActive && (value[behavior.name] || []).length < this.maxOccurrence) {
                     this.increaseOccurrence(behavior.name)
