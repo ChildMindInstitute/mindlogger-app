@@ -5,6 +5,7 @@ import Slider2D from '../../Slider2D';
 
 const styles = StyleSheet.create({
   range: {
+    textTransform: 'capitalize',
     color: '#8B8B8B',
     fontSize: 15
   },
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
   }
 })
 
-const BehaviorAggregation = ({ range, aggregation, applet }) => {
+const BehaviorAggregation = ({ pastTokensLabel, aggregation, applet }) => {
   const options = [];
 
   for (const activity of applet.activities) {
@@ -65,7 +66,7 @@ const BehaviorAggregation = ({ range, aggregation, applet }) => {
     <View style={{
       marginVertical: 20
     }}>
-      <Text style={styles.range}>{range}</Text>
+      <Text style={styles.range}>{pastTokensLabel}</Text>
       {
         options.map(option => (
           <View style={{

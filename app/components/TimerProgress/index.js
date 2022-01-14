@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, ImageBackground, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Image, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import Svg, { Rect, Circle, Mask, Defs, LinearGradient, Stop } from 'react-native-svg';
 import TimerBackground from '../../../img/behavior_timer.png';
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: width / 6,
-    height: 36,
+    height: width / 11,
     justifyContent: 'center'
   },
   timeLeft: {
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     width: width / 6,
-    height: 36,
+    height: width / 11,
     justifyContent: 'center'
   },
   text: {
@@ -40,9 +40,9 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
   return (
     <View>
       <View>
-        <ImageBackground
+        <Image
           style={{
-            width: '100%', height: 36, marginBottom: 5
+            width: '100%', height: width/11, marginBottom: 5
           }}
           source={length ? TimerBackground : TimerNoLimit}
         />

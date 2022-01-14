@@ -240,7 +240,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
   let localInfo = {};
 
-  if (currentApplets) {
+  if (currentApplets && onAppletsDownloaded !== true) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet;
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
@@ -325,7 +325,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               cumulativeActivities[currentApplet.id] = nextActivities;
               return currentApplet;
             } else {
-              const applet = transformApplet(appletInfo, currentApplets);
+              const applet = transformApplet(appletInfo);
               if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
                 const appletId = applet.id.split('/')[1];
 

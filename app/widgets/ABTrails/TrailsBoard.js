@@ -44,10 +44,11 @@ export default class TrailsBoard extends Component {
       currentPoint: -1,
       currentIndex: 1,
       validIndex: -1,
-      currentScreen: 0,
-      isValid: false,
       startTime: 0,
+      currentScreen: 0,
+      isStarted: false,
       isStopped: false,
+      isValid: false,
       rate: 1,
     };
     this.allowed = false;
@@ -119,7 +120,7 @@ export default class TrailsBoard extends Component {
 
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines, rate, currentIndex, currentPoint } = this.state;
+    const { lines, rate, currentIndex, currentPoint, isStarted } = this.state;
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
@@ -127,6 +128,8 @@ export default class TrailsBoard extends Component {
 
     const currentItem = screen.items.find(({ order }) => order === currentIndex);
     const nextItem = screen.items.find(({ order }) => order === currentIndex + 1);
+
+    if (!isStarted) this.setState({ isStarted: true });
 
     if (currentPoint !== -1) {
       this.setState({ currentPoint: -1 });
@@ -231,24 +234,25 @@ export default class TrailsBoard extends Component {
       }
       let position = lines[n].points[0];
 
-      lines[n].points.forEach((point, index) => {
+      lines[n].points.forEach((point) => {
         const d1 = Math.pow(currentPos.x * rate - point.x, 2) + Math.pow(currentPos.y * rate - point.y, 2);
         const d2 = Math.pow(currentPos.x * rate - position.x, 2) + Math.pow(currentPos.y * rate - position.y, 2);
 
         if (d1 < d2) {
           position = point;
         }
-        if (index > validIndex) {
-          point.valid = false;
-          point.actual = item.label;
-        }
       });
 
-      this.props.onError("Incorrect line!");
+      this.props.onError("Incorrect line!", true);
       this.setState({ lines, isValid: false, currentPoint: currentIndex, errorPoint: position });
       setTimeout(() => {
-        this.props.onError("Please start here and continue.", true);
-        this.setState({ errorPoint: null });
+        lines[n].points.forEach((point, index) => {
+          if (index > validIndex) {
+            point.valid = false;
+            point.actual = item.label;
+          }
+        })
+        this.setState({ lines, errorPoint: null, currentPoint: -1 });
       }, 2000);
 
     } else {
@@ -300,8 +304,8 @@ export default class TrailsBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 335,
-        y: point.y / width * 335,
+        x: point.x / width - 0.5,
+        y: 0.5 - point.y / width,
       })),
     }));
 
@@ -320,10 +324,10 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentPoint, rate, errorPoint } = this.state;
+    const { currentPoint, rate, errorPoint, isStarted } = this.state;
     let itemColor = trailsData.colors.pending;
 
-    if (index === currentPoint - 1) {
+    if ((index === 0 && !isStarted) || index === currentPoint - 1) {
       itemColor = trailsData.colors.passed;
     }
 

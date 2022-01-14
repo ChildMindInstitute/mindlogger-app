@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { connect } from "react-redux";
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { currentResponsesSelector } from '../state/responses/responses.selectors';
-import { CachedImage } from 'react-native-img-cache';
 import { getTokenSummary } from '../services/tokens';
 
 const coin = require('../../img/coin.png');
@@ -210,8 +209,8 @@ const TokenSummaryComponent = ({ currentResponse }) => {
                       >
                         {
                           option.image && (
-                            <CachedImage
-                              source={coin}
+                            <Image
+                              source={{ uri: option.image }}
                               style={styles.optionImage}
                             />
                           ) || <></>

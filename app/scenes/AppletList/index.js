@@ -32,7 +32,7 @@ class AppletList extends Component {
   refresh = () => {
     const { sync } = this.props;
 
-    sync();
+    sync(true);
   };
 
   uploadQueue = () => {

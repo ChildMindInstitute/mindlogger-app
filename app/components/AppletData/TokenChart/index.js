@@ -242,12 +242,12 @@ class TokenChart extends React.Component {
       ticks = [
         {
           time: moment(startDate),
-          text: moment(startDate).format('ddd M/DD'),
+          text: moment(startDate).format('MMM DD'),
         },
         { time: moment(`${date} 12:00`, 'YYYY-MM-DD HH:mm'), text: 'Noon' },
         {
           time: moment(endDate),
-          text: moment(endDate).format('ddd M/DD'),
+          text: moment(endDate).format('MMM DD'),
         },
       ]
     } else {
@@ -387,12 +387,13 @@ class TokenChart extends React.Component {
     return tokens;
   }
 
-  getPastTokensLabel() {
+  getPastTokensLabel(isTokenHeader = true) {
     const { range } = this.state;
   
     switch (range) {
       case 'Today':
-        return 'yesterday';
+        if (isTokenHeader) return 'yesterday';
+        return 'today';
       case '1w':
         return 'past week';
       case '2w':
@@ -523,8 +524,8 @@ class TokenChart extends React.Component {
           {
             !this.state.downloading &&
             <BehaviorAggregation
-              range={this.state.range}
               aggregation={this.state.aggregation}
+              pastTokensLabel={this.getPastTokensLabel(false)}
               applet={this.props.applet}
             /> || <></>
           }
