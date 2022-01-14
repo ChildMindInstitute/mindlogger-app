@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import Slider2D from '../../Slider2D';
+
+const { width } = Dimensions.get('window')
 
 const styles = StyleSheet.create({
   range: {
@@ -11,8 +13,8 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '95%',
-    height: 100,
-    borderRadius: 25,
+    height: width/4,
+    borderRadius: width/16,
     marginTop: 10,
     position: 'relative',
     flexDirection: 'row'
@@ -24,7 +26,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#B7C7D4',
-    fontSize: 16,
+    fontSize: 15,
   }
 })
 
@@ -75,7 +77,7 @@ const BehaviorAggregation = ({ pastTokensLabel, aggregation, applet }) => {
           }}>
             <View
               style={{
-                width: 100,
+                width: width/4,
                 alignItems: 'center',
                 height: '100%',
                 justifyContent: 'center',
@@ -97,11 +99,11 @@ const BehaviorAggregation = ({ pastTokensLabel, aggregation, applet }) => {
               <Text style={styles.text}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
             </View>
 
-            <View style={{ width: 100, height: '100%', padding: 10 }}>
+            <View style={{ width: width/4, height: '100%', padding: 10 }}>
               <Slider2D
                 borderRadius={5}
                 borderColor={'rgba(0,0,0,0)'}
-                sliderWidth={55}
+                sliderWidth={width/8}
                 padding={20}
                 item={
                   aggregation[option.itemId] && aggregation[option.itemId][option.name] ? {

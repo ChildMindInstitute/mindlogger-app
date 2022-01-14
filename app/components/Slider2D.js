@@ -1,6 +1,6 @@
-import React from 'react'
-import Svg, { Rect, Text, Defs, Mask, G, LinearGradient, Stop, Circle } from 'react-native-svg'
-import { View, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react'
+import Svg, { Rect, Text as SvgText, Defs, Mask, G, LinearGradient, Stop, Circle } from 'react-native-svg'
+import { View, Image, Modal, Text } from 'react-native';
 
 const doubleArrow = require('../../img/double-arrow.png');
 const pointer = require('../../img/pointer.png');
@@ -8,6 +8,11 @@ const pointer = require('../../img/pointer.png');
 const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange, type, borderColor, disabled, axisHeight=10 }) => {
   const distress = '#EC0C8B', impairment = '#0FB0EC';
   const axis = [0,1,2,3,4,5,6,7,8,9,10], delta = (1-Math.sqrt(0.5)) * borderRadius;
+
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+  const slider = useRef(null);
+  const [tooltipOffset, setTooltipOffset] = useState({ x: 0, y: 0 });
+  const tooltipWidth = 110;
 
   const renderMainAxis = (direction, value, color) => {
     const perecent = value*100/(axis.length-1);
@@ -69,7 +74,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
         position: 'relative'
       }}
     >
-      <View style={{ width: sliderWidth }}>
+      <View style={{ width: sliderWidth }} ref={slider}>
         <Svg
           width={sliderWidth} height={sliderWidth}
           onStartShouldSetResponder={() => true}
@@ -165,7 +170,29 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
 
             {
               item.distress !== null && item.impairment !== null &&
-                <G>
+                <G onPress={() => {
+                  if (disabled) {
+                    if (slider.current) {
+                      slider.current.measure(
+                        (
+                          frameOffsetX,
+                          frameOffsetY,
+                          width,
+                          height,
+                          pageOffsetX,
+                          pageOffsetY
+                        ) => {
+                          setTooltipOffset({
+                            x: pageOffsetX + (10 - item.distress + item.impairment) / Math.sqrt(2) * sliderWidth / 10,
+                            y: pageOffsetY + sliderWidth / 4
+                          })
+                        }
+                      );
+                    }
+
+                    setTooltipVisible(true);
+                  }
+                }}>
                   {
                     !disabled && (
                       <>
@@ -221,7 +248,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                 </LinearGradient>
 
                 <Mask id="text-mask">
-                  <Text
+                  <SvgText
                     x={sliderWidth/2}
                     y={15}
                     textAnchor="middle"
@@ -230,7 +257,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                     fill={'white'}
                   >
                     Distress
-                  </Text>
+                  </SvgText>
                 </Mask>
               </Defs>
               <Rect
@@ -281,14 +308,14 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
                   </LinearGradient>
 
                   <Mask id="text-mask">
-                    <Text
+                    <SvgText
                       fill={'white'}
                       fontWeight="600"
                       fontSize="15"
                       x={sliderWidth/2}
                       y={15}
                       textAnchor="middle"
-                    >Impairment</Text>
+                    >Impairment</SvgText>
                   </Mask>
                 </Defs>
 
@@ -348,46 +375,75 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
         </>
       }
 
-      <View
-        style={{
-          position: 'absolute',
-          width: sliderWidth,
-          height: sliderWidth,
-          borderRadius,
-          borderColor: (item.distress !== null || item.impairment !== null) ? borderColor : 'rgba(0,0,0,0)',
-          borderWidth: 2
-        }}
-        onStartShouldSetResponder={() => true}
-        onResponderGrant={(evt) => {
-          const { locationX, locationY } = evt.nativeEvent;
+      {
+        !disabled && (
+          <View
+            style={{
+              position: 'absolute',
+              width: sliderWidth,
+              height: sliderWidth,
+              borderRadius,
+              borderColor: (item.distress !== null || item.impairment !== null) ? borderColor : 'rgba(0,0,0,0)',
+              borderWidth: 2
+            }}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={(evt) => {
+              const { locationX, locationY } = evt.nativeEvent;
 
-          if (!disabled) {
-            updateValues(locationX, locationY, false)
-            onToggle(false);
-          }
-        }}
-        onResponderMove={(evt) => {
-          const { locationX, locationY } = evt.nativeEvent;
-          if (!disabled) {
-            updateValues(locationX, locationY, false)
-            onToggle(false);
-          }
-        }}
-        onPanResponderTerminate={() => {
-          if (!disabled) {
-            onToggle(true);
-          }
-        }}
+              updateValues(locationX, locationY, false)
+              onToggle(false);
+            }}
+            onResponderMove={(evt) => {
+              const { locationX, locationY } = evt.nativeEvent;
+              updateValues(locationX, locationY, false)
+              onToggle(false);
+            }}
+            onPanResponderTerminate={() => {
+              onToggle(true);
+            }}
 
-        onResponderRelease={(evt) => {
-          const { locationX, locationY } = evt.nativeEvent;
+            onResponderRelease={(evt) => {
+              const { locationX, locationY } = evt.nativeEvent;
+              updateValues(locationX, locationY, true)
+            }}
+          />
+        ) || <></>
+      }
 
-          if (!disabled) {
-            updateValues(locationX, locationY, true)
-          }
-        }}
-
-      ></View>
+      {
+        tooltipVisible && (
+          <Modal
+            visible={tooltipVisible}
+            transparent
+          >
+            <View
+              style={{ flex: 1 }}
+              activeOpacity={1}
+              onStartShouldSetResponder={()=>true}
+              onResponderRelease={ () => setTooltipVisible(false)}
+            >
+              <View style={{
+                position: 'absolute',
+                top: tooltipOffset.y,
+                left: tooltipOffset.x - tooltipWidth,
+                backgroundColor: '#20609D',
+                padding: 5,
+                borderRadius: 5,
+                width: tooltipWidth
+              }}>
+                <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
+                  <Text style={{ color: 'white' }}>Distress:</Text>
+                  <Text style={{ color: 'white' }}>{item.distress.toFixed(1)}</Text>
+                </View>
+                <View style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'row' }}>
+                  <Text style={{ color: 'white' }}>Impairment:</Text>
+                  <Text style={{ color: 'white' }}>{item.impairment.toFixed(1)}</Text>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        ) || <></>
+      }
     </View>
   )
 }
