@@ -389,73 +389,77 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   const now = new Date(), processes = [];
 
   for (let i = 0; i < applets.length; i++) {
-    const applet = applets[i];
+    try {
+      const applet = applets[i];
 
-    const { lastRewardTime, tokenTimes } = responseHistory[i].token;
+      const { lastRewardTime, tokenTimes } = responseHistory[i].token;
 
-    if (!tokenTimes.length) {
-      continue;
-    }
-
-    const lastTokenTime = new Date(tokenTimes[tokenTimes.length - 1])
-
-    let refreshTime = new Date(
-      lastTokenTime.getFullYear(),
-      lastTokenTime.getMonth(),
-      lastTokenTime.getDate(),
-      3
-    );
-
-    if (refreshTime < lastTokenTime) {
-      refreshTime.setDate(refreshTime.getDate() + 1)
-    }
-
-    let process = null;
-
-    for (let k = 0; k < 2; k++) {
-      if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
-        refreshTime.setDate(refreshTime.getDate() + 1)
+      if (!tokenTimes.length) {
         continue;
       }
 
-      let offset = 0;
+      const lastTokenTime = new Date(tokenTimes[tokenTimes.length - 1])
 
-      for (const activity of applet.activities) {
-        for (const item of activity.items) {
-          if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-            offset += getTokenIncreaseForNegativeBehaviors(
-              item,
-              tokenTimes,
-              refreshTime,
-              responseHistory[i].responses[item.schema] || []
-            );
-          }
-        }
+      let refreshTime = new Date(
+        lastTokenTime.getFullYear(),
+        lastTokenTime.getMonth(),
+        lastTokenTime.getDate(),
+        3
+      );
+
+      if (refreshTime < lastTokenTime) {
+        refreshTime.setDate(refreshTime.getDate() + 1)
       }
 
-      const updates = getTokenUpdateInfo(
-        offset,
-        responseHistory[i].token,
-        applet,
-        refreshTime.getTime()
-      );
+      let process = null;
 
-      const calculation = updateUserTokenBalance(
-        authToken,
-        applet.id.split('/').pop(),
-        updates.cumulative,
-        updates.changes,
-        applet.schemaVersion.en,
-        updates.userPublicKey || null,
-        refreshTime.getTime()
-      );
+      for (let k = 0; k < 2; k++) {
+        if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
+          refreshTime.setDate(refreshTime.getDate() + 1)
+          continue;
+        }
 
-      process = !process ? calculation : process.then(() => calculation);
-      refreshTime.setDate(refreshTime.getDate() + 1)
-    }
+        let offset = 0;
 
-    if (process) {
-      processes.push(process);
+        for (const activity of applet.activities) {
+          for (const item of activity.items) {
+            if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+              offset += getTokenIncreaseForNegativeBehaviors(
+                item,
+                tokenTimes,
+                refreshTime,
+                responseHistory[i].responses[item.schema] || []
+              );
+            }
+          }
+        }
+
+        const updates = getTokenUpdateInfo(
+          offset,
+          responseHistory[i].token,
+          applet,
+          refreshTime.getTime()
+        );
+
+        const calculation = updateUserTokenBalance(
+          authToken,
+          applet.id.split('/').pop(),
+          updates.cumulative,
+          updates.changes,
+          applet.schemaVersion.en,
+          updates.userPublicKey || null,
+          refreshTime.getTime()
+        );
+
+        process = !process ? calculation : process.then(() => calculation);
+        refreshTime.setDate(refreshTime.getDate() + 1)
+      }
+
+      if (process) {
+        processes.push(process);
+      }
+    } catch (e) {
+      console.log('error', e);
     }
   }
 
