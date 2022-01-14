@@ -410,34 +410,37 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
       refreshTime.setDate(refreshTime.getDate() + 1)
     }
 
-    if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
-      continue;
-    }
+    let process = null;
 
-    let offset = 0;
+    for (let k = 0; k < 2; k++) {
+      if (refreshTime.getTime() >= now.getTime() || refreshTime.getTime() <= lastRewardTime) {
+        refreshTime.setDate(refreshTime.getDate() + 1)
+        continue;
+      }
 
-    for (const activity of applet.activities) {
-      for (const item of activity.items) {
-        if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-          offset += getTokenIncreaseForNegativeBehaviors(
-            item,
-            tokenTimes,
-            refreshTime,
-            responseHistory[i].responses[item.schema] || []
-          );
+      let offset = 0;
+
+      for (const activity of applet.activities) {
+        for (const item of activity.items) {
+          if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+            offset += getTokenIncreaseForNegativeBehaviors(
+              item,
+              tokenTimes,
+              refreshTime,
+              responseHistory[i].responses[item.schema] || []
+            );
+          }
         }
       }
-    }
 
-    const updates = getTokenUpdateInfo(
-      offset,
-      responseHistory[i].token,
-      applet,
-      refreshTime.getTime()
-    );
+      const updates = getTokenUpdateInfo(
+        offset,
+        responseHistory[i].token,
+        applet,
+        refreshTime.getTime()
+      );
 
-    processes.push(
-      updateUserTokenBalance(
+      const calculation = updateUserTokenBalance(
         authToken,
         applet.id.split('/').pop(),
         updates.cumulative,
@@ -445,8 +448,15 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
         applet.schemaVersion.en,
         updates.userPublicKey || null,
         refreshTime.getTime()
-      )
-    )
+      );
+
+      process = !process ? calculation : process.then(() => calculation);
+      refreshTime.setDate(refreshTime.getDate() + 1)
+    }
+
+    if (process) {
+      processes.push(process);
+    }
   }
 
   return Promise.all(processes).then(() => {
