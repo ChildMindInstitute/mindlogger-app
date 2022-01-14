@@ -38,63 +38,87 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
   const timestamp = refreshTime.getTime(), day = 24 * 3600 * 1000
   const times = tokenTimes.map(time => new Date(time).getTime()).sort()
 
-  const getTokens = (behavior) => {
-    let count = 0;
-
-    for (const response of responses) {
-      const time = new Date(response.datetime).getTime()
-      if (time >= timestamp - day && time < timestamp) {
-        const data = response.value[behavior.name] || [];
-        count += data.length;
-      }
-    }
-
-    return count * behavior.value * -1;
-  }
-
-  const getTrackedMinutes = (startTime, endTime, date) => {
-    if (startTime >= endTime) return 0;
-
-    for (const time of times) {
-      if (time >= date + startTime && time < date + endTime) {
-        return (date + endTime - time) / 60 / 1000;
-      }
-    }
-
-    return 0;
-  }
 
   const getMilliseconds = (timeStr) => {
     const parts = timeStr.split(':')
     return (Number(parts[0]) * 60 + Number(parts[1])) * 60 * 1000
   }
 
-  for (const behavior of negativeBehaviors ) {
-    let reward = getTokens(behavior);
+  const getTokens = (startTime, endTime, date, behavior) => {
+    if (startTime >= endTime) return 0;
 
-    let { startTime, endTime, rate, value } = behavior;
+    const timeRanges = [];
+    let last = null;
 
-    startTime = getMilliseconds(startTime);
-    endTime = getMilliseconds(endTime);
+    for (const time of times) {
+      const start = Math.max(time, startTime + date), end = Math.min(time + day, endTime + date);
 
-    const today = timestamp - 3 * 3600 * 1000;
-
-    let duration = getTrackedMinutes( // 3am yesterday to 12am today
-      Math.max(3 * 3600 * 1000, startTime), endTime, today - day
-    ) + getTrackedMinutes(  // 12am today to 3am today
-      startTime, Math.min(endTime, 3 * 3600 * 1000), today
-    );
-
-    reward += value * duration / rate;
-
-    if (reward < 0) {
-      reward = 0;
+      if (start < end) {
+        if (last && last.end >= start) {
+          last.end = Math.max(last.end, end);
+        } else {
+          last = { start, end };
+          timeRanges.push(last);
+        }
+      }
     }
 
-    result += Math.round(reward);
+    let reward = 0;
+
+    // tokens_rewarded = TV*(duration(ETR) / RATE) – TV*behavior_frequency
+
+    for (const range of timeRanges) {
+      const start = Math.ceil(range.start / 3600000) * 3600000;
+      const end = range.end - range.end % 3600000;
+
+      reward += (end - start) / (behavior.rate * 60 * 1000) * behavior.value;
+    }
+
+    for (const response of responses) {
+      const time = new Date(response.datetime).getTime();
+      const count = (response.value[behavior.name] || []).length;
+
+      if (timeRanges.some(range => time >= range.start && time <= range.end)) {
+        reward -= behavior.value * count;
+      }
+    }
+
+    return reward;
   }
 
-  return result;
+  const today = timestamp - 3 * 3600 * 1000;
+
+  for (const behavior of negativeBehaviors ) {
+    let reward = 0;
+
+    // all negative behaviors reduces 1 token per occurrence
+    for (const response of responses) {
+      const time = new Date(response.datetime).getTime()
+      if (time >= timestamp - day && time < timestamp) {
+        const data = response.value[behavior.name] || [];
+        reward += data.length * -1;
+      }
+    }
+
+    let { startTime, endTime } = behavior;
+
+    startTime = getMilliseconds(startTime);
+    endTime = getMilliseconds(endTime) + 60 * 1000;
+
+    // calculate negative behaviors according to rule
+    if (startTime < endTime) {
+      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), endTime, today - day, behavior);
+      reward += getTokens(startTime, Math.min(endTime, 3 * 3600 * 1000), today, behavior)
+    } else {
+      reward += getTokens(3 * 3600 * 1000, endTime, today-day, behavior);
+      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), day, today - day, behavior);
+      reward += getTokens(0, Math.min(3 * 3600 * 1000, endTime), today, behavior);
+    }
+
+    result += reward;
+  }
+
+  return Math.round(Math.max(result, 0));
 }
 
 export const getTokenSummary = (activity, responses) => {

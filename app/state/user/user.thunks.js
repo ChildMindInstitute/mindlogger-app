@@ -4,6 +4,7 @@ import { sync, showToast } from '../app/app.thunks';
 import { setInfo, setAuth, setLanguage } from './user.actions';
 
 import { getUserUpdates } from '../../services/network';
+import { refreshTokenBehaviors } from '../responses/responses.thunks';
 
 export const signInSuccessful = response => (dispatch) => {
   dispatch(setInfo(response.user));
@@ -11,7 +12,7 @@ export const signInSuccessful = response => (dispatch) => {
   dispatch(
     sync(() => getUserUpdates({
       authToken: response.authToken.token,
-    }), response.keys),
+    }).then(() => dispatch(refreshTokenBehaviors())), response.keys),
   );
   Actions.replace('applet_list');
 };
