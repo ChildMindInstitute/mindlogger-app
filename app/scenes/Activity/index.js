@@ -283,7 +283,7 @@ class Activity extends React.Component {
       setCurrentScreen,
       isSplashScreen,
     } = this.props;
- 
+
     const { isSummaryScreen } = this.state;
     const { activity } = currentResponse;
     const screen = activity.items[currentScreen].variableName;
@@ -303,7 +303,7 @@ class Activity extends React.Component {
         return;
       } else if (currentScreen !== 3) {
         setTutorialStatus(1);
-      } 
+      }
     }
     this.updateStore();
 
@@ -525,8 +525,9 @@ class Activity extends React.Component {
                 timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || 0}
                 timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
                 timerActive={responses[currentScreen]?.timerActive}
+                lastAvailableTime={responses[currentScreen]?.lastAvailableTime}
                 appStatus={appStatus}
-                setTimerStatus={(timerActive, timeLeft) => {
+                setTimerStatus={(timerActive, timeLeft, lastAvailableTime=0) => {
                   const response = responses[currentScreen] || {};
 
                   if (timeLeft <= 0 && response.timeLimit) {
@@ -539,10 +540,19 @@ class Activity extends React.Component {
                     value: response.value,
                     timerActive,
                     timeLeft,
-                    timeLimit: response.timeLimit
+                    timeLimit: response.timeLimit,
+                    lastAvailableTime
                   };
 
                   this.setState({ responses });
+
+                  if (currentResponse && lastAvailableTime) {
+                    setAnswer(
+                      currentResponse.activity,
+                      currentScreen,
+                      responses[currentScreen]
+                    );
+                  }
                 }}
                 onPressAction={() => {
                   if (timerEnabled) {
