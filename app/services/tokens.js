@@ -84,7 +84,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
       const time = new Date(response.datetime).getTime()
       if (time >= timestamp - day && time < timestamp) {
         const data = response.value[behavior.name] || [];
-        reward += data.length * behavior.value;
+        reward -= data.length * behavior.value;
       }
     }
 
@@ -106,7 +106,7 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     result += reward;
   }
 
-  return Math.round(Math.max(result, 0));
+  return Math.max(result, 0);
 }
 
 export const getTokenSummary = (activity, responses) => {
