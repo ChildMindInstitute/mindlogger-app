@@ -4,8 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.36] - 2022-1-15
+## [0.18.37] - 2022-1-16
 - Fix incorrect X, Y coordinates
+
+## [0.18.36] - 2022-1-16
+- Update Tooltip for Stacked Items to be a Hyperlink
+- Fix timestamp issue
+- Update negative behaviors calulations
+- Fix timer issue
 
 ## [0.18.35] - 2022-1-13
 - Fix app crash issue on Data tab with TokenLogger Applet
