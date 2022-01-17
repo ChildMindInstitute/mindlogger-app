@@ -60,11 +60,12 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
   }
 
   const markdownSplit = markdown?.split('\n');
-  if (markdownSplit?.includes('[Time_Activity_Last_Completed] to [Now]')) {
-    const index = markdownSplit.findIndex(v => v === '[Time_Activity_Last_Completed] to [Now]');
-    markdownSplit[index] = `[blue]${markdownSplit[index]}`
-    markdown = markdownSplit.join('\n');
-  }
+  markdownSplit.forEach((element, index) => {
+    if (element?.includes('[Time_Activity_Last_Completed] to [Now]')) {
+      markdownSplit[index] = `[blue]${markdownSplit[index]}`
+      markdown = markdownSplit.join('\n');
+    }
+  });
 
   return markdown
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
@@ -86,7 +87,7 @@ const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
       {screen.inputType !== "trail" && (
         <MarkdownScreen height={78}>
           {screen.inputType === 'futureBehaviorTracker' || screen.inputType == 'pastBehaviorTracker' ?
-              `::: hljs-left\r\n${markdown}\r\n:::` : markdown}
+            `::: hljs-left\r\n${markdown}\r\n:::` : markdown}
         </MarkdownScreen>
       )}
       {screen.info && (
