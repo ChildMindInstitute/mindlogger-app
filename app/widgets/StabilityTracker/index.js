@@ -343,7 +343,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
       responses.current.push(response)
 
-      sendData('live_event', response, this.props.appletId);
+      sendData('live_event', response, appletId);
     },
     configObj.taskLoopRate * 1000,
     moving
