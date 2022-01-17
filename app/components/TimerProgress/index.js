@@ -48,13 +48,13 @@ const TimerProgress = ({ current, length, color, sliderColor }) => {
         />
 
         <View style={styles.timeElapsed}>
-          <Text style={{ ...styles.text, color }}>{getTimeStr(current)}</Text>
+          <Text style={{ ...styles.text, color }}>{getTimeStr(length ? Math.min(current, length) : current)}</Text>
         </View>
 
         {
           length && (
             <View style={styles.timeLeft}>
-              <Text style={{ ...styles.text, color }}>{'-' + getTimeStr(length-current)}</Text>
+              <Text style={{ ...styles.text, color }}>{'-' + getTimeStr(Math.max(0, length-current))}</Text>
             </View>
           ) || <></>
         }
