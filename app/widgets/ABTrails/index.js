@@ -124,6 +124,7 @@ class ABTrails extends React.Component {
       trailsTimerId,
       setTrailsTimerId,
       currentScreen,
+      appletId
     } = this.props;
     const { activity } = this.props.currentResponse;
     let currentActivity = 'activity1';
@@ -164,6 +165,7 @@ class ABTrails extends React.Component {
               currentIndex={this.finalAnswer["value"] && this.finalAnswer["value"].currentIndex}
               failedCnt={this.finalAnswer["value"] && this.finalAnswer["value"].failedCnt}
               screenTime={this.finalAnswer["value"] && this.finalAnswer["value"].screenTime}
+              appletId={appletId}
               currentScreen={currentScreen + 1}
               setTrailsTimerId={setTrailsTimerId}
               trailsTimerId={trailsTimerId}
@@ -206,6 +208,7 @@ ABTrails.propTypes = {
   data: PropTypes.any,
   trailsTimerId: PropTypes.number.isRequired,
   screen: PropTypes.string.isRequired,
+  appletId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => {
