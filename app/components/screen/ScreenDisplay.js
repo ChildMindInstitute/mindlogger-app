@@ -67,7 +67,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
   }
 
   return markdown
-    .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
+    .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
     .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
     .replace(/\[Nickname\]/i, profile.nickName || '');
