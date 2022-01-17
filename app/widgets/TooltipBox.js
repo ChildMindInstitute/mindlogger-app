@@ -18,7 +18,7 @@ export const TooltipBox = ({ text, children }) => {
         }
       }
     >
-      <MarkdownScreen maxWidth={width} textColor='white'>{text}</MarkdownScreen>
+      <MarkdownScreen maxWidth={width} textColor='black'>{text}</MarkdownScreen>
     </View>
   ), [text]);
 
@@ -35,7 +35,7 @@ export const TooltipBox = ({ text, children }) => {
           margin: 0,
           overflow: 'hidden',
         }}
-        backgroundColor="rgba(0, 0, 0, 1)"
+        backgroundColor="rgba(226, 240, 254, 1)"
       >
         { children }
       </CustomTooltip>

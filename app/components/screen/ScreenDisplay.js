@@ -67,7 +67,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
   }
 
   return markdown
-    .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today')
+    .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
     .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
     .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
@@ -75,7 +75,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
 
 const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
   const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null, profile)).current;
-  
+
   return (
     <View style={{ marginBottom: 18 }}>
       {screen.preamble && (
