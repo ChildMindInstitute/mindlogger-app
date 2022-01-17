@@ -74,25 +74,33 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
 };
 
 const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
-  const markdown = useRef(parseMarkdown(screen.question && screen.question.en || '', lastResponseTime[activity.id] || null, profile)).current;
+  const { question, inputType, preamble, info } = screen;
+  const markdown = useRef(parseMarkdown(question && question.en || '', lastResponseTime[activity.id] || null, profile)).current;
+  let heightProp;
+
+  if (inputType === 'tokenSummary') {
+    heightProp = {
+      height: 78,
+    };
+  }
 
   return (
     <View style={{ marginBottom: 18 }}>
-      {screen.preamble && (
+      {preamble && (
         <MarkdownScreen mstyle={preambleStyle}>
-          {screen.preamble.en}
+          {preamble.en}
         </MarkdownScreen>
       )}
-      {screen.inputType !== "trail" && (
-        <MarkdownScreen height={78}>
-          {screen.inputType === 'futureBehaviorTracker' || screen.inputType == 'pastBehaviorTracker' ?
+      {inputType !== "trail" && (
+        <MarkdownScreen {...heightProp} >
+          {inputType === 'futureBehaviorTracker' || inputType == 'pastBehaviorTracker' ?
               `::: hljs-left\r\n${markdown}\r\n:::` : markdown}
         </MarkdownScreen>
       )}
-      {screen.info && (
+      {info && (
         <View style={styles.infoTitle}>
           <MarkdownScreen>
-            {screen.info.en}
+            {info.en}
           </MarkdownScreen>
         </View>
       )}
