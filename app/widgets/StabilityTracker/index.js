@@ -7,6 +7,7 @@ import { magnetometer } from "react-native-sensors";
 
 import { useAnimationFrame } from '../../services/hooks';
 import { showToast } from '../../state/app/app.thunks';
+import { sendData } from "../../services/socket";
 
 import {
   generateTargetTraj,
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showToast }) => {
+const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, appletId, showToast }) => {
   const configObj = useRef({
     numTestTrials: config.numTestTrials || 10,
     taskMode: config.taskMode || 'pseudo_stair',
@@ -341,6 +342,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, showTo
       }
 
       responses.current.push(response)
+
+      sendData('live_event', response, this.props.appletId);
     },
     configObj.taskLoopRate * 1000,
     moving
@@ -597,6 +600,7 @@ StabilityTrackerScreen.propTypes = {
   }),
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
+  appletId: PropTypes.string.isRequired
 };
 
 const mapStateToProps = (state) => ({

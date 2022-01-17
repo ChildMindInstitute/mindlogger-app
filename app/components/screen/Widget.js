@@ -91,6 +91,7 @@ const Widget = ({
         onChange={onChange}
         config={screen.inputs}
         isCurrent={isCurrent}
+        appletId={applet.id}
       />
     )
   }

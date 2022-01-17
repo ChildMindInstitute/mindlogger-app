@@ -164,7 +164,7 @@ export default class TrailsBoard extends Component {
 
   logData = (x, y) => {
     const { width } = this.state.dimensions;
-    sendData('touch_event', {
+    sendData('live_event', {
       x: x * width / 335,
       y: y * width / 335,
       time: Date.now()
