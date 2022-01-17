@@ -125,6 +125,7 @@ const Widget = ({
         screen={screen.variableName}
         currentScreen={currentScreen}
         isCurrent={isCurrent}
+        appletId={applet.id}
         data={answer}
         onChange={onChange}
       />
@@ -253,6 +254,7 @@ const Widget = ({
       <VisualStimulusResponse
         onChange={onChange}
         config={screen.inputs}
+        appletId={applet.id}
         isCurrent={isCurrent}
       />
     );
@@ -266,6 +268,7 @@ const Widget = ({
         onRelease={onRelease}
         isOptionalText = {screen.isOptionalText}
         isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired}
+        appletId={applet.id}
         answer={answer}
       />
     );
