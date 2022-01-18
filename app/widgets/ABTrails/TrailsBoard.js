@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
+import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
   picture: {
@@ -157,7 +158,17 @@ export default class TrailsBoard extends Component {
     if (isValid && currentItem.order !== screen.items.length) {
       const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true, start: currentItem.label, end: nextItem.label }] };
       this.setState({ lines: [...lines, newLine] });
+      this.logData(this.startX, this.startY);
     }
+  }
+
+  logData = (x, y) => {
+    const { width } = this.state.dimensions;
+    sendData('live_event', {
+      x: x * width / 335,
+      y: y * width / 335,
+      time: Date.now()
+    }, this.props.appletId);
   }
 
   endLine = (evt, gestureState) => {
@@ -264,6 +275,8 @@ export default class TrailsBoard extends Component {
         ? 'Finished. Click Done to complete.'
         : 'Finished. Click next to continue.');
     }
+
+    this.logData(this.lastX, this.lastY);
   }
 
   onLayout = (event) => {
@@ -457,4 +470,5 @@ TrailsBoard.propTypes = {
   onPress: PropTypes.func,
   onError: PropTypes.func,
   onRelease: PropTypes.func,
+  appletId: PropTypes.string,
 };

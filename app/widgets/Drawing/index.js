@@ -50,7 +50,7 @@ export class Drawing extends React.Component {
   }
 
   render() {
-    const { config, answer, onChange, onPress, onRelease, isOptionalText, isOptionalTextRequired } = this.props;
+    const { config, answer, appletId, onChange, onPress, onRelease, isOptionalText, isOptionalTextRequired } = this.props;
     const url = config.inputs.backgroundImage
       ? getURL(config.inputs.backgroundImage)
       : null;
@@ -75,6 +75,7 @@ export class Drawing extends React.Component {
           }
           <DrawingBoard
             imageSource={url}
+            appletId={appletId}
             lines={this.finalAnswer["value"] && this.finalAnswer["value"].lines}
             onResult={this.onResult}
             ref={(ref) => { this.board = ref; }}
@@ -108,6 +109,7 @@ Drawing.propTypes = {
     inputs: PropTypes.object,
     valueConstraints: PropTypes.object,
   }),
+  appletId: PropTypes.string,
   answer: PropTypes.object,
   onChange: PropTypes.func.isRequired,
   onPress: PropTypes.func,

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
+import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
   picture: {
@@ -84,15 +85,20 @@ export default class DrawingBoard extends Component {
 
   addLine = (evt) => {
     const { lines } = this.state;
+    const { width } = this.state.dimensions;
+
     const { locationX, locationY } = evt.nativeEvent;
     this.startX = locationX;
     this.startY = locationY;
     const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
     this.setState({ lines: [...lines, newLine] });
+
+    sendData('live_event', { x: locationX / width - 0.5, y: 0.5 - locationY / width, time: Date.now() }, this.props.appletId);
   }
 
   addPoint = (gestureState) => {
     const { lines } = this.state;
+    const { width } = this.state.dimensions;
 
     if (lines.length === 0) return;
     const time = Date.now();
@@ -110,6 +116,8 @@ export default class DrawingBoard extends Component {
     this.lastPressTimestamp = time;
     lines[n].points.push({ x: this.lastX, y: this.lastY, time });
     this.setState({ lines });
+
+    sendData('live_event', { x: this.lastX / width - 0.5, y: 0.5 - this.lastY / width, time }, this.props.appletId);
   }
 
   onLayout = (event) => {
@@ -226,6 +234,7 @@ DrawingBoard.defaultProps = {
 
 DrawingBoard.propTypes = {
   imageSource: PropTypes.string,
+  appletId: PropTypes.string,
   lines: PropTypes.array,
   onResult: PropTypes.func,
   onPress: PropTypes.func,

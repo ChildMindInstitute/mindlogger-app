@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.37] - 2022-1-16
 - Fix incorrect X, Y coordinates
+- Fixed small header images on activity screen
 
 ## [0.18.36] - 2022-1-16
 - Update Tooltip for Stacked Items to be a Hyperlink

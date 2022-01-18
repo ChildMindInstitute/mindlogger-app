@@ -251,6 +251,12 @@ window.jsPsych = (function() {
     // data object that just went through the trial's finish handlers.
     opts.on_data_update(trial_data_values);
 
+    if (window.ReactNativeWebView) {
+      var progress = jsPsych.progress();
+      var serialized = JSON.stringify({ type: 'response', data: trial_data_values});
+      window.ReactNativeWebView.postMessage(serialized);
+    }
+
     // wait for iti
     if (typeof current_trial.post_trial_gap === null) {
       if (opts.default_iti > 0) {

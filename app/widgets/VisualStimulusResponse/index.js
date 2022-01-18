@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, Platform, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { sendData } from "../../services/socket";
 
 const htmlSource = require('./visual-stimulus-response.html');
 
-export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
+export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [tryIndex, setTryIndex] = useState(1);
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +43,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       continueText,
       restartText: tryIndex < config.maxRetryCount ? restartText : continueText
     };
+    const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
     const injectConfig = `
       window.CONFIG = ${JSON.stringify(configObj)};
@@ -52,6 +54,18 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
       ios: htmlSource,
       android: { uri: 'file:///android_asset/html/visual-stimulus-response.html' },
     });
+
+    const parseResponse = (record) => ({
+      trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
+      duration: record.rt,
+      question: record.stimulus,
+      button_pressed: record.button_pressed,
+      start_time: record.image_time,
+      correct: record.correct,
+      start_timestamp: record.start_timestamp,
+      offset: record.start_timestamp - record.start_time,
+      tag: record.tag,
+    })
 
     return (
       <View
@@ -70,7 +84,12 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
           injectedJavaScript={injectConfig}
           onMessage={(e) => {
             const dataString = e.nativeEvent.data;
-            const data = JSON.parse(dataString);
+            const { type, data } = JSON.parse(dataString);
+
+            if (type == 'response') {
+              sendData('live_event', parseResponse(data), appletId);
+              return ;
+            }
 
             let correctCount = 0, totalCount = 0;
             for (let i = 0; i < data.length; i++) {
@@ -90,22 +109,10 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent }) => {
               setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
               setTryIndex(tryIndex+1);
             } else {
-              const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
-
               setLoading(true);
 
               setTimeout(() => {
-                onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => ({
-                  trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
-                  duration: record.rt,
-                  question: record.stimulus,
-                  button_pressed: record.button_pressed,
-                  start_time: record.image_time,
-                  correct: record.correct,
-                  start_timestamp: record.start_timestamp,
-                  offset: record.start_timestamp - record.start_time,
-                  tag: record.tag,
-                })), true);
+                onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => parseResponse(record)), true);
               }, 0)
             }
           }}
@@ -153,4 +160,5 @@ VisualStimulusResponse.propTypes = {
   }).isRequired,
   onChange: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
+  appletId: PropTypes.string.isRequired,
 };

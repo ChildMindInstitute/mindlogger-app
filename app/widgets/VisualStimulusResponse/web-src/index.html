@@ -21,7 +21,7 @@ function start() {
         timeline: buildTimeline(),
         on_finish: function (data) {
             if (window.ReactNativeWebView) {
-                const serialized = JSON.stringify(data.values());
+                const serialized = JSON.stringify({ type: 'finish', data: data.values() });
                 window.ReactNativeWebView.postMessage(serialized);
             }
         }

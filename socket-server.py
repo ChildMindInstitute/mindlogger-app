@@ -17,6 +17,8 @@ def process(address, source):
         print('set response', d['data'])
     elif d['type'] == 'finish_activity':
         print('finish activity', d['data'])
+    elif d['type'] == 'live_event':
+        print('live response', d['data'])
 
 def readData(address, data):
     if address not in buffer:
