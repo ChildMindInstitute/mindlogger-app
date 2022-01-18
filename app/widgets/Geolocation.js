@@ -8,7 +8,6 @@ import _ from "lodash";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { OptionalText } from "./OptionalText";
-import { Toast } from 'native-base';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -64,7 +63,7 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
 
   let finalAnswer = value ? _.cloneDeep(value) : {};
 
-  handleComment = (itemValue) => {
+  const handleComment = (itemValue) => {
     finalAnswer["text"] = itemValue;
 
     onChange(finalAnswer);
@@ -72,7 +71,7 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
 
   useEffect(() => {
     Permissions.check(permission).then(setLocationPermission);
-  });
+  }, []);
 
   const onPress = () => {
     Permissions.request(permission).then((response) => {
@@ -88,13 +87,11 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
             onChange(finalAnswer);
           },
           (errorResponse) => {
-            Toast.show({
-              text: errorResponse.message,
-              position: 'bottom',
-              duration: 2000,
-            });
+            setLocationPermission('denied');
           }
         );
+      } else {
+        setLocationPermission('denied');
       }
     });
   };
