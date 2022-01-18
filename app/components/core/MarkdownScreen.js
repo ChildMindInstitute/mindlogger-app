@@ -193,7 +193,7 @@ export { MarkdownScreen };
 
 
 const checkNodeContent = (content) => {
-  content = content.replace(/(<([^><]+)>)/ig, '');
+  content = content.replace(/<([^‘]*[a-zA-Z]+[^‘]*)>/ig, '');
 
   if (regex.test(content.trim())) content = content.trim().replace(/==/g, "")
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) return checkSuperscript(content)
