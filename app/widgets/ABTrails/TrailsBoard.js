@@ -165,8 +165,8 @@ export default class TrailsBoard extends Component {
   logData = (x, y) => {
     const { width } = this.state.dimensions;
     sendData('live_event', {
-      x: x * width / 335,
-      y: y * width / 335,
+      x: x * width / 100,
+      y: y * width / 100,
       time: Date.now()
     }, this.props.appletId);
   }
@@ -288,13 +288,13 @@ export default class TrailsBoard extends Component {
         ...line,
         points: line.points.map(point => ({
           ...point,
-          x: point.x * width / 335,
-          y: point.y * width / 335,
+          x: point.x * width / 100,
+          y: point.y * width / 100,
         })),
       })) : [];
-      this.setState({ rate: width / 335, dimensions: { width, height, top, left }, lines });
+      this.setState({ rate: width / 100, dimensions: { width, height, top, left }, lines });
     } else {
-      this.setState({ rate: width / 335, dimensions: { width, height, top, left } });
+      this.setState({ rate: width / 100, dimensions: { width, height, top, left } });
     }
   }
 
@@ -317,8 +317,8 @@ export default class TrailsBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width * 335,
-        y: point.y / width * 335,
+        x: point.x / width * 100,
+        y: point.y / width * 100,
       })),
     }));
 
@@ -368,7 +368,7 @@ export default class TrailsBoard extends Component {
 
         {errorPoint && <Text
           stroke={trailsData.colors.failed}
-          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontSize={trailsData.fontSize * rate * 0.75}
           fontWeight="200"
           x={errorPoint.x}
           y={errorPoint.y}
@@ -379,10 +379,10 @@ export default class TrailsBoard extends Component {
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
-          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontSize={trailsData.fontSize * rate * 0.75}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - trailsData.r - 5) * rate}
+          y={(item.cy - trailsData.r - 2) * rate}
           textAnchor="middle"
         >
           {`Begin`}
@@ -391,10 +391,10 @@ export default class TrailsBoard extends Component {
         {index === screen.items.length - 1 && <Text
           fill="white"
           stroke={trailsData.colors.pending}
-          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontSize={trailsData.fontSize * rate * 0.75}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - trailsData.r - 5) * rate}
+          y={(item.cy - trailsData.r - 2) * rate}
           textAnchor="middle"
         >
           {`End`}
