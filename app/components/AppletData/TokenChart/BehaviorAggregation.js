@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   card: {
-    width: '95%',
+    width: '98%',
     height: width/4,
     borderRadius: width/16,
     marginTop: 10,
@@ -94,9 +94,9 @@ const BehaviorAggregation = ({ pastTokensLabel, aggregation, applet }) => {
               }
             </View>
 
-            <View style={{ flexGrow: 1, flexShrink: 1, height: '100%', justifyContent: 'space-around', paddingVertical: 20 }}>
+            <View style={{ flexGrow: 1, flexShrink: 1, height: '100%', justifyContent: 'center' }}>
               <Text style={styles.text}>{option.name}</Text>
-              <Text style={styles.text}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
+              <Text style={[styles.text, { marginTop: 4 }]}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
             </View>
 
             <View style={{ width: width/4, height: '100%', padding: 10 }}>
