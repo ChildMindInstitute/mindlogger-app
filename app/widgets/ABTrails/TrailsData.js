@@ -843,7 +843,7 @@ export const tutorials = {
       { text: "Then go to the next letter, B, and so on.", number: 'B' },
       { text: "Please try not to lift the pen as you move from one number to the next. Work as quickly as you can." },
       { text: "Begin here.", number: 1 },
-      { text: "And end here.", number: 8 },
+      { text: "And end here.", number: 'D' },
       { text: "Click next to start" }
     ],
     trail4: [
@@ -851,7 +851,7 @@ export const tutorials = {
       { text: "You will take a pen and draw a line from one circle to the next." },
       { text: "Alternating in order between the numbers and letters." },
       { text: "Start at 1.", number: 1 },
-      { text: "And end here.", number: 25 },
+      { text: "And end here.", number: 13 },
       { text: "Please try not to lift the pen as you move from one circle to the next." },
       { text: "Work as quickly as you can." },
       { text: "Click next to start" }
