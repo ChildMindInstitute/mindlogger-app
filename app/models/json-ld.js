@@ -110,6 +110,7 @@ const END_TIME = "schema:endTime";
 const RATE = "schema:rate";
 const TIME_SCREEN = "reprolib:terms/timeScreen";
 const STREAM_ENABLED = "reprolib:terms/streamEnabled";
+const COMBINE_REPORTS = "reprolib:terms/combineReports";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -689,7 +690,8 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
-    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false,
+    combineReports: R.path([COMBINE_REPORTS, 0, "@value"], applet) || false,
   };
 
   if (applet.encryption && Object.keys(applet.encryption).length) {
