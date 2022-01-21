@@ -93,7 +93,7 @@ export default class DrawingBoard extends Component {
     const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
     this.setState({ lines: [...lines, newLine] });
 
-    sendData('live_event', { x: locationX / width - 0.5, y: 0.5 - locationY / width, time: Date.now() }, this.props.appletId);
+    sendData('live_event', { x: locationX / width * 100, y: locationY / width * 100, time: Date.now() }, this.props.appletId);
   }
 
   addPoint = (gestureState) => {
@@ -117,7 +117,7 @@ export default class DrawingBoard extends Component {
     lines[n].points.push({ x: this.lastX, y: this.lastY, time });
     this.setState({ lines });
 
-    sendData('live_event', { x: this.lastX / width - 0.5, y: 0.5 - this.lastY / width, time }, this.props.appletId);
+    sendData('live_event', { x: this.lastX / width * 100, y: this.lastY / width * 100, time }, this.props.appletId);
   }
 
   onLayout = (event) => {
@@ -149,8 +149,8 @@ export default class DrawingBoard extends Component {
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width - 0.5,
-        y: 0.5 - point.y / width,
+        x: point.x / width * 100,
+        y: point.y / width * 100,
       })),
     }));
     return { lines: results };

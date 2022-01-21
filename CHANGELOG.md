@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.18.38] - 2022-1-20
 - Fix instruction issues in A/B Trails
+- Update coordiantes in Drawing and A/B Trails
 
 ## [0.18.37] - 2022-1-16
 - Fix incorrect X, Y coordinates
