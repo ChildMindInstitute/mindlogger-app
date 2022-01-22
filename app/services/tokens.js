@@ -123,10 +123,6 @@ export const getTokenSummary = (activity, responses) => {
           reward++;
         }
       }
-
-      if (count == reward) {
-        reward++;
-      }
     }
 
     return { count, reward }
