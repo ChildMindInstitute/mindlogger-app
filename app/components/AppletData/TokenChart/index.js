@@ -300,7 +300,8 @@ class TokenChart extends React.Component {
         points.push({
           x: this.getX(changes[i].time, startDate, endDate, graphWidth),
           y: graphHeight - yUnit * cumulative,
-          spend: changes[i].spend
+          spend: changes[i].spend,
+          isTracker: changes[i].isTracker
         })
       }
 
@@ -309,7 +310,8 @@ class TokenChart extends React.Component {
       points.push({
         x: this.getX(changes[i].time, startDate, endDate, graphWidth),
         y: graphHeight - yUnit * cumulative,
-        spend: changes[i].spend
+        spend: changes[i].spend,
+        isTracker: changes[i].isTracker,
       })
     }
 
@@ -503,7 +505,7 @@ class TokenChart extends React.Component {
                   {
                     this.state.range == 'Today' &&
                     this.cumulativePoints(startDate, endDate, SVGWidth, SVGHeight)
-                      .filter(point => !point.spend)
+                      .filter(point => !point.spend && !point.isTracker)
                       .map((point, index) => (
                         <>
                           <Circle

@@ -44,11 +44,11 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     return (Number(parts[0]) * 60 + Number(parts[1])) * 60 * 1000
   }
 
-  const getTokens = (startTime, endTime, date, behavior) => {
+  const getTrackedTime = (startTime, endTime, date) => {
     if (startTime >= endTime) return 0;
 
     const timeRanges = [];
-    let last = null;
+    let last = null, totalTime = 0;
 
     for (const time of times) {
       const start = Math.max(time, startTime + date), end = Math.min(time + day, endTime + date);
@@ -63,15 +63,11 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
       }
     }
 
-    let reward = 0, totalTime = 0;
-
     for (const range of timeRanges) {
       totalTime += range.end - range.start;
     }
 
-    reward += Math.floor(totalTime / (behavior.rate * 60 * 1000)) * behavior.value;
-
-    return reward;
+    return totalTime;
   }
 
   const today = timestamp - 3 * 3600 * 1000;
@@ -93,15 +89,18 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     startTime = getMilliseconds(startTime);
     endTime = getMilliseconds(endTime) + 60 * 1000;
 
+    let totalTime = 0;
     // calculate negative behaviors according to rule
     if (startTime < endTime) {
-      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), endTime, today - day, behavior);
-      reward += getTokens(startTime, Math.min(endTime, 3 * 3600 * 1000), today, behavior)
+      totalTime += getTrackedTime(Math.max(3 * 3600 * 1000, startTime), endTime, today - day);
+      totalTime += getTrackedTime(startTime, Math.min(endTime, 3 * 3600 * 1000), today)
     } else {
-      reward += getTokens(3 * 3600 * 1000, endTime, today-day, behavior);
-      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), day, today - day, behavior);
-      reward += getTokens(0, Math.min(3 * 3600 * 1000, endTime), today, behavior);
+      totalTime += getTrackedTime(3 * 3600 * 1000, endTime, today-day);
+      totalTime += getTrackedTime(Math.max(3 * 3600 * 1000, startTime), day, today - day);
+      totalTime += getTrackedTime(0, Math.min(3 * 3600 * 1000, endTime), today);
     }
+
+    reward += Math.floor(totalTime / (behavior.rate * 60 * 1000)) * behavior.value;
 
     result += reward;
   }
