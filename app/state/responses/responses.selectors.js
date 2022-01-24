@@ -48,7 +48,7 @@ export const currentAppletResponsesSelector = createSelector(
 export const currentAppletTokenBalanceSelector = createSelector(
   currentAppletResponsesSelector,
   (responseHistory) => {
-    return responseHistory.tokens;
+    return responseHistory.token.cumulative;
   }
 )
 
