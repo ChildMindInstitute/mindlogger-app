@@ -99,7 +99,9 @@ const BehaviorAggregation = ({ pastTokensLabel, aggregation, applet }) => {
               <Text style={styles.text}>{aggregation[option.itemId] && (aggregation[option.itemId][option.name] || {}).count || 0} times</Text>
             </View>
 
-            <View style={{ width: width/4, height: '100%', padding: 10 }}>
+            <View
+              style={{ width: width/4, height: '100%', justifyContent: 'center', alignItems: 'center' }}
+            >
               <Slider2D
                 borderRadius={5}
                 borderColor={'rgba(0,0,0,0)'}

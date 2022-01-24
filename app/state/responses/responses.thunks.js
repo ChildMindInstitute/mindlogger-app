@@ -70,6 +70,7 @@ import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actio
 import { getAESKey, getPublicKey } from "../../services/encryption";
 import { sendData } from "../../services/socket";
 import config from "../../config";
+import { sync } from "../app/app.thunks";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
@@ -465,7 +466,7 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
 
   return Promise.all(processes).then(() => {
     if (processes.length) {
-      dispatch(downloadResponses());
+      dispatch(sync());
     }
   })
 }

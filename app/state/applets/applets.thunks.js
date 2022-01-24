@@ -320,7 +320,11 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
                 currentApplet.schedule.events = events;
               }
-              responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
+
+              responses.push({
+                ...decryptAppletResponses(currentApplet, appletInfo.responses),
+                appletId: 'applet/' + appletInfo.id
+              });
 
               cumulativeActivities[currentApplet.id] = nextActivities;
               return currentApplet;
