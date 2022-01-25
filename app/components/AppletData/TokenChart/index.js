@@ -306,7 +306,7 @@ class TokenChart extends React.Component {
         })
       }
 
-      cumulative -= changes[i].value;
+      cumulative = Math.max(0, cumulative - changes[i].value);
 
       points.push({
         x: this.getX(changes[i].time, startDate, endDate, graphWidth),
