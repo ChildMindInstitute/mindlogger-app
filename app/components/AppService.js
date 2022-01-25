@@ -16,7 +16,7 @@ import { startResponse, refreshTokenBehaviors } from '../state/responses/respons
 import { inProgressSelector } from '../state/responses/responses.selectors';
 import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
-import { syncTargetApplet, sync, showToast } from '../state/app/app.thunks';
+import { syncTargetApplet, sync, showToast, syncUploadQueue } from '../state/app/app.thunks';
 
 import { sendResponseReuploadRequest } from '../services/network';
 import { delayedExec, clearExec } from '../services/timing';
@@ -78,6 +78,7 @@ class AppService extends Component {
     this.startTimer();
 
     this.props.setAppStatus(true);
+    this.props.syncUploadQueue();
   }
 
   /**
@@ -627,7 +628,7 @@ class AppService extends Component {
    * @returns {void}
    */
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive } = this.props;
+    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive, syncUploadQueue } = this.props;
     const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
     const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
     const stateChanged = nextAppState !== this.appState;
@@ -639,6 +640,7 @@ class AppService extends Component {
       this.clearTimer();
     } else if (goingToForeground) {
       setAppStatus(true);
+      syncUploadQueue();
       this.startTimer();
     }
 
@@ -709,7 +711,8 @@ const mapDispatchToProps = dispatch => ({
   showToast: toast => dispatch(showToast(toast)),
   setLastActiveTime: time => dispatch(setLastActiveTime(time)),
   refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
-  setCurrentActivity: activityId => dispatch(setCurrentActivity(activityId))
+  setCurrentActivity: activityId => dispatch(setCurrentActivity(activityId)),
+  syncUploadQueue: () => dispatch(syncUploadQueue()),
 });
 
 export default connect(
