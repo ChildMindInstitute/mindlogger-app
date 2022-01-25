@@ -4,6 +4,7 @@ import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
 import { sendData } from "../../services/socket";
+import ViewShot, { releaseCapture } from "react-native-view-shot";
 
 const styles = StyleSheet.create({
   picture: {
@@ -18,6 +19,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d6d7da',
   },
+  background: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute'
+  }
 });
 
 function chunkedPointStr(lines, chunkSize) {
@@ -50,7 +56,12 @@ export default class DrawingBoard extends Component {
     super(props);
     this.state = {
       lines: [],
+      newBackground: { uri: '', chunks: 0 },
+      prevBackground: { uri: '', chunks: 0 },
+      cached: 0
     };
+    this.capturing = false;
+
     this.startX = 0;
     this.startY = 0;
     this.lastX = 0;
@@ -81,6 +92,29 @@ export default class DrawingBoard extends Component {
         this.props.onResult({ ...result, lines: [...this.props.lines, line], svgString });
       },
     });
+  }
+
+  captureImage = (chunks) => {
+    if (this.capturing) {
+      return ;
+    }
+
+    this.capturing = true;
+
+    this.refs.viewShot.capture().then(uri => {
+      if (this.capturing) {
+        this.setState({
+          prevBackground: this.state.newBackground,
+          newBackground: { uri, chunks }
+        })
+      }
+    })
+  }
+
+  onCapturedImage = () => {
+    this.capturing = false;
+    releaseCapture(this.state.prevBackground.uri);
+    this.setState({ prevBackground: { uri: '', chunks: 0 } });
   }
 
   addLine = (evt) => {
@@ -139,7 +173,13 @@ export default class DrawingBoard extends Component {
   }
 
   reset = () => {
-    this.setState({ lines: [] });
+    this.setState({
+      lines: [],
+      newBackground: { uri: '', chunks: 0 },
+      prevBackground: { uri: '', chunks: 0 }
+    });
+
+    this.capturing = false;
   }
 
   save = () => {
@@ -181,17 +221,27 @@ export default class DrawingBoard extends Component {
     return ReactDOMServer.renderToStaticMarkup(webJsx);
   };
 
-  renderSvg() {
+  renderSvg(displayFrom = 0, allowCapturing = false) {
     const { lines, dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
-    const strArray = chunkedPointStr(lines, 50);
+    const chunkSize = 50;
+    const strArray = chunkedPointStr(lines, chunkSize);
+
+    if (allowCapturing && strArray.length - displayFrom > 10) {
+      const { points } = lines[lines.length-1];
+
+      if (points.length % chunkSize == 1) {
+        this.captureImage(strArray.length-1);
+      }
+    }
+
     return (
       <Svg
         ref={(ref) => { this.svgRef = ref; }}
         height={width}
         width={width}
       >
-        {strArray.map(this.renderLine)}
+        {strArray.slice(displayFrom || 0).map(this.renderLine)}
       </Svg>
     );
   }
@@ -216,9 +266,26 @@ export default class DrawingBoard extends Component {
             source={{ uri: this.props.imageSource }}
           />
         )}
-        <View style={styles.blank}>
-          {dimensions && this.renderSvg()}
-        </View>
+        <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9 }}>
+          {
+            this.state.prevBackground.uri && ( <Image
+              style={styles.background}
+              source={{ uri: this.state.prevBackground.uri }}
+            />) || <></>
+          }
+          {
+            this.state.newBackground.uri && ( <Image
+              style={styles.background}
+              source={{ uri: this.state.newBackground.uri }}
+              onLoad={() => this.onCapturedImage()}
+            /> ) || <></>
+          }
+
+          {dimensions && this.renderSvg(
+            this.state.prevBackground.chunks || this.state.newBackground.chunks,
+            true
+          )}
+        </ViewShot>
       </View>
     );
   }
