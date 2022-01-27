@@ -111,7 +111,7 @@ export default class DrawingBoard extends Component {
     })
   }
 
-  onCapturedImage = () => {
+  onImageCaptured = () => {
     this.capturing = false;
     releaseCapture(this.state.prevBackground.uri);
     this.setState({ prevBackground: { uri: '', chunks: 0 } });
@@ -227,7 +227,7 @@ export default class DrawingBoard extends Component {
     const chunkSize = 50;
     const strArray = chunkedPointStr(lines, chunkSize);
 
-    if (allowCapturing && strArray.length - displayFrom > 10) {
+    if (allowCapturing && strArray.length - displayFrom > 5) {
       const { points } = lines[lines.length-1];
 
       if (points.length % chunkSize == 1) {
@@ -266,7 +266,7 @@ export default class DrawingBoard extends Component {
             source={{ uri: this.props.imageSource }}
           />
         )}
-        <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9 }}>
+        <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9 }} style={styles.blank}>
           {
             this.state.prevBackground.uri && ( <Image
               style={styles.background}
@@ -277,7 +277,7 @@ export default class DrawingBoard extends Component {
             this.state.newBackground.uri && ( <Image
               style={styles.background}
               source={{ uri: this.state.newBackground.uri }}
-              onLoad={() => this.onCapturedImage()}
+              onLoad={() => this.onImageCaptured()}
             /> ) || <></>
           }
 
