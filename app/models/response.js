@@ -4,7 +4,7 @@ import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
 import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
-import { updateTrackerAggregation, getTokenSummary, getTokenIncreaseForNegativeBehaviors } from '../services/tokens';
+import { updateTrackerAggregation, getTokenSummary } from '../services/tokens';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";
 import {
@@ -36,9 +36,13 @@ export const prepareResponseForUpload = (
 
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.token.cumulative, tokenChanged = false, trackerChanged = false;
-  const now = moment().format('YYYY-MM-DD')
+  const today = moment().format('YYYY-MM-DD')
+  const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
-  const trackerAggregation = responseHistory.token.trackerAggregation.find(d => d.date == now) || { data: {}, id: 0, date: now };
+  let trackerAggregations = [
+    responseHistory.token.trackerAggregation.find(d => d.date == today) || { data: {}, id: 0, date: today },
+    responseHistory.token.trackerAggregation.find(d => d.date == yesterday) || { data: {}, id: 0, date: yesterday }
+  ]
 
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
@@ -78,11 +82,12 @@ export const prepareResponseForUpload = (
         const { value } = (responses[i] || {});
         if (value && Object.keys(value).length) {
           trackerChanged = true;
-          updateTrackerAggregation(trackerAggregation.data, item.id.split('/').pop(), value)
+          updateTrackerAggregation(trackerAggregations, item.id.split('/').pop(), value)
         }
       }
     }
   }
+  trackerAggregations = trackerAggregations.filter(aggregation => Object.keys(aggregation.data).length > 0);
 
   const tokenSummary = getTokenSummary(activity, responses);
   if (tokenSummary.total > 0) {
@@ -134,7 +139,7 @@ export const prepareResponseForUpload = (
   }
 
   if (tokenChanged || trackerChanged) {
-    const changes = responseHistory.token.tokens.find(change => change.date == now) || { data: [], id: 0, date: now };
+    const changes = responseHistory.token.tokens.find(change => change.date == today) || { data: [], id: 0, date: today };
 
     const offset = cumulative - responseHistory.token.cumulative;
 
@@ -147,7 +152,7 @@ export const prepareResponseForUpload = (
     }
 
     if (trackerChanged) {
-      responseData['token'].trackerAggregation = trackerAggregation;
+      responseData['token'].trackerAggregations = trackerAggregations;
     }
   }
 
@@ -199,7 +204,9 @@ export const prepareResponseForUpload = (
       }
 
       if (trackerChanged) {
-        responseData['token'].trackerAggregation.data = getEncryptedData(responseData['token'].trackerAggregation.data, appletMetaData.AESKey)
+        for (let aggregation of responseData['token'].trackerAggregations) {
+          aggregation.data = getEncryptedData(aggregation.data, appletMetaData.AESKey)
+        }
       }
     }
 

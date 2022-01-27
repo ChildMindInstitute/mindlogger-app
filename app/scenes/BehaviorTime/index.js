@@ -148,8 +148,12 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   }
 
   const setTime = (time) => {
-    if (time.getTime() > new Date().getTime()) {
+    const now = Date.now(), day = 86400 * 1000;
+
+    if (time.getTime() > now) {
       time.setDate(time.getDate()-1);
+    } else if (time.getTime() + day <= now) {
+      time.setDate(time.getDate()+1);
     }
 
     const item = currentItem.current;
@@ -231,10 +235,12 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
               }}>{ item.index+1 } out of { orderedList.length }</Text>
 
               <View style={styles.timeSection}>
-                <CachedImage
-                  style={styles.imageStyle}
-                  source={{ uri: image }}
-                />
+                {
+                  image && <CachedImage
+                    style={styles.imageStyle}
+                    source={{ uri: image }}
+                  /> || <View style={styles.imageStyle} />
+                }
 
                 <TouchableOpacity
                   style={{
