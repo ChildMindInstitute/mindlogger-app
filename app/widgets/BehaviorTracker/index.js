@@ -144,11 +144,13 @@ export class BehaviorTrackerComponent extends Component {
 
       const { name, list } = this.props.currentBehavior;
 
-      value[name] = list;
-      this.props.onChange({
-        ...this.props.value,
-        value
-      });
+      if (name) {
+        value[name] = list;
+        this.props.onChange({
+          ...this.props.value,
+          value
+        });
+      }
     }
   }
 
