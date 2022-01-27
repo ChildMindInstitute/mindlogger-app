@@ -90,7 +90,7 @@ export class BehaviorTrackerComponent extends Component {
     }
 
     value[behavior].push({
-      time: inputType == 'pastBehaviorTracker' ?  0 : new Date().getTime(),
+      time: inputType == 'pastBehaviorTracker' ?  null : new Date().getTime(),
       distress: null,
       impairment: null
     })
@@ -123,7 +123,7 @@ export class BehaviorTrackerComponent extends Component {
       value[behavior].pop();
     }
     while (value[behavior].length < this.state.itemCount) {
-      value[behavior].push({ time: 0, distress: null, impairment: null })
+      value[behavior].push({ time: null, distress: null, impairment: null })
     }
 
     if (!value[behavior].length) {
