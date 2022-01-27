@@ -111,7 +111,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       type,
       image,
       list: items,
-      inputType
+      inputType,
+      defaultTime: currentBehavior.defaultTime
     })
 
     if (!items.length) {
@@ -140,7 +141,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
         type,
         image,
         list: items,
-        inputType
+        inputType,
+        defaultTime: currentBehavior.defaultTime
       })
     }
   }
@@ -165,7 +167,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       type,
       image,
       list: items,
-      inputType
+      inputType,
+      defaultTime: time.getTime()
     })
 
     setShowTimePicker(false);
@@ -187,6 +190,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
 
       <DateTimePickerModal
         isVisible={showTimePicker}
+        date={new Date(currentBehavior.defaultTime)}
         mode="time"
         onConfirm={setTime}
         onCancel={() => setShowTimePicker(false)}

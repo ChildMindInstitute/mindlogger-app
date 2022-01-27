@@ -172,7 +172,8 @@ export class BehaviorTrackerComponent extends Component {
         negativeBehaviors,
       },
       inputType,
-      setCurrentBehavior
+      setCurrentBehavior,
+      currentBehavior
     } = this.props;
 
     let {
@@ -286,7 +287,8 @@ export class BehaviorTrackerComponent extends Component {
                     image: behavior.image,
                     list: value[behavior.name],
                     type: behavior.type,
-                    inputType
+                    inputType,
+                    defaultTime: currentBehavior.defaultTime || new Date().getTime()
                   })
                   Actions.push('set_behavior_times')
                 }}
