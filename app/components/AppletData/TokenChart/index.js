@@ -20,7 +20,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 15,
     marginTop: 10,
-    marginBottom: 20
+    marginBottom: 20,
+    position: 'absolute'
   }
 });
 
@@ -305,7 +306,7 @@ class TokenChart extends React.Component {
         })
       }
 
-      cumulative -= changes[i].value;
+      cumulative = Math.max(0, cumulative - changes[i].value);
 
       points.push({
         x: this.getX(changes[i].time, startDate, endDate, graphWidth),
@@ -471,59 +472,63 @@ class TokenChart extends React.Component {
                   }
                 </View>
 
-                {
-                  this.state.range == 'Today' && (
-                    <View style={styles.tooltip}>
-                      <Text>Today you'll earn at least:</Text>
-                      <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                        <Image source={coin} style={{ width: 25, height: 25 }} />
-                        <Text style={{ color: '#FDC440' }}>
-                          <Text style={{ fontWeight: 'bold' }}>{this.tokensForDateRange(yesterday.getTime() + day, day)}</Text> from {applet.activities.length} {applet.activities.length > 1 ? 'activities' : 'activity'}
-                        </Text>
-                      </View>
-                    </View>
-                  ) || <></>
-                }
-
-                <Svg
-                  width={SVGWidth}
-                  height={SVGHeight + 10}
-                >
-                  <Polygon
-                    fill={this.constants.fillColor}
-                    points={this.cumulativePolygon(startDate, endDate, SVGWidth, SVGHeight)}
-                  />
-
-                  <Path
-                    stroke={this.constants.pathColor}
-                    strokeWidth={this.constants.strokeWidth}
-                    d={this.cumulativePath(startDate, endDate, SVGWidth, SVGHeight)}
-                  />
-
-                  <Line x1={0} x2={SVGWidth} y1={SVGHeight+1} y2={SVGHeight+1} stroke={'black'} strokeWidth={1} strokeDasharray={[1, 2]} />
-
+                <View>
                   {
-                    this.state.range == 'Today' &&
-                    this.cumulativePoints(startDate, endDate, SVGWidth, SVGHeight)
-                      .filter(point => !point.spend && !point.isTracker)
-                      .map((point, index) => (
-                        <>
-                          <Circle
-                            key={`circle-${index}`}
-                            cx={point.x}
-                            cy={SVGHeight}
-                            r={7}
-                            fill={this.constants.starColor}
-                          />
-                          <Polygon
-                            key={`star-${index}`}
-                            points={this.getStarCoordinates(point.x, SVGHeight, 5)}
-                            fill={'white'}
-                          />
-                        </>
-                      )) || []
+                    this.state.range == 'Today' && (
+                      <View style={styles.tooltip}>
+                        <Text>Today you'll earn at least:</Text>
+                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                          <Image source={coin} style={{ width: 25, height: 25 }} />
+                          <Text style={{ color: '#FDC440' }}>
+                            <Text style={{ fontWeight: 'bold' }}>{this.tokensForDateRange(yesterday.getTime() + day, day)}</Text> from {applet.activities.length} {applet.activities.length > 1 ? 'activities' : 'activity'}
+                          </Text>
+                        </View>
+                      </View>
+                    ) || <></>
                   }
-                </Svg>
+
+                  <Svg
+                    style={{ marginTop: 100 }}
+                    width={SVGWidth}
+                    height={SVGHeight + 10}
+                  >
+                    <Polygon
+                      fill={this.constants.fillColor}
+                      points={this.cumulativePolygon(startDate, endDate, SVGWidth, SVGHeight)}
+                    />
+
+                    <Path
+                      stroke={this.constants.pathColor}
+                      strokeWidth={this.constants.strokeWidth}
+                      d={this.cumulativePath(startDate, endDate, SVGWidth, SVGHeight)}
+                    />
+
+                    <Line x1={0} x2={SVGWidth} y1={SVGHeight+1} y2={SVGHeight+1} stroke={'black'} strokeWidth={1} strokeDasharray={[1, 2]} />
+
+                    {
+                      this.state.range == 'Today' &&
+                      this.cumulativePoints(startDate, endDate, SVGWidth, SVGHeight)
+                        .filter(point => !point.spend)
+                        .map((point, index) => (
+                          <>
+                            <Circle
+                              key={`circle-${index}`}
+                              cx={point.x}
+                              cy={SVGHeight}
+                              r={7}
+                              fill={this.constants.starColor}
+                            />
+                            <Polygon
+                              key={`star-${index}`}
+                              points={this.getStarCoordinates(point.x, SVGHeight, 5)}
+                              fill={'white'}
+                            />
+                          </>
+                        )) || []
+                    }
+                  </Svg>
+
+                </View>
               </>
             ) || <ActivityIndicator size="large" />
           }

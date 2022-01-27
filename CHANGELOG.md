@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.40] - 2022-1-24
+- Fix issue with gelocation warning message
+- Update Tooltip for Stacked Items
+- Fix other small issues
+
 ## [0.18.39] - 2022-1-23
 - Fix tooltip issue
 - Fix small UI issue

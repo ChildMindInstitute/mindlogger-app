@@ -9,14 +9,14 @@ import { TooltipBox } from '../TooltipBox';
 
 const styles = StyleSheet.create({
   itemText: {
-    fontSize: 11,
+    fontSize: 12,
   },
   optionText: {
-    fontSize: 10
+    fontSize: 11
   },
   tooltip: {
     textDecorationLine: 'underline',
-    color: '#53B5E0'
+    color: '#2082B0'
   }
 });
 
