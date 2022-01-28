@@ -186,25 +186,33 @@ const uploadResponse = (authToken, response) =>
       cleanFiles(responses);
     });
 
-// Recursive function that tries to upload the first item in the queue and
-// calls itself again on success
 export const uploadResponseQueue = (
   authToken,
   responseQueue,
   progressCallback,
+  uploaderId,
+  getUploaderId
 ) => {
-  if (responseQueue.length === 0) {
-    return Promise.resolve();
-  }
+  const queue = [...responseQueue];
 
-  return uploadResponse(authToken, responseQueue[0])
-    .then(() => {
-      progressCallback();
-      return uploadResponseQueue(
-        authToken,
-        R.remove(0, 1, responseQueue),
-        progressCallback,
-      );
-    })
-    .catch((e) => console.warn(e));
+  let hasNewProcess = false;
+
+  return queue.reduce(
+    (prev, response, index) => {
+      return prev
+        .then(() => new Promise(resolve => {
+          if (hasNewProcess || index && uploaderId != getUploaderId()) {
+            hasNewProcess = true;
+            resolve();
+          } else {
+            progressCallback();
+
+            uploadResponse(authToken, response).finally(() => {
+              resolve();
+            });
+          }
+        }))
+    },
+    Promise.resolve()
+  )
 };

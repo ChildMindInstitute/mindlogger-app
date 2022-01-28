@@ -327,7 +327,7 @@ const Widget = ({
         onSelected={setSelected}
         value={answer}
         selected={isSelected}
-        tokenBalance={appletTokenBalance.cumulativeToken}
+        tokenBalance={appletTokenBalance}
       />
     );
   }
@@ -382,7 +382,7 @@ Widget.propTypes = {
   currentScreen: PropTypes.number.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
-  appletTokenBalance: PropTypes.object.isRequired,
+  appletTokenBalance: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({

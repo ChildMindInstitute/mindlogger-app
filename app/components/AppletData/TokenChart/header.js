@@ -12,9 +12,9 @@ const TokenHeader = (props) => {
     textColor,
     cumulative,
     pastTokensLabel,
-    tokensYesterday
+    pastTokensValue
   } = props;
- 
+
   return (
     <View style={{ marginVertical: 20 }}>
       <BaseText
@@ -48,7 +48,9 @@ const TokenHeader = (props) => {
       </View>
 
       <View style={{ flexDirection: 'row', marginLeft: 15, alignItems: 'flex-end' }}>
-        <Image source={coin} style={{ width: 25, height: 25 }} />
+        {
+          pastTokensLabel ? <Image source={coin} style={{ width: 25, height: 25 }} /> : <View style={{ width: 25, height: 25 }}/>
+        }
         <BaseText
           style={{
             fontSize: 20,
@@ -56,7 +58,7 @@ const TokenHeader = (props) => {
             fontWeight: '500',
             marginHorizontal: 2
           }}
-        >{tokensYesterday.toLocaleString()}</BaseText>
+        >{pastTokensLabel ? pastTokensValue.toLocaleString() : ''}</BaseText>
         <BaseText
           style={{
             fontSize: 15,
@@ -73,7 +75,7 @@ TokenHeader.propTypes = {
   pastTokensLabel: PropTypes.string.isRequired,
   textColor: PropTypes.string.isRequired,
   cumulative: PropTypes.number.isRequired,
-  tokensYesterday: PropTypes.number.isRequired,
+  pastTokensValue: PropTypes.number.isRequired,
 };
 
 export default TokenHeader;
