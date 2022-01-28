@@ -148,7 +148,7 @@ export const prepareResponseForUpload = (
     responseData['token'] = {};
 
     if (tokenChanged) {
-      responseData['token'] = { cumulative, changes }
+      responseData['token'] = { cumulative, changes: { ...changes } }
     }
 
     if (trackerChanged) {
