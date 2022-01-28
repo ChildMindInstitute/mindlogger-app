@@ -54,6 +54,12 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
     return (yiq >= 128) ? '#333333' : 'white';
   }
 
+  const checkTooltip = (item) => {
+    if (!item.description) return false;
+    if (item.description === 'false' && item.color === 'false') return false;
+    return true;
+  }
+
   return (
     <KeyboardAvoidingView>
       <View style={{ alignItems: 'stretch' }}>
@@ -65,7 +71,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
               key={index}
             >
               <View style={{ width: '10%', marginRight: "2%", marginLeft: "2%" }}>
-                {item.description ? (
+                {checkTooltip(item) ? (
                   <TooltipBox text={item.description}>
                     <View style={{ width: 22, height: 22 }}>
                       <Image
