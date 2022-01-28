@@ -90,7 +90,7 @@ export class BehaviorTrackerComponent extends Component {
     }
 
     value[behavior].push({
-      time: inputType == 'pastBehaviorTracker' ?  0 : new Date().getTime(),
+      time: inputType == 'pastBehaviorTracker' ?  null : new Date().getTime(),
       distress: null,
       impairment: null
     })
@@ -123,7 +123,7 @@ export class BehaviorTrackerComponent extends Component {
       value[behavior].pop();
     }
     while (value[behavior].length < this.state.itemCount) {
-      value[behavior].push({ time: 0, distress: null, impairment: null })
+      value[behavior].push({ time: null, distress: null, impairment: null })
     }
 
     if (!value[behavior].length) {
@@ -144,11 +144,13 @@ export class BehaviorTrackerComponent extends Component {
 
       const { name, list } = this.props.currentBehavior;
 
-      value[name] = list;
-      this.props.onChange({
-        ...this.props.value,
-        value
-      });
+      if (name) {
+        value[name] = list;
+        this.props.onChange({
+          ...this.props.value,
+          value
+        });
+      }
     }
   }
 
@@ -172,7 +174,8 @@ export class BehaviorTrackerComponent extends Component {
         negativeBehaviors,
       },
       inputType,
-      setCurrentBehavior
+      setCurrentBehavior,
+      currentBehavior
     } = this.props;
 
     let {
@@ -286,7 +289,8 @@ export class BehaviorTrackerComponent extends Component {
                     image: behavior.image,
                     list: value[behavior.name],
                     type: behavior.type,
-                    inputType
+                    inputType,
+                    defaultTime: currentBehavior.defaultTime || new Date().getTime()
                   })
                   Actions.push('set_behavior_times')
                 }}

@@ -331,7 +331,7 @@ const ActivitySummary = (props) => {
       <View style={styles.headerContainer}>
         <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
         <TouchableOpacity style={styles.shareButton} onPress={shareReport}>
-          <Text style={styles.shareButtonText}>Share Report</Text>
+          <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
         </TouchableOpacity>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>

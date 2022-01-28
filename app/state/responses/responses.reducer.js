@@ -16,7 +16,8 @@ export const initialState = {
   schedule: {},
   activityOpened: false,
   currentBehavior: {},
-  lastResponseTime: {}
+  lastResponseTime: {},
+  uploaderId: false
 };
 
 const replaceAppletResponses = (state, action) => {
@@ -149,6 +150,7 @@ export default (state = initialState, action = {}) => {
             ...time
           },
         },
+        currentBehavior: {}
       };
     case RESPONSES_CONSTANTS.SET_ANSWER:
       const currentAct = action.payload.activity;
@@ -186,6 +188,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         uploadQueue: [...state.uploadQueue, action.payload],
       };
+    case RESPONSES_CONSTANTS.SET_UPLOADER_ID:
+      return {
+        ...state,
+        uploaderId: action.payload
+      }
     case RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE:
       return {
         ...state,
