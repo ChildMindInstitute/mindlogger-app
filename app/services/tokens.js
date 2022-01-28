@@ -1,33 +1,37 @@
+import moment from 'moment';
 
-export const updateTrackerAggregation = (aggregation, id, response) => {
-  aggregation[id] = aggregation[id] || {};
-
+export const updateTrackerAggregation = (aggregations, id, response) => {
+  const now = Date.now()
   for (const option in response) {
-    aggregation[id][option] = aggregation[id][option] || {};
+    for (const item of response[option]) {
+      const time = item.time || now;
+      const date = moment(new Date(time)).format('YYYY-MM-DD');
+      const aggregation = aggregations.find(d => d.date == date);
 
-    let {
-      count = 0,
-      distress = { total: 0, count: 0 },
-      impairment = { total: 0, count: 0 }
-    } = aggregation[id][option];
-
-    distress = response[option].reduce((prev, d) => {
-      if (d.distress === null) {
-        return prev;
+      if (!aggregation) {
+        continue;
       }
 
-      return { total: prev.total + d.distress, count: prev.count + 1 }
-    }, distress)
+      const data = aggregation.data;
 
-    impairment = response[option].reduce((prev, d) => {
-      if (d.impairment === null) {
-        return prev;
+      data[id] = data[id] || {};
+      data[id][option] = data[id][option] || { count: 0, distress: { total:0, count: 0 }, impairment: { total:0, count: 0 } };
+
+      let { count, distress, impairment } = data[id][option];
+      count++;
+
+      if (item.distress) {
+        distress.total += item.distress;
+        distress.count++;
       }
 
-      return { total: prev.total + d.impairment, count: prev.count + 1 }
-    }, impairment)
+      if (item.impairment) {
+        impairment.total += item.distress;
+        impairment.count++;
+      }
 
-    aggregation[id][option] = { count: count + response[option].length, distress, impairment }
+      data[id][option] = { count, distress, impairment };
+    }
   }
 }
 

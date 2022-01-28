@@ -149,6 +149,7 @@ export default (state = initialState, action = {}) => {
             ...time
           },
         },
+        currentBehavior: {}
       };
     case RESPONSES_CONSTANTS.SET_ANSWER:
       const currentAct = action.payload.activity;

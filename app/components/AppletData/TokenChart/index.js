@@ -408,10 +408,9 @@ class TokenChart extends React.Component {
     const ticks = this.getTicks(startDate, endDate, SVGWidth);
 
     for (const tracker of this.state.trackerAggregation) {
-      const { data, created } = tracker;
-      const time = new Date(created).getTime();
+      const { data, date } = tracker;
 
-      if (time < startDate.getTime() || time > endDate.getTime()) {
+      if (date < moment(startDate).format('YYYY-MM-DD') || date > moment(endDate).format('YYYY-MM-DD')) {
         continue;
       }
 
