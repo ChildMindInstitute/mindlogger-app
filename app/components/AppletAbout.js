@@ -47,7 +47,7 @@ ${i18n.t("applet_about:no_info")}
     const { landingPageType } = this.props.applet;
 
     return (
-      <View style={{ padding: 10, backgroundColor: "white", height: '100%' }}>
+      <View style={{ padding: landingPageType != 'image' ? 10 : 0, height: '100%' }}>
         {
           (landingPageType == 'markdown' || landingPageType == 'text') && (
             <AboutView>{markdown}</AboutView>
@@ -55,7 +55,7 @@ ${i18n.t("applet_about:no_info")}
             <Image source={{ uri: markdown }} style={{
               flex: 1,
               width: "100%",
-              resizeMode: "contain",
+              resizeMode: "cover",
             }} />
           )
         }
