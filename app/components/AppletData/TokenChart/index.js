@@ -115,7 +115,7 @@ class TokenChart extends React.Component {
       const endDate = new Date(moment(new Date()).format('YYYY/MM/DD'));
       endDate.setDate(endDate.getDate()+1);
 
-      const startDate = this.startDate(endDate, range)
+      const startDate = this.startDate(this.startDate(endDate, range), range); // to display tokens earned past week
 
       this.setState({ downloading: true })
 
@@ -381,6 +381,38 @@ class TokenChart extends React.Component {
     }
   }
 
+  getPastTokensValue() {
+    const { range } = this.state;
+    const current = new Date(moment(new Date()).format('YYYY/MM/DD'));
+
+    switch (range) {
+      case 'Today':
+        break;
+      case '1w': case '2w':
+        current.setDate(current.getDate() - current.getDay() + 1);
+        break;
+      case '1m': case '3m':
+        current.setDate(1);
+        break;
+      case '1y':
+        current.setDate(1); current.setMonth(1);
+        return 0;
+    }
+
+    const startDate = this.startDate(current, range);
+
+    const { changes } = this.state;
+    let tokens = 0;
+
+    for (const change of changes) {
+      if (change.time > startDate.getTime() && change.time < current.getTime()) {
+        tokens += change.value;
+      }
+    }
+
+    return tokens;
+  }
+
   render () {
     const { applet } = this.props;
     const {
@@ -446,7 +478,7 @@ class TokenChart extends React.Component {
           pastTokensLabel={this.getPastTokensLabel()}
           textColor={this.constants.textColor}
           cumulative={this.cumulative}
-          tokensYesterday={this.tokensForDateRange(yesterday.getTime(), day)}
+          pastTokensValue={this.getPastTokensValue()}
         />
 
         <View>
