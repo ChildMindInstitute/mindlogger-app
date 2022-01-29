@@ -165,7 +165,6 @@ const AppletListComponent = ({
           )}
           contentContainerStyle={styles.activityListContainer}
         >
-          {isDownloadingApplets && !refreshing && <ActivityIndicator size="small" />}
           {isDownloadingTargetApplet && <ActivityIndicator size="large" />}
           {applets.map(applet => (
             <AppletListItem
