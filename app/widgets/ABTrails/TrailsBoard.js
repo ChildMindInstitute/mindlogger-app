@@ -215,6 +215,7 @@ export default class TrailsBoard extends Component {
         point.actual = item && item.label || 'none';
       })
 
+      this.drawLines(lines[n].points, 'white');
       this.initCanvas();
     }
   }
