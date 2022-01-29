@@ -185,6 +185,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       impairment: item.impairment,
     }
 
+    setShowTimePicker(false);
     setList(items)
     setCurrentBehavior({
       name,
@@ -194,8 +195,6 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       inputType,
       defaultTime: time.getTime()
     })
-
-    setShowTimePicker(false);
   }
 
   const toggleContentTouches = (value) => {
