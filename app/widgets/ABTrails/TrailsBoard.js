@@ -4,6 +4,7 @@ import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
 import { sendData } from "../../services/socket";
+import ViewShot, { releaseCapture } from "react-native-view-shot";
 
 const styles = StyleSheet.create({
   picture: {
@@ -18,21 +19,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d6d7da',
   },
+  background: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute'
+  }
 });
-
-function chunkedPointStr(lines, chunkSize) {
-  const results = [];
-  lines.forEach((line) => {
-    const points = line.points.filter(({ valid }) => valid);
-    const { length } = points;
-    for (let index = 0; index < length; index += chunkSize) {
-      const myChunk = points.slice(index, index + chunkSize + 1);
-      // Do something if you want with the group
-      results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
-    }
-  });
-  return results;
-}
 
 export default class TrailsBoard extends Component {
   constructor(props) {
@@ -51,7 +43,12 @@ export default class TrailsBoard extends Component {
       isStopped: false,
       isValid: false,
       rate: 1,
+
+      newBackground: { uri: '', chunks: 0 },
+      prevBackground: { uri: '', chunks: 0 },
     };
+
+    this.capturing = false;
     this.allowed = false;
     this.timeInterval = 0;
     this.startX = 0;
@@ -72,6 +69,58 @@ export default class TrailsBoard extends Component {
       },
     });
     this.allowed = true;
+  }
+
+  chunkedPointStr = (lines, chunkSize, confirmedPoints) => {
+    const { validIndex } = this.state;
+
+    const results = [];
+    lines.forEach((line, index) => {
+      let points = line.points;
+
+      // draw points already confirmed
+      if (confirmedPoints && index == lines.length-1) {
+        points = points.slice(0, validIndex+1);
+      }
+
+      // draw points which are not verified yet
+      if (!confirmedPoints) {
+        if (index != lines.length-1) return ;
+        points = points.slice(validIndex + 1);
+      }
+
+      points = points.filter(({ valid }) => valid);
+
+      for (let index = 0; index < points.length; index += chunkSize) {
+        const myChunk = points.slice(index, index + chunkSize + 1);
+
+        results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
+      }
+    });
+    return results;
+  }
+
+  captureImage = (chunks) => {
+    if (this.capturing) {
+      return ;
+    }
+
+    this.capturing = true;
+
+    this.refs.viewShot.capture().then(uri => {
+      if (this.capturing) {
+        this.setState({
+          prevBackground: this.state.newBackground,
+          newBackground: { uri, chunks }
+        })
+      }
+    })
+  }
+
+  onImageCaptured = () => {
+    this.capturing = false;
+    releaseCapture(this.state.prevBackground.uri);
+    this.setState({ prevBackground: { uri: '', chunks: 0 } });
   }
 
   componentDidMount() {
@@ -299,7 +348,13 @@ export default class TrailsBoard extends Component {
   }
 
   reset = () => {
-    this.setState({ lines: [] });
+    this.setState({
+      lines: [],
+      newBackground: { uri: '', chunks: 0 },
+      prevBackground: { uri: '', chunks: 0 }
+    });
+
+    this.capturing = false;
   }
 
   start = () => {
@@ -403,19 +458,30 @@ export default class TrailsBoard extends Component {
     )
   }
 
-  renderSvg() {
+  renderSvg(displayFrom, confirmedPoints) {
     const { lines, dimensions } = this.state;
     const { screen } = this.props;
     const width = dimensions ? dimensions.width : 300;
-    const strArray = chunkedPointStr(lines, 50);
+
+    const chunkSize = 50;
+    const strArray = this.chunkedPointStr(lines, chunkSize, confirmedPoints);
+
+    if (confirmedPoints && strArray.length - displayFrom > 10) {
+      this.captureImage(strArray.length - 1);
+    }
+
     return (
       <Svg
         ref={(ref) => { this.svgRef = ref; }}
         height={width}
         width={width}
       >
-        {strArray.map(this.renderLine)}
-        {screen.items.map((item, index) => this.renderTrailsData(item, index, screen))}
+        {strArray.slice(displayFrom || 0).map(this.renderLine)}
+        {
+          !confirmedPoints && screen.items.map(
+            (item, index) => this.renderTrailsData(item, index, screen)
+          ) || <></>
+        }
       </Svg>
     );
   }
@@ -442,7 +508,30 @@ export default class TrailsBoard extends Component {
           />
         )}
         <View style={styles.blank}>
-          {dimensions && this.renderSvg()}
+          <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9 }} style={styles.background}>
+            {
+              this.state.prevBackground.uri && ( <Image
+                style={styles.background}
+                source={{ uri: this.state.prevBackground.uri }}
+              />) || <></>
+            }
+            {
+              this.state.newBackground.uri && ( <Image
+                style={styles.background}
+                source={{ uri: this.state.newBackground.uri }}
+                onLoad={() => this.onImageCaptured()}
+              /> ) || <></>
+            }
+
+            {dimensions && this.renderSvg(
+              this.state.prevBackground.chunks || this.state.newBackground.chunks,
+              true
+            )}
+          </ViewShot>
+
+          <View style={styles.background}>
+            {dimensions && this.renderSvg(0, false)}
+          </View>
         </View>
       </View>
     );

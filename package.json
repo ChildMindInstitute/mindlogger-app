@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.18.41",
+  "version": "0.18.42",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -19,7 +19,8 @@
     "postinstall": "jetify",
     "patchinstall": "npx patch-package",
     "ios-build": "cd ios && fastlane ios beta",
-    "prepare": "./node_modules/.bin/rn-nodeify --hack --install"
+    "prepare": "./node_modules/.bin/rn-nodeify --hack --install",
+    "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/NewApp/main.jsbundle' --dev=false --platform='ios' --assets-dest='./iOS'"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.14.0",
@@ -118,6 +119,7 @@
     "react-native-vector-icons": "6.6.0",
     "react-native-video": "^5.1.1",
     "react-native-video-player": "^0.10.1",
+    "react-native-view-shot": "^3.1.2",
     "react-native-webview": "11.0.0",
     "react-redux": "^7.2.0",
     "react-timer-mixin": "^0.13.4",

@@ -20,6 +20,7 @@ import { setCumulativeActivities } from "../activities/activities.actions";
 import {
   responsesSelector,
   uploadQueueSelector,
+  uploaderIdSelector,
   currentResponsesSelector,
   currentAppletResponsesSelector,
   currentScreenSelector,
@@ -43,6 +44,7 @@ import {
   setCurrentScreen,
   setLastResponseTime,
   setSummaryScreen,
+  setUploaderId,
   replaceAppletResponses,
   setActivityOpened,
   setAnswer,
@@ -360,14 +362,31 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   const lastResponseTime = lastResponseTimeSelector(state);
 
+  if (!uploadQueue.length) {
+    return ;
+  }
+
+  const uploaderId = Date.now();
+
+  dispatch(setUploaderId(uploaderId));
+
+  const getUploaderId = () => {
+    const state = getState();
+    return uploaderIdSelector(state);
+  }
+
   return uploadResponseQueue(authToken, uploadQueue, () => {
-    // Progress - a response was uploaded
+    // Progress - response is being processed
     dispatch(shiftUploadQueue());
-  }).finally(() => {
+  }, uploaderId, getUploaderId).finally(() => {
+    if (getUploaderId() != uploaderId) {
+      return ;
+    }
+
     if (applet) {
       dispatch(downloadResponse());
     } else {
-      dispatch(downloadResponses());
+      dispatch(sync());
     }
 
     try {
@@ -557,7 +576,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     dispatch(
       removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
     );
-  }, 300);
+  }, 400);
 };
 
 export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {

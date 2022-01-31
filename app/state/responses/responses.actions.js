@@ -71,6 +71,11 @@ export const setAnswer = (activity, screenIndex, answer) => ({
   },
 });
 
+export const setUploaderId = (status) => ({
+  type: RESPONSES_CONSTANTS.SET_UPLOADER_ID,
+  payload: status
+})
+
 export const addToUploadQueue = response => ({
   type: RESPONSES_CONSTANTS.ADD_TO_UPLOAD_QUEUE,
   payload: response,
