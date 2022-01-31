@@ -4,7 +4,7 @@ import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
 import { sendData } from "../../services/socket";
-import ViewShot, { releaseCapture } from "react-native-view-shot";
+import Canvas from 'react-native-canvas';
 
 const styles = StyleSheet.create({
   picture: {
@@ -19,17 +19,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#d6d7da',
   },
-  background: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute'
-  }
 });
 
 function chunkedPointStr(lines, chunkSize) {
   const results = [];
   lines.forEach((line) => {
-    const { points } = line;
+    const points = [...line.points];
     let { length } = points;
 
     if (length === 1) {
@@ -42,8 +37,9 @@ function chunkedPointStr(lines, chunkSize) {
       });
       length += 1;
     }
+
     for (let index = 0; index < length; index += chunkSize) {
-      const myChunk = line.points.slice(index, index + chunkSize + 1);
+      const myChunk = points.slice(index, index + chunkSize + 1);
       // Do something if you want with the group
       results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
     }
@@ -56,16 +52,12 @@ export default class DrawingBoard extends Component {
     super(props);
     this.state = {
       lines: [],
-      newBackground: { uri: '', chunks: 0 },
-      prevBackground: { uri: '', chunks: 0 },
-      cached: 0
     };
-    this.capturing = false;
-
     this.startX = 0;
     this.startY = 0;
     this.lastX = 0;
     this.lastY = 0;
+    this.canvasContext = null;
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => {
         this.props.onPress();
@@ -76,7 +68,7 @@ export default class DrawingBoard extends Component {
         this.addPoint(gestureState);
       },
       onPanResponderRelease: (evt, gestureState) => {
-        this.addPoint(gestureState);
+        this.addPoint(gestureState, true);
         this.props.onRelease();
         const result = this.save();
         const svgString = this.serialize();
@@ -94,43 +86,37 @@ export default class DrawingBoard extends Component {
     });
   }
 
-  captureImage = (chunks) => {
-    if (this.capturing) {
-      return ;
-    }
-
-    this.capturing = true;
-
-    this.refs.viewShot.capture().then(uri => {
-      if (this.capturing) {
-        this.setState({
-          prevBackground: this.state.newBackground,
-          newBackground: { uri, chunks }
-        })
-      }
-    })
-  }
-
-  onImageCaptured = () => {
-    this.capturing = false;
-    releaseCapture(this.state.prevBackground.uri);
-    this.setState({ prevBackground: { uri: '', chunks: 0 } });
-  }
-
   addLine = (evt) => {
     const { lines } = this.state;
     const { width } = this.state.dimensions;
 
     const { locationX, locationY } = evt.nativeEvent;
+
+    if (lines.length) {
+      const { points } = lines[lines.length - 1];
+      if (points.length == 1) {
+        this.drawLine(points[0].x, points[0].y, points[0].x + 1.5, points[0].y + 1.5);
+      }
+    }
+
     this.startX = locationX;
     this.startY = locationY;
+    this.lastX = this.lastY = 0;
     const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
     this.setState({ lines: [...lines, newLine] });
 
     sendData('live_event', { x: locationX / width * 100, y: locationY / width * 100, time: Date.now() }, this.props.appletId);
   }
 
-  addPoint = (gestureState) => {
+  drawLine = (x1, y1, x2, y2) => {
+    this.canvasContext.beginPath();
+    this.canvasContext.moveTo(x1, y1)
+    this.canvasContext.lineTo(x2, y2);
+    this.canvasContext.closePath();
+    this.canvasContext.stroke();
+  }
+
+  addPoint = (gestureState, lastPoint = false) => {
     const { lines } = this.state;
     const { width } = this.state.dimensions;
 
@@ -139,8 +125,19 @@ export default class DrawingBoard extends Component {
     const n = lines.length - 1;
     const { moveX, moveY, x0, y0 } = gestureState;
 
-    if (moveX === 0 && moveY === 0) return;
+    if (moveX === 0 && moveY === 0) {
+      if (lines[n].points.length == 1) {
+        const point = lines[n].points[0];
+
+        this.drawLine(point.x, point.y, point.x + 1.5, point.y + 1.5);
+      }
+      return;
+    }
     else {
+      if (this.lastX && this.lastY) {
+        this.drawLine(this.lastX, this.lastY, moveX - x0 + this.startX, moveY - y0 + this.startY)
+      }
+
       this.lastX = moveX - x0 + this.startX;
       this.lastY = moveY - y0 + this.startY;
 
@@ -173,13 +170,7 @@ export default class DrawingBoard extends Component {
   }
 
   reset = () => {
-    this.setState({
-      lines: [],
-      newBackground: { uri: '', chunks: 0 },
-      prevBackground: { uri: '', chunks: 0 }
-    });
-
-    this.capturing = false;
+    this.setState({ lines: [] });
   }
 
   save = () => {
@@ -221,34 +212,64 @@ export default class DrawingBoard extends Component {
     return ReactDOMServer.renderToStaticMarkup(webJsx);
   };
 
-  renderSvg(displayFrom = 0, allowCapturing = false) {
+  renderSvg() {
     const { lines, dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
-    const chunkSize = 50;
-    const strArray = chunkedPointStr(lines, chunkSize);
-
-    if (allowCapturing && strArray.length - displayFrom > 5) {
-      const { points } = lines[lines.length-1];
-
-      if (points.length % chunkSize == 1) {
-        this.captureImage(strArray.length-1);
-      }
-    }
-
+    const strArray = chunkedPointStr(lines, 50);
     return (
       <Svg
         ref={(ref) => { this.svgRef = ref; }}
         height={width}
         width={width}
       >
-        {strArray.slice(displayFrom || 0).map(this.renderLine)}
+        {strArray.map(this.renderLine)}
       </Svg>
     );
+  }
+
+  initCanvas = (canvas) => {
+    if (!canvas) return ;
+
+    const { dimensions, lines } = this.state;
+    const width = dimensions ? dimensions.width : 300;
+
+    canvas.width = width;
+    canvas.height = width;
+
+    this.canvasContext = canvas.getContext('2d');
+    this.canvasContext.lineWidth = 1.5;
+
+    for (const line of lines) {
+      this.canvasContext.beginPath();
+
+      const { points } = line;
+      let { length } = points;
+
+      if (length === 1) {
+        const point = points[0];
+
+        points.push({
+          ...point,
+          x: point.x + 1.5,
+          y: point.y + 1.5,
+        });
+        length += 1;
+      }
+
+      this.canvasContext.moveTo(points[0].x, points[0].y);
+      for (let i = 1; i < points.length; i++) {
+        this.canvasContext.lineTo(points[i].x, points[i].y);
+      }
+
+      this.canvasContext.closePath();
+      this.canvasContext.stroke();
+    }
   }
 
   render() {
     const { dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
+
     return (
       <View
         style={{
@@ -266,26 +287,11 @@ export default class DrawingBoard extends Component {
             source={{ uri: this.props.imageSource }}
           />
         )}
-        <ViewShot ref="viewShot" options={{ format: "jpg", quality: 0.9 }} style={styles.blank}>
+        <View style={styles.blank}>
           {
-            this.state.prevBackground.uri && ( <Image
-              style={styles.background}
-              source={{ uri: this.state.prevBackground.uri }}
-            />) || <></>
+            dimensions && <Canvas ref={this.initCanvas} /> || <></>
           }
-          {
-            this.state.newBackground.uri && ( <Image
-              style={styles.background}
-              source={{ uri: this.state.newBackground.uri }}
-              onLoad={() => this.onImageCaptured()}
-            /> ) || <></>
-          }
-
-          {dimensions && this.renderSvg(
-            this.state.prevBackground.chunks || this.state.newBackground.chunks,
-            true
-          )}
-        </ViewShot>
+        </View>
       </View>
     );
   }
