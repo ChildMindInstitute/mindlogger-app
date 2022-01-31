@@ -47,7 +47,7 @@ ${i18n.t("applet_about:no_info")}
     const { landingPageType } = this.props.applet;
 
     return (
-      <View style={{ padding: 10, backgroundColor: "white", height: '100%' }}>
+      <View style={{ padding: 10, height: '100%' }}>
         {
           (landingPageType == 'markdown' || landingPageType == 'text') && (
             <AboutView>{markdown}</AboutView>
