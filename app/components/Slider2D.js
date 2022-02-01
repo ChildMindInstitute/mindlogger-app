@@ -403,6 +403,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
             onResponderRelease={(evt) => {
               const { locationX, locationY } = evt.nativeEvent;
               updateValues(locationX, locationY, true)
+              onToggle(true);
             }}
           />
         ) || <></>
