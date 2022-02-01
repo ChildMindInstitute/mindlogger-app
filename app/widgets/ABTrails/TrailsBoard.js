@@ -294,7 +294,6 @@ export default class TrailsBoard extends Component {
           }
         })
 
-        console.log('points', lines[n].points.slice(Math.max(validIndex, 0)))
         this.drawLines(lines[n].points.slice(Math.max(validIndex, 0)), 'white');
         this.initCanvas();
         this.setState({ lines, errorPoint: null, currentPoint: -1 });
