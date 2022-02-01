@@ -334,6 +334,7 @@ export default class TrailsBoard extends Component {
 
   reset = () => {
     this.setState({ lines: [] });
+    this.canvasContext.clearRect(0, 0, width, width)
   }
 
   start = () => {

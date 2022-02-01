@@ -170,7 +170,10 @@ export default class DrawingBoard extends Component {
   }
 
   reset = () => {
+    const { width } = this.state.dimensions;
+
     this.setState({ lines: [] });
+    this.canvasContext.clearRect(0, 0, width, width)
   }
 
   save = () => {
