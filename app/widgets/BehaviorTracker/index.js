@@ -107,7 +107,7 @@ export class BehaviorTrackerComponent extends Component {
       return ;
     }
 
-    this.setState({ modalVisible: false });
+    this.setState({ modalVisible: false, focused: false });
     const {
       value = {}
     } = this.props.value || {};
@@ -220,7 +220,7 @@ export class BehaviorTrackerComponent extends Component {
               paddingTop: focused ? 40 : 0
             }}
             onStartShouldSetResponder={() => true}
-            onResponderGrant={() => this.setState({ modalVisible: false }) }
+            onResponderGrant={() => this.setState({ modalVisible: false, focused: false }) }
           >
             <View
               style={styles.modal}
