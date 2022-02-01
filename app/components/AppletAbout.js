@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { View, Image } from "react-native";
 import i18n from "i18next";
 import { AboutView } from "./core/AboutView";
+import { ScrollView } from "react-native-gesture-handler";
 
 // eslint-disable-next-line
 class AppletAbout extends React.Component {
@@ -46,20 +47,24 @@ ${i18n.t("applet_about:no_info")}
     const { markdown } = this.state;
     const { landingPageType } = this.props.applet;
 
+
+    if (landingPageType == 'image') {
+      return (
+        <View style={{ padding: landingPageType != 'image' ? 10 : 0, height: '100%' }}>
+          <Image source={{ uri: markdown }} style={{
+            flex: 1,
+            width: "100%",
+            height: "100%",
+            resizeMode: "cover",
+          }} />
+        </View>
+      )
+    }
+
     return (
-      <View style={{ padding: landingPageType != 'image' ? 10 : 0, height: '100%' }}>
-        {
-          (landingPageType == 'markdown' || landingPageType == 'text') && (
-            <AboutView>{markdown}</AboutView>
-          ) || (
-            <Image source={{ uri: markdown }} style={{
-              flex: 1,
-              width: "100%",
-              resizeMode: "cover",
-            }} />
-          )
-        }
-      </View>
+      <ScrollView style={{ padding: 10, height: '100%' }}>
+        <AboutView>{markdown}</AboutView>
+      </ScrollView>
     );
   }
 }
