@@ -240,7 +240,7 @@ export default class DrawingBoard extends Component {
     canvas.height = width;
 
     this.canvasContext = canvas.getContext('2d');
-    this.canvasContext.lineWidth = 1.5;
+    this.canvasContext.lineWidth = 1;
 
     for (const line of lines) {
       this.canvasContext.beginPath();

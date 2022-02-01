@@ -130,7 +130,7 @@ export default class TrailsBoard extends Component {
     this.canvasContext.stroke();
 
     if (originalColor) {
-      this.canvasContext.lineWidth = 1.5;
+      this.canvasContext.lineWidth = 1;
       this.canvasContext.strokeStyle = originalColor;
     }
   }
@@ -456,7 +456,7 @@ export default class TrailsBoard extends Component {
       this.canvasContext = canvas.getContext('2d');
     }
 
-    this.canvasContext.lineWidth = 1.5;
+    this.canvasContext.lineWidth = 1;
 
     for (const line of lines) {
       this.canvasContext.beginPath();
