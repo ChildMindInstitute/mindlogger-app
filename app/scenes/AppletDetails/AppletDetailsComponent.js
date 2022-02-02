@@ -121,9 +121,9 @@ class AppletDetailsComponent extends React.Component {
         );
       case 'about':
         return (
-          <Content>
+          <View style={{ height: '100%', flex: 1 }}>
             <AppletAbout applet={applet} />
-          </Content>
+          </View>
         );
       default:
         break;

@@ -130,7 +130,7 @@ export default class TrailsBoard extends Component {
     this.canvasContext.stroke();
 
     if (originalColor) {
-      this.canvasContext.lineWidth = 1.5;
+      this.canvasContext.lineWidth = 1;
       this.canvasContext.strokeStyle = originalColor;
     }
   }
@@ -294,7 +294,6 @@ export default class TrailsBoard extends Component {
           }
         })
 
-        console.log('points', lines[n].points.slice(Math.max(validIndex, 0)))
         this.drawLines(lines[n].points.slice(Math.max(validIndex, 0)), 'white');
         this.initCanvas();
         this.setState({ lines, errorPoint: null, currentPoint: -1 });
@@ -334,6 +333,7 @@ export default class TrailsBoard extends Component {
 
   reset = () => {
     this.setState({ lines: [] });
+    this.canvasContext.clearRect(0, 0, width, width)
   }
 
   start = () => {
@@ -456,7 +456,7 @@ export default class TrailsBoard extends Component {
       this.canvasContext = canvas.getContext('2d');
     }
 
-    this.canvasContext.lineWidth = 1.5;
+    this.canvasContext.lineWidth = 1;
 
     for (const line of lines) {
       this.canvasContext.beginPath();
