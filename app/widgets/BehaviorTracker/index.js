@@ -70,7 +70,8 @@ export class BehaviorTrackerComponent extends Component {
     this.state = {
       modalVisible: false,
       selectedBehavior: '',
-      itemCount: 0
+      itemCount: 0,
+      focused: false
     };
 
     this.maxOccurrence = 99;
@@ -106,7 +107,7 @@ export class BehaviorTrackerComponent extends Component {
       return ;
     }
 
-    this.setState({ modalVisible: false });
+    this.setState({ modalVisible: false, focused: false });
     const {
       value = {}
     } = this.props.value || {};
@@ -185,7 +186,7 @@ export class BehaviorTrackerComponent extends Component {
     } = (this.props.value || {});
 
     const {
-      modalVisible, selectedBehavior, itemCount
+      modalVisible, selectedBehavior, itemCount, focused
     } = this.state;
 
     const behaviors = [];
@@ -209,47 +210,63 @@ export class BehaviorTrackerComponent extends Component {
       <KeyboardAvoidingView>
         <Modal
           isVisible={modalVisible}
-          onBackdropPress={() => this.setState({ modalVisible: false })}
         >
-          <View style={styles.modal}>
-            <View style={{ margin: 20 }}>
-              <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
-            </View>
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'transparent',
+              justifyContent: !focused ? 'center' : 'flex-start',
+              paddingTop: focused ? 40 : 0
+            }}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={() => this.setState({ modalVisible: false, focused: false }) }
+          >
+            <View
+              style={styles.modal}
+              onStartShouldSetResponder={() => true}
+            >
+              <View style={{ margin: 20 }}>
+                <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
+              </View>
 
-            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity
-                style={styles.upButton}
-                onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
-              />
+              <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity
+                  style={styles.upButton}
+                  onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
+                />
 
-              <Input
-                style={styles.inputStyle}
-                maxLength={2}
-                onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
-                keyboardType={"numeric"}
-                value={`${itemCount}`}
-              />
+                <Input
+                  style={styles.inputStyle}
+                  maxLength={2}
+                  onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
+                  keyboardType={"numeric"}
+                  value={`${itemCount}`}
+                  onFocus={() => this.setState({ focused: true })}
+                  onBlur={() => this.setState({ focused: false })}
+                />
 
-              <TouchableOpacity
-                style={styles.downButton}
-                onPress={() => this.setState({ itemCount: Math.max(0, itemCount-1) })}
-              />
-            </View>
+                <TouchableOpacity
+                  style={styles.downButton}
+                  onPress={() => this.setState({ itemCount: Math.max(0, itemCount-1) })}
+                />
+              </View>
 
-            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity
-                style={styles.doneButtonStyle}
-                onPress={() => this.setState({ itemCount: 0 })}
-              >
-                <Text style={styles.buttonText}>Reset</Text>
-              </TouchableOpacity>
+              <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity
+                  style={styles.doneButtonStyle}
+                  onPress={() => this.setState({ itemCount: 0 })}
+                >
+                  <Text style={styles.buttonText}>Reset</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.doneButtonStyle}
-                onPress={this.onSetOccurance.bind(this)}
-              >
-                <Text style={styles.buttonText}>Done</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.doneButtonStyle}
+                  onPress={this.onSetOccurance.bind(this)}
+                >
+                  <Text style={styles.buttonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
