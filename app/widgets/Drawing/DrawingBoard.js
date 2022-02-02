@@ -170,7 +170,10 @@ export default class DrawingBoard extends Component {
   }
 
   reset = () => {
+    const { width } = this.state.dimensions;
+
     this.setState({ lines: [] });
+    this.canvasContext.clearRect(0, 0, width, width)
   }
 
   save = () => {
@@ -237,7 +240,7 @@ export default class DrawingBoard extends Component {
     canvas.height = width;
 
     this.canvasContext = canvas.getContext('2d');
-    this.canvasContext.lineWidth = 1.5;
+    this.canvasContext.lineWidth = 1;
 
     for (const line of lines) {
       this.canvasContext.beginPath();
