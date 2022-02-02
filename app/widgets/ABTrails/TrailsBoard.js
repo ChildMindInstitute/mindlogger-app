@@ -4,7 +4,6 @@ import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
 import { sendData } from "../../services/socket";
-import Canvas from 'react-native-canvas';
 
 const styles = StyleSheet.create({
   picture: {
@@ -20,6 +19,20 @@ const styles = StyleSheet.create({
     borderColor: '#d6d7da',
   },
 });
+
+function chunkedPointStr(lines, chunkSize) {
+  const results = [];
+  lines.forEach((line) => {
+    const points = line.points.filter(({ valid }) => valid);
+    const { length } = points;
+    for (let index = 0; index < length; index += chunkSize) {
+      const myChunk = points.slice(index, index + chunkSize + 1);
+      // Do something if you want with the group
+      results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
+    }
+  });
+  return results;
+}
 
 export default class TrailsBoard extends Component {
   constructor(props) {
@@ -39,7 +52,6 @@ export default class TrailsBoard extends Component {
       isValid: false,
       rate: 1,
     };
-    this.canvasContext=null;
     this.allowed = false;
     this.timeInterval = 0;
     this.startX = 0;
@@ -107,41 +119,10 @@ export default class TrailsBoard extends Component {
     }
   }
 
-  drawLines = (points, color=null) => {
-    let started = false, originalColor = null;
-
-    if (color) {
-      originalColor = this.canvasContext.strokeStyle;
-      this.canvasContext.strokeStyle = color;
-      this.canvasContext.lineWidth = 2.5;
-    }
-
-    this.canvasContext.beginPath();
-
-    for (let i = 0; i < points.length; i++) {
-      if (!started) {
-        this.canvasContext.moveTo(points[i].x, points[i].y);
-        started = true;
-      } else {
-        this.canvasContext.lineTo(points[i].x, points[i].y);
-      }
-    }
-
-    this.canvasContext.stroke();
-
-    if (originalColor) {
-      this.canvasContext.lineWidth = 1;
-      this.canvasContext.strokeStyle = originalColor;
-    }
-  }
-
   startLine = (evt) => {
     const { screen } = this.props;
-    const { lines, rate, currentIndex, currentPoint, isStarted, dimensions } = this.state;
-    const width = dimensions ? dimensions.width : 300;
-
+    const { lines, rate, currentIndex, currentPoint, isStarted } = this.state;
     if (!this.allowed) return;
-
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
     let order = 0;
@@ -179,7 +160,6 @@ export default class TrailsBoard extends Component {
       this.setState({ lines: [...lines, newLine] });
       this.logData(this.startX, this.startY);
     }
-    this.lastX = this.lastY = 0;
   }
 
   logData = (x, y) => {
@@ -193,7 +173,7 @@ export default class TrailsBoard extends Component {
 
   endLine = (evt, gestureState) => {
     const { screen } = this.props;
-    const { lines, rate, currentIndex, isStopped, dimensions } = this.state;
+    const { lines, rate, currentIndex, isStopped } = this.state;
     const n = lines.length - 1;
     let isValidLine = false;
 
@@ -214,15 +194,12 @@ export default class TrailsBoard extends Component {
         point.valid = false;
         point.actual = item && item.label || 'none';
       })
-
-      this.drawLines(lines[n].points, 'white');
-      this.initCanvas();
     }
   }
 
   movePoint = (evt, gestureState) => {
     const { screen, onRelease, currentScreen } = this.props;
-    const { lines, isValid, rate, errorPoint, dimensions } = this.state;
+    const { lines, isValid, rate, errorPoint } = this.state;
     let { currentIndex } = this.state;
     let isFinished = false;
 
@@ -237,13 +214,6 @@ export default class TrailsBoard extends Component {
     const n = lines.length - 1;
     let valid = true;
     const { moveX, moveY, x0, y0 } = gestureState;
-
-    if (this.lastX && this.lastY) {
-      this.drawLines([
-        { x: this.lastX, y: this.lastY },
-        { x: moveX - x0 + this.startX, y: moveY - y0 + this.startY }
-      ]);
-    }
 
     this.lastX = moveX - x0 + this.startX;
     this.lastY = moveY - y0 + this.startY;
@@ -293,9 +263,6 @@ export default class TrailsBoard extends Component {
             point.actual = item.label;
           }
         })
-
-        this.drawLines(lines[n].points.slice(Math.max(validIndex, 0)), 'white');
-        this.initCanvas();
         this.setState({ lines, errorPoint: null, currentPoint: -1 });
       }, 2000);
 
@@ -333,7 +300,6 @@ export default class TrailsBoard extends Component {
 
   reset = () => {
     this.setState({ lines: [] });
-    this.canvasContext.clearRect(0, 0, width, width)
   }
 
   start = () => {
@@ -358,6 +324,16 @@ export default class TrailsBoard extends Component {
 
     return { lines: results, currentIndex };
   }
+
+  renderLine = (pointStr, idx) => (
+    <Polyline
+      key={idx}
+      points={pointStr}
+      fill="none"
+      stroke="black"
+      strokeWidth="1.5"
+    />
+  );
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
@@ -428,56 +404,20 @@ export default class TrailsBoard extends Component {
   }
 
   renderSvg() {
-    const { dimensions } = this.state;
+    const { lines, dimensions } = this.state;
     const { screen } = this.props;
     const width = dimensions ? dimensions.width : 300;
-
+    const strArray = chunkedPointStr(lines, 50);
     return (
       <Svg
         ref={(ref) => { this.svgRef = ref; }}
         height={width}
         width={width}
       >
+        {strArray.map(this.renderLine)}
         {screen.items.map((item, index) => this.renderTrailsData(item, index, screen))}
       </Svg>
     );
-  }
-
-  initCanvas = (canvas = null) => {
-    if (!canvas && !this.canvasContext) return ;
-
-    const { dimensions, lines } = this.state;
-    const width = dimensions ? dimensions.width : 300;
-
-    if (canvas) {
-      canvas.width = width;
-      canvas.height = width;
-
-      this.canvasContext = canvas.getContext('2d');
-    }
-
-    this.canvasContext.lineWidth = 1;
-
-    for (const line of lines) {
-      this.canvasContext.beginPath();
-
-      let started = false;
-
-      for (let i = 0; i < line.points.length; i++) {
-        const point = line.points[i];
-
-        if (!point.valid) continue;
-
-        if (!started) {
-          this.canvasContext.moveTo(point.x, point.y);
-          started = true;
-        } else {
-          this.canvasContext.lineTo(point.x, point.y);
-        }
-      }
-
-      this.canvasContext.stroke();
-    }
   }
 
   render() {
@@ -501,10 +441,6 @@ export default class TrailsBoard extends Component {
             source={{ uri: this.props.imageSource }}
           />
         )}
-        <View style={styles.blank}>
-          {dimensions && <Canvas ref={this.initCanvas} /> || <></>}
-        </View>
-
         <View style={styles.blank}>
           {dimensions && this.renderSvg()}
         </View>
