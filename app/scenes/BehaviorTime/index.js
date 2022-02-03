@@ -266,6 +266,10 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
           marginTop: 50,
           marginBottom: 20
         }}
+        onStartShouldSetResponder={() => true}
+        onResponderGrant={(evt) => {
+          setCancelContentTouches(true);
+        }}
       >
         {
           orderedList.map(item => (
