@@ -213,7 +213,7 @@ export default class DrawingBoard extends Component {
             const result = this.save();
             const svgString = this.serialize();
 
-            this.props.onResult({ ...result, lines: this.lines, svgString });
+            this.props.onResult({ ...result, lines: this.lines, svgString, width });
           }}
         />
       </View>
