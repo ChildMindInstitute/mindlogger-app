@@ -240,7 +240,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
   let localInfo = {};
 
-  if (currentApplets && onAppletsDownloaded !== true) {
+  if (currentApplets) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet;
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
