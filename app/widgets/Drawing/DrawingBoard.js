@@ -100,7 +100,7 @@ export default class DrawingBoard extends Component {
         size: { width: width, height: width },
         path: {
           color: 'black',
-          width: 1,
+          width: 1.5,
           id: i+1,
           data: line.points.map(point => `${point.x},${point.y}`)
         }
@@ -196,7 +196,7 @@ export default class DrawingBoard extends Component {
           }}
           style={styles.blank}
           strokeColor={'black'}
-          strokeWidth={1}
+          strokeWidth={1.5}
           onStrokeStart={(x, y) => {
             this.addLine(x, y);
 
