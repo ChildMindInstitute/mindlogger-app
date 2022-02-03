@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function chunkedPointStr(lines, chunkSize) {
+function chunkedPointStr(lines, chunkSize, scale) {
   const results = [];
   lines.forEach((line) => {
     const { points } = line;
@@ -40,7 +40,7 @@ function chunkedPointStr(lines, chunkSize) {
     for (let index = 0; index < length; index += chunkSize) {
       const myChunk = line.points.slice(index, index + chunkSize + 1);
       // Do something if you want with the group
-      results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
+      results.push(myChunk.map(point => `${point.x*scale},${point.y*scale}`).join(' '));
     }
   });
   return results;
@@ -157,12 +157,12 @@ export default class DrawingBoard extends Component {
   renderSvg() {
     const { dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
-    const strArray = chunkedPointStr(this.lines, 50);
+    const strArray = chunkedPointStr(this.lines, 50, 100 / width);
+
     return (
       <Svg
-        ref={(ref) => { this.svgRef = ref; }}
-        height={width}
-        width={width}
+        height={100}
+        width={100}
       >
         {strArray.map(this.renderLine)}
       </Svg>
