@@ -133,7 +133,7 @@ export default class DrawingBoard extends Component {
       points={pointStr}
       fill="none"
       stroke="black"
-      strokeWidth="2"
+      strokeWidth="0.6"
     />
   );
 
