@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    borderWidth: 1,
-    borderColor: '#d6d7da',
   },
 });
 
@@ -180,6 +178,8 @@ export default class DrawingBoard extends Component {
           height: width || 300,
           alignItems: 'center',
           backgroundColor: 'white',
+          borderWidth: 1,
+          borderColor: '#d6d7da',
         }}
         onLayout={this.onLayout}
       >
