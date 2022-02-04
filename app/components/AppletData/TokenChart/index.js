@@ -296,6 +296,12 @@ class TokenChart extends React.Component {
     const points = []
     let cumulative = this.cumulative, yUnit = this.yUnit(graphHeight);
 
+    for (const change of this.state.changes) {
+      if (change.time > endTime) {
+        cumulative = Math.max(0, cumulative - change.value);
+      }
+    }
+
     for (let i = 0; i < changes.length; i++) {
       if (changes[i].value) {
         points.push({
@@ -381,6 +387,30 @@ class TokenChart extends React.Component {
     }
   }
 
+  getDateRange() {
+    const { range } = this.state;
+    const endDate = new Date(moment(new Date()).format('YYYY/MM/DD'));
+
+    switch (range) {
+      case 'Today': case 'All':
+        endDate.setDate(endDate.getDate() + 1);
+        break;
+      case '1w': case '2w':
+        endDate.setDate(endDate.getDate() + 1);
+        break;
+      case '1m': case '3m':
+        endDate.setDate(1);
+        break;
+      case '1y':
+        endDate.setDate(1); endDate.setMonth(0);
+        break;
+    }
+
+    const startDate = this.startDate(endDate, range);
+
+    return { startDate, endDate }
+  }
+
   getPastTokensValue() {
     const { range } = this.state;
     const current = new Date(moment(new Date()).format('YYYY/MM/DD'));
@@ -395,8 +425,8 @@ class TokenChart extends React.Component {
         current.setDate(1);
         break;
       case '1y':
-        current.setDate(1); current.setMonth(1);
-        return 0;
+        current.setDate(1); current.setMonth(0);
+        break;
     }
 
     const startDate = this.startDate(current, range);
@@ -427,15 +457,12 @@ class TokenChart extends React.Component {
     const SVGWidth = Math.round(windowDimension.width * 0.95) - graphMargin.horizontal * 2;
     const SVGHeight = Math.round(windowDimension.height * 0.25) - graphMargin.vertical * 2;
 
-    const endDate = new Date(moment(new Date()).format('YYYY/MM/DD'));
-    endDate.setDate(endDate.getDate()+1);
-
     const yesterday = new Date(moment(new Date()).format('YYYY/MM/DD'));
     yesterday.setDate(yesterday.getDate()-1);
 
     const day = 86400 * 1000;
 
-    const startDate = this.startDate(endDate, this.state.range);
+    const { startDate, endDate } = this.getDateRange();
 
     const ticks = this.getTicks(startDate, endDate, SVGWidth);
 
