@@ -62,7 +62,6 @@ export default class DrawingBoard extends Component {
     }
 
     this.canvas = null;
-    this.started = false;
   }
 
   addLine = (x, y) => {
@@ -111,7 +110,6 @@ export default class DrawingBoard extends Component {
   reset = () => {
     this.canvas.clear();
     this.lines = [];
-    this.started = false;
   }
 
   save = () => {
@@ -200,10 +198,7 @@ export default class DrawingBoard extends Component {
           onStrokeStart={(x, y) => {
             this.addLine(x, y);
 
-            if (!this.started) {
-              this.started = true;
-              this.props.onPress();
-            }
+            this.props.onPress();
           }}
           onStrokeChanged={(x, y) => {
             this.addPoint(x, y);
