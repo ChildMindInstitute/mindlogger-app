@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.18.43",
+  "version": "0.18.44",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -32,6 +32,7 @@
     "@react-native-community/push-notification-ios": "1.8.0",
     "@react-native-community/slider": "^2.0.8",
     "@sentry/react-native": "^2.2.2",
+    "@terrylinla/react-native-sketch-canvas": "^0.8.0",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
     "browserify-zlib": "^0.1.4",
