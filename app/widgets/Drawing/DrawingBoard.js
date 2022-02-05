@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    borderWidth: 1,
-    borderColor: '#d6d7da',
   },
 });
 
@@ -64,7 +62,6 @@ export default class DrawingBoard extends Component {
     }
 
     this.canvas = null;
-    this.started = false;
   }
 
   addLine = (x, y) => {
@@ -113,7 +110,6 @@ export default class DrawingBoard extends Component {
   reset = () => {
     this.canvas.clear();
     this.lines = [];
-    this.started = false;
   }
 
   save = () => {
@@ -135,7 +131,7 @@ export default class DrawingBoard extends Component {
       points={pointStr}
       fill="none"
       stroke="black"
-      strokeWidth="2"
+      strokeWidth="0.6"
     />
   );
 
@@ -180,6 +176,8 @@ export default class DrawingBoard extends Component {
           height: width || 300,
           alignItems: 'center',
           backgroundColor: 'white',
+          borderWidth: 1,
+          borderColor: '#d6d7da',
         }}
         onLayout={this.onLayout}
       >
@@ -200,10 +198,7 @@ export default class DrawingBoard extends Component {
           onStrokeStart={(x, y) => {
             this.addLine(x, y);
 
-            if (!this.started) {
-              this.started = true;
-              this.props.onPress();
-            }
+            this.props.onPress();
           }}
           onStrokeChanged={(x, y) => {
             this.addPoint(x, y);
