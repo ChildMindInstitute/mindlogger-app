@@ -608,14 +608,18 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   if (next === -1) {
-    if (activity.nextAccess) {
-      dispatch(setActivityAccess(applet.id + activity.id));
-    }
+    setTimeout(() => {
+      console.log('start uploading response ... ')
+      if (activity.nextAccess) {
+        dispatch(setActivityAccess(applet.id + activity.id));
+      }
 
-    sendData('finish_activity', activity.id, applet.id);
+      sendData('finish_activity', activity.id, applet.id);
 
-    dispatch(completeResponse());
-    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+      dispatch(completeResponse());
+      dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+    });
+
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
