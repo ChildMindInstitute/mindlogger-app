@@ -67,7 +67,6 @@ export class ActivityButtons extends React.Component {
 
   componentDidUpdate(oldProps) {
     const { timerActive, appStatus, timeLimit, timeLeft, lastAvailableTime } = this.props;
-    this.timeElapsed = timeLimit - timeLeft;
 
     if (timerActive) {
       // app goes background
@@ -211,11 +210,12 @@ export class ActivityButtons extends React.Component {
     const {
       nextLabel, nextEnabled, prevLabel, prevEnabled,
       actionLabel, onPressPrev, onPressNext, onPressAction, timerEnabled,
-      timeLimit, timerActive
+      timeLimit, timerActive, timeLeft
     } = this.props;
     const { width, height } = this.state;
 
-    const timerFinished = this.timeElapsed >= timeLimit && timeLimit;
+    const timerFinished = timeLeft <= 0 && timeLimit != 0;
+    this.timeElapsed = timeLimit - timeLeft;
 
     return (
       <View>
