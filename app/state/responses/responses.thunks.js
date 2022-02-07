@@ -609,7 +609,6 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
 
   if (next === -1) {
     setTimeout(() => {
-      console.log('start uploading response ... ')
       if (activity.nextAccess) {
         dispatch(setActivityAccess(applet.id + activity.id));
       }
