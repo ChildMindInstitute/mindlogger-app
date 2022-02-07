@@ -405,7 +405,7 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
-    if (!currentResponse) {
+    if (!currentResponse || !this.currentItem) {
       return <View />;
     }
 
