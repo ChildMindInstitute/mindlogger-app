@@ -375,6 +375,14 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
     return uploaderIdSelector(state);
   }
 
+  if (!state.app.isConnected) {
+    if (activityId) {
+      dispatch(setLastResponseTime({ ...lastResponseTime, [applet.id]: { ...lastResponseTime[applet.id], [activityId]: new Date().toISOString() } }));
+    }
+
+    return Promise.resolve();
+  }
+
   return uploadResponseQueue(authToken, uploadQueue, () => {
     // Progress - response is being processed
     dispatch(shiftUploadQueue());
