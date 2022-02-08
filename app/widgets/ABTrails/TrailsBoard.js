@@ -318,7 +318,7 @@ export default class TrailsBoard extends Component {
           this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1))
         );
 
-        this.lastIndex += lines[n].points.length-2;
+        this.lastIndex = lines[n].points.length-2;
       } else {
         this.lastPathId = this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
       }
