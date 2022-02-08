@@ -313,7 +313,7 @@ export default class TrailsBoard extends Component {
         this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
         this.lastIndex = validIndex-2;
         this.pathStack = [];
-      } else if (lines[n].points.length > this.lastIndex + 250) {
+      } else if (lines[n].points.length > this.lastIndex + 50) {
         this.pathStack.push(
           this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1))
         );
