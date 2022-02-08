@@ -311,14 +311,14 @@ export default class TrailsBoard extends Component {
 
       if (validIndex == lines[n].points.length-1) {
         this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
-        this.lastIndex = validIndex-1;
+        this.lastIndex = validIndex-2;
         this.pathStack = [];
       } else if (lines[n].points.length > this.lastIndex + 250) {
         this.pathStack.push(
-          this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1, this.lastIndex+1 + 250))
+          this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1))
         );
 
-        this.lastIndex += 249;
+        this.lastIndex += lines[n].points.length-2;
       } else {
         this.lastPathId = this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
       }
@@ -334,6 +334,10 @@ export default class TrailsBoard extends Component {
 
   addPathToCanvas (points) {
     let width = this.state.dimensions.width;
+
+    if(points.length) {
+      points.push(points[points.length-1]);
+    }
 
     const path = {
       size: { width: width, height: width },
