@@ -26,7 +26,6 @@ import {
 class AppletList extends Component {
   constructor(props) {
     super(props);
-    this.refresh();
   }
   /**
    * Synchronizes the local data of applet with the backend.
