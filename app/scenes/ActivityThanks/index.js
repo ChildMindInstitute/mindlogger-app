@@ -11,6 +11,7 @@ import { isTokenLoggerApplet } from '../../services/tokens';
 import {
   currentAppletSelector,
 } from "../../state/app/app.selectors";
+import { currentResponsesSelector } from "../../state/responses/responses.selectors";
 import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
 
 const styles = StyleSheet.create({
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityThanks = ({ currentApplet }) => {
+const ActivityThanks = ({ currentApplet, currentResponses }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
 
   const onClose = () => {
@@ -41,14 +42,23 @@ const ActivityThanks = ({ currentApplet }) => {
       }
     >
       <View style={styles.box}>
-        <Heading style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
-          {i18n.t("additional:thanks")}
-        </Heading>
-        <BodyText style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
-          {i18n.t("additional:saved_answers")}
-        </BodyText>
+        {
+          currentResponses &&
+            <BodyText style={{ fontFamily: theme.fontFamily, textAlign: "center", fontWeight: '500', fontSize: 22 }}>
+              Please Wait ...
+            </BodyText>
+          ||
+            <>
+              <Heading style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
+                {i18n.t("additional:thanks")}
+              </Heading>
+              <BodyText style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
+                {i18n.t("additional:saved_answers")}
+              </BodyText>
 
-        <FunButton onPress={onClose}>{i18n.t("additional:close")}</FunButton>
+              <FunButton onPress={onClose}>{i18n.t("additional:close")}</FunButton>
+            </>
+        }
       </View>
     </ImageBackground>
   );
@@ -58,6 +68,7 @@ ActivityThanks.propTypes = {};
 
 const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
+  currentResponses: currentResponsesSelector(state)
 });
 
 const mapDispatchToProps = {};
