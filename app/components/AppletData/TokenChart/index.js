@@ -419,7 +419,7 @@ class TokenChart extends React.Component {
       case 'Today':
         break;
       case '1w': case '2w':
-        current.setDate(current.getDate() - current.getDay() + 1);
+        current.setDate(current.getDate()+1);
         break;
       case '1m': case '3m':
         current.setDate(1);
