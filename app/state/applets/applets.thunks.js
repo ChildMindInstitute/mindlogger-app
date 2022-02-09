@@ -266,7 +266,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   }
 
   dispatch(setDownloadingApplets(true));
-  getApplets(auth.token, localInfo)
+
+  return getApplets(auth.token, localInfo)
     .then(async (resp) => {
       let applets = [];
       if (resp.data)
