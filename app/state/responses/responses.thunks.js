@@ -243,7 +243,12 @@ export const downloadResponse = () => (dispatch, getState) => {
 
   dispatch(setDownloadingResponses(true));
 
-  downloadAppletResponse(authToken, applet)
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone).then((schedule) => {
+    dispatch(setLastResponseTime(schedule));
+  });
+
+  return downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
         await storeData('ml_responses', responses);
@@ -253,12 +258,6 @@ export const downloadResponse = () => (dispatch, getState) => {
     .finally(() => {
       dispatch(setDownloadingResponses(false));
     });
-
-
-  const timezone = RNLocalize.getTimeZone();
-  getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setLastResponseTime(schedule));
-  });
 }
 
 export const downloadResponses = () => (dispatch, getState) => {
@@ -363,7 +362,7 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
   const lastResponseTime = lastResponseTimeSelector(state);
 
   if (!uploadQueue.length) {
-    return ;
+    return Promise.resolve();
   }
 
   const uploaderId = Date.now();
@@ -391,12 +390,6 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
       return ;
     }
 
-    if (applet) {
-      dispatch(downloadResponse());
-    } else {
-      dispatch(sync());
-    }
-
     try {
       NetInfo.fetch().then(state => {
         if (!state.isConnected && activityId) {
@@ -406,6 +399,12 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
     } catch (error) {
       console.warn(error);
     }
+
+    if (applet) {
+      return dispatch(downloadResponse());
+    }
+
+    return dispatch(sync());
   });
 };
 
@@ -513,6 +512,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const finishedTime = new Date();
 
   const responseHistory = currentAppletResponsesSelector(state);
+  let uploader = Promise.resolve();
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
@@ -524,7 +524,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       applet,
     );
 
-    updateUserTokenBalance(
+    uploader = updateUserTokenBalance(
       authToken,
       applet.id.split('/').pop(),
       updates.cumulative,
@@ -532,7 +532,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       applet.schemaVersion.en,
       updates.userPublicKey || null
     ).then(() => {
-      dispatch(downloadResponses())
+      return dispatch(downloadResponses())
     })
   } else {
     let { cumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
@@ -569,7 +569,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     );
 
     dispatch(addToUploadQueue(preparedResponse));
-    dispatch(startUploadQueue(inProgressResponse?.activity?.id));
+    uploader = dispatch(startUploadQueue(inProgressResponse?.activity?.id));
   }
 
   if (event) {
@@ -578,13 +578,13 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     }))
   }
 
-  setTimeout(() => {
+  uploader.finally(() => {
     const { activity } = inProgressResponse;
-    // Allow some time to navigate back to ActivityList
+
     dispatch(
       removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
     );
-  }, 400);
+  })
 };
 
 export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
