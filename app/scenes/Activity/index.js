@@ -193,14 +193,8 @@ class Activity extends React.Component {
           setTutorialStatus(1);
         }
 
-        if (!this.completed) {
-          if (next == -1) {
-            this.completed = true;
-          }
-
-          nextScreen(timeElapsed);
-          setSelected(false);
-        }
+        nextScreen(timeElapsed);
+        setSelected(false);
       }
     }
   }
