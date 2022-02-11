@@ -338,7 +338,7 @@ export const decryptAppletResponses = (applet, responses) => {
           response.value.src &&
           response.value.ptr !== undefined
         ) {
-          if (inputType == 'stabilityTracker' || inputType == 'visual-stimulus-response') {
+          if (inputType == 'stabilityTracker' || inputType == 'visual-stimulus-response' || inputType == 'drawing' || inputType == 'trail') {
             responses.dataSources[response.value.src][response.value.ptr] = null;
           }
 
