@@ -94,7 +94,7 @@ export default class DrawingBoard extends Component {
       const line = this.lines[i];
 
       const path = {
-        size: { width: width, height: width },
+        size: { width: width, height: height },
         path: {
           color: 'black',
           width: 1.5,
