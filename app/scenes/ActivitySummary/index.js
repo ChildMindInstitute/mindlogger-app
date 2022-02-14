@@ -377,7 +377,7 @@ const ActivitySummary = (props) => {
           {
             reports.length > 1 &&
               <TouchableOpacity style={styles.shareButton} onPress={() => shareReport(true)}>
-                <Text style={styles.shareButtonText}>Share All Reports</Text>
+                <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_all_reports")}</Text>
               </TouchableOpacity>
             || <></>
           }
