@@ -322,7 +322,7 @@ class Activity extends React.Component {
 
     if (isSplashScreen) {
       setSplashScreen(activity, false);
-      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, 0)
+      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, currentScreen)
       return
     }
     if (
