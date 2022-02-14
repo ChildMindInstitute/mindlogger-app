@@ -159,6 +159,7 @@ test('appletTransformJson: ema-hbn', () => {
     altLabel: {
       en: "ema-hbn",
     },
+    combineReports: false,
     schema:
       "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
     id: "applet/5ca5314fd27b4e0459cee21f",
