@@ -41,9 +41,9 @@ export default class TrailsTutorial extends Component {
           y: point.y * width / 100,
         })),
       })) : [];
-      this.setState({ rate: width / 335, dimensions: { width, height, top, left }, lines });
+      this.setState({ rate: width / 100, dimensions: { width, height, top, left }, lines });
     } else {
-      this.setState({ rate: width / 335, dimensions: { width, height, top, left } });
+      this.setState({ rate: width / 100, dimensions: { width, height, top, left } });
     }
   }
 
@@ -80,10 +80,10 @@ export default class TrailsTutorial extends Component {
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
-          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontSize={trailsData.fontSize * rate * 0.75}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - trailsData.r - 5) * rate}
+          y={(item.cy - trailsData.r - 2) * rate}
           textAnchor="middle"
         >
           {`Begin`}
@@ -92,10 +92,10 @@ export default class TrailsTutorial extends Component {
         {index === screen.items.length - 1 && <Text
           fill="white"
           stroke={trailsData.colors.pending}
-          fontSize={12 * ((rate - 1) / 2 + 1)}
+          fontSize={trailsData.fontSize * rate * 0.75}
           fontWeight="200"
           x={item.cx * rate}
-          y={(item.cy - trailsData.r - 5) * rate}
+          y={(item.cy - trailsData.r - 2) * rate}
           textAnchor="middle"
         >
           {`End`}

@@ -240,7 +240,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
   let localInfo = {};
 
-  if (currentApplets && onAppletsDownloaded !== true) {
+  if (currentApplets) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet;
       const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
@@ -266,7 +266,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   }
 
   dispatch(setDownloadingApplets(true));
-  getApplets(auth.token, localInfo)
+
+  return getApplets(auth.token, localInfo)
     .then(async (resp) => {
       let applets = [];
       if (resp.data)
@@ -320,7 +321,11 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
                 currentApplet.schedule.events = events;
               }
-              responses.push(currentResponses.find(({ appletId }) => appletId.split("/").pop() === appletInfo.id));
+
+              responses.push({
+                ...decryptAppletResponses(currentApplet, appletInfo.responses),
+                appletId: 'applet/' + appletInfo.id
+              });
 
               cumulativeActivities[currentApplet.id] = nextActivities;
               return currentApplet;

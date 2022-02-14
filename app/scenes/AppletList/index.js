@@ -24,6 +24,9 @@ import {
 } from '../../state/app/app.selectors';
 
 class AppletList extends Component {
+  constructor(props) {
+    super(props);
+  }
   /**
    * Synchronizes the local data of applet with the backend.
    *
@@ -32,7 +35,7 @@ class AppletList extends Component {
   refresh = () => {
     const { sync } = this.props;
 
-    sync(true);
+    sync();
   };
 
   uploadQueue = () => {

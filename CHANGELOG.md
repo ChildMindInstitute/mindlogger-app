@@ -4,6 +4,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.49] - 2022-2-11
+- Fix drawing item
+
+## [0.18.48] - 2022-2-10
+- Fix an issue that app becomes unactionable after completing big activity
+
+## [0.18.47] - 2022-2-8
+- Fix an issue that line is randomly interrupted
+
+## [0.18.46] - 2022-2-7
+- Fix an issue with play/pause btn
+
+## [0.18.45] - 2022-2-4
+- Fix drawing issues
+
+## [0.18.44] - 2022-2-3
+- Fix crashing issue
+
+## [0.18.43] - 2022-1-31
+- Fix scrolling issue
+
+## [0.18.42] - 2022-1-28
+- Fix about page issues
+- Fixed tooltip issue on radio widget
+
+## [0.18.41] - 2022-1-27
+- Fix an issue with Trails/Draw Canvas
+- Fix theme issue
+- Fix small tokenlogger issues
+
+## [0.18.40] - 2022-1-24
+- Fix issue with gelocation warning message
+- Update Tooltip for Stacked Items
+- Fix other small issues
+
+## [0.18.39] - 2022-1-23
+- Fix tooltip issue
+- Fix small UI issue
+
+## [0.18.38] - 2022-1-20
+- Fix instruction issues in A/B Trails
+- Update coordiantes in Drawing and A/B Trails
+
 ## [0.18.37] - 2022-1-16
 - Fix incorrect X, Y coordinates
 - Fixed small header images on activity screen

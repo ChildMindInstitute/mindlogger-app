@@ -66,6 +66,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
 
   return (
     <View
+      ref={e => slider.current = e}
       style={{
         width: sliderWidth + padding,
         height: sliderWidth + padding,
@@ -74,7 +75,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
         position: 'relative'
       }}
     >
-      <View style={{ width: sliderWidth }} ref={slider}>
+      <View style={{ width: sliderWidth }}>
         <Svg
           width={sliderWidth} height={sliderWidth}
           onStartShouldSetResponder={() => true}
@@ -82,6 +83,25 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
             const { locationX, locationY } = evt.nativeEvent;
             if (!disabled) {
               updateValues(locationX, locationY, false)
+            }
+            else if (slider.current && (item.distress !== null || item.impairment !== null)) {
+              slider.current.measure(
+                (
+                  frameOffsetX,
+                  frameOffsetY,
+                  width,
+                  height,
+                  pageOffsetX,
+                  pageOffsetY
+                ) => {
+                  setTooltipOffset({
+                    x: pageOffsetX + (10 - item.distress + item.impairment) / Math.sqrt(2) * sliderWidth / 10,
+                    y: pageOffsetY + sliderWidth / 4
+                  })
+                }
+              );
+
+              setTooltipVisible(true);
             }
           }}
           onResponderMove={(evt) => {
@@ -170,29 +190,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
 
             {
               item.distress !== null && item.impairment !== null &&
-                <G onPress={() => {
-                  if (disabled) {
-                    if (slider.current) {
-                      slider.current.measure(
-                        (
-                          frameOffsetX,
-                          frameOffsetY,
-                          width,
-                          height,
-                          pageOffsetX,
-                          pageOffsetY
-                        ) => {
-                          setTooltipOffset({
-                            x: pageOffsetX + (10 - item.distress + item.impairment) / Math.sqrt(2) * sliderWidth / 10,
-                            y: pageOffsetY + sliderWidth / 4
-                          })
-                        }
-                      );
-                    }
-
-                    setTooltipVisible(true);
-                  }
-                }}>
+                <G>
                   {
                     !disabled && (
                       <>
@@ -405,6 +403,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
             onResponderRelease={(evt) => {
               const { locationX, locationY } = evt.nativeEvent;
               updateValues(locationX, locationY, true)
+              onToggle(true);
             }}
           />
         ) || <></>
@@ -417,7 +416,7 @@ const Slider2D = ({ sliderWidth, padding, onToggle, item, borderRadius, onChange
             transparent
           >
             <View
-              style={{ flex: 1 }}
+              style={{ flex: 1, backgroundColor: 'transparent' }}
               activeOpacity={1}
               onStartShouldSetResponder={()=>true}
               onResponderRelease={ () => setTooltipVisible(false)}

@@ -70,7 +70,8 @@ export class BehaviorTrackerComponent extends Component {
     this.state = {
       modalVisible: false,
       selectedBehavior: '',
-      itemCount: 0
+      itemCount: 0,
+      focused: false
     };
 
     this.maxOccurrence = 99;
@@ -90,7 +91,7 @@ export class BehaviorTrackerComponent extends Component {
     }
 
     value[behavior].push({
-      time: inputType == 'pastBehaviorTracker' ?  0 : new Date().getTime(),
+      time: inputType == 'pastBehaviorTracker' ?  null : new Date().getTime(),
       distress: null,
       impairment: null
     })
@@ -106,7 +107,7 @@ export class BehaviorTrackerComponent extends Component {
       return ;
     }
 
-    this.setState({ modalVisible: false });
+    this.setState({ modalVisible: false, focused: false });
     const {
       value = {}
     } = this.props.value || {};
@@ -123,7 +124,7 @@ export class BehaviorTrackerComponent extends Component {
       value[behavior].pop();
     }
     while (value[behavior].length < this.state.itemCount) {
-      value[behavior].push({ time: 0, distress: null, impairment: null })
+      value[behavior].push({ time: null, distress: null, impairment: null })
     }
 
     if (!value[behavior].length) {
@@ -144,11 +145,13 @@ export class BehaviorTrackerComponent extends Component {
 
       const { name, list } = this.props.currentBehavior;
 
-      value[name] = list;
-      this.props.onChange({
-        ...this.props.value,
-        value
-      });
+      if (name) {
+        value[name] = list;
+        this.props.onChange({
+          ...this.props.value,
+          value
+        });
+      }
     }
   }
 
@@ -172,7 +175,8 @@ export class BehaviorTrackerComponent extends Component {
         negativeBehaviors,
       },
       inputType,
-      setCurrentBehavior
+      setCurrentBehavior,
+      currentBehavior
     } = this.props;
 
     let {
@@ -182,7 +186,7 @@ export class BehaviorTrackerComponent extends Component {
     } = (this.props.value || {});
 
     const {
-      modalVisible, selectedBehavior, itemCount
+      modalVisible, selectedBehavior, itemCount, focused
     } = this.state;
 
     const behaviors = [];
@@ -206,47 +210,63 @@ export class BehaviorTrackerComponent extends Component {
       <KeyboardAvoidingView>
         <Modal
           isVisible={modalVisible}
-          onBackdropPress={() => this.setState({ modalVisible: false })}
         >
-          <View style={styles.modal}>
-            <View style={{ margin: 20 }}>
-              <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
-            </View>
+          <View
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'transparent',
+              justifyContent: !focused ? 'center' : 'flex-start',
+              paddingTop: focused ? 40 : 0
+            }}
+            onStartShouldSetResponder={() => true}
+            onResponderGrant={() => this.setState({ modalVisible: false, focused: false }) }
+          >
+            <View
+              style={styles.modal}
+              onStartShouldSetResponder={() => true}
+            >
+              <View style={{ margin: 20 }}>
+                <Text style={{ textAlign: 'center', fontSize: 25 }}>{selectedBehavior}</Text>
+              </View>
 
-            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity
-                style={styles.upButton}
-                onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
-              />
+              <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity
+                  style={styles.upButton}
+                  onPress={() => this.setState({ itemCount: Math.min(this.maxOccurrence, itemCount+1) })}
+                />
 
-              <Input
-                style={styles.inputStyle}
-                maxLength={2}
-                onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
-                keyboardType={"numeric"}
-                value={`${itemCount}`}
-              />
+                <Input
+                  style={styles.inputStyle}
+                  maxLength={2}
+                  onChangeText={text => this.setState({ itemCount: Math.min(this.maxOccurrence, isNaN(text) ? 0 : Number(text)) })}
+                  keyboardType={"numeric"}
+                  value={`${itemCount}`}
+                  onFocus={() => this.setState({ focused: true })}
+                  onBlur={() => this.setState({ focused: false })}
+                />
 
-              <TouchableOpacity
-                style={styles.downButton}
-                onPress={() => this.setState({ itemCount: Math.max(0, itemCount-1) })}
-              />
-            </View>
+                <TouchableOpacity
+                  style={styles.downButton}
+                  onPress={() => this.setState({ itemCount: Math.max(0, itemCount-1) })}
+                />
+              </View>
 
-            <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
-              <TouchableOpacity
-                style={styles.doneButtonStyle}
-                onPress={() => this.setState({ itemCount: 0 })}
-              >
-                <Text style={styles.buttonText}>Reset</Text>
-              </TouchableOpacity>
+              <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity
+                  style={styles.doneButtonStyle}
+                  onPress={() => this.setState({ itemCount: 0 })}
+                >
+                  <Text style={styles.buttonText}>Reset</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.doneButtonStyle}
-                onPress={this.onSetOccurance.bind(this)}
-              >
-                <Text style={styles.buttonText}>Done</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.doneButtonStyle}
+                  onPress={this.onSetOccurance.bind(this)}
+                >
+                  <Text style={styles.buttonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </Modal>
@@ -286,7 +306,8 @@ export class BehaviorTrackerComponent extends Component {
                     image: behavior.image,
                     list: value[behavior.name],
                     type: behavior.type,
-                    inputType
+                    inputType,
+                    defaultTime: currentBehavior.defaultTime || new Date().getTime()
                   })
                   Actions.push('set_behavior_times')
                 }}

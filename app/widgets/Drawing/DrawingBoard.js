@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, PanResponder, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
+import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
 import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
@@ -15,12 +16,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
-    borderWidth: 1,
-    borderColor: '#d6d7da',
   },
 });
 
-function chunkedPointStr(lines, chunkSize) {
+function chunkedPointStr(lines, chunkSize, scale) {
   const results = [];
   lines.forEach((line) => {
     const { points } = line;
@@ -39,7 +38,7 @@ function chunkedPointStr(lines, chunkSize) {
     for (let index = 0; index < length; index += chunkSize) {
       const myChunk = line.points.slice(index, index + chunkSize + 1);
       // Do something if you want with the group
-      results.push(myChunk.map(point => `${point.x},${point.y}`).join(' '));
+      results.push(myChunk.map(point => `${point.x*scale},${point.y*scale}`).join(' '));
     }
   });
   return results;
@@ -49,108 +48,78 @@ export default class DrawingBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lines: [],
     };
-    this.startX = 0;
-    this.startY = 0;
-    this.lastX = 0;
-    this.lastY = 0;
-    this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => {
-        this.props.onPress();
-        return true;
-      },
-      onPanResponderGrant: this.addLine,
-      onPanResponderMove: (evt, gestureState) => {
-        this.addPoint(gestureState);
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        this.addPoint(gestureState);
-        this.props.onRelease();
-        const result = this.save();
-        const svgString = this.serialize();
 
-        let line = {};
+    this.lines = [...this.props.lines];
 
-        if (result && result.lines) {
-          const lines = result.lines.length;
-          line = { ...result.lines[lines - 1], endTime: Date.now() };
-          result.lines[lines - 1] = line;
-        }
+    const lineCount = this.lines.length;
 
-        this.props.onResult({ ...result, lines: [...this.props.lines, line], svgString });
-      },
-    });
-  }
-
-  addLine = (evt) => {
-    const { lines } = this.state;
-    const { width } = this.state.dimensions;
-
-    const { locationX, locationY } = evt.nativeEvent;
-    this.startX = locationX;
-    this.startY = locationY;
-    const newLine = { points: [{ x: locationX, y: locationY, time: Date.now() }], startTime: Date.now() };
-    this.setState({ lines: [...lines, newLine] });
-
-    sendData('live_event', { x: locationX / width - 0.5, y: 0.5 - locationY / width, time: Date.now() }, this.props.appletId);
-  }
-
-  addPoint = (gestureState) => {
-    const { lines } = this.state;
-    const { width } = this.state.dimensions;
-
-    if (lines.length === 0) return;
-    const time = Date.now();
-    const n = lines.length - 1;
-    const { moveX, moveY, x0, y0 } = gestureState;
-
-    if (moveX === 0 && moveY === 0) return;
-    else {
-      this.lastX = moveX - x0 + this.startX;
-      this.lastY = moveY - y0 + this.startY;
-
-      if (this.lastX === this.startX && this.lastY === this.startY) return;
+    if (lineCount) {
+      this.lines[lineCount-1] = {
+        ...this.lines[lineCount-1],
+        points: [...this.lines[lineCount-1].points]
+      }
     }
 
-    this.lastPressTimestamp = time;
-    lines[n].points.push({ x: this.lastX, y: this.lastY, time });
-    this.setState({ lines });
+    this.canvas = null;
+  }
 
-    sendData('live_event', { x: this.lastX / width - 0.5, y: 0.5 - this.lastY / width, time }, this.props.appletId);
+  addLine = (x, y) => {
+    const { width } = this.state.dimensions;
+
+    const newLine = { points: [{ x, y, time: Date.now() }], startTime: Date.now() };
+    this.lines.push(newLine);
+
+    sendData('live_event', { x: x / width * 100, y: y / width * 100, time: Date.now() }, this.props.appletId);
+  }
+
+  addPoint = (x, y) => {
+    const { width } = this.state.dimensions;
+
+    if (this.lines.length === 0) return;
+    const time = Date.now();
+    const n = this.lines.length - 1;
+
+    this.lines[n].points.push({ x, y, time });
+
+    sendData('live_event', { x: x / width * 100, y: y / width * 100, time }, this.props.appletId);
   }
 
   onLayout = (event) => {
     if (this.state.dimensions) return; // layout was already called
     const { width, height, top, left } = event.nativeEvent.layout;
-    if (this.props.lines && this.props.lines.length > this.state.lines.length) {
-      const lines = this.props.lines.map(line => ({
-        ...line,
-        points: line.points.map(point => ({
-          ...point,
-          x: point.x * width / 100,
-          y: point.y * width / 100,
-        })),
-      }));
-      this.setState({ dimensions: { width, height, top, left }, lines });
-    } else {
-      this.setState({ dimensions: { width, height, top, left } });
+    this.setState({ dimensions: { width, height, top, left }});
+
+    for (let i = 0; i < this.lines.length; i++) {
+      const line = this.lines[i];
+
+      const path = {
+        size: { width: width, height: height },
+        path: {
+          color: 'black',
+          width: 1.5,
+          id: i+1,
+          data: line.points.map(point => `${point.x},${point.y}`)
+        }
+      }
+
+      this.canvas.addPath(path)
     }
   }
 
   reset = () => {
-    this.setState({ lines: [] });
+    this.canvas.clear();
+    this.lines = [];
   }
 
   save = () => {
-    const { lines } = this.state;
     const { width } = this.state.dimensions;
-    const results = lines.map(line => ({
+    const results = this.lines.map(line => ({
       ...line,
       points: line.points.map(point => ({
         ...point,
-        x: point.x / width - 0.5,
-        y: 0.5 - point.y / width,
+        x: point.x / width * 100,
+        y: point.y / width * 100,
       })),
     }));
     return { lines: results };
@@ -162,7 +131,7 @@ export default class DrawingBoard extends Component {
       points={pointStr}
       fill="none"
       stroke="black"
-      strokeWidth="2"
+      strokeWidth="0.6"
     />
   );
 
@@ -182,14 +151,14 @@ export default class DrawingBoard extends Component {
   };
 
   renderSvg() {
-    const { lines, dimensions } = this.state;
+    const { dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
-    const strArray = chunkedPointStr(lines, 50);
+    const strArray = chunkedPointStr(this.lines, 50, 100 / width);
+
     return (
       <Svg
-        ref={(ref) => { this.svgRef = ref; }}
-        height={width}
-        width={width}
+        height={100}
+        width={100}
       >
         {strArray.map(this.renderLine)}
       </Svg>
@@ -199,6 +168,7 @@ export default class DrawingBoard extends Component {
   render() {
     const { dimensions } = this.state;
     const width = dimensions ? dimensions.width : 300;
+
     return (
       <View
         style={{
@@ -206,9 +176,10 @@ export default class DrawingBoard extends Component {
           height: width || 300,
           alignItems: 'center',
           backgroundColor: 'white',
+          borderWidth: 1,
+          borderColor: '#d6d7da',
         }}
         onLayout={this.onLayout}
-        {...this._panResponder.panHandlers}
       >
         {this.props.imageSource && (
           <Image
@@ -216,9 +187,30 @@ export default class DrawingBoard extends Component {
             source={{ uri: this.props.imageSource }}
           />
         )}
-        <View style={styles.blank}>
-          {dimensions && this.renderSvg()}
-        </View>
+
+        <SketchCanvas
+          ref={(ref) => {
+            this.canvas = ref;
+          }}
+          style={styles.blank}
+          strokeColor={'black'}
+          strokeWidth={1.5}
+          onStrokeStart={(x, y) => {
+            this.addLine(x, y);
+
+            this.props.onPress();
+          }}
+          onStrokeChanged={(x, y) => {
+            this.addPoint(x, y);
+          }}
+          onStrokeEnd={() => {
+            this.props.onRelease();
+            const result = this.save();
+            const svgString = this.serialize();
+
+            this.props.onResult({ ...result, lines: this.lines, svgString, width });
+          }}
+        />
       </View>
     );
   }

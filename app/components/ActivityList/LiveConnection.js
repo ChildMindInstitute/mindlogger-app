@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, StyleSheet, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Button, TextInput, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import { createConnection, closeConnection, addCloseListner } from '../../services/socket';
 import { Icon } from 'native-base';
@@ -72,6 +72,7 @@ const LiveConnection = ({
   const [port, setPort] = useState('8881');
   const [error, setError] = useState('');
   const [status, setStatus] = useState(false);
+  const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
     closeConnection();
@@ -113,9 +114,9 @@ const LiveConnection = ({
           <Text
             style={[
               styles.textStyle,
-              { fontWeight: 'bold', color: 'grey', textAlign: 'center', marginBottom: 20 }
+              { fontWeight: 'bold', color: 'grey', textAlign: 'center', marginBottom: 20, alignItems: 'center' }
             ]}
-          >Connect To Server</Text>
+          > Connect To Server { connecting && <ActivityIndicator /> || <></> }</Text>
 
           <Text
             style={styles.textStyle}
@@ -154,8 +155,12 @@ const LiveConnection = ({
 
             <Button
               title="Submit"
+              disabled={connecting}
               onPress={() => {
+                setConnecting(true);
+
                 createConnection(ip, Number(port), applet).then(() => {
+                  setConnecting(false);
                   setError('')
                   setStatus(true)
                   setVisible(false)
@@ -170,6 +175,7 @@ const LiveConnection = ({
                     });
                   })
                 }).catch(() => {
+                  setConnecting(false);
                   setStatus(false)
                   setError('Connection failed. Please double check ip and port')
                 })

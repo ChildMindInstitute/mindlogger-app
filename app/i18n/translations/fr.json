@@ -27,7 +27,8 @@
     "category_emotional": "Emotionnel",
     "category_emotional_message": "Dans les limites normales : Aucun autre examen ou évaluation n'est nécessaire.",
     "category_sport": "Sport",
-    "category_sport_message": "Dans le domaine clinique : Mettre au courant un clinicien ; Effectuer une évaluation de suivi (recommandé) ; Générer une recommandation."
+    "category_sport_message": "Dans le domaine clinique : Mettre au courant un clinicien ; Effectuer une évaluation de suivi (recommandé) ; Générer une recommandation.",
+    "share_report": "Partager le rapport"
   },
   "activity_chart": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
@@ -164,7 +165,8 @@
     "get_location": "LOCALISATION",
     "must_enable_location": "Vous devez permettre aux services de localisation d'accomplir cette tâche. Veuillez autoriser MindLogger dans les paramètres iOS et appuyez à nouveau sur le bouton.",
     "must_enable_location_subtitle": "Vous devez permettre aux services de localisation d'accomplir cette tâche. Veuillez appuyer à nouveau sur le bouton et autoriser MindLogger à utiliser votre localisation.",
-    "location_saved": "Localisation sauvegardée."
+    "location_saved": "Localisation sauvegardée.",
+    "service_not_available": "Le service de localisation n'est pas disponible."
   },
   "select": {
     "select_one": "Sélectionnez une option",

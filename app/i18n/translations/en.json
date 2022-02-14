@@ -27,7 +27,8 @@
     "category_emotional": "Emotional",
     "category_emotional_message": "Within normal limits: No further screening or assessment required.",
     "category_sport": "Sport",
-    "category_sport_message": "Clinical Range: Make clinician aware; Perform follow up assessment (Recommended); Generate referral."
+    "category_sport_message": "Clinical Range: Make clinician aware; Perform follow up assessment (Recommended); Generate referral.",
+    "share_report": "Share Report"
   },
   "activity_chart": {
     "title": "Please take the assessment for data to be displayed."
@@ -170,7 +171,8 @@
     "get_location": "GET LOCATION",
     "must_enable_location": "You must enable Location services to complete this task. Please grant MindLogger permission in your iOS Settings and press the button again.",
     "must_enable_location_subtitle": "You must enable Location services to complete this task. Please press the button again and grant MindLogger permission to use your location.",
-    "location_saved": "Location saved."
+    "location_saved": "Location saved.",
+    "service_not_available": "Location service is not available."
   },
   "select": {
     "select_one": "Select one",

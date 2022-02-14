@@ -70,6 +70,7 @@ const AppletListComponent = ({
 }) => {
   const [onSettings, setOnSettings] = useState(0);
   const [onAboutTime, setOnAboutTime] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const netInfo = useNetInfo();
   let currentConnection = false;
 
@@ -116,6 +117,11 @@ const AppletListComponent = ({
     }
   }, [])
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    onPressRefresh();
+  }
+
   return (
     <Container style={styles.container}>
       <StatusBar barStyle={isIOS ? "dark-content" : "light-content"} />
@@ -152,7 +158,7 @@ const AppletListComponent = ({
                 } else if (netInfo.type === 'cellular' && !mobileDataAllowed) {
                   mobileDataAlert(toggleMobileDataAllowed);
                 } else {
-                  onPressRefresh();
+                  onRefresh();
                 }
               }}
             />

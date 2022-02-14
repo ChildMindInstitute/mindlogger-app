@@ -7,6 +7,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from 'moment';
 import Slider2D from '../../components/Slider2D';
 import { CachedImage } from 'react-native-img-cache';
+import Modal from 'react-native-modal';
 
 import { setCurrentBehavior } from '../../state/responses/responses.actions';
 import { currentBehaviorSelector } from '../../state/responses/responses.selectors';
@@ -72,6 +73,24 @@ const styles = StyleSheet.create({
     right: 6,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  modal: {
+    width: '80%',
+    backgroundColor: '#E2EBF5',
+    alignSelf: 'center',
+    shadowColor: 'grey',
+    shadowRadius: 5,
+    borderRadius: 15
+  },
+  modalButton: {
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 15
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '500'
   }
 })
 
@@ -82,6 +101,7 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
   const padding = 40;
   const borderRadius = 16;
   const [list, setList] = useState(currentBehavior.list);
+  const [modalVisible, setModalVisible] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const currentItem = useRef(null);
   const borderColor = '#44E7DE';
@@ -111,7 +131,8 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       type,
       image,
       list: items,
-      inputType
+      inputType,
+      defaultTime: currentBehavior.defaultTime
     })
 
     if (!items.length) {
@@ -140,14 +161,19 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
         type,
         image,
         list: items,
-        inputType
+        inputType,
+        defaultTime: currentBehavior.defaultTime
       })
     }
   }
 
   const setTime = (time) => {
-    if (time.getTime() > new Date().getTime()) {
+    const now = Date.now(), day = 86400 * 1000;
+
+    if (time.getTime() > now) {
       time.setDate(time.getDate()-1);
+    } else if (time.getTime() + day <= now) {
+      time.setDate(time.getDate()+1);
     }
 
     const item = currentItem.current;
@@ -159,16 +185,16 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
       impairment: item.impairment,
     }
 
+    setShowTimePicker(false);
     setList(items)
     setCurrentBehavior({
       name,
       type,
       image,
       list: items,
-      inputType
+      inputType,
+      defaultTime: time.getTime()
     })
-
-    setShowTimePicker(false);
   }
 
   const toggleContentTouches = (value) => {
@@ -185,8 +211,39 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
     >
       <StatusBar hidden />
 
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+      >
+        <View style={styles.modal}>
+          <View style={{ marginHorizontal: 20, marginTop: 32 }}>
+            <Text style={{ textAlign: 'center', fontSize: 17 }}>Are you sure you want to remove this observation?</Text>
+          </View>
+
+          <View style={{ marginVertical: 20, flexDirection: 'row', justifyContent: 'space-around' }}>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: '#FF5053' }]}
+              onPress={() => {
+                setModalVisible(false);
+                deleteItem(currentItem.current);
+              }}
+            >
+              <Text style={styles.modalButtonText}>Yes</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: '#20609D' }]}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>No</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <DateTimePickerModal
         isVisible={showTimePicker}
+        date={new Date(currentBehavior.defaultTime)}
         mode="time"
         onConfirm={setTime}
         onCancel={() => setShowTimePicker(false)}
@@ -209,6 +266,10 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
           marginTop: 50,
           marginBottom: 20
         }}
+        onStartShouldSetResponder={() => true}
+        onResponderGrant={(evt) => {
+          setCancelContentTouches(true);
+        }}
       >
         {
           orderedList.map(item => (
@@ -227,10 +288,12 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
               }}>{ item.index+1 } out of { orderedList.length }</Text>
 
               <View style={styles.timeSection}>
-                <CachedImage
-                  style={styles.imageStyle}
-                  source={{ uri: image }}
-                />
+                {
+                  image && <CachedImage
+                    style={styles.imageStyle}
+                    source={{ uri: image }}
+                  /> || <View style={styles.imageStyle} />
+                }
 
                 <TouchableOpacity
                   style={{
@@ -275,7 +338,10 @@ const BehaviorTime = ({ currentBehavior, setCurrentBehavior }) => {
                 />
               </View>
 
-              <TouchableOpacity style={styles.cardXButton} onPress={() => deleteItem(item)}>
+              <TouchableOpacity style={styles.cardXButton} onPress={() => {
+                currentItem.current = item;
+                setModalVisible(true)
+              }}>
                 <Icon
                   type="FontAwesome"
                   name="close"

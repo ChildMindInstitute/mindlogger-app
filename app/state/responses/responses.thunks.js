@@ -20,6 +20,7 @@ import { setCumulativeActivities } from "../activities/activities.actions";
 import {
   responsesSelector,
   uploadQueueSelector,
+  uploaderIdSelector,
   currentResponsesSelector,
   currentAppletResponsesSelector,
   currentScreenSelector,
@@ -43,6 +44,7 @@ import {
   setCurrentScreen,
   setLastResponseTime,
   setSummaryScreen,
+  setUploaderId,
   replaceAppletResponses,
   setActivityOpened,
   setAnswer,
@@ -70,6 +72,7 @@ import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actio
 import { getAESKey, getPublicKey } from "../../services/encryption";
 import { sendData } from "../../services/socket";
 import config from "../../config";
+import { sync } from "../app/app.thunks";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
@@ -240,7 +243,12 @@ export const downloadResponse = () => (dispatch, getState) => {
 
   dispatch(setDownloadingResponses(true));
 
-  downloadAppletResponse(authToken, applet)
+  const timezone = RNLocalize.getTimeZone();
+  getSchedule(authToken, timezone).then((schedule) => {
+    dispatch(setLastResponseTime(schedule));
+  });
+
+  return downloadAppletResponse(authToken, applet)
     .then(async (responses) => {
       if (loggedInSelector(getState())) {
         await storeData('ml_responses', responses);
@@ -250,12 +258,6 @@ export const downloadResponse = () => (dispatch, getState) => {
     .finally(() => {
       dispatch(setDownloadingResponses(false));
     });
-
-
-  const timezone = RNLocalize.getTimeZone();
-  getSchedule(authToken, timezone).then((schedule) => {
-    dispatch(setLastResponseTime(schedule));
-  });
 }
 
 export const downloadResponses = () => (dispatch, getState) => {
@@ -359,14 +361,33 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
   const applet = currentAppletSelector(state);
   const lastResponseTime = lastResponseTimeSelector(state);
 
+  if (!uploadQueue.length) {
+    return Promise.resolve();
+  }
+
+  const uploaderId = Date.now();
+
+  dispatch(setUploaderId(uploaderId));
+
+  const getUploaderId = () => {
+    const state = getState();
+    return uploaderIdSelector(state);
+  }
+
+  if (!state.app.isConnected) {
+    if (activityId) {
+      dispatch(setLastResponseTime({ ...lastResponseTime, [applet.id]: { ...lastResponseTime[applet.id], [activityId]: new Date().toISOString() } }));
+    }
+
+    return Promise.resolve();
+  }
+
   return uploadResponseQueue(authToken, uploadQueue, () => {
-    // Progress - a response was uploaded
+    // Progress - response is being processed
     dispatch(shiftUploadQueue());
-  }).finally(() => {
-    if (applet) {
-      dispatch(downloadResponse());
-    } else {
-      dispatch(downloadResponses());
+  }, uploaderId, getUploaderId).finally(() => {
+    if (getUploaderId() != uploaderId) {
+      return ;
     }
 
     try {
@@ -378,6 +399,12 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
     } catch (error) {
       console.warn(error);
     }
+
+    if (applet) {
+      return dispatch(downloadResponse());
+    }
+
+    return dispatch(sync());
   });
 };
 
@@ -465,7 +492,7 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
 
   return Promise.all(processes).then(() => {
     if (processes.length) {
-      dispatch(downloadResponses());
+      dispatch(sync());
     }
   })
 }
@@ -485,6 +512,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   const finishedTime = new Date();
 
   const responseHistory = currentAppletResponsesSelector(state);
+  let uploader = Promise.resolve();
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
@@ -496,7 +524,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       applet,
     );
 
-    updateUserTokenBalance(
+    uploader = updateUserTokenBalance(
       authToken,
       applet.id.split('/').pop(),
       updates.cumulative,
@@ -504,7 +532,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       applet.schemaVersion.en,
       updates.userPublicKey || null
     ).then(() => {
-      dispatch(downloadResponses())
+      return dispatch(downloadResponses())
     })
   } else {
     let { cumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
@@ -541,7 +569,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     );
 
     dispatch(addToUploadQueue(preparedResponse));
-    dispatch(startUploadQueue(inProgressResponse?.activity?.id));
+    uploader = dispatch(startUploadQueue(inProgressResponse?.activity?.id));
   }
 
   if (event) {
@@ -550,13 +578,13 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     }))
   }
 
-  setTimeout(() => {
+  uploader.finally(() => {
     const { activity } = inProgressResponse;
-    // Allow some time to navigate back to ActivityList
+
     dispatch(
       removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
     );
-  }, 300);
+  })
 };
 
 export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
@@ -588,14 +616,17 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   if (next === -1) {
-    if (activity.nextAccess) {
-      dispatch(setActivityAccess(applet.id + activity.id));
-    }
+    setTimeout(() => {
+      if (activity.nextAccess) {
+        dispatch(setActivityAccess(applet.id + activity.id));
+      }
 
-    sendData('finish_activity', activity.id, applet.id);
+      sendData('finish_activity', activity.id, applet.id);
 
-    dispatch(completeResponse());
-    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+      dispatch(completeResponse());
+      dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+    });
+
     Actions.push("activity_thanks");
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));

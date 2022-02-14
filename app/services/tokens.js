@@ -1,33 +1,37 @@
+import moment from 'moment';
 
-export const updateTrackerAggregation = (aggregation, id, response) => {
-  aggregation[id] = aggregation[id] || {};
-
+export const updateTrackerAggregation = (aggregations, id, response) => {
+  const now = Date.now()
   for (const option in response) {
-    aggregation[id][option] = aggregation[id][option] || {};
+    for (const item of response[option]) {
+      const time = item.time || now;
+      const date = moment(new Date(time)).format('YYYY-MM-DD');
+      const aggregation = aggregations.find(d => d.date == date);
 
-    let {
-      count = 0,
-      distress = { total: 0, count: 0 },
-      impairment = { total: 0, count: 0 }
-    } = aggregation[id][option];
-
-    distress = response[option].reduce((prev, d) => {
-      if (d.distress === null) {
-        return prev;
+      if (!aggregation) {
+        continue;
       }
 
-      return { total: prev.total + d.distress, count: prev.count + 1 }
-    }, distress)
+      const data = aggregation.data;
 
-    impairment = response[option].reduce((prev, d) => {
-      if (d.impairment === null) {
-        return prev;
+      data[id] = data[id] || {};
+      data[id][option] = data[id][option] || { count: 0, distress: { total:0, count: 0 }, impairment: { total:0, count: 0 } };
+
+      let { count, distress, impairment } = data[id][option];
+      count++;
+
+      if (item.distress) {
+        distress.total += item.distress;
+        distress.count++;
       }
 
-      return { total: prev.total + d.impairment, count: prev.count + 1 }
-    }, impairment)
+      if (item.impairment) {
+        impairment.total += item.distress;
+        impairment.count++;
+      }
 
-    aggregation[id][option] = { count: count + response[option].length, distress, impairment }
+      data[id][option] = { count, distress, impairment };
+    }
   }
 }
 
@@ -44,11 +48,11 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     return (Number(parts[0]) * 60 + Number(parts[1])) * 60 * 1000
   }
 
-  const getTokens = (startTime, endTime, date, behavior) => {
+  const getTrackedTime = (startTime, endTime, date) => {
     if (startTime >= endTime) return 0;
 
     const timeRanges = [];
-    let last = null;
+    let last = null, totalTime = 0;
 
     for (const time of times) {
       const start = Math.max(time, startTime + date), end = Math.min(time + day, endTime + date);
@@ -63,15 +67,11 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
       }
     }
 
-    let reward = 0, totalTime = 0;
-
     for (const range of timeRanges) {
       totalTime += range.end - range.start;
     }
 
-    reward += Math.floor(totalTime / (behavior.rate * 60 * 1000)) * behavior.value;
-
-    return reward;
+    return totalTime;
   }
 
   const today = timestamp - 3 * 3600 * 1000;
@@ -93,15 +93,18 @@ export const getTokenIncreaseForNegativeBehaviors = (item, tokenTimes, refreshTi
     startTime = getMilliseconds(startTime);
     endTime = getMilliseconds(endTime) + 60 * 1000;
 
+    let totalTime = 0;
     // calculate negative behaviors according to rule
     if (startTime < endTime) {
-      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), endTime, today - day, behavior);
-      reward += getTokens(startTime, Math.min(endTime, 3 * 3600 * 1000), today, behavior)
+      totalTime += getTrackedTime(Math.max(3 * 3600 * 1000, startTime), endTime, today - day);
+      totalTime += getTrackedTime(startTime, Math.min(endTime, 3 * 3600 * 1000), today)
     } else {
-      reward += getTokens(3 * 3600 * 1000, endTime, today-day, behavior);
-      reward += getTokens(Math.max(3 * 3600 * 1000, startTime), day, today - day, behavior);
-      reward += getTokens(0, Math.min(3 * 3600 * 1000, endTime), today, behavior);
+      totalTime += getTrackedTime(3 * 3600 * 1000, endTime, today-day);
+      totalTime += getTrackedTime(Math.max(3 * 3600 * 1000, startTime), day, today - day);
+      totalTime += getTrackedTime(0, Math.min(3 * 3600 * 1000, endTime), today);
     }
+
+    reward += Math.floor(totalTime / (behavior.rate * 60 * 1000)) * behavior.value;
 
     result += reward;
   }
@@ -122,10 +125,6 @@ export const getTokenSummary = (activity, responses) => {
         if (data.time && data.distress !== null & data.impairment !== null) {
           reward++;
         }
-      }
-
-      if (count == reward) {
-        reward++;
       }
     }
 

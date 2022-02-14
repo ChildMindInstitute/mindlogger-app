@@ -101,6 +101,7 @@ class Activity extends React.Component {
       responses: []
     };
     this.idleTimer = new Timer();
+    this.completed = false;
   }
 
   componentDidMount() {
@@ -177,7 +178,9 @@ class Activity extends React.Component {
     }
 
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
-      this.updateStore();
+      if (!this.completed) {
+        this.updateStore();
+      }
 
       if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
         this.setState({ isSummaryScreen: true });
@@ -190,8 +193,14 @@ class Activity extends React.Component {
           setTutorialStatus(1);
         }
 
-        nextScreen(timeElapsed);
-        setSelected(false);
+        if (!this.completed) {
+          if (next == -1) {
+            this.completed = true;
+          }
+
+          nextScreen(timeElapsed);
+          setSelected(false);
+        }
       }
     }
   }
@@ -288,6 +297,7 @@ class Activity extends React.Component {
     const { activity } = currentResponse;
     const screen = activity.items[currentScreen].variableName;
     let currentActivity = 'activity1';
+    const next = getNextPos(currentScreen, itemVisibility);
 
     if (activity.name && activity.name.en.includes('iPad')) {
       currentActivity = 'activity2';
@@ -305,7 +315,10 @@ class Activity extends React.Component {
         setTutorialStatus(1);
       }
     }
-    this.updateStore();
+
+    if (!this.completed) {
+      this.updateStore();
+    }
 
     if (isSplashScreen) {
       setSplashScreen(activity, false);
@@ -333,7 +346,7 @@ class Activity extends React.Component {
     }
     this.setState({ isContentError: false });
     if (
-      getNextPos(currentScreen, itemVisibility) === -1 &&
+      next === -1 &&
       activity.compute &&
       !activity.summaryDisabled &&
       !isSummaryScreen
@@ -345,8 +358,15 @@ class Activity extends React.Component {
         this.setState({ isSummaryScreen: false });
         setSummaryScreen(activity, false);
       }
-      nextScreen();
-      setSelected(false);
+
+      if (!this.completed) {
+        if (next == -1) {
+          this.completed = true;
+        }
+        nextScreen();
+
+        setSelected(false);
+      }
     }
   }
 

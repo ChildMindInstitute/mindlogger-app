@@ -8,6 +8,7 @@ import { IS_VIS } from "../../models/json-ld";
 export const responsesSelector = R.path(["responses", "responseHistory"]);
 
 export const uploadQueueSelector = R.path(["responses", "uploadQueue"]);
+export const uploaderIdSelector = R.path(["responses", "uploaderId"])
 
 export const currentBehaviorSelector = R.path(["responses", "currentBehavior"]);
 
@@ -48,7 +49,7 @@ export const currentAppletResponsesSelector = createSelector(
 export const currentAppletTokenBalanceSelector = createSelector(
   currentAppletResponsesSelector,
   (responseHistory) => {
-    return responseHistory.tokens;
+    return responseHistory.token.cumulative;
   }
 )
 

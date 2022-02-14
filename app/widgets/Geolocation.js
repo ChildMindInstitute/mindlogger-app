@@ -8,6 +8,9 @@ import _ from "lodash";
 import { colors } from "../theme";
 import BaseText from "../components/base_text/base_text";
 import { OptionalText } from "./OptionalText";
+import { showToast } from "../state/app/app.thunks";
+import { connect } from 'react-redux';
+import i18n from 'i18next';
 
 const styles = StyleSheet.create({
   locationButton: {
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Geolocation = ({ config, value, onChange, isOptionalText, isOptionalTextRequired }) => {
+const GeolocationComponent = ({ config, value, onChange, isOptionalText, isOptionalTextRequired, showToast }) => {
   const [locationPermission, setLocationPermission] = useState("undetermined");
   const permission = Platform.select({
     android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
@@ -87,10 +90,22 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
             onChange(finalAnswer);
           },
           (errorResponse) => {
+            showToast({
+              text: i18n.t('geolocation:service_not_available'),
+              position: 'bottom',
+              duration: 2000,
+            });
+
             setLocationPermission('denied');
           }
         );
       } else {
+        showToast({
+          text: i18n.t('geolocation:service_not_available'),
+          position: 'bottom',
+          duration: 2000,
+        });
+
         setLocationPermission('denied');
       }
     });
@@ -144,15 +159,25 @@ export const Geolocation = ({ config, value, onChange, isOptionalText, isOptiona
   );
 };
 
-Geolocation.defaultProps = {
+GeolocationComponent.defaultProps = {
   value: {},
   onChange: () => {},
 };
 
-Geolocation.propTypes = {
+GeolocationComponent.propTypes = {
   config: PropTypes.object,
   value: PropTypes.object,
   onChange: PropTypes.func,
   isOptionalText: PropTypes.bool,
   isOptionalTextRequired: PropTypes.bool,
 };
+
+
+const mapStateToProps = (state) => ({
+});
+
+const mapDispatchToProps = {
+  showToast,
+};
+
+export const Geolocation = connect(mapStateToProps, mapDispatchToProps)(GeolocationComponent);
