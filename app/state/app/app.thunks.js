@@ -24,8 +24,10 @@ export const showToast = toast => () => {
 export const sync = (onAppletsDownloaded = null, keys = null) => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
-    dispatch(downloadApplets(onAppletsDownloaded, keys));
+    return dispatch(downloadApplets(onAppletsDownloaded, keys));
   }
+
+  return Promise.resolve();
 };
 
 export const syncUploadQueue = () => (dispatch, getState) => {
