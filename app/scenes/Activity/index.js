@@ -316,7 +316,7 @@ class Activity extends React.Component {
 
     if (isSplashScreen) {
       setSplashScreen(activity, false);
-      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, 0)
+      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, currentScreen)
       return
     }
     if (
@@ -399,7 +399,7 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
-    if (!currentResponse) {
+    if (!currentResponse || !this.currentItem) {
       return <View />;
     }
 
