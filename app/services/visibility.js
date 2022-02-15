@@ -13,6 +13,7 @@ export const testVisibility = (testExpression = true, items = [], responses = []
   });
 
   let testExpressionFixed = testExpression
+    .replace(/ /g, '_')
     .replace(/&&/g, ' and ')
     .replace(/\|\|/g, ' or ')
     .replace('===', '==')
