@@ -53,7 +53,8 @@ const Widget = ({
   onPress,
   onRelease,
   onContentError,
-  appletTokenBalance
+  appletTokenBalance,
+  handleReplaceBehaviourResponse,
 }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
@@ -67,6 +68,7 @@ const Widget = ({
         onChange={onChange}
         value={screenValue}
         token={valueType && valueType.includes('token')}
+        handleReplaceBehaviourResponse={handleReplaceBehaviourResponse}
       />
     );
   }
@@ -81,6 +83,7 @@ const Widget = ({
         value={answer}
         selected={isSelected}
         token={valueType && valueType.includes("token")}
+        handleReplaceBehaviourResponse={handleReplaceBehaviourResponse}
       />
     );
   }
@@ -382,7 +385,7 @@ Widget.propTypes = {
   currentScreen: PropTypes.number.isRequired,
   onPress: PropTypes.func,
   onRelease: PropTypes.func,
-  appletTokenBalance: PropTypes.number.isRequired,
+  handleReplaceBehaviourResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = state => ({

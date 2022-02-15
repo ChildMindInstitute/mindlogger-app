@@ -476,11 +476,9 @@ class Activity extends React.Component {
             hasSplashScreen={hasSplashScreen}
             onChange={(answer, goToNext=false, timeElapsed=0) => {
               responses[currentScreen] = answer;
-
               if (this.currentItem.inputType != 'drawing' && this.currentItem.inputType != 'trail') {
                 sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
               }
-
               this.setState({ responses })
               this.handleChange(answer, goToNext, timeElapsed);
             }}
