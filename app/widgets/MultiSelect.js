@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { View, Image , ScrollView,KeyboardAvoidingView, TextInput, Platform} from "react-native";
+import { View, Image, KeyboardAvoidingView } from "react-native";
 import PropTypes from "prop-types";
 import * as R from "ramda";
-import { ListItem, Text, Icon ,Item , Input } from 'native-base';
+import { ListItem, Text } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { getURL } from "../services/helper";
 import { colors } from "../themes/colors";
@@ -12,7 +12,7 @@ import { connect } from "react-redux";
 import {
   currentScreenSelector,
 } from "../state/responses/responses.selectors";
-import questionMark from "../../img/question-mark.png";
+import questionMark from "../../img/question-mark.png";
 
 export class MultiSelectScreen extends Component {
   constructor() {
@@ -60,15 +60,15 @@ export class MultiSelectScreen extends Component {
 
   onAnswer = (itemVal) => {
     const { onChange, config } = this.props;
-    if (!this.finalAnswer["value"]  || (config.maxValue === 1 && config.minValue === 1)) {
-      this.finalAnswer["value"] =[itemVal]
+    if (!this.finalAnswer["value"] || (config.maxValue === 1 && config.minValue === 1)) {
+      this.finalAnswer["value"] = [itemVal]
       onChange(this.finalAnswer);
-    } else if (Array.isArray(this.finalAnswer["value"] ) && this.finalAnswer["value"] .includes(itemVal)) {
-      const answerIndex = this.finalAnswer["value"] .indexOf(itemVal);
-      this.finalAnswer["value"] =R.remove(answerIndex, 1, this.finalAnswer["value"] );
+    } else if (Array.isArray(this.finalAnswer["value"]) && this.finalAnswer["value"].includes(itemVal)) {
+      const answerIndex = this.finalAnswer["value"].indexOf(itemVal);
+      this.finalAnswer["value"] = R.remove(answerIndex, 1, this.finalAnswer["value"]);
       onChange(this.finalAnswer);
     } else {
-      this.finalAnswer["value"] =R.append(itemVal, this.finalAnswer["value"] );
+      this.finalAnswer["value"] = R.append(itemVal, this.finalAnswer["value"]);
       onChange(this.finalAnswer);
     }
   };
@@ -88,114 +88,115 @@ export class MultiSelectScreen extends Component {
       },
       token,
       value = {},
+      handleReplaceBehaviourResponse,
     } = this.props;
 
-   this.finalAnswer = value ? value : {};
+    this.finalAnswer = value ? value : {};
 
     return (
       <KeyboardAvoidingView
-    //  behavior="padding"
-    >
-      <View style={{ alignItems: "stretch" }}>
-        {this.state.orderedItems.filter(item => !item.isVis).map((item, index) => (
-          <ListItem
-            style={{ width: '90%', backgroundColor: colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
-            onPress={() => this.onAnswer(token ? item.name.en : item.value)}
-            key={index}
-          >
-            <View style={{
-              width: '10%',
-              marginLeft: "2%",
-              marginRight: "2%",
-              justifyContent: "center",
-              flexDirection: "row"
-            }}>
-              {item.description ? (
-                <TooltipBox text={item.description}>
-                  <View style={{ width: 22, height: 22 }}>
-                    <Image
-                      style={{ width: '100%', height: '100%' }}
-                      source={questionMark}
-                    />
-                  </View>
-                </TooltipBox>
-              ) : (
-                <View />
-              )}
-            </View>
-            <View style={{ width: "72%" }}>
-              <View style={{ width: "100%", flexDirection: "row" }}>
-                {item.image ? (
-                  <Image
-                    style={{ width: "20%", height: 64, resizeMode: "contain" }}
-                    source={{ uri: getURL(item.image) }}
-                  />
+      //  behavior="padding"
+      >
+        <View style={{ alignItems: "stretch" }}>
+          {this.state.orderedItems.filter(item => !item.isVis).map((item, index) => (
+            <ListItem
+              style={{ width: '90%', backgroundColor: colorPalette ? item.color : 'none', borderRadius: 7, margin: 2 }}
+              onPress={() => this.onAnswer(token ? item.name.en : item.value)}
+              key={index}
+            >
+              <View style={{
+                width: '10%',
+                marginLeft: "2%",
+                marginRight: "2%",
+                justifyContent: "center",
+                flexDirection: "row"
+              }}>
+                {item.description ? (
+                  <TooltipBox text={item.description}>
+                    <View style={{ width: 22, height: 22 }}>
+                      <Image
+                        style={{ width: '100%', height: '100%' }}
+                        source={questionMark}
+                      />
+                    </View>
+                  </TooltipBox>
                 ) : (
                   <View />
                 )}
-                {item.image ? (
-                  <View
-                    style={{
-                      marginLeft: "8%",
-                      maxWidth: "72%",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333'}}>
-                      {item.name.en}{" "}
-                      {token
-                        ? item.value < 0
-                          ? "(" + item.value + ")"
-                          : "(+" + item.value + ")"
-                        : ""}
-                    </Text>
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      marginLeft: "8%",
-                      maxWidth: "92%",
-                      justifyContent: "center",
-                      color: colorPalette && item.color ? this.invertColor(item.color) : colors.primary
-                    }}
-                  >
-                      <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333' }}>
-                      {item.name.en}{" "}
-                      {token
-                        ? item.value < 0
-                          ? "(" + item.value + ")"
-                          : "(+" + item.value + ")"
-                        : ""}
-                    </Text>
-                  </View>
-                )}
               </View>
-            </View>
-            <View style={{ width: "14%" }}>
-              <CheckBox
-                checked={
-                  this.finalAnswer["value"] &&
-                  Array.isArray(this.finalAnswer["value"]) &&
-                  this.finalAnswer["value"].includes(token ? item.name.en : item.value)
-                }
-                onPress={() => this.onAnswer(token ? item.name.en : item.value)}
-                checkedIcon="check-square"
-                uncheckedIcon="square-o"
-                checkedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
-                uncheckedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
-              />
-            </View>
-          </ListItem>
-        ))}
+              <View style={{ width: "72%" }}>
+                <View style={{ width: "100%", flexDirection: "row" }}>
+                  {item.image ? (
+                    <Image
+                      style={{ width: "20%", height: 64, resizeMode: "contain" }}
+                      source={{ uri: getURL(item.image) }}
+                    />
+                  ) : (
+                    <View />
+                  )}
+                  {item.image ? (
+                    <View
+                      style={{
+                        marginLeft: "8%",
+                        maxWidth: "72%",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333' }}>
+                        {handleReplaceBehaviourResponse(item.name.en)}{" "}
+                        {token
+                          ? item.value < 0
+                            ? "(" + item.value + ")"
+                            : "(+" + item.value + ")"
+                          : ""}
+                      </Text>
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        marginLeft: "8%",
+                        maxWidth: "92%",
+                        justifyContent: "center",
+                        color: colorPalette && item.color ? this.invertColor(item.color) : colors.primary
+                      }}
+                    >
+                      <Text style={{ color: colorPalette && item.color ? this.invertColor(item.color) : '#333333' }}>
+                        {handleReplaceBehaviourResponse(item.name.en)}{" "}
+                        {token
+                          ? item.value < 0
+                            ? "(" + item.value + ")"
+                            : "(+" + item.value + ")"
+                          : ""}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              <View style={{ width: "14%" }}>
+                <CheckBox
+                  checked={
+                    this.finalAnswer["value"] &&
+                    Array.isArray(this.finalAnswer["value"]) &&
+                    this.finalAnswer["value"].includes(token ? item.name.en : item.value)
+                  }
+                  onPress={() => this.onAnswer(token ? item.name.en : item.value)}
+                  checkedIcon="check-square"
+                  uncheckedIcon="square-o"
+                  checkedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
+                  uncheckedColor={colorPalette && item.color ? this.invertColor(item.color) : colors.primary}
+                />
+              </View>
+            </ListItem>
+          ))}
 
-        {isOptionalText &&
-          <OptionalText
-            isRequired={isOptionalTextRequired}
-            value={this.finalAnswer["text"]}
-            onChangeText={text=>this.handleComment(text)}
-          />
-        }
-      </View>
+          {isOptionalText &&
+            <OptionalText
+              isRequired={isOptionalTextRequired}
+              value={this.finalAnswer["text"]}
+              onChangeText={text => this.handleComment(text)}
+            />
+          }
+        </View>
       </KeyboardAvoidingView>
     );
   }
@@ -214,6 +215,7 @@ MultiSelectScreen.propTypes = {
   token: PropTypes.bool,
   value: PropTypes.object,
   onChange: PropTypes.func.isRequired,
+  handleReplaceBehaviourResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

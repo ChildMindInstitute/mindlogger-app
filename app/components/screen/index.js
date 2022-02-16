@@ -9,13 +9,13 @@ import {
   Keyboard
 } from "react-native";
 import { connect } from "react-redux";
-
 import PropTypes from "prop-types";
 import { Icon, Button } from "native-base";
 import ScreenDisplay from "./ScreenDisplay";
 import Widget from "./Widget";
 import Timer from "../Timer";
 import { colors } from "../../theme";
+import { replaceItemVariableWithName } from "../../services/helper";
 
 import {
   itemStartTimeSelector,
@@ -318,8 +318,13 @@ class ActivityScreen extends Component {
     }
   }
 
+  handleReplaceBehaviourResponse = (text) => {
+    const { activity, answers } = this.props;
+    return replaceItemVariableWithName(text, activity, answers).replace(/[\[\]']+/g, '');
+  }
+
   render() {
-    const { activity, screen, answer, onChange, isCurrent, onContentError, currentScreen, lastResponseTime, profiles } = this.props;
+    const { activity, screen, answer, isCurrent, onContentError, currentScreen, lastResponseTime, profiles, answers } = this.props;
     const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
 
     return (
@@ -351,6 +356,8 @@ class ActivityScreen extends Component {
             <ScreenDisplay
               screen={screen}
               activity={activity}
+              answers={answers}
+              currentScreen={currentScreen}
               lastResponseTime={lastResponseTime[activity.appletId] || {}}
               profile={profiles[activity.appletId] || {}}
             />
@@ -377,6 +384,7 @@ class ActivityScreen extends Component {
                     onRelease={() => {
                       this.setState({ scrollEnabled: true });
                     }}
+                    handleReplaceBehaviourResponse={this.handleReplaceBehaviourResponse.bind(this)}
                   />
                 </View>
               </View>
@@ -394,6 +402,7 @@ class ActivityScreen extends Component {
                   this.setState({ scrollEnabled: true });
                 }}
                 onContentError={onContentError}
+                handleReplaceBehaviourResponse={this.handleReplaceBehaviourResponse.bind(this)}
               />
             )}
           </ScrollView>
@@ -453,6 +462,7 @@ ActivityScreen.propTypes = {
   currentScreen: PropTypes.number.isRequired,
   onContentError: PropTypes.func.isRequired,
   isCurrent: PropTypes.bool.isRequired,
+  answers: PropTypes.array,
 };
 
 const mapStateToProps = (state) => ({

@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import { View, Image ,KeyboardAvoidingView,ScrollView, TextInput, Platform} from 'react-native';
-import { ListItem, Text, Item , Input} from 'native-base';
+import { View, Image, KeyboardAvoidingView } from 'react-native';
+import { ListItem, Text } from 'native-base';
 import { CheckBox } from 'react-native-elements';
 import { colors } from '../themes/colors';
 import { getURL } from '../services/helper';
 import { TooltipBox } from './TooltipBox';
 import { OptionalText } from './OptionalText';
 import { connect } from "react-redux";
-import questionMark from "../../img/question-mark.png";
+import questionMark from "../../img/question-mark.png";
 
 import {
   currentScreenSelector,
 } from "../state/responses/responses.selectors";
 
-const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, currentScreen }) => {
+const RadioScreen = ({ value, config, onChange, token, selected, onSelected, currentScreen, handleReplaceBehaviourResponse }) => {
 
   let finalAnswer = value ? value : {};
 
@@ -33,10 +33,10 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
   }, [currentScreen]);
 
   const handlePress = (itemValue) => {
-   // if (!selected) {
-      finalAnswer["value"] = itemValue;
-      onSelected(true);
-      onChange(finalAnswer);
+    // if (!selected) {
+    finalAnswer["value"] = itemValue;
+    onSelected(true);
+    onChange(finalAnswer);
     //}
   };
 
@@ -104,7 +104,7 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                       }}
                     >
                       <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333' }}>
-                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                        {handleReplaceBehaviourResponse(item.name.en)} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
                       </Text>
                     </View>
                   ) : (
@@ -115,8 +115,8 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
                         justifyContent: 'center',
                       }}
                     >
-                        <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333'}}>
-                        {item.name.en} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
+                      <Text style={{ color: config.colorPalette && item.color ? invertColor(item.color) : '#333333' }}>
+                        {handleReplaceBehaviourResponse(item.name.en)} {token ? (item.value < 0 ? '(' + item.value + ')' : '(+' + item.value + ')') : ""}
                       </Text>
                     </View>
                   )}
@@ -138,11 +138,11 @@ const RadioScreen = ({ value, config, onChange, token ,selected, onSelected, cur
 
         {
           config.isOptionalText &&
-            <OptionalText
-              isRequired={config.isOptionalTextRequired}
-              value={finalAnswer["text"]}
-              onChangeText={text=>handleComment(text)}
-            />
+          <OptionalText
+            isRequired={config.isOptionalTextRequired}
+            value={finalAnswer["text"]}
+            onChangeText={text => handleComment(text)}
+          />
         }
       </View>
     </KeyboardAvoidingView>
@@ -168,6 +168,7 @@ RadioScreen.propTypes = {
   token: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
+  handleReplaceBehaviourResponse: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({

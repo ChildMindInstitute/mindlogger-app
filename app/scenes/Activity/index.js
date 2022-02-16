@@ -193,14 +193,8 @@ class Activity extends React.Component {
           setTutorialStatus(1);
         }
 
-        if (!this.completed) {
-          if (next == -1) {
-            this.completed = true;
-          }
-
-          nextScreen(timeElapsed);
-          setSelected(false);
-        }
+        nextScreen(timeElapsed);
+        setSelected(false);
       }
     }
   }
@@ -322,7 +316,7 @@ class Activity extends React.Component {
 
     if (isSplashScreen) {
       setSplashScreen(activity, false);
-      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, 0)
+      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, currentScreen)
       return
     }
     if (
@@ -405,7 +399,7 @@ class Activity extends React.Component {
 
     const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
-    if (!currentResponse) {
+    if (!currentResponse || !this.currentItem) {
       return <View />;
     }
 
@@ -482,11 +476,9 @@ class Activity extends React.Component {
             hasSplashScreen={hasSplashScreen}
             onChange={(answer, goToNext=false, timeElapsed=0) => {
               responses[currentScreen] = answer;
-
               if (this.currentItem.inputType != 'drawing' && this.currentItem.inputType != 'trail') {
                 sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
               }
-
               this.setState({ responses })
               this.handleChange(answer, goToNext, timeElapsed);
             }}
