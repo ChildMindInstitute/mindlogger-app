@@ -107,3 +107,7 @@ export const setLanguage = language => ({
   payload: language,
 });
 
+export const setTCPConnectionHistory = (history) => ({
+  type: APP_ACTIONS.SET_TCP_CONNECTION_HISTORY,
+  payload: history
+});

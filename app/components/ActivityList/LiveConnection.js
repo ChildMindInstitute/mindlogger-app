@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity, Button, TextInput, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
-import { createConnection, closeConnection, addCloseListner } from '../../services/socket';
+import { createConnection, closeConnection, addCloseListener, getConnection } from '../../services/socket';
 import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import { showToast } from '../../state/app/app.thunks';
+import { setTCPConnectionHistory } from '../../state/app/app.actions';
+import { tcpConnectionHistorySelector } from '../../state/app/app.selectors';
+import { CheckBox } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   sectionHeading: {
@@ -60,23 +63,42 @@ const styles = StyleSheet.create({
   error: {
     color: rgb(128, 0, 0),
     fontSize: 18
+  },
+  checkbox: {
+    backgroundColor: 'white',
+    borderWidth: 0,
+    marginLeft: 0,
+    marginTop: 0,
+    marginBottom: 0
   }
 });
 
 const LiveConnection = ({
   applet,
   showToast,
+  connectionHistory,
+  setTCPConnectionHistory
 }) => {
+  const history = connectionHistory && connectionHistory[applet.accountId] || { ip: '127.0.0.1', port: 8881 };
+
   const [visible, setVisible] = useState(false);
-  const [ip, setIPAddress] = useState('127.0.0.1');
-  const [port, setPort] = useState('8881');
+  const [ip, setIPAddress] = useState(history.ip);
+  const [port, setPort] = useState(history.port.toString());
   const [error, setError] = useState('');
+  const [remember, setRemember] = useState(true);
   const [status, setStatus] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
   useEffect(() => {
-    closeConnection();
-  }, []);
+    const conn = getConnection(applet);
+
+    if (conn && applet) {
+      setPort(conn.port);
+      setIPAddress(conn.host);
+      setStatus(true);
+      createConnection(conn.host, conn.port, applet);
+    }
+  }, [])
 
   return (
     <View style={styles.sectionHeading}>
@@ -139,6 +161,17 @@ const LiveConnection = ({
             keyboardType="numeric"
           />
 
+            <CheckBox
+              checked={remember}
+              onPress={() => setRemember(!remember)}
+              checkedIcon="check-square"
+              uncheckedIcon="square-o"
+              checkedColor={'grey'}
+              uncheckedColor={'grey'}
+              title={'Remember'}
+              containerStyle={styles.checkbox}
+            />
+
           {
             error && <Text style={styles.error}>{error}</Text> || <></>
           }
@@ -160,12 +193,22 @@ const LiveConnection = ({
                 setConnecting(true);
 
                 createConnection(ip, Number(port), applet).then(() => {
+                  if (remember) {
+                    setTCPConnectionHistory({
+                      ...connectionHistory,
+                      [applet.accountId]: {
+                        port: Number(port),
+                        ip
+                      }
+                    })
+                  }
+
                   setConnecting(false);
                   setError('')
                   setStatus(true)
                   setVisible(false)
 
-                  addCloseListner(() => {
+                  addCloseListener(() => {
                     setStatus(false)
 
                     showToast({
@@ -193,10 +236,12 @@ LiveConnection.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  connectionHistory: tcpConnectionHistorySelector(state),
 });
 
 const mapDispatchToProps = {
   showToast,
+  setTCPConnectionHistory,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LiveConnection);

@@ -1,4 +1,5 @@
 import socket, json
+import threading
 
 buffer = {}
 
@@ -32,6 +33,18 @@ def readData(address, data):
         process(address, buffer[address][:index])
         buffer[address] = buffer[address][index+3:]
 
+def serveClient(socket, address):
+    while 1:
+        receivedData = socket.recv(1024)
+
+        if not receivedData: break
+
+        readData(address, receivedData)
+
+    socket.close()
+
+    print ( "Disconnected from", address)
+
 def startServer():
     # Create a socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,26 +59,21 @@ def startServer():
     # Set the number of clients waiting for connection that can be queued
     sock.listen(5)
 
+    print ('waiting for connection')
+
     # loop waiting for connections (terminate with Ctrl-C)
     try:
         while 1:
-            print ('waiting for connection')
-
             newSocket, address = sock.accept()
-
+            thread = threading.Thread(
+                target=serveClient,
+                kwargs={
+                    'socket': newSocket,
+                    'address': address
+                }
+            )
             print ("Connected from", address)
-
-            # loop serving the new client
-            while 1:
-                receivedData = newSocket.recv(1024)
-
-                if not receivedData: break
-
-                readData(address, receivedData)
-
-            newSocket.close()
-
-            print ( "Disconnected from", address )
+            thread.start()
     finally:
         sock.close()
 

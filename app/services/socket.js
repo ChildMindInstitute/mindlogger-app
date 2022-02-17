@@ -1,15 +1,16 @@
 import net from 'net';
 
-let socket = null, currentApplet = null;
+let connections = [];
+let currentSocket = null, currentApplet = null;
 
 export const sendData = (type, data, appletId) => {
-  if (currentApplet && appletId == currentApplet.id && socket) {
+  if (currentApplet && appletId == currentApplet.id && currentSocket) {
     const string = JSON.stringify({
       type,
       data
     });
 
-    socket.write(string + '$$$');
+    currentSocket.write(string + '$$$');
 
     return true;
   }
@@ -17,33 +18,60 @@ export const sendData = (type, data, appletId) => {
   return false;
 }
 
+export const getConnection = (applet) => {
+  return connections.find(conn => conn.accountId == applet.accountId);
+}
+
 export const createConnection = (host, port, applet) => {
-  socket = net.connect(port, host)
+  const conn = getConnection(applet);
+
+  if (conn) {
+    currentSocket = conn.socket;
+    currentApplet = applet;
+    sendData('start_applet', currentApplet, currentApplet.id);
+
+    return Promise.resolve();
+  }
+
+  currentSocket = net.connect(port, host)
 
   return new Promise((resolve, reject) => {
-    socket.on('connect', () => {
+    currentSocket.on('connect', () => {
       currentApplet = applet;
       sendData('start_applet', currentApplet, currentApplet.id);
+
+      connections.push({
+        socket: currentSocket,
+        accountId: applet.accountId,
+        port, host
+      })
+
       resolve();
     })
 
-    socket.on('error', () => {
+    currentSocket.on('error', () => {
       reject();
     })
   })
 }
 
 export const closeConnection = () => {
-  if (socket) {
-    socket.emit('close');
+  const index = connections.findIndex(conn => conn.socket == currentSocket);
+
+  if (index >= 0) {
+    connections.splice(index, 1);
   }
 
-  socket = null;
+  if (currentSocket) {
+    currentSocket.emit('close');
+  }
+
+  currentSocket = null;
 }
 
-export const addCloseListner = (fn) => {
-  socket.addListener('close', () => {
-    socket = null;
+export const addCloseListener = (fn) => {
+  currentSocket.addListener('close', () => {
+    currentSocket = null;
     fn();
   })
 }
