@@ -93,7 +93,7 @@ const LiveConnection = ({
     const conn = getConnection(applet);
 
     if (conn && applet) {
-      setPort(conn.port);
+      setPort(conn.port.toString());
       setIPAddress(conn.host);
       setStatus(true);
       createConnection(conn.host, conn.port, applet);
