@@ -2,9 +2,10 @@ import React, { useRef } from 'react';
 import * as R from 'ramda';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { MarkdownScreen } from '../core';
 import { markdownStyle } from '../../themes/activityTheme';
-import moment from 'moment';
+import { replaceItemVariableWithName } from '../../services/helper';
 
 const styleLens = R.lensPath(['paragraph', 'fontWeight']);
 const preambleStyle = R.set(styleLens, 'bold', markdownStyle);
@@ -16,9 +17,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const parseMarkdown = (markdown, lastResponseTime, profile) => {
+const parseMarkdown = (markdown, lastResponseTime, profile, activity, answers) => {
   if (!lastResponseTime) {
-    return markdown.replace(/\[Nickname\]/i, profile.nickName || '');
+    markdown = replaceItemVariableWithName(markdown, activity, answers)
+    return markdown.replace(/\[Nickname\]/i, profile.nickName || profile.firstName).replace(/[\[\]']+/g, '');
   }
 
   const now = new Date();
@@ -67,16 +69,19 @@ const parseMarkdown = (markdown, lastResponseTime, profile) => {
     }
   });
 
+  markdown = replaceItemVariableWithName(markdown, activity, answers);
   return markdown
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
     .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
-    .replace(/\[Nickname\]/i, profile.nickName || '');
+    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName)
+    .replace(/[\[\]']+/g, '');
 };
 
-const ScreenDisplay = ({ screen, activity, lastResponseTime, profile }) => {
+const ScreenDisplay = ({ activity, lastResponseTime, profile, answers, currentScreen, screen }) => {
   const { question, inputType, preamble, info } = screen;
-  const markdown = useRef(parseMarkdown(question && question.en || '', lastResponseTime[activity.id] || null, profile)).current;
+  const markdown = useRef(parseMarkdown(question && question.en || '', lastResponseTime[activity.id] || null, profile, activity, answers)).current;
+
   let heightProp;
 
   if (inputType === 'tokenSummary') {
@@ -113,7 +118,9 @@ ScreenDisplay.propTypes = {
   screen: PropTypes.object.isRequired,
   lastResponseTime: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
-  activity: PropTypes.object.isRequired
+  activity: PropTypes.object.isRequired,
+  answers: PropTypes.array,
+  currentScreen: PropTypes.number,
 };
 
 export default ScreenDisplay;

@@ -26,8 +26,10 @@ import { colors } from "../../themes/colors";
 import { MarkdownScreen } from "../../components/core";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
+import { currentAppletResponsesSelector } from "../../state/responses/responses.selectors";
 import { setActivities } from "../../state/activities/activities.actions";
 import { evaluateCumulatives } from "../../services/scoring";
+import { getChainedActivities } from "../../services/helper";
 
 let markdownItInstance = MarkdownIt({ typographer: true })
   .use(markdownContainer)
@@ -87,16 +89,42 @@ const DATA = [
 ];
 
 const ActivitySummary = (props) => {
-  const [messages, setMessages] = useState([]);
-  const { responses, applet, activity } = props;
+  const [reports, setReports] = useState([]);
+  const { responses, applet, activity, responseHistory } = props;
+  const { messages } = reports.find(report => report.activity.id == activity.id) || { messages: [] };
 
   const termsText = i18n.t("activity_summary:terms_text");
   const footerText = i18n.t("activity_summary:footer_text");
 
   useEffect(() => {
-    let { reportMessages } = evaluateCumulatives(responses, activity)
-    setMessages(reportMessages);
-  }, [responses]);
+    let chained = applet.combineReports ? getChainedActivities(applet.activities, activity) : [activity];
+    let reports = [];
+
+    for (let chainedActivity of chained) {
+      let lastResponse = [];
+
+      if (activity.id == chainedActivity.id) {
+        lastResponse = responses;
+      } else {
+        for (let item of chainedActivity.items) {
+          const itemResponses = responseHistory.responses[item.schema];
+
+          if (itemResponses && itemResponses.length) {
+            lastResponse.push(itemResponses[itemResponses.length-1]);
+          }
+        }
+      }
+
+      let { reportMessages } = evaluateCumulatives(lastResponse, chainedActivity);
+
+      reports.push({
+        activity: chainedActivity,
+        messages: reportMessages
+      });
+    }
+
+    setReports(reports);
+  }, []);
 
   const fRequestAndroidPermission = async () => {
     try {
@@ -113,7 +141,7 @@ const ActivitySummary = (props) => {
     }
   };
 
-  const shareReport = async () => {
+  const shareReport = async (allReports = false) => {
     if (Platform.OS === "android") {
       const permissionGranted = await fRequestAndroidPermission();
       if (!permissionGranted) {
@@ -132,82 +160,92 @@ const ActivitySummary = (props) => {
       bgColor: "#ffffff",
     };
 
-    const isSplashScreen = activity.splash && activity.splash.en;
+    let currentActivity = activity;
 
-    if (isSplashScreen) {
-      const uri = activity.splash.en;
-      const mimeType = Mimoza.getMimeType(uri) || "";
+    for (let i = 0; i < reports.length; i++) {
+      const { activity, messages } = reports[i];
+      const isSplashScreen = activity.splash && activity.splash.en;
 
-      if (!mimeType.startsWith("video/")) {
+      if (!allReports && currentActivity != activity) {
+        continue;
+      }
+
+      if (isSplashScreen) {
+        const uri = activity.splash.en;
+        const mimeType = Mimoza.getMimeType(uri) || "";
+
+        if (!mimeType.startsWith("video/")) {
+          options.html += `
+            <div style="height: 100%; display: flex; justify-content: center">
+              <img style="width: 100%" src="${uri}" alt="Splash Activity">
+            </div>
+          `;
+        }
+      }
+
+      if (applet.image) {
         options.html += `
-          <div style="height: 100%; display: flex; justify-content: center">
-            <img style="width: 100%" src="${uri}" alt="Splash Activity">
+          <div style="float: right; margin-left: 10px">
+            <img
+              src="${applet.image}"
+              height="100"
+              alt=''
+            />
           </div>
+        `;
+      }
+
+      options.html += `
+        <p class="text-body-2 mb-4">
+          ${markdownItInstance.render(activity?.scoreOverview)}
+        </p>
+      `;
+
+      for (const message of messages) {
+        options.html += `
+          <p class="blue--text mb-1">
+            <b>
+              ${message.category.replace(/_/g, " ")}
+            </b>
+          </p>
+          <p class="text-body-2">
+            ${markdownItInstance.render(message.compute.description)}
+          </p>
+          <div class="score-area">
+            <p
+              class="score-title text-nowrap"
+              style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
+            >
+              <b>
+                ${i18n.t("activity_summary:child_score")}
+              </b>
+            </p>
+            <div
+              class="score-bar score-below ${message.compute.direction ? "score-positive" : "score-negative"}"
+              style="width: ${(message.exprValue / message.maxScoreValue) * 100}%"
+            ></div>
+            <div
+              class="score-bar score-above ${!message.compute.direction ? "score-positive" : "score-negative"}"
+            ></div>
+            <div
+              class="score-spliter"
+              style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
+            ></div>
+            <p class="score-max-value">
+              <b>
+                ${message.maxScoreValue}
+              </b>
+            </p>
+          </div>
+          <p class="text-body-2 mb-4">
+            ${i18n.t("activity_summary:child_score_on_subscale", { name: message.category.replace(/_/g, " ") })}
+            <span class="text-danger">${message.scoreValue}</span>.
+            ${markdownItInstance.render(message.message)}
+          </p>
         `;
       }
     }
 
-    if (applet.image) {
-      options.html += `
-        <div style="float: right; margin-left: 10px">
-          <img
-            src="${applet.image}"
-            height="100"
-            alt=''
-          />
-        </div>
-      `;
-    }
-
-    options.html += `
-      <p class="text-body-2 mb-4">
-        ${markdownItInstance.render(activity?.scoreOverview)}
-      </p>
-    `;
-
-    for (const message of messages) {
-      options.html += `
-        <p class="blue--text mb-1">
-          <b>
-            ${message.category.replace(/_/g, " ")}
-          </b>
-        </p>
-        <p class="text-body-2">
-          ${markdownItInstance.render(message.compute.description)}
-        </p>
-        <div class="score-area">
-          <p
-            class="score-title text-nowrap"
-            style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
-          >
-            <b>
-              ${i18n.t("activity_summary:child_score")}
-            </b>
-          </p>
-          <div
-            class="score-bar score-below ${message.compute.direction ? "score-positive" : "score-negative"}"
-            style="width: ${(message.exprValue / message.maxScoreValue) * 100}%"
-          ></div>
-          <div
-            class="score-bar score-above ${!message.compute.direction ? "score-positive" : "score-negative"}"
-          ></div>
-          <div
-            class="score-spliter"
-            style="left: ${(message.scoreValue / message.maxScoreValue) * 100}%"
-          ></div>
-          <p class="score-max-value">
-            <b>
-              ${message.maxScoreValue}
-            </b>
-          </p>
-        </div>
-        <p class="text-body-2 mb-4">
-          ${i18n.t("activity_summary:child_score_on_subscale", { name: message.category.replace(/_/g, " ") })}
-          <span class="text-danger">${message.scoreValue}</span>.
-          ${markdownItInstance.render(message.message)}
-        </p>
-      `;
-    }
     options.html += `
       <div class="divider-line"></div>
       <p class="text-footer text-body mb-5">
@@ -330,9 +368,20 @@ const ActivitySummary = (props) => {
     <>
       <View style={styles.headerContainer}>
         <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
-        <TouchableOpacity style={styles.shareButton} onPress={shareReport}>
-          <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
-        </TouchableOpacity>
+
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableOpacity style={styles.shareButton} onPress={() => shareReport(false)}>
+            <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
+          </TouchableOpacity>
+
+          {
+            reports.length > 1 &&
+              <TouchableOpacity style={styles.shareButton} onPress={() => shareReport(true)}>
+                <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_all_reports")}</Text>
+              </TouchableOpacity>
+            || <></>
+          }
+        </View>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
         {messages?.length > 0 ? messages.map((item) => (
@@ -355,6 +404,7 @@ ActivitySummary.propTypes = {
 const mapStateToProps = (state) => ({
   applet: newAppletSelector(state),
   activities: state.activities.activities,
+  responseHistory: currentAppletResponsesSelector(state)
 });
 
 const mapDispatchToProps = {

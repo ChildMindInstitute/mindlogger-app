@@ -330,7 +330,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               cumulativeActivities[currentApplet.id] = nextActivities;
               return currentApplet;
             } else {
-              const applet = transformApplet(appletInfo);
+              const applet = transformApplet(appletInfo, currentApplets);
               if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
                 const appletId = applet.id.split('/')[1];
 

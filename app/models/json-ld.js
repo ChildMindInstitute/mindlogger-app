@@ -110,6 +110,7 @@ const END_TIME = "schema:endTime";
 const RATE = "schema:rate";
 const TIME_SCREEN = "reprolib:terms/timeScreen";
 const STREAM_ENABLED = "reprolib:terms/streamEnabled";
+const COMBINE_REPORTS = "reprolib:terms/combineReports";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -689,7 +690,8 @@ export const appletTransformJson = (appletJson) => {
     contentUpdateTime: updated,
     responseDates: applet.responseDates,
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
-    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false
+    streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false,
+    combineReports: R.path([COMBINE_REPORTS, 0, "@value"], applet) || false,
   };
 
   if (applet.encryption && Object.keys(applet.encryption).length) {
@@ -697,6 +699,21 @@ export const appletTransformJson = (appletJson) => {
   }
   return res;
 };
+
+const orderBySchema = (order) => (a, b) => {
+  const indexA = order.indexOf(a.schema);
+  const indexB = order.indexOf(b.schema);
+
+  if (indexA < indexB) {
+    return -1;
+  }
+
+  if (indexA > indexB) {
+    return 1;
+  }
+
+  return 0;
+}
 
 export const transformApplet = (payload, currentApplets = null) => {
   const applet = appletTransformJson(payload);
@@ -857,6 +874,18 @@ export const transformApplet = (payload, currentApplets = null) => {
     applet.activities = activities;
     applet.schedule = payload.schedule;
   }
+
+  for (let i = 0; i < applet.activities.length; i++) {
+    const activity = applet.activities[i];
+    const items = [...activity.items].sort(orderBySchema(activity.order));
+
+    applet.activities[i] = {
+      ...activity,
+      items
+    }
+  }
+
+  applet.activities = [...applet.activities].sort(orderBySchema(applet.order));
 
   applet.groupId = payload.groups;
   applet.theme = payload.theme;

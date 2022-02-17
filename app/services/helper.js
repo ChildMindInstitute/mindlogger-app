@@ -87,6 +87,34 @@ export const truncateString = (str, len, dots = true) => {
   return str.length <= len ? str : str.substr(0, len) + (dots ? '...' : '');
 };
 
+const findActivityFromName = (activities, name) => {
+  return activities.findIndex(activity => activity.name.en == name)
+}
+
+export const getDependency = (activities) => {
+  const dependency = []
+
+  for (let i = 0; i < activities.length; i++) {
+    dependency.push([])
+  }
+
+  for (let i = 0; i < activities.length; i++) {
+    const activity = activities[i];
+    if (activity.messages) {
+      for (const message of activity.messages) {
+        if (message.nextActivity) {
+          const index = findActivityFromName(activities, message.nextActivity)
+          if (index >= 0) {
+            dependency[index].push(i);
+          }
+        }
+      }
+    }
+  }
+
+  return dependency;
+}
+
 export const getActivityAvailabilityFromDependency = (g, availableActivities, archievedActivities) => {
   const marked = [], activities = [];
   let markedCount = 0;
@@ -116,7 +144,7 @@ export const getActivityAvailabilityFromDependency = (g, availableActivities, ar
     }
   }
 
-  while ( markedCount < g.length ) {
+  while (markedCount < g.length) {
     let updated = false;
 
     for (let i = 0; i < g.length; i++) {
@@ -143,8 +171,128 @@ export const getActivityAvailabilityFromDependency = (g, availableActivities, ar
   return activities;
 }
 
+export const getChainedActivities = (activities, currentActivity) => {
+  const g = getDependency(activities);
+  const index = findActivityFromName(activities, currentActivity.name.en);
+  let markedCount = 0, marked = [];
+
+  for (let i = 0; i < g.length; i++) {
+    marked.push(false);
+  }
+
+  for (let i = 0; i < g.length; i++) {
+    if (!g[i].length && !marked[i]) {
+      markedCount++;
+      marked[i] = true;
+    }
+  }
+
+  while (!marked[index] && markedCount < g.length) {
+    let updated = false;
+
+    for (let i = 0; i < g.length; i++) {
+      if (!marked[i] && g[i].some(dependency => marked[dependency])) {
+        marked[i] = true;
+        markedCount++;
+        updated = true;
+        break;
+      }
+    }
+
+    if (!updated) {
+      for (let i = 0; i < g.length; i++) {
+        if (!marked[i]) {
+          marked[i] = true;
+          markedCount++;
+          break;
+        }
+      }
+    }
+  }
+
+  for (let i = 0; i < g.length; i++) {
+    if (!marked[i] && g[i].some(dependency => dependency == index)) {
+      return [currentActivity];
+    }
+  }
+
+  for (let i = 0; i < g.length; i++) {
+    marked[i] = false;
+  }
+
+  const queue = [index], chainedActivities = [];
+
+  marked[index] = true;
+
+  while (queue.length > 0) {
+    const head = queue[0];
+    queue.shift();
+
+    for (let i = 0; i < g[head].length; i++) {
+      const prev = g[head][i];
+
+      if (!marked[prev]) {
+        marked[prev] = true;
+        queue.push(prev);
+      }
+    }
+  }
+
+  for (let i = 0; i < marked.length; i++) {
+    if (marked[i]) {
+      chainedActivities.push(activities[i])
+    }
+  }
+
+  return chainedActivities;
+}
+
 export const waitFor = (sec = 1) => {
   return new Promise(res => {
     setTimeout(() => res(), sec * 1000)
   })
+}
+
+export const getTextBetweenBrackets = (str) => {
+  const reBrackets = /\[\[(.*?)\]]/g;
+  const listOfText = [];
+  let found;
+  while (found = reBrackets.exec(str)) {
+    listOfText.push(found[1]);
+  };
+  return listOfText;
+};
+
+export const replaceItemVariableWithName = (markdown, activity, answers) => {
+  try {
+    const variableNames = getTextBetweenBrackets(markdown);
+    if (variableNames?.length) {
+      variableNames.forEach(variableName => {
+        const index = _.findIndex(activity.items, { variableName });
+        if (Array.isArray(answers[index]?.value)) {
+          let names = [];
+          answers[index]?.value.forEach(ans => {
+            const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, { value: ans });
+            if (item) names.push(item.name.en);
+          })
+          const reg = new RegExp(`${variableName}`, "gi");
+          markdown = markdown.replace(reg, names.join(', '));
+
+        } else if (typeof answers[index] === "object") {
+          const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, answers[index]);
+          if (item) {
+            const reg = new RegExp(`${variableName}`, "gi");
+            markdown = markdown.replace(reg, item.name.en);
+          }
+
+        } else if (answers[index]) {
+          const reg = new RegExp(`${variableName}`, "gi");
+          markdown = markdown.replace(reg, answers[index]);
+        }
+      });
+    }
+  } catch (error) {
+    console.warn(error)
+  }
+  return markdown;
 }

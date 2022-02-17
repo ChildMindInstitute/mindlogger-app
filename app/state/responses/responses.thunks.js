@@ -638,7 +638,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
       const index = activity.items.findIndex(item => item.variableName == timeScreen);
       const timeLimit = inProgress.responses[index] && inProgress.responses[index].value || 0;
 
-      dispatch(setAnswer(activity, next, {
+      dispatch(setAnswer(inProgress.activity, next, {
         timerActive: true,
         value: undefined,
         timeLeft: !timeLimit ? -1 : timeLimit * 60 * 1000,
