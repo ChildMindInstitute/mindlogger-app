@@ -27,7 +27,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { getActivityAvailabilityFromDependency } from '../../services/helper';
+import { getActivityAvailabilityFromDependency, getDependency } from '../../services/helper';
 import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
@@ -52,33 +52,9 @@ const ActivityList = ({
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
-  const findActivityFromName = (activities, name) => {
-    return activities.findIndex(activity => activity.name.en == name)
-  }
-
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
-
-    const dependency = []
-
-    for (let i = 0; i < newApplet.activities.length; i++) {
-      dependency.push([])
-    }
-
-    for (let i = 0; i < newApplet.activities.length; i++) {
-      const activity = newApplet.activities[i];
-      if (activity.messages) {
-        for (const message of activity.messages) {
-          if (message.nextActivity) {
-            const index = findActivityFromName(newApplet.activities, message.nextActivity)
-            if (index >= 0) {
-              dependency[index].push(i);
-            }
-          }
-        }
-      }
-    }
 
     const convertToIndexes = (activities) => (activities || [])
       .map(id => {
@@ -88,7 +64,7 @@ const ActivityList = ({
       .filter(index => index >= 0)
 
     let appletActivities = getActivityAvailabilityFromDependency(
-      dependency,
+      getDependency(newApplet.activities),
       convertToIndexes(cumulativeActivities[applet.id].available),
       convertToIndexes(cumulativeActivities[applet.id].archieved)
     )

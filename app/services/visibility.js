@@ -47,11 +47,13 @@ export const testVisibility = (testExpression = true, items = [], responses = []
     return true;
   };
 
-  const isActivityShownFirstTime = (activity) => {
+  const isActivityShownFirstTime = (expression) => {
+    const activity = expression.replace(/ /g, '_');
     return !responseTimes[activity];
   }
 
-  const isActivityNowShownFirstTime = (activity) => {
+  const isActivityNowShownFirstTime = (expression) => {
+    const activity = expression.replace(/ /g, '_');
     return !!responseTimes[activity];
   }
 

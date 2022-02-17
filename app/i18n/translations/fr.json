@@ -28,7 +28,8 @@
     "category_emotional_message": "Dans les limites normales : Aucun autre examen ou évaluation n'est nécessaire.",
     "category_sport": "Sport",
     "category_sport_message": "Dans le domaine clinique : Mettre au courant un clinicien ; Effectuer une évaluation de suivi (recommandé) ; Générer une recommandation.",
-    "share_report": "Partager le rapport"
+    "share_report": "Partager le rapport",
+    "share_all_reports": "Partager tous les rapports"
   },
   "activity_chart": {
     "title": "Veuillez passer l'évaluation pour que les données soient affichées."
