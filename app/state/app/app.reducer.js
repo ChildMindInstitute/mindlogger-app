@@ -138,7 +138,8 @@ export const initialState = {
    * @type {object}
    */
   finishedEvents: {},
-  activities: []
+  activities: [],
+  tcpConnectionHistory: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -260,7 +261,11 @@ export default (state = initialState, action = {}) => {
         ...state,
         appLanguage: action.payload,
       };
-
+    case APP_CONSTANTS.SET_TCP_CONNECTION_HISTORY:
+      return {
+        ...state,
+        tcpConnectionHistory: action.payload
+      }
     default:
       return state;
   }
