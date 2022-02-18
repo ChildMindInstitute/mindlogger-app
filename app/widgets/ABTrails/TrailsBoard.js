@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, PanResponder, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Circle, Text } from 'react-native-svg';
-import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
+import { SketchCanvas } from '@m4yer/react-native-sketch-canvas';
 import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
@@ -515,6 +515,7 @@ export default class TrailsBoard extends Component {
           touchEnabled={false}
           strokeColor={'black'}
           strokeWidth={1.5}
+          promptForExternalWritePermissions={false}
         />
 
         <View style={styles.blank}>

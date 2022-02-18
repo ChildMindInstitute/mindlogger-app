@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, Image } from 'react-native';
 import Svg, { Polyline, Rect } from 'react-native-svg';
 import ReactDOMServer from 'react-dom/server';
-import { SketchCanvas } from '@terrylinla/react-native-sketch-canvas';
+import { SketchCanvas } from '@m4yer/react-native-sketch-canvas';
 import { sendData } from "../../services/socket";
 
 const styles = StyleSheet.create({
@@ -210,6 +210,7 @@ export default class DrawingBoard extends Component {
 
             this.props.onResult({ ...result, lines: this.lines, svgString, width });
           }}
+          promptForExternalWritePermissions={false}
         />
       </View>
     );
