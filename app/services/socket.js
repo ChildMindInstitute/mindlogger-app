@@ -46,6 +46,20 @@ export const createConnection = (host, port, applet) => {
         port, host
       })
 
+      const accountId = currentApplet.accountId;
+
+      currentSocket.addListener('close', () => {
+        const index = connections.findIndex(conn => conn.accountId == accountId);
+    
+        if (index >= 0) {
+          connections.splice(index, 1);
+        }
+    
+        if (accountId == currentApplet.accountId) {
+          currentSocket = null;
+        }
+      })
+
       resolve();
     })
 
@@ -70,8 +84,11 @@ export const closeConnection = () => {
 }
 
 export const addCloseListener = (fn) => {
-  currentSocket.addListener('close', () => {
-    currentSocket = null;
-    fn();
-  })
+  currentSocket.addListener('close', fn)
+}
+
+export const removeListener = (fn) => {
+  if (currentSocket) {
+    currentSocket.removeListener('close', fn);
+  }
 }
