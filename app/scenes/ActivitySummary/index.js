@@ -166,7 +166,7 @@ const ActivitySummary = (props) => {
       const { activity, messages } = reports[i];
       const isSplashScreen = activity.splash && activity.splash.en;
 
-      if (!allReports && currentActivity != activity) {
+      if (!allReports && currentActivity.id != activity.id) {
         continue;
       }
 
