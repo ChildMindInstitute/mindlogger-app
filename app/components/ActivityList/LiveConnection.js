@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity, Button, TextInput, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
-import { createConnection, closeConnection, addCloseListener, getConnection } from '../../services/socket';
+import { createConnection, closeConnection, addCloseListener, removeListener, getConnection } from '../../services/socket';
 import { Icon } from 'native-base';
 import Modal from 'react-native-modal';
 import { showToast } from '../../state/app/app.thunks';
@@ -89,6 +89,16 @@ const LiveConnection = ({
   const [status, setStatus] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
+  const closeListener = useCallback(() => {
+    setStatus(false);
+
+    showToast({
+      text: 'tcp connection was closed',
+      position: 'bottom',
+      duration: 2000,
+    });
+  }, []);
+
   useEffect(() => {
     const conn = getConnection(applet);
 
@@ -97,6 +107,12 @@ const LiveConnection = ({
       setIPAddress(conn.host);
       setStatus(true);
       createConnection(conn.host, conn.port, applet);
+
+      addCloseListener(closeListener)
+    }
+
+    return () => {
+      removeListener(closeListener);
     }
   }, [])
 
@@ -208,15 +224,7 @@ const LiveConnection = ({
                   setStatus(true)
                   setVisible(false)
 
-                  addCloseListener(() => {
-                    setStatus(false)
-
-                    showToast({
-                      text: 'tcp connection was closed',
-                      position: 'bottom',
-                      duration: 2000,
-                    });
-                  })
+                  addCloseListener(closeListener)
                 }).catch(() => {
                   setConnecting(false);
                   setStatus(false)
