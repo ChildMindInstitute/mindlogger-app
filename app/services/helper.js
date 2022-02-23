@@ -264,29 +264,55 @@ export const getTextBetweenBrackets = (str) => {
 };
 
 export const replaceItemVariableWithName = (markdown, activity, answers) => {
+  const getTimeString = (obj) => {
+    if (!obj) return '';
+
+    return `${obj.hour.toString().padStart(2, '0')}:${obj.minute.toString().padStart(2, '0')}`;
+  }
+
+  const getDateString = (obj) => {
+    if (!obj) return '';
+    return `${obj.year}-${Number(obj.month+1).toString().padStart(2, '0')}-${Number(obj.day).toString().padStart(2, '0')}`;
+  }
   try {
     const variableNames = getTextBetweenBrackets(markdown);
     if (variableNames?.length) {
       variableNames.forEach(variableName => {
         const index = _.findIndex(activity.items, { variableName });
+        const reg = new RegExp(`\\[\\[${variableName}\\]\\]`, "gi");
+
         if (Array.isArray(answers[index]?.value)) {
           let names = [];
           answers[index]?.value.forEach(ans => {
             const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, { value: ans });
             if (item) names.push(item.name.en);
           })
-          const reg = new RegExp(`${variableName}`, "gi");
+
           markdown = markdown.replace(reg, names.join(', '));
 
         } else if (typeof answers[index] === "object") {
-          const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, answers[index]);
-          if (item) {
-            const reg = new RegExp(`${variableName}`, "gi");
-            markdown = markdown.replace(reg, item.name.en);
+          switch (activity.items[index].inputType) {
+            case 'radio':
+              const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, answers[index]);
+              if (item) {
+                markdown = markdown.replace(reg, item.name.en);
+              }
+              break;
+            case 'slider':
+              markdown = markdown.replace(reg, answers[index].value);
+              break;
+            case 'timeRange':
+              markdown = markdown.replace(reg, getTimeString(answers[index].value?.from) + ' - ' + getTimeString(answers[index].value?.to));
+              break;
+            case 'date':
+              markdown = markdown.replace(reg, getDateString(answers[index].value));
+              break;
+            case 'ageSelector':
+              markdown = markdown.replace(reg, answers[index].value);
+              break;
           }
 
         } else if (answers[index]) {
-          const reg = new RegExp(`${variableName}`, "gi");
           markdown = markdown.replace(reg, answers[index]);
         }
       });
