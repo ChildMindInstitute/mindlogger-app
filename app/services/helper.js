@@ -293,7 +293,7 @@ export const replaceItemVariableWithName = (markdown, activity, answers) => {
         } else if (typeof answers[index] === "object") {
           switch (activity.items[index].inputType) {
             case 'radio':
-              const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, answers[index]);
+              const item = index > -1 && _.find(activity.items[index]?.valueConstraints?.itemList, { value: answers[index].value });
               if (item) {
                 markdown = markdown.replace(reg, item.name.en);
               }
