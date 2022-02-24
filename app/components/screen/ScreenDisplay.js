@@ -69,13 +69,12 @@ const parseMarkdown = (markdown, lastResponseTime, profile, activity, answers) =
     }
   });
 
-  markdown = replaceItemVariableWithName(markdown, activity, answers);
+  markdown = replaceItemVariableWithName(markdown, activity, answers);ƒ
   return markdown
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
     .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
-    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName)
-    .replace(/[\[\]']+/g, '');
+    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
 };
 
 const ScreenDisplay = ({ activity, lastResponseTime, profile, answers, currentScreen, screen }) => {
