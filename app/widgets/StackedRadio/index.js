@@ -79,7 +79,7 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
           config.options.map(option => (
             <View style={{ width: optionWidth }}>
               {option.description ? (
-                <TooltipBox text={option.description}>
+                <TooltipBox text={handleReplaceBehaviourResponse(option.description)}>
                   <Text
                     style={[styles.optionText, styles.tooltip]}
                     allowFontScaling={false}
@@ -111,7 +111,7 @@ export const StackedRadio = ({ value, config, onChange, token, onSelected }) => 
         >
           <View style={{ width: '22%' }}>
             {item.description ? (
-              <TooltipBox text={item.description}>
+              <TooltipBox text={handleReplaceBehaviourResponse(item.description)}>
                 <Text
                   style={[styles.itemText, styles.tooltip]}
                   allowFontScaling={false}

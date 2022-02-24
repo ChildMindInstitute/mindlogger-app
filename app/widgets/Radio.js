@@ -72,7 +72,7 @@ const RadioScreen = ({ value, config, onChange, token, selected, onSelected, cur
             >
               <View style={{ width: '10%', marginRight: "2%", marginLeft: "2%" }}>
                 {checkTooltip(item) ? (
-                  <TooltipBox text={item.description}>
+                  <TooltipBox text={handleReplaceBehaviourResponse(item.description)}>
                     <View style={{ width: 22, height: 22 }}>
                       <Image
                         style={{ width: '100%', height: '100%' }}
