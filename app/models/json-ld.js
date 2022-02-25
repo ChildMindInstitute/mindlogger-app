@@ -701,9 +701,9 @@ export const appletTransformJson = (appletJson) => {
   return res;
 };
 
-const orderBySchema = (order) => (a, b) => {
-  const indexA = order.indexOf(a.schema);
-  const indexB = order.indexOf(b.schema);
+const orderBySchema = (order, getSchema = null) => (a, b) => {
+  const indexA = order.indexOf(getSchema ? getSchema(a) : a.schema);
+  const indexB = order.indexOf(getSchema ? getSchema(b) : b.schema);
 
   if (indexA < indexB) {
     return -1;
@@ -886,7 +886,7 @@ export const transformApplet = (payload, currentApplets = null) => {
     }
   }
 
-  applet.activities = [...applet.activities].sort(orderBySchema(applet.order));
+  applet.activities = [...applet.activities].sort(orderBySchema(applet.order, (activity) => activity.id.split('/').pop()));
 
   applet.groupId = payload.groups;
   applet.theme = payload.theme;
