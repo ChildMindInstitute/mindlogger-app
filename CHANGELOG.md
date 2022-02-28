@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.18.58] - 2022-2-26
+## [0.18.59] - 2022-2-28
 - Fixed applet images in PDF report
+
+## [0.18.58] - 2022-2-26
+- Fixed splash screen in PDF report
 
 ## [0.18.57] - 2022-2-24
 - Fixed markdown image issues
