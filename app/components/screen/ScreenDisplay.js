@@ -69,7 +69,7 @@ const parseMarkdown = (markdown, lastResponseTime, profile, activity, answers) =
     }
   });
 
-  markdown = replaceItemVariableWithName(markdown, activity, answers);ƒ
+  markdown = replaceItemVariableWithName(markdown, activity, answers);
   return markdown
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
