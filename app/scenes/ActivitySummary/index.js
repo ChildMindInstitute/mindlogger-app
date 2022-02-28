@@ -161,7 +161,7 @@ const ActivitySummary = (props) => {
     };
 
     let currentActivity = activity;
-    let splashScreen = 0;
+    let splashScreen = false;
 
     for (let i = 0; i < reports.length; i++) {
       const { activity, messages } = reports[i];
@@ -176,22 +176,16 @@ const ActivitySummary = (props) => {
         const mimeType = Mimoza.getMimeType(uri) || "";
 
         if (!mimeType.startsWith("video/")) {
-          if (!splashScreen) {
-            options.html += `
-              <div style="height: 100%; display: flex; justify-content: center">
-                <img style="width: 100%" src="${uri}" alt="Splash Activity">
-              </div>
-            `;
-          } else {
-            options.html += `
-              <div style="height: 100%; display: flex; margin-top: ${splashScreen * -100}%"></div>
-            `;
-          }
-          splashScreen += 1;
+          options.html += `
+            <div style="height: 100%; display: flex; justify-content: center">
+              <img style="width: 100%" src="${uri}" alt="Splash Activity">
+            </div>
+          `;
         }
       }
 
-      if (applet.image) {
+      if (applet.image && !splashScreen) {
+        splashScreen = true;
         options.html += `
           <div style="float: right; margin-left: 10px">
             <img
