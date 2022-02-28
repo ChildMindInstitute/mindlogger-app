@@ -38,7 +38,7 @@ export const FormInputItem = ({
       {
         Platform.OS === 'android'
           ? <Input {...props} onChangeText={input.onChange} {...input} />
-          : <TextInput {...props} onChangeText={input.onChange} {...input} style={{...props.style, width: '100%'}} />
+          : <TextInput {...props} selectionColor={"white"} onChangeText={input.onChange} {...input} style={{...props.style, width: '100%'}} />
       }
     </Item>
     {touched && error && <Text style={[styles.errorText, errorStyle]}>{error}</Text>}
