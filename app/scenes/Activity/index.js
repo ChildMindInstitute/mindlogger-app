@@ -7,6 +7,7 @@ import * as R from "ramda";
 import _ from "lodash";
 import { Actions } from "react-native-router-flux";
 import i18n from "i18next";
+import { addUserActivityEvent } from "../../state/responses/responses.actions";
 import {
   nextScreen,
   prevScreen,
@@ -103,11 +104,18 @@ class Activity extends React.Component {
     };
     this.idleTimer = new Timer();
     this.completed = false;
+    this.responseTime = null;
   }
 
   componentDidMount() {
-    const { isSummaryScreen, isSplashScreen, currentResponse: { activity, responses }, currentScreen, itemVisibility } = this.props;
+    const { isSummaryScreen, currentResponse: { activity, responses }, currentScreen, itemVisibility } = this.props;
+    const { activity, responses } = currentResponse;
+
     const idleTime = this.getIdleTime();
+
+    if (currentResponse[currentScreen]) {
+      this.responseTime = currentResponse[currentScreen].responseTime || null;
+    }
 
     this.props.setActivitySelectionDisabled(false);
     this.setState({
@@ -159,13 +167,16 @@ class Activity extends React.Component {
       setSummaryScreen,
       setSelected,
       currentApplet,
-      lastResponseTime
+      lastResponseTime,
+      addUserActivityEvent
     } = this.props;
     const { activity } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText;
     const responseTimes = {};
+
+    this.responseTime = Date.now();
 
     for (const activity of currentApplet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
@@ -203,6 +214,13 @@ class Activity extends React.Component {
 
         nextScreen(timeElapsed);
         setSelected(false);
+        addUserActivityEvent(currentResponse.activity, {
+          event_type: 'SET_ANSWER',
+          time: this.responseTime,
+          screen: currentScreen
+        })
+
+        this.responseTime = null;
       }
     }
   }
@@ -276,6 +294,22 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
+
+    if (this.responseTime) {
+      addUserActivityEvent(currentResponse.activity, {
+        event_type: 'SET_ANSWER',
+        time: Date.now(),
+        screen: currentScreen
+      });
+    }
+
+    addUserActivityEvent(currentResponse.activity, {
+      event_type: 'PREV',
+      time: Date.now(),
+      screen: currentScreen
+    });
+
+    this.responseTime = null;
   }
 
   handlePressNextScreen = () => {
@@ -293,6 +327,7 @@ class Activity extends React.Component {
       setSplashScreen,
       setCurrentScreen,
       isSplashScreen,
+      addUserActivityEvent,
     } = this.props;
 
     const { isSummaryScreen } = this.state;
@@ -370,6 +405,22 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
+
+    if (this.responseTime) {
+      addUserActivityEvent(currentResponse.activity, {
+        event_type: 'SET_ANSWER',
+        time: Date.now(),
+        screen: currentScreen
+      });
+    }
+
+    addUserActivityEvent(currentResponse.activity, {
+      event_type: 'NEXT',
+      time: Date.now(),
+      screen: currentScreen
+    });
+
+    this.responseTime = null;
   }
 
   updateStore () {
@@ -402,6 +453,7 @@ class Activity extends React.Component {
       currentScreen,
       appStatus,
       isSplashScreen,
+      addUserActivityEvent,
     } = this.props;
 
     const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
@@ -583,6 +635,13 @@ class Activity extends React.Component {
                   }
 
                   this.setState({ responses });
+
+                  addUserActivityEvent(currentResponse.activity, {
+                    event_type: 'UNDO',
+                    time: Date.now(),
+                    screen: currentScreen
+                  })
+
                   sendData('set_response', { [activity.items[currentScreen].id]: responses[currentScreen] }, currentApplet.id);
                 }}
               />
@@ -661,7 +720,8 @@ const mapDispatchToProps = {
   setSplashScreen,
   setCurrentScreen,
   setActivitySelectionDisabled,
-  finishActivity
+  finishActivity,
+  addUserActivityEvent
 };
 
 export default connect(
