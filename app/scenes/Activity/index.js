@@ -215,7 +215,7 @@ class Activity extends React.Component {
         nextScreen(timeElapsed);
         setSelected(false);
         addUserActivityEvent(currentResponse.activity, {
-          event_type: 'SET_ANSWER',
+          type: 'SET_ANSWER',
           time: this.responseTime,
           screen: currentScreen
         })
@@ -275,7 +275,8 @@ class Activity extends React.Component {
       prevScreen,
       setSelected,
       isSelected,
-      currentResponse
+      currentResponse,
+      addUserActivityEvent
     } = this.props;
     const { activity, responses } = currentResponse;
 
@@ -297,14 +298,14 @@ class Activity extends React.Component {
 
     if (this.responseTime) {
       addUserActivityEvent(currentResponse.activity, {
-        event_type: 'SET_ANSWER',
-        time: Date.now(),
+        type: 'SET_ANSWER',
+        time: this.responseTime,
         screen: currentScreen
       });
     }
 
     addUserActivityEvent(currentResponse.activity, {
-      event_type: 'PREV',
+      type: 'PREV',
       time: Date.now(),
       screen: currentScreen
     });
@@ -408,14 +409,14 @@ class Activity extends React.Component {
 
     if (this.responseTime) {
       addUserActivityEvent(currentResponse.activity, {
-        event_type: 'SET_ANSWER',
-        time: Date.now(),
+        type: 'SET_ANSWER',
+        time: this.responseTime,
         screen: currentScreen
       });
     }
 
     addUserActivityEvent(currentResponse.activity, {
-      event_type: 'NEXT',
+      type: 'NEXT',
       time: Date.now(),
       screen: currentScreen
     });
@@ -636,8 +637,16 @@ class Activity extends React.Component {
 
                   this.setState({ responses });
 
+                  if (this.responseTime) {
+                    addUserActivityEvent(currentResponse.activity, {
+                      type: 'SET_ANSWER',
+                      time: this.responseTime,
+                      screen: currentScreen
+                    });
+                  }
+
                   addUserActivityEvent(currentResponse.activity, {
-                    event_type: 'UNDO',
+                    type: 'UNDO',
                     time: Date.now(),
                     screen: currentScreen
                   })
