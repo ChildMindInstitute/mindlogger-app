@@ -35,14 +35,16 @@ export const prepareResponseForUpload = (
   const { cumActivities } = evaluateCumulatives(responses, activity);
 
   const scheduledTime = activity.event && activity.event.scheduledTime;
-  let cumulative = responseHistory.token.cumulative, tokenChanged = false, trackerChanged = false;
+  let cumulative = responseHistory.token ? responseHistory.token.cumulative : null;
+  let tokenChanged = false, trackerChanged = false;
   const today = moment().format('YYYY-MM-DD')
   const yesterday = moment().subtract(1, 'days').format('YYYY-MM-DD');
 
-  let trackerAggregations = [
-    responseHistory.token.trackerAggregation.find(d => d.date == today) || { data: {}, id: 0, date: today },
-    responseHistory.token.trackerAggregation.find(d => d.date == yesterday) || { data: {}, id: 0, date: yesterday }
-  ]
+  let trackerAggregations = responseHistory.token ?
+    [
+      responseHistory.token.trackerAggregation.find(d => d.date == today) || { data: {}, id: 0, date: today },
+      responseHistory.token.trackerAggregation.find(d => d.date == yesterday) || { data: {}, id: 0, date: yesterday }
+    ] : [];
 
   const alerts = [], nextsAt = {};
   for (let i = 0; i < responses.length; i++) {
