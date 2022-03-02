@@ -24,6 +24,7 @@ const ChangeStudyForm = ({
       autoCapitalize="none"
       style={styles.text}
       keyboardType="email-address"
+      selectionColor={"#CCCCCC"}
     />
     {error && <Text style={styles.errorText}>{error}</Text>}
     <View style={styles.buttonContainer}>
