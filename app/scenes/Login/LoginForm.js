@@ -31,6 +31,7 @@ const LoginForm = ({
         style={styles.text}
         validate={required}
         errorStyle={{ color: colors.secondary }}
+        selectionColor={"#CCCCCC"}
       />
       <Field
         component={FormInputItem}
@@ -42,6 +43,7 @@ const LoginForm = ({
         secureTextEntry
         validate={required}
         errorStyle={{ color: colors.secondary }}
+        selectionColor={"#CCCCCC"}
       />
       <Button
         style={styles.button}
