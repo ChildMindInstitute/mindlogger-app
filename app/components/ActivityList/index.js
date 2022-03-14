@@ -84,6 +84,11 @@ const ActivityList = ({
     }
   };
 
+  const checkActivityIsShown = (name, messages) => {
+    if (!name || !messages) return true;
+    return _.findIndex(messages, obj => obj.nextActivity === name && (obj.hideActivity || obj.hideActivity === undefined)) === -1;
+  }
+
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
       cancelReminder();
