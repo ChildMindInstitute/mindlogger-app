@@ -16,7 +16,8 @@ const email = value => (value && !RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-z
   ? i18n.t('sign_up_form:email_validation_error')
   : undefined);
 
-const password = value => (value && !RegExp('.{6}.*').test(value) ? 'Password must be at least 6 characters' : undefined);
+const shortPassword = value => (value && !RegExp('.{6}.*').test(value) ? 'Password must be at least 6 characters' : undefined);
+const blankPassword = value => (value && value.includes(" ") ? 'Password should not contain blank spaces' : undefined);
 
 const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
   <Form>
@@ -50,7 +51,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
-      validate={[required, password]}
+      validate={[required, shortPassword, blankPassword]}
     />
     <Button warning style={styles.button} block onPress={handleSubmit} disabled={submitting}>
       {submitting ? (
