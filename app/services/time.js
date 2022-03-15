@@ -85,7 +85,7 @@ export const getScheduledNotifications = (
   const dateTimes = [];
 
   dates.forEach((date) => {
-    notifications.forEach((n) => {
+    notifications?.forEach((n) => {
       // TODO: handle randomized notifiation times
       // i.e. if n.random is true generate notification time between n.start and n.end
       const timestamp = moment(

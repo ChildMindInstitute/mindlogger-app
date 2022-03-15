@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { TouchableOpacity, Image, StatusBar, Platform } from "react-native";
+import { TouchableOpacity, Image, StatusBar, Platform, Linking } from "react-native";
 import { connect } from "react-redux";
 import {
   Container,
@@ -165,6 +165,9 @@ class Login extends Component {
                 {i18n.t("language_screen:change_app_language")}
               </Text>
             </TouchableOpacity>
+          </View>
+          <View>
+            <Text style={styles.whiteText} onPress={() => Linking.openURL('https://mindlogger.org/terms')} >Terms of Service</Text>
           </View>
           <Image square style={styles.logo} source={logo} />
         </Content>
