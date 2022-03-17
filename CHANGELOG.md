@@ -338,6 +338,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.17.42] - 2021-10-6
 - Fix undo on top navigation bar
+- Add tick options on slider widget
 
 ## [0.17.41] - 2021-10-5
 - Fix drawing a line
