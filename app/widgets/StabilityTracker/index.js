@@ -287,7 +287,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
       controlBar.current = true;
       userPos.current = [width/2, width/2];
     } else {
-      lambdaVal.current = getNewLambda(lambdaVal.current, deltaTime / 1000 * configObj.taskLoopRate, lambdaSlope.current, lambdaLimit);
+      lambdaVal.current = getNewLambda(lambdaVal.current, deltaTime / 1000, lambdaSlope.current, lambdaLimit);
     }
   }
 

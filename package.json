@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -102,6 +102,7 @@
     "react-native-media-controls": "^2.2.0",
     "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^10.2.0",
+    "react-native-multiple-select": "^0.5.7",
     "react-native-os": "^1.2.6",
     "react-native-permissions": "^2.2.2",
     "react-native-progress": "^3.4.0",
