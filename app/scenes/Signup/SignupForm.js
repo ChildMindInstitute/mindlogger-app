@@ -74,7 +74,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
         {submitting ? (
           <ActivityIndicator color={primaryColor} />
         ) : (
-          <Text style={[styles.buttonText, { color: primaryColor }]}>
+          <Text style={[styles.buttonText, { color: terms ? primaryColor : 'grey', fontWeight: '400' }]}>
             {i18n.t('sign_up_form:sign_up')}
           </Text>
         )}
