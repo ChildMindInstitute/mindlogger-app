@@ -121,7 +121,7 @@ export const setReminder = () => async (dispatch, getState) => {
       });
 
       _.uniqBy(validEvents, 'id').forEach(event => {
-        event.data.notifications.forEach(notification => {
+        event?.data?.notifications?.forEach(notification => {
           if (notification.start) {
             const values = notification.start.split(':');
             const date = new Date(event.date);

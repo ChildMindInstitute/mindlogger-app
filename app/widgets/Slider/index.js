@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
   tickMark: {
     position: "absolute",
-    bottom: -33,
+    top: 30,
   },
   knobLabel: {
     position: "absolute",
@@ -318,14 +318,23 @@ class Slider extends Component {
   render() {
     const { currentValue, minimumValue, maximumValue, tickMarks } = this.state;
     const {
-      config,
+      config: {
+        maxValue,
+        minValue,
+        itemList,
+        textAnchors,
+        tickLabel,
+        tickMark,
+        continousSlider,
+        isOptionalText,
+        isOptionalTextRequired,
+        showTickMarks
+      },
       onChange,
       onPress,
       value,
       onRelease,
     } = this.props;
-
-    const { maxValue, minValue, itemList, continousSlider, showTickMarks ,isOptionalText, isOptionalTextRequired } = config || {};
 
     this.finalAnswer = value ? value : {};
 
@@ -347,15 +356,17 @@ class Slider extends Component {
 
       <View style={styles.container}>
         <View style={styles.sliderWrapper}>
-          {tickMarks.map((tickMark) => (
+          {tickMarks.map((tick) => (
             <View
-              key={tickMark.value}
-              style={[styles.tickMark, { left: tickMark.left }]}
+              key={tick.value}
+              style={[styles.tickMark, { left: tick.left }]}
             >
-              <Text style={styles.tickLabel}> l </Text>
-              {!showTickMarks && (
-                <Text> {tickMark.value} </Text>
-              )}
+              {tickMark &&
+                <Text style={styles.tickLabel}> l </Text>
+              }
+              {tickLabel &&
+                <Text> {tick.value} </Text>
+              }
             </View>
           ))}
           <TouchableWithoutFeedback onPressIn={this.tapSliderHandler}>
@@ -401,7 +412,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {!showTickMarks && (
+            {textAnchors && (
               <Text style={styles.label}>{minValue}</Text>
             )}
           </View>
@@ -414,7 +425,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {!showTickMarks && (
+            {textAnchors && (
               <Text style={styles.label}>{maxValue}</Text>
             )}
           </View>

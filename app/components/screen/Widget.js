@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as R from 'ramda';
-import WidgetError from './WidgetError';
 
-import {
-  View,
-} from "react-native";
+import WidgetError from './WidgetError';
 import {
   AudioImageRecord,
   AudioRecord,
@@ -30,6 +27,8 @@ import {
   BehaviorTracker,
   TokenSummary,
   StabilityTracker,
+  MultiDropdown,
+  SingleDropdown,
 } from '../../widgets';
 import ABTrails from '../../widgets/ABTrails';
 import TimePicker from '../../widgets/TimeRange/TimePicker';
@@ -149,8 +148,8 @@ const Widget = ({
   }
   if (screen.inputType === 'timeRange') {
     return (
-        <TimeRange
-       config={screen.valueConstraints}
+      <TimeRange
+        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         isOptionalText = {screen.isOptionalText}
@@ -354,6 +353,31 @@ const Widget = ({
     return (
       <TokenSummary />
     )
+  }
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'multipleChoice'], screen) === true) {
+    const screenValue = (typeof answer === 'object') ? answer : undefined;
+    return (
+      <MultiDropdown
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={screenValue}
+        token={valueType && valueType.includes('token')}
+      />
+    );
+  }
+  if (screen.inputType === 'dropdownList'
+    && R.path(['valueConstraints', 'itemList'], screen)) {
+    return (
+      <SingleDropdown
+        config={screen.valueConstraints}
+        onChange={onChange}
+        onSelected={setSelected}
+        value={answer}
+        selected={isSelected}
+        token={valueType && valueType.includes("token")}
+      />
+    );
   }
 
   const [oneShot, setOneShot] = useState(false);
