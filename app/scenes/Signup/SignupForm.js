@@ -65,7 +65,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
           checkedColor={'white'}
           uncheckedColor={'white'}
         />
-        <Text style={{ color: 'white' }}>
+        <Text style={{ color: 'white' }} onPress={() => setTerms(!terms)}>
           I agree to the <Text style={{ color: 'white', textDecorationLine: 'underline' }} onPress={() => Linking.openURL('https://mindlogger.org/terms')} >Terms of Service</Text>
         </Text>
       </View>
@@ -74,7 +74,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
         {submitting ? (
           <ActivityIndicator color={primaryColor} />
         ) : (
-          <Text style={[styles.buttonText, { color: primaryColor }]}>
+          <Text style={[styles.buttonText, { color: terms ? primaryColor : 'grey', fontWeight: '400' }]}>
             {i18n.t('sign_up_form:sign_up')}
           </Text>
         )}
