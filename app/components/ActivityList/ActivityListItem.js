@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
   box: {
     position: 'relative',
     fontFamily: theme.fontFamily,
+    marginBottom: 20,
   },
   inner: {
     flexDirection: 'row',
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.fontFamily,
   },
   sectionHeading: {
-    marginTop: 20,
+    marginTop: 0,
     marginBottom: 0,
     marginLeft: 20,
     marginRight: 20,
@@ -67,11 +68,15 @@ const styles = StyleSheet.create({
 
 const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
   if (activity.isHeader === true) {
-    return (
-      <View style={styles.sectionHeading}>
-        <LittleHeading style={{ color: colors.grey }}>{activity.text}</LittleHeading>
-      </View>
-    );
+
+      return (
+        <View style={styles.sectionHeading}>
+          {!!activity.text &&
+            <LittleHeading style={{ color: colors.grey }}>{activity.text}</LittleHeading>
+          }
+        </View>
+      );
+
   }
   return (
     <View style={styles.box}>
