@@ -373,16 +373,15 @@ const ActivitySummary = (props) => {
         <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
 
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
-            <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
-          </TouchableOpacity>
-
           {
             reports.length > 1 &&
               <TouchableOpacity style={[styles.shareButton, { marginLeft: 10 }]} onPress={() => shareReport(true)}>
                 <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_all_reports")}</Text>
               </TouchableOpacity>
-            || <></>
+            ||
+              <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
+                <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
+              </TouchableOpacity>
           }
         </View>
       </View>
