@@ -97,8 +97,7 @@ const ActivitySummary = (props) => {
   const termsText = i18n.t("activity_summary:terms_text");
   const footerText = i18n.t("activity_summary:footer_text");
 
-  const [loadingOneReport, setLoadingOneReport] = useState(false);
-  const [loadingAllReports, setLoadingAllReports] = useState(false);
+  const [loadingReport, setLoadingReport] = useState(false);
 
   useEffect(() => {
     let chained = applet.combineReports ? getChainedActivities(applet.activities, activity) : [activity];
@@ -367,33 +366,18 @@ const ActivitySummary = (props) => {
       </style>
     `;
 
-    if (allReports) {
-      setLoadingAllReports(true);
-    } else {
-      setLoadingOneReport(true);
-    }
+    setLoadingReport(true);
 
     const file = await RNHTMLtoPDF.convert(options);
     FileViewer.open(file.filePath);
 
-    if (allReports) {
-      setLoadingAllReports(false);
-    } else {
-      setLoadingOneReport(false);
-    }
+    setLoadingReport(false);
   };
 
   return (
     <>
       <View style={styles.headerContainer}>
         <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
-
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
-            <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
-          </TouchableOpacity>
-          { loadingOneReport && <ActivityIndicator /> || <></> }
-        </View>
 
         {
           reports.length > 1 &&
@@ -402,7 +386,14 @@ const ActivitySummary = (props) => {
                 <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_all_reports")}</Text>
               </TouchableOpacity>
 
-              { loadingAllReports && <ActivityIndicator /> || <></> }
+              { loadingReport && <ActivityIndicator /> || <></> }
+            </View>
+          ||
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
+                <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
+              </TouchableOpacity>
+              { loadingReport && <ActivityIndicator /> || <></> }
             </View>
         }
       </View>
