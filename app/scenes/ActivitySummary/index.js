@@ -91,7 +91,7 @@ const DATA = [
 const ActivitySummary = (props) => {
   const [reports, setReports] = useState([]);
   const { responses, applet, activity, responseHistory } = props;
-  const { messages } = reports.find(report => report.activity.id == activity.id) || { messages: [] };
+  const { messages, scoreOverview } = reports.find(report => report.activity.id == activity.id) || { messages: [] };
 
   const termsText = i18n.t("activity_summary:terms_text");
   const footerText = i18n.t("activity_summary:footer_text");
@@ -115,11 +115,12 @@ const ActivitySummary = (props) => {
         }
       }
 
-      let { reportMessages } = evaluateCumulatives(lastResponse, chainedActivity);
+      let { reportMessages, scoreOverview } = evaluateCumulatives(lastResponse, chainedActivity);
 
       reports.push({
         activity: chainedActivity,
-        messages: reportMessages
+        messages: reportMessages,
+        scoreOverview
       });
     }
 
@@ -164,7 +165,7 @@ const ActivitySummary = (props) => {
     let splashScreen = false;
 
     for (let i = 0; i < reports.length; i++) {
-      const { activity, messages } = reports[i];
+      const { activity, messages, scoreOverview } = reports[i];
       const isSplashScreen = activity.splash && activity.splash.en;
 
       if (!allReports && currentActivity.id != activity.id) {
@@ -199,7 +200,7 @@ const ActivitySummary = (props) => {
 
       options.html += `
         <p class="text-body-2 mb-4">
-          ${markdownItInstance.render(activity?.scoreOverview)}
+          ${markdownItInstance.render(scoreOverview)}
         </p>
       `;
 
@@ -386,6 +387,7 @@ const ActivitySummary = (props) => {
         </View>
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
+        {scoreOverview && <MarkdownScreen>{scoreOverview}</MarkdownScreen>}
         {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>

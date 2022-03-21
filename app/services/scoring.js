@@ -1,5 +1,6 @@
 import { Parser } from 'expr-eval';
 import _ from "lodash";
+import { replaceItemVariableWithName } from "./helper";
 import moment from 'moment';
 
 export const getScoreFromResponse = (item, value) => {
@@ -329,9 +330,12 @@ export const evaluateCumulatives = (responses, activity) => {
 
       reportMessages.push({
         category,
-        message,
+        message: replaceItemVariableWithName(message, activity, responses),
         score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
-        compute,
+        compute: {
+          ...compute,
+          description: replaceItemVariableWithName(compute.description, activity, responses)
+        },
         jsExpression: jsExpression.substr(variableName.length),
         scoreValue: cumulativeScores[category],
         maxScoreValue: cumulativeMaxScores[category],
@@ -340,5 +344,9 @@ export const evaluateCumulatives = (responses, activity) => {
     }
   });
 
-  return { reportMessages, cumActivities }
+  return {
+    reportMessages,
+    cumActivities,
+    scoreOverview: replaceItemVariableWithName(activity.scoreOverview, activity, responses)
+  }
 }
