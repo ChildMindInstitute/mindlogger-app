@@ -64,7 +64,7 @@ const ActivityList = ({
       .filter(index => index >= 0)
 
     let appletActivities = getActivityAvailabilityFromDependency(
-      getDependency(newApplet.activities),
+      getDependency(newApplet.activities, cumulativeActivities),
       convertToIndexes(cumulativeActivities[applet.id].available),
       convertToIndexes(cumulativeActivities[applet.id].archieved)
     )
@@ -83,11 +83,6 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
-
-  const checkActivityIsShown = (name, messages) => {
-    if (!name || !messages) return true;
-    return _.findIndex(messages, obj => obj.nextActivity === name && (obj.hideActivity || obj.hideActivity === undefined)) === -1;
-  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
