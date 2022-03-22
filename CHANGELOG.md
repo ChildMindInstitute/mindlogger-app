@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.19.6] - 2022-03-21
 - Fix too much space under dates
+- Fix an issue with threshold achieved acitivty
+- Duration Picker
+- Hot fixes on production
 
 ## [0.19.5] - 2022-03-20
 - Built time duration widget
