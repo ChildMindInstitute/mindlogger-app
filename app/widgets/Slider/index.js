@@ -361,10 +361,10 @@ class Slider extends Component {
               key={tick.value}
               style={[styles.tickMark, { left: tick.left }]}
             >
-              {tickMark &&
+              {tickMark !== false &&
                 <Text style={styles.tickLabel}> l </Text>
               }
-              {tickLabel &&
+              {tickLabel !== false &&
                 <Text> {tick.value} </Text>
               }
             </View>
@@ -412,7 +412,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {textAnchors && (
+            {textAnchors !== false && (
               <Text style={styles.label}>{minValue}</Text>
             )}
           </View>
@@ -425,7 +425,7 @@ class Slider extends Component {
                 />
               </View>
             )}
-            {textAnchors && (
+            {textAnchors !== false && (
               <Text style={styles.label}>{maxValue}</Text>
             )}
           </View>

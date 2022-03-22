@@ -91,28 +91,37 @@ const findActivityFromName = (activities, name) => {
   return activities.findIndex(activity => activity.name.en == name)
 }
 
-export const getDependency = (activities) => {
-  const dependency = []
-
-  for (let i = 0; i < activities.length; i++) {
-    dependency.push([])
+export const getDependency = (appletActivities, cumulativeActivities) => {
+  const activities = [];
+  const notShownActs = [];
+  for (let index = 0; index < appletActivities.length; index++) {
+    const act = appletActivities[index];
+    const { messages } = act;
+    if (messages?.length && (messages[0].nextActivity || messages[1].nextActivity)) notShownActs.push(act);
   }
 
-  for (let i = 0; i < activities.length; i++) {
-    const activity = activities[i];
-    if (activity.messages) {
-      for (const message of activity.messages) {
-        if (message.nextActivity) {
-          const index = findActivityFromName(activities, message.nextActivity)
-          if (index >= 0) {
-            dependency[index].push(i);
-          }
-        }
-      }
+  for (let index = 0; index < appletActivities.length; index++) {
+    let isNextActivityShown = true;
+    const act = appletActivities[index];
+
+    for (let index = 0; index < notShownActs.length; index++) {
+      const notShownAct = notShownActs[index];
+      const alreadyAct = cumulativeActivities && cumulativeActivities[`${notShownAct.id}/nextActivity`];
+
+      isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
+        ? true
+        : checkActivityIsShown(act.name.en, notShownAct.messages)
     }
-  }
 
-  return dependency;
+    if (isNextActivityShown)
+      activities.push(act);
+  } 
+  return activities;
+}
+
+const checkActivityIsShown = (name, messages) => {
+  if (!name || !messages) return true;
+  return _.findIndex(messages, obj => obj.nextActivity === name && (obj.hideActivity || obj.hideActivity === undefined)) === -1;
 }
 
 export const getActivityAvailabilityFromDependency = (g, availableActivities, archievedActivities) => {
