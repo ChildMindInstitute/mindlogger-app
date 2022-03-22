@@ -92,13 +92,12 @@ const DATA = [
 const ActivitySummary = (props) => {
   const [reports, setReports] = useState([]);
   const { responses, applet, activity, responseHistory } = props;
-  const { messages } = reports.find(report => report.activity.id == activity.id) || { messages: [] };
+  const { messages, scoreOverview } = reports.find(report => report.activity.id == activity.id) || { messages: [] };
 
   const termsText = i18n.t("activity_summary:terms_text");
   const footerText = i18n.t("activity_summary:footer_text");
 
-  const [loadingOneReport, setLoadingOneReport] = useState(false);
-  const [loadingAllReports, setLoadingAllReports] = useState(false);
+  const [loadingReport, setLoadingReport] = useState(false);
 
   useEffect(() => {
     let chained = applet.combineReports ? getChainedActivities(applet.activities, activity) : [activity];
@@ -119,11 +118,12 @@ const ActivitySummary = (props) => {
         }
       }
 
-      let { reportMessages } = evaluateCumulatives(lastResponse, chainedActivity);
+      let { reportMessages, scoreOverview } = evaluateCumulatives(lastResponse, chainedActivity);
 
       reports.push({
         activity: chainedActivity,
-        messages: reportMessages
+        messages: reportMessages,
+        scoreOverview
       });
     }
 
@@ -168,7 +168,7 @@ const ActivitySummary = (props) => {
     let splashScreen = false;
 
     for (let i = 0; i < reports.length; i++) {
-      const { activity, messages } = reports[i];
+      const { activity, messages, scoreOverview } = reports[i];
       const isSplashScreen = activity.splash && activity.splash.en;
 
       if (!allReports && currentActivity.id != activity.id) {
@@ -203,7 +203,7 @@ const ActivitySummary = (props) => {
 
       options.html += `
         <p class="text-body-2 mb-4">
-          ${markdownItInstance.render(activity?.scoreOverview)}
+          ${markdownItInstance.render(scoreOverview)}
         </p>
       `;
 
@@ -366,33 +366,18 @@ const ActivitySummary = (props) => {
       </style>
     `;
 
-    if (allReports) {
-      setLoadingAllReports(true);
-    } else {
-      setLoadingOneReport(true);
-    }
+    setLoadingReport(true);
 
     const file = await RNHTMLtoPDF.convert(options);
     FileViewer.open(file.filePath);
 
-    if (allReports) {
-      setLoadingAllReports(false);
-    } else {
-      setLoadingOneReport(false);
-    }
+    setLoadingReport(false);
   };
 
   return (
     <>
       <View style={styles.headerContainer}>
         <BaseText style={{ fontSize: 25, fontWeight: "500", alignSelf: "center" }} textKey="activity_summary:summary" />
-
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
-            <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
-          </TouchableOpacity>
-          { loadingOneReport && <ActivityIndicator /> || <></> }
-        </View>
 
         {
           reports.length > 1 &&
@@ -401,12 +386,19 @@ const ActivitySummary = (props) => {
                 <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_all_reports")}</Text>
               </TouchableOpacity>
 
-              { loadingAllReports && <ActivityIndicator /> || <></> }
+              { loadingReport && <ActivityIndicator /> || <></> }
+            </View>
+          ||
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity style={[styles.shareButton, { marginLeft: 25 }]} onPress={() => shareReport(false)}>
+                <Text style={styles.shareButtonText}>{i18n.t("activity_summary:share_report")}</Text>
+              </TouchableOpacity>
+              { loadingReport && <ActivityIndicator /> || <></> }
             </View>
         }
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        {activity.scoreOverview && <MarkdownScreen>{activity.scoreOverview}</MarkdownScreen>}
+        {scoreOverview && <MarkdownScreen>{scoreOverview}</MarkdownScreen>}
         {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>

@@ -152,21 +152,21 @@ class Login extends Component {
               </Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <TouchableOpacity onPress={this.onAbout}>
               <Text style={styles.whiteText}>{`${i18n.t(
                 "login:what_is"
               )} ${title}${appLanguage === 'fr' ? ' ' : ''}?`}</Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <TouchableOpacity onPress={() => Actions.app_language()}>
-              <Text style={styles.whiteText}>
+              <Text style={{ ...styles.whiteText }}>
                 {i18n.t("language_screen:change_app_language")}
               </Text>
             </TouchableOpacity>
           </View>
-          <View>
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
             <Text style={styles.whiteText} onPress={() => Linking.openURL('https://mindlogger.org/terms')} >Terms of Service</Text>
           </View>
           <Image square style={styles.logo} source={logo} />
