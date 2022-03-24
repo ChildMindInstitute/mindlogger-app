@@ -310,6 +310,9 @@ export const replaceItemVariableWithName = (markdown, activity, answers) => {
             case 'ageSelector':
               markdown = markdown.replace(reg, answers[index].value);
               break;
+            case 'text':
+              markdown = markdown.replace(reg, answers[index].value || answers[index]);
+              break;
           }
 
         } else if (answers[index]) {
