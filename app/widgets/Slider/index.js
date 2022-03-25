@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   },
   labelContainer: {
     width: "100%",
-    paddingTop: 35,
     justifyContent: "space-between",
     flexDirection: "row",
   },
@@ -365,7 +364,7 @@ class Slider extends Component {
                 <Text style={styles.tickLabel}> l </Text>
               }
               {tickLabel !== false &&
-                <Text> {tick.value} </Text>
+                <Text style={{ marginTop: tickMark !== false ? 0 : 5 }}> {tick.value} </Text>
               }
             </View>
           ))}
@@ -402,7 +401,7 @@ class Slider extends Component {
           </TouchableWithoutFeedback>
         </View>
 
-        <View style={styles.labelContainer}>
+        <View style={[styles.labelContainer, { paddingTop: 5 + (tickLabel !== false ? 15 : 0) + (tickMark !== false ? 15 : 0) }]}>
           <View style={styles.labelBox}>
             {itemList[0]?.image && (
               <View style={styles.iconWrapper}>
