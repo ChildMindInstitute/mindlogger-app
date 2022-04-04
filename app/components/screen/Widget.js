@@ -20,6 +20,7 @@ import {
   TableInput,
   TextEntry,
   TimeRange,
+  TimeDuration,
   VisualStimulusResponse,
   RadioPrizes,
   StackedSlider,
