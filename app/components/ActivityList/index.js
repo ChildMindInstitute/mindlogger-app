@@ -153,6 +153,12 @@ const ActivityList = ({
     }
   }, [])
 
+  const getRecomendedActivity = (activityId) => {
+    const availableCumulativeActivities = cumulativeActivities[applet.id]?.available;
+    return availableCumulativeActivities?.length &&
+      availableCumulativeActivities[availableCumulativeActivities?.length - 1] === activityId?.split('/').pop()
+  }
+
   return (
     <View style={{ paddingBottom: 30 }}>
       {
@@ -165,6 +171,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
+          isRecommended={getRecomendedActivity(activity.id)}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))}
