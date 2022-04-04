@@ -64,7 +64,7 @@ const ActivityList = ({
       .filter(index => index >= 0)
 
     let appletActivities = getActivityAvailabilityFromDependency(
-      getDependency(newApplet.activities, cumulativeActivities),
+      getDependency(newApplet.activities),
       convertToIndexes(cumulativeActivities[applet.id].available),
       convertToIndexes(cumulativeActivities[applet.id].archieved)
     )

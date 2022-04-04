@@ -91,32 +91,29 @@ const findActivityFromName = (activities, name) => {
   return activities.findIndex(activity => activity.name.en == name)
 }
 
-export const getDependency = (appletActivities, cumulativeActivities) => {
-  const activities = [];
-  const notShownActs = [];
-  for (let index = 0; index < appletActivities.length; index++) {
-    const act = appletActivities[index];
-    const { messages } = act;
-    if (messages?.length && (messages[0].nextActivity || messages[1].nextActivity)) notShownActs.push(act);
+export const getDependency = (activities) => {
+  const dependency = []
+
+  for (let i = 0; i < activities.length; i++) {
+    dependency.push([])
   }
 
-  for (let index = 0; index < appletActivities.length; index++) {
-    let isNextActivityShown = true;
-    const act = appletActivities[index];
+  for (let i = 0; i < activities.length; i++) {
+    const activity = activities[i];
 
-    for (let index = 0; index < notShownActs.length; index++) {
-      const notShownAct = notShownActs[index];
-      const alreadyAct = cumulativeActivities && cumulativeActivities[`${notShownAct.id}/nextActivity`];
-
-      isNextActivityShown = alreadyAct && alreadyAct.includes(act.name.en)
-        ? true
-        : checkActivityIsShown(act.name.en, notShownAct.messages)
+    if (activity.messages) {
+      for (const message of activity.messages) {
+        if (message.nextActivity) {
+          const index = findActivityFromName(activities, message.nextActivity)
+          if (index >= 0) {
+            dependency[index].push(i);
+          }
+        }
+      }
     }
+  }
 
-    if (isNextActivityShown)
-      activities.push(act);
-  } 
-  return activities;
+  return dependency;
 }
 
 const checkActivityIsShown = (name, messages) => {
