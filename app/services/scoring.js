@@ -303,7 +303,7 @@ export const evaluateCumulatives = (responses, activity) => {
   }, {});
 
   const reportMessages = [];
-  let cumActivities = [];
+  let cumActivities = [], nonHiddenCumActivities = [];
 
   activity.messages.forEach(async (msg, i) => {
     const { jsExpression, message, outputType, nextActivity, hideActivity } = msg;
@@ -324,7 +324,12 @@ export const evaluateCumulatives = (responses, activity) => {
     };
 
     if (expr.evaluate(variableScores)) {
-      if (nextActivity && (hideActivity || hideActivity === undefined)) cumActivities.push(nextActivity);
+      if (nextActivity) {
+        if (hideActivity || hideActivity === undefined)
+          cumActivities.push(nextActivity);
+        else
+          nonHiddenCumActivities.push(nextActivity);
+      }
 
       const compute = activity.compute && activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
 
@@ -347,6 +352,7 @@ export const evaluateCumulatives = (responses, activity) => {
   return {
     reportMessages,
     cumActivities,
-    scoreOverview: replaceItemVariableWithName(activity.scoreOverview, activity, responses)
+    scoreOverview: replaceItemVariableWithName(activity.scoreOverview, activity, responses),
+    nonHiddenCumActivities
   }
 }
