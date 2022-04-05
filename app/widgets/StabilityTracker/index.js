@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, RecyclerViewBackedScrollViewBase } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
-import { gravity } from "react-native-sensors";
+import { orientation } from "react-native-sensors";
 
 import { useAnimationFrame } from '../../services/hooks';
 import { showToast } from '../../state/app/app.thunks';
@@ -104,7 +104,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   const trialNumber = useRef(0);
   const responses = useRef([]);
   const controlBar = useRef(true);
-  const gravRef = useRef(), baseGrav = useRef(), prevGrav = useRef();
+  const oriRef = useRef(), baseOri = useRef();
 
   const lastCrashTime = useRef(0);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
@@ -127,32 +127,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   useEffect(() => {
     if (configObj.userInputType == 'gyroscope') {
       if (moving) {
-        gravRef.current = gravity.subscribe(({ x, y, z, timestamp }) => {
-          let xRot = Math.asin(z / Math.sqrt(y*y + z*z + x*x));
-          let yRot = -Math.asin(x / Math.sqrt(x*x + z*z));
-
-          if (y < 0) {
-            xRot = Math.PI - xRot;
-          }
-
-          if (!baseGrav.current) {
-            baseGrav.current = [xRot, yRot];
+        oriRef.current = orientation.subscribe(({ pitch, yaw, roll, timestamp }) => {
+          if (!baseOri.current) {
+            baseOri.current = [roll, pitch];
           } else {
-            if (Math.abs(prevGrav.current[0] - xRot) > Math.PI) {
-              if (prevGrav.current[0] > xRot) {
-                xRot += 2 * Math.PI;
-              } else {
-                xRot -= 2 * Math.PI;
-              }
-            }
-
-            const x = center + (yRot - baseGrav.current[1]) / configObj.maxRad * panelRadius;
-            const y = center - (xRot - baseGrav.current[0]) / configObj.maxRad * panelRadius;
+            const x = center + (roll - baseOri.current[0]) / configObj.maxRad * panelRadius;
+            const y = center - (pitch - baseOri.current[1]) / configObj.maxRad * panelRadius;
 
             userPos.current = [x, y];
           }
-
-          prevGrav.current = [xRot, yRot];
         }, (e) => {
           showToast({
             text: e,
@@ -163,15 +146,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
           configObj.userInputType = 'touch'
         })
       } else {
-        if (gravRef.current) {
-          gravRef.current.unsubscribe();
+        if (oriRef.current) {
+          oriRef.current.unsubscribe();
         }
       }
     }
 
     return () => {
-      if (gravRef.current) {
-        gravRef.current.unsubscribe();
+      if (oriRef.current) {
+        oriRef.current.unsubscribe();
       }
     }
   }, [moving])
