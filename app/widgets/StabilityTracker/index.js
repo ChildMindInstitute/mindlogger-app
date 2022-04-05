@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, RecyclerViewBackedScrollViewBase } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
-import { magnetometer } from "react-native-sensors";
+import { orientation } from "react-native-sensors";
 
 import { useAnimationFrame } from '../../services/hooks';
 import { showToast } from '../../state/app/app.thunks';
@@ -104,7 +104,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   const trialNumber = useRef(0);
   const responses = useRef([]);
   const controlBar = useRef(true);
-  const magnRef = useRef(), baseAcc = useRef();
+  const oriRef = useRef(), baseOri = useRef();
 
   const lastCrashTime = useRef(0);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
@@ -127,19 +127,12 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   useEffect(() => {
     if (configObj.userInputType == 'gyroscope') {
       if (moving) {
-        magnRef.current = magnetometer.subscribe(({ x, y, z }) => {
-          let yRot = Math.asin(x / Math.sqrt(x*x + z*z));
-          let xRot = Math.asin(y / Math.sqrt(y*y + z*z + x*x));
-
-          if (y < 0) {
-            yRot += Math.PI;
-          }
-
-          if (!baseAcc.current) {
-            baseAcc.current = [xRot, yRot];
+        oriRef.current = orientation.subscribe(({ pitch, yaw, roll, timestamp }) => {
+          if (!baseOri.current) {
+            baseOri.current = [roll, pitch];
           } else {
-            const x = center + (yRot - baseAcc.current[1]) / configObj.maxRad * panelRadius;
-            const y = center - (xRot - baseAcc.current[0]) / configObj.maxRad * panelRadius;
+            const x = center + (roll - baseOri.current[0]) / configObj.maxRad * panelRadius;
+            const y = center - (pitch - baseOri.current[1]) / configObj.maxRad * panelRadius;
 
             userPos.current = [x, y];
           }
@@ -153,15 +146,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
           configObj.userInputType = 'touch'
         })
       } else {
-        if (magnRef.current) {
-          magnRef.current.unsubscribe();
+        if (oriRef.current) {
+          oriRef.current.unsubscribe();
         }
       }
     }
 
     return () => {
-      if (magnRef.current) {
-        magnRef.current.unsubscribe();
+      if (oriRef.current) {
+        oriRef.current.unsubscribe();
       }
     }
   }, [moving])
