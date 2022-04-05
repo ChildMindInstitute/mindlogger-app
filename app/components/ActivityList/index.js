@@ -27,7 +27,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { getActivityAvailabilityFromDependency, getDependency } from '../../services/helper';
+import { getAvailableActivities } from '../../services/helper';
 import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
@@ -63,11 +63,11 @@ const ActivityList = ({
       })
       .filter(index => index >= 0)
 
-    let appletActivities = getActivityAvailabilityFromDependency(
-      getDependency(newApplet.activities),
+    let appletActivities = getAvailableActivities(
+      newApplet.activities,
       convertToIndexes(cumulativeActivities[applet.id].available),
-      convertToIndexes(cumulativeActivities[applet.id].archieved)
-    )
+      convertToIndexes(cumulativeActivities[applet.id].archieved),
+    );
 
     appletActivities = appletActivities
       .map(index => newApplet.activities[index])
