@@ -539,7 +539,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     const { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
     const cumulativeActivities = state.activities.cumulativeActivities;
 
-    if (cumActivities.length || nonHiddenCumActivities.length) {
+    if (cumActivities.length || nonHiddenCumActivities && nonHiddenCumActivities.length) {
       let archieved = [...cumulativeActivities[applet.id].archieved];
       let available = [...cumulativeActivities[applet.id].available];
       const activityId = activity.id.split('/').pop();
