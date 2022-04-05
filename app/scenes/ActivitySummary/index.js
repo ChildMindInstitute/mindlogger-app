@@ -118,13 +118,23 @@ const ActivitySummary = (props) => {
         }
       }
 
-      let { reportMessages, scoreOverview } = evaluateCumulatives(lastResponse, chainedActivity);
+      if (lastResponse.length) {
+        let { reportMessages, scoreOverview } = evaluateCumulatives(lastResponse, chainedActivity);
 
-      reports.push({
-        activity: chainedActivity,
-        messages: reportMessages,
-        scoreOverview
-      });
+        reports.push({
+          activity: chainedActivity,
+          messages: reportMessages,
+          scoreOverview,
+          active: true
+        });
+      } else {
+        reports.push({
+          activity: chainedActivity,
+          messages: [],
+          scoreOverview: '',
+          active: false
+        })
+      }
     }
 
     setReports(reports);
@@ -168,10 +178,14 @@ const ActivitySummary = (props) => {
     let splashScreen = false;
 
     for (let i = 0; i < reports.length; i++) {
-      const { activity, messages, scoreOverview } = reports[i];
+      const { activity, messages, scoreOverview, active } = reports[i];
       const isSplashScreen = activity.splash && activity.splash.en;
 
       if (!allReports && currentActivity.id != activity.id) {
+        continue;
+      }
+
+      if (!active) {
         continue;
       }
 
