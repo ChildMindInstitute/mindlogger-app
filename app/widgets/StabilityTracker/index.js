@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, RecyclerViewBackedScrollViewBase } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
 import { orientation } from "react-native-sensors";
@@ -132,7 +132,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
             baseOri.current = [roll, pitch];
           } else {
             const x = center + (roll - baseOri.current[0]) / configObj.maxRad * panelRadius;
-            const y = center - (pitch - baseOri.current[1]) / configObj.maxRad * panelRadius;
+
+            const y = center + (Platform.OS == 'ios' ? 1 : -1) * (pitch - baseOri.current[1]) / configObj.maxRad * panelRadius;
 
             userPos.current = [x, y];
           }
