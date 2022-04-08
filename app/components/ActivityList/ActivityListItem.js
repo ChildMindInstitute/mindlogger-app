@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
   box: {
     position: 'relative',
     fontFamily: theme.fontFamily,
-    marginBottom: 20,
   },
   inner: {
     flexDirection: 'row',
