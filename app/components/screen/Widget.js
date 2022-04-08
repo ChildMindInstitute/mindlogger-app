@@ -204,6 +204,7 @@ const Widget = ({
   if (screen.inputType === 'text') {
     return (
       <TextEntry
+        config={screen.valueConstraints}
         onChange={onChange}
         value={answer}
         valueType={screen.valueConstraints.valueType}

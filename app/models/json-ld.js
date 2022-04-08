@@ -105,6 +105,7 @@ const SHOW_TICK_MARKS = "reprolib:terms/showTickMarks";
 const IS_OPTIONAL_TEXT = "reprolib:terms/isOptionalText";
 const IS_OPTIONAL_TEXT_REQUIRED =  "reprolib:terms/isOptionalTextRequired";
 const IS_REVIEWER_ACTIVITY = "reprolib:terms/isReviewerActivity";
+const MAX_LENGTH = "reprolib:terms/maxLength";
 const RESPONSE_ALERT_MESSAGE = "schema:responseAlertMessage";
 const MIN_ALERT_VALUE = "schema:minAlertValue";
 const MAX_ALERT_VALUE = "schema:maxAlertValue";
@@ -293,6 +294,13 @@ export const flattenValueConstraints = (vcObj) =>
       }
     }
 
+    if (key == MAX_LENGTH) {
+      return {
+        ...accumulator,
+        maxLength: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
     if (key === TOP_NAVIGATION_OPTION) {
       return {
         ...accumulator,
@@ -320,21 +328,21 @@ export const flattenValueConstraints = (vcObj) =>
         textAnchors: R.path([key, 0, "@value"], vcObj),
       }
     }
-    
+
     if (key === TICK_LABEL) {
       return {
         ...accumulator,
         tickLabel: R.path([key, 0, "@value"], vcObj),
       }
     }
-    
+
     if (key === TICK_MARK) {
       return {
         ...accumulator,
         tickMark: R.path([key, 0, "@value"], vcObj),
       }
     }
-    
+
     if (key === RESPONSE_ALERT_MESSAGE) {
       return {
         ...accumulator,

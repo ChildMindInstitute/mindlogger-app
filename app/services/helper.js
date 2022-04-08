@@ -184,7 +184,7 @@ export const getAvailableActivities = (appletActivities, availableActivities, ar
     if (activity.messages) {
       for (const message of activity.messages) {
         if (message.nextActivity && (message.hideActivity || message.hideActivity === undefined)) {
-          const index = findActivityFromName(message.nextActivity);
+          const index = findActivityFromName(appletActivities, message.nextActivity);
           if (index >= 0) {
             hidden[index] = true;
           }
