@@ -1,3 +1,4 @@
+import _ from "lodash";
 import * as R from "ramda";
 import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
@@ -387,7 +388,7 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
     dispatch(shiftUploadQueue());
   }, uploaderId, getUploaderId).finally(() => {
     if (getUploaderId() != uploaderId) {
-      return ;
+      return;
     }
 
     try {
@@ -535,29 +536,40 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       return dispatch(downloadResponses())
     })
   } else {
-    let { cumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
+    const { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
     const cumulativeActivities = state.activities.cumulativeActivities;
 
-    if (cumActivities.length) {
-      const archieved = cumulativeActivities[applet.id].archieved;
+    if (cumActivities.length || nonHiddenCumActivities?.length) {
+      let archieved = [...cumulativeActivities[applet.id].archieved];
+      let available = [...cumulativeActivities[applet.id].available];
       const activityId = activity.id.split('/').pop();
+
+      if (nonHiddenCumActivities?.length) {
+        const ids = nonHiddenCumActivities.map(name => {
+          const activity = applet.activities.find(activity => activity.name.en == name)
+          return activity && activity.id.split('/').pop()
+        }).filter(id => id)
+
+        available = available.concat(_.intersection(archieved, ids));
+        archieved = _.difference(archieved, ids);
+      }
 
       if (archieved.indexOf(activityId) < 0) {
         archieved.push(activityId);
       }
 
+      available = available.concat(
+        cumActivities.map(name => {
+          const activity = applet.activities.find(activity => activity.name.en == name)
+          return activity && activity.id.split('/').pop()
+        }).filter(id => id)
+      ).filter(id => id != activity.id.split('/').pop())
+
       dispatch(
         setCumulativeActivities({
           ...cumulativeActivities,
           [applet.id]: {
-            available: cumulativeActivities[applet.id].available
-              .concat(
-                cumActivities.map(name => {
-                  const activity = applet.activities.find(activity => activity.name.en == name)
-                  return activity && activity.id.split('/').pop()
-                }).filter(id => id)
-              )
-              .filter(id => id != activityId),
+            available,
             archieved
           }
         })

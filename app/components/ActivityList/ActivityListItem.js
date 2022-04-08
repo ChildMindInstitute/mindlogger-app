@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Icon } from 'native-base';
 import TouchBox from '../core/TouchBox';
 import { SubHeading, NotificationDot, BodyText, LittleHeading } from '../core';
@@ -10,10 +10,13 @@ import { colors } from '../../theme';
 import theme from '../../themes/base-theme';
 import { CachedImage } from 'react-native-img-cache';
 
+import RecomendedBadge from '../../../img/recomended_badge.png'
+
 const styles = StyleSheet.create({
   box: {
     position: 'relative',
     fontFamily: theme.fontFamily,
+    marginBottom: 20,
   },
   inner: {
     flexDirection: 'row',
@@ -26,7 +29,7 @@ const styles = StyleSheet.create({
     fontFamily: theme.fontFamily,
   },
   sectionHeading: {
-    marginTop: 20,
+    marginTop: 0,
     marginBottom: 0,
     marginLeft: 20,
     marginRight: 20,
@@ -59,19 +62,29 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     borderRadius: 32
   },
+  recomendedImage: {
+    flex: 0,
+    width: 100,
+    height: 40,
+    resizeMode: 'stretch'
+  },
   icon: {
     color: '#AAA',
     fontSize: 18,
   },
 });
 
-const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
+const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended }) => {
   if (activity.isHeader === true) {
+
     return (
       <View style={styles.sectionHeading}>
-        <LittleHeading style={{ color: colors.grey }}>{activity.text}</LittleHeading>
+        {!!activity.text &&
+          <LittleHeading style={{ color: colors.grey }}>{activity.text}</LittleHeading>
+        }
       </View>
     );
+
   }
   return (
     <View style={styles.box}>
@@ -115,6 +128,9 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress }) => {
               Details
             </Hyperlink> */}
           </View>
+          {isRecommended ?
+            <Image style={styles.recomendedImage} source={RecomendedBadge} /> : null
+          }
           <View style={styles.right}>
             <Icon type="FontAwesome" name="chevron-right" style={styles.icon} />
           </View>

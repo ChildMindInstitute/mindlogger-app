@@ -57,7 +57,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
         autoCapitalize="none"
         validate={[required, shortPassword, blankPassword]}
       />
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
         <CheckBox
           checked={terms}
           onPress={() => setTerms(!terms)}
@@ -65,8 +65,9 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
           uncheckedIcon="square-o"
           checkedColor={'white'}
           uncheckedColor={'white'}
+          containerStyle={{ marginLeft: -5, marginRight: 0 }}
         />
-        <Text style={{ color: 'white' }}>
+        <Text style={{ color: 'white' }} onPress={() => setTerms(!terms)}>
           I agree to the <Text style={{ color: 'white', textDecorationLine: 'underline' }} onPress={() => Linking.openURL('https://mindlogger.org/terms')} >Terms of Service</Text>
         </Text>
       </View>
@@ -75,7 +76,7 @@ const SignUpForm = ({ handleSubmit, submitting, primaryColor }) => {
         {submitting ? (
           <ActivityIndicator color={primaryColor} />
         ) : (
-          <Text style={[styles.buttonText, { color: primaryColor }]}>
+          <Text style={[styles.buttonText, { color: terms ? primaryColor : 'grey', fontWeight: '400' }]}>
             {i18n.t('sign_up_form:sign_up')}
           </Text>
         )}

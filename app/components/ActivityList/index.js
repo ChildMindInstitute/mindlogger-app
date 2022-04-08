@@ -27,7 +27,7 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { getActivityAvailabilityFromDependency, getDependency } from '../../services/helper';
+import { getAvailableActivities } from '../../services/helper';
 import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
@@ -63,11 +63,11 @@ const ActivityList = ({
       })
       .filter(index => index >= 0)
 
-    let appletActivities = getActivityAvailabilityFromDependency(
-      getDependency(newApplet.activities),
+    let appletActivities = getAvailableActivities(
+      newApplet.activities,
       convertToIndexes(cumulativeActivities[applet.id].available),
-      convertToIndexes(cumulativeActivities[applet.id].archieved)
-    )
+      convertToIndexes(cumulativeActivities[applet.id].archieved),
+    );
 
     appletActivities = appletActivities
       .map(index => newApplet.activities[index])
@@ -83,11 +83,6 @@ const ActivityList = ({
       setPrizeActivity(pzActs[0]);
     }
   };
-
-  const checkActivityIsShown = (name, messages) => {
-    if (!name || !messages) return true;
-    return _.findIndex(messages, obj => obj.nextActivity === name && (obj.hideActivity || obj.hideActivity === undefined)) === -1;
-  }
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
@@ -158,6 +153,12 @@ const ActivityList = ({
     }
   }, [])
 
+  const getRecomendedActivity = (activityId) => {
+    const availableCumulativeActivities = cumulativeActivities[applet.id]?.available;
+    return availableCumulativeActivities?.length &&
+      availableCumulativeActivities[availableCumulativeActivities?.length - 1] === activityId?.split('/').pop()
+  }
+
   return (
     <View style={{ paddingBottom: 30 }}>
       {
@@ -170,6 +171,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
+          isRecommended={getRecomendedActivity(activity.id)}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))}

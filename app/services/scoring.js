@@ -1,5 +1,6 @@
 import { Parser } from 'expr-eval';
 import _ from "lodash";
+import { replaceItemVariableWithName } from "./helper";
 import moment from 'moment';
 
 export const getScoreFromResponse = (item, value) => {
@@ -302,7 +303,7 @@ export const evaluateCumulatives = (responses, activity) => {
   }, {});
 
   const reportMessages = [];
-  let cumActivities = [];
+  let cumActivities = [], nonHiddenCumActivities = [];
 
   activity.messages.forEach(async (msg, i) => {
     const { jsExpression, message, outputType, nextActivity, hideActivity } = msg;
@@ -323,15 +324,23 @@ export const evaluateCumulatives = (responses, activity) => {
     };
 
     if (expr.evaluate(variableScores)) {
-      if (nextActivity && (hideActivity || hideActivity === undefined)) cumActivities.push(nextActivity);
+      if (nextActivity) {
+        if (hideActivity || hideActivity === undefined)
+          cumActivities.push(nextActivity);
+        else
+          nonHiddenCumActivities.push(nextActivity);
+      }
 
       const compute = activity.compute && activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
 
       reportMessages.push({
         category,
-        message,
+        message: replaceItemVariableWithName(message, activity, responses),
         score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
-        compute,
+        compute: {
+          ...compute,
+          description: replaceItemVariableWithName(compute.description, activity, responses)
+        },
         jsExpression: jsExpression.substr(variableName.length),
         scoreValue: cumulativeScores[category],
         maxScoreValue: cumulativeMaxScores[category],
@@ -340,5 +349,10 @@ export const evaluateCumulatives = (responses, activity) => {
     }
   });
 
-  return { reportMessages, cumActivities }
+  return {
+    reportMessages,
+    cumActivities,
+    scoreOverview: replaceItemVariableWithName(activity.scoreOverview, activity, responses),
+    nonHiddenCumActivities
+  }
 }

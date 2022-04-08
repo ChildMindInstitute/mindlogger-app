@@ -4,15 +4,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.19.4] - 2022-03-15
+## [0.19.14] - 2022-04-07
 - Added password validation in signup form
+
+## [0.19.13] - 2022-04-5
+- Fix app carshing issue
+
+## [0.19.11] - 2022-04-4
+- Fix an issue with variable name
+- Fix an issue with Sthare Report button
+- Fix Badge is not shown on completed activity when threshod was met
+
+## [0.19.10] - 2022-04-3
+- Fix issues on duration widget
+
+## [0.19.7] - 2022-03-24
+- Fix an issue with slider item
+
+## [0.19.6] - 2022-03-21
+- Fix too much space under dates
+- Fix an issue with threshold achieved acitivty
+- Duration Picker
+- Hot fixes on production
+
+## [0.19.5] - 2022-03-20
+- Built time duration widget
+
+## [0.19.4] - 2022-03-17
+- Fix an issue with back button missing on the one-page accessment
+- Fix an issue with Terms of Service Label
 
 ## [0.19.3] - 2022-03-16
 - Fix speed acceleration issue
 - Dropdown List Item
 - Dropdown auto-advance
 - Update slider tick marks and labels
-`
+
 ## [0.19.2] - 2022-03-15
 - Add terms of service
 - Fix optimization issue

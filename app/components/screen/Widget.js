@@ -20,6 +20,7 @@ import {
   TableInput,
   TextEntry,
   TimeRange,
+  TimeDuration,
   VisualStimulusResponse,
   RadioPrizes,
   StackedSlider,
@@ -156,6 +157,17 @@ const Widget = ({
         isOptionalTextRequired = {screen.valueConstraints.isOptionalTextRequired || false}
       />
     );
+  }
+  if (screen.inputType === 'duration') {
+    return (
+      <TimeDuration
+        config={screen.valueConstraints}
+        onChange={onChange}
+        value={answer}
+        isOptionalText={screen.isOptionalText}
+        isOptionalTextRequired={screen.valueConstraints.isOptionalTextRequired || false}
+      />
+    )
   }
   if (screen.inputType === 'date') {
     return (
