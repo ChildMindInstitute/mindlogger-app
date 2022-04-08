@@ -51,37 +51,60 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
 };
 
 export const postFile = async ({ authToken, file, appletId, activityId }) => {
-  const url = `${apiHost()}/response/${appletId}/${activityId}`; // `https://api-staging.mindlogger.org/api/v1/response/60813d6629edf40497e54d11/60813d6429edf40497e54d0a`;
+  const url = `${apiHost()}/response/${appletId}/${activityId}`;
 
   const headers = {
     "Girder-Token": authToken,
   };
-
-  const form = new FormData();
-
-  form.append(file.key, {
-    name: file.filename,
-    type: file.type,
-    uri: Platform.OS === 'ios' ?
-         file.uri.replace('file://', '')
-         : file.uri,
-  });
-
-  form.append('metadata', JSON.stringify({
+  const metadata = JSON.stringify({
     "applet": { "schemaVersion": "1.0" },
     "subject": { "@id": "asasa", "timezone": "US" },
     "responses": {
       [file.key]: { "size": file.size, "type": file.type }
     }
-  }))
+  });
 
-  return fetch(url, {
-    method: 'post',
-    headers,
-    body: form
-  })
-    .then(async res => {
+  if (file.uri.includes('content://')) {
+    const form = new FormData();
+
+    form.append(file.key, {
+      name: file.filename,
+      type: file.type,
+      uri: Platform.OS === 'ios' ?
+           file.uri.replace('file://', '')
+           : file.uri,
+    });
+
+    form.append('metadata', metadata);
+    return fetch(url, {
+      method: 'post',
+      headers,
+      body: form
+    }).then(async res => {
       return res.status === 200 ? await res.json() : Promise.reject(res);
+    }).catch(err => {
+      Promise.reject(err);
+      console.log(err)
+    })
+  }
+
+  return RNFS.uploadFiles({
+    toUrl: url,
+    files: [
+      {
+        name: file.key,
+        filename: file.filename,
+        filepath: Platform.OS === 'ios' ?
+          file.uri.replace('file://', '')
+          : file.uri,
+        filetype: file.type
+      }
+    ],
+    method: 'POST',
+    headers,
+    fields: { metadata },
+  }).promise.then(async res => {
+      return res.statusCode === 200 ? res.body : Promise.reject(res);
     }).catch(err => {
       Promise.reject(err);
       console.log(err)
