@@ -4,7 +4,7 @@ import { View, TextInput, Platform, KeyboardAvoidingView } from 'react-native';
 import { Item } from 'native-base';
 import i18n from 'i18next';
 
-export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
+export const TextEntry = ({ value = '', onChange, valueType, config, ...props }) => {
   const [text, setText] = useState(value);
   const [height, setHeight] = useState(36);
   const [focused, setFocused] = useState(false);
@@ -56,6 +56,7 @@ export const TextEntry = ({ value = '', onChange, valueType, ...props }) => {
             onChangeText={onChangeText}
             style={[newStyle]}
             keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
+            maxLength={Number(config.maxLength)}
             value={text}
             autoCorrect={false}
             multiline={false}
@@ -74,6 +75,7 @@ TextEntry.defaultProps = {
 };
 
 TextEntry.propTypes = {
+  config: PropTypes.object,
   value: PropTypes.string,
   valueType: PropTypes.string,
   onChange: PropTypes.func.isRequired,
