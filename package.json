@@ -62,7 +62,7 @@
     "markdown-it-ins": "^3.0.1",
     "markdown-it-mark": "^3.0.1",
     "mimoza": "^1.0.0",
-    "moment": "^2.29.1",
+    "moment": "^2.29.2",
     "native-base": "2.13.8",
     "node-pre-gyp": "^0.10.0",
     "npm": "^7.20.5",
