@@ -538,6 +538,11 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
     let { cumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
     const cumulativeActivities = state.activities.cumulativeActivities;
 
+    cumActivities = cumActivities.map(name => {
+      const activity = applet.activities.find(activity => activity.name.en == name)
+      return activity && activity.id.split('/').pop()
+    }).filter(id => id)
+
     if (cumActivities.length) {
       const archieved = cumulativeActivities[applet.id].archieved;
       const activityId = activity.id.split('/').pop();
@@ -552,10 +557,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
           [applet.id]: {
             available: cumulativeActivities[applet.id].available
               .concat(
-                cumActivities.map(name => {
-                  const activity = applet.activities.find(activity => activity.name.en == name)
-                  return activity && activity.id.split('/').pop()
-                }).filter(id => id)
+                cumActivities
               )
               .filter(id => id != activityId),
             archieved
