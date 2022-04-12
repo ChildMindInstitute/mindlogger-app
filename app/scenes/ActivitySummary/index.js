@@ -332,6 +332,21 @@ const ActivitySummary = (props) => {
           color: #ff0000;
         }
 
+        table tr {
+          background-color: #fff;
+          border-top: 1px solid #c6cbd1;
+        }
+
+        table tr:nth-child(2n) {
+          background-color: #f6f8fa;
+        }
+
+        table th, td {
+          padding: 6px 13px;
+          border: 1px solid #dfe2e5;
+          font-size: 18pt;
+        }
+
         .score-area {
           position: relative;
           display: flex;
