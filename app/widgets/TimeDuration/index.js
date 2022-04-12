@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Picker, ScrollView, KeyboardAvoidingView, Text } from 'react-native';
+import { View, Picker, Dimensions, KeyboardAvoidingView, Text } from 'react-native';
 // import RNPickerSelect from 'react-native-picker-select';
 import { OptionalText } from '../OptionalText';
 
 const defaultTime = { hour: 0, minute: 0 };
+const { width } = Dimensions.get('window');
 
 export class TimeDuration extends React.Component {
 
@@ -50,7 +51,7 @@ export class TimeDuration extends React.Component {
     }
 
     return (
-      <Picker selectedValue={finalAnswer[type] || ''} onValueChange={(v) => onChangeValue(type, v)}>
+      <Picker selectedValue={finalAnswer[type] || ''} onValueChange={(v) => onChangeValue(type, v)} style={width < 800 ? { width: 102 } : {}}>
         <Picker.Item label={this.capitalizeFirstLetter(type)} value={items.value} />
         {items.map((item, index) => (
           <Picker.Item label={item.label + ''} value={item.value} key={index} />
@@ -74,7 +75,7 @@ export class TimeDuration extends React.Component {
 
     return (
       <KeyboardAvoidingView>
-        <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1 }}>
+        <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1, marginLeft: width < 800 ? -10 : 0, marginRight: width < 800 ? -10 : 0 }}>
           {valueTypes && Object.keys(valueTypes).map(type =>
             <>
               {valueTypes[type] !== "" &&
