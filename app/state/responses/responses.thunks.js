@@ -536,8 +536,13 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       return dispatch(downloadResponses())
     })
   } else {
-    const { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
+    let { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
     const cumulativeActivities = state.activities.cumulativeActivities;
+
+    cumActivities = cumActivities.map(name => {
+      const activity = applet.activities.find(activity => activity.name.en == name)
+      return activity && activity.id.split('/').pop()
+    }).filter(id => id)
 
     if (cumActivities.length || nonHiddenCumActivities?.length) {
       let archieved = [...cumulativeActivities[applet.id].archieved];
@@ -559,10 +564,7 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       }
 
       available = available.concat(
-        cumActivities.map(name => {
-          const activity = applet.activities.find(activity => activity.name.en == name)
-          return activity && activity.id.split('/').pop()
-        }).filter(id => id)
+        cumActivities
       ).filter(id => id != activity.id.split('/').pop())
 
       dispatch(
