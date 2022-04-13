@@ -18,15 +18,29 @@ class ActivityScreens extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      activeScreens: [props.currentScreen],
+      activeScreens: this.preLoadFlanker([props.currentScreen]),
     };
+  }
+
+  preLoadFlanker(activeScreens) {
+    const activity = this.props.activity;
+
+    for (let i = 0; i < activity.items.length; i++) {
+      if (activity.items[i].inputType == 'visual-stimulus-response' && !activeScreens.includes(i)) {
+        activeScreens.unshift(i);
+      }
+    }
+
+    return activeScreens;
   }
 
   componentDidUpdate(oldProps) {
     if (oldProps.currentScreen !== this.props.currentScreen) {
       // eslint-disable-next-line
+      const activeScreens = [oldProps.currentScreen, this.props.currentScreen];
+
       this.setState({
-        activeScreens: [oldProps.currentScreen, this.props.currentScreen],
+        activeScreens: this.preLoadFlanker(activeScreens),
         direction: calcPosition(oldProps.currentScreen, this.props.currentScreen),
       });
     }
@@ -43,7 +57,7 @@ class ActivityScreens extends React.PureComponent {
       hasSplashScreen,
     } = this.props;
     const { activeScreens, direction } = this.state;
-    
+
     return (
       <View onTouchStart={this.props.onAnyTouch} style={{ flex: 1, width: '100%', position: 'relative' }}>
         {activeScreens.map(index => (
