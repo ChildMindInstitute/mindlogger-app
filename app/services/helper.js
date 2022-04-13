@@ -194,7 +194,7 @@ export const getAvailableActivities = (appletActivities, availableActivities, ar
   }
 
   for (let i = 0; i < hidden.length; i++) {
-    if (!hidden[i] && !activities.includes(i)) {
+    if (!hidden[i] && !activities.includes(i) && !archievedActivities.includes(i)) {
       activities.push(i);
     }
   }
