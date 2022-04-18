@@ -283,6 +283,24 @@ export const getTokenUpdateInfo = (
   }
 };
 
+export const mergeResponses = (old, latest) => {
+  if (old.dataSources) {
+    Object.keys(old.dataSources).forEach(key => {
+      if (!latest.dataSources[key]) {
+        latest.dataSources[key] = old.dataSources[key];
+      }
+    })
+  }
+
+  if (old.responses) {
+    Object.keys(old.responses).forEach(item => {
+      if (!latest.responses[item]) {
+        latest.responses[item] = old.responses[item];
+      }
+    })
+  }
+}
+
 export const decryptAppletResponses = (applet, responses) => {
   if (responses.dataSources && applet.encryption) {
     Object.keys(responses.dataSources).forEach((key) => {
