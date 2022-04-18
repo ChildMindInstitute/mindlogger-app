@@ -61,7 +61,7 @@ const ActivityList = ({
         const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
         return index;
       })
-      .filter(index => index >= 0)
+      .filter(index => index > -1)
 
     let appletActivities = getAvailableActivities(
       newApplet.activities,
@@ -77,7 +77,7 @@ const ActivityList = ({
           !activity.isVis && activity.isReviewerActivity != true
       )
 
-    setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
+    setActivities(_.uniqBy(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data), "id"));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
