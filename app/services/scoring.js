@@ -324,7 +324,7 @@ export const evaluateCumulatives = (responses, activity) => {
     };
 
     if (expr.evaluate(variableScores)) {
-      if (nextActivity) {
+      if (nextActivity && nextActivity !== activity.name.en) {
         if (hideActivity || hideActivity === undefined)
           cumActivities.push(nextActivity);
         else
