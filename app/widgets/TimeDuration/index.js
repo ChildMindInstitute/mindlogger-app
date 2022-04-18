@@ -84,7 +84,8 @@ export class TimeDuration extends React.Component {
               }
             </>
           )}
-
+        </View>
+        <View>
           {isOptionalText &&
             <OptionalText
               onChangeText={text => this.handleComment(text)}
