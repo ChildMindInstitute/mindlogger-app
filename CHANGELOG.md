@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix small UI issues
 
 ## [0.19.15] - 2022-04-11
+- Fix issues on activity status label
+
+## [0.19.15] - 2022-04-11
 - Fix an issue Linked Activity
 
 ## [0.19.14] - 2022-04-07
