@@ -56,7 +56,7 @@ export const TextEntry = ({ value = '', onChange, valueType, config, ...props })
             onChangeText={onChangeText}
             style={[newStyle]}
             keyboardType={valueType && valueType.includes('integer') ? `numeric` : `default`}
-            maxLength={Number(config.maxLength)}
+            maxLength={Number(config.maxLength || 50)}
             value={text}
             autoCorrect={false}
             multiline={false}

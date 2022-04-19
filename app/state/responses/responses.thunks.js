@@ -557,10 +557,11 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
 
         available = available.concat(_.intersection(archieved, ids));
         archieved = _.difference(archieved, ids);
-      }
-
-      if (archieved.indexOf(activityId) < 0) {
-        archieved.push(activityId);
+        available = _.uniq(available.concat(ids));
+      } else {
+        if (archieved.indexOf(activityId) < 0) {
+          archieved.push(activityId);
+        }
       }
 
       available = available.concat(

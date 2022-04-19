@@ -16,7 +16,8 @@ const styles = StyleSheet.create({
     width: '100%',
     marginLeft: 20,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 20
   },
   title: {
     fontWeight: 'bold',
