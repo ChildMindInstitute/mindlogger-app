@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Picker, ScrollView, KeyboardAvoidingView, Text } from 'react-native';
-// import RNPickerSelect from 'react-native-picker-select';
+import { KeyboardAvoidingView, StyleSheet, TextInput } from 'react-native';
+import { View } from 'native-base';
 import { OptionalText } from '../OptionalText';
 
 const defaultTime = { hour: 0, minute: 0 };
@@ -16,6 +16,20 @@ export class TimeDuration extends React.Component {
     onChange(this.finalAnswer);
   }
 
+  getItemLabel = (item, type) => {
+    if (this.finalAnswer[type] === item.value) {
+      return item.label + ' ' + this.capitalizeFirstLetter(type);
+    }
+    return item.label + '';
+  }
+
+  isTimeType = (type) => {
+    if (type === 'hours' || type === 'mins' || type === 'secs') {
+      return true;
+    }
+    return false;
+  }
+
   capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
@@ -27,41 +41,23 @@ export class TimeDuration extends React.Component {
     onChange(this.finalAnswer);
   }
 
-  renderDuration = (type) => {
-    let items;
-    const { finalAnswer, onChangeValue } = this;
-
-    if (type === 'hours') {
-      items = new Array(23).fill(0).map((val, index) => {
-        return { label: index + 1, value: index + 1 }
-      });
-    } else if (type === 'mins') {
-      items = new Array(59).fill(0).map((val, index) => {
-        return { label: index + 1, value: index + 1 }
-      });
-    } else if (type === 'secs') {
-      items = new Array(59).fill(0).map((val, index) => {
-        return { label: index + 1, value: index + 1 }
-      });
-    } else {
-      items = new Array(99).fill(0).map((val, index) => {
-        return { label: index + 1, value: index + 1 }
-      });
-    }
-
+  renderDuration = (type, index) => { 
     return (
-      <Picker selectedValue={finalAnswer[type] || ''} onValueChange={(v) => onChangeValue(type, v)}>
-        <Picker.Item label={this.capitalizeFirstLetter(type)} value={items.value} />
-        {items.map((item, index) => (
-          <Picker.Item label={item.label + ''} value={item.value} key={index} />
-        ))}
-      </Picker>
+      <View style={{ justifyContent: 'center' }}>
+        <TextInput
+          style={styles.input}
+          placeholder={this.capitalizeFirstLetter(type)}
+          onChangeText={(v) => this.onChangeValue(type, v)}
+          keyboardType="numeric"
+          value={this.finalAnswer[type]}
+        />
+      </View>
     );
   }
 
   render() {
     const { value, config, isOptionalText, isOptionalTextRequired } = this.props;
-    const valueTypes = config.timeDuration.split(' ');
+    const valueTypes = config.timeDuration.split(' ').filter(type => type !== '');
 
     this.finalAnswer = value ? value : {};
 
@@ -74,17 +70,29 @@ export class TimeDuration extends React.Component {
 
     return (
       <KeyboardAvoidingView>
-        <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1 }}>
-          {valueTypes && Object.keys(valueTypes).map(type =>
-            <>
-              {valueTypes[type] !== "" &&
-                <View style={{ flex: 1 }}>
-                  {this.renderDuration(valueTypes[type])}
-                </View>
-              }
-            </>
-          )}
-
+        <View>
+          <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1 }}>
+            {valueTypes && Object.keys(valueTypes).map((type, index) =>
+              <>
+                {!this.isTimeType(valueTypes[type]) &&
+                  <View style={{ flex: 1 }}>
+                    {this.renderDuration(valueTypes[type], index)}
+                  </View>
+                }
+              </>
+            )}
+          </View>
+          <View style={{ alignItems: 'stretch', flexDirection: 'row', flex: 1 }}>
+            {valueTypes && Object.keys(valueTypes).map((type, index) =>
+              <>
+                {this.isTimeType(valueTypes[type]) &&
+                  <View style={{ flex: 1 }}>
+                    {this.renderDuration(valueTypes[type], index)}
+                  </View>
+                }
+              </>
+            )}
+          </View>
           {isOptionalText &&
             <OptionalText
               onChangeText={text => this.handleComment(text)}
@@ -97,6 +105,17 @@ export class TimeDuration extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 4,
+    borderWidth: 1,
+    borderColor: '#505050',
+    borderRadius: 4,
+    padding: 12,
+  },
+});
 
 TimeDuration.defaultProps = {
   value: {},
