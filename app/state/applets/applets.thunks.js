@@ -51,7 +51,7 @@ import { replaceResponses, setLastResponseTime } from "../responses/responses.ac
 
 import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
-import { decryptAppletResponses } from "../../models/response";
+import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
 import { waitFor } from "../../services/helper";
 
@@ -236,14 +236,14 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   const auth = authSelector(state);
   const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
   let currentApplets = allApplets && allApplets.length ? allApplets : await getData('ml_applets');
-  let currentResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
+  let oldResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
 
   let localInfo = {};
 
   if (currentApplets) {
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet;
-      const response = currentResponses ? currentResponses.find(r => id === r.appletId) : null;
+      const response = oldResponses ? oldResponses.find(r => id === r.appletId) : null;
       const localEvents = Object.keys(applet.schedule.events).map(id => {
         event = applet.schedule.events[id];
         return {
@@ -258,7 +258,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         localItems: response ? Object.keys(response.items) : [],
         localActivities: response ? Object.keys(response.activities) : [],
         localEvents,
-        startDate: response ? response['schema:startDate'] : null,
+        startDate: response ? response['schema:endDate'] : null,
+        localResponses: response ? Object.keys(response.dataSources) : [],
       }
     })
   } else {
@@ -350,6 +351,14 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               return applet;
             }
           });
+
+        for (let i = 0; i < responses.length; i++) {
+          const old = oldResponses && oldResponses.find(old => old && old.appletId == responses[i].appletId);
+
+          if (old) {
+            mergeResponses(old, responses[i]);
+          }
+        }
 
         dispatch(setUserProfiles(profiles));
         dispatch(setLastResponseTime(lastResponseTime));
