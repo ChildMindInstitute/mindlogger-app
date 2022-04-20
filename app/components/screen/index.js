@@ -95,6 +95,20 @@ class ActivityScreen extends Component {
       return true;
     }
 
+    if (screen.inputType === 'duration') {
+      const valueTypes = screen.valueConstraints.timeDuration.split(' ').filter(type => type !== '');
+
+      if (!answer) {
+        return false;
+      }
+      for (let i = 0; i < valueTypes.length; i += 1) {
+        if (!answer[valueTypes[i]]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     if (screen.inputType == 'pastBehaviorTracker' || screen.inputType == 'futureBehaviorTracker') {
       return answer && answer.value && Object.keys(answer.value).length;
     }
