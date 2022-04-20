@@ -98,14 +98,15 @@ class Activity extends React.Component {
       isActivityShow: false,
       modalVisible: false,
       hasSplashScreen: false,
-      responses: []
+      responses: [],
+      visibility: []
     };
     this.idleTimer = new Timer();
     this.completed = false;
   }
 
   componentDidMount() {
-    const { isSummaryScreen, isSplashScreen, currentResponse: { activity, responses }, currentScreen } = this.props;
+    const { isSummaryScreen, isSplashScreen, currentResponse: { activity, responses }, currentScreen, itemVisibility } = this.props;
     const idleTime = this.getIdleTime();
 
     this.props.setActivitySelectionDisabled(false);
@@ -114,6 +115,7 @@ class Activity extends React.Component {
       idleTime,
       hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
+      visibility: itemVisibility
     }, () => {
       if (idleTime) {
         this.idleTimer.startCountdown(
@@ -172,6 +174,8 @@ class Activity extends React.Component {
       return testVisibility(item.visibility, activity.items, responses, responseTimes)
     });
     const next = getNextPos(currentScreen, visibility);
+
+    this.setState({ visibility });
 
     if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
       return;
@@ -392,12 +396,11 @@ class Activity extends React.Component {
       currentApplet,
       authToken,
       currentScreen,
-      itemVisibility,
       appStatus,
       isSplashScreen,
     } = this.props;
 
-    const { isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
+    const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
 
     if (!currentResponse || !this.currentItem) {
       return <View />;
@@ -416,7 +419,7 @@ class Activity extends React.Component {
       : getNextLabel(
         currentScreen,
         isSplashScreen,
-        itemVisibility,
+        visibility,
         activity,
         responses,
         this.state.isContentError,
@@ -427,7 +430,7 @@ class Activity extends React.Component {
       : getActionLabel(currentScreen, responses, activity.items);
     let prevLabel = isSummaryScreen
       ? "Back"
-      : getPrevLabel(currentScreen, itemVisibility);
+      : getPrevLabel(currentScreen, visibility);
 
     if (this.currentItem.valueConstraints
       && this.currentItem.valueConstraints.removeBackOption) {
@@ -480,7 +483,7 @@ class Activity extends React.Component {
                 sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
               }
               this.setState({ responses })
-              this.handleChange(answer, goToNext, timeElapsed);
+              this.handleChange(responses, goToNext, timeElapsed);
             }}
             authToken={authToken}
             onContentError={() => this.setState({ isContentError: true })}
