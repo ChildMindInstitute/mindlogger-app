@@ -62,13 +62,13 @@ class MarkdownScreen extends Component {
         } else if (mimeType.startsWith('video/') || node.attributes.src.includes('.quicktime')) {
           return (
             <View
-              width={maxWidth}
+              width={maxWidth - 30}
               height={250}
             >
               <VideoPlayer
                 uri={node.attributes.src}
                 key={node.key}
-                width={maxWidth}
+                width={maxWidth - 30}
                 height={250}
               />
             </View>
