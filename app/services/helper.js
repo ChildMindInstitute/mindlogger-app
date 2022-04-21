@@ -116,11 +116,6 @@ export const getDependency = (activities) => {
   return dependency;
 }
 
-const checkActivityIsShown = (name, messages) => {
-  if (!name || !messages) return true;
-  return _.findIndex(messages, obj => obj.nextActivity === name && (obj.hideActivity || obj.hideActivity === undefined)) === -1;
-}
-
 export const getAvailableActivities = (appletActivities, availableActivities, archievedActivities) => {
   const g = getDependency(appletActivities);
   const marked = [], activities = [];
@@ -194,7 +189,20 @@ export const getAvailableActivities = (appletActivities, availableActivities, ar
   }
 
   for (let i = 0; i < hidden.length; i++) {
-    if (!hidden[i] && !activities.includes(i) && !archievedActivities.includes(i)) {
+    if (!hidden[i] && !activities.includes(i) && archievedActivities.includes(i)) {
+      try {
+        const activity = appletActivities[i];
+        for (const message of activity?.messages) {
+          if (message.nextActivity && !message.hideActivity) {
+            activities.push(i);
+            break;
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+    } else if (!hidden[i] && !activities.includes(i) && !archievedActivities.includes(i)) {
       activities.push(i);
     }
   }
