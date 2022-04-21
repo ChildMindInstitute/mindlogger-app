@@ -196,7 +196,7 @@ const ActivitySummary = (props) => {
         if (!mimeType.startsWith("video/")) {
           options.html += `
             <div style="height: 100%; display: flex; justify-content: center; ${i && allReports ? 'page-break-before: always;' : ''}">
-              <img style="object-fit: cover; max-height: 100%; max-width: 100%;" src="${uri}" alt="Splash Activity">
+              <img style="object-fit: scale-down; max-height: 100%; max-width: 100%;" src="${uri}" alt="Splash Activity">
             </div>
           `;
         }
