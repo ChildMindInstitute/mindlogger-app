@@ -21,6 +21,8 @@ const validate = ({ oldPassword, password }) => {
 };
 
 const required = value => value ? undefined : 'Required'
+const shortPassword = value => (value && !RegExp('.{6}.*').test(value) ? 'Password must be at least 6 characters' : undefined);
+const blankPassword = value => (value && value.includes(" ") ? 'Password should not contain blank spaces' : undefined);
 
 const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
   <Form>
@@ -44,7 +46,7 @@ const UserForm = ({ handleSubmit, submitting, error, primaryColor }) => (
       autoComplete="off"
       autoCorrect={false}
       autoCapitalize="none"
-      validate={required}
+      validate={[required, shortPassword, blankPassword]}
     />
     <Button
       warning
