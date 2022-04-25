@@ -77,7 +77,7 @@ const ActivityList = ({
           !activity.isVis && activity.isReviewerActivity != true
       )
 
-    setActivities(_.uniqBy(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data), "id"));
+    setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
