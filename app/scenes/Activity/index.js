@@ -137,6 +137,10 @@ class Activity extends React.Component {
       this.updateStore();
     }
 
+    if (oldProps.currentScreen != this.props.currentScreen) {
+      this.completed = false;
+    }
+
     if (
       this.props.currentResponse &&
       oldProps.currentResponse.responses != this.props.currentResponse.responses
