@@ -327,7 +327,8 @@ class Slider extends Component {
         continousSlider,
         isOptionalText,
         isOptionalTextRequired,
-        showTickMarks
+        minValueImg,
+        maxValueImg
       },
       onChange,
       onPress,
@@ -335,6 +336,8 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
+    console.log('image1', minValueImg)
+    console.log('iamge2', maxValueImg)
     this.finalAnswer = value ? value : {};
 
     let currentVal = this.finalAnswer["value"];
@@ -403,11 +406,11 @@ class Slider extends Component {
 
         <View style={[styles.labelContainer, { paddingTop: 5 + (tickLabel !== false ? 15 : 0) + (tickMark !== false ? 15 : 0) }]}>
           <View style={styles.labelBox}>
-            {itemList[0]?.image && (
+            {minValueImg && (
               <View style={styles.iconWrapper}>
                 <Image
                   style={styles.icon}
-                  source={{ uri: getURL(itemList[0]?.image) }}
+                  source={{ uri: getURL(minValueImg) }}
                 />
               </View>
             )}
@@ -416,11 +419,11 @@ class Slider extends Component {
             )}
           </View>
           <View style={styles.labelBox}>
-            {itemList[itemList.length - 1]?.image && (
+            {maxValueImg && (
               <View style={styles.iconWrapper}>
                 <Image
                   style={styles.icon}
-                  source={{ uri: getURL(itemList[itemList.length - 1]?.image) }}
+                  source={{ uri: getURL(maxValueImg) }}
                 />
               </View>
             )}

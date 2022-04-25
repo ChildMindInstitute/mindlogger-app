@@ -355,6 +355,21 @@ export const flattenValueConstraints = (vcObj) =>
         minAlertValue: R.path([key, 0, "@value"], vcObj)
       }
     }
+
+    if (key === MIN_VALUE_IMAGE) {
+      return {
+        ...accumulator,
+        minValueImg: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === MAX_VALUE_IMAGE) {
+      return {
+        ...accumulator,
+        maxValueImg: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
     if (key === MAX_ALERT_VALUE) {
       return {
         ...accumulator,
