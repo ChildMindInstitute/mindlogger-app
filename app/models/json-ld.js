@@ -355,6 +355,21 @@ export const flattenValueConstraints = (vcObj) =>
         minAlertValue: R.path([key, 0, "@value"], vcObj)
       }
     }
+
+    if (key === MIN_VALUE_IMAGE) {
+      return {
+        ...accumulator,
+        minValueImg: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
+    if (key === MAX_VALUE_IMAGE) {
+      return {
+        ...accumulator,
+        maxValueImg: R.path([key, 0, "@value"], vcObj)
+      }
+    }
+
     if (key === MAX_ALERT_VALUE) {
       return {
         ...accumulator,
@@ -1024,8 +1039,11 @@ export const parseAppletEvents = (applet) => {
       const event = applet.schedule.events[eventId];
 
       if (event.data.activity_id === act.id.substring(9)) {
+        const date = new Date();
+        date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+
         const futureSchedule = Parse.schedule(event.schedule).forecast(
-          Day.fromDate(new Date()),
+          Day.fromDate(date),
           true,
           1,
           0,
