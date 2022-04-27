@@ -107,6 +107,7 @@ const Widget = ({
         onSelected={setSelected}
         value={answer}
         token={valueType && valueType.includes("token")}
+        handleReplaceBehaviourResponse={handleReplaceBehaviourResponse}
       />
     )
   }

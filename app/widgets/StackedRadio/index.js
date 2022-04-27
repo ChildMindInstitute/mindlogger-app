@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export const StackedRadio = ({ value, config, onChange, token, onSelected }) => {
+export const StackedRadio = ({ value, config, onChange, token, onSelected, handleReplaceBehaviourResponse }) => {
   const optionNumber = config.options.length;
   const optionWidth = `${Math.floor(75 / optionNumber)}%`;
   const tokenValues = [];
