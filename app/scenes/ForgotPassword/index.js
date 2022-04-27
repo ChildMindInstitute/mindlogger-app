@@ -13,7 +13,7 @@ import { showToast } from '../../state/app/app.thunks';
 import ForgotPasswordForm from './ForgotPasswordForm';
 
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 20 : 0;
+const IOSHeaderPadding = isIOS ? 24 : 0;
 const IOSBodyPadding = isIOS ? 8 : 0;
 
 class ForgotPassword extends Component {
