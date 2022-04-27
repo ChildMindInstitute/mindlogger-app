@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.19.23] - 2022-04-26
 - Fix padding on iPhones with notches
+- Update activity label for unscheduled activities
 
 ## [0.19.22] - 2022-04-25
 - Fix slider issues
