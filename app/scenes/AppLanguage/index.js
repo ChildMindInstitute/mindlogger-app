@@ -24,7 +24,7 @@ import { skinSelector, mobileDataAllowedSelector } from '../../state/app/app.sel
 import { userInfoSelector } from '../../state/user/user.selectors';
 import { setApplicationLanguage } from '../../i18n/i18n';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? 24 : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 44 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
 
 // eslint-disable-next-line

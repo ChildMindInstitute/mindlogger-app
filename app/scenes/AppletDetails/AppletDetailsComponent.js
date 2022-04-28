@@ -19,7 +19,7 @@ import { isTokenLoggerApplet } from '../../services/tokens';
 import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
 
 const isIOS = Platform.OS === 'ios';
-const IOSHeaderPadding = isIOS ? 24 : 0;
+const IOSHeaderPadding = isIOS ? 44 : 0;
 const IOSBodyPadding = isIOS ? 9 : 0;
 
 const styles = StyleSheet.create({
