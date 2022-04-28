@@ -22,7 +22,7 @@ import {
 import { skinSelector, currentAppletSelector } from '../../state/app/app.selectors';
 import { deactivateApplet, removeAndDeleteApplet } from '../../state/applets/applets.thunks';
 
-const IOSHeaderPadding = Platform.OS === 'ios' ? 24 : 0;
+const IOSHeaderPadding = Platform.OS === 'ios' ? 44 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 8 : 0;
 
 // eslint-disable-next-line
