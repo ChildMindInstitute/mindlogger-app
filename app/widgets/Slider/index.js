@@ -413,7 +413,7 @@ class Slider extends Component {
                   source={{ uri: getURL(minValueImg) }}
                 />
               </View>
-            )}
+            ) || <></>}
             {textAnchors !== false && (
               <Text style={styles.label}>{minValue}</Text>
             )}
@@ -426,10 +426,10 @@ class Slider extends Component {
                   source={{ uri: getURL(maxValueImg) }}
                 />
               </View>
-            )}
+            ) || <></>}
             {textAnchors !== false && (
               <Text style={styles.label}>{maxValue}</Text>
-            )}
+            ) || <></>}
           </View>
         </View>
 
@@ -438,7 +438,7 @@ class Slider extends Component {
             onChangeText={text=>this.handleComment(text)}
             value={this.finalAnswer["text"]}
             isRequired={isOptionalTextRequired}
-          />
+          /> || <></>
         }
       </View>
       </KeyboardAvoidingView>
