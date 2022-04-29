@@ -152,6 +152,7 @@ const uploadFiles = (authToken, response, item) => {
     } else {
       return accumulator; // Break early
     }
+
     const request = prepareFile(file)
       .then(file => postFile({
         authToken,
@@ -159,7 +160,8 @@ const uploadFiles = (authToken, response, item) => {
         parentType: 'item',
         parentId: item._id,
         appletId,
-        activityId
+        activityId,
+        appletVersion: response.applet.schemaVersion
       }))
       .then((res) => {
         try {

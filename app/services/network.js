@@ -50,14 +50,14 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
   })
 };
 
-export const postFile = async ({ authToken, file, appletId, activityId }) => {
+export const postFile = async ({ authToken, file, appletId, activityId, appletVersion }) => {
   const url = `${apiHost()}/response/${appletId}/${activityId}`;
 
   const headers = {
     "Girder-Token": authToken,
   };
   const metadata = JSON.stringify({
-    "applet": { "schemaVersion": "1.0" },
+    "applet": { "schemaVersion": appletVersion },
     "subject": { "@id": "asasa", "timezone": "US" },
     "responses": {
       [file.key]: { "size": file.size, "type": file.type }
