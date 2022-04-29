@@ -220,7 +220,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
     onChange({
       maxLambda,
-      value: responses.current,
+      value: [...responses.current],
       phaseType: configObj.phaseType
     }, true);
 
@@ -242,7 +242,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
     trialNumber.current = trialNumber.current+1
 
     if (configObj.phaseType == 'challenge-phase') {
-      lambdaSlope.current = lambdaSlope.current / 9 * 10;
+      lambdaSlope.current = lambdaSlope.current * 95 / 100;
     }
 
     lastCrashTime.current = timeElapsed;
