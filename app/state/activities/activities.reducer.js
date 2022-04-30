@@ -2,6 +2,7 @@ import _ from "lodash";
 
 export const initialState = {
   activities: [],
+  recommendedActivities: [],
   cumulativeActivities: {},
 };
 
@@ -11,6 +12,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         activities: action.payload,
+      };
+    case "SET_RECOMMENDED_ACTIVITIES":
+      return {
+        ...state,
+        recommendedActivities: action.payload,
       };
     case "CUMULATIVE_ACTIVITIES":
       return {
