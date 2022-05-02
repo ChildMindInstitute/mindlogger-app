@@ -189,8 +189,10 @@ export const getAvailableActivities = (appletActivities, availableActivities, ar
             hidden[index] = true;
           }
           if (message.isRecommended) {
-            const id = findActivityIdByName(appletActivities, message.nextActivity);
-            recommendedActivities.push(id);
+            if (availableActivities.includes(index)) {
+              const id = findActivityIdByName(appletActivities, message.nextActivity);
+              recommendedActivities.push(id);
+            }
           }
         }
       }
