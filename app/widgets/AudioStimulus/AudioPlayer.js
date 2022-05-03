@@ -64,6 +64,7 @@ export class AudioPlayer extends React.Component {
       this.setState({ playing: false });
       onEnd();
     });
+    onEnd();
   };
   stop = () => {
     const { player } = this.state;
