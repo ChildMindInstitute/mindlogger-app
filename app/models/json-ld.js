@@ -91,6 +91,7 @@ const OUTPUT_TEXT  ="reprolib:terms/outputText";
 const OUTPUT_TYPE = "reprolib:terms/outputType";
 const NEXT_ACTIVITY = "reprolib:terms/nextActivity";
 const HIDE_ACTIVITY = "reprolib:terms/hideActivity";
+const IS_RECOMMENDED = "reprolib:terms/isRecommended";
 const RESPONSE_ALERT = "reprolib:terms/responseAlert";
 const RANDOMIZE_OPTIONS = "reprolib:terms/randomizeOptions";
 const REMOVE_UNDO_OPTION = "reprolib:terms/removeUndoOption";
@@ -661,6 +662,7 @@ const transformPureActivity = (activityJson) => {
       outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
       nextActivity: R.path([NEXT_ACTIVITY, 0, "@value"], item),
       hideActivity: R.path([HIDE_ACTIVITY, 0, "@value"], item),
+      isRecommended: R.path([IS_RECOMMENDED, 0, "@value"], item),
     }
   }, activityJson[MESSAGES]);
 

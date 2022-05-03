@@ -5,6 +5,13 @@ export const setActivities = (data) => {
   })
 };
 
+export const setRecommendedActivities = (data) => {
+  return ({
+    type: "SET_RECOMMENDED_ACTIVITIES",
+    payload: data,
+  })
+};
+
 export const setCumulativeActivities = (data) => {
   return ({
     type: "CUMULATIVE_ACTIVITIES",

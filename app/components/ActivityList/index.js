@@ -20,7 +20,7 @@ import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
-import { setActivities } from '../../state/activities/activities.actions';
+import { setActivities, setRecommendedActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
   inProgressSelector,
@@ -33,6 +33,7 @@ import LiveConnection from './LiveConnection';
 const ActivityList = ({
   applet,
   activities,
+  recommendedActivities,
   syncUploadQueue,
   appStatus,
   setConnection,
@@ -43,6 +44,7 @@ const ActivityList = ({
   setScheduleUpdated,
   inProgress,
   setActivities,
+  setRecommendedActivities,
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
@@ -63,7 +65,7 @@ const ActivityList = ({
       })
       .filter(index => index > -1)
 
-    let appletActivities = getAvailableActivities(
+    let { appletActivities, recommendedActivities } = getAvailableActivities(
       newApplet.activities,
       convertToIndexes(cumulativeActivities[applet.id].available),
       convertToIndexes(cumulativeActivities[applet.id].archieved),
@@ -77,6 +79,7 @@ const ActivityList = ({
           !activity.isVis && activity.isReviewerActivity != true
       )
 
+    setRecommendedActivities(recommendedActivities);
     setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
@@ -153,12 +156,6 @@ const ActivityList = ({
     }
   }, [])
 
-  const getRecomendedActivity = (activityId) => {
-    const availableCumulativeActivities = cumulativeActivities[applet.id]?.available;
-    return availableCumulativeActivities?.length &&
-      availableCumulativeActivities[availableCumulativeActivities?.length - 1] === activityId?.split('/').pop()
-  }
-
   return (
     <View style={{ paddingBottom: 30 }}>
       {
@@ -171,7 +168,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
-          isRecommended={getRecomendedActivity(activity.id)}
+          isRecommended={recommendedActivities?.includes(activity.id)}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))}
@@ -222,6 +219,7 @@ const mapStateToProps = (state) => {
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
+    recommendedActivities: state.activities.recommendedActivities,
     cumulativeActivities: state.activities.cumulativeActivities,
   };
 };
@@ -235,7 +233,8 @@ const mapDispatchToProps = {
   syncUploadQueue,
   setReminder,
   cancelReminder,
-  setActivities
+  setActivities,
+  setRecommendedActivities
 };
 
 export default connect(
