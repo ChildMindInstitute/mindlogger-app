@@ -179,14 +179,16 @@ export default (activityList, inProgress, finishedEvents, scheduleData) => {
   // const completed = getCompleted(notInProgress).reverse();
 
   return [
-    ...addSectionHeader(addProp('status', 'pastdue', pastdue), i18n.t('additional:available')),
     ...addSectionHeader(
       addProp('status', 'in-progress', inProgressActivities),
       i18n.t('additional:in_progress'),
     ),
     ...addSectionHeader(
-      addProp('status', 'unscheduled', unscheduled),
-      (inProgressActivities.length || pastdue.length || scheduled.length) ? i18n.t('additional:unscheduled') : '',
+      [
+        ...addProp('status', 'pastdue', pastdue),
+        ...addProp('status', 'unscheduled', unscheduled)
+      ],
+      i18n.t('additional:available')
     ),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), i18n.t('additional:scheduled')),
   ];
