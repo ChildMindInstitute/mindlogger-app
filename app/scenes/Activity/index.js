@@ -108,7 +108,7 @@ class Activity extends React.Component {
   }
 
   componentDidMount() {
-    const { isSummaryScreen, currentResponse: { activity, responses }, currentScreen, itemVisibility } = this.props;
+    const { isSummaryScreen, currentResponse, currentScreen, itemVisibility } = this.props;
     const { activity, responses } = currentResponse;
 
     const idleTime = this.getIdleTime();
