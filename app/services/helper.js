@@ -356,13 +356,13 @@ export const replaceItemVariableWithName = (markdown, activity, answers) => {
               markdown = markdown.replace(reg, getTimeString(answers[index].value?.from) + ' - ' + getTimeString(answers[index].value?.to));
               break;
             case 'date':
-              markdown = markdown.replace(reg, getDateString(answers[index].value));
+              markdown = markdown.replace(reg, getDateString(answers[index]));
               break;
             case 'ageSelector':
               markdown = markdown.replace(reg, answers[index].value);
               break;
             case 'text':
-              markdown = markdown.replace(reg, JSON.stringify(answers[index].value).replace(/(?=[$&])/g, '\\'));
+              markdown = markdown.replace(reg, JSON.stringify(answers[index]).replace(/(?=[$&])/g, '\\'));
               break;
           }
 
