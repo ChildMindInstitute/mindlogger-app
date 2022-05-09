@@ -85,7 +85,6 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
         style={{ flex: 1, height: '100%' }}
         onLoad={() => setLoading(false)}
         source={source}
-        key={tryIndex}
         originWhitelist={['*']}
         scrollEnabled={false}
         onMessage={(e) => {
@@ -114,6 +113,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
           ) {
             setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
             setTryIndex(tryIndex+1);
+            webView.current.injectJavaScript(injectConfig);
           } else {
             setLoading(true);
 
