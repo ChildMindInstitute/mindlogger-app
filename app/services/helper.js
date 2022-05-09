@@ -322,7 +322,8 @@ export const replaceItemVariableWithName = (markdown, activity, answers) => {
 
   const getDateString = (obj) => {
     if (!obj) return '';
-    return `${obj.year}-${Number(obj.month+1).toString().padStart(2, '0')}-${Number(obj.day).toString().padStart(2, '0')}`;
+
+    return JSON.stringify(obj);
   }
   try {
     const variableNames = getTextBetweenBrackets(markdown);
@@ -361,7 +362,7 @@ export const replaceItemVariableWithName = (markdown, activity, answers) => {
               markdown = markdown.replace(reg, answers[index].value);
               break;
             case 'text':
-              markdown = markdown.replace(reg, answers[index].value.toString().replace(/(?=[$&])/g, '\\'));
+              markdown = markdown.replace(reg, JSON.stringify(answers[index].value).replace(/(?=[$&])/g, '\\'));
               break;
           }
 
