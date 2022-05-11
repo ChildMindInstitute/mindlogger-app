@@ -307,21 +307,21 @@ export const evaluateCumulatives = (responses, activity) => {
 
   activity.messages.forEach(async (msg, i) => {
     const { jsExpression, message, outputType, nextActivity, hideActivity } = msg;
-
     const exprArr = jsExpression.split(/[><]/g);
     const variableName = exprArr[0];
     const exprValue = parseFloat(exprArr[1].split(" ")[1]);
     const category = variableName.trim().replace(/[\s\/]/g, "__");
-    const expr = parser.parse(category + jsExpression.substr(variableName.length));
-
+    const scoreCategory = replaceItemVariableWithName(category, activity, responses).replace(/\s/g, '__');
     const variableScores = {
-      [category]:
+      [scoreCategory]:
         outputType == "percentage"
           ? Math.round(
             cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
           )
           : cumulativeScores[category],
     };
+
+    const expr = parser.parse(scoreCategory + jsExpression.substr(variableName.length));    
 
     if (expr.evaluate(variableScores)) {
       if (nextActivity && nextActivity !== activity.name.en) {
@@ -334,9 +334,9 @@ export const evaluateCumulatives = (responses, activity) => {
       const compute = activity.compute && activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
 
       reportMessages.push({
-        category,
+        category: scoreCategory,
         message: replaceItemVariableWithName(message, activity, responses),
-        score: variableScores[category] + (outputType == "percentage" ? "%" : ""),
+        score: variableScores[scoreCategory] + (outputType == "percentage" ? "%" : ""),
         compute: {
           ...compute,
           description: replaceItemVariableWithName(compute.description, activity, responses)
