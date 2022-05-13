@@ -54,6 +54,7 @@ test('it creates a response in progress', () => {
       [activity.id]: {
         activity,
         responses: [undefined],
+        events: [],
         screenIndex: 0,
         subjectId: undefined,
         timeStarted: undefined,
@@ -73,6 +74,7 @@ test('it removes response in progress', () => {
       [activity.id]: {
         activity,
         responses: [undefined],
+        events: [],
         screenIndex: 0,
         subjectId: undefined,
         timeStarted: undefined,
@@ -86,14 +88,19 @@ test('it sets an answer', () => {
   const appletId = 'myApplet';
   const activity = { id: 'myActivity', foo: 'bar', items: [{}] };
   const oneResponseState = responsesReducer(initialState, createResponseInProgress(appletId, activity));
+  const now = Date.now();
   expect(responsesReducer(oneResponseState, setAnswer(activity, 0, 'foobar'))).toEqual({
     ...initialState,
     inProgress: {
       [activity.id]: {
         activity,
         responses: ['foobar'],
+        events: [],
         screenIndex: 0,
-        isSummaryScreen: false
+        isSummaryScreen: false,
+        [0]: {
+          responseTime: now
+        }
       },
     },
   });
