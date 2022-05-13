@@ -23,11 +23,11 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`
+    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`,
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
-    'Press the button below to end current block and restart.'
+    'Press the button below to end current block and restart.',
   ];
 
   const configObj = {
@@ -71,13 +71,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_timestamp: record.start_timestamp,
     offset: record.start_timestamp - record.start_time,
     tag: record.tag,
-  })
+  });
 
   return (
     <View
       style={{
         height: '100%',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       <WebView
