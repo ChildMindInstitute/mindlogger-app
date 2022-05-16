@@ -30,7 +30,7 @@ export const prepareResponseForUpload = (
   finishedTime
 ) => {
   const languageKey = "en";
-  const { activity, responses, subjectId } = inProgressResponse;
+  const { activity, responses, subjectId, events } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
   const { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(responses, activity);
 
@@ -46,7 +46,7 @@ export const prepareResponseForUpload = (
       responseHistory.token.trackerAggregation.find(d => d.date == yesterday) || { data: {}, id: 0, date: yesterday }
     ] : [];
 
-  const alerts = [], nextsAt = {};
+  const alerts = [];
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
 
@@ -186,6 +186,10 @@ export const prepareResponseForUpload = (
     const dataSource = getEncryptedData(responses, appletMetaData.AESKey);
     responseData['responses'] = formattedResponses;
     responseData['dataSource'] = dataSource;
+    responseData['events'] = getEncryptedData(events.map(event => ({
+      ...event,
+      screen: activity.items[event.screen].schema
+    })), appletMetaData.AESKey);
 
     if (activity.finalSubScale) {
       subScaleResult.push(getFinalSubScale(responses, activity.items, activity.finalSubScale.isAverageScore, activity.finalSubScale.lookupTable));
@@ -222,6 +226,10 @@ export const prepareResponseForUpload = (
     }, {});
 
     responseData['responses'] = formattedResponses;
+    responseData['events'] = events.map(event => ({
+      ...event,
+      screen: activity.items[event.screen].schema
+    }));
 
     if (activity.subScales) {
       responseData['subScales'] = activity.subScales.reduce((accumulator, subScale, index) => {
@@ -239,12 +247,6 @@ export const prepareResponseForUpload = (
     }
   }
 
-  let i = 0;
-  for (const key in responseData.responses) {
-    nextsAt[key] = inProgressResponse[i] && inProgressResponse[i].endTime || Date.now();
-    i++;
-  }
-  responseData['nextsAt'] = nextsAt;
 
   return responseData;
 };

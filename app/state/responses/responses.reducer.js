@@ -39,7 +39,7 @@ const replaceAppletResponses = (state, action) => {
 };
 
 export default (state = initialState, action = {}) => {
-  let activity, activityId;
+  let activity, activityId, index, time;
 
   switch (action.type) {
     case RESPONSES_CONSTANTS.CLEAR:
@@ -113,7 +113,8 @@ export default (state = initialState, action = {}) => {
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
             isSummaryScreen: false,
-            isSplashScreen: activity.splash && activity.splash.en
+            isSplashScreen: activity.splash && activity.splash.en,
+            events: []
           },
         },
       };
@@ -123,20 +124,9 @@ export default (state = initialState, action = {}) => {
 
       activityId = action.payload.activityId;
 
-      let time = {};
       if (activityId) {
         time = {
           [screenIndex]: { startTime: startTime || moment().valueOf() }
-        }
-      }
-
-      if (inProgress[activityId] && inProgress[activityId][screenIndex - 1]) {
-        time = {
-          ...time,
-          [screenIndex - 1]: {
-            ...inProgress[activityId][screenIndex - 1],
-            endTime: moment().valueOf()
-          },
         }
       }
 
@@ -152,9 +142,9 @@ export default (state = initialState, action = {}) => {
         },
         currentBehavior: {}
       };
-    case RESPONSES_CONSTANTS.SET_ANSWER:
-      const currentAct = action.payload.activity;
-      const index = currentAct.event ? currentAct.id + currentAct.event.id : currentAct.id;
+    case RESPONSES_CONSTANTS.ADD_USER_ACTIVITY_EVENT:
+      activity = action.payload.activity;
+      index = activity.event ? activity.id + activity.event.id : activity.id;
 
       return {
         ...state,
@@ -162,6 +152,27 @@ export default (state = initialState, action = {}) => {
           ...state.inProgress,
           [index]: {
             ...state.inProgress[index],
+            events: [
+              ...state.inProgress[index].events,
+              action.payload.event
+            ]
+          }
+        }
+      }
+    case RESPONSES_CONSTANTS.SET_ANSWER:
+      const currentAct = action.payload.activity;
+      index = currentAct.event ? currentAct.id + currentAct.event.id : currentAct.id;
+
+      time = { ...state.inProgress[index][action.payload.screenIndex] || {} };
+      time.responseTime = Date.now();
+
+      return {
+        ...state,
+        inProgress: {
+          ...state.inProgress,
+          [index]: {
+            ...state.inProgress[index],
+            [action.payload.screenIndex]: time,
             responses: R.update(
               action.payload.screenIndex,
               action.payload.answer,
