@@ -177,6 +177,8 @@ const ActivitySummary = (props) => {
     let currentActivity = activity;
     let splashScreen = false;
 
+    const renderLineBreak = (str) => str.replace(/(?<=[a-zA-Z])\n(?=[a-zA-Z])/g, '<br />');
+
     for (let i = 0; i < reports.length; i++) {
       const { activity, messages, scoreOverview, active } = reports[i];
       const isSplashScreen = activity.splash && activity.splash.en;
@@ -217,7 +219,7 @@ const ActivitySummary = (props) => {
 
       options.html += `
         <p class="text-body-2 mb-4">
-          ${markdownItInstance.render(scoreOverview)}
+          ${renderLineBreak(markdownItInstance.render(scoreOverview))}
         </p>
       `;
 
@@ -229,7 +231,7 @@ const ActivitySummary = (props) => {
             </b>
           </p>
           <p class="text-body-2">
-            ${markdownItInstance.render(message.compute.description)}
+            ${renderLineBreak(markdownItInstance.render(message.compute.description))}
           </p>
           <div class="score-area">
             <p
@@ -260,7 +262,7 @@ const ActivitySummary = (props) => {
           <p class="text-body-2 mb-4">
             ${i18n.t("activity_summary:child_score_on_subscale", { name: message.category.replace(/_/g, " ") })}
             <span class="text-danger">${message.scoreValue}</span>.
-            ${markdownItInstance.render(message.message)}
+            ${renderLineBreak(markdownItInstance.render(message.message))}
           </p>
         `;
       }
