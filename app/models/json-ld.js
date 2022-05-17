@@ -946,6 +946,7 @@ export const transformApplet = (payload, currentApplets = null) => {
 
   applet.groupId = payload.groups;
   applet.theme = payload.theme;
+  applet.welcomeApplet = payload.welcomeApplet;
   return applet;
 };
 
