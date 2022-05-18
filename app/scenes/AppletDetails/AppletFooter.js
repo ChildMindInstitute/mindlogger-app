@@ -33,7 +33,7 @@ class AppletFooter extends React.Component {
             />
           </Button>
 
-          <Button vertical active={active === 'data'} onPress={() => changeTab('data')}>
+          <Button style={{ opacity: applet.welcomeApplet ? 0.5 : 1 }} vertical active={active === 'data'} onPress={() => applet.welcomeApplet ? '' : changeTab('data')}>
             <DataIcon color={active === 'data' ? activeColor : defaultColor} tokenLogger={tokenLogger} />
             <BaseText
               style={
