@@ -11,6 +11,16 @@ import {
   setSchedule,
 } from './responses.actions';
 
+const RealDate = Date.now;
+
+beforeAll(() => {
+  global.Date.now = jest.fn(() => new Date('2022-05-07T10:20:30Z').getTime())
+})
+
+afterAll(() => {
+  global.Date.now = RealDate
+})
+
 test('it has an initial state', () => {
   expect(responsesReducer(undefined, { type: 'foo' })).toEqual(initialState);
 });
