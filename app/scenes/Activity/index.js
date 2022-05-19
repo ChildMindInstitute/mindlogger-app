@@ -313,7 +313,7 @@ class Activity extends React.Component {
     this.responseTime = null;
   }
 
-  handlePressNextScreen = () => {
+  handlePressNextScreen = (nextLabel = null) => {
     const {
       currentResponse,
       setSummaryScreen,
@@ -415,8 +415,15 @@ class Activity extends React.Component {
       });
     }
 
+    let eventType = 'NEXT';
+    if (nextLabel == i18n.t('activity_navigation:skip')) {
+      eventType = 'SKIP';
+    } else if (nextLabel == i18n.t('activity_navigation:done')) {
+      eventType = 'DONE';
+    }
+
     addUserActivityEvent(currentResponse.activity, {
-      type: 'NEXT',
+      type: eventType,
       time: Date.now(),
       screen: currentScreen
     });
@@ -590,7 +597,7 @@ class Activity extends React.Component {
               <ActivityButtons
                 nextLabel={nextLabel}
                 nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses, tutorialStatus)}
-                onPressNext={() => this.handlePressNextScreen()}
+                onPressNext={() => this.handlePressNextScreen(nextLabel)}
                 prevLabel={prevLabel}
                 prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
                 onPressPrev={() => this.handlePressPrevScreen()}
