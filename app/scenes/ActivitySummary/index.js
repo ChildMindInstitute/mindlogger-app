@@ -177,7 +177,7 @@ const ActivitySummary = (props) => {
     let currentActivity = activity;
     let splashScreen = false;
 
-    const renderLineBreak = (str) => str.replace(/(?<=[a-zA-Z])\n(?=[a-zA-Z])/g, '<br />');
+    const renderLineBreak = (str) => str.replace(/\n(?=[a-zA-Z])/g, '<br />');
 
     for (let i = 0; i < reports.length; i++) {
       const { activity, messages, scoreOverview, active } = reports[i];
