@@ -344,6 +344,11 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
           setTutorialIndex(tutorialIndex + 1);
+          addUserActivityEvent(currentResponse.activity, {
+            type: 'NEXT',
+            time: Date.now(),
+            screen: currentScreen
+          });
         } else {
           setTutorialStatus(0);
           setTutorialIndex(0);
