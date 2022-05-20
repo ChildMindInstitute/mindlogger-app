@@ -416,7 +416,7 @@ class Activity extends React.Component {
       addUserActivityEvent(currentResponse.activity, {
         type: 'SET_ANSWER',
         time: this.responseTime,
-        screen: currentScreen
+        screen: isSummaryScreen ? 'summary' : currentScreen
       });
     }
 

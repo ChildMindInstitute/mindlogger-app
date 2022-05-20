@@ -429,7 +429,7 @@ const ActivitySummary = (props) => {
         }
       </View>
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        {scoreOverview && <MarkdownScreen>{scoreOverview}</MarkdownScreen>}
+        {scoreOverview && <MarkdownScreen>{scoreOverview}</MarkdownScreen> || <></>}
         {messages?.length > 0 ? messages.map((item) => (
           <View style={styles.itemContainer} key={item.category}>
             <BaseText style={{ fontSize: 20, fontWeight: "200" }}>{item.category.replace(/_/g, " ")}</BaseText>

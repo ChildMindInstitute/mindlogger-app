@@ -228,7 +228,7 @@ export const prepareResponseForUpload = (
     responseData['responses'] = formattedResponses;
     responseData['events'] = events.map(event => ({
       ...event,
-      screen: activity.items[event.screen].schema
+      screen: event.screen == 'summary' ? event.screen : activity.items[event.screen].schema
     }));
 
     if (activity.subScales) {
