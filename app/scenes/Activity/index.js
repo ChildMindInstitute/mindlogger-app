@@ -176,7 +176,9 @@ class Activity extends React.Component {
     const optionalText = this.currentItem.isOptionalText;
     const responseTimes = {};
 
-    this.responseTime = Date.now();
+    if (!goToNext || !timeElapsed) {
+      this.responseTime = Date.now();
+    }
 
     for (const activity of currentApplet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
@@ -216,13 +218,14 @@ class Activity extends React.Component {
         setSelected(false);
       }
 
-      addUserActivityEvent(currentResponse.activity, {
-        type: 'SET_ANSWER',
-        time: this.responseTime,
-        screen: currentScreen
-      })
-
-      this.responseTime = null;
+      if (this.responseTime) {
+        addUserActivityEvent(currentResponse.activity, {
+          type: 'SET_ANSWER',
+          time: this.responseTime,
+          screen: currentScreen
+        });
+        this.responseTime = null;
+      }
     }
   }
 
