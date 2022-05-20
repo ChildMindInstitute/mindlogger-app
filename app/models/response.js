@@ -188,7 +188,7 @@ export const prepareResponseForUpload = (
     responseData['dataSource'] = dataSource;
     responseData['events'] = getEncryptedData(events.map(event => ({
       ...event,
-      screen: activity.items[event.screen].schema
+      screen: event.screen == 'summary' ? event.screen : activity.items[event.screen].schema
     })), appletMetaData.AESKey);
 
     if (activity.finalSubScale) {

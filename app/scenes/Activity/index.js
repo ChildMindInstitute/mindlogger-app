@@ -214,14 +214,15 @@ class Activity extends React.Component {
 
         nextScreen(timeElapsed);
         setSelected(false);
-        addUserActivityEvent(currentResponse.activity, {
-          type: 'SET_ANSWER',
-          time: this.responseTime,
-          screen: currentScreen
-        })
-
-        this.responseTime = null;
       }
+
+      addUserActivityEvent(currentResponse.activity, {
+        type: 'SET_ANSWER',
+        time: this.responseTime,
+        screen: currentScreen
+      })
+
+      this.responseTime = null;
     }
   }
 
@@ -416,7 +417,7 @@ class Activity extends React.Component {
       addUserActivityEvent(currentResponse.activity, {
         type: 'SET_ANSWER',
         time: this.responseTime,
-        screen: isSummaryScreen ? 'summary' : currentScreen
+        screen: currentScreen
       });
     }
 
@@ -430,7 +431,7 @@ class Activity extends React.Component {
     addUserActivityEvent(currentResponse.activity, {
       type: eventType,
       time: Date.now(),
-      screen: currentScreen
+      screen: isSummaryScreen ? 'summary' : currentScreen
     });
 
     this.responseTime = null;
