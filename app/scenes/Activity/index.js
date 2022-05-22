@@ -183,7 +183,7 @@ class Activity extends React.Component {
     }
 
     const visibility = activity.items.map((item) => {
-      if (item.isvis) {
+      if (item.isVis) {
         return false;
       }
       return testVisibility(item.visibility, activity.items, responses, responseTimes)
