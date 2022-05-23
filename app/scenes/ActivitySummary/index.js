@@ -239,7 +239,7 @@ const ActivitySummary = (props) => {
               style="left: max(170px, ${(message.scoreValue / message.maxScoreValue) * 100}%)"
             >
               <b>
-                ${i18n.t("activity_summary:child_score")}
+                Score
               </b>
             </p>
             <div
@@ -260,7 +260,7 @@ const ActivitySummary = (props) => {
             </p>
           </div>
           <p class="text-body-2 mb-4">
-            ${i18n.t("activity_summary:child_score_on_subscale", { name: message.category.replace(/_/g, " ") })}
+            ${i18n.t("activity_summary:score_on_subscale", { name: message.category.replace(/_/g, " ") })}
             <span class="text-danger">${message.scoreValue}</span>.
             ${renderLineBreak(markdownItInstance.render(message.message))}
           </p>
