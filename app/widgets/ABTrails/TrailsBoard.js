@@ -134,9 +134,9 @@ export default class TrailsBoard extends Component {
     screen.items.forEach((item) => {
       const distance = Math.sqrt(Math.pow(item.cx * rate - locationX, 2) + Math.pow(item.cy * rate - locationY, 2));
 
-      if (distance <= screen.r * rate) {
-        this.startX = item.cx * rate;
-        this.startY = item.cy * rate;
+      if (distance <= screen.r * rate + 2) {
+        this.startX = locationX;
+        this.startY = locationY;
 
         if (currentIndex === item.order) {
           isValid = true;

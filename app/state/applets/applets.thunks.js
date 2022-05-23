@@ -255,11 +255,11 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
       localInfo[id.split("/").pop()] = {
         appletVersion: applet.schemaVersion.en,
         contentUpdateTime,
-        localItems: response ? Object.keys(response.items) : [],
-        localActivities: response ? Object.keys(response.activities) : [],
+        localItems: response && response.items ? Object.keys(response.items) : [],
+        localActivities: response && response.activities ? Object.keys(response.activities) : [],
         localEvents,
         startDate: response ? response['schema:endDate'] : null,
-        localResponses: response ? Object.keys(response.dataSources) : [],
+        localResponses: response && response.dataSources ? Object.keys(response.dataSources) : [],
       }
     })
   } else {

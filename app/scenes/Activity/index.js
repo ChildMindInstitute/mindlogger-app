@@ -176,14 +176,16 @@ class Activity extends React.Component {
     const optionalText = this.currentItem.isOptionalText;
     const responseTimes = {};
 
-    this.responseTime = Date.now();
+    if (!goToNext || !timeElapsed) {
+      this.responseTime = Date.now();
+    }
 
     for (const activity of currentApplet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
     }
 
     const visibility = activity.items.map((item) => {
-      if (item.isvis) {
+      if (item.isVis) {
         return false;
       }
       return testVisibility(item.visibility, activity.items, responses, responseTimes)
@@ -214,12 +216,14 @@ class Activity extends React.Component {
 
         nextScreen(timeElapsed);
         setSelected(false);
+      }
+
+      if (this.responseTime) {
         addUserActivityEvent(currentResponse.activity, {
           type: 'SET_ANSWER',
           time: this.responseTime,
           screen: currentScreen
-        })
-
+        });
         this.responseTime = null;
       }
     }
@@ -344,6 +348,11 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
           setTutorialIndex(tutorialIndex + 1);
+          addUserActivityEvent(currentResponse.activity, {
+            type: 'NEXT',
+            time: Date.now(),
+            screen: currentScreen
+          });
         } else {
           setTutorialStatus(0);
           setTutorialIndex(0);
@@ -425,7 +434,7 @@ class Activity extends React.Component {
     addUserActivityEvent(currentResponse.activity, {
       type: eventType,
       time: Date.now(),
-      screen: currentScreen
+      screen: isSummaryScreen ? 'summary' : currentScreen
     });
 
     this.responseTime = null;
