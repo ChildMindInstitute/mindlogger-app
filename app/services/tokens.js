@@ -186,9 +186,11 @@ export const getTokenSummary = (activity, responses) => {
 
 export const isTokenLoggerApplet = (applet) => {
   for (const activity of applet.activities) {
-    for (const item of activity.items) {
-      if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
-        return true;
+    if (activity.items) {
+      for (const item of activity.items) {
+        if (item.inputType == 'pastBehaviorTracker' || item.inputType == 'futureBehaviorTracker') {
+          return true;
+        }
       }
     }
   }
