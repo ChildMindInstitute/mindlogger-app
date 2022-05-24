@@ -262,6 +262,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         localResponses: response && response.dataSources ? Object.keys(response.dataSources) : [],
       }
     })
+    localInfo = {};
+
   } else {
     localInfo = {};
   }
