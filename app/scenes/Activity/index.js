@@ -200,7 +200,7 @@ class Activity extends React.Component {
       const inputType = activity.items[currentScreen].inputType;
       if ([
         'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
-        'date', 'ageSelector', 'select', 'text', 'time',
+        'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
         'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
       ].indexOf(inputType) >= 0 && responses[currentScreen]) {
         userEvent.response = JSON.parse(JSON.stringify(responses[currentScreen]));
