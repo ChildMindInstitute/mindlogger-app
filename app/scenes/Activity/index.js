@@ -198,12 +198,16 @@ class Activity extends React.Component {
       };
 
       const inputType = activity.items[currentScreen].inputType;
-      if ([
-        'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
-        'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
-        'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
-      ].indexOf(inputType) >= 0 && responses[currentScreen]) {
-        userEvent.response = JSON.parse(JSON.stringify(responses[currentScreen]));
+      if (responses[currentScreen]) {
+        if ([
+          'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
+          'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
+          'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
+        ].indexOf(inputType) >= 0) {
+          userEvent.response = JSON.parse(JSON.stringify(responses[currentScreen]));
+        } else if (typeof responses[currentScreen] == 'object' && responses[currentScreen].text) {
+          userEvent.response = { text: responses[currentScreen].text };
+        }
       }
 
       if (this.userEvents.length > 0 && userEvent.response) {
