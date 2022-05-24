@@ -210,11 +210,13 @@ class Activity extends React.Component {
         }
       }
 
-      if (this.userEvents.length > 0 && userEvent.response) {
+      if (this.userEvents.length > 0) {
         const lastEvent = this.userEvents[this.userEvents.length-1];
 
-        if (
-          lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
+        if ((inputType == 'trail' || inputType == 'drawing') && lastEvent.type == 'SET_ANSWER') {
+          this.userEvents.pop();
+        } else if (
+          userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
         ) {
           if (lastEvent.response.text != userEvent.response.text) {
             if (this.state.optionalTextChanged) {
@@ -307,6 +309,14 @@ class Activity extends React.Component {
     } = this.props;
     const { activity, responses } = currentResponse;
 
+    this.userEvents.push({
+      type: 'PREV',
+      time: Date.now(),
+      screen: currentScreen
+    });
+
+    this.setState({ optionalTextChanged: false });
+
     this.updateStore();
 
     if (isSummaryScreen) {
@@ -322,14 +332,6 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
-
-    this.userEvents.push({
-      type: 'PREV',
-      time: Date.now(),
-      screen: currentScreen
-    });
-
-    this.setState({ optionalTextChanged: false });
   }
 
   handlePressNextScreen = (nextLabel = null) => {
@@ -362,15 +364,16 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
           setTutorialIndex(tutorialIndex + 1);
-          this.userEvents.push({
-            type: 'NEXT',
-            time: Date.now(),
-            screen: currentScreen
-          });
         } else {
           setTutorialStatus(0);
           setTutorialIndex(0);
         }
+        this.userEvents.push({
+          type: 'NEXT',
+          time: Date.now(),
+          screen: currentScreen
+        });
+        this.updateStore();
         return;
       } else if (currentScreen !== 3) {
         setTutorialStatus(1);
