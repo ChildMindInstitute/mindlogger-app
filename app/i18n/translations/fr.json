@@ -13,8 +13,7 @@
   "activity_summary": {
     "terms_text": "Je comprends que les informations fournies par ce questionnaire ne sont pas destinées à remplacer les conseils, le diagnostic ou le traitement offerts par un professionnel de la santé médicale ou mentale, et que mes réponses anonymes peuvent être utilisées et partagées pour des recherches sur la santé mentale des enfants.",
     "footer_text": "CHILD MIND INSTITUTE, INC. ET CHILD MIND MEDICAL PRACTICE, PLLC (ENSEMBLE, \"CMI\") NE PRATIQUENT PAS DIRECTEMENT OU INDIRECTEMENT LA MÉDECINE ET NE DISPENSENT PAS DE CONSEILS MÉDICAUX DANS LE CADRE DE CE QUESTIONNAIRE. CMI DÉCLINE TOUTE RESPONSABILITÉ EN CE QUI CONCERNE LE DIAGNOSTIC, LE TRAITEMENT, LES DÉCISIONS OU LES ACTIONS PRISES SUR LA BASE DES INFORMATIONS FOURNIES PAR LE PRÉSENT QUESTIONNAIRE ET DÉCLINE TOUTE RESPONSABILITÉ QUANT À L'UTILISATION DE CE QUESTIONNAIRE.",
-    "child_score": "Le score de votre enfant",
-    "child_score_on_subscale": "Le score de votre enfant pour la sous-échelle {{name}} est de",
+    "score_on_subscale": "Le score pour la sous-échelle {{name}} est",
     "save": "Sauvegarder",
     "summary": "Résumé",
     "not_yet_completed":"Pas encore terminé",

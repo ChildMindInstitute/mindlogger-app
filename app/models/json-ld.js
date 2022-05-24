@@ -918,6 +918,18 @@ export const transformApplet = (payload, currentApplets = null) => {
         })
       })
     }
+
+    const activities = Object.keys(payload.activities).map((key) => {
+      const activity = activityTransformJson(
+        payload.activities[key],
+        payload.items,
+      );
+      activity.schema = key;
+      return activity;
+    });
+    // Add the items and activities to the applet object
+    applet.activities = activities;
+    
   } else {
     const activities = Object.keys(payload.activities).map((key) => {
       const activity = activityTransformJson(
@@ -934,8 +946,7 @@ export const transformApplet = (payload, currentApplets = null) => {
 
   for (let i = 0; i < applet.activities.length; i++) {
     const activity = applet.activities[i];
-    const items = [...activity.items].sort(orderBySchema(activity.order));
-
+    const items = [...(activity.items || [])].sort(orderBySchema(activity.order));
     applet.activities[i] = {
       ...activity,
       items
