@@ -142,7 +142,7 @@ export default (state = initialState, action = {}) => {
         },
         currentBehavior: {}
       };
-    case RESPONSES_CONSTANTS.ADD_USER_ACTIVITY_EVENT:
+    case RESPONSES_CONSTANTS.ADD_USER_ACTIVITY_EVENTS:
       activity = action.payload.activity;
       index = activity.event ? activity.id + activity.event.id : activity.id;
 
@@ -154,7 +154,7 @@ export default (state = initialState, action = {}) => {
             ...state.inProgress[index],
             events: [
               ...state.inProgress[index].events,
-              action.payload.event
+              ...action.payload.events
             ]
           }
         }
