@@ -7,7 +7,7 @@ import * as R from "ramda";
 import _ from "lodash";
 import { Actions } from "react-native-router-flux";
 import i18n from "i18next";
-import { addUserActivityEvent } from "../../state/responses/responses.actions";
+import { addUserActivityEvents } from "../../state/responses/responses.actions";
 import {
   nextScreen,
   prevScreen,
@@ -100,11 +100,12 @@ class Activity extends React.Component {
       modalVisible: false,
       hasSplashScreen: false,
       responses: [],
-      visibility: []
+      visibility: [],
+      optionalTextChanged: false
     };
+    this.userEvents = [];
     this.idleTimer = new Timer();
     this.completed = false;
-    this.responseTime = null;
   }
 
   componentDidMount() {
@@ -112,10 +113,6 @@ class Activity extends React.Component {
     const { activity, responses } = currentResponse;
 
     const idleTime = this.getIdleTime();
-
-    if (currentResponse[currentScreen]) {
-      this.responseTime = currentResponse[currentScreen].responseTime || null;
-    }
 
     this.props.setActivitySelectionDisabled(false);
     this.setState({
@@ -168,17 +165,12 @@ class Activity extends React.Component {
       setSelected,
       currentApplet,
       lastResponseTime,
-      addUserActivityEvent
     } = this.props;
     const { activity } = currentResponse;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText;
     const responseTimes = {};
-
-    if (!goToNext || !timeElapsed) {
-      this.responseTime = Date.now();
-    }
 
     for (const activity of currentApplet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
@@ -196,6 +188,49 @@ class Activity extends React.Component {
 
     if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
       return;
+    }
+
+    if (!goToNext || !timeElapsed) {
+      const userEvent = {
+        type: 'SET_ANSWER',
+        time: Date.now(),
+        screen: currentScreen
+      };
+
+      const inputType = activity.items[currentScreen].inputType;
+      if (responses[currentScreen]) {
+        if ([
+          'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
+          'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
+          'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
+        ].indexOf(inputType) >= 0) {
+          userEvent.response = JSON.parse(JSON.stringify(responses[currentScreen]));
+        } else if (typeof responses[currentScreen] == 'object' && responses[currentScreen].text) {
+          userEvent.response = { text: responses[currentScreen].text };
+        }
+      }
+
+      if (this.userEvents.length > 0) {
+        const lastEvent = this.userEvents[this.userEvents.length-1];
+
+        if ((inputType == 'trail' || inputType == 'drawing') && lastEvent.type == 'SET_ANSWER') {
+          this.userEvents.pop();
+        } else if (
+          userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
+        ) {
+          if (lastEvent.response.text != userEvent.response.text) {
+            if (this.state.optionalTextChanged) {
+              this.userEvents.pop();
+            }
+
+            this.setState({ optionalTextChanged: true });
+          } else {
+            this.setState({ optionalTextChanged: false });
+          }
+        }
+      }
+
+      this.userEvents.push(userEvent);
     }
 
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
@@ -216,15 +251,6 @@ class Activity extends React.Component {
 
         nextScreen(timeElapsed);
         setSelected(false);
-      }
-
-      if (this.responseTime) {
-        addUserActivityEvent(currentResponse.activity, {
-          type: 'SET_ANSWER',
-          time: this.responseTime,
-          screen: currentScreen
-        });
-        this.responseTime = null;
       }
     }
   }
@@ -280,9 +306,16 @@ class Activity extends React.Component {
       setSelected,
       isSelected,
       currentResponse,
-      addUserActivityEvent
     } = this.props;
     const { activity, responses } = currentResponse;
+
+    this.userEvents.push({
+      type: 'PREV',
+      time: Date.now(),
+      screen: currentScreen
+    });
+
+    this.setState({ optionalTextChanged: false });
 
     this.updateStore();
 
@@ -299,22 +332,6 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
-
-    if (this.responseTime) {
-      addUserActivityEvent(currentResponse.activity, {
-        type: 'SET_ANSWER',
-        time: this.responseTime,
-        screen: currentScreen
-      });
-    }
-
-    addUserActivityEvent(currentResponse.activity, {
-      type: 'PREV',
-      time: Date.now(),
-      screen: currentScreen
-    });
-
-    this.responseTime = null;
   }
 
   handlePressNextScreen = (nextLabel = null) => {
@@ -332,7 +349,6 @@ class Activity extends React.Component {
       setSplashScreen,
       setCurrentScreen,
       isSplashScreen,
-      addUserActivityEvent,
     } = this.props;
 
     const { isSummaryScreen } = this.state;
@@ -348,20 +364,36 @@ class Activity extends React.Component {
       if (tutorialStatus !== 0) {
         if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
           setTutorialIndex(tutorialIndex + 1);
-          addUserActivityEvent(currentResponse.activity, {
-            type: 'NEXT',
-            time: Date.now(),
-            screen: currentScreen
-          });
         } else {
           setTutorialStatus(0);
           setTutorialIndex(0);
         }
+        this.userEvents.push({
+          type: 'NEXT',
+          time: Date.now(),
+          screen: currentScreen
+        });
+        this.updateStore();
         return;
       } else if (currentScreen !== 3) {
         setTutorialStatus(1);
       }
     }
+
+    let eventType = 'NEXT';
+    if (nextLabel == i18n.t('activity_navigation:skip')) {
+      eventType = 'SKIP';
+    } else if (nextLabel == i18n.t('activity_navigation:done')) {
+      eventType = 'DONE';
+    }
+
+    this.userEvents.push({
+      type: eventType,
+      time: Date.now(),
+      screen: isSummaryScreen ? 'summary' : currentScreen
+    });
+
+    this.setState({ optionalTextChanged: false });
 
     if (!this.completed) {
       this.updateStore();
@@ -415,41 +447,22 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
-
-    if (this.responseTime) {
-      addUserActivityEvent(currentResponse.activity, {
-        type: 'SET_ANSWER',
-        time: this.responseTime,
-        screen: currentScreen
-      });
-    }
-
-    let eventType = 'NEXT';
-    if (nextLabel == i18n.t('activity_navigation:skip')) {
-      eventType = 'SKIP';
-    } else if (nextLabel == i18n.t('activity_navigation:done')) {
-      eventType = 'DONE';
-    }
-
-    addUserActivityEvent(currentResponse.activity, {
-      type: eventType,
-      time: Date.now(),
-      screen: isSummaryScreen ? 'summary' : currentScreen
-    });
-
-    this.responseTime = null;
   }
 
   updateStore () {
-    const { currentScreen } = this.props;
+    const { currentScreen, addUserActivityEvents } = this.props;
     if (!this.props.currentResponse) return;
 
-    if (this.props.currentResponse) {
-      this.props.setAnswer(
-        this.props.currentResponse.activity,
-        currentScreen,
-        this.state.responses[currentScreen]
-      );
+    const activity = this.props.currentResponse.activity;
+    this.props.setAnswer(
+      activity,
+      currentScreen,
+      this.state.responses[currentScreen]
+    );
+
+    if (this.userEvents.length) {
+      addUserActivityEvents(activity, this.userEvents);
+      this.userEvents = [];
     }
   }
 
@@ -470,7 +483,6 @@ class Activity extends React.Component {
       currentScreen,
       appStatus,
       isSplashScreen,
-      addUserActivityEvent,
     } = this.props;
 
     const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
@@ -651,17 +663,9 @@ class Activity extends React.Component {
                     responses[currentScreen] = undefined;
                   }
 
-                  this.setState({ responses });
+                  this.setState({ responses, optionalTextChanged: false });
 
-                  if (this.responseTime) {
-                    addUserActivityEvent(currentResponse.activity, {
-                      type: 'SET_ANSWER',
-                      time: this.responseTime,
-                      screen: currentScreen
-                    });
-                  }
-
-                  addUserActivityEvent(currentResponse.activity, {
+                  this.userEvents.push({
                     type: 'UNDO',
                     time: Date.now(),
                     screen: currentScreen
@@ -746,7 +750,7 @@ const mapDispatchToProps = {
   setCurrentScreen,
   setActivitySelectionDisabled,
   finishActivity,
-  addUserActivityEvent
+  addUserActivityEvents
 };
 
 export default connect(

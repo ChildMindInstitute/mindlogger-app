@@ -104,10 +104,10 @@ export const setCurrentBehavior = behavior => ({
   payload: behavior
 })
 
-export const addUserActivityEvent = (activity, event) => ({
-  type: RESPONSES_CONSTANTS.ADD_USER_ACTIVITY_EVENT,
+export const addUserActivityEvents = (activity, events) => ({
+  type: RESPONSES_CONSTANTS.ADD_USER_ACTIVITY_EVENTS,
   payload: {
     activity,
-    event
+    events
   }
 })

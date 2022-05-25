@@ -918,18 +918,6 @@ export const transformApplet = (payload, currentApplets = null) => {
         })
       })
     }
-
-    const activities = Object.keys(payload.activities).map((key) => {
-      const activity = activityTransformJson(
-        payload.activities[key],
-        payload.items,
-      );
-      activity.schema = key;
-      return activity;
-    });
-    // Add the items and activities to the applet object
-    applet.activities = activities;
-    
   } else {
     const activities = Object.keys(payload.activities).map((key) => {
       const activity = activityTransformJson(
