@@ -186,10 +186,6 @@ class Activity extends React.Component {
 
     this.setState({ visibility });
 
-    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
-      return;
-    }
-
     if (!goToNext || !timeElapsed) {
       const userEvent = {
         type: 'SET_ANSWER',
@@ -231,6 +227,10 @@ class Activity extends React.Component {
       }
 
       this.userEvents.push(userEvent);
+    }
+
+    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
+      return;
     }
 
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
