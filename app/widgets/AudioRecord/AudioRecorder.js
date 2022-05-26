@@ -82,6 +82,8 @@ export default class AudioRecorder extends Component {
           const { err, message } = recordErr;
           console.warn(err, message);
           this.setState({ recorderState: 'error' });
+
+          return ;
         }
         this.setState({
           recorderState: 'recording',
@@ -109,9 +111,7 @@ export default class AudioRecorder extends Component {
       if (response !== Permissions.RESULTS.GRANTED) {
         Permissions.request(permission).then((response) => {
           this.setState({ permission: response });
-          if (response === Permissions.RESULTS.GRANTED) {
-            this.record();
-          } else if (response === Permissions.RESULTS.BLOCKED) {
+          if (response === Permissions.RESULTS.BLOCKED) {
             Alert.alert(
               i18n.t('audio_recorder:alert_title'),
               i18n.t('audio_recorder:alert_message'),

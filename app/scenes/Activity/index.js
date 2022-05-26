@@ -541,6 +541,12 @@ class Activity extends React.Component {
               responses[currentScreen] = undefined;
               this.setState({ responses });
 
+              this.userEvents.push({
+                type: 'UNDO',
+                time: Date.now(),
+                screen: currentScreen
+              })
+
               sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
             }}
           />
