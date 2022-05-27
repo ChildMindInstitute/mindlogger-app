@@ -41,7 +41,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     buttonLabel: config.nextButton || 'Finish',
     minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
     continueText,
-    restartText: tryIndex < config.maxRetryCount ? restartText : continueText
+    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText
   };
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
@@ -112,8 +112,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
             tryIndex < config.maxRetryCount
           ) {
             setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
-            setTryIndex(tryIndex+1);
             webView.current.injectJavaScript(injectConfig);
+            setTryIndex(tryIndex+1);
           } else {
             setLoading(true);
 
