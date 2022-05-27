@@ -186,10 +186,6 @@ class Activity extends React.Component {
 
     this.setState({ visibility });
 
-    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
-      return;
-    }
-
     if (!goToNext || !timeElapsed) {
       const userEvent = {
         type: 'SET_ANSWER',
@@ -213,7 +209,7 @@ class Activity extends React.Component {
       if (this.userEvents.length > 0) {
         const lastEvent = this.userEvents[this.userEvents.length-1];
 
-        if ((inputType == 'trail' || inputType == 'drawing') && lastEvent.type == 'SET_ANSWER') {
+        if ((inputType == 'trail' || inputType == 'drawing' || inputType == 'text') && lastEvent.type == 'SET_ANSWER') {
           this.userEvents.pop();
         } else if (
           userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
@@ -231,6 +227,10 @@ class Activity extends React.Component {
       }
 
       this.userEvents.push(userEvent);
+    }
+
+    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
+      return;
     }
 
     if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
