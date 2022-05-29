@@ -19,7 +19,7 @@ import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
-import { setActivities, setRecommendedActivities } from '../../state/activities/activities.actions';
+import { setActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
   inProgressSelector,
@@ -32,7 +32,6 @@ import LiveConnection from './LiveConnection';
 const ActivityList = ({
   applet,
   activities,
-  recommendedActivities,
   syncUploadQueue,
   appStatus,
   setConnection,
@@ -43,13 +42,13 @@ const ActivityList = ({
   setScheduleUpdated,
   inProgress,
   setActivities,
-  setRecommendedActivities,
   finishedEvents,
   onPressActivity,
   onLongPressActivity,
   cumulativeActivities
 }) => {
   const [prizeActivity, setPrizeActivity] = useState(null);
+  const [recommendedActivities, setRecommendedActivities] = useState([]);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
@@ -217,7 +216,6 @@ const mapStateToProps = (state) => {
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
-    recommendedActivities: state.activities.recommendedActivities,
     cumulativeActivities: state.activities.cumulativeActivities,
   };
 };
@@ -232,7 +230,6 @@ const mapDispatchToProps = {
   setReminder,
   cancelReminder,
   setActivities,
-  setRecommendedActivities
 };
 
 export default connect(
