@@ -224,6 +224,10 @@ class Activity extends React.Component {
             this.setState({ optionalTextChanged: false });
           }
         }
+
+        if (inputType == 'trail' && responses[currentScreen] && !responses[currentScreen].value.updated) {
+          userEvent.time = lastEvent.time;
+        }
       }
 
       this.userEvents.push(userEvent);
