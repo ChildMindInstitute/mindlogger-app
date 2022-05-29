@@ -14,7 +14,6 @@ import {
   newAppletSelector,
   connectionSelector,
   finishedEventsSelector,
-  activitySelectionDisabledSelector,
 } from '../../state/app/app.selectors';
 import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
@@ -214,7 +213,6 @@ const mapStateToProps = (state) => {
     applet: newAppletSelector(state),
     isConnected: connectionSelector(state),
     appletTime: state.applets.currentTime,
-    activitySelectionDisabled: activitySelectionDisabledSelector(state),
     activityAccess: activityAccessSelector(state),
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),

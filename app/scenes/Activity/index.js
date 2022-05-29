@@ -33,7 +33,6 @@ import { setTutorialStatus, setTutorialIndex } from '../../state/app/app.actions
 import { testVisibility } from "../../services/visibility";
 import {
   setCurrentActivity,
-  setActivitySelectionDisabled,
 } from "../../state/app/app.actions";
 import {
   setAnswer,
@@ -114,7 +113,6 @@ class Activity extends React.Component {
 
     const idleTime = this.getIdleTime();
 
-    this.props.setActivitySelectionDisabled(false);
     this.setState({
       isSummaryScreen,
       idleTime,
@@ -727,7 +725,6 @@ Activity.propTypes = {
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
   setCurrentActivity: PropTypes.func.isRequired,
-  setActivitySelectionDisabled: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
 
@@ -758,7 +755,6 @@ const mapDispatchToProps = {
   setSummaryScreen,
   setSplashScreen,
   setCurrentScreen,
-  setActivitySelectionDisabled,
   finishActivity,
   addUserActivityEvents
 };

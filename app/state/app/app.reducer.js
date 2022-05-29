@@ -246,11 +246,6 @@ export default (state = initialState, action = {}) => {
         ...state,
         appletSelectionDisabled: action.payload,
       };
-    case APP_CONSTANTS.SET_ACTIVITY_SELECTION_DISABLED:
-      return {
-        ...state,
-        activitySelectionDisabled: action.payload,
-      };
     case APP_CONSTANTS.TOGGLE_MOBILE_DATA_ALLOWED:
       return {
         ...state,

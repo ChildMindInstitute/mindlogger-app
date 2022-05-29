@@ -59,11 +59,6 @@ export const setAppletSelectionDisabled = status => ({
   payload: status,
 });
 
-export const setActivitySelectionDisabled = status => ({
-  type: APP_ACTIONS.SET_ACTIVITY_SELECTION_DISABLED,
-  payload: status,
-});
-
 export const setActivityEndTime = status => ({
   type: APP_ACTIONS.SET_ACTIVITY_END_TIME,
   payload: status,
