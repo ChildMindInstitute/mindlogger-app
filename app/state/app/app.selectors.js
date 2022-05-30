@@ -57,5 +57,4 @@ export const currentActivitySelector = createSelector(
 
 export const currentEventSelector = R.path(['app', 'currentEvent']);
 export const appletSelectionDisabledSelector = R.path(['app', 'appletSelectionDisabled']);
-export const activitySelectionDisabledSelector = R.path(['app', 'activitySelectionDisabled']);
 export const tcpConnectionHistorySelector = R.path(['app', 'tcpConnectionHistory']);

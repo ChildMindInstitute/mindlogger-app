@@ -144,7 +144,6 @@ export const startResponse = (activity) => (dispatch, getState) => {
       activity);
     dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
-    dispatch(setCurrentActivity(activity.id));
 
     sendData('start_activity', activity.id, applet.id);
 
@@ -160,7 +159,6 @@ export const startResponse = (activity) => (dispatch, getState) => {
     }
     dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
-    dispatch(setCurrentActivity(activity.id));
 
     sendData('start_activity', activity.id, applet.id);
 
@@ -199,7 +197,6 @@ export const startResponse = (activity) => (dispatch, getState) => {
               )
             );
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
-            dispatch(setCurrentActivity(activity.id));
 
             sendData('restart_activity', activity.id, applet.id);
 
@@ -219,7 +216,6 @@ export const startResponse = (activity) => (dispatch, getState) => {
 
             dispatch(setActivityOpened(true));
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, currentScreen || next, responses.inProgress[index][currentScreen].startTime));
-            dispatch(setCurrentActivity(activity.id));
 
             sendData('resume_activity', activity.id, applet.id);
 

@@ -44,6 +44,7 @@ export default class TrailsBoard extends Component {
     this.startY = 0;
     this.lastX = 0;
     this.lastY = 0;
+    this.capturing = false;
 
     this.pathStack = [];
     this.pathId = 1;
@@ -62,7 +63,7 @@ export default class TrailsBoard extends Component {
         const { lines, currentIndex } = this.state;
         this.endLine(evt, gestureState);
 
-        this.props.onResult({ ...this.save(lines, currentIndex), startTime: this.state.startTime });
+        this.props.onResult({ ...this.save(lines, currentIndex), startTime: this.state.startTime, updated: true });
       },
     });
     this.allowed = true;
@@ -90,12 +91,13 @@ export default class TrailsBoard extends Component {
       const result = this.save(lines, currentIndex);
 
       screenTime = screenTime ? screenTime + 1 : 1;
+
       if ((currentScreen === 2 && screenTime >= 150) ||
         (currentScreen === 4 && screenTime >= 300)) {
         this.setState({ screenTime: 0 });
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt, startTime: this.state.startTime }, true);
+
+        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt, startTime: this.state.startTime, updated: this.capturing }, true);
       } else {
-        this.props.onResult({ ...result, screenTime, failedCnt: failedCnt, startTime: this.state.startTime });
         this.setState({ screenTime });
       }
     }, 1000)
@@ -153,6 +155,7 @@ export default class TrailsBoard extends Component {
       const newLine = { points: [{ x: this.startX, y: this.startY, time: Date.now(), valid: true, start: currentItem.label, end: nextItem.label }] };
       this.setState({ lines: [...lines, newLine] });
       this.logData(this.startX, this.startY);
+      this.capturing = true;
     }
   }
 
@@ -170,6 +173,8 @@ export default class TrailsBoard extends Component {
     const { lines, rate, currentIndex, isStopped, validIndex } = this.state;
     const n = lines.length - 1;
     let isValidLine = false;
+
+    this.capturing = false;
 
     if (!isStopped || !lines.length) return ;
 
