@@ -69,7 +69,7 @@ const ActivityList = ({
       convertToIndexes(cumulativeActivities[applet.id].archieved),
     );
 
-    appletActivities = appletActivities
+    appletActivities = _.sortBy(appletActivities)
       .map(index => newApplet.activities[index])
       .filter(
         activity =>

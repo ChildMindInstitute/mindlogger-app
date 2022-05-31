@@ -121,7 +121,6 @@ export default class TrailsBoard extends Component {
     if (!this.allowed) return;
     const { locationX, locationY } = evt.nativeEvent;
     let isValid = false;
-    let order = 0;
 
     const currentItem = screen.items.find(({ order }) => order === currentIndex);
     const nextItem = screen.items.find(({ order }) => order === currentIndex + 1);
@@ -173,6 +172,8 @@ export default class TrailsBoard extends Component {
     const { lines, rate, currentIndex, isStopped, validIndex } = this.state;
     const n = lines.length - 1;
     let isValidLine = false;
+
+    if (!this.capturing) return ;
 
     this.capturing = false;
 
