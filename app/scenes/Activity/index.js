@@ -32,9 +32,6 @@ import {
 import { setTutorialStatus, setTutorialIndex } from '../../state/app/app.actions';
 import { testVisibility } from "../../services/visibility";
 import {
-  setCurrentActivity,
-} from "../../state/app/app.actions";
-import {
   setAnswer,
   setSummaryScreen,
   setSplashScreen,
@@ -302,7 +299,6 @@ class Activity extends React.Component {
     const { isSummaryScreen } = this.state;
     const {
       setSummaryScreen,
-      setCurrentActivity,
       currentScreen,
       prevScreen,
       setSelected,
@@ -326,9 +322,6 @@ class Activity extends React.Component {
       setSummaryScreen(activity, false);
       setSelected(false);
     } else {
-      if (!currentScreen) {
-        setCurrentActivity(null);
-      }
       prevScreen();
       if (isSelected) {
         setSelected(false);
@@ -456,15 +449,18 @@ class Activity extends React.Component {
     if (!this.props.currentResponse) return;
 
     const activity = this.props.currentResponse.activity;
-    this.props.setAnswer(
-      activity,
-      currentScreen,
-      this.state.responses[currentScreen]
-    );
 
-    if (this.userEvents.length) {
-      addUserActivityEvents(activity, this.userEvents);
-      this.userEvents = [];
+    if (activity) {
+      this.props.setAnswer(
+        activity,
+        currentScreen,
+        this.state.responses[currentScreen]
+      );
+
+      if (this.userEvents.length) {
+        addUserActivityEvents(activity, this.userEvents);
+        this.userEvents = [];
+      }
     }
   }
 
@@ -724,7 +720,6 @@ Activity.propTypes = {
   setTutorialIndex: PropTypes.func.isRequired,
   completeResponse: PropTypes.func.isRequired,
   itemVisibility: PropTypes.array.isRequired,
-  setCurrentActivity: PropTypes.func.isRequired,
   isSelected: PropTypes.bool.isRequired,
 };
 
@@ -744,7 +739,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  setCurrentActivity,
   setAnswer,
   setSelected,
   nextScreen,
