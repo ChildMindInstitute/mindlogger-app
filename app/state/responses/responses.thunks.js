@@ -693,7 +693,6 @@ export const prevScreen = () => (dispatch, getState) => {
 
   if (prev === -1) {
     Actions.pop();
-    dispatch(setCurrentActivity(null));
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, prev));
   }
