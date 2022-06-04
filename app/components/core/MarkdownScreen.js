@@ -4,8 +4,9 @@ import { View, Linking, Dimensions, Image, Text } from 'react-native';
 import { markdownStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
 import AudioPlayer from './AudioPlayer';
-import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from 'react-native-markdown-display';
+import Markdown, { MarkdownIt, renderRules } from 'react-native-markdown-display';
 import Mimoza from 'mimoza';
+import moment from "moment";
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 import { WebView } from 'react-native-webview';
@@ -193,7 +194,7 @@ export { MarkdownScreen };
 
 
 const checkNodeContent = (content) => {
-  content = content.replace(/<([^‘]*[a-zA-Z]+[^‘]*)>/ig, '');
+  content = content.replace(/<([^‘]*[a-zA-Z]+[^‘]*)>/ig, '').replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'));
 
   if (regex.test(content.trim())) content = content.trim().replace(/==/g, "")
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) return checkSuperscript(content)
