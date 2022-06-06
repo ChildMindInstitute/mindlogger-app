@@ -37,7 +37,7 @@ function buildTimeline() {
     type: 'html-keyboard-response',
     stimulus: fixationImage,
     choices: window.CONFIG.trials[0].choices.map(choice => choice.name.en),
-    trial_duration: 500,
+    trial_duration: window.CONFIG.fixationDuration || 500,
     data: {
       tag: 'fixation',
     }
@@ -74,7 +74,7 @@ function buildTimeline() {
       tag: 'feedback',
     },
     choices: window.CONFIG.trials[0].choices.map(choice => choice.name.en),
-    trial_duration: 500,
+    trial_duration: window.CONFIG.fixationDuration || 500,
   };
 
   /* defining test timeline */
