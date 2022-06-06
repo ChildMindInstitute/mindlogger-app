@@ -287,15 +287,15 @@ export default class TrailsBoard extends Component {
       this.lastPathId = 0;
       this.lastIndex = -1;
 
-      setTimeout(() => {
-        lines[n].points.forEach((point, index) => {
-          if (index > validIndex) {
-            point.valid = false;
-            point.actual = item.label;
-          }
-        })
-        this.setState({ lines, errorPoint: null, currentPoint: -1 });
+      lines[n].points.forEach((point, index) => {
+        if (index > validIndex) {
+          point.valid = false;
+          point.actual = item.label;
+        }
+      })
+      this.setState({ lines, errorPoint: null, currentPoint: -1 });
 
+      setTimeout(() => {
         // pop stack
         if (lastId) {
           this.canvas.deletePath(lastId);
@@ -304,7 +304,7 @@ export default class TrailsBoard extends Component {
         for (const pathId of stack) {
           this.canvas.deletePath(pathId);
         }
-      }, 2000);
+      }, 1000);
 
     } else {
       lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
