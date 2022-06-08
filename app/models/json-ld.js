@@ -164,11 +164,13 @@ export const flattenIdList = (list = []) => list.map((item) => item["@id"]);
 export const flattenItemList = (list = []) =>
   list.map((item) => ({
     name: languageListToObject(item[NAME]),
+    id: R.path(['@id'], item),
     value: R.path([VALUE, 0, "@value"], item),
     color: R.path([COLOR, 0, "@value"], item),
     price: R.path([PRICE, 0, "@value"], item),
     score: R.path([SCORE, 0, "@value"], item),
     alert: R.path([ALERT, 0, "@value"], item),
+    order: item[ORDER] && flattenIdList(R.path([ORDER, 0, "@list"], item)),
     isVis: item[IS_VIS] ? R.path([IS_VIS, 0, "@value"], item) : false,
     description: R.path([DESCRIPTION, 0, "@value"], item),
     image: item[IMAGE],
@@ -446,6 +448,13 @@ export const transformInputs = (inputs) =>
   inputs.reduce((accumulator, inputObj) => {
     const key = R.path([NAME, 0, "@value"], inputObj);
     let val = R.path([VALUE, 0, "@value"], inputObj);
+
+    if (key == 'fixationScreen') {
+      val = {
+        value: R.path([VALUE, 0, "@value"], inputObj),
+        image: R.path([IMAGE], inputObj)
+      };
+    }
 
     if (typeof val === "undefined" && inputObj[ITEM_LIST_ELEMENT]) {
       const itemList = R.path([ITEM_LIST_ELEMENT], inputObj);
