@@ -15,22 +15,24 @@ console.log(config)
   const [count, setCount] = useState(1)
   let onEndGame = (result: Object) => {
     const dataString = result.nativeEvent.data;
+    console.log(dataString)
+    const dataObject = JSON.parse(dataString);
 
-    const dataTest = JSON.parse(dataString);
+    const dataType = result.nativeEvent.type;
 
-    if (result.nativeEvent.type == 'response') {
-      sendData('live_event', parseResponse(dataTest), appletId);
+    if (dataType == 'response') {
+      sendData('live_event', parseResponse(dataObject), appletId);
       return ;
     }
     console.log(result.nativeEvent.correctAnswers);
     if (tryIndex < config.maxRetryCount && result.nativeEvent.correctAnswers < 75) {
-      setResponses(responses.concat(dataTest));
+      setResponses(responses.concat(dataObject));
       setTryIndex(tryIndex+1);
       NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex+1);
 
       setCount(count + 1);
     } else {
-      onChange(responses.concat(dataTest).map(record => parseResponse(record)), true);
+      onChange(responses.concat(dataObject).map(record => parseResponse(record)), true);
     }
     };
 

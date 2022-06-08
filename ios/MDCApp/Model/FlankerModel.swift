@@ -9,10 +9,12 @@
 import Foundation
 
 struct FlankerModel: Codable {
+  var button_pressed: Int?
+  var correct: Bool
+  var correctChoice: Int
   var endTime: Int
   var image_time: Int
   var internal_node_id: String
-  var key_press: Bool?
   var rt: Int
   var start_time: Int
   var start_timestamp: Int
