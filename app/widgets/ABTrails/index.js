@@ -50,6 +50,7 @@ class ABTrails extends React.Component {
       isFinished: false,
     };
     this.finalAnswer = {};
+    this.errorTimerId = null;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -96,9 +97,15 @@ class ABTrails extends React.Component {
 
     if (!flag) return;
 
-    setTimeout(() => {
+    if (this.errorTimerId) {
+      clearTimeout(this.errorTimerId);
+    }
+
+    this.errorTimerId = setTimeout(() => {
       const { isFinished } = this.state;
       if (!isFinished) this.setState({ message: ' ' });
+
+      this.errorTimerId = 0;
     }, 2000);
   }
 

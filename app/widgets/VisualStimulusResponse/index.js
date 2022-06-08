@@ -6,6 +6,46 @@ import { sendData } from "../../services/socket";
 
 const htmlSource = require('./visual-stimulus-response.html');
 
+const shuffle = (a) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const getImage = (image, alt) => {
+  if (image) {
+    return `<img src="${image}" alt="${alt}">`
+  }
+
+  return alt;
+}
+
+const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
+  const trials = [];
+  const choices = buttons.map(button => ({
+    value: button.value,
+    name: { en: getImage(button.image, button.name.en) }
+  }));
+
+  for (const block of blocks) {
+    const order = samplingMethod == 'randomize-order' ? shuffle([...block.order]) : block.order;
+
+    for (const item of order) {
+      const screen = stimulusScreens.find(screen => screen.id == item);
+      if (screen) {
+        trials.push({
+          ...screen,
+          choices
+        });
+      }
+    }
+  }
+
+  return trials;
+}
+
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [tryIndex, setTryIndex] = useState(1);
   const [responses, setResponses] = useState([]);
@@ -13,36 +53,36 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   const webView = useRef();
 
   // Prepare config data for injecting into the WebView
-  const trials = config.trials.map(trial => ({
-    stimulus: {
-      en: trial.image
-    },
-    choices: trial.valueConstraints.itemList,
+  const screens = config.trials.map(trial => ({
+    id: trial.id,
+    stimulus: { en: getImage(trial.image, trial.name.en) },
     correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
     weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`
+    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`,
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
-    'Press the button below to end current block and restart.'
+    'Press the button below to end current block and restart.',
   ];
 
   const configObj = {
-    trials,
+    trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
+    fixationDuration: config.fixationDuration,
+    fixation: getImage(config.fixationScreen.image, config.fixationScreen.value),
     showFixation: config.showFixation !== false,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,
-    samplingMethod: config.samplingMethod,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
     minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
     continueText,
-    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText
+    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText,
   };
+
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
   const injectConfig = `
@@ -71,13 +111,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_timestamp: record.start_timestamp,
     offset: record.start_timestamp - record.start_time,
     tag: record.tag,
-  })
+  });
 
   return (
     <View
       style={{
         height: '100%',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       <WebView

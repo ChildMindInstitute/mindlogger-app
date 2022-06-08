@@ -178,12 +178,8 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const captured = useRef(false);
   const onResponderGrant = useCallback(evt => {
-    if (controlBar.current) {
-      captured.current = true;
-    }
-
     if (configObj.userInputType == 'touch') {
-      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+      startPos = evt.nativeEvent.locationY;
     }
   }, [width])
 
@@ -193,16 +189,22 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
       captured.current = false;
     }
 
-    if (configObj.userInputType == 'touch') {
-      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+    if (configObj.userInputType == 'touch' && startPos !== evt.nativeEvent.locationY) {
+      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
+      setMoving(true)
+      startPos = 0;
     }
 
-    setMoving(true)
   }, [width])
 
   const onResponderMove = useCallback(evt => {
+    if (controlBar.current) {
+      controlBar.current = false;
+      captured.current = true;
+    }
+
     if (configObj.userInputType == 'touch' && controlBar.current == false) {
-      updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
     }
   }, [width])
 
@@ -351,6 +353,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const previews = [];
   let targetPos = null;
+  let startPos = 0;
 
   /** get target point and points to preview */
   if (width) {
@@ -466,6 +469,38 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
                 <Rect
                   y={0}
+                  x={0}
+                  height={blockHeight - outerStimRadius}
+                  width={blockWidth}
+                  fill={getBackColor('white')}
+                />
+
+                <Rect
+                  y={0}
+                  x={center + blockWidth / 2}
+                  height={blockHeight - outerStimRadius}
+                  width={blockWidth}
+                  fill={getBackColor('white')}
+                />
+
+                <Rect
+                  y={width - blockHeight + outerStimRadius}
+                  x={0}
+                  height={blockHeight - outerStimRadius}
+                  width={blockWidth}
+                  fill={getBackColor('white')}
+                />
+
+                <Rect
+                  y={width - blockHeight + outerStimRadius}
+                  x={center + blockWidth / 2}
+                  height={blockHeight - outerStimRadius}
+                  width={blockWidth}
+                  fill={getBackColor('white')}
+                />
+
+                <Rect
+                  y={0}
                   x={center - blockWidth/2}
                   height={blockHeight-outerStimRadius}
                   width={blockWidth}
@@ -542,7 +577,16 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
         {
           configObj.dimensionCount == 1 && (
             <View
-              style={{ position: 'absolute', width: "10%", height: width-blockHeight*2+outerStimRadius*2, top: blockHeight-outerStimRadius, left: 10, backgroundColor: 'white' }}
+              style={{
+                position: 'absolute',
+                width: "10%",
+                height: width - blockHeight * 2 + outerStimRadius * 2,
+                top: blockHeight - outerStimRadius,
+                borderWidth: 2,
+                borderColor: '#5A5A5A',
+                left: 10,
+                backgroundColor: 'white'
+              }}
             >
                 {
                   controlBar.current && (
