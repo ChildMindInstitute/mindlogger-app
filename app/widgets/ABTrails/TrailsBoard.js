@@ -263,7 +263,15 @@ export default class TrailsBoard extends Component {
       this.setState({ isStopped: true });
     }
 
+    if (this.lastPathId) {
+      this.canvas.deletePath(this.lastPathId);
+      this.lastPathId = 0;
+    }
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
+
     if (!valid) {
+      this.lastPathId = this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
+
       const currentPos = {
         x: (currentItem.cx + item.cx) / 2,
         y: (currentItem.cy + item.cy) / 2,
@@ -305,15 +313,8 @@ export default class TrailsBoard extends Component {
           this.canvas.deletePath(pathId);
         }
       }, 1000);
-
     } else {
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
       this.setState({ lines: [...lines], currentIndex });
-
-      if (this.lastPathId) {
-        this.canvas.deletePath(this.lastPathId);
-        this.lastPathId = 0;
-      }
 
       if (validIndex == lines[n].points.length-1) {
         this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
