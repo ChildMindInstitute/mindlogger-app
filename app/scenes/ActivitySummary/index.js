@@ -114,6 +114,8 @@ const ActivitySummary = (props) => {
 
           if (itemResponses && itemResponses.length) {
             lastResponse.push(itemResponses[itemResponses.length-1]);
+          } else {
+            lastResponse.push(null);
           }
         }
       }

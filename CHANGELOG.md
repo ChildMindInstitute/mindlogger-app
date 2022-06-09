@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.20.14] - 2022-05-31
-- Native Flanker
+## [0.21.0] - 2022-06-07
+- Flanker: Do not allow buttons to be selected
+- Fix trackpad issues
+## [0.20.15] - 2022-06-02
+- Fix app crashing issue after return button clicked
+- Fix pdf report issue
 
 ## [0.20.13] - 2022-05-30
 - Fix A/B Trails issue
