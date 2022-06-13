@@ -187,6 +187,9 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
       updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
       setMoving(true)
       startPos = 0;
+    } else if (configObj.userInputType == 'gyroscope') {
+      setMoving(true);
+      controlBar.current = false;
     }
 
   }, [width])
