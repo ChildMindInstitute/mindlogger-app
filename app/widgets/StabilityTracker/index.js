@@ -183,7 +183,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
       captured.current = false;
     }
 
-    if (configObj.userInputType == 'touch' && startPos !== evt.nativeEvent.locationY) {
+    if (configObj.userInputType == 'touch') {
       updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
       setMoving(true)
       startPos = 0;
