@@ -11,6 +11,7 @@ import Foundation
 enum ButtonType {
   case ok
   case next
+  case finish
 }
 
 class ResultView: UIView {
@@ -55,13 +56,17 @@ class ResultView: UIView {
   func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, closureFinish: @escaping () -> Void) {
     switch typeButton {
     case .ok:
-      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Remember to respond only to the central arraw.</p> <p>Press the button below to end current block and restart.</p></font>").htmlToAttributedString
+      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
       textLabel.attributedText = textAttr
-      finishButton.setTitle("OK", for: .normal)
+      finishButton.setTitle("Continue", for: .normal)
     case .next:
       let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
       textLabel.attributedText = textAttr
       finishButton.setTitle("Continue", for: .normal)
+    case .finish:
+      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to finish.</p></font>").htmlToAttributedString
+      textLabel.attributedText = textAttr
+      finishButton.setTitle("Finish", for: .normal)
     }
     closure = closureFinish
     textLabel.centerVertically()

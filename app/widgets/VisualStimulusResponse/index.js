@@ -94,6 +94,16 @@ const screens = config.trials.map(trial => ({
     'Press the button below to end current block and restart.',
   ];
 
+  const source = Platform.select({
+    ios: htmlSource,
+    android: { uri: 'file:///android_asset/html/visual-stimulus-response.html' },
+  });
+
+  const injectConfig = `
+    window.CONFIG = ${JSON.stringify(configObj)};
+    start();
+  `;
+
   const configObj = {
     // trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
@@ -112,8 +122,13 @@ const screens = config.trials.map(trial => ({
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
   useEffect(() => {
+    
     if (isCurrent) {
-      NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex);
+      if(Platform.OS === 'ios') {
+        NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex);
+      } else {
+        webView.current.injectJavaScript(injectConfig);
+      }
     }
   }, [isCurrent])
 
@@ -128,39 +143,111 @@ const screens = config.trials.map(trial => ({
     offset: record.start_timestamp - record.start_time,
     tag: record.tag,
   });
-
-  return (
-    <View
-      style={{
-        height: '100%',
-        position: 'relative',
-      }}
-    >
-    <View
-      style={{
-          backgroundColor: 'white',
-          width: '100%',
+  if(Platform.OS === 'ios') {
+    return (
+      <View
+        style={{
           height: '100%',
-          flex: 1,
-          osition: 'absolute',
-          alignItems: 'center',
-          justifyContent: 'center'
-      }}
-    >
-    <FlankerView 
-      style={{ 
-          backgroundColor: 'white',
-          width: '100%',
+          position: 'relative',
+        }}
+      >
+      <View
+        style={{
+            backgroundColor: 'white',
+            width: '100%',
+            height: '100%',
+            flex: 1,
+            osition: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}
+      >
+      <FlankerView 
+        style={{ 
+            backgroundColor: 'white',
+            width: '100%',
+            height: '100%',
+            flex: 1,
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center' }} 
+            onEndGame={onEndGame}
+      />
+      </View>  
+      </View>
+    );
+  } else {
+    return (
+      <View
+        style={{
           height: '100%',
-          flex: 1,
-          position: 'absolute',
-          alignItems: 'center',
-          justifyContent: 'center' }} 
-          onEndGame={onEndGame}
-    />
-    </View>  
-    </View>
-  );
+          position: 'relative',
+        }}
+      >
+        <WebView
+          ref={(ref) => webView.current = ref}
+          style={{ flex: 1, height: '100%' }}
+          onLoad={() => setLoading(false)}
+          source={source}
+          originWhitelist={['*']}
+          scrollEnabled={false}
+          onMessage={(e) => {
+            const dataString = e.nativeEvent.data;
+            const { type, data } = JSON.parse(dataString);
+  
+            if (type == 'response') {
+              sendData('live_event', parseResponse(data), appletId);
+              return ;
+            }
+  
+            let correctCount = 0, totalCount = 0;
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].tag == 'trial') {
+                totalCount++;
+                if (data[i].correct) {
+                  correctCount++;
+                }
+              }
+            }
+  
+            if (
+              config.minimumAccuracy &&
+              correctCount * 100 / config.minimumAccuracy < totalCount && 
+              tryIndex < config.maxRetryCount
+            ) {
+              setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
+              webView.current.injectJavaScript(injectConfig);
+              setTryIndex(tryIndex+1);
+            } else {
+              setLoading(true);
+  
+              setTimeout(() => {
+                onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => parseResponse(record)), true);
+              }, 0)
+            }
+          }}
+        />
+  
+        {
+          loading && (
+            <View
+              style={{
+                backgroundColor: 'white',
+                width: '100%',
+                height: '100%',
+                flex: 1,
+                position: 'absolute',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ActivityIndicator size="large" />
+            </View>
+          ) || <></>
+        }
+      </View>
+    );
+  }
 };
 
 VisualStimulusResponse.propTypes = {

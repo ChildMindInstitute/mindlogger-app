@@ -63,7 +63,7 @@ class FlankerViewManager: RCTViewManager {
       viewTest2?.parameterGame(isShowAnswers: false, countGame: 120)
       countDelegate += 1
     case 6:
-      viewTest1?.typeResult = .next
+      viewTest1?.typeResult = .finish
       viewTest1?.parameterGame(isShowAnswers: false, countGame: 120)
       countDelegate += 1
     default:
