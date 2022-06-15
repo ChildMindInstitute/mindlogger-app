@@ -6,6 +6,46 @@ import { sendData } from "../../services/socket";
 import FlankerView from './FlankerView';
 const htmlSource = require('./visual-stimulus-response.html');
 
+const shuffle = (a) => {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const getImage = (image, alt) => {
+  if (image) {
+    return `<img src="${image}" alt="${alt}">`
+  }
+
+  return alt;
+}
+
+const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
+  const trials = [];
+  const choices = buttons.map(button => ({
+    value: button.value,
+    name: { en: getImage(button.image, button.name.en) }
+  }));
+
+  for (const block of blocks) {
+    const order = samplingMethod == 'randomize-order' ? shuffle([...block.order]) : block.order;
+
+    for (const item of order) {
+      const screen = stimulusScreens.find(screen => screen.id == item);
+      if (screen) {
+        trials.push({
+          ...screen,
+          choices
+        });
+      }
+    }
+  }
+
+  return trials;
+}
+
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [tryIndex, setTryIndex] = useState(1);
   const [responses, setResponses] = useState([]);
@@ -36,6 +76,16 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     }
     };
 
+// Prepare config data for injecting into the WebView
+const screens = config.trials.map(trial => ({
+  id: trial.id,
+  stimulus: { en: getImage(trial.image, trial.name.en) },
+  correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
+  weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
+}));
+
+
+
   const continueText = [
     `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`,
   ];
@@ -45,7 +95,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   ];
 
   const configObj = {
+    // trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
+    // fixation: getImage(config.fixationScreen.image, config.fixationScreen.value),
     showFixation: config.showFixation !== false,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
