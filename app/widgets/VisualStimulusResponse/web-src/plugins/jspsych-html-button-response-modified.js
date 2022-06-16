@@ -97,7 +97,14 @@ jsPsych.plugins["html-button-response"] = (function() {
     html += '<div id="jspsych-html-button-response-btngroup">';
     for (var i = 0; i < trial.choices.length; i++) {
       var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      html += '<div class="jspsych-html-button-response-button ' + trial.data.tag + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+
+      var classes = 'jspsych-html-button-response-button ' + trial.data.tag;
+
+      if (trial.choices[i].match(/<img.+src=.+>/)) {
+        classes += ' image-button';
+      }
+
+      html += '<div class="' + classes + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     html += '</div>';
 

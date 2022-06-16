@@ -6,7 +6,7 @@ body {
 .jspsych-btn {
   margin: .5rem 0;
   padding: 0.75rem 0;
-  font-size: 3.5rem;
+  font-size: 2rem;
   width: 100%;
   background: #0067A0;
   border: none;
@@ -14,6 +14,28 @@ body {
   outline: none;
   /* transition: opacity 0s; */
   font-family: -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
+}
+
+.jspsych-html-button-response-button.image-button .jspsych-btn {
+  position: relative;
+}
+.jspsych-html-button-response-button.image-button .jspsych-btn::after {
+  content: '_';
+}
+
+.jspsych-btn img {
+  object-fit: cover;
+  min-width: 100%;
+  min-height: 100%;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+}
+
+@media only screen and (min-width: 768px) {
+  .jspsych-btn {
+    font-size: 3.5rem;
+  }
 }
 
 .jspsych-html-button-response-button.result .jspsych-btn {
@@ -63,8 +85,15 @@ body {
   font-weight: bold;
 }
 
+#jspsych-html-button-response-stimulus .question img {
+  max-width: 75vw;
+  max-height: 50vh;
+  object-fit: contain;
+}
+
 .jspsych-image-button-response-button, .jspsych-html-button-response-button {
   flex: 1 1 auto;
+  width: 50%;
 }
 
 .mindlogger-button-image {
