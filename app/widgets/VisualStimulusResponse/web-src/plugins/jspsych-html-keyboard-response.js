@@ -64,7 +64,7 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       margin_horizontal: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin horizontal',
-        default: '8px',
+        default: '12px',
         description: 'The horizontal margin of the button.'
       },
       response_ends_trial: {
