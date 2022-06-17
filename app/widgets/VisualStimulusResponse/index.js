@@ -141,7 +141,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     tag: record.tag,
   })
 
-  if(Platform.OS === 'ios') {
+  if (Platform.OS === 'ios') {
     return (
       <View
         style={{

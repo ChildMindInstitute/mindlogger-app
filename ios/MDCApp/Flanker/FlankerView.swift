@@ -67,6 +67,7 @@ class FlankerView: UIView {
   }()
   private let gameManager = GameManager()
   var typeResult: ButtonType = .ok
+  var isLast: Bool = false
   @objc var onEndGame: RCTBubblingEventBlock?
   @objc var onUpdate: RCTDirectEventBlock?
 
@@ -176,7 +177,7 @@ extension FlankerView: GameManagerProtocol {
       let avrgTime = avrgTime,
       let procentCorrect = procentCorrect {
       gameManager.stopGame()
-      finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect) {
+      finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, isLast: isLast) {
         guard
           let jsonData = try? JSONEncoder().encode(dataArray),
           let json = String(data: jsonData, encoding: .utf8)

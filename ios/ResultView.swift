@@ -53,12 +53,19 @@ class ResultView: UIView {
     super.init(coder: coder)
   }
 
-  func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, closureFinish: @escaping () -> Void) {
+  func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, isLast: Bool = false, closureFinish: @escaping () -> Void) {
     switch typeButton {
     case .ok:
-      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
-      textLabel.attributedText = textAttr
-      finishButton.setTitle("Continue", for: .normal)
+      if procentCorrect >= 75 || isLast {
+        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
+        textLabel.attributedText = textAttr
+        finishButton.setTitle("Continue", for: .normal)
+      } else {
+        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p> Remember to respond only to the central arrow.</p> <p>Press the button below to end current block and restart.</p></font>").htmlToAttributedString
+        textLabel.attributedText = textAttr
+        finishButton.setTitle("OK", for: .normal)
+      }
+
     case .next:
       let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
       textLabel.attributedText = textAttr
