@@ -18,6 +18,7 @@ body {
 
 .jspsych-html-button-response-button.image-button .jspsych-btn {
   position: relative;
+  overflow: hidden;
 }
 .jspsych-html-button-response-button.image-button .jspsych-btn::after {
   content: '_';
