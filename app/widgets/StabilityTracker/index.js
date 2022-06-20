@@ -116,6 +116,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
+  const startPos = useRef(0);
 
   useEffect(() => {
     if (!isCurrent && moving) {
@@ -170,38 +171,32 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
     }
   };
 
-  const captured = useRef(false);
   const onResponderGrant = useCallback(evt => {
     if (configObj.userInputType == 'touch') {
-      startPos = evt.nativeEvent.locationY;
+      startPos.current = evt.nativeEvent.locationY;
     }
   }, [width])
 
   const onResponderRelease = useCallback((evt) => {
-    if (captured.current) {
-      controlBar.current = false;
-      captured.current = false;
-    }
-
     if (configObj.userInputType == 'touch') {
-      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
+      if (moving) {
+        updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos.current);
+      } else {
+        updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+      }
+
       setMoving(true)
-      startPos = 0;
+      startPos.current = 0;
     } else if (configObj.userInputType == 'gyroscope') {
       setMoving(true);
-      controlBar.current = false;
     }
 
-  }, [width])
+    controlBar.current = false;
+  }, [width, moving])
 
   const onResponderMove = useCallback(evt => {
-    if (controlBar.current) {
-      controlBar.current = false;
-      captured.current = true;
-    }
-
     if (configObj.userInputType == 'touch' && controlBar.current == false) {
-      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
+      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos.current);
     }
   }, [width])
 
@@ -350,7 +345,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const previews = [];
   let targetPos = null;
-  let startPos = 0;
 
   /** get target point and points to preview */
   if (width) {

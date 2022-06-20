@@ -64,7 +64,7 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       margin_horizontal: {
         type: jsPsych.plugins.parameterType.STRING,
         pretty_name: 'Margin horizontal',
-        default: '8px',
+        default: '12px',
         description: 'The horizontal margin of the button.'
       },
       response_ends_trial: {
@@ -88,7 +88,14 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
     new_html += '<div id="jspsych-html-button-response-btngroup">';
     for (var i = 0; i < trial.choices.length; i++) {
       var str = trial.button_html.replace(/%choice%/g, trial.choices[i]);
-      new_html += '<div class="jspsych-html-button-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
+
+      var classes = 'jspsych-html-button-response-button';
+
+      if (trial.choices[i].match(/<img.+src=.+>/)) {
+        classes += ' image-button';
+      }
+
+      new_html += '<div class="' + classes + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     new_html += '</div>';
 
