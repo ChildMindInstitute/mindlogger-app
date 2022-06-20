@@ -52,6 +52,7 @@ class FlankerViewManager: RCTViewManager {
     switch countDelegate {
     case 1...3:
       viewTest4?.typeResult = .ok
+      countDelegate == 3 ? (viewTest4?.isLast = true) : (viewTest4?.isLast = false)
       viewTest4?.parameterGame(isShowAnswers: isShowAnswers, countGame: 30)
       countDelegate += 1
     case 4:

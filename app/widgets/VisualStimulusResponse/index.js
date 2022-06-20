@@ -57,11 +57,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   let onEndGame = (result: Object) => {
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
-
+    // console.log(dataObject)
     const dataType = result.nativeEvent.type;
 
     if (dataType == 'response') {
       sendData('live_event', parseResponse(dataObject), appletId);
+      let test = parseResponse(dataObject)
+      console.log(test)
       return ;
     }
 
@@ -137,7 +139,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_time: record.image_time,
     correct: record.correct,
     start_timestamp: record.start_timestamp,
-    offset: record.start_timestamp - record.start_time,
+    offset: Platform.OS === 'ios' ? record.start_time : record.start_timestamp - record.start_time,
     tag: record.tag,
   })
 
@@ -195,6 +197,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
 
               if (type == 'response') {
                 sendData('live_event', parseResponse(data), appletId);
+                console.log(parseResponse(data))
                 return ;
               }
 

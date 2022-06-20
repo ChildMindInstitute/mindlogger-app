@@ -39,6 +39,7 @@ class GameManager {
   private let resultManager = ResultManager.shared
 
   private var text: String = ""
+  private var responseText: String = ""
 
   private var timerSetText: Timer?
   private var timeResponse: Timer?
@@ -51,6 +52,10 @@ class GameManager {
   private var isShowGameAnswers = true
   private var startDate: Date?
   private var arrayTimes: [Int] = []
+
+  private var startVisibleImageTime: Date?
+  private var endVisibleImageTime: Date?
+  private var startGameTime: Date?
 
   private var isFirst = true
 
@@ -73,18 +78,47 @@ class GameManager {
 
   func stopGame() {
     invalidateTimers()
+    if
+      let startVisibleImageTime = startVisibleImageTime,
+      let endVisibleImageTime = endVisibleImageTime,
+      let startGameTime = startGameTime, isShowGameAnswers {
+      let model = FlankerModel(rt: Constants.lowTimeInterval * 1000,
+                               stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
+                               button_pressed: nil,
+                               image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                               correct: nil,
+                               start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
+                               tag: "feedback",
+                               trial_index: countTest,
+                               start_time: startGameTime.timeIntervalSince1970 * 1000)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      resultManager.addStepData(data: model)
+    }
     delegate?.updateText(text: "-----", color: .black, font: Constants.bigFont)
   }
 
   func startLogicTimer() {
     invalidateTimers()
+    startGameTime = Date()
+    startVisibleImageTime = Date()
+    delegate?.updateText(text: "-----", color: .black, font: Constants.bigFont)
     timerSetText = Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
+  }
+
+  func setEndTimeViewingImage(time: Date) {
+    endVisibleImageTime = time
+    startDate = time
   }
 
   func checkedAnswer(button: SelectedButton) {
     invalidateTimers()
     delegate?.setEnableButton(isEnable: false)
-    guard let startDate = startDate else { return }
+    guard
+      let startDate = startDate,
+      let startVisibleImageTime = startVisibleImageTime,
+      let endVisibleImageTime = endVisibleImageTime,
+      let startGameTime = startGameTime
+    else { return }
     let endDate = Date()
     let resultTime = (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 1000
     arrayTimes.append(resultTime.convertToInt())
@@ -96,93 +130,82 @@ class GameManager {
     case .left:
       if textArray[2] == "<" {
         correctAnswers += 1
-        let model = FlankerModel(button_pressed: 0,
-                                 correct: true,
-                                 correctChoice: 1,
-                                 endTime: endDate.timeIntervalSince1970.convertToInt(),
-                                 image_time: 0,
-                                 internal_node_id: "",
-                                 rt: resultTime.convertToInt(),
-                                 start_time: startDate.timeIntervalSince1970.convertToInt(),
-                                 start_timestamp: 0,
+        let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
+                                 button_pressed: "0",
+                                 image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                                 correct: true,
+                                 start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
                                  tag: Constants.tag,
-                                 time_elapsed: 0,
                                  trial_index: countTest,
-                                 trial_type: Constants.trialTag)
+                                 start_time: startGameTime.timeIntervalSince1970 * 1000)
+
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont)
         }
+        responseText = Constants.correctText
       } else {
-        let model = FlankerModel(button_pressed: 0,
-                                 correct: false,
-                                 correctChoice: 0,
-                                 endTime: endDate.timeIntervalSince1970.convertToInt(),
-                                 image_time: 0,
-                                 internal_node_id: "",
-                                 rt: resultTime.convertToInt(),
-                                 start_time: startDate.timeIntervalSince1970.convertToInt(),
-                                 start_timestamp: 0,
+        let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
+                                 button_pressed: "0",
+                                 image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                                 correct: false,
+                                 start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
                                  tag: Constants.tag,
-                                 time_elapsed: 0,
                                  trial_index: countTest,
-                                 trial_type: Constants.trialTag)
+                                 start_time: startGameTime.timeIntervalSince1970 * 1000)
+
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont)
         }
+        responseText = Constants.inCorrectText
       }
     case .right:
       if textArray[2] == ">" {
         correctAnswers += 1
-        let model = FlankerModel(button_pressed: 1,
-                                 correct: true,
-                                 correctChoice: 1,
-                                 endTime: endDate.timeIntervalSince1970.convertToInt(),
-                                 image_time: 0,
-                                 internal_node_id: "",
-                                 rt: resultTime.convertToInt(),
-                                 start_time: startDate.timeIntervalSince1970.convertToInt(),
-                                 start_timestamp: 0,
+        let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
+                                 button_pressed: "1",
+                                 image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                                 correct: true,
+                                 start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
                                  tag: Constants.tag,
-                                 time_elapsed: 0,
                                  trial_index: countTest,
-                                 trial_type: Constants.trialTag)
+                                 start_time: startGameTime.timeIntervalSince1970 * 1000)
+
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont)
         }
+        responseText = Constants.correctText
       } else {
-        let model = FlankerModel(button_pressed: 1,
-                                 correct: false,
-                                 correctChoice: 0,
-                                 endTime: endDate.timeIntervalSince1970.convertToInt(),
-                                 image_time: 0,
-                                 internal_node_id: "",
-                                 rt: resultTime.convertToInt(),
-                                 start_time: startDate.timeIntervalSince1970.convertToInt(),
-                                 start_timestamp: 0,
+        let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
+                                 button_pressed: "1",
+                                 image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                                 correct: false,
+                                 start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
                                  tag: Constants.tag,
-                                 time_elapsed: 0,
                                  trial_index: countTest,
-                                 trial_type: Constants.trialTag)
+                                 start_time: startGameTime.timeIntervalSince1970 * 1000)
+
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont)
         }
+        responseText = Constants.inCorrectText
       }
     }
     
 
     if isShowGameAnswers {
+      self.startVisibleImageTime = Date()
       Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
     } else {
       setDefaultText()
@@ -191,16 +214,53 @@ class GameManager {
 
   @objc func setDefaultText() {
     if isEndGame() { return }
+    startGameTime = Date()
+    if
+      let startVisibleImageTime = startVisibleImageTime,
+      let endVisibleImageTime = endVisibleImageTime,
+      let startGameTime = startGameTime, isShowGameAnswers {
+      let feedbackText = ""
+//      if responseText = Constants.correctText {
+
+//      } else
+      let model = FlankerModel(rt: Constants.lowTimeInterval * 1000,
+                               stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
+                               button_pressed: nil,
+                               image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                               correct: nil,
+                               start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
+                               tag: "feedback",
+                               trial_index: countTest,
+                               start_time: startGameTime.timeIntervalSince1970 * 1000)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      resultManager.addStepData(data: model)
+    }
     delegate?.updateText(text: "-----", color: .black, font: Constants.bigFont)
     startLogicTimer()
   }
 
   @objc func setText() {
+    if
+      let startVisibleImageTime = startVisibleImageTime,
+      let endVisibleImageTime = endVisibleImageTime,
+      let startGameTime = startGameTime {
+      let model = FlankerModel(rt: Constants.lowTimeInterval * 1000,
+                               stimulus: "<div class=\"mindlogger-fixation\">-----</div>",
+                               button_pressed: nil,
+                               image_time: startVisibleImageTime.timeIntervalSince1970 * 1000,
+                               correct: nil,
+                               start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000,
+                               tag: "fixation",
+                               trial_index: countTest,
+                               start_time: startGameTime.timeIntervalSince1970 * 1000)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      resultManager.addStepData(data: model)
+    }
     delegate?.setEnableButton(isEnable: true)
     text = randomString()
+    startVisibleImageTime = Date()
     delegate?.updateText(text: text, color: .black, font: Constants.bigFont)
     countTest += 1
-    startDate = Date()
     timeResponse = Timer.scheduledTimer(timeInterval: Constants.moreTimeInterval, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
   }
 
@@ -211,27 +271,32 @@ class GameManager {
       delegate?.updateText(text: Constants.timeRespondText, color: .black, font: Constants.smallFont)
     }
 
-    guard let startDate = startDate else { return }
+    guard
+      let startDate = startDate,
+      let startVisibleImageTime = startVisibleImageTime,
+      let endVisibleImageTime = endVisibleImageTime,
+      let startGameTime = startGameTime
+    else { return }
+
     let endDate = Date()
     let resultTime = (endDate.timeIntervalSince1970 - startDate.timeIntervalSince1970) * 1000
     arrayTimes.append(resultTime.convertToInt())
-    let model = FlankerModel(button_pressed: nil,
-                             correct: false,
-                             correctChoice: 0,
-                             endTime: endDate.timeIntervalSince1970.convertToInt(),
-                             image_time: 0,
-                             internal_node_id: "",
-                             rt: resultTime.convertToInt(),
-                             start_time: startDate.timeIntervalSince1970.convertToInt(),
-                             start_timestamp: 0,
+
+    let model = FlankerModel(rt: resultTime,
                              stimulus: text,
+                             button_pressed: nil,
+                             image_time: startVisibleImageTime.timeIntervalSince1970 * 1000, // має намалювати
+                             correct: false,
+                             start_timestamp: endVisibleImageTime.timeIntervalSince1970 * 1000, // вже намальовано
                              tag: Constants.tag,
-                             time_elapsed: 0,
                              trial_index: countTest,
-                             trial_type: Constants.trialTag)
+                             start_time: startGameTime.timeIntervalSince1970 * 1000)
+
     resultManager.addStepData(data: model)
     delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
     if !isEndGame() {
+      self.startVisibleImageTime = Date()
+      responseText = Constants.timeRespondText
       Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
     }
   }
