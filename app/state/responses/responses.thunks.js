@@ -609,6 +609,28 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   let screenIndex = currentScreenSelector(state);
   let next = -1;
 
+  const item = activity.items[screenIndex];
+
+  if (item.inputType == 'visual-stimulus-response' && item.inputs.blockType === 'practice' && !item.inputs.lastPractice) {
+    const responses = inProgress.responses[screenIndex];
+    let correctCount = 0, totalCount = 0;
+    for (let i = 0; i < responses.length; i++) {
+      if (responses[i].tag == 'trial') {
+        totalCount++;
+        if (responses[i].correct) {
+          correctCount++;
+        }
+      }
+    }
+
+    if (
+      item.inputs.minimumAccuracy &&
+      correctCount * 100 >= totalCount * item.inputs.minimumAccuracy
+    ) {
+      screenIndex = activity.items.findIndex(item => item.inputs.lastPractice);
+    }
+  }
+
   do {
     const { timer, delay } = activity.items[screenIndex];
     let totalTime = timer + (delay || 0);

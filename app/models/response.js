@@ -47,6 +47,7 @@ export const prepareResponseForUpload = (
     ] : [];
 
   const alerts = [];
+  let flankerPractice = -1;
   for (let i = 0; i < responses.length; i++) {
     const item = activity.items[i];
 
@@ -88,7 +89,17 @@ export const prepareResponseForUpload = (
         }
       }
     }
+
+    if (item.inputType == 'visual-stimulus-response' && item.inputs.blockType === 'practice') {
+      if (flankerPractice < 0) {
+        flankerPractice = i;
+      } else {
+        responses[flankerPractice] = responses[flankerPractice].concat(responses[i]);
+        responses[i] = null;
+      }
+    }
   }
+
   trackerAggregations = trackerAggregations.filter(aggregation => Object.keys(aggregation.data).length > 0);
 
   const tokenSummary = getTokenSummary(activity, responses);
@@ -177,6 +188,10 @@ export const prepareResponseForUpload = (
           response = { ...d, index };
         }
 
+        if (item.inputType == 'visual-stimulus-response' && !responses[index]) {
+          return accumulator;
+        }
+
         return {
           ...accumulator, [item.schema]: response
         }
@@ -219,6 +234,10 @@ export const prepareResponseForUpload = (
     responseData['userPublicKey'] = appletMetaData.userPublicKey;
   } else {
     const formattedResponses = activity.items.reduce((accumulator, item, index) => {
+      if (item.inputType == 'visual-stimulus-response' && !responses[index]) {
+        return accumulator;
+      }
+
       return {
         ...accumulator,
         [item.schema]: responses[index],
