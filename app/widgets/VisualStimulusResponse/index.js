@@ -79,11 +79,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     };
 
   // Prepare config data for injecting into the WebView
-  const trials = config.trials.map(trial => ({
-    stimulus: {
-      en: trial.image
-    },
-    choices: trial.valueConstraints.itemList,
+  const screens = config.trials.map(trial => ({
+    id: trial.id,
+    stimulus: { en: getImage(trial.image, trial.name.en) },
     correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
     weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
   }));
@@ -97,7 +95,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   ];
 
   const configObj = {
-    trials,
+    trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
+    fixationDuration: config.fixationDuration,
+    fixation: getImage(config.fixationScreen.image, config.fixationScreen.value),
     showFixation: config.showFixation !== false,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
