@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Svg, { Circle, Rect } from 'react-native-svg';
-import { magnetometer } from "react-native-sensors";
+import { orientation } from "react-native-sensors";
 
 import { useAnimationFrame } from '../../services/hooks';
 import { showToast } from '../../state/app/app.thunks';
@@ -104,7 +104,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   const trialNumber = useRef(0);
   const responses = useRef([]);
   const controlBar = useRef(true);
-  const magnRef = useRef(), baseAcc = useRef();
+  const oriRef = useRef(), baseOri = useRef();
 
   const lastCrashTime = useRef(0);
   const lambdaLimit = configObj.phaseType == 'challenge-phase' ? 0 : maxLambda * 0.3;
@@ -116,6 +116,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const [tickNumber, setTickNumber] = useState(0);
   const lambdaVal = useRef(configObj.initialLambda);
+  const startPos = useRef(0);
 
   useEffect(() => {
     if (!isCurrent && moving) {
@@ -127,19 +128,13 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
   useEffect(() => {
     if (configObj.userInputType == 'gyroscope') {
       if (moving) {
-        magnRef.current = magnetometer.subscribe(({ x, y, z }) => {
-          let yRot = Math.asin(x / Math.sqrt(x*x + z*z));
-          let xRot = Math.asin(y / Math.sqrt(y*y + z*z + x*x));
-
-          if (y < 0) {
-            yRot += Math.PI;
-          }
-
-          if (!baseAcc.current) {
-            baseAcc.current = [xRot, yRot];
+        oriRef.current = orientation.subscribe(({ pitch, yaw, roll, timestamp }) => {
+          if (!baseOri.current) {
+            baseOri.current = [roll, pitch];
           } else {
-            const x = center + (yRot - baseAcc.current[1]) / configObj.maxRad * panelRadius;
-            const y = center - (xRot - baseAcc.current[0]) / configObj.maxRad * panelRadius;
+            const x = center + (roll - baseOri.current[0]) / configObj.maxRad * panelRadius;
+
+            const y = center + (Platform.OS == 'ios' ? 1 : -1) * (pitch - baseOri.current[1]) / configObj.maxRad * panelRadius;
 
             userPos.current = [x, y];
           }
@@ -153,15 +148,15 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
           configObj.userInputType = 'touch'
         })
       } else {
-        if (magnRef.current) {
-          magnRef.current.unsubscribe();
+        if (oriRef.current) {
+          oriRef.current.unsubscribe();
         }
       }
     }
 
     return () => {
-      if (magnRef.current) {
-        magnRef.current.unsubscribe();
+      if (oriRef.current) {
+        oriRef.current.unsubscribe();
       }
     }
   }, [moving])
@@ -176,35 +171,32 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
     }
   };
 
-  const captured = useRef(false);
   const onResponderGrant = useCallback(evt => {
     if (configObj.userInputType == 'touch') {
-      startPos = evt.nativeEvent.locationY;
+      startPos.current = evt.nativeEvent.locationY;
     }
   }, [width])
 
   const onResponderRelease = useCallback((evt) => {
-    if (captured.current) {
-      controlBar.current = false;
-      captured.current = false;
-    }
+    if (configObj.userInputType == 'touch') {
+      if (moving) {
+        updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos.current);
+      } else {
+        updateUserPos(evt.nativeEvent.locationX, evt.nativeEvent.locationY);
+      }
 
-    if (configObj.userInputType == 'touch' && startPos !== evt.nativeEvent.locationY) {
-      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
       setMoving(true)
-      startPos = 0;
+      startPos.current = 0;
+    } else if (configObj.userInputType == 'gyroscope') {
+      setMoving(true);
     }
 
-  }, [width])
+    controlBar.current = false;
+  }, [width, moving])
 
   const onResponderMove = useCallback(evt => {
-    if (controlBar.current) {
-      controlBar.current = false;
-      captured.current = true;
-    }
-
     if (configObj.userInputType == 'touch' && controlBar.current == false) {
-      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos);
+      updateUserPos(evt.nativeEvent.locationX, center + evt.nativeEvent.locationY - startPos.current);
     }
   }, [width])
 
@@ -353,7 +345,6 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
   const previews = [];
   let targetPos = null;
-  let startPos = 0;
 
   /** get target point and points to preview */
   if (width) {

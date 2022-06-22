@@ -27,7 +27,7 @@ export default class TrailsBoard extends Component {
       lines: [],
       failedCnt: 0,
       screenTime: 0,
-      errorPoint: null,
+      errorPoints: [],
       currentPoint: -1,
       currentIndex: 1,
       validIndex: -1,
@@ -220,11 +220,11 @@ export default class TrailsBoard extends Component {
 
   movePoint = (evt, gestureState) => {
     const { screen, onRelease, currentScreen } = this.props;
-    const { lines, isValid, rate, errorPoint } = this.state;
+    const { lines, isValid, rate } = this.state;
     let { currentIndex } = this.state;
     let isFinished = false;
 
-    if (!this.allowed || !lines.length || !isValid || errorPoint !== null) return;
+    if (!this.allowed || !lines.length || !isValid) return;
 
     const currentItem = screen.items.find(({ order }) => order === currentIndex);
     const nextItem = screen.items.find(({ order }) => order === currentIndex + 1);
@@ -263,7 +263,15 @@ export default class TrailsBoard extends Component {
       this.setState({ isStopped: true });
     }
 
+    if (this.lastPathId) {
+      this.canvas.deletePath(this.lastPathId);
+      this.lastPathId = 0;
+    }
+    lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
+
     if (!valid) {
+      this.lastPathId = this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
+
       const currentPos = {
         x: (currentItem.cx + item.cx) / 2,
         y: (currentItem.cy + item.cy) / 2,
@@ -279,13 +287,13 @@ export default class TrailsBoard extends Component {
         }
       });
 
-      this.props.onError("Incorrect line!", true);
-      this.setState({ lines, isValid: false, currentPoint: currentIndex, errorPoint: position });
-
-      let stack = [...this.pathStack], lastId = this.lastPathId;
+      let stack = [...this.pathStack], lastId = this.lastPathId, errorPoint = position;
       this.pathStack = [];
       this.lastPathId = 0;
       this.lastIndex = -1;
+
+      this.props.onError("Incorrect line!", true);
+      this.setState({ lines, isValid: false, currentPoint: currentIndex, errorPoints: [...this.state.errorPoints, errorPoint] });
 
       lines[n].points.forEach((point, index) => {
         if (index > validIndex) {
@@ -293,7 +301,7 @@ export default class TrailsBoard extends Component {
           point.actual = item.label;
         }
       })
-      this.setState({ lines, errorPoint: null, currentPoint: -1 });
+      this.setState({ lines, currentPoint: -1 });
 
       setTimeout(() => {
         // pop stack
@@ -304,16 +312,11 @@ export default class TrailsBoard extends Component {
         for (const pathId of stack) {
           this.canvas.deletePath(pathId);
         }
+
+        this.setState({ errorPoints: this.state.errorPoints.filter(point => point != errorPoint) });
       }, 1000);
-
     } else {
-      lines[n].points.push({ x: this.lastX, y: this.lastY, time, valid, start: currentItem.label, end: nextItem.label });
       this.setState({ lines: [...lines], currentIndex });
-
-      if (this.lastPathId) {
-        this.canvas.deletePath(this.lastPathId);
-        this.lastPathId = 0;
-      }
 
       if (validIndex == lines[n].points.length-1) {
         this.addPathToCanvas(lines[n].points.slice(this.lastIndex+1));
@@ -410,7 +413,7 @@ export default class TrailsBoard extends Component {
 
   renderTrailsData = (item, index, trailsData) => {
     const { screen } = this.props;
-    const { currentPoint, rate, errorPoint, isStarted } = this.state;
+    const { currentPoint, rate, errorPoints, isStarted } = this.state;
     let itemColor = trailsData.colors.pending;
 
     if ((index === 0 && !isStarted) || index === currentPoint - 1) {
@@ -439,16 +442,19 @@ export default class TrailsBoard extends Component {
           {item.label}
         </Text>
 
-        {errorPoint && <Text
-          stroke={trailsData.colors.failed}
-          fontSize={trailsData.fontSize * rate * 0.75}
-          fontWeight="200"
-          x={errorPoint.x}
-          y={errorPoint.y}
-          textAnchor="middle"
-        >
-          {`X`}
-        </Text>}
+        {errorPoints.map((point, index) => (
+          <Text
+            stroke={trailsData.colors.failed}
+            fontSize={trailsData.fontSize * rate * 0.75}
+            fontWeight="200"
+            key={index}
+            x={point.x}
+            y={point.y}
+            textAnchor="middle"
+          >
+            {`X`}
+          </Text>
+        ))}
 
         {index === 0 && <Text
           stroke={trailsData.colors.pending}
