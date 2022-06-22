@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect, Component } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Text, StyleSheet, View, Platform, ActivityIndicator, NativeModules, TouchableOpacity } from 'react-native';
+import { View, Platform, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { sendData } from "../../services/socket";
-import FlankerView from './FlankerView';
 
 const htmlSource = require('./visual-stimulus-response.html');
 
@@ -48,35 +47,8 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 }
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
-  const [tryIndex, setTryIndex] = useState(1);
-  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [count, setCount] = useState(1);
   const webView = useRef();
-
-  let onEndGame = (result: Object) => {
-    const dataString = result.nativeEvent.data;
-    const dataObject = JSON.parse(dataString);
-    // console.log(dataObject)
-    const dataType = result.nativeEvent.type;
-
-    if (dataType == 'response') {
-      sendData('live_event', parseResponse(dataObject), appletId);
-      let test = parseResponse(dataObject)
-      console.log(test)
-      return ;
-    }
-
-    if (tryIndex < config.maxRetryCount && result.nativeEvent.correctAnswers < 75) {
-      setResponses(responses.concat(dataObject));
-      setTryIndex(tryIndex+1);
-      NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex+1);
-
-      setCount(count + 1);
-    } else {
-      onChange(responses.concat(dataObject).map(record => parseResponse(record)), true);
-    }
-    };
 
   // Prepare config data for injecting into the WebView
   const screens = config.trials.map(trial => ({
@@ -87,11 +59,11 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`
+    `Press the button below to ${config.lastTest ? 'finish' : 'continue'}.`,
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
-    'Press the button below to end current block and restart.'
+    'Press the button below to end current block and restart.',
   ];
 
   const configObj = {
@@ -102,13 +74,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,
-    samplingMethod: config.samplingMethod,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
-    minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
+    minimumAccuracy: config.minimumAccuracy,
     continueText,
-    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText
+    restartText: config.lastPractice ? continueText : restartText,
   };
+
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
   const injectConfig = `
@@ -123,11 +95,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
 
   useEffect(() => {
     if (isCurrent) {
-      if(Platform.OS === 'ios') {
-        NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex);
-      } else {
-        webView.current.injectJavaScript(injectConfig);
-      }
+      webView.current.injectJavaScript(injectConfig);
     }
   }, [isCurrent])
 
@@ -139,116 +107,59 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_time: record.image_time,
     correct: record.correct,
     start_timestamp: record.start_timestamp,
-    offset: Platform.OS === 'ios' ? record.start_time : record.start_timestamp - record.start_time,
+    offset: record.start_timestamp - record.start_time,
     tag: record.tag,
-  })
+  });
 
-  if (Platform.OS === 'ios') {
-    return (
-      <View
-        style={{
-          height: '100%',
-          position: 'relative',
-        }}
-      >
-      <View
-        style={{
-            backgroundColor: 'white',
-            width: '100%',
-            height: '100%',
-            flex: 1,
-            osition: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center'
-        }}
-      >
-      <FlankerView 
-        style={{ 
-            backgroundColor: 'white',
-            width: '100%',
-            height: '100%',
-            flex: 1,
-            position: 'absolute',
-            alignItems: 'center',
-            justifyContent: 'center' }} 
-            onEndGame={onEndGame}
-      />
-      </View>  
-      </View>
-    );
-  } else {
-      return (
-        <View
-          style={{
-            height: '100%',
-            position: 'relative'
-          }}
-        >
-          <WebView
-            ref={(ref) => webView.current = ref}
-            style={{ flex: 1, height: '100%' }}
-            onLoad={() => setLoading(false)}
-            source={source}
-            originWhitelist={['*']}
-            scrollEnabled={false}
-            onMessage={(e) => {
-              const dataString = e.nativeEvent.data;
-              const { type, data } = JSON.parse(dataString);
+  return (
+    <View
+      style={{
+        height: '100%',
+        position: 'relative',
+      }}
+    >
+      <WebView
+        ref={(ref) => webView.current = ref}
+        style={{ flex: 1, height: '100%' }}
+        onLoad={() => setLoading(false)}
+        source={source}
+        originWhitelist={['*']}
+        scrollEnabled={false}
+        onMessage={(e) => {
+          const dataString = e.nativeEvent.data;
+          const { type, data } = JSON.parse(dataString);
 
-              if (type == 'response') {
-                sendData('live_event', parseResponse(data), appletId);
-                console.log(parseResponse(data))
-                return ;
-              }
-
-              let correctCount = 0, totalCount = 0;
-              for (let i = 0; i < data.length; i++) {
-                if (data[i].tag == 'trial') {
-                  totalCount++;
-                  if (data[i].correct) {
-                    correctCount++;
-                  }
-                }
-              }
-
-              if (
-                config.minimumAccuracy &&
-                correctCount * 100 / config.minimumAccuracy < totalCount && 
-                tryIndex < config.maxRetryCount
-              ) {
-                setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
-                webView.current.injectJavaScript(injectConfig);
-                setTryIndex(tryIndex+1);
-              } else {
-                setLoading(true);
-
-                setTimeout(() => {
-                  onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => parseResponse(record)), true);
-                }, 0)
-              }
-            }}
-          />
-
-          {
-            loading && (
-              <View
-                style={{
-                  backgroundColor: 'white',
-                  width: '100%',
-                  height: '100%',
-                  flex: 1,
-                  position: 'absolute',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ActivityIndicator size="large" />
-              </View>
-            ) || <></>
+          if (type == 'response') {
+            sendData('live_event', parseResponse(data), appletId);
+            return ;
           }
-        </View>
-      );
-    }
+
+          setLoading(true);
+          setTimeout(() => {
+            onChange(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare').map(record => parseResponse(record)), true);
+          }, 0)
+        }}
+      />
+
+      {
+        loading && (
+          <View
+            style={{
+              backgroundColor: 'white',
+              width: '100%',
+              height: '100%',
+              flex: 1,
+              position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ActivityIndicator size="large" />
+          </View>
+        ) || <></>
+      }
+    </View>
+  );
 };
 
 VisualStimulusResponse.propTypes = {
