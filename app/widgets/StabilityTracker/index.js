@@ -585,7 +585,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
                       styles.controlBarText,
                       {
                         width,
-                        transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
+                        transform: [{ rotate: '90deg' }, { translateY: width * 0.892 }]
                       }
                     ]}>Tap here to {moving ? 're' : ''}start</Text>
                   ) || <></>
