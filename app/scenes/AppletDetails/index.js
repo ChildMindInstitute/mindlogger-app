@@ -34,8 +34,6 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handlePressActivity = (activity) => {
-    const { startedTimes } = this.props;
-
     this.props.setCurrentActivity(activity.id);
     this.props.startResponse(activity);
   };

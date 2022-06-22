@@ -118,7 +118,9 @@ const RATE = "schema:rate";
 const TIME_SCREEN = "reprolib:terms/timeScreen";
 const STREAM_ENABLED = "reprolib:terms/streamEnabled";
 const COMBINE_REPORTS = "reprolib:terms/combineReports";
-
+const SHOW_BADGE = "reprolib:terms/showBadge";
+const ACTIVITY_FLOW_ORDER = "reprolib:terms/activityFlowOrder";
+const ACTIVITY_FLOW_PROPERTIES = "reprolib:terms/activityFlowProperties";
 export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
@@ -781,8 +783,38 @@ const orderBySchema = (order, getSchema = null) => (a, b) => {
   return 0;
 }
 
+export const activityFlowTransformJson = (activityFlowObj, activityFlows) => {
+  const res = {
+    id: activityFlowObj._id,
+    name: R.path([NAME, 0, "@value"], activityFlowObj),
+    description: R.path([DESCRIPTION, 0, "@value"], activityFlowObj),
+    showBadge: R.path([SHOW_BADGE, 0, "@value"], activityFlowObj),
+    combineReports: R.path([COMBINE_REPORTS, 0, "@value"], activityFlowObj),
+    order: flattenIdList(R.path([ORDER, 0, "@list"], activityFlowObj))
+  }
+
+  activityFlows.forEach(activityFlow => {
+    if (R.path([PREF_LABEL, 0, "@value"], activityFlow) === res.name) {
+      res.isVis = R.path([IS_VIS, 0, "@value"], activityFlow);
+    }
+  })
+
+  return res;
+}
+
 export const transformApplet = (payload, currentApplets = null) => {
   const applet = appletTransformJson(payload);
+
+  if (payload.applet[ACTIVITY_FLOW_PROPERTIES]) {
+    applet.activityFlows = Object.keys(payload.activityFlows).map((key) => {
+      return activityFlowTransformJson(
+        payload.activityFlows[key],
+        payload.applet[ACTIVITY_FLOW_PROPERTIES]
+      );
+    });
+  } else {
+    applet.activityFlows = [];
+  }
 
   if (currentApplets && !R.isEmpty(currentApplets)) {
     const currentApplet = currentApplets.find(({ id }) => id.substring(7) === payload.id);
@@ -951,7 +983,6 @@ export const transformApplet = (payload, currentApplets = null) => {
   }
 
   applet.activities = [...applet.activities].sort(orderBySchema(applet.order, (activity) => activity.id.split('/').pop()));
-
   applet.groupId = payload.groups;
   applet.theme = payload.theme;
   applet.welcomeApplet = payload.welcomeApplet;
@@ -1049,7 +1080,7 @@ export const parseAppletEvents = (applet) => {
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
 
-      if (event.data.activity_id === act.id.substring(9)) {
+      if (event.data.title === act.name.en) {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
@@ -1065,7 +1096,6 @@ export const parseAppletEvents = (applet) => {
         events.push(event);
       }
     }
-
     return {
       ...act,
       appletId: applet.id,
@@ -1074,19 +1104,55 @@ export const parseAppletEvents = (applet) => {
     }
   });
 
+  const activityFlows = applet.activityFlows.map(activityFlow => {
+    const events = [];
+
+    const availability = getActivityAbility(applet.schedule, activityFlow.name, false);
+    for (let eventId in applet.schedule.events) {
+      const event = applet.schedule.events[eventId];
+
+      if (event.data.title === activityFlow.name) {
+        const date = new Date();
+        date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+
+        const futureSchedule = Parse.schedule(event.schedule).forecast(
+          Day.fromDate(date),
+          true,
+          1,
+          0,
+          true,
+        );
+
+        event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+        events.push(event);
+      }
+    }
+    return {
+      ...activityFlow,
+      isActivityFlow: true,
+      appletId: applet.id,
+      availability,
+      events
+    }
+  })
+
   return {
     ...applet,
     activities: extraInfoActivities,
+    activityFlows: activityFlows
   };
 }
 
-const getActivityAbility = (schedule, activityId) => {
+const getActivityAbility = (schedule, value, isActivity = true) => {
   let availability = false;
 
   Object.keys(schedule.events).forEach(key => {
     const e = schedule.events[key];
 
-    if (e.data.activity_id === activityId.substring(9)) {
+    if (e.data.activity_id === value.substring(9) && isActivity) {
+      availability = e.data.availability;
+    }
+    if (e.data.title === value && !isActivity) {
       availability = e.data.availability;
     }
   });
