@@ -140,18 +140,13 @@ function buildTimeline() {
     }
   };
 
-  var end_block = {
-    type: "html-button-response",
-    stimulus: "<p>The experiment is complete.</p><p>Press the button below to continue.</p>",
-    choices: [window.CONFIG.buttonLabel]
-  };
-
   /*set up experiment structure*/
   var timeline = [];
-  // timeline.push(ready);
   timeline.push(test_procedure);
-  showResults
-    ? timeline.push(debrief)
-    : timeline.push(end_block)
+
+  if (showResults) {
+    timeline.push(debrief)
+  }
+
   return timeline;
 }

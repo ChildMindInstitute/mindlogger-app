@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.21.11] - 2022-06-21
-- Native flanker
+- Fix small bugs
 
 ## [0.21.10] - 2022-06-19
 - Fix error delay and erroneous line
@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.21.0] - 2022-06-07
 - Flanker: Do not allow buttons to be selected
-- Fix trackpad issues
+- Fix trackpad issues  
 
 ## [0.20.15] - 2022-06-02
 - Fix app crashing issue after return button clicked
