@@ -123,12 +123,12 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
         style={{ flex: 1, height: '100%' }}
         onLoad={() => setLoading(false)}
         source={source}
+        androidLayerType="hardware"
         originWhitelist={['*']}
         scrollEnabled={false}
         onMessage={(e) => {
           const dataString = e.nativeEvent.data;
           const { type, data } = JSON.parse(dataString);
-
           if (type == 'response') {
             sendData('live_event', parseResponse(data), appletId);
             return ;
