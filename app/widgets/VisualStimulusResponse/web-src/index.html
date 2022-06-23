@@ -15,6 +15,16 @@
 <body>
 </body>
 <script>
+// preload button images for flanker
+function preloadButtonImages (choices) {
+  for (const choice of choices) {
+    if (choice.image) {
+      const image = new Image();
+      image.src = choice.image;
+    }
+  }
+}
+
 /*start experiment*/
 function start() {
     jsPsych.init({

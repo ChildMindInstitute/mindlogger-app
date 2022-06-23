@@ -24,6 +24,7 @@ const getImage = (image, alt) => {
 
 const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
   const trials = [];
+
   const choices = buttons.map(button => ({
     value: button.value,
     name: { en: getImage(button.image, button.name.en) }
@@ -126,6 +127,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
         androidLayerType="hardware"
         originWhitelist={['*']}
         scrollEnabled={false}
+        injectedJavaScript={`preloadButtonImages(${JSON.stringify(config.buttons)})`}
         onMessage={(e) => {
           const dataString = e.nativeEvent.data;
           const { type, data } = JSON.parse(dataString);
