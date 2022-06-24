@@ -11,33 +11,23 @@ import Foundation
 @objc(RCTFlankerViewManager)
 class FlankerViewManager: RCTViewManager {
   private let resultManeger = ResultManager.shared
-  private var viewTest1: FlankerView?
-  private var viewTest2: FlankerView?
-  private var viewTest3: FlankerView?
-  private var viewTest4: FlankerView?
-  var count = 1
-  var countDelegate = 1
+  private var arrayPages: [FlankerView] = []
+  private var count = 1
+  private var countDelegate = 1
+  private var lastIndex = 1
+  private var lastType = 0
+  private var countType = 0
+  private var isUpdate = false
   override func view() -> UIView! {
-    if count >= 5 { count = 1 }
+    countDelegate = 1
+    lastIndex = 1
+    lastType = 0
+    countType = 0
+    isUpdate = false
     let view = FlankerView()
-    switch count {
-    case 1:
-      viewTest1 = view
-      count += 1
-      countDelegate = 1
-    case 2:
-      viewTest2 = view
-      count += 1
-    case 3:
-      viewTest3 = view
-      count += 1
-    case 4:
-      viewTest4 = view
-      count += 1
-    default:
-      break
-    }
-
+    if count == 1 { arrayPages = [] }
+    arrayPages.append(view)
+    count += 1
     return view
   }
 
@@ -46,29 +36,47 @@ class FlankerViewManager: RCTViewManager {
   }
 
   @objc
-  func parameterGame(_ isShowAnswers: Bool, countGame: Int, index: Int) {
-    if index == 1 && countDelegate >= 7 { countDelegate = 1}
-    if index == 1 && countDelegate > 1 && countDelegate < 4 { countDelegate = 4}
-    switch countDelegate {
-    case 1...3:
-      viewTest4?.typeResult = .ok
-      countDelegate == 3 ? (viewTest4?.isLast = true) : (viewTest4?.isLast = false)
-      viewTest4?.parameterGame(isShowAnswers: isShowAnswers, countGame: 30)
-      countDelegate += 1
-    case 4:
-      viewTest3?.typeResult = .next
-      viewTest3?.parameterGame(isShowAnswers: false, countGame: 120)
-      countDelegate += 1
-    case 5:
-      viewTest2?.typeResult = .next
-      viewTest2?.parameterGame(isShowAnswers: false, countGame: 120)
-      countDelegate += 1
-    case 6:
-      viewTest1?.typeResult = .finish
-      viewTest1?.parameterGame(isShowAnswers: false, countGame: 120)
-      countDelegate += 1
-    default:
-      break
+  func parameterGameType(_ blockType: Int) {
+    print("BlockType: \(blockType)")
+    if lastType == blockType {
+      countType += 1
+    } else {
+      isUpdate = true
     }
+    lastType = blockType
+  }
+
+  @objc
+  func parameterGame(_ isShowAnswers: Bool, countGame: Int, index: Int) {
+
+    count = 1
+
+    var indexPath = arrayPages.count - countDelegate
+    if isUpdate && countDelegate < 4 {
+      isUpdate = false
+      indexPath = 2
+      countDelegate = arrayPages.count - indexPath
+    }
+    if lastIndex < index {
+      indexPath += 1
+    } else {
+      countDelegate += 1
+    }
+
+    let view  = arrayPages[indexPath]
+
+    if indexPath + 1 == arrayPages.count || lastIndex < index {
+      view.typeResult = .ok
+      index == 3 ? (view.isLast = true) : (view.isLast = false)
+      view.parameterGame(isShowAnswers: isShowAnswers, countGame: countGame) //set countGame
+    } else if indexPath == 0 {
+      view.typeResult = .finish
+      view.parameterGame(isShowAnswers: false, countGame: countGame)
+    } else {
+      view.typeResult = .next
+      view.parameterGame(isShowAnswers: false, countGame: countGame)
+    }
+//    lastType = blockType
+    lastIndex = index
   }
 }

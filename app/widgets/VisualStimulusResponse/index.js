@@ -57,20 +57,19 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   let onEndGame = (result: Object) => {
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
-    // console.log(dataObject)
+    console.log(config)
     const dataType = result.nativeEvent.type;
 
     if (dataType == 'response') {
       sendData('live_event', parseResponse(dataObject), appletId);
-      let test = parseResponse(dataObject)
-      console.log(test)
       return ;
     }
-
-    if (tryIndex < config.maxRetryCount && result.nativeEvent.correctAnswers < 75) {
+  
+    if (tryIndex < config.maxRetryCount && result.nativeEvent.correctAnswers < configObj.minimumAccuracy) {
       setResponses(responses.concat(dataObject));
       setTryIndex(tryIndex+1);
-      NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex+1);
+      NativeModules.FlankerViewManager.parameterGameType(config.blockType == "practice" ? 0 : 1);
+      NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, tryIndex+1);
 
       setCount(count + 1);
     } else {
@@ -124,7 +123,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   useEffect(() => {
     if (isCurrent) {
       if(Platform.OS === 'ios') {
-        NativeModules.FlankerViewManager.parameterGame(true, 5, tryIndex);
+        NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0);
+        NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, tryIndex);
       } else {
         webView.current.injectJavaScript(injectConfig);
       }
