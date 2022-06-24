@@ -49,34 +49,21 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 }
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
-  const [tryIndex, setTryIndex] = useState(1);
-  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [count, setCount] = useState(1);
   const webView = useRef();
 
   let onEndGame = (result: Object) => {
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
-    console.log(config)
     const dataType = result.nativeEvent.type;
 
     if (dataType == 'response') {
       sendData('live_event', parseResponse(dataObject), appletId);
       return ;
     }
-  
-    if (tryIndex < config.maxRetryCount && result.nativeEvent.correctAnswers < configObj.minimumAccuracy) {
-      setResponses(responses.concat(dataObject));
-      setTryIndex(tryIndex+1);
-      NativeModules.FlankerViewManager.parameterGameType(config.blockType == "practice" ? 0 : 1);
-      NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, tryIndex+1);
 
-      setCount(count + 1);
-    } else {
-      onChange(responses.concat(dataObject).map(record => parseResponse(record)), true);
-    }
-    };
+    onChange(dataObject.map(record => parseResponse(record)), true);
+  };
 
   // Prepare config data for injecting into the WebView
   const screens = config.trials.map(trial => ({
@@ -105,9 +92,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     samplingMethod: config.samplingMethod,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
-    minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
     continueText,
-    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText
+    restartText: config.lastPractice ? continueText : restartText,
   };
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
@@ -125,7 +111,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     if (isCurrent) {
       if(Platform.OS === 'ios') {
         NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0);
-        NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, tryIndex);
+        NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
       } else {
         webView.current.injectJavaScript(injectConfig);
       }
@@ -163,18 +149,18 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
             justifyContent: 'center'
         }}
       >
-      <FlankerView 
-        style={{ 
+      <FlankerView
+        style={{
             backgroundColor: 'white',
             width: '100%',
             height: '100%',
             flex: 1,
             position: 'absolute',
             alignItems: 'center',
-            justifyContent: 'center' }} 
+            justifyContent: 'center' }}
             onEndGame={onEndGame}
       />
-      </View>  
+      </View>
       </View>
     );
   } else {
@@ -202,31 +188,11 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
                 return ;
               }
 
-              let correctCount = 0, totalCount = 0;
-              for (let i = 0; i < data.length; i++) {
-                if (data[i].tag == 'trial') {
-                  totalCount++;
-                  if (data[i].correct) {
-                    correctCount++;
-                  }
-                }
-              }
+              setLoading(true);
 
-              if (
-                config.minimumAccuracy &&
-                correctCount * 100 / config.minimumAccuracy < totalCount && 
-                tryIndex < config.maxRetryCount
-              ) {
-                setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
-                webView.current.injectJavaScript(injectConfig);
-                setTryIndex(tryIndex+1);
-              } else {
-                setLoading(true);
-
-                setTimeout(() => {
-                  onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => parseResponse(record)), true);
-                }, 0)
-              }
+              setTimeout(() => {
+                onChange(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare').map(record => parseResponse(record)), true);
+              }, 0)
             }}
           />
 

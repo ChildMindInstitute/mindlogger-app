@@ -93,7 +93,7 @@ export const prepareResponseForUpload = (
     if (item.inputType == 'visual-stimulus-response' && item.inputs.blockType === 'practice') {
       if (flankerPractice < 0) {
         flankerPractice = i;
-      } else {
+      } else if (responses[i]) {
         responses[flankerPractice] = responses[flankerPractice].concat(responses[i]);
         responses[i] = null;
       }
