@@ -136,7 +136,7 @@ const GeolocationComponent = ({ config, value, onChange, isOptionalText, isOptio
           )}
         </View>
 
-        {config?.image && (
+        {config?.image ? (
           <View style={styles.imgContainer}>
             <Image
               style={styles.img}
@@ -145,15 +145,15 @@ const GeolocationComponent = ({ config, value, onChange, isOptionalText, isOptio
               }}
             />
           </View>
-        )}
+        ) : <></>}
 
-        {isOptionalText && (
+        {isOptionalText ? (
           <OptionalText
             isRequired={isOptionalTextRequired}
             value={finalAnswer["text"]}
             onChangeText={(text) => handleComment(text)}
           />
-        )}
+        ) : <></>}
       </View>
     </KeyboardAvoidingView>
   );
