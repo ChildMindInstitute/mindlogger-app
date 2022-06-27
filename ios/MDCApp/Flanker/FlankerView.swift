@@ -156,11 +156,11 @@ extension FlankerView: GameManagerProtocol {
     timeLabel.text = time
   }
 
-  func updateText(text: String, color: UIColor, font: UIFont) {
+  func updateText(text: String, color: UIColor, font: UIFont, isStart: Bool) {
     textLabel.font = font
     textLabel.text = text
     textLabel.textColor = color
-    gameManager.setEndTimeViewingImage(time: Date())
+    gameManager.setEndTimeViewingImage(time: Date(), isStart: isStart)
   }
 
   func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?) {
