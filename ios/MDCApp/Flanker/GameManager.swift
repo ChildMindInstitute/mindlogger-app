@@ -144,6 +144,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.correctText
@@ -161,6 +162,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.inCorrectText
@@ -181,6 +183,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.correctText
@@ -198,6 +201,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.inCorrectText
@@ -215,7 +219,6 @@ class GameManager {
 
   @objc func setDefaultText(isFirst: Bool) {
     if isEndGame() { return }
-    startGameTime = Date()
     if
       let endVisibleImageTime = endVisibleImageTime,
       let startVisibleImageTime = startVisibleImageTime,
@@ -235,6 +238,7 @@ class GameManager {
       resultManager.addStepData(data: model)
     }
     invalidateTimers()
+    startGameTime = Date()
     delegate?.updateText(text: "-----", color: .black, font: Constants.bigFont, isStart: false)
 
     timerSetText = Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
@@ -271,6 +275,7 @@ class GameManager {
     delegate?.setEnableButton(isEnable: false)
 
     if isShowGameAnswers {
+      self.startGameTime = Date()
       delegate?.updateText(text: Constants.timeRespondText, color: .black, font: Constants.smallFont, isStart: false)
     }
 
