@@ -92,21 +92,21 @@ export const itemVisiblitySelector = createSelector(
   currentResponsesSelector,
   R.path(["app", "currentActivity"]),
   R.path(["applets", "applets"]),
+  R.path(["activities", "orderIndex"]),
   lastResponseTimeSelector,
-  (current, activityId, applets, lastResponseTimes) => {
+  (current, activityId, applets, orderIndex, lastResponseTimes) => {
     const currentApplets = applets.map((applet) => parseAppletEvents(applet));
     const currentActivity = currentApplets.reduce(
       (acc, applet) => [
         ...acc,
         ...applet.activities,
+        ...applet.activityFlows,
       ],
       [],
     ).find(activity => activity.id === activityId);
-
     if (!current && !currentActivity) {
       return [];
     }
-
     const responses = current ? current.responses : [];
     const activity = current ? current.activity : currentActivity;
     const applet = applets.find(applet => applet.id == activity.appletId);
@@ -114,6 +114,19 @@ export const itemVisiblitySelector = createSelector(
 
     for (const activity of applet.activities) {
       responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTimes[applet.id] || {})[activity.id];
+    }
+
+    if (activity.isActivityFlow) {
+      const activityOrderIndex = orderIndex[activity.id] || 0;
+      const activityOrder = activity.activityFlowId ? activity.activityFlowOrder : activity.order;
+      const flowActivity = applet.activities.find(act => act.name.en === activityOrder[activityOrderIndex]);
+
+      return flowActivity ?.addProperties.map((property, index) => {
+        if (!flowActivity.items[index] || flowActivity.items[index].isVis) {
+          return false;
+        }
+        return testVisibility(property[IS_VIS][0]['@value'], flowActivity.items, responses, responseTimes)
+      });
     }
 
     return activity ?.addProperties.map((property, index) => {

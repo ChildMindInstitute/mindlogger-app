@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
 
 const ActivityThanks = ({ currentApplet, currentResponses }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
-
   const onClose = () => {
     Actions.replace("applet_details");
   };

@@ -39,7 +39,6 @@ export function clearExec(timerId) {
  *
  * delayedExec(() => {
  *   const now = new Date();
- *   console.log(now.toTimeString());
  * }, { every: 1000 });
  *
  * @example <caption>Run a function after five seconds</caption>

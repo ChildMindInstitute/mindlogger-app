@@ -19,6 +19,7 @@ import { activityAccessSelector } from '../../state/applets/applets.selectors';
 import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
+import { setActivityFlows } from '../../state/activityFlows/activityFlows.actions';
 import { setActivities } from '../../state/activities/activities.actions';
 import { setScheduleUpdated } from '../../state/applets/applets.actions';
 import {
@@ -43,6 +44,7 @@ const ActivityList = ({
   inProgress,
   setActivities,
   finishedEvents,
+  orderIndex,
   onPressActivity,
   onLongPressActivity,
   cumulativeActivities
@@ -55,7 +57,7 @@ const ActivityList = ({
   const stateUpdate = async () => {
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
-
+    const activityFlows = newApplet.activityFlows.filter(activityFlow => activityFlow.isVis);
     const convertToIndexes = (activities) => (activities || [])
       .map(id => {
         const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
@@ -63,7 +65,7 @@ const ActivityList = ({
       })
       .filter(index => index > -1)
 
-    let { appletActivities, recommendedActivities } = getAvailableActivities(
+    let { appletActivities, recommendedActivities } = getAvailableActivities( 
       newApplet.activities,
       convertToIndexes(cumulativeActivities[applet.id].available),
       convertToIndexes(cumulativeActivities[applet.id].archieved),
@@ -76,9 +78,8 @@ const ActivityList = ({
           activity.isPrize != true &&
           !activity.isVis && activity.isReviewerActivity != true
       )
-
     setRecommendedActivities(recommendedActivities);
-    setActivities(sortActivities(appletActivities, inProgress, finishedEvents, applet.schedule.data));
+    setActivities(sortActivities([...activityFlows, ...appletActivities], inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
       setPrizeActivity(pzActs[0]);
@@ -166,6 +167,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
+          orderIndex={orderIndex}
           isRecommended={recommendedActivities?.includes(activity.id)}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
@@ -216,6 +218,7 @@ const mapStateToProps = (state) => {
     inProgress: inProgressSelector(state),
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
+    orderIndex: state.activities.orderIndex,
     cumulativeActivities: state.activities.cumulativeActivities,
   };
 };

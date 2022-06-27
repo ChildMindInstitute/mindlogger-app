@@ -336,8 +336,6 @@ class Slider extends Component {
       onRelease,
     } = this.props;
 
-    console.log('image1', minValueImg)
-    console.log('iamge2', maxValueImg)
     this.finalAnswer = value ? value : {};
 
     let currentVal = this.finalAnswer["value"];

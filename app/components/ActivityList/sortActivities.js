@@ -164,17 +164,13 @@ export default (activityList, inProgress, finishedEvents, scheduleData) => {
   }
 
   // Activities currently scheduled - or - previously scheduled and not yet completed.
-
   // Activities scheduled some time in the future.
   const pastdue = getPastdue(notInProgress, finishedEvents)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
-
   const scheduled = getScheduled(notInProgress, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
-
   // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents, scheduleData);
-
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();
 

@@ -4,6 +4,7 @@ export const initialState = {
   activities: [],
   recommendedActivities: [],
   cumulativeActivities: {},
+  orderIndex: {},
 };
 
 export default (state = initialState, action = {}) => {
@@ -18,8 +19,19 @@ export default (state = initialState, action = {}) => {
         ...state,
         cumulativeActivities: { ...action.payload },
       };
+    case "SET_ORDER_INDEX":
+      return {
+        ...state,
+      };
     case "CLEAR_ACTIVITIES":
       return { ...initialState };
+    
+    case "SET_ACTIVITY_FLOW_INDEX_ORDER":
+      const { activityId, index } = action.payload;
+      return {
+        ...state,
+        orderIndex: { ...state.orderIndex, [activityId]: index }
+      }
 
     default:
       return state;

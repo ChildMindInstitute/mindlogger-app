@@ -96,6 +96,7 @@ class Activity extends React.Component {
       modalVisible: false,
       hasSplashScreen: false,
       responses: [],
+      visibleAct: null,
       visibility: [],
       optionalTextChanged: false
     };
@@ -107,7 +108,7 @@ class Activity extends React.Component {
   componentDidMount() {
     const { isSummaryScreen, currentResponse, currentScreen, itemVisibility } = this.props;
     const { activity, responses } = currentResponse;
-
+    const visibleAct = currentResponse.activity.isActivityFlow ? this.getActivityData() : currentResponse.activity;
     const idleTime = this.getIdleTime();
 
     this.setState({
@@ -115,6 +116,7 @@ class Activity extends React.Component {
       idleTime,
       hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
+      visibleAct,
       visibility: itemVisibility
     }, () => {
       if (idleTime) {
@@ -161,7 +163,7 @@ class Activity extends React.Component {
       currentApplet,
       lastResponseTime,
     } = this.props;
-    const { activity } = currentResponse;
+    const activity = this.state.visibleAct;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText;
@@ -262,7 +264,7 @@ class Activity extends React.Component {
   get currentItem() {
     return R.path(
       ["items", this.props.currentScreen],
-      this.props.currentResponse.activity
+      this.state.visibleAct
     );
   }
 
@@ -296,7 +298,7 @@ class Activity extends React.Component {
   }
 
   handlePressPrevScreen = () => {
-    const { isSummaryScreen } = this.state;
+    const { isSummaryScreen, visibleAct } = this.state;
     const {
       setSummaryScreen,
       currentScreen,
@@ -305,7 +307,6 @@ class Activity extends React.Component {
       isSelected,
       currentResponse,
     } = this.props;
-    const { activity, responses } = currentResponse;
 
     this.userEvents.push({
       type: 'PREV',
@@ -319,7 +320,7 @@ class Activity extends React.Component {
 
     if (isSummaryScreen) {
       this.setState({ isSummaryScreen: false });
-      setSummaryScreen(activity, false);
+      setSummaryScreen(visibleAct, false);
       setSelected(false);
     } else {
       prevScreen();
@@ -347,7 +348,7 @@ class Activity extends React.Component {
     } = this.props;
 
     const { isSummaryScreen } = this.state;
-    const { activity } = currentResponse;
+    const activity = this.state.visibleAct;
     const screen = activity.items[currentScreen].variableName;
     let currentActivity = 'activity1';
     const next = getNextPos(currentScreen, itemVisibility);
@@ -395,9 +396,10 @@ class Activity extends React.Component {
     }
 
     if (isSplashScreen) {
+      let activityObj = currentResponse.activity;
       setSplashScreen(activity, false);
-      setCurrentScreen(activity.event ? activity.id + activity.event.id : activity.id, currentScreen)
-      return
+      setCurrentScreen(activityObj.event ? activityObj.id + activityObj.event.id : activityObj.id, currentScreen)
+      return;
     }
     if (
       activity.items[currentScreen].correctAnswer &&
@@ -464,6 +466,16 @@ class Activity extends React.Component {
     }
   }
 
+  getActivityData() {
+    const { currentApplet, orderIndex } = this.props;
+    const { activity } = this.props.currentResponse;
+    const orderActivity = activity.activityFlowId
+      ? activity.activityFlowOrder[orderIndex[activity.activityFlowId] || 0]
+      : activity.order[orderIndex[activity.id] || 0];
+
+    return currentApplet.activities.find(act => act.name.en === orderActivity);
+  }
+
   componentWillUnmount() {
     this.updateStore();
     this.idleTimer.clear();
@@ -490,10 +502,8 @@ class Activity extends React.Component {
     }
 
     const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
-
-    const { activity } = currentResponse;
     const { responses } = this.state;
-
+    const activity = currentResponse.activity.isActivityFlow ? this.getActivityData() : currentResponse.activity;
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
     const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
@@ -566,7 +576,7 @@ class Activity extends React.Component {
             answers={responses}
             currentScreen={currentScreen}
             hasSplashScreen={hasSplashScreen}
-            onChange={(answer, goToNext=false, timeElapsed=0) => {
+            onChange={(answer, goToNext = false, timeElapsed = 0) => {
               responses[currentScreen] = answer;
               if (this.currentItem.inputType != 'drawing' && this.currentItem.inputType != 'trail') {
                 sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
@@ -735,6 +745,7 @@ const mapStateToProps = (state) => ({
   lastResponseTime: lastResponseTimeSelector(state),
   isSplashScreen: isSplashScreenSelector(state),
   isSelected: state.responses.isSelected,
+  orderIndex: state.activities.orderIndex || {},
   appStatus: appStatusSelector(state),
 });
 

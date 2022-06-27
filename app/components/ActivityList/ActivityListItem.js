@@ -12,6 +12,7 @@ import { CachedImage } from 'react-native-img-cache';
 
 import RecomendedBadge from '../../../img/recomended_badge.png'
 
+const badge = require('../../../img/badge.png');
 const styles = StyleSheet.create({
   box: {
     position: 'relative',
@@ -73,7 +74,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended }) => {
+const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended, orderIndex }) => {
+  const isActivityFlow = activity.isActivityFlow ? true : false;
+  const activityOrder = orderIndex[activity.id] ? orderIndex[activity.id] : 0;
+  
   if (activity.isHeader === true) {
 
     return (
@@ -102,12 +106,34 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended }
             /> || <></>
           }
           <View style={styles.left}>
+            {activity.showBadge && (
+              <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 8 }}>
+                <Image
+                  source={badge}
+                  style={{
+                    width: 18,
+                    height: 18,
+                    opacity: 0.6,
+                    right: 2,
+                  }}
+                />
+                <BodyText style={{
+                  opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
+                  color: colors.grey,
+                  fontFamily: theme.fontFamily,
+                  fontWeight: "bold",
+                  fontSize: 15
+                }}>
+                  {`(${activityOrder + 1} of ${activity.order.length}) ${activity.name}`}
+                </BodyText>
+              </View>
+            )}
             <SubHeading
               style={{
                 opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
                 fontFamily: theme.fontFamily
               }}>
-              {activity.name.en}
+              {isActivityFlow ? activity.order[activityOrder] : activity.name.en}
             </SubHeading>
             {activity.description && (
               <BodyText
@@ -115,7 +141,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended }
                   opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
                   fontFamily: theme.fontFamily
                 }}>
-                {activity.description.en}
+                {isActivityFlow ? activity.description : activity.description.en}
               </BodyText>
             ) || <></>}
             <ActivityDueDate activity={activity} />

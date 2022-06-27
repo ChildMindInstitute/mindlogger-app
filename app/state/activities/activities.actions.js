@@ -17,3 +17,10 @@ export const clearActivities = () => {
     type: "CLEAR_ACTIVITIES",
   })
 };
+
+export const setActivityFlowOrderIndex = (data) => {
+  return ({
+    type: "SET_ACTIVITY_FLOW_INDEX_ORDER",
+    payload: data,
+  })
+}
