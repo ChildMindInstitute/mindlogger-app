@@ -15,8 +15,6 @@ const styles = StyleSheet.create({
     right: 15,
   },
   logo: {
-    position: 'absolute',
-    top: 20,
     right: 50,
     left: 15,
   },
@@ -53,11 +51,6 @@ const ActHeader = (props) => {
 
   return (
     <>
-      {!!watermark && !isSummaryScreen && !isSplashScreen &&
-        <View style={styles.logo}>
-          <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
-        </View>
-      }
       <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
         <Icon
           type="FontAwesome"
@@ -91,6 +84,11 @@ const ActHeader = (props) => {
                 style={{ color: colors.tertiary }} />
             }
           </TouchableOpacity>
+        </View>
+      }
+      {!!watermark && !isSummaryScreen && !isSplashScreen &&
+        <View style={styles.logo}>
+          <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
       }
     </>

@@ -29,8 +29,9 @@ body {
   object-fit: cover;
   min-width: 100%;
   min-height: 100%;
-  left: 0px;
-  top: 0px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   position: absolute;
 }
 
