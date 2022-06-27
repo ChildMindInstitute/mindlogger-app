@@ -126,7 +126,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_time: Platform.OS === 'ios' ? record.start_time : record.image_time,
     correct: record.correct,
     start_timestamp: Platform.OS === 'ios' ? record.image_time : record.start_timestamp,
-    offset: Platform.OS === 'ios' ? record.start_time : record.start_timestamp - record.start_time,
+    offset: Platform.OS === 'ios' ? 0 : record.start_timestamp - record.start_time,
     tag: record.tag,
   })
 
