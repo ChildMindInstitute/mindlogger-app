@@ -124,7 +124,6 @@ jsPsych.plugins["html-button-response"] = (function() {
         after_response(choice);
       };
       el.addEventListener('touchstart', handler);
-      el.addEventListener('mousedown', handler);
     }
 
     // store response
