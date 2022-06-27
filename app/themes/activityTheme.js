@@ -73,6 +73,76 @@ const styles = StyleSheet.create({
   },
 });
 
+export const markdownHtmlStyle = `
+  * {
+    font-family: ${theme.fontFamily};
+    font-size: 22px;
+    font-weight: 300;
+    text-align: center;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+
+  h2 {
+    font-size: 30px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  h4 {
+    font-size: 20px;
+  }
+
+  h5 {
+    font-size: 18px;
+  }
+
+  h6 {
+    font-size: 16px;
+  }
+
+  p {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 300;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  img {
+    object-fit: contain;
+    width: calc(100vw - 80px);
+    margin: 0px 40px;
+  }
+
+  table {
+    width: 100%;
+    border: 1px solid;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-bottom: 1px solid black;
+  }
+
+  td {
+    font-size: 14px;
+    text-align: left;
+  }
+`
+
 export const markdownStyle = {
   heading1: {
     fontSize: 36,
