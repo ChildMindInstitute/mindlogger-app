@@ -56,7 +56,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-
+    console.log(parseResponse(dataObject))
     if (dataType == 'response') {
       sendData('live_event', parseResponse(dataObject), appletId);
       return ;
@@ -123,9 +123,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     duration: record.rt,
     question: record.stimulus,
     button_pressed: record.button_pressed,
-    start_time: record.image_time,
+    start_time: Platform.OS === 'ios' ? record.start_time : record.image_time,
     correct: record.correct,
-    start_timestamp: record.start_timestamp,
+    start_timestamp: Platform.OS === 'ios' ? record.image_time : record.start_timestamp,
     offset: Platform.OS === 'ios' ? record.start_time : record.start_timestamp - record.start_time,
     tag: record.tag,
   })

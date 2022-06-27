@@ -76,7 +76,6 @@ class FlankerViewManager: RCTViewManager {
       view.typeResult = .next
       view.parameterGame(isShowAnswers: false, countGame: countGame)
     }
-//    lastType = blockType
     lastIndex = index
   }
 }
