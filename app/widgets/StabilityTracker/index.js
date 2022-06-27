@@ -460,33 +460,18 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
 
                 <Rect
                   y={0}
-                  x={0}
+                  x={-5}
                   height={blockHeight - outerStimRadius}
-                  width={blockWidth}
-                  fill={getBackColor('white')}
-                />
-
-                <Rect
-                  y={0}
-                  x={center + blockWidth / 2}
-                  height={blockHeight - outerStimRadius}
-                  width={blockWidth}
+                  width={width + 10}
+                  strokeWidth={0}
                   fill={getBackColor('white')}
                 />
 
                 <Rect
                   y={width - blockHeight + outerStimRadius}
-                  x={0}
+                  x={-5}
                   height={blockHeight - outerStimRadius}
-                  width={blockWidth}
-                  fill={getBackColor('white')}
-                />
-
-                <Rect
-                  y={width - blockHeight + outerStimRadius}
-                  x={center + blockWidth / 2}
-                  height={blockHeight - outerStimRadius}
-                  width={blockWidth}
+                  width={width + 10}
                   fill={getBackColor('white')}
                 />
 
@@ -585,7 +570,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
                       styles.controlBarText,
                       {
                         width,
-                        transform: [{ rotate: '90deg' }, { translateY: width * 0.9 }]
+                        transform: [{ rotate: '90deg' }, { translateY: width * 0.892 }]
                       }
                     ]}>Tap here to {moving ? 're' : ''}start</Text>
                   ) || <></>

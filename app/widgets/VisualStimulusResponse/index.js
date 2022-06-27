@@ -24,6 +24,7 @@ const getImage = (image, alt) => {
 
 const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
   const trials = [];
+
   const choices = buttons.map(button => ({
     value: button.value,
     name: { en: getImage(button.image, button.name.en) }
@@ -47,8 +48,6 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 }
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
-  const [tryIndex, setTryIndex] = useState(1);
-  const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
   const webView = useRef();
 
@@ -61,7 +60,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`,
+    `Press the button below to ${config.lastTest ? 'finish' : 'continue'}.`,
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
@@ -78,9 +77,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     trialDuration: config.trialDuration || 1500,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
-    minimumAccuracy: tryIndex < config.maxRetryCount && config.minimumAccuracy || 0,
+    minimumAccuracy: config.minimumAccuracy,
     continueText,
-    restartText: tryIndex+1 < config.maxRetryCount ? restartText : continueText,
+    restartText: config.lastPractice ? continueText : restartText,
   };
 
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
@@ -125,42 +124,22 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
         style={{ flex: 1, height: '100%' }}
         onLoad={() => setLoading(false)}
         source={source}
+        androidLayerType="hardware"
         originWhitelist={['*']}
         scrollEnabled={false}
+        injectedJavaScript={`preloadButtonImages(${JSON.stringify(config.buttons)})`}
         onMessage={(e) => {
           const dataString = e.nativeEvent.data;
           const { type, data } = JSON.parse(dataString);
-
           if (type == 'response') {
             sendData('live_event', parseResponse(data), appletId);
             return ;
           }
 
-          let correctCount = 0, totalCount = 0;
-          for (let i = 0; i < data.length; i++) {
-            if (data[i].tag == 'trial') {
-              totalCount++;
-              if (data[i].correct) {
-                correctCount++;
-              }
-            }
-          }
-
-          if (
-            config.minimumAccuracy &&
-            correctCount * 100 / config.minimumAccuracy < totalCount && 
-            tryIndex < config.maxRetryCount
-          ) {
-            setResponses(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')));
-            webView.current.injectJavaScript(injectConfig);
-            setTryIndex(tryIndex+1);
-          } else {
-            setLoading(true);
-
-            setTimeout(() => {
-              onChange(responses.concat(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare')).map(record => parseResponse(record)), true);
-            }, 0)
-          }
+          setLoading(true);
+          setTimeout(() => {
+            onChange(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare').map(record => parseResponse(record)), true);
+          }, 0)
         }}
       />
 
