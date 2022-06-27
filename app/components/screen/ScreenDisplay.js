@@ -20,7 +20,9 @@ const styles = StyleSheet.create({
 const parseMarkdown = (markdown, lastResponseTime, profile, activity, answers) => {
   if (!lastResponseTime) {
     markdown = replaceItemVariableWithName(markdown, activity, answers)
-    return markdown.replace(/\[Nickname\]/i, profile.nickName || '');
+    return markdown
+      .replace(/\[Nickname\]/i, profile.nickName || '')
+      .replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'));
   }
 
   const now = new Date();
@@ -74,7 +76,8 @@ const parseMarkdown = (markdown, lastResponseTime, profile, activity, answers) =
     .replace(/\[Now\]/i, moment(now).format('hh:mm A') + ' today (now)')
     .replace(/\[Time_Elapsed_Activity_Last_Completed\]/i, formatElapsedTime(now.getTime() - responseTime.getTime()))
     .replace(/\[Time_Activity_Last_Completed\]/i, formatLastResponseTime(responseTime, moment(now)))
-    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName);
+    .replace(/\[Nickname\]/i, profile.nickName || profile.firstName)
+    .replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'));
 };
 
 const ScreenDisplay = ({ activity, lastResponseTime, profile, answers, currentScreen, screen }) => {

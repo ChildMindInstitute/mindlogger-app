@@ -22,6 +22,7 @@ import markdownContainer from "markdown-it-container";
 import markdownIns from "markdown-it-ins";
 import markdownEmoji from "markdown-it-emoji";
 import markdownMark from "markdown-it-mark";
+import moment from "moment";
 import Mimoza from "mimoza";
 import { colors } from "../../themes/colors";
 import { MarkdownScreen } from "../../components/core";
@@ -221,7 +222,7 @@ const ActivitySummary = (props) => {
 
       options.html += `
         <p class="text-body-2 mb-4">
-          ${renderLineBreak(markdownItInstance.render(scoreOverview))}
+          ${renderLineBreak(markdownItInstance.render(scoreOverview?.replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'))))}
         </p>
       `;
 
@@ -233,7 +234,7 @@ const ActivitySummary = (props) => {
             </b>
           </p>
           <p class="text-body-2">
-            ${renderLineBreak(markdownItInstance.render(message.compute.description))}
+            ${renderLineBreak(markdownItInstance.render(message.compute.description?.replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'))))}
           </p>
           <div class="score-area">
             <p
@@ -264,7 +265,7 @@ const ActivitySummary = (props) => {
           <p class="text-body-2 mb-4">
             ${i18n.t("activity_summary:score_on_subscale", { name: message.category.replace(/_/g, " ") })}
             <span class="text-danger">${message.scoreValue}</span>.
-            ${renderLineBreak(markdownItInstance.render(message.message))}
+            ${renderLineBreak(markdownItInstance.render(message.message?.replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'))))}
           </p>
         `;
       }
