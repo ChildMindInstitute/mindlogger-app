@@ -71,6 +71,7 @@ class GameManager {
   func parameterGame(isShowAnswers: Bool, countGame: Int) {
     isShowGameAnswers = isShowAnswers
     countAllGame = countGame
+    resultManager.cleanData()
     countTest = 0
     correctAnswers = 0
     startLogicTimer()
@@ -125,7 +126,6 @@ class GameManager {
     arrayTimes.append(resultTime.convertToInt())
     self.startDate = nil
     delegate?.updateTime(time: String(format: "%.3f", resultTime))
-
     let textArray = Array(text)
     switch button {
     case .left:
@@ -218,12 +218,12 @@ class GameManager {
   }
 
   @objc func setDefaultText(isFirst: Bool) {
-    if isEndGame() { return }
     if
       let endVisibleImageTime = endVisibleImageTime,
       let startVisibleImageTime = startVisibleImageTime,
       let startGameTime = startGameTime, isShowGameAnswers,
       !isFirst {
+
       let resultTime = (Date().timeIntervalSince1970 - startVisibleImageTime.timeIntervalSince1970) * 1000
       let model = FlankerModel(rt: resultTime,
                                stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
@@ -237,12 +237,13 @@ class GameManager {
       delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
       resultManager.addStepData(data: model)
     }
+    if isEndGame() { return } else { countTest += 1 }
     invalidateTimers()
     startGameTime = Date()
+    startVisibleImageTime = Date()
     delegate?.updateText(text: "-----", color: .black, font: Constants.bigFont, isStart: false)
 
     timerSetText = Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
-//    startLogicTimer()
   }
 
   @objc func setText() {
@@ -267,13 +268,11 @@ class GameManager {
     text = randomString()
     startVisibleImageTime = Date()
     delegate?.updateText(text: text, color: .black, font: Constants.bigFont, isStart: true)
-    countTest += 1
     timeResponse = Timer.scheduledTimer(timeInterval: Constants.moreTimeInterval, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
   }
 
   @objc func timeResponseFailed() {
     delegate?.setEnableButton(isEnable: false)
-
     if isShowGameAnswers {
       self.startGameTime = Date()
       delegate?.updateText(text: Constants.timeRespondText, color: .black, font: Constants.smallFont, isStart: false)
@@ -302,11 +301,11 @@ class GameManager {
 
     resultManager.addStepData(data: model)
     delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-    if !isEndGame() {
+//    if !isEndGame() {
       self.startVisibleImageTime = Date()
       responseText = Constants.timeRespondText
       Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
-    }
+//    }
   }
 }
 

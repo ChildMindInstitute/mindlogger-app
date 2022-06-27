@@ -119,7 +119,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   }, [isCurrent])
 
   const parseResponse = (record) => ({
-    trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
+    trial_index: Platform.OS === 'ios' ? record.trial_index : Math.ceil((record.trial_index + 1) / screenCountPerTrial),
     duration: record.rt,
     question: record.stimulus,
     button_pressed: record.button_pressed,
