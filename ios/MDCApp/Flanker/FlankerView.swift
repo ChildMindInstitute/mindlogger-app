@@ -83,13 +83,12 @@ class FlankerView: UIView {
     super.init(coder: coder)
   }
 
-  func parameterGame(isShowAnswers: Bool, countGame: Int) {
+  func parameterGame() {
     DispatchQueue.main.async {
       self.finishView.isHidden = true
-      self.gameManager.parameterGame(isShowAnswers: isShowAnswers, countGame: countGame)
+      self.gameManager.parameterGame()
     }
   }
-  
   
   func setText(text: String, color: UIColor = .black) {
     textLabel.text = text
@@ -161,6 +160,11 @@ extension FlankerView: GameManagerProtocol {
     textLabel.text = text
     textLabel.textColor = color
     gameManager.setEndTimeViewingImage(time: Date(), isStart: isStart)
+  }
+
+  func updateTitleButton(left: String, right: String) {
+    leftButton.setTitle(left, for: .normal)
+    rightButton.setTitle(right, for: .normal)
   }
 
   func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?) {

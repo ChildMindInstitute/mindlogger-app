@@ -110,7 +110,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   useEffect(() => {
     if (isCurrent) {
       if(Platform.OS === 'ios') {
-        NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0);
+        NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0, JSON.stringify(configObj));
         NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
       } else {
         webView.current.injectJavaScript(injectConfig);

@@ -18,6 +18,8 @@
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* MDCAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MDCAppTests.m */; };
 		3FAC1F992451C52400C01290 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3FAC1F982451C52400C01290 /* GoogleService-Info.plist */; };
+		84168E23286B7EBB00B52084 /* ParameterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84168E22286B7EBB00B52084 /* ParameterModel.swift */; };
+		84168E25286B824B00B52084 /* ParameterGameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84168E24286B824B00B52084 /* ParameterGameManager.swift */; };
 		843D600828421098009C0C76 /* ResultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D600728421098009C0C76 /* ResultManager.swift */; };
 		847C00802850F67B00A780F3 /* TimeInterval+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847C007F2850F67B00A780F3 /* TimeInterval+Extension.swift */; };
 		8492B73F283934740037B381 /* FlankerViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8492B73B283934740037B381 /* FlankerViewManager.m */; };
@@ -79,6 +81,8 @@
 		5FBB8A3E36CABE6781B2B9A1 /* Pods-MDCApp-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MDCApp-tvOS.release.xcconfig"; path = "Target Support Files/Pods-MDCApp-tvOS/Pods-MDCApp-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		73DD85E72832917A00498829 /* MDCApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MDCApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		759001E32D3642F9A55E0160 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		84168E22286B7EBB00B52084 /* ParameterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterModel.swift; sourceTree = "<group>"; };
+		84168E24286B824B00B52084 /* ParameterGameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterGameManager.swift; sourceTree = "<group>"; };
 		843D600728421098009C0C76 /* ResultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultManager.swift; sourceTree = "<group>"; };
 		847C007F2850F67B00A780F3 /* TimeInterval+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extension.swift"; sourceTree = "<group>"; };
 		8492B73B283934740037B381 /* FlankerViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FlankerViewManager.m; path = MDCApp/Flanker/FlankerViewManager.m; sourceTree = "<group>"; };
@@ -249,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				84DD8A7328451BD000ED6593 /* FlankerModel.swift */,
+				84168E22286B7EBB00B52084 /* ParameterModel.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -262,6 +267,7 @@
 				8492B73C283934740037B381 /* GameManager.swift */,
 				84C01EA6284096BB003976F8 /* ResultView.swift */,
 				843D600728421098009C0C76 /* ResultManager.swift */,
+				84168E24286B824B00B52084 /* ParameterGameManager.swift */,
 			);
 			name = Flanker;
 			sourceTree = "<group>";
@@ -706,9 +712,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				8492B742283934740037B381 /* FlankerViewManager.swift in Sources */,
+				84168E23286B7EBB00B52084 /* ParameterModel.swift in Sources */,
 				8492B741283934740037B381 /* FlankerView.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				8492B746283934DB0037B381 /* UIColor+Extension.swift in Sources */,
+				84168E25286B824B00B52084 /* ParameterGameManager.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				84C01EAB2840C418003976F8 /* UITextFild+Extesion.swift in Sources */,
 				8492B73F283934740037B381 /* FlankerViewManager.m in Sources */,

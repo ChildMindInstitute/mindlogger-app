@@ -54,20 +54,21 @@ class ResultView: UIView {
   }
 
   func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, isLast: Bool = false, closureFinish: @escaping () -> Void) {
+    guard let parametersGame = ParameterGameManager.shared.getParameters() else { return }
     switch typeButton {
     case .ok:
       if procentCorrect >= 75 || isLast {
-        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
+        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>\(parametersGame.continueText[0])</p></font>").htmlToAttributedString
         textLabel.attributedText = textAttr
         finishButton.setTitle("Continue", for: .normal)
       } else {
-        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p> Remember to respond only to the central arrow.</p> <p>Press the button below to end current block and restart.</p></font>").htmlToAttributedString
+        let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p> \(parametersGame.restartText[0])</p> <p>\(parametersGame.restartText[1])</p></font>").htmlToAttributedString
         textLabel.attributedText = textAttr
         finishButton.setTitle("OK", for: .normal)
       }
 
     case .next:
-      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>Press the button below to continue.</p></font>").htmlToAttributedString
+      let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>\(parametersGame.continueText[0])</p></font>").htmlToAttributedString
       textLabel.attributedText = textAttr
       finishButton.setTitle("Continue", for: .normal)
     case .finish:

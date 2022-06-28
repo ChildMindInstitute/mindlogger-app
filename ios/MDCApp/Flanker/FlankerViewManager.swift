@@ -36,8 +36,10 @@ class FlankerViewManager: RCTViewManager {
   }
 
   @objc
-  func parameterGameType(_ blockType: Int) {
+  func parameterGameType(_ blockType: Int, json: String) {
     print("BlockType: \(blockType)")
+    ParameterGameManager.shared.setJsonWithParameters(json: json)
+
     if lastType == blockType {
       countType += 1
     } else {
@@ -69,17 +71,14 @@ class FlankerViewManager: RCTViewManager {
     if indexPath + 1 == arrayPages.count || lastIndex < index {
       view.typeResult = .ok
       index == 3 ? (view.isLast = true) : (view.isLast = false)
-      view.parameterGame(isShowAnswers: isShowFeedback, countGame: countGame) //set countGame
     } else if indexPath == 0 {
       view.typeResult = .finish
-      view.parameterGame(isShowAnswers: isShowFeedback, countGame: countGame)
     } else if lastType == 0 &&  indexPath == 4 {
       view.typeResult = .ok
-      view.parameterGame(isShowAnswers: isShowFeedback, countGame: countGame)
     } else {
       view.typeResult = .next
-      view.parameterGame(isShowAnswers: isShowFeedback, countGame: countGame)
     }
+    view.parameterGame()
     lastIndex = index
   }
 }
