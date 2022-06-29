@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '90deg'}],
   },
   controlBarText: {
-    flex: 1,
     textAlign: 'center',
   },
   score: {
@@ -566,13 +565,21 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
             >
                 {
                   controlBar.current && (
-                    <Text style={[
-                      styles.controlBarText,
-                      {
-                        width,
-                        transform: [{ rotate: '90deg' }, { translateY: width * 0.892 }]
-                      }
-                    ]}>Tap here to {moving ? 're' : ''}start</Text>
+                    <View
+                      style={{
+                        width: width,
+                        height: width/10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        transform: [
+                          { rotate: '90deg' },
+                          { translateY: width/2 - width/20 },
+                          { translateX: width/2 - blockHeight * 2 + outerStimRadius * 2 }
+                        ]
+                      }}
+                    >
+                      <Text>Tap here to {moving ? 're' : ''}start</Text>
+                    </View>
                   ) || <></>
                 }
 
