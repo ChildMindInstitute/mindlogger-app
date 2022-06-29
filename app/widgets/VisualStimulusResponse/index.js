@@ -4,6 +4,7 @@ import { Text, StyleSheet, View, Platform, ActivityIndicator, NativeModules, Tou
 import { WebView } from 'react-native-webview';
 import { sendData } from "../../services/socket";
 import FlankerView from './FlankerView';
+import { image } from 'd3';
 
 const htmlSource = require('./visual-stimulus-response.html');
 
@@ -14,6 +15,14 @@ const shuffle = (a) => {
   }
   return a;
 }
+
+const getImageNative = (image, alt) => {
+  if (image) {
+    return image
+  }
+
+  return alt;
+} 
 
 const getImage = (image, alt) => {
   if (image) {
@@ -28,7 +37,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 
   const choices = buttons.map(button => ({
     value: button.value,
-    name: { en: getImage(button.image, button.name.en) }
+    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en) }
   }));
 
   for (const block of blocks) {
@@ -68,7 +77,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   // Prepare config data for injecting into the WebView
   const screens = config.trials.map(trial => ({
     id: trial.id,
-    stimulus: { en: getImage(trial.image, trial.name.en) },
+    stimulus: { en: Platform.OS === 'ios' ? getImageNative(trial.image, trial.name.en) : getImage(trial.image, trial.name.en) },
     correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
     weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
   }));
@@ -84,7 +93,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   const configObj = {
     trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
-    fixation: getImage(config.fixationScreen.image, config.fixationScreen.value),
+    fixation: Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value),
     showFixation: config.showFixation !== false,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,

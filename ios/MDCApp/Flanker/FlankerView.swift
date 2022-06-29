@@ -32,6 +32,15 @@ class FlankerView: UIView {
     return label
   }()
 
+  private lazy var fixationImage: ImageLoader = {
+    let imageView = ImageLoader()
+    imageView.translatesAutoresizingMaskIntoConstraints = false
+    imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    imageView.contentMode = .scaleAspectFit
+    imageView.layer.cornerRadius = 5.0
+    return imageView
+  }()
+
   private lazy var leftButton: UIButton = {
     let button = UIButton()
     button.translatesAutoresizingMaskIntoConstraints = false
@@ -43,6 +52,8 @@ class FlankerView: UIView {
     button.addTarget(self, action: #selector(leftButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
+    button.contentHorizontalAlignment = .fill
+    button.contentVerticalAlignment = .fill
     return button
   }()
   
@@ -57,6 +68,8 @@ class FlankerView: UIView {
     button.addTarget(self, action: #selector(rightButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
+    button.contentHorizontalAlignment = .fill
+    button.contentVerticalAlignment = .fill
     return button
   }()
 
@@ -76,6 +89,9 @@ class FlankerView: UIView {
     setupConstraint()
     timeLabel.isHidden = true
     finishView.isHidden = true
+    leftButton.isHidden = true
+    rightButton.isHidden = true
+    textLabel.isHidden = true
     gameManager.delegate = self
   }
 
@@ -110,6 +126,7 @@ class FlankerView: UIView {
     self.addSubview(leftButton)
     self.addSubview(rightButton)
     self.addSubview(finishView)
+    self.addSubview(fixationImage)
 
     NSLayoutConstraint.activate([
       timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
@@ -118,6 +135,10 @@ class FlankerView: UIView {
       textLabel.leftAnchor.constraint(equalTo: self.leftAnchor),
       textLabel.rightAnchor.constraint(equalTo: self.rightAnchor),
       textLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+
+      fixationImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30),
+      fixationImage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30),
+      fixationImage.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 30),
 
       leftButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
       leftButton.rightAnchor.constraint(equalTo: self.centerXAnchor, constant: -10),
@@ -159,12 +180,46 @@ extension FlankerView: GameManagerProtocol {
     textLabel.font = font
     textLabel.text = text
     textLabel.textColor = color
+    textLabel.isHidden = false
+    fixationImage.isHidden = true
     gameManager.setEndTimeViewingImage(time: Date(), isStart: isStart)
   }
 
-  func updateTitleButton(left: String, right: String) {
-    leftButton.setTitle(left, for: .normal)
-    rightButton.setTitle(right, for: .normal)
+  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?) {
+    leftButton.isHidden = false
+    rightButton.isHidden = false
+    if let left = left, let right = right {
+      leftButton.setImage(nil, for: .normal)
+      rightButton.setImage(nil, for: .normal)
+      leftButton.setTitle(left, for: .normal)
+      leftButton.titleLabel?.textAlignment = .center
+      rightButton.setTitle(right, for: .normal)
+      rightButton.titleLabel?.textAlignment = .center
+    } else if let leftImage = leftImage, let rightImage = rightImage {
+      let left = ImageLoader()
+      left.loadImageWithUrl(leftImage)
+      let right = ImageLoader()
+      right.loadImageWithUrl(rightImage)
+
+      leftButton.setImage(left.image, for: .normal)
+      leftButton.setImage(left.image, for: .disabled)
+      leftButton.imageView?.contentMode = .scaleToFill
+      leftButton.imageView?.layer.cornerRadius = 5.0
+
+      rightButton.setImage(right.image, for: .normal)
+      rightButton.setImage(right.image, for: .disabled)
+      rightButton.imageView?.contentMode = .scaleToFill
+      rightButton.imageView?.layer.cornerRadius = 5.0
+    }
+  }
+
+  func updateFixations(image: URL?, isStart: Bool) {
+    if let url = image {
+      textLabel.isHidden = true
+      fixationImage.isHidden = false
+      fixationImage.loadImageWithUrl(url)
+      gameManager.setEndTimeViewingImage(time: Date(), isStart: isStart)
+    }
   }
 
   func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?) {

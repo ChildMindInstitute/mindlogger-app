@@ -30,9 +30,10 @@ enum Constants {
 
 protocol GameManagerProtocol: AnyObject {
   func updateText(text: String, color: UIColor, font: UIFont, isStart: Bool)
+  func updateFixations(image: URL?, isStart: Bool)
   func updateTime(time: String)
   func setEnableButton(isEnable: Bool)
-  func updateTitleButton(left: String, right: String)
+  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?)
   func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?)
 }
 
@@ -72,15 +73,18 @@ class GameManager {
   }
 
   func parameterGame() {
-    guard let parameters = ParameterGameManager.shared.getParameters() else { return }
-    gameParameters = parameters
-    isShowGameAnswers = parameters.showFeedback
-    countAllGame = parameters.trials.count
-    delegate?.updateTitleButton(left: parameters.trials[countTest].choices[0].name.en, right: parameters.trials[countTest].choices[1].name.en)
-    resultManager.cleanData()
-    countTest = 0
-    correctAnswers = 0
-    startLogicTimer()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+      guard let self = self else { return }
+      guard let parameters = ParameterGameManager.shared.getParameters() else { return }
+      self.gameParameters = parameters
+      self.isShowGameAnswers = parameters.showFeedback
+      self.countAllGame = parameters.trials.count
+      self.delegate?.updateTitleButton(left: parameters.trials[self.countTest].choices[0].name.en, right: parameters.trials[self.countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
+      self.resultManager.cleanData()
+      self.countTest = 0
+      self.correctAnswers = 0
+      self.startLogicTimer()
+    }
   }
 
   func stopGame() {
@@ -137,7 +141,7 @@ class GameManager {
     let textArray = Array(text)
     switch button {
     case .left:
-      if textArray[2] == Character(gameParameters.trials[countTest].choices[0].name.en) {
+      if gameParameters.trials[countTest].correctChoice == 0 {
         correctAnswers += 1
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
@@ -176,7 +180,7 @@ class GameManager {
         responseText = Constants.inCorrectText
       }
     case .right:
-      if textArray[2] == Character(gameParameters.trials[countTest].choices[1].name.en) {
+      if gameParameters.trials[countTest].correctChoice == 1 {
         correctAnswers += 1
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
@@ -253,7 +257,22 @@ class GameManager {
     startGameTime = Date()
     startVisibleImageTime = Date()
     guard let gameParameters = gameParameters else { return }
-    delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+    if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
+      delegate?.updateFixations(image: image, isStart: false)
+    } else {
+      delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+    }
+
+    if
+      let leftImage = URL(string: gameParameters.trials[countTest].choices[0].name.en),
+      let rightImage = URL(string: gameParameters.trials[countTest].choices[1].name.en),
+      gameParameters.trials[countTest].choices[0].name.en.contains("https"),
+      gameParameters.trials[countTest].choices[1].name.en.contains("https") {
+      delegate?.updateTitleButton(left: nil, right: nil, leftImage: leftImage, rightImage: rightImage)
+    } else {
+      delegate?.updateTitleButton(left: gameParameters.trials[countTest].choices[0].name.en, right: gameParameters.trials[countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
+    }
+    
     timerSetText = Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
   }
 
@@ -278,8 +297,14 @@ class GameManager {
     guard let gameParameters = gameParameters else { return }
     delegate?.setEnableButton(isEnable: true)
     text = gameParameters.trials[countTest].stimulus.en
+    
     startVisibleImageTime = Date()
-    delegate?.updateText(text: text, color: .black, font: Constants.bigFont, isStart: true)
+    if let image = URL(string: text), text.contains("https") {
+      delegate?.updateFixations(image: image, isStart: true)
+    } else {
+      delegate?.updateText(text: text, color: .black, font: Constants.bigFont, isStart: true)
+    }
+
     timeResponse = Timer.scheduledTimer(timeInterval: gameParameters.trialDuration / 1000, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
   }
 
