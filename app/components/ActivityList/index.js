@@ -50,7 +50,6 @@ const ActivityList = ({
   cumulativeActivities
 }) => {
   const [prizeActivity, setPrizeActivity] = useState(null);
-  const [recommendedActivities, setRecommendedActivities] = useState([]);
   const updateStatusDelay = 60 * 1000;
   let currentConnection = false;
 
@@ -58,27 +57,13 @@ const ActivityList = ({
     const newApplet = parseAppletEvents(applet);
     const pzActs = newApplet.activities.filter(act => act.isPrize === true)
     const activityFlows = newApplet.activityFlows.filter(activityFlow => activityFlow.isVis);
-    const convertToIndexes = (activities) => (activities || [])
-      .map(id => {
-        const index = newApplet.activities.findIndex(activity => activity.id.split('/').pop() == id)
-        return index;
-      })
-      .filter(index => index > -1)
 
-    let { appletActivities, recommendedActivities } = getAvailableActivities( 
-      newApplet.activities,
-      convertToIndexes(cumulativeActivities[applet.id].available),
-      convertToIndexes(cumulativeActivities[applet.id].archieved),
+    let appletActivities = newApplet.activities.filter(
+      activity =>
+        activity.isPrize != true &&
+        !activity.isVis && activity.isReviewerActivity != true
     );
 
-    appletActivities = _.sortBy(appletActivities)
-      .map(index => newApplet.activities[index])
-      .filter(
-        activity =>
-          activity.isPrize != true &&
-          !activity.isVis && activity.isReviewerActivity != true
-      )
-    setRecommendedActivities(recommendedActivities);
     setActivities(sortActivities([...activityFlows, ...appletActivities], inProgress, finishedEvents, applet.schedule.data));
 
     if (pzActs.length === 1) {
@@ -167,8 +152,8 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
-          orderIndex={orderIndex}
-          isRecommended={recommendedActivities?.includes(activity.id)}
+          orderIndex={orderIndex || {}}
+          isRecommended={false}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
         />
       ))}
