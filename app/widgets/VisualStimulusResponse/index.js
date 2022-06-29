@@ -4,7 +4,6 @@ import { Text, StyleSheet, View, Platform, ActivityIndicator, NativeModules, Tou
 import { WebView } from 'react-native-webview';
 import { sendData } from "../../services/socket";
 import FlankerView from './FlankerView';
-import { image } from 'd3';
 
 const htmlSource = require('./visual-stimulus-response.html');
 
@@ -22,7 +21,7 @@ const getImageNative = (image, alt) => {
   }
 
   return alt;
-} 
+}
 
 const getImage = (image, alt) => {
   if (image) {
@@ -187,6 +186,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
             source={source}
             originWhitelist={['*']}
             scrollEnabled={false}
+            injectedJavaScript={`preloadButtonImages(${JSON.stringify(config.buttons)})`}
             onMessage={(e) => {
               const dataString = e.nativeEvent.data;
               const { type, data } = JSON.parse(dataString);
