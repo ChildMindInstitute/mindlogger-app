@@ -615,10 +615,13 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
 
   uploader.finally(() => {
     const activity = {
-      ...inProgressResponse.activity,
-      id: inProgressResponse.activity.activityFlowId,
-      order: inProgressResponse.activity.activityFlowOrder
+      ...inProgressResponse.activity
     };
+
+    if (inProgressResponse.activity.activityFlowId) {
+      activity.id = inProgressResponse.activity.activityFlowId;
+      activity.order = inProgressResponse.activity.activityFlowOrder;
+    }
 
     dispatch(
       removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)

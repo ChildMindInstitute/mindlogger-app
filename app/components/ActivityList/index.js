@@ -47,7 +47,6 @@ const ActivityList = ({
   orderIndex,
   onPressActivity,
   onLongPressActivity,
-  cumulativeActivities
 }) => {
   const [prizeActivity, setPrizeActivity] = useState(null);
   const updateStatusDelay = 60 * 1000;
@@ -204,7 +203,6 @@ const mapStateToProps = (state) => {
     finishedEvents: finishedEventsSelector(state),
     activities: state.activities.activities,
     orderIndex: state.activities.orderIndex,
-    cumulativeActivities: state.activities.cumulativeActivities,
   };
 };
 
