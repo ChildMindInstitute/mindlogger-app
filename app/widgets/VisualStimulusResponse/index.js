@@ -51,6 +51,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
         });
       }
     }
+
   }
 
   return trials;
@@ -100,6 +101,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     samplingMethod: config.samplingMethod,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
+    minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
@@ -194,7 +196,6 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
 
               if (type == 'response') {
                 sendData('live_event', parseResponse(data), appletId);
-                console.log(parseResponse(data))
                 return ;
               }
 
