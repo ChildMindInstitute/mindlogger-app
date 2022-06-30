@@ -541,6 +541,7 @@ class Activity extends React.Component {
             isSummaryScreen={isSummaryScreen}
             prevLabel={prevLabel}
             topNavigation={topNavigation}
+            disableCloseIcon={false}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
             onPressPrevScreen={this.handlePressPrevScreen}
             nextEnabled={isNextEnabled(currentScreen, activity, responses)}
@@ -595,14 +596,15 @@ class Activity extends React.Component {
         {!!isSplashScreen && (
           <ActivitySplash activity={activity} />
         )}
-        {!fullScreen && !topNavigation &&
+        {!fullScreen &&
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
             isSummaryScreen={isSummaryScreen}
             isSplashScreen={!!isSplashScreen}
             watermark={currentApplet.watermark}
-            topNavigation={topNavigation}
+            disableCloseIcon={topNavigation}
+            topNavigation={false}
             prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
             onPressPrevScreen={this.handlePressPrevScreen}
             nextEnabled={isNextEnabled(currentScreen, activity, responses)}
