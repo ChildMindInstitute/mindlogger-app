@@ -18,6 +18,7 @@ class FlankerViewManager: RCTViewManager {
   private var lastType = 0
   private var countType = 0
   private var isUpdate = false
+  
   override func view() -> UIView! {
     countDelegate = 1
     lastIndex = 1

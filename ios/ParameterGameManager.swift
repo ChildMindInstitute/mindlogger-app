@@ -19,28 +19,24 @@ class ParameterGameManager {
       let parameters: ParameterModel = try? JSONDecoder().decode(ParameterModel.self, from: jsonData)
     else { return }
     allParameters = parameters
-    loadAllImage()
+//    loadAllImage()
   }
 
   func getParameters() -> ParameterModel? {
     return allParameters
   }
 
-//  func handleImageFixations() {
-//    guard let allParameters = allParameters, let url = URL(string: allParameters.fixation) else { return }
-//
-//    self.fixationImage = UIImageView()
-//    fixationImage?.downloaded(from: url)
-//  }
+  func loadAllImage(dataJson: String) {
+    guard
+      let jsonData = dataJson.data(using: .utf8),
+      let parameters: ParameterModel = try? JSONDecoder().decode(ParameterModel.self, from: jsonData)
+    else { return }
 
-  func loadAllImage() {
-    guard let allParameters = allParameters else { return }
-
-    if let url = URL(string: allParameters.fixation) {
+    if let url = URL(string: parameters.fixation) {
       ImageLoader().loadImageWithUrl(url)
     }
 
-    allParameters.trials.forEach { trial in
+    parameters.trials.forEach { trial in
       if let url = URL(string: trial.stimulus.en) {
         ImageLoader().loadImageWithUrl(url)
       }

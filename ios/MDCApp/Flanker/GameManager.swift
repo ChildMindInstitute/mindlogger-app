@@ -73,18 +73,15 @@ class GameManager {
   }
 
   func parameterGame() {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-      guard let self = self else { return }
       guard let parameters = ParameterGameManager.shared.getParameters() else { return }
-      self.gameParameters = parameters
-      self.isShowGameAnswers = parameters.showFeedback
-      self.countAllGame = parameters.trials.count
-      self.delegate?.updateTitleButton(left: parameters.trials[self.countTest].choices[0].name.en, right: parameters.trials[self.countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
-      self.resultManager.cleanData()
-      self.countTest = 0
-      self.correctAnswers = 0
-      self.startLogicTimer()
-    }
+      gameParameters = parameters
+      isShowGameAnswers = parameters.showFeedback
+      countAllGame = parameters.trials.count
+      delegate?.updateTitleButton(left: parameters.trials[countTest].choices[0].name.en, right: parameters.trials[countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
+      resultManager.cleanData()
+      countTest = 0
+      correctAnswers = 0
+      startLogicTimer()
   }
 
   func stopGame() {

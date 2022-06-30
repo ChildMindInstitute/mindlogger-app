@@ -167,6 +167,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
             alignItems: 'center',
             justifyContent: 'center' }}
             onEndGame={onEndGame}
+            dataJson ={JSON.stringify(configObj)}
       />
       </View>
       </View>

@@ -83,6 +83,11 @@ class FlankerView: UIView {
   var isLast: Bool = false
   @objc var onEndGame: RCTBubblingEventBlock?
   @objc var onUpdate: RCTDirectEventBlock?
+  @objc var dataJson: NSString? {
+    didSet {
+      ParameterGameManager.shared.loadAllImage(dataJson: String(dataJson ?? ""))
+    }
+  }
 
   override init(frame: CGRect) {
     super.init(frame: frame)
