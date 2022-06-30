@@ -117,7 +117,7 @@ export const itemVisiblitySelector = createSelector(
     }
 
     if (activity.isActivityFlow) {
-      const activityOrderIndex = orderIndex[activity.id] || 0;
+      const activityOrderIndex = orderIndex && orderIndex[activity.id] || 0;
       const activityOrder = activity.activityFlowId ? activity.activityFlowOrder : activity.order;
       const flowActivity = applet.activities.find(act => act.name.en === activityOrder[activityOrderIndex]);
 

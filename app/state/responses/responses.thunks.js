@@ -615,10 +615,13 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
 
   uploader.finally(() => {
     const activity = {
-      ...inProgressResponse.activity,
-      id: inProgressResponse.activity.activityFlowId,
-      order: inProgressResponse.activity.activityFlowOrder
+      ...inProgressResponse.activity
     };
+
+    if (inProgressResponse.activity.activityFlowId) {
+      activity.id = inProgressResponse.activity.activityFlowId;
+      activity.order = inProgressResponse.activity.activityFlowOrder;
+    }
 
     dispatch(
       removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
@@ -675,7 +678,12 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   let activityObj = { ...activity };
   let next = -1;
 
-  const item = activity.items[screenIndex];
+  if (activity.isActivityFlow) {
+    const currentActName = activity.order[currentActOrderIndex];
+    activityObj = applet.activities.find(act => act.name.en === currentActName);
+  }
+
+  const item = activityObj.items[screenIndex];
 
   if (item.inputType == 'visual-stimulus-response' && item.inputs.blockType === 'practice' && !item.inputs.lastPractice) {
     const responses = inProgress.responses[screenIndex];
@@ -698,10 +706,6 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   do {
-    if (activity.isActivityFlow) {
-      const currentActName = activity.order[currentActOrderIndex];
-      activityObj = applet.activities.find(act => act.name.en === currentActName);
-    }
     const { timer, delay } = activityObj.items[screenIndex];
     let totalTime = timer + (delay || 0);
 
@@ -736,7 +740,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
           }));
         }
       });
-      
+
       Actions.push("activity_thanks");
     }
   } else {
