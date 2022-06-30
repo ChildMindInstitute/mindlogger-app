@@ -574,7 +574,7 @@ const StabilityTrackerScreen = ({ onChange, config, isCurrent, maxLambda, applet
                         transform: [
                           { rotate: '90deg' },
                           { translateY: width/2 - width/20 },
-                          { translateX: width/2 - blockHeight * 2 + outerStimRadius * 2 }
+                          { translateX: width/2 - width/12 }
                         ]
                       }}
                     >
