@@ -342,7 +342,7 @@ export default class TrailsBoard extends Component {
   }
 
   addPathToCanvas (points) {
-    let width = this.state.dimensions.width;
+    let width = this.state.dimensions ? this.state.dimensions.width : 300;
 
     if(points.length) {
       points.push(points[points.length-1]);
@@ -402,7 +402,7 @@ export default class TrailsBoard extends Component {
   }
 
   save = (lines, currentIndex) => {
-    const { width } = this.state.dimensions;
+    const width = this.state.dimensions ? this.state.dimensions.width : 300;
     const results = lines.map(line => ({
       ...line,
       points: line.points.map(point => ({...point}))
