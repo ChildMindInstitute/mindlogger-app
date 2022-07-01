@@ -15,6 +15,14 @@ const styles = StyleSheet.create({
     right: 15,
   },
   logo: {
+    position: 'absolute',
+    top: 30,
+    right: 50,
+    left: 15,
+  },
+  topLogo: {
+    position: 'absolute',
+    top: 70,
     right: 50,
     left: 15,
   },
@@ -43,6 +51,7 @@ const ActHeader = (props) => {
     watermark,
     isSummaryScreen,
     isSplashScreen,
+    disableCloseIcon,
     prevLabel,
     onPressNextScreen,
     onPressPrevScreen,
@@ -51,12 +60,20 @@ const ActHeader = (props) => {
 
   return (
     <>
-      <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
-        <Icon
-          type="FontAwesome"
-          name="close"
-          style={{ color: colors.tertiary }} />
-      </TouchableOpacity>
+      {!disableCloseIcon &&
+        <TouchableOpacity style={styles.button} onPress={() => Actions.pop()}>
+          <Icon
+            type="FontAwesome"
+            name="close"
+            style={{ color: colors.tertiary }} />
+        </TouchableOpacity>
+      }
+
+      {!!watermark && !isSummaryScreen && !isSplashScreen && !topNavigation &&
+        <View style={disableCloseIcon ? styles.topLogo : styles.logo}>
+          <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
+        </View>
+      }
 
       {topNavigation &&
         <View style={styles.navigations}>
@@ -84,11 +101,6 @@ const ActHeader = (props) => {
                 style={{ color: colors.tertiary }} />
             }
           </TouchableOpacity>
-        </View>
-      }
-      {!!watermark && !isSummaryScreen && !isSplashScreen &&
-        <View style={styles.logo}>
-          <Image square style={styles.logoImage} source={{ uri: watermark[0]['@id'] }} />
         </View>
       }
     </>
