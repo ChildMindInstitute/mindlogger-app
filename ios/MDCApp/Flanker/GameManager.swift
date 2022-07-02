@@ -251,7 +251,7 @@ class GameManager {
       delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
       resultManager.addStepData(data: model)
       countTest += 1
-    } else if !isShowGameAnswers {
+    } else if !isFirst, !isShowGameAnswers {
       countTest += 1
     }
     if isEndGame() { return }
@@ -367,7 +367,8 @@ private extension GameManager {
 
   func isEndGame() -> Bool {
     guard let gameParameters = gameParameters else { return false}
-    if countTest == 5 /*gameParameters.trials.count*/ {
+    
+    if countTest == gameParameters.trials.count {
       let sumArray = arrayTimes.reduce(0, +)
       let avrgArray = sumArray / arrayTimes.count
       delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
