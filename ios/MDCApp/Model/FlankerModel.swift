@@ -18,4 +18,5 @@ struct FlankerModel: Codable {
   var tag: String
   var trial_index: Int
   var start_time: Double
+  var response_touch_timestamp: Double
 }
