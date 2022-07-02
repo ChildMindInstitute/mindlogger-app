@@ -16,6 +16,7 @@ const ABOUT_CONTENT = "reprolib:terms/landingPageContent";
 const ALT_LABEL = "http://www.w3.org/2004/02/skos/core#altLabel";
 const AUDIO_OBJECT = "schema:AudioObject";
 const AUTO_ADVANCE = "reprolib:terms/auto_advance";
+const ALLOW_EXPORT = "reprolib:terms/allow_export";
 const BACK_DISABLED = "reprolib:terms/disable_back";
 const SUMMARY_DISABLED = "reprolib:terms/disable_summary";
 const CONTENT_URL = "schema:contentUrl";
@@ -119,6 +120,7 @@ const TIME_SCREEN = "reprolib:terms/timeScreen";
 const STREAM_ENABLED = "reprolib:terms/streamEnabled";
 const COMBINE_REPORTS = "reprolib:terms/combineReports";
 const SHOW_BADGE = "reprolib:terms/showBadge";
+const REPORT_CONFIGS = "reprolib:terms/reportConfigs"
 const ACTIVITY_FLOW_ORDER = "reprolib:terms/activityFlowOrder";
 const ACTIVITY_FLOW_PROPERTIES = "reprolib:terms/activityFlowProperties";
 export const ORDER = "reprolib:terms/order";
@@ -692,6 +694,7 @@ const transformPureActivity = (activityJson) => {
     summaryDisabled: allowList.includes(SUMMARY_DISABLED),
     fullScreen: allowList.includes(FULL_SCREEN),
     autoAdvance: allowList.includes(AUTO_ADVANCE),
+    allowExport: allowList.includes(ALLOW_EXPORT),
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     isVis,
@@ -759,6 +762,7 @@ export const appletTransformJson = (appletJson) => {
     shuffle: R.path([SHUFFLE, 0, "@value"], applet),
     streamEnabled: R.path([STREAM_ENABLED, 0, "@value"], applet) || false,
     combineReports: R.path([COMBINE_REPORTS, 0, "@value"], applet) || false,
+    reportConfigs: transformInputs(R.path([REPORT_CONFIGS, 0, '@list'], applet) || []),
     accountId: accountId
   };
 

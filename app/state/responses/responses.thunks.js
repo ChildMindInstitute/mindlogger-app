@@ -71,6 +71,7 @@ import {
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 import { getTokenIncreaseForNegativeBehaviors } from "../../services/tokens";
+import { sendPDFExport } from "../../services/reports";
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
@@ -556,49 +557,6 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
       return dispatch(downloadResponses())
     })
   } else {
-    let { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
-    const cumulativeActivities = state.activities.cumulativeActivities;
-
-    cumActivities = cumActivities.map(name => {
-      const activity = applet.activities.find(activity => activity.name.en == name)
-      return activity && activity.id.split('/').pop()
-    }).filter(id => id)
-
-    if (cumActivities.length || nonHiddenCumActivities?.length) {
-      let archieved = [...cumulativeActivities[applet.id].archieved];
-      let available = [...cumulativeActivities[applet.id].available];
-      const activityId = activity.id.split('/').pop();
-
-      if (nonHiddenCumActivities?.length) {
-        const ids = nonHiddenCumActivities.map(name => {
-          const activity = applet.activities.find(activity => activity.name.en == name)
-          return activity && activity.id.split('/').pop()
-        }).filter(id => id)
-
-        available = available.concat(_.intersection(archieved, ids));
-        archieved = _.difference(archieved, ids);
-        available = _.uniq(available.concat(ids));
-      } else {
-        if (archieved.indexOf(activityId) < 0) {
-          archieved.push(activityId);
-        }
-      }
-
-      available = available.concat(
-        cumActivities
-      ).filter(id => id != activity.id.split('/').pop())
-
-      dispatch(
-        setCumulativeActivities({
-          ...cumulativeActivities,
-          [applet.id]: {
-            available,
-            archieved
-          }
-        })
-      );
-    }
-
     const preparedResponse = prepareResponseForUpload(
       inProgressResponse, applet, responseHistory, isTimeout, finishedTime
     );
@@ -618,22 +576,49 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
       ...inProgressResponse.activity
     };
 
-    if (inProgressResponse.activity.activityFlowId) {
-      activity.id = inProgressResponse.activity.activityFlowId;
-      activity.order = inProgressResponse.activity.activityFlowOrder;
-    }
+    if (activity.activityFlowId) {
+      const flowId = activity.activityFlowId;
 
-    dispatch(
-      removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
-    );
+      dispatch(
+        removeResponseInProgress(activity.event ? flowId + activity.event.id : flowId)
+      );
 
-    if (isFlow) {
       const currentActOrderIndex = orderIndex[activity.id] || 0;
-      const currentActName = activity.order[currentActOrderIndex];
-      const currentActivity = applet.activities.find(act => act.name.en === currentActName);
 
-      dispatch(createResponseInProgress(applet.id, activity, subjectId, Date.now(), currentActivity.items));
-      Actions.replace("take_act");
+      if (!isFlow) {
+        sendPDFExport(
+          authToken,
+          applet,
+          applet.activities.filter(act => activity.activityFlowOrder.includes(act.name.en)),
+          currentAppletResponsesSelector(state),
+          activity.id,
+          flowId,
+        );
+      }
+
+      if (isFlow) {
+        const currentActName = activity.activityFlowOrder[currentActOrderIndex];
+        const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+
+        dispatch(
+          createResponseInProgress(applet.id, applet.activityFlows.find(flow => flow.id == flowId), subjectId, Date.now(), currentActivity.items)
+        );
+        Actions.replace("take_act");
+      }
+    } else {
+      dispatch(
+        removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
+      );
+
+      if (activity.allowExport) {
+        sendPDFExport(
+          authToken,
+          applet,
+          [activity],
+          currentAppletResponsesSelector(state),
+          activity.id,
+        );
+      }
     }
   })
 };
