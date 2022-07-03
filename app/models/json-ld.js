@@ -451,7 +451,12 @@ export const flattenValueConstraints = (vcObj) =>
 export const transformInputs = (inputs) =>
   inputs.reduce((accumulator, inputObj) => {
     const key = R.path([NAME, 0, "@value"], inputObj);
-    let val = R.path([VALUE, 0, "@value"], inputObj);
+    const type = R.path(["@type", 0], inputObj);
+    let val = (R.path([VALUE], inputObj) || []).map(d => d["@value"]);
+
+    if (type !== 'http://schema.org/List') {
+      val = val[0];
+    }
 
     if (key == 'fixationScreen') {
       val = {
