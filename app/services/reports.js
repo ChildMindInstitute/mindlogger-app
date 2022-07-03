@@ -48,7 +48,7 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
       authToken,
       encrypted.toString('base64'),
       applet.id.split('/').pop(),
-      flowId,
+      flowId && flowId.split('/').pop(),
       currentActivityId.split('/').pop(),
       responseId
     )
