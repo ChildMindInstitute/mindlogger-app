@@ -52,26 +52,31 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
       }
     }
 
-  }
+  }
 
   return trials;
 }
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [loading, setLoading] = useState(true);
+  const [responses, setResponses] = useState([]);
   const webView = useRef();
 
   let onEndGame = (result: Object) => {
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-    console.log(parseResponse(dataObject))
+
+    if (dataObject.trial_index > configObj.trials.length) return ;
+
     if (dataType == 'response') {
+      setResponses(responses.concat([dataObject]));
+
       sendData('live_event', parseResponse(dataObject), appletId);
       return ;
     }
 
-    onChange(dataObject.map(record => parseResponse(record)), true);
+    onChange(responses.map(response => parseResponse(response)), true);
   };
 
   // Prepare config data for injecting into the WebView
