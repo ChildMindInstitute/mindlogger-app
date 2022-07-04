@@ -83,7 +83,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastScreen ? 'finish' : 'continue'}.`
+    `Press the button below to ${config.lastTest ? 'finish' : 'continue'}.`
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
@@ -138,7 +138,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     start_timestamp: Platform.OS === 'ios' ? record.image_time : record.start_timestamp,
     offset: Platform.OS === 'ios' ? 0 : record.start_timestamp - record.start_time,
     tag: record.tag,
-    response_touch_timestamp: Platform.OS === 'ios' ? record.response_touch_timestamp : 0
+    response_touch_timestamp: Platform.OS === 'ios' ? record.response_touch_timestamp : record.start_timestamp + record.rt
   })
 
   if (Platform.OS === 'ios') {
