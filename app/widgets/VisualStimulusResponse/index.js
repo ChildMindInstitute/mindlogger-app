@@ -103,13 +103,14 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,
-    samplingMethod: config.samplingMethod,
+    samplingMethod: 'fixed-order',
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
     minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
+
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
   const injectConfig = `
