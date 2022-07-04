@@ -329,6 +329,9 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
               });
 
               cumulativeActivities[currentApplet.id] = nextActivities;
+              if (!currentApplet.activityFlows) {
+                currentApplet.activityFlows = [];
+              }
               return currentApplet;
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
