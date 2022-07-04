@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Platform, ActivityIndicator } from 'react-native';
+import { Text, StyleSheet, View, Platform, ActivityIndicator, NativeModules, TouchableOpacity } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { sendData } from "../../services/socket";
+import FlankerView from './FlankerView';
 
 const htmlSource = require('./visual-stimulus-response.html');
 
@@ -12,6 +13,14 @@ const shuffle = (a) => {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+const getImageNative = (image, alt) => {
+  if (image) {
+    return image
+  }
+
+  return alt;
 }
 
 const getImage = (image, alt) => {
@@ -27,7 +36,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 
   const choices = buttons.map(button => ({
     value: button.value,
-    name: { en: getImage(button.image, button.name.en) }
+    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en) }
   }));
 
   for (const block of blocks) {
@@ -42,46 +51,65 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
         });
       }
     }
-  }
+
+  }
 
   return trials;
 }
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [loading, setLoading] = useState(true);
+  const [responses, setResponses] = useState([]);
   const webView = useRef();
+
+  let onEndGame = (result: Object) => {
+    const dataString = result.nativeEvent.data;
+    const dataObject = JSON.parse(dataString);
+    const dataType = result.nativeEvent.type;
+
+    if (dataObject.trial_index > configObj.trials.length) return ;
+
+    if (dataType == 'response') {
+      setResponses(responses.concat([dataObject]));
+
+      sendData('live_event', parseResponse(dataObject), appletId);
+      return ;
+    }
+
+    onChange(responses.map(response => parseResponse(response)), true);
+  };
 
   // Prepare config data for injecting into the WebView
   const screens = config.trials.map(trial => ({
     id: trial.id,
-    stimulus: { en: getImage(trial.image, trial.name.en) },
+    stimulus: { en: Platform.OS === 'ios' ? getImageNative(trial.image, trial.name.en) : getImage(trial.image, trial.name.en) },
     correctChoice: typeof trial.value === 'undefined' ? -1 : trial.value,
     weight: typeof trial.weight === 'undefined' ? 1 : trial.weight,
   }));
 
   const continueText = [
-    `Press the button below to ${config.lastTest ? 'finish' : 'continue'}.`,
+    `Press the button below to ${config.lastTest ? 'finish' : 'continue'}.`
   ];
   const restartText = [
     'Remember to respond only to the central arrow.',
-    'Press the button below to end current block and restart.',
+    'Press the button below to end current block and restart.'
   ];
 
   const configObj = {
     trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
-    fixation: getImage(config.fixationScreen.image, config.fixationScreen.value),
+    fixation: Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value),
     showFixation: config.showFixation !== false,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,
+    samplingMethod: config.samplingMethod,
     samplingSize: config.sampleSize,
     buttonLabel: config.nextButton || 'Finish',
-    minimumAccuracy: config.minimumAccuracy,
+    minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
-
   const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
 
   const injectConfig = `
@@ -96,72 +124,115 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
 
   useEffect(() => {
     if (isCurrent) {
-      webView.current.injectJavaScript(injectConfig);
+      if(Platform.OS === 'ios') {
+        NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0, JSON.stringify(configObj));
+        NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
+      } else {
+        webView.current.injectJavaScript(injectConfig);
+      }
     }
   }, [isCurrent])
 
   const parseResponse = (record) => ({
-    trial_index: Math.ceil((record.trial_index + 1) / screenCountPerTrial),
+    trial_index: Platform.OS === 'ios' ? record.trial_index : Math.ceil((record.trial_index + 1) / screenCountPerTrial),
     duration: record.rt,
     question: record.stimulus,
     button_pressed: record.button_pressed,
-    start_time: record.image_time,
+    start_time: Platform.OS === 'ios' ? record.start_time : record.image_time,
     correct: record.correct,
-    start_timestamp: record.start_timestamp,
-    offset: record.start_timestamp - record.start_time,
+    start_timestamp: Platform.OS === 'ios' ? record.image_time : record.start_timestamp,
+    offset: Platform.OS === 'ios' ? 0 : record.start_timestamp - record.start_time,
     tag: record.tag,
-  });
+    response_touch_timestamp: Platform.OS === 'ios' ? record.response_touch_timestamp : record.start_timestamp + record.rt
+  })
 
-  return (
-    <View
-      style={{
-        height: '100%',
-        position: 'relative',
-      }}
-    >
-      <WebView
-        ref={(ref) => webView.current = ref}
-        style={{ flex: 1, height: '100%' }}
-        onLoad={() => setLoading(false)}
-        source={source}
-        androidLayerType="hardware"
-        originWhitelist={['*']}
-        scrollEnabled={false}
-        injectedJavaScript={`preloadButtonImages(${JSON.stringify(config.buttons)})`}
-        onMessage={(e) => {
-          const dataString = e.nativeEvent.data;
-          const { type, data } = JSON.parse(dataString);
-          if (type == 'response') {
-            sendData('live_event', parseResponse(data), appletId);
-            return ;
-          }
-
-          setLoading(true);
-          setTimeout(() => {
-            onChange(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare').map(record => parseResponse(record)), true);
-          }, 0)
+  if (Platform.OS === 'ios') {
+    return (
+      <View
+        style={{
+          height: '100%',
+          position: 'relative',
         }}
+      >
+      <View
+        style={{
+            backgroundColor: 'white',
+            width: '100%',
+            height: '100%',
+            flex: 1,
+            osition: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}
+      >
+      <FlankerView
+        style={{
+            backgroundColor: 'white',
+            width: '100%',
+            height: '100%',
+            flex: 1,
+            position: 'absolute',
+            alignItems: 'center',
+            justifyContent: 'center' }}
+            onEndGame={onEndGame}
+            dataJson ={JSON.stringify(configObj)}
       />
+      </View>
+      </View>
+    );
+  } else {
+      return (
+        <View
+          style={{
+            height: '100%',
+            position: 'relative'
+          }}
+        >
+          <WebView
+            ref={(ref) => webView.current = ref}
+            style={{ flex: 1, height: '100%' }}
+            onLoad={() => setLoading(false)}
+            source={source}
+            originWhitelist={['*']}
+            scrollEnabled={false}
+            injectedJavaScript={`preloadButtonImages(${JSON.stringify(config.buttons)})`}
+            onMessage={(e) => {
+              const dataString = e.nativeEvent.data;
+              const { type, data } = JSON.parse(dataString);
 
-      {
-        loading && (
-          <View
-            style={{
-              backgroundColor: 'white',
-              width: '100%',
-              height: '100%',
-              flex: 1,
-              position: 'absolute',
-              alignItems: 'center',
-              justifyContent: 'center'
+              if (type == 'response') {
+                sendData('live_event', parseResponse(data), appletId);
+                return ;
+              }
+
+              setLoading(true);
+
+              setTimeout(() => {
+                onChange(data.filter(trial => trial.tag != 'result' && trial.tag != 'prepare').map(record => parseResponse(record)), true);
+              }, 0)
             }}
-          >
-            <ActivityIndicator size="large" />
-          </View>
-        ) || <></>
-      }
-    </View>
-  );
+          />
+
+          {
+            loading && (
+              <View
+                style={{
+                  backgroundColor: 'white',
+                  width: '100%',
+                  height: '100%',
+                  flex: 1,
+                  position: 'absolute',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <ActivityIndicator size="large" />
+              </View>
+            ) || <></>
+          }
+        </View>
+      );
+    }
 };
 
 VisualStimulusResponse.propTypes = {
