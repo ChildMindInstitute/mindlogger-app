@@ -145,7 +145,7 @@ class Activity extends React.Component {
 
     if (
       this.props.currentResponse &&
-      oldProps.currentResponse.responses != this.props.currentResponse.responses
+      (!oldProps.currentResponse || oldProps.currentResponse.responses != this.props.currentResponse.responses)
     ) {
       this.setState({ responses: this.props.currentResponse.responses })
     }

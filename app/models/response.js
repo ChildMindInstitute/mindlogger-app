@@ -32,7 +32,6 @@ export const prepareResponseForUpload = (
   const languageKey = "en";
   const { activity, responses, subjectId, events } = inProgressResponse;
   const appletVersion = appletMetaData.schemaVersion[languageKey];
-  const { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(responses, activity);
 
   const scheduledTime = activity.event && activity.event.scheduledTime;
   let cumulative = responseHistory.token ? responseHistory.token.cumulative : null;
@@ -136,10 +135,7 @@ export const prepareResponseForUpload = (
     },
     languageCode: languageKey,
     alerts,
-    nextActivities: cumActivities.concat(nonHiddenCumActivities).map(name => {
-      const activity = appletMetaData.activities.find(activity => activity.name.en == name)
-      return activity && activity.id.split('/').pop()
-    }).filter(id => id)
+    activityFlowId: activity.activityFlowId ? activity.activityFlowId.split('/').pop() : null
   };
 
   let subScaleResult = [];
@@ -373,12 +369,13 @@ export const decryptAppletResponses = (applet, responses) => {
     Object.keys(responses.responses).forEach((item) => {
       for (let response of responses.responses[item]) {
         const inputType = items[item] && items[item].inputType;
-
         if (
           response.value &&
           response.value.src &&
           response.value.ptr !== undefined
         ) {
+          response.id = response.value.src;
+
           if (inputType == 'stabilityTracker' || inputType == 'visual-stimulus-response' || inputType == 'drawing' || inputType == 'trail') {
             responses.dataSources[response.value.src][response.value.ptr] = null;
           }
@@ -389,6 +386,10 @@ export const decryptAppletResponses = (applet, responses) => {
 
         if (response.value && response.value.value !== undefined) {
           response.value = response.value.value;
+        }
+
+        if (!response.activityFlow) {
+          delete response.activityFlow;
         }
       }
 
