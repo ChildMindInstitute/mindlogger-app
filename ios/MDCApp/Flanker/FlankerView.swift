@@ -48,7 +48,7 @@ class FlankerView: UIView {
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle("<", for: .normal)
-    button.titleLabel?.font = .systemFont(ofSize: 50.0, weight: .regular)
+    button.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
     button.addTarget(self, action: #selector(leftButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
@@ -64,7 +64,7 @@ class FlankerView: UIView {
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle(">", for: .normal)
-    button.titleLabel?.font = .systemFont(ofSize: 50.0, weight: .regular)
+    button.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
     button.addTarget(self, action: #selector(rightButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
@@ -143,7 +143,9 @@ class FlankerView: UIView {
 
       fixationImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30),
       fixationImage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30),
-      fixationImage.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 30),
+//      fixationImage.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 30),
+      fixationImage.bottomAnchor.constraint(equalTo: leftButton.topAnchor, constant: 20),
+      fixationImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 20),
 
       leftButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
       leftButton.rightAnchor.constraint(equalTo: self.centerXAnchor, constant: -10),
@@ -196,6 +198,8 @@ extension FlankerView: GameManagerProtocol {
     if let left = left, let right = right {
       leftButton.setImage(nil, for: .normal)
       rightButton.setImage(nil, for: .normal)
+      leftButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
+      rightButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
       leftButton.setTitle(left, for: .normal)
       leftButton.titleLabel?.textAlignment = .center
       rightButton.setTitle(right, for: .normal)
@@ -205,15 +209,18 @@ extension FlankerView: GameManagerProtocol {
       left.loadImageWithUrl(leftImage)
       let right = ImageLoader()
       right.loadImageWithUrl(rightImage)
-
+      leftButton.setTitle(nil, for: .normal)
+      leftButton.backgroundColor = .clear
       leftButton.setImage(left.image, for: .normal)
       leftButton.setImage(left.image, for: .disabled)
-      leftButton.imageView?.contentMode = .scaleToFill
+      leftButton.imageView?.contentMode = .scaleAspectFit
       leftButton.imageView?.layer.cornerRadius = 5.0
 
+      rightButton.setTitle(nil, for: .normal)
+      rightButton.backgroundColor = .clear
       rightButton.setImage(right.image, for: .normal)
       rightButton.setImage(right.image, for: .disabled)
-      rightButton.imageView?.contentMode = .scaleToFill
+      rightButton.imageView?.contentMode = .scaleAspectFit
       rightButton.imageView?.layer.cornerRadius = 5.0
     }
   }
