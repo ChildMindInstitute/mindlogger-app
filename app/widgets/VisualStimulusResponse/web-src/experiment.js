@@ -4,7 +4,7 @@ function buildTimeline() {
   const showFeedback = window.CONFIG.showFeedback === false ? false : true;
   const showResults = window.CONFIG.showResults === false ? false : true;
   const trialDuration = window.CONFIG.trialDuration || 1500;
-  const fixationImage = window.CONFIG.fixation || '<div class="mindlogger-fixation">-----</div>';
+  const fixationImage = '<div class="mindlogger-fixation">' + window.CONFIG.fixation + '</div>';
   const samplingMethod = window.CONFIG.samplingMethod || 'default';
   const sampleSize = window.CONFIG.samplingSize || 1;
   const minimumAccuracy = window.CONFIG.minimumAccuracy;
