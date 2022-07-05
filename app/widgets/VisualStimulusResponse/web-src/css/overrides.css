@@ -96,38 +96,6 @@ body {
   object-fit: contain;
 }
 
-  #jspsych-html-button-response-stimulus .question{ 
-    font-size:4em; 
-    font-weight:bold;
-  }
-  .square {
-    width: 2px;
-    height: 2px;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-  }
-  #jspsych-html-button-response-btngroup { 
-    position:absolute;
-    z-index:1;
-    bottom:0;
-    width:100%;
-    left:0;
-    padding:2rem;
-    display:flex;
-    justify-content:stretch;
-    box-sizing:border-box;
-  }
-  .noSelect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-
 .jspsych-image-button-response-button, .jspsych-html-button-response-button {
   flex: 1 1 auto;
   width: 50%;
