@@ -158,6 +158,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.correctText
@@ -176,6 +177,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.inCorrectText
@@ -197,6 +199,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.correctText
@@ -215,6 +218,7 @@ class GameManager {
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
         if isShowGameAnswers {
+          self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
         responseText = Constants.inCorrectText
