@@ -53,11 +53,11 @@ class ResultView: UIView {
     super.init(coder: coder)
   }
 
-  func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, isLast: Bool = false, closureFinish: @escaping () -> Void) {
+  func configureView(text: String, typeButton: ButtonType, avrgTime: Int, procentCorrect: Int, minAccuracy: Int, isLast: Bool = false, closureFinish: @escaping () -> Void) {
     guard let parametersGame = ParameterGameManager.shared.getParameters() else { return }
     switch typeButton {
     case .ok:
-      if procentCorrect >= 75 || isLast {
+      if procentCorrect >= minAccuracy || isLast {
         let textAttr = ("<font size=\"+3\"><p>You responded correctly on <strong>" + String(procentCorrect) + "%</strong> of trials.</p><p>Your average response time was <strong>" + String(avrgTime) + "ms</strong>.</p> <p>\(parametersGame.continueText[0])</p></font>").htmlToAttributedString
         textLabel.attributedText = textAttr
         finishButton.setTitle("Continue", for: .normal)

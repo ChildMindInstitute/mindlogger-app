@@ -19,7 +19,6 @@ class ParameterGameManager {
       let parameters: ParameterModel = try? JSONDecoder().decode(ParameterModel.self, from: jsonData)
     else { return }
     allParameters = parameters
-//    loadAllImage()
   }
 
   func getParameters() -> ParameterModel? {

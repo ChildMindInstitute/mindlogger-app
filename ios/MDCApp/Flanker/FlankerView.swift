@@ -48,7 +48,7 @@ class FlankerView: UIView {
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle("<", for: .normal)
-    button.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
+    button.titleLabel?.font = .systemFont(ofSize: 25.0, weight: .regular)
     button.addTarget(self, action: #selector(leftButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
@@ -64,13 +64,25 @@ class FlankerView: UIView {
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle(">", for: .normal)
-    button.titleLabel?.font = .systemFont(ofSize: 35.0, weight: .regular)
+    button.titleLabel?.font = .systemFont(ofSize: 25.0, weight: .regular)
     button.addTarget(self, action: #selector(rightButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
     return button
+  }()
+
+  private lazy var buttonStackView: UIStackView = {
+    let stackView = UIStackView()
+    stackView.axis = .horizontal
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.backgroundColor = .clear
+    stackView.addArrangedSubview(leftButton)
+    stackView.addArrangedSubview(rightButton)
+    stackView.spacing = 20
+    stackView.distribution = .fillEqually
+    return stackView
   }()
 
   private lazy var finishView: ResultView = {
@@ -100,6 +112,12 @@ class FlankerView: UIView {
     gameManager.delegate = self
   }
 
+  override func draw(_ rect: CGRect) {
+    print("Draw")
+    test2 = Date()
+    print("Draw_Start: \(test1.timeIntervalSince1970), end: \(test2.timeIntervalSince1970)")
+  }
+
   required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
@@ -126,12 +144,11 @@ class FlankerView: UIView {
   }
 
   private func setupConstraint() {
-    self.addSubview(textLabel)
-    self.addSubview(timeLabel)
-    self.addSubview(leftButton)
-    self.addSubview(rightButton)
-    self.addSubview(finishView)
-    self.addSubview(fixationImage)
+    addSubview(textLabel)
+    addSubview(timeLabel)
+    addSubview(buttonStackView)
+    addSubview(finishView)
+    addSubview(fixationImage)
 
     NSLayoutConstraint.activate([
       timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
@@ -143,19 +160,14 @@ class FlankerView: UIView {
 
       fixationImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30),
       fixationImage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -30),
-//      fixationImage.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 30),
       fixationImage.bottomAnchor.constraint(equalTo: leftButton.topAnchor, constant: 20),
       fixationImage.topAnchor.constraint(equalTo: self.topAnchor, constant: 20),
 
-      leftButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
-      leftButton.rightAnchor.constraint(equalTo: self.centerXAnchor, constant: -10),
-      leftButton.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 50),
-      leftButton.heightAnchor.constraint(equalToConstant: 90),
-
-      rightButton.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
-      rightButton.leftAnchor.constraint(equalTo: self.centerXAnchor, constant: 10),
-      rightButton.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -50),
-      rightButton.heightAnchor.constraint(equalToConstant: 90),
+      buttonStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
+      buttonStackView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -50),
+      buttonStackView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 50),
+      //buttonStackView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+      buttonStackView.heightAnchor.constraint(equalToConstant: 90),
 
       finishView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
       finishView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
@@ -163,12 +175,17 @@ class FlankerView: UIView {
       finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     ])
   }
-
+  var test1: Date = Date()
+  var test2: Date = Date()
   @objc func leftButtonAction(sender: UIButton!) {
+    test1 = Date()
+    backgroundColor = .black
     gameManager.checkedAnswer(button: .left)
   }
 
   @objc func rightButtonAction(sender: UIButton!) {
+    test1 = Date()
+    backgroundColor = .yellow
     gameManager.checkedAnswer(button: .right)
   }
 }
@@ -192,36 +209,55 @@ extension FlankerView: GameManagerProtocol {
     gameManager.setEndTimeViewingImage(time: Date(), isStart: isStart)
   }
 
-  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?) {
+  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?, countButton: Int) {
     leftButton.isHidden = false
-    rightButton.isHidden = false
-    if let left = left, let right = right {
-      leftButton.setImage(nil, for: .normal)
-      rightButton.setImage(nil, for: .normal)
-      leftButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
-      rightButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
-      leftButton.setTitle(left, for: .normal)
-      leftButton.titleLabel?.textAlignment = .center
-      rightButton.setTitle(right, for: .normal)
-      rightButton.titleLabel?.textAlignment = .center
-    } else if let leftImage = leftImage, let rightImage = rightImage {
-      let left = ImageLoader()
-      left.loadImageWithUrl(leftImage)
-      let right = ImageLoader()
-      right.loadImageWithUrl(rightImage)
-      leftButton.setTitle(nil, for: .normal)
-      leftButton.backgroundColor = .clear
-      leftButton.setImage(left.image, for: .normal)
-      leftButton.setImage(left.image, for: .disabled)
-      leftButton.imageView?.contentMode = .scaleAspectFit
-      leftButton.imageView?.layer.cornerRadius = 5.0
+    if countButton == 2 {
+      rightButton.isHidden = false
 
-      rightButton.setTitle(nil, for: .normal)
-      rightButton.backgroundColor = .clear
-      rightButton.setImage(right.image, for: .normal)
-      rightButton.setImage(right.image, for: .disabled)
-      rightButton.imageView?.contentMode = .scaleAspectFit
-      rightButton.imageView?.layer.cornerRadius = 5.0
+      if let left = left, let right = right {
+        leftButton.setImage(nil, for: .normal)
+        rightButton.setImage(nil, for: .normal)
+        leftButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
+        rightButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
+        leftButton.setTitle(left, for: .normal)
+        leftButton.titleLabel?.textAlignment = .center
+        rightButton.setTitle(right, for: .normal)
+        rightButton.titleLabel?.textAlignment = .center
+      } else if let leftImage = leftImage, let rightImage = rightImage {
+        let left = ImageLoader()
+        left.loadImageWithUrl(leftImage)
+        let right = ImageLoader()
+        right.loadImageWithUrl(rightImage)
+        leftButton.setTitle(nil, for: .normal)
+        leftButton.backgroundColor = .clear
+        leftButton.setImage(left.image, for: .normal)
+        leftButton.setImage(left.image, for: .disabled)
+        leftButton.imageView?.contentMode = .scaleAspectFit
+        leftButton.imageView?.layer.cornerRadius = 5.0
+
+        rightButton.setTitle(nil, for: .normal)
+        rightButton.backgroundColor = .clear
+        rightButton.setImage(right.image, for: .normal)
+        rightButton.setImage(right.image, for: .disabled)
+        rightButton.imageView?.contentMode = .scaleAspectFit
+        rightButton.imageView?.layer.cornerRadius = 5.0
+      }
+    } else {
+      if let left = left {
+        leftButton.setImage(nil, for: .normal)
+        leftButton.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
+        leftButton.setTitle(left, for: .normal)
+        leftButton.titleLabel?.textAlignment = .center
+      } else if let leftImage = leftImage {
+        let left = ImageLoader()
+        left.loadImageWithUrl(leftImage)
+        leftButton.setTitle(nil, for: .normal)
+        leftButton.backgroundColor = .clear
+        leftButton.setImage(left.image, for: .normal)
+        leftButton.setImage(left.image, for: .disabled)
+        leftButton.imageView?.contentMode = .scaleAspectFit
+        leftButton.imageView?.layer.cornerRadius = 5.0
+      }
     }
   }
 
@@ -234,7 +270,7 @@ extension FlankerView: GameManagerProtocol {
     }
   }
 
-  func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?) {
+  func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?, isShowResults: Bool, minAccuracy: Int) {
     guard let onEndGame = self.onEndGame else { return }
     if let data = data {
       guard
@@ -249,7 +285,18 @@ extension FlankerView: GameManagerProtocol {
       let avrgTime = avrgTime,
       let procentCorrect = procentCorrect {
       gameManager.stopGame()
-      finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, isLast: isLast) {
+      if isShowResults {
+        finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, minAccuracy: minAccuracy, isLast: isLast) {
+          guard
+            let jsonData = try? JSONEncoder().encode(dataArray),
+            let json = String(data: jsonData, encoding: .utf8)
+          else { return }
+
+          let result: [String: Any] = ["type": "finish", "data": json, "correctAnswers": procentCorrect]
+          onEndGame(result)
+        }
+        finishView.isHidden = false
+      } else {
         guard
           let jsonData = try? JSONEncoder().encode(dataArray),
           let json = String(data: jsonData, encoding: .utf8)
@@ -258,7 +305,6 @@ extension FlankerView: GameManagerProtocol {
         let result: [String: Any] = ["type": "finish", "data": json, "correctAnswers": procentCorrect]
         onEndGame(result)
       }
-      finishView.isHidden = false
     }
   }
 }
