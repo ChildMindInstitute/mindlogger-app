@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.30] - 2022-07-06
+- Fix grey scale on android device
+
 ## [0.21.29] - 2022-07-05
 - Flanker: Do not allow buttons to be selected
 - Fix button press state is missing in flanker activity
