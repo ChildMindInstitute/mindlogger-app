@@ -112,12 +112,6 @@ class FlankerView: UIView {
     gameManager.delegate = self
   }
 
-  override func draw(_ rect: CGRect) {
-    print("Draw")
-    test2 = Date()
-    print("Draw_Start: \(test1.timeIntervalSince1970), end: \(test2.timeIntervalSince1970)")
-  }
-
   required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
@@ -175,17 +169,12 @@ class FlankerView: UIView {
       finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     ])
   }
-  var test1: Date = Date()
-  var test2: Date = Date()
+
   @objc func leftButtonAction(sender: UIButton!) {
-    test1 = Date()
-    backgroundColor = .black
     gameManager.checkedAnswer(button: .left)
   }
 
   @objc func rightButtonAction(sender: UIButton!) {
-    test1 = Date()
-    backgroundColor = .yellow
     gameManager.checkedAnswer(button: .right)
   }
 }
