@@ -116,7 +116,14 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
-  const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
+  let screenCountPerTrial = 1;
+  if (configObj.showFeedback) {
+    screenCountPerTrial++;
+  }
+
+  if (configObj.showFixation) {
+    screenCountPerTrial++;
+  }
 
   const injectConfig = `
     window.CONFIG = ${JSON.stringify(configObj)};
