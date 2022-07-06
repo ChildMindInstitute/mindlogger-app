@@ -23,9 +23,13 @@ const getImageNative = (image, alt) => {
   return alt;
 }
 
-const getImage = (image, alt) => {
+const getImage = (image, alt, isButton=false) => {
   if (image) {
     return `<img src="${image}" alt="${alt}">`
+  }
+
+  if (isButton) {
+    return `<span class="button-text">${alt}</span>`
   }
 
   return alt;
@@ -36,7 +40,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 
   const choices = buttons.map(button => ({
     value: button.value,
-    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en) }
+    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en, true) }
   }));
 
   for (const block of blocks) {

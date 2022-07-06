@@ -134,7 +134,7 @@ function buildTimeline() {
       }
       return msg;
     },
-    choices: [window.CONFIG.buttonLabel],
+    choices: ["<span class='button-text'>" + window.CONFIG.buttonLabel + "</span>"],
     data: {
       tag: 'result',
     }
