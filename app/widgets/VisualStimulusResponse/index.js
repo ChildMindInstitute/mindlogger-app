@@ -111,7 +111,7 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     trialDuration: config.trialDuration || 1500,
     samplingMethod: 'fixed-order',
     samplingSize: config.sampleSize,
-    buttonLabel: config.nextButton || 'Finish',
+    buttonLabel: !config.lastTest && config.nextButton || 'Finish',
     minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
