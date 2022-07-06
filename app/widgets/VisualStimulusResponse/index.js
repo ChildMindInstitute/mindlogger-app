@@ -70,9 +70,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-
+    console.log(config)
     if (dataObject.trial_index > configObj.trials.length) return ;
-
+    console.log(parseResponse(dataObject))
     if (dataType == 'response') {
       setResponses(responses.concat([dataObject]));
 
@@ -99,11 +99,13 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     'Press the button below to end current block and restart.'
   ];
 
+  const fixation = Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value);
+
   const configObj = {
     trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
-    fixation: Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value),
-    showFixation: config.showFixation !== false,
+    fixation,
+    showFixation: config.showFixation !== false && fixation.length > 0,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,

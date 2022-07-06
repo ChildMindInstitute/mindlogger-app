@@ -33,8 +33,8 @@ protocol GameManagerProtocol: AnyObject {
   func updateFixations(image: URL?, isStart: Bool)
   func updateTime(time: String)
   func setEnableButton(isEnable: Bool)
-  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?)
-  func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?)
+  func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?, countButton: Int)
+  func resultTest(avrgTime: Int?, procentCorrect: Int?, data: FlankerModel?, dataArray: [FlankerModel]?, isShowResults: Bool, minAccuracy: Int)
 }
 
 class GameManager {
@@ -51,7 +51,9 @@ class GameManager {
   private var correctAnswers = 0
 
   private var timeSpeedGame: TimeInterval = 0.5
-  private var isShowGameAnswers = true
+  private var isShowFeedback = true
+  private var isShowFixations = true
+  private var isShowResults = true
   private var startDate: Date?
   private var arrayTimes: [Int] = []
 
@@ -68,28 +70,33 @@ class GameManager {
   func startGame(timeSpeed: Float, isShowAnswers: Bool, countGame: Int) {
     countAllGame = countGame
     timeSpeedGame = TimeInterval(timeSpeed)
-    isShowGameAnswers = isShowAnswers
+    isShowFeedback = isShowAnswers
     startLogicTimer()
   }
 
   func parameterGame() {
-      guard let parameters = ParameterGameManager.shared.getParameters() else { return }
-      gameParameters = parameters
-      isShowGameAnswers = parameters.showFeedback
-      countAllGame = parameters.trials.count
-      delegate?.updateTitleButton(left: parameters.trials[countTest].choices[0].name.en, right: parameters.trials[countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
-      resultManager.cleanData()
-      countTest = 0
-      correctAnswers = 0
-      startLogicTimer()
+    guard let parameters = ParameterGameManager.shared.getParameters() else { return }
+    gameParameters = parameters
+    isShowFeedback = parameters.showFeedback
+    isShowFixations = parameters.showFixation
+    isShowResults = parameters.showResults
+    countAllGame = parameters.trials.count
+    updateButtonTitle()
+    resultManager.cleanData()
+    countTest = 0
+    correctAnswers = 0
+    startLogicTimer()
   }
 
   func stopGame() {
+    guard let gameParameters = gameParameters else { return }
     invalidateTimers()
     if
       let endVisibleImageTime = endVisibleImageTime,
       let startVisibleImageTime = startVisibleImageTime,
-      let startGameTime = startGameTime, isShowGameAnswers {
+      let startGameTime = startGameTime,
+      gameParameters.showFeedback {
+
       let resultTime = (Date().timeIntervalSince1970 - startVisibleImageTime.timeIntervalSince1970) * 1000
       let model = FlankerModel(rt: resultTime,
                                stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
@@ -101,11 +108,13 @@ class GameManager {
                                trial_index: countTest + 1,
                                start_time: startGameTime.timeIntervalSince1970 * 1000,
                                response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       resultManager.addStepData(data: model)
     }
-    guard let gameParameters = gameParameters else { return }
-    delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+
+    if gameParameters.showFixation {
+      delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+    }
   }
 
   func startLogicTimer() {
@@ -120,9 +129,6 @@ class GameManager {
       startDate = time
     }
     endVisibleImageTime = time
-
-    print("ssss_startGameTime \(startGameTime?.timeIntervalSince1970)")
-    print("ssss_endVisibleImageTime \(endVisibleImageTime?.timeIntervalSince1970)")
   }
 
   func checkedAnswer(button: SelectedButton) {
@@ -139,7 +145,6 @@ class GameManager {
     arrayTimes.append(resultTime.convertToInt())
     self.startDate = nil
     delegate?.updateTime(time: String(format: "%.3f", resultTime))
-    let textArray = Array(text)
     switch button {
     case .left:
       if gameParameters.trials[countTest].correctChoice == 0 {
@@ -156,8 +161,8 @@ class GameManager {
                                  response_touch_timestamp: startDate.timeIntervalSince1970 * 1000)
 
         resultManager.addStepData(data: model)
-        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-        if isShowGameAnswers {
+        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+        if gameParameters.showFeedback {
           self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
@@ -175,8 +180,8 @@ class GameManager {
                                  response_touch_timestamp: startDate.timeIntervalSince1970 * 1000)
 
         resultManager.addStepData(data: model)
-        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-        if isShowGameAnswers {
+        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+        if gameParameters.showFeedback {
           self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
@@ -197,8 +202,8 @@ class GameManager {
                                  response_touch_timestamp: startDate.timeIntervalSince1970 * 1000)
 
         resultManager.addStepData(data: model)
-        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-        if isShowGameAnswers {
+        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+        if gameParameters.showFeedback {
           self.startGameTime = Date()
           delegate?.updateText(text: Constants.correctText, color: Constants.greenColor, font: Constants.smallFont, isStart: false)
         }
@@ -216,8 +221,8 @@ class GameManager {
                                  response_touch_timestamp: startDate.timeIntervalSince1970 * 1000)
 
         resultManager.addStepData(data: model)
-        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-        if isShowGameAnswers {
+        delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+        if gameParameters.showFeedback {
           self.startGameTime = Date()
           delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false)
         }
@@ -226,7 +231,7 @@ class GameManager {
     }
     
 
-    if isShowGameAnswers {
+    if gameParameters.showFeedback {
       self.startVisibleImageTime = Date()
       Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
     } else {
@@ -235,10 +240,12 @@ class GameManager {
   }
 
   @objc func setDefaultText(isFirst: Bool) {
+    guard let gameParameters = gameParameters else { return }
     if
       let endVisibleImageTime = endVisibleImageTime,
       let startVisibleImageTime = startVisibleImageTime,
-      let startGameTime = startGameTime, isShowGameAnswers,
+      let startGameTime = startGameTime,
+      gameParameters.showFeedback,
       !isFirst {
 
       let resultTime = (Date().timeIntervalSince1970 - startVisibleImageTime.timeIntervalSince1970) * 1000
@@ -252,43 +259,42 @@ class GameManager {
                                trial_index: countTest + 1,
                                start_time: startGameTime.timeIntervalSince1970 * 1000,
                                response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       resultManager.addStepData(data: model)
       countTest += 1
-    } else if !isFirst, !isShowGameAnswers {
+    } else if !isFirst, !gameParameters.showFeedback {
       countTest += 1
     }
     if isEndGame() { return }
     invalidateTimers()
 
     startVisibleImageTime = Date()
-    guard let gameParameters = gameParameters else { return }
-    if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
-      startGameTime = Date()
-      delegate?.updateFixations(image: image, isStart: false)
-    } else {
-      startGameTime = Date()
-      delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+    if gameParameters.showFixation {
+      if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
+        startGameTime = Date()
+        delegate?.updateFixations(image: image, isStart: false)
+      } else {
+        startGameTime = Date()
+        delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
+      }
     }
 
-    if
-      let leftImage = URL(string: gameParameters.trials[countTest].choices[0].name.en),
-      let rightImage = URL(string: gameParameters.trials[countTest].choices[1].name.en),
-      gameParameters.trials[countTest].choices[0].name.en.contains("https"),
-      gameParameters.trials[countTest].choices[1].name.en.contains("https") {
-      delegate?.updateTitleButton(left: nil, right: nil, leftImage: leftImage, rightImage: rightImage)
+    updateButtonTitle()
+
+    if gameParameters.showFixation {
+      timerSetText = Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
     } else {
-      delegate?.updateTitleButton(left: gameParameters.trials[countTest].choices[0].name.en, right: gameParameters.trials[countTest].choices[1].name.en, leftImage: nil, rightImage: nil)
+      setText()
     }
-    
-    timerSetText = Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(setText), userInfo: nil, repeats: false)
   }
 
   @objc func setText() {
+    guard let gameParameters = gameParameters else { return }
     if
       let endVisibleImageTime = endVisibleImageTime,
       let startVisibleImageTime = startVisibleImageTime,
-      let startGameTime = startGameTime {
+      let startGameTime = startGameTime,
+      gameParameters.showFixation {
       let resultTime = (Date().timeIntervalSince1970 - startVisibleImageTime.timeIntervalSince1970) * 1000
       let model = FlankerModel(rt: resultTime,
                                stimulus: "<div class=\"mindlogger-fixation\">-----</div>",
@@ -300,10 +306,10 @@ class GameManager {
                                trial_index: countTest + 1,
                                start_time: startGameTime.timeIntervalSince1970 * 1000,
                                response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
+      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       resultManager.addStepData(data: model)
     }
-    guard let gameParameters = gameParameters else { return }
+
     delegate?.setEnableButton(isEnable: true)
     text = gameParameters.trials[countTest].stimulus.en
 
@@ -320,8 +326,10 @@ class GameManager {
   }
 
   @objc func timeResponseFailed() {
+    guard let gameParameters = gameParameters else { return }
+
     delegate?.setEnableButton(isEnable: false)
-    if isShowGameAnswers {
+    if gameParameters.showFeedback {
       self.startGameTime = Date()
       delegate?.updateText(text: Constants.timeRespondText, color: .black, font: Constants.smallFont, isStart: false)
     }
@@ -349,10 +357,10 @@ class GameManager {
                              response_touch_timestamp: 0)
 
     resultManager.addStepData(data: model)
-    delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil)
-      self.startVisibleImageTime = Date()
-      responseText = Constants.timeRespondText
-    guard let gameParameters = gameParameters else { return }
+    delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+    self.startVisibleImageTime = Date()
+    responseText = Constants.timeRespondText
+
     Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
   }
 }
@@ -370,14 +378,14 @@ private extension GameManager {
   }
 
   func isEndGame() -> Bool {
-    guard let gameParameters = gameParameters else { return false}
+    guard let gameParameters = gameParameters else { return false }
     
     if countTest == gameParameters.trials.count {
       let sumArray = arrayTimes.reduce(0, +)
       let avrgArray = sumArray / arrayTimes.count
       delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false)
       let procentsCorrect = Float(correctAnswers) / Float(countAllGame) * 100
-      delegate?.resultTest(avrgTime: avrgArray, procentCorrect: Int(procentsCorrect), data: nil, dataArray: resultManager.oneGameDataResult)
+      delegate?.resultTest(avrgTime: avrgArray, procentCorrect: Int(procentsCorrect), data: nil, dataArray: resultManager.oneGameDataResult, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       clearData()
       return true
     } else {
@@ -396,5 +404,29 @@ private extension GameManager {
   func invalidateTimers() {
     timeResponse?.invalidate()
     timerSetText?.invalidate()
+  }
+
+  func updateButtonTitle() {
+    guard let gameParameters = gameParameters else { return }
+
+    if gameParameters.trials[countTest].choices.count == 2 {
+      if
+        let leftImage = URL(string: gameParameters.trials[countTest].choices[0].name.en),
+        let rightImage = URL(string: gameParameters.trials[countTest].choices[1].name.en),
+        gameParameters.trials[countTest].choices[0].name.en.contains("https"),
+        gameParameters.trials[countTest].choices[1].name.en.contains("https") {
+        delegate?.updateTitleButton(left: nil, right: nil, leftImage: leftImage, rightImage: rightImage, countButton: 2)
+      } else {
+        delegate?.updateTitleButton(left: gameParameters.trials[countTest].choices[0].name.en, right: gameParameters.trials[countTest].choices[1].name.en, leftImage: nil, rightImage: nil, countButton: 2)
+      }
+    } else {
+      if
+        let leftImage = URL(string: gameParameters.trials[countTest].choices[0].name.en),
+        gameParameters.trials[countTest].choices[0].name.en.contains("https") {
+        delegate?.updateTitleButton(left: nil, right: nil, leftImage: leftImage, rightImage: nil, countButton: 1)
+      } else {
+        delegate?.updateTitleButton(left: gameParameters.trials[countTest].choices[0].name.en, right: nil, leftImage: nil, rightImage: nil, countButton: 1)
+      }
+    }
   }
 }
