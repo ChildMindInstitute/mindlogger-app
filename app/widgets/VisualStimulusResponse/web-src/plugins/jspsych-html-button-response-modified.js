@@ -77,7 +77,8 @@ jsPsych.plugins["html-button-response"] = (function() {
 
   plugin.trial = function(display_element, trial) {
     var start_time = performance.now();
-
+    var greyColors = ['#585858', '#696969', '#808080', '#989898', '#A9A9A9', '#C0C0C0', '#BEBEBE', '#D3D3D3', '#DCDCDC', '#F5F5F5'];
+    var randomColorIndex = Math.floor(Math.random() * 10);
     // display stimulus
     var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
@@ -112,6 +113,9 @@ jsPsych.plugins["html-button-response"] = (function() {
     if (trial.prompt !== null) {
       html += trial.prompt;
     }
+    if (trial.choices.length > 1) {
+      html += '<div class="square" style="background-color:' + greyColors[randomColorIndex] + '"></div>';
+    }
     display_element.innerHTML = html;
 
     var image_time = performance.now();
@@ -124,7 +128,6 @@ jsPsych.plugins["html-button-response"] = (function() {
         after_response(choice);
       };
       el.addEventListener('touchstart', handler);
-      el.addEventListener('mousedown', handler);
     }
 
     // store response
