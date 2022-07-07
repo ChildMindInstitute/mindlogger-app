@@ -127,14 +127,14 @@ function buildTimeline() {
       const rt = Math.round(jsPsych.data.get().filter({ tag: 'trial' }).select('rt').mean());
 
       let msg = "<p>You responded correctly on <strong>" + accuracy + "%</strong> of trials.</p><p>Your average response time was <strong>" + rt + "ms</strong>.</p>";
-      if (accuracy > minimumAccuracy) {
+      if (accuracy >= minimumAccuracy) {
         msg = msg + window.CONFIG.continueText.map(txt => `<p>${txt}</p>`).join('');
       } else {
         msg = msg + window.CONFIG.restartText.map(txt => `<p>${txt}</p>`).join('');
       }
       return msg;
     },
-    choices: [window.CONFIG.buttonLabel],
+    choices: ["<span class='button-text'>" + window.CONFIG.buttonLabel + "</span>"],
     data: {
       tag: 'result',
     }

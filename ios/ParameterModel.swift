@@ -18,6 +18,7 @@ struct ParameterModel: Decodable {
   let samplingMethod: String
   let samplingSize: Int
   let buttonLabel: String
+  let minimumAccuracy: Int
   let continueText: [String]
   let restartText: [String]
   let trials: [TrialsModel]

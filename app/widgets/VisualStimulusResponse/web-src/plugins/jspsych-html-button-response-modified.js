@@ -80,7 +80,7 @@ jsPsych.plugins["html-button-response"] = (function() {
     var greyColors = ['#585858', '#696969', '#808080', '#989898', '#A9A9A9', '#C0C0C0', '#BEBEBE', '#D3D3D3', '#DCDCDC', '#F5F5F5'];
     var randomColorIndex = Math.floor(Math.random() * 10);
     // display stimulus
-    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="noSelect ${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
+    var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
     //display buttons
     var buttons = [];
@@ -95,7 +95,7 @@ jsPsych.plugins["html-button-response"] = (function() {
         buttons.push(trial.button_html);
       }
     }
-    html += '<div id="jspsych-html-button-response-btngroup" class="noSelect">';
+    html += '<div id="jspsych-html-button-response-btngroup">';
     for (var i = 0; i < trial.choices.length; i++) {
       var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
 
@@ -105,7 +105,7 @@ jsPsych.plugins["html-button-response"] = (function() {
         classes += ' image-button';
       }
 
-      html += '<div unselectable="on" onselectstart="return false;" onmousedown="return false;"class="jspsych-html-button-response-button noSelect ' + trial.data.tag + '" style="display: inline-block; margin:' + trial.margin_vertical + ' ' + trial.margin_horizontal + '" id="jspsych-html-button-response-button-' + i + '" data-choice="' + i + '">' + str + '</div>';
+      html += '<div class="' + classes + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     html += '</div>';
 
@@ -122,31 +122,12 @@ jsPsych.plugins["html-button-response"] = (function() {
 
     // add event listeners to buttons
     for (var i = 0; i < trial.choices.length; i++) {
-      var touching = null;
       const el = display_element.querySelector('#jspsych-html-button-response-button-' + i);
-      const longTouch = function (e) {
-        // long touch
-      };
-      const shortTouch = function (e) {
+      const handler = function (e) {
         var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
-
-
         after_response(choice);
-
-        e.preventDefault();
-        e.stopPropagation();
-        touching = window.setTimeout(longTouch, 50000, true);
       };
-      const closeLongTouch = function (e) {
-        e.preventDefault();
-        if (touching) {
-          window.clearTimeout(touching);
-        }
-      };
-      el.addEventListener('touchstart', shortTouch, false);
-      el.addEventListener('mousedown', shortTouch, false);
-      el.addEventListener("touchend", closeLongTouch, false);
-      el.addEventListener("mouseup", closeLongTouch, false);
+      el.addEventListener('touchstart', handler);
     }
 
     // store response

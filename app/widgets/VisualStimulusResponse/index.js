@@ -23,9 +23,13 @@ const getImageNative = (image, alt) => {
   return alt;
 }
 
-const getImage = (image, alt) => {
+const getImage = (image, alt, isButton=false) => {
   if (image) {
     return `<img src="${image}" alt="${alt}">`
+  }
+
+  if (isButton) {
+    return `<span class="button-text">${alt}</span>`
   }
 
   return alt;
@@ -36,7 +40,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 
   const choices = buttons.map(button => ({
     value: button.value,
-    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en) }
+    name: { en: Platform.OS === 'ios' ? getImageNative(button.image, button.name.en) : getImage(button.image, button.name.en, true) }
   }));
 
   for (const block of blocks) {
@@ -66,9 +70,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-
+    console.log(config)
     if (dataObject.trial_index > configObj.trials.length) return ;
-
+    console.log(parseResponse(dataObject))
     if (dataType == 'response') {
       setResponses(responses.concat([dataObject]));
 
@@ -95,22 +99,31 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     'Press the button below to end current block and restart.'
   ];
 
+  const fixation = Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value);
+
   const configObj = {
     trials: getTrials(screens, config.blocks, config.buttons, config.samplingMethod),
     fixationDuration: config.fixationDuration,
-    fixation: Platform.OS === 'ios' ? getImageNative(config.fixationScreen.image, config.fixationScreen.value) : getImage(config.fixationScreen.image, config.fixationScreen.value),
-    showFixation: config.showFixation !== false,
+    fixation,
+    showFixation: config.showFixation !== false && fixation.length > 0,
     showFeedback: config.showFeedback !== false,
     showResults: config.showResults !== false,
     trialDuration: config.trialDuration || 1500,
     samplingMethod: 'fixed-order',
     samplingSize: config.sampleSize,
-    buttonLabel: config.nextButton || 'Finish',
+    buttonLabel: !config.lastTest && config.nextButton || 'Finish',
     minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
-  const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
+  let screenCountPerTrial = 1;
+  if (configObj.showFeedback) {
+    screenCountPerTrial++;
+  }
+
+  if (configObj.showFixation) {
+    screenCountPerTrial++;
+  }
 
   const injectConfig = `
     window.CONFIG = ${JSON.stringify(configObj)};
