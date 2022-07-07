@@ -77,11 +77,9 @@ const DIRECTION = "reprolib:terms/direction";
 const VERSION = "schema:version";
 export const IS_VIS = "reprolib:terms/isVis";
 const ADD_PROPERTIES = "reprolib:terms/addProperties";
-const COMPUTE = "reprolib:terms/compute";
 const SUBSCALES = "reprolib:terms/subScales";
 const FINAL_SUBSCALE = "reprolib:terms/finalSubScale";
 const IS_AVERAGE_SCORE = "reprolib:terms/isAverageScore";
-const MESSAGES = "reprolib:terms/messages";
 const MESSAGE = "reprolib:terms/message";
 const LOOKUP_TABLE = "reprolib:terms/lookupTable";
 const AGE = "reprolib:terms/age";
@@ -123,6 +121,11 @@ const SHOW_BADGE = "reprolib:terms/showBadge";
 const REPORT_CONFIGS = "reprolib:terms/reportConfigs"
 const ACTIVITY_FLOW_ORDER = "reprolib:terms/activityFlowOrder";
 const ACTIVITY_FLOW_PROPERTIES = "reprolib:terms/activityFlowProperties";
+const REPORTS = "reprolib:terms/reports";
+const PRINT_ITEMS = "reprolib:terms/printItems";
+const CONDITIONALS = "reprolib:terms/conditionals";
+const FLAG_SCORE = "reprolib:terms/flagScore";
+
 export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
@@ -648,14 +651,6 @@ const transformPureActivity = (activityJson) => {
   const notification = {}; // TO DO
   const info = languageListToObject(activityJson.info); // TO DO
   const isVis = activityJson[IS_VIS] ? R.path([IS_VIS, 0, "@value"], activityJson) : false;
-  const compute = activityJson[COMPUTE] && R.map((item) => {
-    return {
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
-      variableName: R.path([VARIABLE_NAME, 0, "@value"], item),
-      description: _.get(item, [DESCRIPTION, 0, "@value"]),
-      direction: _.get(item, [DIRECTION, 0, "@value"], true),
-    }
-  }, activityJson[COMPUTE]);
   const subScales = activityJson[SUBSCALES] && R.map((subScale) => {
     const jsExpression = R.path([JS_EXPRESSION, 0, "@value"], subScale);
     return {
@@ -673,16 +668,25 @@ const transformPureActivity = (activityJson) => {
     lookupTable: flattenLookupTable(R.path([FINAL_SUBSCALE, 0, LOOKUP_TABLE], activityJson), true),
   }
 
-  const messages = activityJson[MESSAGES] && R.map((item) => {
-    return {
-      message: R.path([MESSAGE, 0, "@value"], item),
-      jsExpression: R.path([JS_EXPRESSION, 0, "@value"], item),
-      outputType: R.path([OUTPUT_TYPE, 0, "@value"], item),
-      nextActivity: R.path([NEXT_ACTIVITY, 0, "@value"], item),
-      hideActivity: R.path([HIDE_ACTIVITY, 0, "@value"], item),
-      isRecommended: R.path([IS_RECOMMENDED, 0, "@value"], item),
-    }
-  }, activityJson[MESSAGES]);
+  const reports = R.map((itemJson) => ({
+    variableName: itemJson['@id'],
+    label: R.path([PREF_LABEL, 0, "@value"], itemJson),
+    message: R.path([MESSAGE, 0, "@value"], itemJson),
+
+    conditionals: R.map((cond) => ({
+      variableName: cond['@id'],
+      label: R.path([PREF_LABEL, 0, "@value"], cond),
+      message: R.path([MESSAGE, 0, "@value"], cond),
+      jsExpression: R.path([IS_VIS, 0, "@value"], cond),
+      flagScore: R.path([FLAG_SCORE, 0, "@value"], cond),
+      printItems: R.map(pItem => pItem['@value'], R.path([PRINT_ITEMS, 0, "@list"], cond) || []),
+    }), R.path([CONDITIONALS, 0, '@list'], itemJson) || []),
+
+    jsExpression: R.path([IS_VIS, 0, "@value"], itemJson) || R.path([JS_EXPRESSION, 0, "@value"], itemJson),
+    outputType: R.path([OUTPUT_TYPE, 0, "@value"], itemJson),
+    dataType: R.path(['schema:DataType', 0, '@id'], itemJson),
+    printItems: R.map(pItem => pItem['@value'], R.path([PRINT_ITEMS, 0, "@list"], itemJson) || []),
+  }), R.path([REPORTS, 0, '@list'], activityJson) || []);
 
   return {
     id: activityJson._id,
@@ -703,17 +707,16 @@ const transformPureActivity = (activityJson) => {
     isPrize: R.path([ISPRIZE, 0, "@value"], activityJson) || false,
     isReviewerActivity: R.path([IS_REVIEWER_ACTIVITY, 0, '@value'], activityJson) || false,
     isVis,
-    compute,
     scoreOverview: _.get(activityJson, [SCORE_OVERVIEW, 0, "@value"]),
     subScales,
     finalSubScale,
-    messages,
     preamble,
     addProperties,
     order,
     scoringLogic,
     notification,
     info,
+    reports,
   };
 };
 

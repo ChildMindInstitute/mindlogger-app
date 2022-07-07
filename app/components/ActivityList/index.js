@@ -27,7 +27,6 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { getAvailableActivities } from '../../services/helper';
 import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
