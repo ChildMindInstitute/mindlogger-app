@@ -38,11 +38,14 @@ const styles = StyleSheet.create({
     borderColor: colors.grey,
   }
 });
+let activityFlow = {}, index = 0;
 
 const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextActivity }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
-  const activityFlow = currentResponses && currentResponses.activity;
-  const index = activityFlow && orderIndex[activityFlow.id] || 0;
+  if (currentResponses && currentResponses.activity && !currentResponses.activity.hasOwnProperty('allowExport')) {
+    activityFlow = currentResponses && currentResponses.activity;
+    index = activityFlow && orderIndex[activityFlow.id] || 0;
+  }
 
   const onSubmit = () => {
     nextActivity(true);
@@ -74,7 +77,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
             </BodyText>
 
             <View style={styles.nextActivity}>
-              <Text style={{ fontWeight: "bold", marginBottom: 10 }}>Blue Activity</Text>
+              <Text style={{ fontWeight: "bold", marginBottom: 10 }}>{activityFlow?.order[index + 1]}</Text>
               <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                 <Image
                   source={badge}
@@ -86,7 +89,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
                   }}
                 />
                 <Text style={{ fontSize: 14, color: colors.grey }}>
-                  {`(${index + 1} of ${activityFlow.order.length}) Morning routine`}
+                  {`(${index + 1} of ${activityFlow.order?.length}) ${activityFlow.name}`}
                 </Text>
               </View>
             </View>
