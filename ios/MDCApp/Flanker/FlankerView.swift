@@ -144,7 +144,7 @@ class FlankerView: UIView {
       let delta = displayLink.timestamp - testStart
       if delta < displaylink.duration {
         self.displayLink?.isPaused = true
-        self.gameManager.setEndTimeViewingImage(time: testStart + delta + displaylink.duration, isStart: false, type: typeTimeStamp)
+        self.gameManager.setEndTimeViewingImage(time: displayLink.targetTimestamp, isStart: false, type: typeTimeStamp)
       } else {
         self.displayLink?.isPaused = true
         self.gameManager.setEndTimeViewingImage(time: displayLink.timestamp, isStart: false, type: typeTimeStamp)
