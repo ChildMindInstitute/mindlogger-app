@@ -23,6 +23,7 @@
 		84168E27286C253600B52084 /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84168E26286C253600B52084 /* UIImageView+Extensions.swift */; };
 		84168E29286C389900B52084 /* ImageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84168E28286C389900B52084 /* ImageLoader.swift */; };
 		843D600828421098009C0C76 /* ResultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843D600728421098009C0C76 /* ResultManager.swift */; };
+		847322812877FDE3007A54BF /* CustomText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847322802877FDE1007A54BF /* CustomText.swift */; };
 		847C00802850F67B00A780F3 /* TimeInterval+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 847C007F2850F67B00A780F3 /* TimeInterval+Extension.swift */; };
 		8492B73F283934740037B381 /* FlankerViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8492B73B283934740037B381 /* FlankerViewManager.m */; };
 		8492B740283934740037B381 /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492B73C283934740037B381 /* GameManager.swift */; };
@@ -88,6 +89,7 @@
 		84168E26286C253600B52084 /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		84168E28286C389900B52084 /* ImageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoader.swift; sourceTree = "<group>"; };
 		843D600728421098009C0C76 /* ResultManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultManager.swift; sourceTree = "<group>"; };
+		847322802877FDE1007A54BF /* CustomText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomText.swift; sourceTree = "<group>"; };
 		847C007F2850F67B00A780F3 /* TimeInterval+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extension.swift"; sourceTree = "<group>"; };
 		8492B73B283934740037B381 /* FlankerViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FlankerViewManager.m; path = MDCApp/Flanker/FlankerViewManager.m; sourceTree = "<group>"; };
 		8492B73C283934740037B381 /* GameManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GameManager.swift; path = MDCApp/Flanker/GameManager.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				843D600728421098009C0C76 /* ResultManager.swift */,
 				84168E24286B824B00B52084 /* ParameterGameManager.swift */,
 				84168E28286C389900B52084 /* ImageLoader.swift */,
+				847322802877FDE1007A54BF /* CustomText.swift */,
 			);
 			name = Flanker;
 			sourceTree = "<group>";
@@ -727,6 +730,7 @@
 				84168E25286B824B00B52084 /* ParameterGameManager.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				84C01EAB2840C418003976F8 /* UITextFild+Extesion.swift in Sources */,
+				847322812877FDE3007A54BF /* CustomText.swift in Sources */,
 				8492B73F283934740037B381 /* FlankerViewManager.m in Sources */,
 				84C01EA7284096BB003976F8 /* ResultView.swift in Sources */,
 				8492B740283934740037B381 /* GameManager.swift in Sources */,
@@ -850,7 +854,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data;
+				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data.test;
 				PRODUCT_NAME = MDCApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MDCApp-Bridging-Header.h";
@@ -881,7 +885,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data;
+				PRODUCT_BUNDLE_IDENTIFIER = lab.childmindinstitute.data.test;
 				PRODUCT_NAME = MDCApp;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "MDCApp-Bridging-Header.h";
