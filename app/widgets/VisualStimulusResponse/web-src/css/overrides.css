@@ -61,6 +61,14 @@ body {
   max-height: 2rem;
 }
 
+.square {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  bottom: 10;
+  right: 10;
+}
+
 .mindlogger-flanker-image-button{
   padding: 0.25rem 0;
 }

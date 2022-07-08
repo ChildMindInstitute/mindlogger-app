@@ -110,12 +110,19 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     trialDuration: config.trialDuration || 1500,
     samplingMethod: 'fixed-order',
     samplingSize: config.sampleSize,
-    buttonLabel: config.nextButton || 'Finish',
+    buttonLabel: !config.lastTest && config.nextButton || 'Finish',
     minimumAccuracy: config.minimumAccuracy || 0,
     continueText,
     restartText: config.lastPractice ? continueText : restartText,
   };
-  const screenCountPerTrial = configObj.showFeedback ? 3 : 2;
+  let screenCountPerTrial = 1;
+  if (configObj.showFeedback) {
+    screenCountPerTrial++;
+  }
+
+  if (configObj.showFixation) {
+    screenCountPerTrial++;
+  }
 
   const injectConfig = `
     window.CONFIG = ${JSON.stringify(configObj)};
