@@ -204,7 +204,8 @@ class GameManager {
 
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
-        if gameParameters.showFeedback {          delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false, typeTime: .feedback)
+        if gameParameters.showFeedback {
+          delegate?.updateText(text: Constants.inCorrectText, color: Constants.redColor, font: Constants.smallFont, isStart: false, typeTime: .feedback)
         }
         responseText = Constants.inCorrectText
       }
