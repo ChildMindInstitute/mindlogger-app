@@ -59,9 +59,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
     <ImageBackground
       style={{ width: "100%", height: "100%", flex: 1 }}
       source={
-        tokenLogger ? TokenLoggerBackground : {
-          uri: "https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80",
-        }
+        tokenLogger ? TokenLoggerBackground : ""
       }
     >
       <View style={styles.box}>
@@ -73,7 +71,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
           ||
           <>
             <BodyText style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
-              {i18n.t("additional:submit_flow_answers")}
+              {i18n.t("additional:submit_flow_answers")} <Text style={{fontWeight: 'bold'}}>{i18n.t("additional:submit")}</Text> {i18n.t("additional:submit_flow_answers_ex")}
             </BodyText>
 
             <View style={styles.nextActivity}>
