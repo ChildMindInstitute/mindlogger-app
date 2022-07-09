@@ -123,7 +123,11 @@ class GameManager {
     }
 
     if gameParameters.showFixation {
-      delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false, typeTime: .fixations)
+      if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
+        delegate?.updateFixations(image: image, isStart: false, typeTime: .fixations)
+      } else {
+        delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false, typeTime: .fixations)
+      }
     }
   }
 
@@ -252,7 +256,7 @@ class GameManager {
     
 
     if gameParameters.showFeedback {
-      Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
+      Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
     } else {
       setDefaultText(isFirst: false)
     }
@@ -333,7 +337,9 @@ class GameManager {
       delegate?.updateText(text: text, color: .black, font: Constants.bigFont, isStart: true, typeTime: .trial)
     }
 
-    timeResponse = Timer.scheduledTimer(timeInterval: gameParameters.trialDuration / 1000, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
+    if gameParameters.showFeedback {
+      timeResponse = Timer.scheduledTimer(timeInterval: gameParameters.trialDuration / 1000, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
+    }
   }
 
   @objc func timeResponseFailed() {
@@ -367,7 +373,7 @@ class GameManager {
     delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
     responseText = Constants.timeRespondText
 
-    Timer.scheduledTimer(timeInterval: gameParameters.fixationDuration / 1000, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
+    Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
   }
 }
 
