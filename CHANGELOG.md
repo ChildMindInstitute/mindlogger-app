@@ -1,8 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
-
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.21.34] - 2022-07-09
+- Fix native flanker issue
+
+## [0.21.33] - 2022-07-07
+- Fix activity flow name, order and quantity on the interim screen dont' match.
+
+## [0.21.32] - 2022-07-06
+- Fix hide badge settings
 
 ## [0.21.31] - 2022-07-06
 - Fix native flanker bugs
@@ -16,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix button press state is missing in flanker activity
 - Fix UI issue
 
+## [0.21.28] - 2022-07-04
+- Configure Automactcally Email Reports
+
 ## [0.21.27] - 2022-06-30
 - Fix grey scale issue and native buttons
 
@@ -25,8 +37,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.21.24] - 2022-06-30
 - Fix app crash issue with refreshed A/B trais activity
 
+## [0.21.23] - 2022-06-29
+- Moving Linked Activity to Activity Flow
+
 ## [0.21.22] - 2022-06-28
 - Fixed watermark issue on top navigation
+
+## [0.21.20] - 2022-06-28
+- Moving Linked Activity to Activity Flow
+- Update Markdown to render HTML
+- Update activity statues representation
+- Ability to Show Users's Date Variable in Markdown
+
+## [0.21.19] - 2022-06-21
+- Build activity flow scheduling
 
 ## [0.21.18] - 2022-06-27
 - Fixed watermark overlap
