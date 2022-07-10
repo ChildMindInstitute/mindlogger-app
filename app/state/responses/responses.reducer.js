@@ -108,7 +108,7 @@ export default (state = initialState, action = {}) => {
           ...state.inProgress,
           [activity.event ? activity.id + activity.event.id : activity.id]: {
             activity: R.clone(activity),
-            responses: new Array(activity.items.length),
+            responses: new Array(action.payload.items.length),
             subjectId: action.payload.subjectId,
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
@@ -129,7 +129,7 @@ export default (state = initialState, action = {}) => {
           [screenIndex]: { startTime: startTime || moment().valueOf() }
         }
       }
-
+      
       return {
         ...state,
         inProgress: {

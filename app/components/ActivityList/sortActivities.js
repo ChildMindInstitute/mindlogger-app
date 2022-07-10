@@ -164,29 +164,27 @@ export default (activityList, inProgress, finishedEvents, scheduleData) => {
   }
 
   // Activities currently scheduled - or - previously scheduled and not yet completed.
-
   // Activities scheduled some time in the future.
   const pastdue = getPastdue(notInProgress, finishedEvents)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
-
   const scheduled = getScheduled(notInProgress, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
-
   // Activities with no schedule.
   const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents, scheduleData);
-
   // Activities which have been completed and have no more scheduled occurrences.
   // const completed = getCompleted(notInProgress).reverse();
 
   return [
-    ...addSectionHeader(addProp('status', 'pastdue', pastdue), i18n.t('additional:available')),
     ...addSectionHeader(
       addProp('status', 'in-progress', inProgressActivities),
       i18n.t('additional:in_progress'),
     ),
     ...addSectionHeader(
-      addProp('status', 'unscheduled', unscheduled),
-      (inProgressActivities.length || pastdue.length || scheduled.length) ? i18n.t('additional:unscheduled') : '',
+      [
+        ...addProp('status', 'pastdue', pastdue),
+        ...addProp('status', 'unscheduled', unscheduled)
+      ],
+      i18n.t('additional:available')
     ),
     ...addSectionHeader(addProp('status', 'scheduled', scheduled), i18n.t('additional:scheduled')),
   ];

@@ -164,6 +164,7 @@ test('appletTransformJson: ema-hbn', () => {
       "https://raw.githubusercontent.com/ReproNim/schema-standardization/master/activity-sets/ema-hbn/ema-hbn_schema.jsonld",
     id: "applet/5ca5314fd27b4e0459cee21f",
     contentUpdateTime: "",
+    reportConfigs: {},
     schedule: null,
   };
 
@@ -232,6 +233,7 @@ test('activityTransformJson: ema-hbn', () => {
     notification: {},
     isPrize: false,
     summaryDisabled: false,
+    allowExport: false,
   };
 
   expect(activityTransformJson(activityJson, itemsJson)).toEqual(expectedResult);
@@ -344,6 +346,7 @@ test('activityTransformJson: nda-phq', () => {
     isPrize: false,
     summaryDisabled: false,
     finalSubScale: undefined,
+    allowExport: false,
     isReviewerActivity: false,
   };
 

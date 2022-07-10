@@ -16,6 +16,7 @@ import AboutApp from "./AboutApp";
 import Activity from "./Activity";
 import ActivityDetails from "./ActivityDetails";
 import ActivityThanks from "./ActivityThanks";
+import ActivityFlowSubmit from "./ActivityFlowSubmit";
 import ActivityEnd from "./ActivityEnd";
 import ActivitySummary from "./ActivitySummary";
 import AppletDetails from "./AppletDetails";
@@ -75,6 +76,7 @@ const Navigator = Actions.create(
       <Scene key="invite" component={AppletInviteFlow} />
       <Scene key="activity_summary" component={ActivitySummary} />
       <Scene key="activity_thanks" component={ActivityThanks} />
+      <Scene key="activity_flow_submit" component={ActivityFlowSubmit} />
       <Scene key="activity_end" component={ActivityEnd} />
     </Modal>
   </Lightbox>
@@ -93,7 +95,6 @@ class AppNavigator extends Component {
   }
 
   handleBackButton = () => {
-    console.log("current route:", Actions.currentScene);
     if (
       Actions.currentScene === "login" ||
       Actions.currentScene === "applet_list"

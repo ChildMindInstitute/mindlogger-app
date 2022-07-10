@@ -1,19 +1,25 @@
 import React, { Component } from "react";
 import PropTypes from 'prop-types';
 import { View, Linking, Dimensions, Image, Text } from 'react-native';
-import { markdownStyle } from '../../themes/activityTheme';
+import { markdownStyle, markdownHtmlStyle } from '../../themes/activityTheme';
 import { VideoPlayer } from './VideoPlayer';
 import AudioPlayer from './AudioPlayer';
-import Markdown, { MarkdownIt, renderRules, tokensToAST, stringToTokens } from 'react-native-markdown-display';
+import Markdown, { MarkdownIt, renderRules } from 'react-native-markdown-display';
 import Mimoza from 'mimoza';
+import moment from "moment";
 import markdownContainer from 'markdown-it-container';
 import markdownIns from 'markdown-it-ins';
 import { WebView } from 'react-native-webview';
+import AutoHeightWebView from 'react-native-autoheight-webview'
 import { colors } from "../../themes/colors";
 
 const { width } = Dimensions.get('window');
 
-const markdownItInstance = MarkdownIt({ typographer: true })
+const markdownItInstance = MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+})
   .use(markdownContainer)
   .use(markdownContainer, 'hljs-left') /* align left */
   .use(markdownContainer, 'hljs-center')/* align center */
@@ -133,12 +139,24 @@ class MarkdownScreen extends Component {
 
         if (type) {
           const style = type.endsWith('right') ? 'flex-end' : type.includes('center') ? 'center' : 'flex-start';
-          return <View key={node.key} key={node.key} style={{ justifyContent: style, alignItems: style }}>
+          return <View key={node.key} style={{ justifyContent: style, alignItems: style }}>
             {children}
           </View>
         }
 
         return renderRules.paragraph(node, children, parents, styles);
+      },
+      html_block: (node, children, parent, styles) => {
+        return (
+          <AutoHeightWebView
+            style={{ width: maxWidth }}
+            customStyle={markdownHtmlStyle}
+            source={{ html: node.content }}
+            scrollEnabled={false}
+            scalesPageToFit={false}
+            viewportContent={'width=device-width, user-scalable=no'}
+          />
+        );
       }
     }
 
@@ -193,7 +211,7 @@ export { MarkdownScreen };
 
 
 const checkNodeContent = (content) => {
-  content = content.replace(/<([^‘]*[a-zA-Z]+[^‘]*)>/ig, '');
+  content = content.replace(/<([^‘]*[a-zA-Z]+[^‘]*)>/ig, '').replace(/\[\[sys.date]\]/i, moment().format('MM/DD/YYYY'));
 
   if (regex.test(content.trim())) content = content.trim().replace(/==/g, "")
   if (content.indexOf("^") > -1 && content.indexOf('^^') === -1) return checkSuperscript(content)

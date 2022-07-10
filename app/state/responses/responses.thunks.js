@@ -17,7 +17,10 @@ import {
 } from "../../models/response";
 import { storeData } from "../../services/storage";
 import { appletsSelector } from "../applets/applets.selectors";
-import { setCumulativeActivities } from "../activities/activities.actions";
+import {
+  setCumulativeActivities,
+  setActivityFlowOrderIndex
+} from "../activities/activities.actions";
 import {
   responsesSelector,
   uploadQueueSelector,
@@ -34,6 +37,7 @@ import {
   loggedInSelector,
   userInfoSelector,
 } from "../user/user.selectors";
+import { orderIndexSelector } from "../activities/activities.selectors";
 import {
   createResponseInProgress,
   setDownloadingResponses,
@@ -67,6 +71,7 @@ import {
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 import { getTokenIncreaseForNegativeBehaviors } from "../../services/tokens";
+import { sendPDFExport } from "../../services/reports";
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
@@ -136,13 +141,14 @@ export const startResponse = (activity) => (dispatch, getState) => {
   const visibilityArray = itemVisiblitySelector(state);
   const next = getNextPos(-1, visibilityArray);
   const event = currentEventSelector(state);
+  const orderIndex = orderIndexSelector(state) || {};
 
   if (activity.isPrize === true) {
     const tokenBalance = currentAppletTokenBalanceSelector(state).cumulativeToken;
     const prizesActivity = R.assocPath(['items', 0, 'info', 'en'],
       `Balance: ${tokenBalance} Token${tokenBalance >= 2 ? 's' : ''}`,
       activity);
-    dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted));
+    dispatch(createResponseInProgress(applet.id, prizesActivity, subjectId, timeStarted, activity.items));
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
 
     sendData('start_activity', activity.id, applet.id);
@@ -157,11 +163,18 @@ export const startResponse = (activity) => (dispatch, getState) => {
     ) {
       dispatch(setActivityStartTime(activity.id + activity.event.id));
     }
-    dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted));
+
+    if (activity.isActivityFlow) {
+      const currentActOrderIndex = orderIndex[activity.id] || 0;
+      const currentActName = activity.order[currentActOrderIndex];
+      const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+
+      dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items));
+    } else {
+      dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, activity.items));
+    }
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
-
     sendData('start_activity', activity.id, applet.id);
-
     Actions.push("take_act");
   } else {
     Alert.alert(
@@ -188,18 +201,17 @@ export const startResponse = (activity) => (dispatch, getState) => {
             cleanFiles(itemResponses);
             dispatch(setActivityOpened(true));
 
-            dispatch(
-              createResponseInProgress(
-                applet.id,
-                activity,
-                subjectId,
-                timeStarted
-              )
-            );
+            if (activity.isActivityFlow) {
+              const currentActOrderIndex = orderIndex[activity.id] || 0;
+              const currentActName = activity.order[currentActOrderIndex];
+              const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+
+              dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items));
+            } else {
+              dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, activity.items));
+            }
             dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next));
-
             sendData('restart_activity', activity.id, applet.id);
-
             Actions.push("take_act");
           },
         },
@@ -415,7 +427,6 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   for (let i = 0; i < applets.length; i++) {
     try {
       const applet = applets[i];
-
       const { lastRewardTime, tokenTimes } = responseHistory[i].token;
 
       if (!tokenTimes.length) {
@@ -494,20 +505,34 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   })
 }
 
-export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
+export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch, getState) => {
   const state = getState();
+  const subjectId = R.path(["info", "_id"], state.user);
   const authToken = authTokenSelector(state);
   const applet = currentAppletSelector(state);
   const inProgressResponse = currentResponsesSelector(state);
-  const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
+  const orderIndex = orderIndexSelector(state);
+  const currentActOrderIndex = orderIndex[inProgressResponse.activity.id] || 0;
+  let activity = currentActivitySelector(state);
+
+  if (!activity) {
+    const currentActName = inProgressResponse.activity.order[currentActOrderIndex];
+    activity = applet.activities.find(act => act.name.en === currentActName);
+    inProgressResponse.activity = {
+      ...inProgressResponse.activity,
+      ...activity,
+      activityFlowId: inProgressResponse.activity.id,
+      activityFlowOrder: inProgressResponse.activity.order,
+      events: inProgressResponse.activity.events
+    }
+  }
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
     dispatch(updateKeys(applet, userInfoSelector(state)));
   }
 
   const finishedTime = new Date();
-
   const responseHistory = currentAppletResponsesSelector(state);
   let uploader = Promise.resolve();
 
@@ -532,49 +557,6 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
       return dispatch(downloadResponses())
     })
   } else {
-    let { cumActivities, nonHiddenCumActivities } = evaluateCumulatives(inProgressResponse.responses, activity);
-    const cumulativeActivities = state.activities.cumulativeActivities;
-
-    cumActivities = cumActivities.map(name => {
-      const activity = applet.activities.find(activity => activity.name.en == name)
-      return activity && activity.id.split('/').pop()
-    }).filter(id => id)
-
-    if (cumActivities.length || nonHiddenCumActivities?.length) {
-      let archieved = [...cumulativeActivities[applet.id].archieved];
-      let available = [...cumulativeActivities[applet.id].available];
-      const activityId = activity.id.split('/').pop();
-
-      if (nonHiddenCumActivities?.length) {
-        const ids = nonHiddenCumActivities.map(name => {
-          const activity = applet.activities.find(activity => activity.name.en == name)
-          return activity && activity.id.split('/').pop()
-        }).filter(id => id)
-
-        available = available.concat(_.intersection(archieved, ids));
-        archieved = _.difference(archieved, ids);
-        available = _.uniq(available.concat(ids));
-      } else {
-        if (archieved.indexOf(activityId) < 0) {
-          archieved.push(activityId);
-        }
-      }
-
-      available = available.concat(
-        cumActivities
-      ).filter(id => id != activity.id.split('/').pop())
-
-      dispatch(
-        setCumulativeActivities({
-          ...cumulativeActivities,
-          [applet.id]: {
-            available,
-            archieved
-          }
-        })
-      );
-    }
-
     const preparedResponse = prepareResponseForUpload(
       inProgressResponse, applet, responseHistory, isTimeout, finishedTime
     );
@@ -590,26 +572,103 @@ export const completeResponse = (isTimeout = false) => (dispatch, getState) => {
   }
 
   uploader.finally(() => {
-    const { activity } = inProgressResponse;
+    const activity = {
+      ...inProgressResponse.activity
+    };
 
-    dispatch(
-      removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
-    );
+    if (activity.activityFlowId) {
+      const flowId = activity.activityFlowId;
+
+      dispatch(
+        removeResponseInProgress(activity.event ? flowId + activity.event.id : flowId)
+      );
+
+      const currentActOrderIndex = orderIndex[activity.id] || 0;
+
+      if (!isFlow) {
+        sendPDFExport(
+          authToken,
+          applet,
+          applet.activities.filter(act => activity.activityFlowOrder.includes(act.name.en)),
+          currentAppletResponsesSelector(state),
+          activity.id,
+          flowId,
+        );
+      }
+
+      if (isFlow) {
+        const currentActName = activity.activityFlowOrder[currentActOrderIndex];
+        const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+
+        dispatch(
+          createResponseInProgress(applet.id, applet.activityFlows.find(flow => flow.id == flowId), subjectId, Date.now(), currentActivity.items)
+        );
+        Actions.replace("take_act");
+      }
+    } else {
+      dispatch(
+        removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
+      );
+
+      if (activity.allowExport) {
+        sendPDFExport(
+          authToken,
+          applet,
+          [activity],
+          currentAppletResponsesSelector(state),
+          activity.id,
+        );
+      }
+    }
   })
 };
+
+export const nextActivity = (isNext = false) => (dispatch, getState) => {
+  const state = getState();
+  const applet = currentAppletSelector(state);
+  const inProgress = currentResponsesSelector(state);
+  const orderIndex = orderIndexSelector(state);
+  const event = currentEventSelector(state);
+  const { activity } = inProgress;
+  const currentActOrderIndex = orderIndex[activity.id] || 0;
+
+  dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0, new Date().getTime()));
+  if (isNext) {
+    if (activity.nextAccess) {
+      dispatch(setActivityAccess(applet.id + activity.id));
+    }
+    sendData('finish_activity', activity.id, applet.id);
+    dispatch(setActivityFlowOrderIndex({
+      activityId: activity.id,
+      index: currentActOrderIndex + 1
+    }));
+    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+    dispatch(completeResponse(false, true));
+  } else {
+    Actions.replace("take_act");
+  }
+}
 
 export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
-  const activity = currentActivitySelector(state);
   const event = currentEventSelector(state);
   const inProgress = currentResponsesSelector(state);
+  const orderIndex = orderIndexSelector(state);
+  const activity = inProgress.activity;
+  const currentActOrderIndex = orderIndex[activity.id] || 0;
 
   let screenIndex = currentScreenSelector(state);
+  let activityObj = { ...activity };
   let next = -1;
 
-  const item = activity.items[screenIndex];
+  if (activity.isActivityFlow) {
+    const currentActName = activity.order[currentActOrderIndex];
+    activityObj = applet.activities.find(act => act.name.en === currentActName);
+  }
+
+  const item = activityObj.items[screenIndex];
 
   if (item.inputType == 'visual-stimulus-response' && item.inputs.blockType === 'practice' && !item.inputs.lastPractice) {
     const responses = inProgress.responses[screenIndex];
@@ -632,7 +691,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   do {
-    const { timer, delay } = activity.items[screenIndex];
+    const { timer, delay } = activityObj.items[screenIndex];
     let totalTime = timer + (delay || 0);
 
     if (next < 0 || (timer && timeElapsed >= totalTime)) {
@@ -649,26 +708,34 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   if (next === -1) {
-    setTimeout(() => {
-      if (activity.nextAccess) {
-        dispatch(setActivityAccess(applet.id + activity.id));
-      }
+    if (activity.isActivityFlow && currentActOrderIndex < activity.order.length - 1) {
+      Actions.replace("activity_flow_submit");
+    } else {
+      setTimeout(() => {
+        if (activity.nextAccess) {
+          dispatch(setActivityAccess(applet.id + activity.id));
+        }
+        sendData('finish_activity', activity.id, applet.id);
+        dispatch(completeResponse());
+        dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+        if (activity.isActivityFlow) {
+          dispatch(setActivityFlowOrderIndex({
+            activityId: activity.id,
+            index: 0
+          }));
+        }
+      });
 
-      sendData('finish_activity', activity.id, applet.id);
-
-      dispatch(completeResponse());
-      dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
-    });
-
-    Actions.push("activity_thanks");
+      Actions.push("activity_thanks");
+    }
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
 
-    const item = activity.items[next];
+    const item = activityObj.items[next];
 
     if (item.inputType == 'futureBehaviorTracker') {
       const { timeScreen } = item.valueConstraints;
-      const index = activity.items.findIndex(item => item.variableName == timeScreen);
+      const index = activityObj.items.findIndex(item => item.variableName == timeScreen);
       const timeLimit = inProgress.responses[index] && inProgress.responses[index].value || 0;
 
       dispatch(setAnswer(inProgress.activity, next, {
@@ -706,11 +773,11 @@ export const endActivity = (activity) => (dispatch) => {
 
 export const prevScreen = () => (dispatch, getState) => {
   const state = getState();
-  const applet = currentAppletSelector(state);
   const screenIndex = currentScreenSelector(state);
   const visibilityArray = itemVisiblitySelector(state);
   const prev = getLastPos(screenIndex, visibilityArray);
-  const activity = currentActivitySelector(state);
+  const inProgress = currentResponsesSelector(state);
+  const { activity } = inProgress;
   const event = currentEventSelector(state);
 
   if (prev === -1) {
