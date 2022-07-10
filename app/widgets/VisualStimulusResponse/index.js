@@ -70,7 +70,6 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-    console.log(config)
     if (dataObject.trial_index > configObj.trials.length) return ;
     console.log(parseResponse(dataObject))
     if (dataType == 'response') {
