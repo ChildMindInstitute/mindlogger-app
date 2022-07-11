@@ -123,6 +123,7 @@ const SHOW_BADGE = "reprolib:terms/showBadge";
 const REPORT_CONFIGS = "reprolib:terms/reportConfigs"
 const ACTIVITY_FLOW_ORDER = "reprolib:terms/activityFlowOrder";
 const ACTIVITY_FLOW_PROPERTIES = "reprolib:terms/activityFlowProperties";
+const ACTIVITY_TYPE = "reprolib:terms/activityType";
 export const ORDER = "reprolib:terms/order";
 
 export const languageListToObject = (list) => {
@@ -714,6 +715,7 @@ const transformPureActivity = (activityJson) => {
     scoringLogic,
     notification,
     info,
+    activityType: _.get(activityJson, [ACTIVITY_TYPE, 0, '@value']),
   };
 };
 

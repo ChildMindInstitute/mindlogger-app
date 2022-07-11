@@ -151,6 +151,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
+          applet={applet}
           orderIndex={orderIndex || {}}
           isRecommended={false}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}
