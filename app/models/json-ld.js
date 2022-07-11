@@ -999,6 +999,13 @@ export const transformApplet = (payload, currentApplets = null) => {
     const names = applet.activities.map(activity => activity.name.en);
 
     flow.order = flow.order.filter(name => names.includes(name));
+    flow.summaryDisabled = true;
+
+    for (const activity of applet.activities) {
+      if (!activity.summaryDisabled) {
+        flow.summaryDisabled = false;
+      }
+    }
   }
 
   applet.activities = [...applet.activities].sort(orderBySchema(applet.order, (activity) => activity.id.split('/').pop()));
