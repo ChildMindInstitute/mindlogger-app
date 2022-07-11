@@ -247,7 +247,7 @@ class Activity extends React.Component {
         !isSummaryScreen &&
         (
           flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-          !activity.summaryDisabled && activity.reports?.length
+          !flow && !activity.summaryDisabled && activity.reports?.length
         )
       ) {
         this.setState({ isSummaryScreen: true });
@@ -439,8 +439,8 @@ class Activity extends React.Component {
       next === -1 &&
       !isSummaryScreen &&
       (
-        flow && !flow.summaryDisabledflow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-        !activity.summaryDisabled && activity.reports?.length
+        flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
+        !flow && !activity.summaryDisabled && activity.reports?.length
       )
     ) {
       this.setState({ isSummaryScreen: true });
@@ -611,6 +611,7 @@ class Activity extends React.Component {
           <ActivitySummary
             responses={responses}
             activity={activity}
+            flow={currentResponse.activity.isActivityFlow ? currentResponse.activity : null}
             orderIndex={orderIndex}
           />
         )}

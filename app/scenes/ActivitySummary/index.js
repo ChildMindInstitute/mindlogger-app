@@ -9,7 +9,6 @@ import {
   Image,
   Text,
 } from "react-native";
-import i18n from "i18next";
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
 import { currentAppletResponsesSelector } from "../../state/responses/responses.selectors";
@@ -53,27 +52,46 @@ const styles = StyleSheet.create({
 });
 
 const ActivitySummary = (props) => {
-  const { responses, applet, activity, responseHistory } = props;
+  const { responses, applet, activity, responseHistory, flow } = props;
   const [alerts, setAlerts] = useState([]);
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
     let alerts = [], reports = [];
-    const activities = activity.isActivityFlow ? applet.activities.filter(act => activity.order.includes(act.name.en)) : [activity];
+    const activities = flow ? applet.activities.filter(act => flow.order.includes(act.name.en)) : [activity];
 
     for (const activity of activities) {
+      if (activity.summaryDisabled) {
+        continue;
+      }
+
+      let lastResponse = [];
+      if (activity.id == props.activity.id) {
+        lastResponse = responses;
+      } else {
+        for (let item of activity.items) {
+          const itemResponses = responseHistory.responses[item.schema];
+
+          if (itemResponses && itemResponses.length) {
+            lastResponse.push(itemResponses[itemResponses.length-1]);
+          } else {
+            lastResponse.push(null);
+          }
+        }
+      }
+
       reports.push({
         activity,
-        data: evaluateReports(responses, activity)
+        data: evaluateReports(lastResponse, activity)
       });
 
-      for (let i = 0; i < responses.length; i++) {
+      for (let i = 0; i < lastResponse.length; i++) {
         const item = activity.items[i];
 
         if (item.valueConstraints) {
           const { responseAlert } = item.valueConstraints;
-          if (responses[i] !== null && responses[i] !== undefined && responseAlert) {
-            const messages = getAlertsFromResponse(item, responses[i].value !== undefined ? responses[i].value : responses[i]);
+          if (lastResponse[i] !== null && lastResponse[i] !== undefined && responseAlert) {
+            const messages = getAlertsFromResponse(item, lastResponse[i].value !== undefined ? lastResponse[i].value : lastResponse[i]);
             alerts = alerts.concat(messages);
           }
         }
@@ -83,9 +101,6 @@ const ActivitySummary = (props) => {
     setAlerts(alerts);
     setReports(reports);
   }, []);
-
-  console.log('alerts', alerts);
-  console.log('reports', reports);
 
   return (
     <>
@@ -165,6 +180,7 @@ const ActivitySummary = (props) => {
 ActivitySummary.propTypes = {
   responses: PropTypes.array.isRequired,
   activity: PropTypes.object.isRequired,
+  flow: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
