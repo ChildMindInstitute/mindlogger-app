@@ -42,9 +42,13 @@ let activityFlow = {}, index = 0;
 
 const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextActivity }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
+
   if (currentResponses && currentResponses.activity && !currentResponses.activity.hasOwnProperty('allowExport')) {
     activityFlow = currentResponses && currentResponses.activity;
     index = activityFlow && orderIndex[activityFlow.id] || 0;
+
+    const currentAct = currentApplet.activities.find(({ name }) => name.en === activityFlow.order[index])
+    activityFlow.backDisabled = currentAct.backDisabled;
   }
 
   const onSubmit = () => {
@@ -94,16 +98,30 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
               </View>
             </View>
 
-            <Button full rounded onPress={onSubmit} style={{ marginTop: 25 }}>
-              <Text style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}>
+            <Button
+              full
+              rounded
+              onPress={onSubmit}
+              style={{ marginTop: 25 }}
+            >
+              <Text
+                style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
+              >
                 {i18n.t("change_study:submit")}
               </Text>
             </Button>
-            <Button full transparent onPress={onBack} style={{ marginTop: 10 }}>
-              <Text style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}>
-                {i18n.t("activity_navigation:back")}
-              </Text>
-            </Button>
+            {!activityFlow.backDisabled && <Button
+                full
+                transparent
+                onPress={onBack} style={{ marginTop: 10 }}
+              >
+                <Text
+                  style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
+                >
+                  {i18n.t("activity_navigation:back")}
+                </Text>
+              </Button>
+            }
           </>
         }
       </View>
