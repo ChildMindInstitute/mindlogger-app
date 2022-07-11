@@ -319,7 +319,6 @@ extension FlankerView: GameManagerProtocol {
       let dataArray = dataArray,
       let avrgTime = avrgTime,
       let procentCorrect = procentCorrect {
-      gameManager.stopGame()
       if isShowResults {
         fixationImage.isHidden = true
         finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, minAccuracy: minAccuracy, isLast: isLast) {
