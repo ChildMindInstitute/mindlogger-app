@@ -131,13 +131,15 @@ const ActivitySummary = (props) => {
                     }}
                     key={score.label}
                   >
-                    <Image
-                      style={{ marginRight: 7 }}
-                      source={scoreAlertIcon}
-                    />
+                    {
+                      score.flagScore && <Image
+                        style={{ marginRight: 7 }}
+                        source={scoreAlertIcon}
+                      /> || <></>
+                    }
 
                     <Text
-                      style={{ fontSize: 18 }}
+                      style={{ fontSize: 18, color: score.flagScore ? '#D17677' : 'black' }}
                     >
                       { score.label }
                     </Text>
@@ -145,7 +147,7 @@ const ActivitySummary = (props) => {
                     <View style={{ flexGrow: 1 }}/>
 
                     <Text
-                      style={{ fontSize: 18 }}
+                      style={{ fontSize: 18, color: score.flagScore ? '#D17677' : 'black' }}
                     >
                       { score.score }
                     </Text>
