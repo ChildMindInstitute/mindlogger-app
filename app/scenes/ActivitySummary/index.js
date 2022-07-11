@@ -154,18 +154,30 @@ const ActivitySummary = (props) => {
                     }
 
                     <Text
-                      style={{ fontSize: 18, color: score.flagScore ? '#D17677' : 'black' }}
+                      style={{ fontSize: 18, color: score.flagScore ? '#D33134' : 'black' }}
                     >
                       { score.label }
                     </Text>
 
                     <View style={{ flexGrow: 1 }}/>
 
-                    <Text
-                      style={{ fontSize: 18, color: score.flagScore ? '#D17677' : 'black' }}
+                    <View
+                      style={{
+                        borderRadius: 10,
+                        paddingHorizontal: 40,
+                        paddingVertical: 5,
+                        backgroundColor: score.flagScore ? '#FFE2E2' : 'white'
+                      }}
                     >
-                      { score.score }
-                    </Text>
+                      <Text
+                        style={[
+                          score.flagScore ? { color: '#D33134', fontWeight: 'bold' } : {},
+                          { fontSize: 22 },
+                        ]}
+                      >
+                        { score.score }
+                      </Text>
+                    </View>
                   </View>
                 ))
               }
