@@ -21,7 +21,6 @@ class FlankerView: UIView {
     label.closureDate = { date in
       guard let typeTimeStamp = self.typeTimeStamp else { return }
       self.testStart = date
-      self.gameManager.setEndTimeViewingImage(time: date, isStart: true, type: typeTimeStamp)
     }
     return label
   }()
@@ -46,7 +45,6 @@ class FlankerView: UIView {
     imageView.closureDate = { date in
       guard let typeTimeStamp = self.typeTimeStamp else { return }
       self.testStart = date
-      self.gameManager.setEndTimeViewingImage(time: date, isStart: true, type: typeTimeStamp)
     }
     return imageView
   }()
@@ -142,11 +140,14 @@ class FlankerView: UIView {
     guard let displayLink = displayLink, let testStart = testStart, let typeTimeStamp = typeTimeStamp else { return }
     if #available(iOS 10.0, *) {
       let delta = displayLink.timestamp - testStart
+      if delta < 0 { return }
       if delta < displaylink.duration {
         self.displayLink?.isPaused = true
+        self.gameManager.setEndTimeViewingImage(time: testStart, isStart: true, type: typeTimeStamp)
         self.gameManager.setEndTimeViewingImage(time: displayLink.targetTimestamp, isStart: false, type: typeTimeStamp)
       } else {
         self.displayLink?.isPaused = true
+        self.gameManager.setEndTimeViewingImage(time: testStart, isStart: true, type: typeTimeStamp)
         self.gameManager.setEndTimeViewingImage(time: displayLink.timestamp, isStart: false, type: typeTimeStamp)
       }
     }
@@ -320,6 +321,7 @@ extension FlankerView: GameManagerProtocol {
       let procentCorrect = procentCorrect {
       gameManager.stopGame()
       if isShowResults {
+        fixationImage.isHidden = true
         finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, minAccuracy: minAccuracy, isLast: isLast) {
           guard
             let jsonData = try? JSONEncoder().encode(dataArray),
