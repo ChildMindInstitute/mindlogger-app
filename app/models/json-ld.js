@@ -991,6 +991,13 @@ export const transformApplet = (payload, currentApplets = null) => {
     }
   }
 
+  for (let i = 0; i < applet.activityFlows.length; i++) {
+    const flow = applet.activityFlows[i];
+    const names = applet.activities.map(activity => activity.name.en);
+
+    flow.order = flow.order.filter(name => names.includes(name));
+  }
+
   applet.activities = [...applet.activities].sort(orderBySchema(applet.order, (activity) => activity.id.split('/').pop()));
   applet.groupId = payload.groups;
   applet.theme = payload.theme;
