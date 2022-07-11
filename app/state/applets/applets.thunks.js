@@ -22,7 +22,6 @@ import { scheduleNotifications } from "../../services/pushNotifications";
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNotificationsReminder } from "./applets.actions";
-import { setCumulativeActivities } from "../activities/activities.actions";
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
@@ -48,6 +47,7 @@ import {
 import { isReminderSetSelector, timersSelector } from "./applets.selectors";
 import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses, setLastResponseTime } from "../responses/responses.actions";
+import { setActivityFlowOrderIndexList } from "../activities/activities.actions";
 
 import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
@@ -282,17 +282,19 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         const responses = [];
         let scheduleUpdated = false;
         let finishedEvents = {};
-        let lastResponseTime = {}, profiles = {};
-
-        let cumulativeActivities = {};
+        let lastResponseTime = {}, profiles = {}, lastActivities = {};
 
         const transformedApplets = applets
           .map((appletInfo) => {
-            const nextActivities = appletInfo.cumulativeActivities;
             Object.assign(finishedEvents, appletInfo.finishedEvents);
 
             lastResponseTime[`applet/${appletInfo.id}`] = appletInfo.lastResponses;
             profiles[`applet/${appletInfo.id}`] = appletInfo.profile;
+
+            for (let flowId in appletInfo.lastActivities) {
+              const activityId = appletInfo.lastActivities[flowId];
+              lastActivities[flowId] = activityId;
+            }
 
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
@@ -328,7 +330,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 appletId: 'applet/' + appletInfo.id
               });
 
-              cumulativeActivities[currentApplet.id] = nextActivities;
               if (!currentApplet.activityFlows) {
                 currentApplet.activityFlows = [];
               }
@@ -350,10 +351,26 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
                 appletId: 'applet/' + appletInfo.id
               });
 
-              cumulativeActivities[applet.id] = nextActivities
               return applet;
             }
           });
+
+        for (let i = 0; i < transformedApplets.length; i++) {
+          const applet = transformedApplets[i];
+
+          for (const flow of applet.activityFlows) {
+            const activityId = lastActivities[flow.id];
+            const activity = applet.activities.find(activity => activity.id.split('/').pop() === activityId)
+
+            if (activity) {
+              lastActivities[flow.id] = flow.order.indexOf(activity.name.en) + 1;
+            } else {
+              lastActivities[flow.id] = 0;
+            }
+          }
+        }
+
+        dispatch(setActivityFlowOrderIndexList(lastActivities));
 
         for (let i = 0; i < responses.length; i++) {
           const old = oldResponses && oldResponses.find(old => old && old.appletId == responses[i].appletId);
@@ -365,7 +382,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
 
         dispatch(setUserProfiles(profiles));
         dispatch(setLastResponseTime(lastResponseTime));
-        dispatch(setCumulativeActivities(cumulativeActivities));
         dispatch(setClosedEvents(finishedEvents));
 
         await storeData('ml_applets', transformedApplets);
