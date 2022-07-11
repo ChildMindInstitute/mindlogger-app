@@ -632,8 +632,8 @@ export const nextActivity = (isNext = false) => (dispatch, getState) => {
   const { activity } = inProgress;
   const currentActOrderIndex = orderIndex[activity.id] || 0;
 
-  dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0, new Date().getTime()));
   if (isNext) {
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0, new Date().getTime()));
     if (activity.nextAccess) {
       dispatch(setActivityAccess(applet.id + activity.id));
     }

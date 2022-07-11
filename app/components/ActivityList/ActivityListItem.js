@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
 const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended, orderIndex }) => {
   const isActivityFlow = activity.isActivityFlow ? true : false;
   const activityOrder = orderIndex[activity.id] ? orderIndex[activity.id] : 0;
-  console.log('activity----------->', activity);
+
   if (activity.isHeader === true) {
 
     return (
