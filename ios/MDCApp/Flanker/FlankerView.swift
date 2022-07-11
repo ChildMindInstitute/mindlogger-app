@@ -20,7 +20,7 @@ class FlankerView: UIView {
     label.text = "-----"
     label.closureDate = { date in
       guard let typeTimeStamp = self.typeTimeStamp else { return }
-      self.testStart = date
+      self.testStartMediaTime = date
     }
     return label
   }()
@@ -44,7 +44,7 @@ class FlankerView: UIView {
     imageView.layer.cornerRadius = 5.0
     imageView.closureDate = { date in
       guard let typeTimeStamp = self.typeTimeStamp else { return }
-      self.testStart = date
+      self.testStartMediaTime = date
     }
     return imageView
   }()
@@ -107,7 +107,12 @@ class FlankerView: UIView {
   @objc var onEndGame: RCTBubblingEventBlock?
   @objc var onUpdate: RCTDirectEventBlock?
 
-  var testStart: CFTimeInterval?
+  var testStartMediaTime: CFTimeInterval?
+
+  var firstDate: Date!
+  var firstCFTime: CFTimeInterval!
+
+  var isFirstScreen = true
 
   @objc var dataJson: NSString? {
     didSet {
@@ -117,6 +122,9 @@ class FlankerView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    createDisplayLink()
+    firstDate = Date()
+    firstCFTime = CACurrentMediaTime()
     setupConstraint()
     timeLabel.isHidden = true
     finishView.isHidden = true
@@ -137,18 +145,30 @@ class FlankerView: UIView {
   }
 
   @objc func step(displaylink: CADisplayLink) {
-    guard let displayLink = displayLink, let testStart = testStart, let typeTimeStamp = typeTimeStamp else { return }
+    guard let displayLink = displayLink, let testStart = testStartMediaTime, let typeTimeStamp = typeTimeStamp else { return }
     if #available(iOS 10.0, *) {
       let delta = displayLink.timestamp - testStart
       if delta < 0 { return }
-      if delta < displaylink.duration {
+      if delta < displayLink.duration {
         self.displayLink?.isPaused = true
-        self.gameManager.setEndTimeViewingImage(time: testStart, isStart: true, type: typeTimeStamp)
-        self.gameManager.setEndTimeViewingImage(time: displayLink.targetTimestamp, isStart: false, type: typeTimeStamp)
+
+        let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
+        let originDelta = displayLink.targetTimestamp - testStart
+        let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
+
+        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
+        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
+
       } else {
         self.displayLink?.isPaused = true
-        self.gameManager.setEndTimeViewingImage(time: testStart, isStart: true, type: typeTimeStamp)
-        self.gameManager.setEndTimeViewingImage(time: displayLink.timestamp, isStart: false, type: typeTimeStamp)
+
+        let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
+        let originDelta = displayLink.timestamp - testStart
+        let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
+
+        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
+        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
+
       }
     }
   }
@@ -156,7 +176,6 @@ class FlankerView: UIView {
 
   func parameterGame() {
     DispatchQueue.main.async {
-      self.createDisplayLink()
       self.finishView.isHidden = true
       self.gameManager.parameterGame()
     }
@@ -210,12 +229,20 @@ class FlankerView: UIView {
   }
 
   @objc func leftButtonAction(sender: UIButton!) {
-    gameManager.setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: false, type: .response)
+    let currentMediaTime = CACurrentMediaTime()
+
+    let deltaCATime = currentMediaTime - firstCFTime
+
+    gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
     gameManager.checkedAnswer(button: .left)
   }
 
   @objc func rightButtonAction(sender: UIButton!) {
-    gameManager.setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: false, type: .response)
+    let currentMediaTime = CACurrentMediaTime()
+
+    let deltaCATime = currentMediaTime - firstCFTime
+
+    gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
     gameManager.checkedAnswer(button: .right)
   }
 }

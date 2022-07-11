@@ -16,7 +16,6 @@ class CustomText: UILabel {
       super.layerWillDraw(layer)
     }
     let date = CACurrentMediaTime()
-    guard let closureDate = closureDate else { return }
-    closureDate(date)
+    closureDate?(date)
   }
 }
