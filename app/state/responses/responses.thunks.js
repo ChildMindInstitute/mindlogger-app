@@ -632,18 +632,19 @@ export const nextActivity = (isNext = false) => (dispatch, getState) => {
   const { activity } = inProgress;
   const currentActOrderIndex = orderIndex[activity.id] || 0;
 
-  dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0, new Date().getTime()));
   if (isNext) {
+    dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0, new Date().getTime()));
     if (activity.nextAccess) {
       dispatch(setActivityAccess(applet.id + activity.id));
     }
     sendData('finish_activity', activity.id, applet.id);
+    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+    dispatch(completeResponse(false, true));
+
     dispatch(setActivityFlowOrderIndex({
       activityId: activity.id,
       index: currentActOrderIndex + 1
     }));
-    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
-    dispatch(completeResponse(false, true));
   } else {
     Actions.replace("take_act");
   }

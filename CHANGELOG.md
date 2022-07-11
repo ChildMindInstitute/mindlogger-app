@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.35] - 2022-07-10
+- Fix app carsh issue
+- Fix back button in interim screen
 
 ## [0.21.34] - 2022-07-09
 - Fix native flanker issue

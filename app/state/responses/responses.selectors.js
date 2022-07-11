@@ -126,7 +126,7 @@ export const itemVisiblitySelector = createSelector(
           return false;
         }
         return testVisibility(property[IS_VIS][0]['@value'], flowActivity.items, responses, responseTimes)
-      });
+      }) || [];
     }
 
     return activity ?.addProperties.map((property, index) => {

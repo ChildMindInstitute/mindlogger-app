@@ -11,7 +11,9 @@ import {
   tutorialStatusSelector,
   trailsTimerIdSelector,
   tutorialIndexSelector,
+  currentAppletSelector,
 } from '../../state/app/app.selectors';
+import { orderIndexSelector } from "../../state/activities/activities.selectors";
 import { currentResponsesSelector } from "../../state/responses/responses.selectors";
 import i18n from 'i18next';
 
@@ -131,9 +133,18 @@ class ABTrails extends React.Component {
       trailsTimerId,
       setTrailsTimerId,
       currentScreen,
-      appletId
+      appletId,
+      applet,
+      orderIndex,
+      currentResponse,
     } = this.props;
-    const { activity } = this.props.currentResponse;
+
+    let activity = currentResponse.activity;
+    if (activity.isActivityFlow) {
+      const name = activity.order[(orderIndex[activity.id] || 0)];
+      activity = applet.activities.find(act => act.name.en === name);
+    }
+
     let currentActivity = 'activity1';
 
     if (activity.name && activity.name.en.includes('iPad')) {
@@ -224,6 +235,8 @@ const mapStateToProps = (state) => {
     tutorialIndex: tutorialIndexSelector(state),
     currentResponse: currentResponsesSelector(state),
     trailsTimerId: trailsTimerIdSelector(state),
+    applet: currentAppletSelector(state),
+    orderIndex: orderIndexSelector(state),
   };
 };
 

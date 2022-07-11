@@ -42,9 +42,13 @@ let activityFlow = {}, index = 0;
 
 const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextActivity }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
+
   if (currentResponses && currentResponses.activity && !currentResponses.activity.hasOwnProperty('allowExport')) {
     activityFlow = currentResponses && currentResponses.activity;
     index = activityFlow && orderIndex[activityFlow.id] || 0;
+
+    const currentAct = currentApplet.activities.find(({ name }) => name.en === activityFlow.order[index])
+    activityFlow.backDisabled = currentAct.backDisabled;
   }
 
   const onSubmit = () => {
@@ -59,9 +63,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
     <ImageBackground
       style={{ width: "100%", height: "100%", flex: 1 }}
       source={
-        tokenLogger ? TokenLoggerBackground : {
-          uri: "https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80",
-        }
+        tokenLogger ? TokenLoggerBackground : ""
       }
     >
       <View style={styles.box}>
@@ -73,7 +75,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
           ||
           <>
             <BodyText style={{ fontFamily: theme.fontFamily, textAlign: "center" }}>
-              {i18n.t("additional:submit_flow_answers")}
+              {i18n.t("additional:submit_flow_answers")} <Text style={{fontWeight: 'bold'}}>{i18n.t("additional:submit")}</Text> {i18n.t("additional:submit_flow_answers_ex")}
             </BodyText>
 
             <View style={styles.nextActivity}>
@@ -94,16 +96,30 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
               </View>
             </View>
 
-            <Button full rounded onPress={onSubmit} style={{ marginTop: 25 }}>
-              <Text style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}>
+            <Button
+              full
+              rounded
+              onPress={onSubmit}
+              style={{ marginTop: 25 }}
+            >
+              <Text
+                style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
+              >
                 {i18n.t("change_study:submit")}
               </Text>
             </Button>
-            <Button full transparent onPress={onBack} style={{ marginTop: 10 }}>
-              <Text style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}>
-                {i18n.t("activity_navigation:back")}
-              </Text>
-            </Button>
+            {!activityFlow.backDisabled && <Button
+                full
+                transparent
+                onPress={onBack} style={{ marginTop: 10 }}
+              >
+                <Text
+                  style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
+                >
+                  {i18n.t("activity_navigation:back")}
+                </Text>
+              </Button>
+            }
           </>
         }
       </View>
