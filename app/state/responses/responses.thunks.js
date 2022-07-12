@@ -686,7 +686,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
       item.inputs.minimumAccuracy &&
       correctCount * 100 >= totalCount * item.inputs.minimumAccuracy
     ) {
-      screenIndex = activity.items.findIndex(item => item.inputs.lastPractice);
+      screenIndex = activityObj.items.findIndex(item => item.inputs.lastPractice);
     }
   }
 
