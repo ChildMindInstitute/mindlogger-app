@@ -27,7 +27,6 @@ import {
 } from '../../state/responses/responses.selectors';
 
 import { parseAppletEvents } from '../../models/json-ld';
-import { getAvailableActivities } from '../../services/helper';
 import LiveConnection from './LiveConnection';
 
 const ActivityList = ({
@@ -151,6 +150,7 @@ const ActivityList = ({
           onPress={() => onPressActivity(activity)}
           onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
+          applet={applet}
           orderIndex={orderIndex || {}}
           isRecommended={false}
           key={(activity.event ? activity.id + activity.event.id : activity.id) || activity.text}

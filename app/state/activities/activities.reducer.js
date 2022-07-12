@@ -25,14 +25,18 @@ export default (state = initialState, action = {}) => {
       };
     case "CLEAR_ACTIVITIES":
       return { ...initialState };
-    
+
     case "SET_ACTIVITY_FLOW_INDEX_ORDER":
       const { activityId, index } = action.payload;
       return {
         ...state,
         orderIndex: { ...state.orderIndex, [activityId]: index }
       }
-
+    case "SET_ACTIVITY_FLOW_INDEX_ORDER_LIST":
+      return {
+        ...state,
+        orderIndex: { ...state.orderIndex, ...action.payload }
+      }
     default:
       return state;
   }

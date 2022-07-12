@@ -155,6 +155,12 @@ class MarkdownScreen extends Component {
             scrollEnabled={false}
             scalesPageToFit={false}
             viewportContent={'width=device-width, user-scalable=no'}
+            onShouldStartLoadWithRequest={(request) => {
+              if(request.url !== "about:blank") {
+                Linking.openURL(request.url)
+                return false
+              } else return true
+            }}
           />
         );
       }

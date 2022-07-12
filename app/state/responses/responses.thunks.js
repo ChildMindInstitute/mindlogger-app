@@ -9,7 +9,6 @@ import NetInfo from "@react-native-community/netinfo";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
 import { cleanFiles } from "../../services/file";
-import { evaluateCumulatives } from '../../services/scoring';
 import {
   prepareResponseForUpload,
   getEncryptedData,
