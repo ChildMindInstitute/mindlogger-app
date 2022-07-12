@@ -363,7 +363,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             const activity = applet.activities.find(activity => activity.id.split('/').pop() === activityId)
 
             if (activity) {
-              lastActivities[flow.id] = flow.order.indexOf(activity.name.en) + 1;
+              lastActivities[flow.id] = (flow.order.indexOf(activity.name.en) + 1) % flow.order.length;
             } else {
               lastActivities[flow.id] = 0;
             }
