@@ -49,35 +49,51 @@ class FlankerView: UIView {
     return imageView
   }()
 
-  private lazy var leftButton: UIButton = {
-    let button = UIButton()
+  private lazy var leftButton: CustomButton = {
+    let button = CustomButton()
     button.translatesAutoresizingMaskIntoConstraints = false
     button.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle("<", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.addTarget(self, action: #selector(leftButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
+    button.closureDate = { [weak self] date in
+      guard let self = self, let firstCFTime = self.firstCFTime, let firstDate = self.firstDate else { return }
+
+      let deltaCATime = date - firstCFTime
+      
+      self.gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
+
+      self.gameManager.checkedAnswer(button: .left)
+    }
     return button
   }()
   
-  private lazy var rightButton: UIButton = {
-    let button = UIButton()
+  private lazy var rightButton: CustomButton = {
+    let button = CustomButton()
     button.translatesAutoresizingMaskIntoConstraints = false
     button.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle(">", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.addTarget(self, action: #selector(rightButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
+    button.closureDate = { [weak self] date in
+      guard let self = self, let firstCFTime = self.firstCFTime, let firstDate = self.firstDate else { return }
+
+      let deltaCATime = date - firstCFTime
+
+      self.gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
+
+      self.gameManager.checkedAnswer(button: .right)
+    }
     return button
   }()
 
@@ -226,24 +242,6 @@ class FlankerView: UIView {
       finishView.topAnchor.constraint(equalTo: self.topAnchor),
       finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     ])
-  }
-
-  @objc func leftButtonAction(sender: UIButton!) {
-    let currentMediaTime = CACurrentMediaTime()
-
-    let deltaCATime = currentMediaTime - firstCFTime
-
-    gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
-    gameManager.checkedAnswer(button: .left)
-  }
-
-  @objc func rightButtonAction(sender: UIButton!) {
-    let currentMediaTime = CACurrentMediaTime()
-
-    let deltaCATime = currentMediaTime - firstCFTime
-
-    gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
-    gameManager.checkedAnswer(button: .right)
   }
 }
 
