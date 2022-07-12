@@ -24,3 +24,10 @@ export const setActivityFlowOrderIndex = (data) => {
     payload: data,
   })
 }
+
+export const setActivityFlowOrderIndexList = (data) => {
+  return ({
+    type: "SET_ACTIVITY_FLOW_INDEX_ORDER_LIST",
+    payload: data,
+  })
+}

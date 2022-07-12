@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import packageJson from '../../package.json';
 import config from '../config';
 import { encryptData } from '../services/encryption';
-import { evaluateCumulatives, getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
+import { getSubScaleResult, getValuesFromResponse, getFinalSubScale } from '../services/scoring';
 import { updateTrackerAggregation, getTokenSummary } from '../services/tokens';
 import { getAlertsFromResponse } from '../services/alert';
 import { decryptData } from "../services/encryption";

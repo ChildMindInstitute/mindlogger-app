@@ -162,6 +162,7 @@ class Activity extends React.Component {
       setSelected,
       currentApplet,
       lastResponseTime,
+      orderIndex,
     } = this.props;
     const activity = this.state.visibleAct;
     const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
@@ -239,7 +240,16 @@ class Activity extends React.Component {
         this.updateStore();
       }
 
-      if (next === -1 && activity.compute && !activity.summaryDisabled && !isSummaryScreen) {
+      const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
+
+      if (
+        next === -1 &&
+        !isSummaryScreen &&
+        (
+          flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
+          !flow && !activity.summaryDisabled && activity.reports?.length
+        )
+      ) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(activity, true);
       } else {
@@ -345,6 +355,7 @@ class Activity extends React.Component {
       setSplashScreen,
       setCurrentScreen,
       isSplashScreen,
+      orderIndex,
     } = this.props;
 
     const { isSummaryScreen } = this.state;
@@ -421,11 +432,16 @@ class Activity extends React.Component {
       }
     }
     this.setState({ isContentError: false });
+
+    const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
+
     if (
       next === -1 &&
-      activity.compute &&
-      !activity.summaryDisabled &&
-      !isSummaryScreen
+      !isSummaryScreen &&
+      (
+        flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
+        !flow && !activity.summaryDisabled && activity.reports?.length
+      )
     ) {
       this.setState({ isSummaryScreen: true });
       setSummaryScreen(activity, true);
@@ -493,6 +509,7 @@ class Activity extends React.Component {
       currentScreen,
       appStatus,
       isSplashScreen,
+      orderIndex,
     } = this.props;
 
     const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
@@ -591,7 +608,12 @@ class Activity extends React.Component {
           />
         )}
         {!!isSummaryScreen && (
-          <ActivitySummary responses={responses} activity={activity} />
+          <ActivitySummary
+            responses={responses}
+            activity={activity}
+            flow={currentResponse.activity.isActivityFlow ? currentResponse.activity : null}
+            orderIndex={orderIndex}
+          />
         )}
         {!!isSplashScreen && (
           <ActivitySplash activity={activity} />

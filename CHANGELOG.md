@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.36] - 2022-07-11
+- Fix Markdown HTML issue
+- Fix report not shown after activity completion
+- Fix refreshing stops after reordering activities on dashboard
+- Add adroid warning in applet builder of flanker
+
 ## [0.21.35] - 2022-07-10
 - Fix app carsh issue
 - Fix back button in interim screen
