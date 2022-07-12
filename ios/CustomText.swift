@@ -11,11 +11,12 @@ import Foundation
 class CustomText: UILabel {
   var closureDate: ((CFTimeInterval) -> Void)? = nil
 
-  override func layerWillDraw(_ layer: CALayer) {
-    if #available(iOS 10.0, *) {
-      super.layerWillDraw(layer)
-    }
+  override func draw(_ rect: CGRect) {
     let date = CACurrentMediaTime()
+    print("Marker: layerWillDraw: time captured: \(date)")
     closureDate?(date)
+    if #available(iOS 10.0, *) {
+      super.draw(rect)
+    }
   }
 }

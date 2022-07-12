@@ -19,7 +19,10 @@ class FlankerView: UIView {
     label.font = .systemFont(ofSize: 50.0, weight: .regular)
     label.text = "-----"
     label.closureDate = { date in
-      guard let typeTimeStamp = self.typeTimeStamp else { return }
+      guard let typeTimeStamp = self.typeTimeStamp else {
+        print("Marker: Who is here?")
+        return
+      }
       self.testStartMediaTime = date
     }
     return label
@@ -43,7 +46,10 @@ class FlankerView: UIView {
     imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 5.0
     imageView.closureDate = { date in
-      guard let typeTimeStamp = self.typeTimeStamp else { return }
+      guard let typeTimeStamp = self.typeTimeStamp else {
+        print("Marker: Who is here 2?")
+        return
+      }
       self.testStartMediaTime = date
     }
     return imageView
@@ -124,7 +130,6 @@ class FlankerView: UIView {
   @objc var onUpdate: RCTDirectEventBlock?
 
   var testStartMediaTime: CFTimeInterval?
-
   var firstDate: Date!
   var firstCFTime: CFTimeInterval!
 
@@ -138,7 +143,6 @@ class FlankerView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
-    createDisplayLink()
     firstDate = Date()
     firstCFTime = CACurrentMediaTime()
     setupConstraint()
@@ -153,42 +157,6 @@ class FlankerView: UIView {
   required init?(coder: NSCoder) {
     super.init(coder: coder)
   }
-
-  func createDisplayLink() {
-    displayLink = CADisplayLink(target: self, selector: #selector(step))
-    displayLink?.isPaused = true
-    displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
-  }
-
-  @objc func step(displaylink: CADisplayLink) {
-    guard let displayLink = displayLink, let testStart = testStartMediaTime, let typeTimeStamp = typeTimeStamp else { return }
-    if #available(iOS 10.0, *) {
-      let delta = displayLink.timestamp - testStart
-      if delta < 0 { return }
-      if delta < displayLink.duration {
-        self.displayLink?.isPaused = true
-
-        let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
-        let originDelta = displayLink.targetTimestamp - testStart
-        let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
-
-        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
-        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
-
-      } else {
-        self.displayLink?.isPaused = true
-
-        let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
-        let originDelta = displayLink.timestamp - testStart
-        let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
-
-        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
-        self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
-
-      }
-    }
-  }
-
 
   func parameterGame() {
     DispatchQueue.main.async {
@@ -243,6 +211,50 @@ class FlankerView: UIView {
       finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
     ])
   }
+
+
+  private var displayLinkNew: CADisplayLink?
+  private var startTime = 0.0
+  private let animationLength = 5.0
+
+  func startDisplayLink() {
+
+      stopDisplayLink() /// make sure to stop a previous running display link
+      startTime = CACurrentMediaTime() // reset start time
+
+      /// create displayLink and add it to the run-loop
+      let displayLinkNew = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+      displayLinkNew.add(to: .main, forMode: .common)
+      self.displayLinkNew = displayLinkNew
+  }
+
+  @objc func displayLinkDidFire(_ displayLink: CADisplayLink) {
+    guard let displayLinkNew = displayLinkNew, let testStart = testStartMediaTime, let typeTimeStamp = typeTimeStamp else {
+      print("Marker: step(displaylink: CADisplayLink): guard")
+      return
+    }
+
+    if #available(iOS 10.0, *) {
+      print("Marker: global displayLink: timestamp \(displayLinkNew.timestamp)")
+    print("Marker: global displayLink: timestamp \(displayLink.timestamp)")
+    print("Marker: global displayLink: targetTimestamp \(displayLink.targetTimestamp)")
+
+      stopDisplayLink()
+      let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
+      let originDelta = displayLink.targetTimestamp - testStart
+      let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
+
+      self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
+      self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
+      self.testStartMediaTime = nil
+    }
+  }
+
+  /// invalidate display link if it's non-nil, then set to nil
+  func stopDisplayLink() {
+    displayLinkNew?.invalidate()
+    displayLinkNew = nil
+  }
 }
 
 extension FlankerView: GameManagerProtocol {
@@ -261,7 +273,10 @@ extension FlankerView: GameManagerProtocol {
     textLabel.text = text
     textLabel.textColor = color
     textLabel.setNeedsDisplay()
-    displayLink?.isPaused = false
+    textLabel.layoutSubviews()
+    startDisplayLink()
+    let time = CACurrentMediaTime()
+    print("Marker: self.displayLink?.isPaused = false: \(time)")
     textLabel.isHidden = false
     fixationImage.isHidden = true
   }
@@ -323,7 +338,10 @@ extension FlankerView: GameManagerProtocol {
       typeTimeStamp = typeTime
       textLabel.isHidden = true
       textLabel.setNeedsDisplay()
-      displayLink?.isPaused = false
+      textLabel.layoutSubviews()
+      startDisplayLink()
+      let time = CACurrentMediaTime()
+      print("Marker: self.displayLink?.isPaused = false: \(time)")
       fixationImage.isHidden = false
       fixationImage.loadImageWithUrl(url)
     }
