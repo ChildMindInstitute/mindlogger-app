@@ -125,6 +125,7 @@ const REPORTS = "reprolib:terms/reports";
 const PRINT_ITEMS = "reprolib:terms/printItems";
 const CONDITIONALS = "reprolib:terms/conditionals";
 const FLAG_SCORE = "reprolib:terms/flagScore";
+const ACTIVITY_TYPE = "reprolib:terms/activityType";
 
 export const ORDER = "reprolib:terms/order";
 
@@ -717,6 +718,7 @@ const transformPureActivity = (activityJson) => {
     notification,
     info,
     reports,
+    activityType: _.get(activityJson, [ACTIVITY_TYPE, 0, '@value']),
   };
 };
 

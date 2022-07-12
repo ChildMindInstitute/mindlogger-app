@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Image } from 'react-native';
-import { Icon } from 'native-base';
+import { View, StyleSheet, Image, Platform } from 'react-native';
+import { Icon, Body } from 'native-base';
 import TouchBox from '../core/TouchBox';
 import { SubHeading, NotificationDot, BodyText, LittleHeading } from '../core';
 import ActivityDueDate from './ActivityDueDate';
@@ -74,9 +74,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended, orderIndex }) => {
+const ActivityRow = ({ applet, activity, disabled, onPress, onLongPress, isRecommended, orderIndex }) => {
   const isActivityFlow = activity.isActivityFlow ? true : false;
   const activityOrder = orderIndex[activity.id] ? orderIndex[activity.id] : 0;
+
+  const activityData = activity.isActivityFlow ? applet.activities[activityOrder] : activity;
 
   if (activity.isHeader === true) {
 
@@ -144,6 +146,17 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended, 
                 {isActivityFlow ? activity.description : activity.description.en}
               </BodyText>
             ) || <></>}
+            {Platform.OS == 'android' && activityData.activityType == 'FLANKER' && (
+              <BodyText
+                style={{
+                  fontFamily: theme.fontFamily,
+                  color: '#FF4649',
+                  marginTop: 15
+                }}
+              >
+                {'*The timestamps collected for an android are not as accurate as iOS devices.'}
+              </BodyText>
+            ) || <></>}
             <ActivityDueDate activity={activity} />
             <TimedActivity activity={activity} />
             {/* <Hyperlink
@@ -170,6 +183,7 @@ const ActivityRow = ({ activity, disabled, onPress, onLongPress, isRecommended, 
 
 ActivityRow.propTypes = {
   activity: PropTypes.object.isRequired,
+  applet: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   onPress: PropTypes.func.isRequired,
   onLongPress: PropTypes.func.isRequired,
