@@ -106,15 +106,27 @@ class Activity extends React.Component {
   }
 
   componentDidMount() {
-    const { isSummaryScreen, currentResponse, currentScreen, itemVisibility } = this.props;
+    const { isSummaryScreen, isSplashScreen, currentResponse, currentScreen, itemVisibility } = this.props;
     const { activity, responses } = currentResponse;
-    const visibleAct = currentResponse.activity.isActivityFlow ? this.getActivityData() : currentResponse.activity;
+    const visibleAct = activity.isActivityFlow ? this.getActivityData() : activity;
     const idleTime = this.getIdleTime();
+
+    if (
+      activity.isActivityFlow &&
+      isSplashScreen === true &&
+      visibleAct.splash &&
+      visibleAct.splash.en &&
+      currentScreen === 0
+    ) {
+      setSplashScreen(activity, visibleAct.splash.en);
+    } else {
+      setSplashScreen(activity, false);
+    }
 
     this.setState({
       isSummaryScreen,
       idleTime,
-      hasSplashScreen: activity.splash && activity.splash.en && currentScreen === 0 && !isSummaryScreen,
+      hasSplashScreen: visibleAct.splash && visibleAct.splash.en && currentScreen === 0 && !isSummaryScreen,
       responses,
       visibleAct,
       visibility: itemVisibility
@@ -346,7 +358,6 @@ class Activity extends React.Component {
       setCurrentScreen,
       isSplashScreen,
     } = this.props;
-
     const { isSummaryScreen } = this.state;
     const activity = this.state.visibleAct;
     const screen = activity.items[currentScreen].variableName;
@@ -397,7 +408,7 @@ class Activity extends React.Component {
 
     if (isSplashScreen) {
       let activityObj = currentResponse.activity;
-      setSplashScreen(activity, false);
+      setSplashScreen(activityObj, false);
       setCurrentScreen(activityObj.event ? activityObj.id + activityObj.event.id : activityObj.id, currentScreen)
       return;
     }
