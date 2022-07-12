@@ -39,8 +39,6 @@ export const getScoreFromResponse = (item, value) => {
       if (option && option.score) {
         totalScore += option.score;
       }
-    } else {
-
     }
   }
 
@@ -262,97 +260,67 @@ export const getFinalSubScale = (responses, items, isAverage, lookupTable) => {
   }
 }
 
-export const evaluateCumulatives = (responses, activity) => {
-  if (!activity.messages || !activity.compute) return { cumActivities: [] };
-  const parser = new Parser({
-    logical: true,
-    comparison: true,
-  });
+export const evaluateReports = (responses, activity) => {
+  const scores = {}, maxScores = {};
 
-  let scores = [],
-    maxScores = [];
-  for (let i = 0; i < activity.items.length; i++) {
-    if (!activity.items[i] || !responses[i]) continue;
+  for (let i = 0; i < responses.length; i++) {
+    const item = activity.items[i];
 
-    let score = getScoreFromResponse(activity.items[i], responses[i]);
-    scores.push(score);
-
-    maxScores.push(getMaxScore(activity.items[i]));
+    if (responses[i]) {
+      scores[item.variableName] = getScoreFromResponse(item, responses[i].value);
+      maxScores[item.variableName] = getMaxScore(item);
+    }
   }
 
-  const cumulativeScores = activity.compute && activity.compute.reduce((accumulator, itemCompute) => {
-    return {
-      ...accumulator,
-      [itemCompute.variableName.trim().replace(/[\s\/]/g, "__")]: evaluateScore(
-        itemCompute.jsExpression,
-        activity.items,
-        scores
-      ),
-    };
-  }, {});
+  const result = [];
+  for (const report of activity.reports) {
+    if (report.dataType === 'score') {
+      const variableNames = report.jsExpression.split('+').map(name => name.trim());
 
-  const cumulativeMaxScores = activity.compute && activity.compute.reduce((accumulator, itemCompute) => {
-    return {
-      ...accumulator,
-      [itemCompute.variableName.trim().replace(/[\s\/]/g, "__")]: evaluateScore(
-        itemCompute.jsExpression,
-        activity.items,
-        maxScores
-      ),
-    };
-  }, {});
-
-  const reportMessages = [];
-  let cumActivities = [], nonHiddenCumActivities = [];
-
-  activity.messages.forEach(async (msg, i) => {
-    const { jsExpression, message, outputType, nextActivity, hideActivity } = msg;
-    const exprArr = jsExpression.split(/[><]/g);
-    const variableName = exprArr[0];
-    const exprValue = parseFloat(exprArr[1].split(" ")[1]);
-    const category = variableName.trim().replace(/[\s\/]/g, "__");
-    const scoreCategory = replaceItemVariableWithName(category, activity, responses).replace(/\s/g, '__');
-    const variableScores = {
-      [scoreCategory]:
-        outputType == "percentage"
-          ? Math.round(
-            cumulativeMaxScores[category] ? (cumulativeScores[category] * 100) / cumulativeMaxScores[category] : 0
-          )
-          : cumulativeScores[category],
-    };
-
-    const expr = parser.parse(scoreCategory + jsExpression.substr(variableName.length));    
-
-    if (expr.evaluate(variableScores)) {
-      if (nextActivity && nextActivity !== activity.name.en) {
-        if (hideActivity || hideActivity === undefined)
-          cumActivities.push(nextActivity);
-        else
-          nonHiddenCumActivities.push(nextActivity);
+      let score = 0, maxScore = 0;
+      for (const name of variableNames) {
+        score += scores[name] || 0;
+        maxScore += maxScores[name] || 0;
       }
 
-      const compute = activity.compute && activity.compute.find((itemCompute) => itemCompute.variableName.trim() == variableName.trim());
+      let reportScore = 0;
+      switch (report.outputType) {
+        case 'cumulative':
+          reportScore = score;
+          break;
+        case 'percentage':
+          reportScore = Number(maxScore ? 0 : score / maxScore).toFixed(2);
+          break;
+        case 'average':
+          reportScore = score / variableNames.length;
+          break;
+      }
 
-      reportMessages.push({
-        category: scoreCategory,
-        message: replaceItemVariableWithName(message, activity, responses),
-        score: variableScores[scoreCategory] + (outputType == "percentage" ? "%" : ""),
-        compute: {
-          ...compute,
-          description: replaceItemVariableWithName(compute.description, activity, responses)
-        },
-        jsExpression: jsExpression.substr(variableName.length),
-        scoreValue: cumulativeScores[category],
-        maxScoreValue: cumulativeMaxScores[category],
-        exprValue: outputType == "percentage" ? (exprValue * cumulativeMaxScores[category]) / 100 : exprValue,
-      });
+      for (const conditional of report.conditionals) {
+        const expression = conditional.jsExpression
+          .replace(/&&/g, ' and ')
+          .replace(/\|\|/g, ' or ')
+          .replace('===', '==')
+          .replace('!==', '!=');
+
+        const parser = new Parser({
+          logical: true,
+          comparison: true,
+        });
+        const expr = parser.parse(expression);
+
+        if (expr.evaluate({ [report.variableName]: reportScore })) {
+          result.push({
+            label: report.label,
+            score: reportScore,
+            flagScore: conditional.flagScore || false
+          });
+
+          break;
+        }
+      }
     }
-  });
-
-  return {
-    reportMessages,
-    cumActivities,
-    scoreOverview: replaceItemVariableWithName(activity.scoreOverview, activity, responses),
-    nonHiddenCumActivities
   }
+
+  return result;
 }
