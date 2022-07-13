@@ -175,7 +175,7 @@ const ActivitySummary = (props) => {
                           { fontSize: 22 },
                         ]}
                       >
-                        { score.score }
+                        {Math.round(score.score * 10000) / 10000 }
                       </Text>
                     </View>
                   </View>
