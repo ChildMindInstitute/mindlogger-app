@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.21.37] - 2022-07-12
 - Fix decimal round in report score
+- Fix splash screen in activity flow
 
 ## [0.21.36] - 2022-07-11
 - Fix Markdown HTML issue
