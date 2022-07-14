@@ -289,7 +289,7 @@ export const evaluateReports = (responses, activity) => {
           reportScore = score;
           break;
         case 'percentage':
-          reportScore = Number(maxScore ? 0 : score / maxScore).toFixed(2);
+          reportScore = Number(!maxScore ? 0 : score / maxScore * 100).toFixed(2);
           break;
         case 'average':
           reportScore = score / variableNames.length;
