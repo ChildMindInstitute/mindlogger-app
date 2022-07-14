@@ -582,8 +582,6 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
         removeResponseInProgress(activity.event ? flowId + activity.event.id : flowId)
       );
 
-      const currentActOrderIndex = orderIndex[activity.id] || 0;
-
       if (!isFlow) {
         sendPDFExport(
           authToken,
@@ -596,11 +594,12 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
       }
 
       if (isFlow) {
-        const currentActName = activity.activityFlowOrder[currentActOrderIndex];
-        const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+        const nextOrderIndex = ((orderIndex[flowId] || 0) + 1) % activity.activityFlowOrder.length;
+        const currentActName = activity.activityFlowOrder[nextOrderIndex];
+        const nextActivity = applet.activities.find(act => act.name.en === currentActName);
 
         dispatch(
-          createResponseInProgress(applet.id, applet.activityFlows.find(flow => flow.id == flowId), subjectId, Date.now(), currentActivity.items)
+          createResponseInProgress(applet.id, applet.activityFlows.find(flow => flow.id == flowId), subjectId, Date.now(), nextActivity.items)
         );
         Actions.replace("take_act");
       }
@@ -686,7 +685,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
       item.inputs.minimumAccuracy &&
       correctCount * 100 >= totalCount * item.inputs.minimumAccuracy
     ) {
-      screenIndex = activity.items.findIndex(item => item.inputs.lastPractice);
+      screenIndex = activityObj.items.findIndex(item => item.inputs.lastPractice);
     }
   }
 
@@ -726,7 +725,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
         }
       });
 
-      Actions.push("activity_thanks");
+      Actions.replace("activity_thanks");
     }
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));

@@ -112,7 +112,7 @@ const ActivitySummary = (props) => {
       </View>
 
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
-        <View style={styles.alertList}>
+        <View style={alerts.length ? styles.alertList : {}}>
           {
             alerts.map((alert, index) => (
               <View
@@ -175,7 +175,7 @@ const ActivitySummary = (props) => {
                           { fontSize: 22 },
                         ]}
                       >
-                        { score.score }
+                        {Math.round(score.score * 10000) / 10000 }
                       </Text>
                     </View>
                   </View>
