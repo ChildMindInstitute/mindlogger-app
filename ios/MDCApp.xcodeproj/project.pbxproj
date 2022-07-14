@@ -32,6 +32,7 @@
 		8492B746283934DB0037B381 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8492B745283934DB0037B381 /* UIColor+Extension.swift */; };
 		84C01EA7284096BB003976F8 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C01EA6284096BB003976F8 /* ResultView.swift */; };
 		84C01EAB2840C418003976F8 /* UITextFild+Extesion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C01EAA2840C418003976F8 /* UITextFild+Extesion.swift */; };
+		84CB2C07287CF29B0062B588 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CB2C06287CF29B0062B588 /* CustomButton.swift */; };
 		84DD8A7428451BD000ED6593 /* FlankerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DD8A7328451BD000ED6593 /* FlankerModel.swift */; };
 		9CC43BDD87879BE43DB25969 /* libPods-MDCAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C82CD4141DB16CB89F29F093 /* libPods-MDCAppTests.a */; };
 		DC8B81AE4777D2E73F92C1DA /* libPods-MDCApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ED8993A971C234F472E9256 /* libPods-MDCApp.a */; };
@@ -98,6 +99,7 @@
 		8492B745283934DB0037B381 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		84C01EA6284096BB003976F8 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		84C01EAA2840C418003976F8 /* UITextFild+Extesion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextFild+Extesion.swift"; sourceTree = "<group>"; };
+		84CB2C06287CF29B0062B588 /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		84DD8A7328451BD000ED6593 /* FlankerModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FlankerModel.swift; path = MDCApp/Model/FlankerModel.swift; sourceTree = "<group>"; };
 		8C9CEC9943F54FB2913054E3 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		8ED8993A971C234F472E9256 /* libPods-MDCApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MDCApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -276,6 +278,7 @@
 				84168E24286B824B00B52084 /* ParameterGameManager.swift */,
 				84168E28286C389900B52084 /* ImageLoader.swift */,
 				847322802877FDE1007A54BF /* CustomText.swift */,
+				84CB2C06287CF29B0062B588 /* CustomButton.swift */,
 			);
 			name = Flanker;
 			sourceTree = "<group>";
@@ -349,7 +352,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				FC0DCDB6D40748D48FBDF760 /* Upload Debug Symbols to Sentry */,
+				/* FC0DCDB6D40748D48FBDF760 Upload Debug Symbols to Sentry */
 				963BED1F353AB912E0475BF7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -500,7 +503,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
+			/* shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n"; */
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -514,7 +518,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+			/* shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh"; */
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		7ADD440CD04349E3ECAB4139 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -722,6 +727,7 @@
 			files = (
 				84168E27286C253600B52084 /* UIImageView+Extensions.swift in Sources */,
 				8492B742283934740037B381 /* FlankerViewManager.swift in Sources */,
+				84CB2C07287CF29B0062B588 /* CustomButton.swift in Sources */,
 				84168E23286B7EBB00B52084 /* ParameterModel.swift in Sources */,
 				8492B741283934740037B381 /* FlankerView.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,

@@ -23,8 +23,7 @@ class ImageLoader: UIImageView {
       super.layerWillDraw(layer)
     }
     let date = CACurrentMediaTime()
-    guard let closureDate = closureDate else { return }
-    closureDate(date)
+    closureDate?(date)
   }
 
   func loadImageWithUrl(_ url: URL) {

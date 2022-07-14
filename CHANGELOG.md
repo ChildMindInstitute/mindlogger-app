@@ -4,9 +4,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.21.37] - 2022-07-12
+## [0.21.38] - 2022-07-13
 - Fix decimal round in report score
 - Fix splash screen in activity flow
+- Fix native flanker issue
 
 ## [0.21.36] - 2022-07-11
 - Fix Markdown HTML issue
