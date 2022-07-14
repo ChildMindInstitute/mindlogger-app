@@ -32,9 +32,11 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
               responseId = response.id;
             }
 
-            return {
-              value: response && response.value || null
+            if (response && response.value !== undefined) {
+              return { value: response.value };
             }
+
+            return { value: null }
           }
 
           return null;
