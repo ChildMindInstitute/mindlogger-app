@@ -99,38 +99,6 @@ class GameManager {
     startLogicTimer()
   }
 
-  func stopGame() {
-    guard let gameParameters = gameParameters else { return }
-    invalidateTimers()
-    if
-      let startFeedbackTimestamp = startFeedbackTimestamp,
-      let endFeedbackTimestamp = endFeedbackTimestamp,
-      gameParameters.showFeedback {
-
-      let resultTime = (Date(timeIntervalSince1970: endFeedbackTimestamp).timeIntervalSince1970 - Date(timeIntervalSince1970: startFeedbackTimestamp).timeIntervalSince1970) * 1000
-      let model = FlankerModel(rt: resultTime,
-                               stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
-                               button_pressed: nil,
-                               image_time: Date(timeIntervalSince1970: endFeedbackTimestamp).timeIntervalSince1970 * 1000,
-                               correct: nil,
-                               start_timestamp: 0,
-                               tag: "feedback",
-                               trial_index: countTest + 1,
-                               start_time: Date(timeIntervalSince1970: startFeedbackTimestamp).timeIntervalSince1970 * 1000,
-                               response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
-      resultManager.addStepData(data: model)
-    }
-
-    if gameParameters.showFixation {
-      if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
-        delegate?.updateFixations(image: image, isStart: false, typeTime: .fixations)
-      } else {
-        delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false, typeTime: .fixations)
-      }
-    }
-  }
-
   func startLogicTimer() {
     invalidateTimers()
     setDefaultText(isFirst: true)
@@ -141,8 +109,48 @@ class GameManager {
       switch type {
       case .fixations:
         startFixationsTimestamp = time
+
+        if
+          let startFeedbackTimestamp = startFeedbackTimestamp,
+          let endFeedbackTimestamp = endFeedbackTimestamp,
+          let gameParameters = gameParameters,
+          gameParameters.showFeedback {
+          let resultTime = (time - startFeedbackTimestamp) * 1000
+          let model = FlankerModel(rt: resultTime,
+                                   stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
+                                   button_pressed: nil,
+                                   image_time: endFeedbackTimestamp * 1000,
+                                   correct: nil,
+                                   start_timestamp: 0,
+                                   tag: "feedback",
+                                   trial_index: countTest,
+                                   start_time: startFeedbackTimestamp * 1000,
+                                   response_touch_timestamp: 0)
+          delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+          resultManager.addStepData(data: model)
+        }
       case .trial:
         startTrialTimestamp = time
+
+        if
+          let startFixationsTimestamp = startFixationsTimestamp,
+          let endFixationsTimestamp = endFixationsTimestamp,
+          let gameParameters = gameParameters,
+          gameParameters.showFixation {
+          let resultTime = (time - startFixationsTimestamp) * 1000
+          let model = FlankerModel(rt: resultTime,
+                                   stimulus: "<div class=\"mindlogger-fixation\">-----</div>",
+                                   button_pressed: nil,
+                                   image_time: endFixationsTimestamp * 1000,
+                                   correct: nil,
+                                   start_timestamp: 0,
+                                   tag: "fixation",
+                                   trial_index: countTest + 1,
+                                   start_time: startFixationsTimestamp * 1000,
+                                   response_touch_timestamp: 0)
+          delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+          resultManager.addStepData(data: model)
+        }
       case .feedback:
         startFeedbackTimestamp = time
       case .response: break
@@ -170,7 +178,7 @@ class GameManager {
       let endTrialTimestamp = endTrialTimestamp,
       let respondTouchButton = respondTouchButton
     else { return }
-    let resultTime = (Date(timeIntervalSince1970: respondTouchButton).timeIntervalSince1970 - Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970) * 1000
+    let resultTime = (respondTouchButton - startTrialTimestamp) * 1000
     arrayTimes.append(resultTime.convertToInt())
     delegate?.updateTime(time: String(format: "%.3f", resultTime))
     switch button {
@@ -180,13 +188,13 @@ class GameManager {
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
                                  button_pressed: "0",
-                                 image_time: Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 * 1000,
+                                 image_time: endTrialTimestamp * 1000,
                                  correct: true,
                                  start_timestamp: 0,
                                  tag: Constants.tag,
                                  trial_index: countTest + 1,
-                                 start_time: Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970 * 1000,
-                                 response_touch_timestamp: Date(timeIntervalSince1970: respondTouchButton).timeIntervalSince1970 * 1000)
+                                 start_time: startTrialTimestamp * 1000,
+                                 response_touch_timestamp: respondTouchButton * 1000)
 
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
@@ -198,13 +206,13 @@ class GameManager {
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
                                  button_pressed: "0",
-                                 image_time: Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 * 1000,
+                                 image_time: endTrialTimestamp * 1000,
                                  correct: false,
                                  start_timestamp: 0,
                                  tag: Constants.tag,
                                  trial_index: countTest + 1,
-                                 start_time: Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970 * 1000,
-                                 response_touch_timestamp: Date(timeIntervalSince1970: respondTouchButton).timeIntervalSince1970 * 1000)
+                                 start_time: startTrialTimestamp * 1000,
+                                 response_touch_timestamp: respondTouchButton * 1000)
 
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
@@ -219,13 +227,13 @@ class GameManager {
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
                                  button_pressed: "1",
-                                 image_time: Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 * 1000,
+                                 image_time: endTrialTimestamp * 1000,
                                  correct: true,
                                  start_timestamp: 0,
                                  tag: Constants.tag,
                                  trial_index: countTest + 1,
-                                 start_time: Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970 * 1000,
-                                 response_touch_timestamp: Date(timeIntervalSince1970: respondTouchButton).timeIntervalSince1970 * 1000)
+                                 start_time: startTrialTimestamp * 1000,
+                                 response_touch_timestamp: respondTouchButton * 1000)
 
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
@@ -237,13 +245,13 @@ class GameManager {
         let model = FlankerModel(rt: resultTime,
                                  stimulus: text,
                                  button_pressed: "1",
-                                 image_time: Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 * 1000,
+                                 image_time: endTrialTimestamp * 1000,
                                  correct: false,
                                  start_timestamp: 0,
                                  tag: Constants.tag,
                                  trial_index: countTest + 1,
-                                 start_time: Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970 * 1000,
-                                 response_touch_timestamp: Date(timeIntervalSince1970: respondTouchButton).timeIntervalSince1970 * 1000)
+                                 start_time: startTrialTimestamp * 1000,
+                                 response_touch_timestamp: respondTouchButton * 1000)
 
         resultManager.addStepData(data: model)
         delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
@@ -264,31 +272,11 @@ class GameManager {
 
   @objc func setDefaultText(isFirst: Bool) {
     guard let gameParameters = gameParameters else { return }
-    if
-      let startFeedbackTimestamp = startFeedbackTimestamp,
-      let endFeedbackTimestamp = endFeedbackTimestamp,
-      gameParameters.showFeedback,
-      !isFirst {
 
-      let resultTime = (Date(timeIntervalSince1970: endFeedbackTimestamp).timeIntervalSince1970 - Date(timeIntervalSince1970: startFeedbackTimestamp).timeIntervalSince1970) * 1000
-      let model = FlankerModel(rt: resultTime,
-                               stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
-                               button_pressed: nil,
-                               image_time: Date(timeIntervalSince1970: endFeedbackTimestamp).timeIntervalSince1970 * 1000,
-                               correct: nil,
-                               start_timestamp: 0,
-                               tag: "feedback",
-                               trial_index: countTest + 1,
-                               start_time: Date(timeIntervalSince1970: startFeedbackTimestamp).timeIntervalSince1970 * 1000,
-                               response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
-      resultManager.addStepData(data: model)
-      countTest += 1
-    } else if !isFirst, !gameParameters.showFeedback {
+    if !isFirst {
       countTest += 1
     }
-    if isEndGame() { return }
-    invalidateTimers()
+
 
     if gameParameters.showFixation {
       if let image = URL(string: gameParameters.fixation), gameParameters.fixation.contains("https") {
@@ -298,6 +286,8 @@ class GameManager {
       }
     }
 
+    if isEndGame() { return }
+    invalidateTimers()
     updateButtonTitle()
 
     if gameParameters.showFixation {
@@ -309,24 +299,6 @@ class GameManager {
 
   @objc func setText() {
     guard let gameParameters = gameParameters else { return }
-    if
-      let startFixationsTimestamp = startFixationsTimestamp,
-      let endFixationsTimestamp = endFixationsTimestamp,
-      gameParameters.showFixation {
-      let resultTime = (Date(timeIntervalSince1970: endFixationsTimestamp).timeIntervalSince1970 - Date(timeIntervalSince1970: startFixationsTimestamp).timeIntervalSince1970) * 1000
-      let model = FlankerModel(rt: resultTime,
-                               stimulus: "<div class=\"mindlogger-fixation\">-----</div>",
-                               button_pressed: nil,
-                               image_time: Date(timeIntervalSince1970: endFixationsTimestamp).timeIntervalSince1970 * 1000,
-                               correct: nil,
-                               start_timestamp: 0,
-                               tag: "fixation",
-                               trial_index: countTest + 1,
-                               start_time: Date(timeIntervalSince1970: startFixationsTimestamp).timeIntervalSince1970 * 1000,
-                               response_touch_timestamp: 0)
-      delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
-      resultManager.addStepData(data: model)
-    }
 
     delegate?.setEnableButton(isEnable: true)
     text = gameParameters.trials[countTest].stimulus.en
@@ -337,9 +309,7 @@ class GameManager {
       delegate?.updateText(text: text, color: .black, font: Constants.bigFont, isStart: true, typeTime: .trial)
     }
 
-    if gameParameters.showFeedback {
-      timeResponse = Timer.scheduledTimer(timeInterval: gameParameters.trialDuration / 1000, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
-    }
+    timeResponse = Timer.scheduledTimer(timeInterval: gameParameters.trialDuration / 1000, target: self, selector: #selector(self.timeResponseFailed), userInfo: nil, repeats: false)
   }
 
   @objc func timeResponseFailed() {
@@ -355,18 +325,18 @@ class GameManager {
       let endTrialTimestamp = endTrialTimestamp
     else { return }
 
-    let resultTime = (Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 - Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970) * 1000
+    let resultTime = (endTrialTimestamp - startTrialTimestamp) * 1000
     arrayTimes.append(resultTime.convertToInt())
 
     let model = FlankerModel(rt: resultTime,
                              stimulus: text,
                              button_pressed: nil,
-                             image_time: Date(timeIntervalSince1970: endTrialTimestamp).timeIntervalSince1970 * 1000, // має намалювати
+                             image_time: endTrialTimestamp * 1000, // має намалювати
                              correct: false,
                              start_timestamp: 0, // вже намальовано
                              tag: Constants.tag,
                              trial_index: countTest + 1,
-                             start_time: Date(timeIntervalSince1970: startTrialTimestamp).timeIntervalSince1970 * 1000,
+                             start_time: startTrialTimestamp * 1000,
                              response_touch_timestamp: 0)
 
     resultManager.addStepData(data: model)
@@ -395,8 +365,8 @@ private extension GameManager {
     if countTest == gameParameters.trials.count {
       let sumArray = arrayTimes.reduce(0, +)
       let avrgArray = sumArray / arrayTimes.count
-      delegate?.updateText(text: gameParameters.fixation, color: .black, font: Constants.bigFont, isStart: false, typeTime: .fixations)
       let procentsCorrect = Float(correctAnswers) / Float(countAllGame) * 100
+      setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: true, type: .fixations)
       delegate?.resultTest(avrgTime: avrgArray, procentCorrect: Int(procentsCorrect), data: nil, dataArray: resultManager.oneGameDataResult, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       clearData()
       return true

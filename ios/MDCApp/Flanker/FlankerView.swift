@@ -19,9 +19,11 @@ class FlankerView: UIView {
     label.font = .systemFont(ofSize: 50.0, weight: .regular)
     label.text = "-----"
     label.closureDate = { date in
-      guard let typeTimeStamp = self.typeTimeStamp else { return }
-      self.testStart = date
-      self.gameManager.setEndTimeViewingImage(time: date, isStart: true, type: typeTimeStamp)
+      guard let typeTimeStamp = self.typeTimeStamp else {
+        print("Marker: Who is here?")
+        return
+      }
+      self.testStartMediaTime = date
     }
     return label
   }()
@@ -44,42 +46,60 @@ class FlankerView: UIView {
     imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 5.0
     imageView.closureDate = { date in
-      guard let typeTimeStamp = self.typeTimeStamp else { return }
-      self.testStart = date
-      self.gameManager.setEndTimeViewingImage(time: date, isStart: true, type: typeTimeStamp)
+      guard let typeTimeStamp = self.typeTimeStamp else {
+        print("Marker: Who is here 2?")
+        return
+      }
+      self.testStartMediaTime = date
     }
     return imageView
   }()
 
-  private lazy var leftButton: UIButton = {
-    let button = UIButton()
+  private lazy var leftButton: CustomButton = {
+    let button = CustomButton()
     button.translatesAutoresizingMaskIntoConstraints = false
     button.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle("<", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.addTarget(self, action: #selector(leftButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
+    button.closureDate = { [weak self] date in
+      guard let self = self, let firstCFTime = self.firstCFTime, let firstDate = self.firstDate else { return }
+
+      let deltaCATime = date - firstCFTime
+      
+      self.gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
+
+      self.gameManager.checkedAnswer(button: .left)
+    }
     return button
   }()
   
-  private lazy var rightButton: UIButton = {
-    let button = UIButton()
+  private lazy var rightButton: CustomButton = {
+    let button = CustomButton()
     button.translatesAutoresizingMaskIntoConstraints = false
     button.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     button.backgroundColor = UIColor(red: 37, green: 95, blue: 158)
     button.layer.cornerRadius = 5.0
     button.setTitle(">", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.addTarget(self, action: #selector(rightButtonAction), for: .touchDown)
     button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
+    button.closureDate = { [weak self] date in
+      guard let self = self, let firstCFTime = self.firstCFTime, let firstDate = self.firstDate else { return }
+
+      let deltaCATime = date - firstCFTime
+
+      self.gameManager.setEndTimeViewingImage(time: firstDate.timeIntervalSince1970 + deltaCATime, isStart: false, type: .response)
+
+      self.gameManager.checkedAnswer(button: .right)
+    }
     return button
   }()
 
@@ -109,7 +129,11 @@ class FlankerView: UIView {
   @objc var onEndGame: RCTBubblingEventBlock?
   @objc var onUpdate: RCTDirectEventBlock?
 
-  var testStart: CFTimeInterval?
+  var testStartMediaTime: CFTimeInterval?
+  var firstDate: Date!
+  var firstCFTime: CFTimeInterval!
+
+  var isFirstScreen = true
 
   @objc var dataJson: NSString? {
     didSet {
@@ -119,6 +143,8 @@ class FlankerView: UIView {
 
   override init(frame: CGRect) {
     super.init(frame: frame)
+    firstDate = Date()
+    firstCFTime = CACurrentMediaTime()
     setupConstraint()
     timeLabel.isHidden = true
     finishView.isHidden = true
@@ -132,30 +158,8 @@ class FlankerView: UIView {
     super.init(coder: coder)
   }
 
-  func createDisplayLink() {
-    displayLink = CADisplayLink(target: self, selector: #selector(step))
-    displayLink?.isPaused = true
-    displayLink?.add(to: .current, forMode: RunLoop.Mode.default)
-  }
-
-  @objc func step(displaylink: CADisplayLink) {
-    guard let displayLink = displayLink, let testStart = testStart, let typeTimeStamp = typeTimeStamp else { return }
-    if #available(iOS 10.0, *) {
-      let delta = displayLink.timestamp - testStart
-      if delta < displaylink.duration {
-        self.displayLink?.isPaused = true
-        self.gameManager.setEndTimeViewingImage(time: displayLink.targetTimestamp, isStart: false, type: typeTimeStamp)
-      } else {
-        self.displayLink?.isPaused = true
-        self.gameManager.setEndTimeViewingImage(time: displayLink.timestamp, isStart: false, type: typeTimeStamp)
-      }
-    }
-  }
-
-
   func parameterGame() {
     DispatchQueue.main.async {
-      self.createDisplayLink()
       self.finishView.isHidden = true
       self.gameManager.parameterGame()
     }
@@ -208,14 +212,48 @@ class FlankerView: UIView {
     ])
   }
 
-  @objc func leftButtonAction(sender: UIButton!) {
-    gameManager.setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: false, type: .response)
-    gameManager.checkedAnswer(button: .left)
+
+  private var displayLinkNew: CADisplayLink?
+  private var startTime = 0.0
+  private let animationLength = 5.0
+
+  func startDisplayLink() {
+
+      stopDisplayLink() /// make sure to stop a previous running display link
+      startTime = CACurrentMediaTime() // reset start time
+
+      /// create displayLink and add it to the run-loop
+      let displayLinkNew = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+      displayLinkNew.add(to: .main, forMode: .common)
+      self.displayLinkNew = displayLinkNew
   }
 
-  @objc func rightButtonAction(sender: UIButton!) {
-    gameManager.setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: false, type: .response)
-    gameManager.checkedAnswer(button: .right)
+  @objc func displayLinkDidFire(_ displayLink: CADisplayLink) {
+    guard let displayLinkNew = displayLinkNew, let testStart = testStartMediaTime, let typeTimeStamp = typeTimeStamp else {
+      print("Marker: step(displaylink: CADisplayLink): guard")
+      return
+    }
+
+    if #available(iOS 10.0, *) {
+      print("Marker: global displayLink: timestamp \(displayLinkNew.timestamp)")
+    print("Marker: global displayLink: timestamp \(displayLink.timestamp)")
+    print("Marker: global displayLink: targetTimestamp \(displayLink.targetTimestamp)")
+
+      stopDisplayLink()
+      let testStartDeltaFromFirstCAMediaTime = testStart - firstCFTime
+      let originDelta = displayLink.targetTimestamp - testStart
+      let testStartTimeInterval = firstDate.timeIntervalSince1970 + testStartDeltaFromFirstCAMediaTime
+
+      self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
+      self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
+      self.testStartMediaTime = nil
+    }
+  }
+
+  /// invalidate display link if it's non-nil, then set to nil
+  func stopDisplayLink() {
+    displayLinkNew?.invalidate()
+    displayLinkNew = nil
   }
 }
 
@@ -235,7 +273,10 @@ extension FlankerView: GameManagerProtocol {
     textLabel.text = text
     textLabel.textColor = color
     textLabel.setNeedsDisplay()
-    displayLink?.isPaused = false
+    textLabel.layoutSubviews()
+    startDisplayLink()
+    let time = CACurrentMediaTime()
+    print("Marker: self.displayLink?.isPaused = false: \(time)")
     textLabel.isHidden = false
     fixationImage.isHidden = true
   }
@@ -297,7 +338,10 @@ extension FlankerView: GameManagerProtocol {
       typeTimeStamp = typeTime
       textLabel.isHidden = true
       textLabel.setNeedsDisplay()
-      displayLink?.isPaused = false
+      textLabel.layoutSubviews()
+      startDisplayLink()
+      let time = CACurrentMediaTime()
+      print("Marker: self.displayLink?.isPaused = false: \(time)")
       fixationImage.isHidden = false
       fixationImage.loadImageWithUrl(url)
     }
@@ -318,8 +362,8 @@ extension FlankerView: GameManagerProtocol {
       let dataArray = dataArray,
       let avrgTime = avrgTime,
       let procentCorrect = procentCorrect {
-      gameManager.stopGame()
       if isShowResults {
+        fixationImage.isHidden = true
         finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, minAccuracy: minAccuracy, isLast: isLast) {
           guard
             let jsonData = try? JSONEncoder().encode(dataArray),
