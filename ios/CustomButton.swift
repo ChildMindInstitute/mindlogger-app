@@ -19,5 +19,13 @@ class CustomButton: UIButton {
       closureDate?(CACurrentMediaTime())
     }
     super.touchesBegan(touches, with: event)
+    tintColor = .black
+    isSelected = true
+    setTitleColor(.gray, for: .normal)
+  }
+
+  override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    isSelected = false
+    setTitleColor(.white, for: .normal)
   }
 }

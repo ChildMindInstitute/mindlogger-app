@@ -325,10 +325,7 @@ class GameManager {
       let endTrialTimestamp = endTrialTimestamp
     else { return }
 
-    let resultTime = (endTrialTimestamp - startTrialTimestamp) * 1000
-    arrayTimes.append(resultTime.convertToInt())
-
-    let model = FlankerModel(rt: resultTime,
+    let model = FlankerModel(rt: 0.0,
                              stimulus: text,
                              button_pressed: nil,
                              image_time: endTrialTimestamp * 1000, // має намалювати

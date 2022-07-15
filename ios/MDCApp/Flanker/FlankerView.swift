@@ -23,7 +23,15 @@ class FlankerView: UIView {
         print("Marker: Who is here?")
         return
       }
-      self.testStartMediaTime = date
+      switch typeTimeStamp {
+      case .fixations:
+        self.testFixationMediaTime = date
+      case .trial:
+        self.testTrialMediaTime = date
+      case .feedback:
+        self.testFeedbackMediaTime = date
+      case .response: break
+      }
     }
     return label
   }()
@@ -43,14 +51,22 @@ class FlankerView: UIView {
     let imageView = ImageLoader()
     imageView.translatesAutoresizingMaskIntoConstraints = false
     imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 5.0
     imageView.closureDate = { date in
       guard let typeTimeStamp = self.typeTimeStamp else {
         print("Marker: Who is here 2?")
         return
       }
-      self.testStartMediaTime = date
+      switch typeTimeStamp {
+      case .fixations:
+        self.testFixationMediaTime = date
+      case .trial:
+        self.testTrialMediaTime = date
+      case .feedback:
+        self.testFeedbackMediaTime = date
+      case .response: break
+      }
+//      self.testStartMediaTime = date
     }
     return imageView
   }()
@@ -130,6 +146,9 @@ class FlankerView: UIView {
   @objc var onUpdate: RCTDirectEventBlock?
 
   var testStartMediaTime: CFTimeInterval?
+  var testFixationMediaTime: CFTimeInterval?
+  var testTrialMediaTime: CFTimeInterval?
+  var testFeedbackMediaTime: CFTimeInterval?
   var firstDate: Date!
   var firstCFTime: CFTimeInterval!
 
@@ -229,7 +248,17 @@ class FlankerView: UIView {
   }
 
   @objc func displayLinkDidFire(_ displayLink: CADisplayLink) {
-    guard let displayLinkNew = displayLinkNew, let testStart = testStartMediaTime, let typeTimeStamp = typeTimeStamp else {
+    var testStartImage: CFTimeInterval?
+    switch typeTimeStamp {
+    case .trial:
+      testStartImage = self.testTrialMediaTime
+    case .fixations:
+      testStartImage = self.testFixationMediaTime
+    case .feedback:
+      testStartImage = self.testFeedbackMediaTime
+    default: break
+    }
+    guard let displayLinkNew = displayLinkNew, let testStart = testStartImage, let typeTimeStamp = typeTimeStamp else {
       print("Marker: step(displaylink: CADisplayLink): guard")
       return
     }
@@ -247,6 +276,9 @@ class FlankerView: UIView {
       self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval, isStart: true, type: typeTimeStamp)
       self.gameManager.setEndTimeViewingImage(time: testStartTimeInterval + originDelta, isStart: false, type: typeTimeStamp)
       self.testStartMediaTime = nil
+      self.testTrialMediaTime = nil
+      self.testFixationMediaTime = nil
+      self.testFeedbackMediaTime = nil
     }
   }
 
@@ -337,8 +369,6 @@ extension FlankerView: GameManagerProtocol {
     if let url = image {
       typeTimeStamp = typeTime
       textLabel.isHidden = true
-      textLabel.setNeedsDisplay()
-      textLabel.layoutSubviews()
       startDisplayLink()
       let time = CACurrentMediaTime()
       print("Marker: self.displayLink?.isPaused = false: \(time)")
