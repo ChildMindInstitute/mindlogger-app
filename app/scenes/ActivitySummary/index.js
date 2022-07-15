@@ -36,7 +36,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   alertMessage: {
-    fontSize: 16
+    fontSize: 16,
+  },
+  alertsTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    marginBottom: 10
   },
   scoreMessages: {
     borderTopColor: '#E0E0E0',
@@ -114,16 +119,21 @@ const ActivitySummary = (props) => {
       <ScrollView scrollEnabled={true} style={styles.pageContainer}>
         <View style={alerts.length ? styles.alertList : {}}>
           {
+            alerts.length ? <Text style={styles.alertsTitle}>Alerts</Text> : <></>
+          }
+          {
             alerts.map((alert, index) => (
               <View
                 key={index}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 25 }}
               >
                 <Image
                   style={{ marginRight: 10 }}
                   source={alertMessageIcon}
                 />
-                <Text style={styles.alertMessage}>
+                <Text
+                  style={styles.alertMessage}
+                >
                   { alert }
                 </Text>
               </View>
