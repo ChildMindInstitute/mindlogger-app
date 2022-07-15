@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import moment from 'moment';
 import { exportPDF } from './network.js';
 
 export const sendPDFExport = (authToken, applet, activities, appletResponse, currentActivityId, flowId = null) => {
@@ -32,9 +33,11 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
               responseId = response.id;
             }
 
-            return {
-              value: response && response.value || null
+            if (response && response.value !== undefined) {
+              return { value: response.value };
             }
+
+            return { value: null }
           }
 
           return null;
@@ -43,10 +46,13 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
     }
 
     const encrypted = crypto.publicEncrypt(configs.publicEncryptionKey, Buffer.from(JSON.stringify(params)));
+    const now = moment().format('MM/DD/YYYY');
+
     exportPDF(
       configs.serverIp,
       authToken,
       encrypted.toString('base64'),
+      now,
       applet.id.split('/').pop(),
       flowId && flowId.split('/').pop(),
       currentActivityId.split('/').pop(),

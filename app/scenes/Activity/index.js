@@ -259,11 +259,11 @@ class Activity extends React.Component {
         !isSummaryScreen &&
         (
           flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-          !flow && !activity.summaryDisabled && activity.reports?.length
+          !flow && !activity.summaryDisabled
         )
       ) {
         this.setState({ isSummaryScreen: true });
-        setSummaryScreen(activity, true);
+        setSummaryScreen(currentResponse.activity, true);
       } else {
         if (isSummaryScreen) {
           this.setState({ isSummaryScreen: false });
@@ -342,7 +342,7 @@ class Activity extends React.Component {
 
     if (isSummaryScreen) {
       this.setState({ isSummaryScreen: false });
-      setSummaryScreen(visibleAct, false);
+      setSummaryScreen(currentResponse.activity, false);
       setSelected(false);
     } else {
       prevScreen();
@@ -451,15 +451,15 @@ class Activity extends React.Component {
       !isSummaryScreen &&
       (
         flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-        !flow && !activity.summaryDisabled && activity.reports?.length
+        !flow && !activity.summaryDisabled
       )
     ) {
       this.setState({ isSummaryScreen: true });
-      setSummaryScreen(activity, true);
+      setSummaryScreen(currentResponse.activity, true);
     } else {
       if (isSummaryScreen) {
         this.setState({ isSummaryScreen: false });
-        setSummaryScreen(activity, false);
+        setSummaryScreen(currentResponse.activity, false);
       }
 
       if (!this.completed) {

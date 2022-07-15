@@ -587,7 +587,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
           authToken,
           applet,
           applet.activities.filter(act => activity.activityFlowOrder.includes(act.name.en)),
-          currentAppletResponsesSelector(state),
+          currentAppletResponsesSelector(getState()),
           activity.id,
           flowId,
         );
@@ -613,7 +613,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
           authToken,
           applet,
           [activity],
-          currentAppletResponsesSelector(state),
+          currentAppletResponsesSelector(getState()),
           activity.id,
         );
       }

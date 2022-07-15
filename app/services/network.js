@@ -172,7 +172,7 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
 //   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
 // );
 
-export const exportPDF = (serverIP, authToken, responses, appletId, activityFlowId, activityId, responseId) => {
+export const exportPDF = (serverIP, authToken, responses, now, appletId, activityFlowId, activityId, responseId) => {
   const queryParams = objectToQueryParams({ appletId, activityFlowId, activityId, responseId });
   const url = serverIP + (serverIP.endsWith('/') ? '' : '/') + 'send-pdf-report';
 
@@ -184,7 +184,8 @@ export const exportPDF = (serverIP, authToken, responses, appletId, activityFlow
       token: authToken
     },
     body: JSON.stringify({
-      responses
+      responses,
+      now
     })
   })
 }
