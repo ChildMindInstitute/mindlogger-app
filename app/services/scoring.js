@@ -296,6 +296,7 @@ export const evaluateReports = (responses, activity) => {
           break;
       }
 
+      let flagScore = false;
       for (const conditional of report.conditionals) {
         const expression = conditional.jsExpression
           .replace(/&&/g, ' and ')
@@ -310,15 +311,15 @@ export const evaluateReports = (responses, activity) => {
         const expr = parser.parse(expression);
 
         if (expr.evaluate({ [report.variableName]: reportScore })) {
-          result.push({
-            label: report.label,
-            score: reportScore,
-            flagScore: conditional.flagScore || false
-          });
-
-          break;
+          flagScore = flagScore || conditional.flagScore;
         }
       }
+
+      result.push({
+        label: report.label,
+        score: reportScore,
+        flagScore
+      });
     }
   }
 
