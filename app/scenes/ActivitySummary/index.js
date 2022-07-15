@@ -117,10 +117,10 @@ const ActivitySummary = (props) => {
             alerts.map((alert, index) => (
               <View
                 key={index}
-                style={{ flexDirection: 'row', alignItems: 'center' }}
+                style={{ flexDirection: 'row', alignItems: 'flex-start', paddingRight: 15 }}
               >
                 <Image
-                  style={{ marginRight: 10 }}
+                  style={{ marginRight: 10, marginTop: 2 }}
                   source={alertMessageIcon}
                 />
                 <Text style={styles.alertMessage}>

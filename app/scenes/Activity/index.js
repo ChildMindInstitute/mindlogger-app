@@ -111,16 +111,17 @@ class Activity extends React.Component {
     const visibleAct = activity.isActivityFlow ? this.getActivityData() : activity;
     const idleTime = this.getIdleTime();
 
-    if (
-      activity.isActivityFlow &&
-      isSplashScreen === true &&
-      visibleAct.splash &&
-      visibleAct.splash.en &&
-      currentScreen === 0
-    ) {
-      setSplashScreen(activity, visibleAct.splash.en);
-    } else {
-      setSplashScreen(activity, false);
+    if (activity.isActivityFlow) {
+      if (
+        isSplashScreen === true &&
+        visibleAct.splash &&
+        visibleAct.splash.en &&
+        currentScreen === 0
+      ) {
+        setSplashScreen(activity, visibleAct.splash.en);
+      } else {
+        setSplashScreen(activity, false);
+      }
     }
 
     this.setState({
@@ -519,11 +520,10 @@ class Activity extends React.Component {
       authToken,
       currentScreen,
       appStatus,
-      isSplashScreen,
       orderIndex,
     } = this.props;
-
     const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
+    const isSplashScreen = this.props.isSplashScreen && hasSplashScreen;
 
     if (!currentResponse || !this.currentItem) {
       return <View />;
