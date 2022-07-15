@@ -91,7 +91,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
                   }}
                 />
                 <Text style={{ fontSize: 14, color: colors.grey }}>
-                  {`(${index + 1} of ${activityFlow.order?.length}) ${activityFlow.name}`}
+                  {`(${index + 2} of ${activityFlow.order?.length}) ${activityFlow.name}`}
                 </Text>
               </View>
             </View>
