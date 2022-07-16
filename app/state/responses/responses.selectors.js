@@ -108,7 +108,7 @@ export const itemVisiblitySelector = createSelector(
       return [];
     }
     const responses = current ? current.responses : [];
-    const activity = current ? current.activity : currentActivity;
+    const activity = (current && current.activity) ? current.activity : currentActivity;
     const applet = applets.find(applet => applet.id == activity.appletId);
     const responseTimes = {};
 

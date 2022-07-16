@@ -128,7 +128,7 @@ const ActivitySummary = (props) => {
                 style={{ flexDirection: 'row', alignItems: 'center', marginRight: 25 }}
               >
                 <Image
-                  style={{ marginRight: 10 }}
+                  style={{ marginRight: 10, marginTop: 2 }}
                   source={alertMessageIcon}
                 />
                 <Text
