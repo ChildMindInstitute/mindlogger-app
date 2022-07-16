@@ -598,8 +598,9 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
         const currentActName = activity.activityFlowOrder[nextOrderIndex];
         const nextActivity = applet.activities.find(act => act.name.en === currentActName);
 
+        const currentFlow = applet.activityFlows.find(flow => flow.id == flowId);
         dispatch(
-          createResponseInProgress(applet.id, applet.activityFlows.find(flow => flow.id == flowId), subjectId, Date.now(), nextActivity.items)
+          createResponseInProgress(applet.id, { ...currentFlow, event: activity.event }, subjectId, Date.now(), nextActivity.items)
         );
         Actions.replace("take_act");
       }

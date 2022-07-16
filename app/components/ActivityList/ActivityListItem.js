@@ -137,13 +137,13 @@ const ActivityRow = ({ applet, activity, disabled, onPress, onLongPress, isRecom
               }}>
               {isActivityFlow ? activity.order[activityOrder] : activity.name.en}
             </SubHeading>
-            {activity.description && (
+            {activityData.description && (
               <BodyText
                 style={{
                   opacity: (activity.status === 'scheduled' && !activity.event.data.timeout.access) ? 0.5 : 1,
                   fontFamily: theme.fontFamily
                 }}>
-                {isActivityFlow ? activity.description : activity.description.en}
+                {activityData.description.en}
               </BodyText>
             ) || <></>}
             {Platform.OS == 'android' && activityData.activityType == 'FLANKER' && (
