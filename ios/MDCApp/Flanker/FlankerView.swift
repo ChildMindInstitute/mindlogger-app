@@ -79,7 +79,6 @@ class FlankerView: UIView {
     button.layer.cornerRadius = 5.0
     button.setTitle("<", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
@@ -103,7 +102,6 @@ class FlankerView: UIView {
     button.layer.cornerRadius = 5.0
     button.setTitle(">", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: UIDevice.current.userInterfaceIdiom == .phone ? 25.0 : 35.0, weight: .regular)
-    button.setTitleColor(.gray, for: .highlighted)
     button.isEnabled = false
     button.contentHorizontalAlignment = .fill
     button.contentVerticalAlignment = .fill
