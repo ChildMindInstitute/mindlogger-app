@@ -990,6 +990,15 @@ export const transformApplet = (payload, currentApplets = null) => {
   for (let i = 0; i < applet.activities.length; i++) {
     const activity = applet.activities[i];
     const items = [...(activity.items || [])].sort(orderBySchema(activity.order));
+
+    if (
+      !activity.summaryDisabled &&
+      !activity.reports.some(report => report.dataType == 'score') &&
+      !items.some(item => item.valueConstraints?.responseAlert)
+    ) {
+      activity.summaryDisabled = true;
+    }
+
     applet.activities[i] = {
       ...activity,
       items

@@ -104,7 +104,7 @@ const ActivitySummary = (props) => {
     }
 
     setAlerts(alerts);
-    setReports(reports);
+    setReports(reports.filter(report => report.data.length > 0));
   }, []);
 
   return (
