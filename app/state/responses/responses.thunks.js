@@ -589,7 +589,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
           applet.activities.filter(act => act.id == activity.id),
           currentAppletResponsesSelector(getState()),
           activity.id,
-          flowId,
+          '',
         );
       } else if (!isFlow) {
         sendPDFExport(
