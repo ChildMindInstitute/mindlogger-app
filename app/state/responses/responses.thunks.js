@@ -582,7 +582,16 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
         removeResponseInProgress(activity.event ? flowId + activity.event.id : flowId)
       );
 
-      if (!isFlow) {
+      if (!activity.combineReports) {
+        sendPDFExport(
+          authToken,
+          applet,
+          applet.activities.filter(act => act.id == activity.id),
+          currentAppletResponsesSelector(getState()),
+          activity.id,
+          '',
+        );
+      } else if (!isFlow) {
         sendPDFExport(
           authToken,
           applet,

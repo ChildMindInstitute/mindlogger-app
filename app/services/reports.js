@@ -17,7 +17,7 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
 
     let responseId = null;
 
-    for (const activity of reportActivities) {
+    for (const activity of activities) {
       params.push({
         activityId: activity.id.split('/').pop(),
         data: activity.items.map(item => {
@@ -41,11 +41,19 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
           }
 
           return null;
-        })
+        }),
+        allowed: activity.allowExport
       })
     }
 
-    const encrypted = crypto.publicEncrypt(configs.publicEncryptionKey, Buffer.from(JSON.stringify(params)));
+    const encrypted = crypto.publicEncrypt(
+      configs.publicEncryptionKey,
+      Buffer.from(JSON.stringify(
+        params
+          .filter(param => param.allowed)
+          .map(param => ({ activityId: param.activityId, data: param.data }))
+      ))
+    );
     const now = moment().format('MM/DD/YYYY');
 
     exportPDF(
