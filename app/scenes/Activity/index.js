@@ -316,7 +316,7 @@ class Activity extends React.Component {
         this.props.currentApplet.id
       );
 
-      Actions.replace("activity_thanks")
+      Actions.replace("activity_flow_submit")
     }
   }
 
@@ -588,9 +588,9 @@ class Activity extends React.Component {
             }}
           />
         }
-        {(activity.event && activity.event.data.timedActivity.allow) &&
-          <ActivityTime
-            activity={activity}
+        {(currentResponse.activity.event && currentResponse.activity.event.data.timedActivity.allow) &&
+          <ActivityTime 
+            activity={currentResponse.activity}
             finishActivity={(activity) => {
               this.updateStore();
               this.props.finishActivity(activity);
