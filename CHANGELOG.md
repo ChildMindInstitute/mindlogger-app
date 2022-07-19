@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.43] - 2022-07-18
+- Fix ap crashing issue on interim screen after double tapping Submit buton
+- Fix admin report issue with email
+- Fix native flanker
+
 ## [0.21.42] - 2022-07-17
 - Fix activiy name is shown on the summary
 - Fix summary screen is shown on mobile app screen
