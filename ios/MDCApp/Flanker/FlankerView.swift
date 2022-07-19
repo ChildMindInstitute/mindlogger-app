@@ -315,13 +315,7 @@ extension FlankerView: GameManagerProtocol {
     print("Marker: self.displayLink?.isPaused = false: \(time)")
     textLabel.isHidden = false
     fixationImage.isHidden = true
-
-    if typeTime == .trial {
-      textLabel.isShowPixel = true
-    } else {
-      textLabel.isShowPixel = false
-      textLabel.hidePixel()
-    }
+    textLabel.isShowPixel = true
   }
 
   func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?, countButton: Int) {
@@ -385,12 +379,7 @@ extension FlankerView: GameManagerProtocol {
       print("Marker: self.displayLink?.isPaused = false: \(time)")
       fixationImage.isHidden = false
       fixationImage.loadImageWithUrl(url)
-      if typeTime == .trial {
-        fixationImage.isShowPixel = true
-      } else {
-        fixationImage.isShowPixel = false
-        fixationImage.hidePixel()
-      }
+      fixationImage.isShowPixel = true
     }
   }
 
