@@ -394,7 +394,7 @@ export const decryptAppletResponses = (applet, responses) => {
       }
 
       responses.responses[item] = responses.responses[item].filter(
-        (response) => response.value !== undefined && response.value !== null
+        (response) => response.value !== undefined
       );
       if (responses.responses[item].length === 0) {
         delete responses.responses[item];
