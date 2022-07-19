@@ -77,6 +77,8 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
+    var greyColors = ['#585858', '#696969', '#808080', '#989898', '#A9A9A9', '#C0C0C0', '#BEBEBE', '#D3D3D3', '#DCDCDC', '#F5F5F5'];
+    var randomColorIndex = Math.floor(Math.random() * 10);
 
     var new_html = '<div id="jspsych-html-keyboard-response-stimulus">'+trial.stimulus+'</div>';
 
@@ -98,6 +100,10 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       new_html += '<div class="' + classes + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     new_html += '</div>';
+
+    if (trial.choices.length > 1) {
+      new_html += '<div class="square" style="background-color:' + greyColors[randomColorIndex] + '"></div>';
+    }
 
     // draw
     display_element.innerHTML = new_html;
