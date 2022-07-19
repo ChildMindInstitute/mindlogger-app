@@ -129,15 +129,23 @@ class FlankerView: UIView {
     return stackView
   }()
 
+  private lazy var pixelView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+//    view.isHidden = true
+    return view
+  }()
+
   private lazy var finishView: ResultView = {
     let view = ResultView()
     view.translatesAutoresizingMaskIntoConstraints = false
     return view
   }()
+
   private let gameManager = GameManager()
   private var typeTimeStamp: TypeTimeStamps?
-  private var lastTimeStamp: Double?
-  private var displayLink: CADisplayLink?
+  private var displayLinkNew: CADisplayLink?
+  private var startTime = 0.0
   var typeResult: ButtonType = .ok
   var isLast: Bool = false
   @objc var onEndGame: RCTBubblingEventBlock?
@@ -149,8 +157,6 @@ class FlankerView: UIView {
   var testFeedbackMediaTime: CFTimeInterval?
   var firstDate: Date!
   var firstCFTime: CFTimeInterval!
-
-  var isFirstScreen = true
 
   @objc var dataJson: NSString? {
     didSet {
@@ -207,15 +213,17 @@ class FlankerView: UIView {
       timeLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 50),
       timeLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor),
 
-      textLabel.leftAnchor.constraint(equalTo: self.leftAnchor),
-      textLabel.rightAnchor.constraint(equalTo: self.rightAnchor),
-      textLabel.bottomAnchor.constraint(equalTo: leftButton.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? -60: -120),
-      textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? 60 : 120),
-
       fixationImage.leftAnchor.constraint(equalTo: self.leftAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? 60 : 120),
       fixationImage.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? -60: -120),
       fixationImage.bottomAnchor.constraint(equalTo: leftButton.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? -60: -120),
       fixationImage.topAnchor.constraint(equalTo: self.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? 60 : 120),
+
+//      textLabel.leftAnchor.constraint(equalTo: self.leftAnchor),
+//      textLabel.rightAnchor.constraint(equalTo: self.rightAnchor),
+      textLabel.centerYAnchor.constraint(equalTo: fixationImage.centerYAnchor),
+      textLabel.centerXAnchor.constraint(equalTo: fixationImage.centerXAnchor),
+//      textLabel.bottomAnchor.constraint(equalTo: leftButton.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? -60: -120),
+//      textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? 60 : 120),
 
       buttonStackView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50),
       buttonStackView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: UIDevice.current.userInterfaceIdiom == .phone ? -30 : -100),
@@ -230,9 +238,7 @@ class FlankerView: UIView {
   }
 
 
-  private var displayLinkNew: CADisplayLink?
-  private var startTime = 0.0
-  private let animationLength = 5.0
+
 
   func startDisplayLink() {
 
@@ -309,6 +315,13 @@ extension FlankerView: GameManagerProtocol {
     print("Marker: self.displayLink?.isPaused = false: \(time)")
     textLabel.isHidden = false
     fixationImage.isHidden = true
+
+    if typeTime == .trial {
+      textLabel.isShowPixel = true
+    } else {
+      textLabel.isShowPixel = false
+      textLabel.hidePixel()
+    }
   }
 
   func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?, countButton: Int) {
@@ -372,6 +385,12 @@ extension FlankerView: GameManagerProtocol {
       print("Marker: self.displayLink?.isPaused = false: \(time)")
       fixationImage.isHidden = false
       fixationImage.loadImageWithUrl(url)
+      if typeTime == .trial {
+        fixationImage.isShowPixel = true
+      } else {
+        fixationImage.isShowPixel = false
+        fixationImage.hidePixel()
+      }
     }
   }
 
