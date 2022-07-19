@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { ImageBackground, Image, View, StyleSheet } from "react-native";
@@ -42,6 +42,7 @@ let activityFlow = {}, index = 0;
 
 const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextActivity }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
+  const [isClicked, setIsClicked] = useState();
 
   if (currentResponses && currentResponses.activity && !currentResponses.activity.hasOwnProperty('allowExport')) {
     activityFlow = currentResponses && currentResponses.activity;
@@ -52,7 +53,10 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
   }
 
   const onSubmit = () => {
-    nextActivity(true);
+    setIsClicked((prev) => {
+      if (!prev) nextActivity(true);
+      return true;
+    })
   };
 
   const onBack = () => {

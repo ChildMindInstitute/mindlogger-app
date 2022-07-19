@@ -150,6 +150,25 @@ class GameManager {
                                    response_touch_timestamp: 0)
           delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
           resultManager.addStepData(data: model)
+        } else if
+          let startFeedbackTimestamp = startFeedbackTimestamp,
+          let endFeedbackTimestamp = endFeedbackTimestamp,
+          let gameParameters = gameParameters,
+          gameParameters.showFeedback,
+          !gameParameters.showFixation {
+          let resultTime = (time - startFeedbackTimestamp) * 1000
+          let model = FlankerModel(rt: resultTime,
+                                   stimulus: "<div class=\"mindlogger-message correct\">\(responseText)</div>",
+                                   button_pressed: nil,
+                                   image_time: endFeedbackTimestamp * 1000,
+                                   correct: nil,
+                                   start_timestamp: 0,
+                                   tag: "feedback",
+                                   trial_index: countTest,
+                                   start_time: startFeedbackTimestamp * 1000,
+                                   response_touch_timestamp: 0)
+          delegate?.resultTest(avrgTime: nil, procentCorrect: nil, data: model, dataArray: nil, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
+          resultManager.addStepData(data: model)
         }
       case .feedback:
         startFeedbackTimestamp = time
@@ -363,7 +382,9 @@ private extension GameManager {
       let sumArray = arrayTimes.reduce(0, +)
       let avrgArray = sumArray / arrayTimes.count
       let procentsCorrect = Float(correctAnswers) / Float(countAllGame) * 100
-      setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: true, type: .fixations)
+      if !gameParameters.showFixation {
+        setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: true, type: .fixations)
+      }
       delegate?.resultTest(avrgTime: avrgArray, procentCorrect: Int(procentsCorrect), data: nil, dataArray: resultManager.oneGameDataResult, isShowResults: gameParameters.showResults, minAccuracy: gameParameters.minimumAccuracy)
       clearData()
       return true
