@@ -80,8 +80,8 @@ const ActivityRow = ({ applet, activity, disabled, onPress, onLongPress, isRecom
 
   const activityData = activity.isActivityFlow ? applet.activities[activityOrder] : activity;
 
-  if (activity.isHeader === true) {
 
+  if (activity.isHeader === true) {
     return (
       <View style={styles.sectionHeading}>
         {!!activity.text &&
@@ -89,8 +89,14 @@ const ActivityRow = ({ applet, activity, disabled, onPress, onLongPress, isRecom
         }
       </View>
     );
-
   }
+
+  if (!activityData) {
+    return (
+      <View />
+    )
+  }
+
   return (
     <View style={styles.box}>
       <TouchBox
