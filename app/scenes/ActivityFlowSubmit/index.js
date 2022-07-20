@@ -42,7 +42,7 @@ let activityFlow = {}, index = 0;
 
 const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextActivity }) => {
   const tokenLogger = isTokenLoggerApplet(currentApplet);
-  const [isClicked, setIsClicked] = useState();
+  const [isClicked, setIsClicked] = useState(false);
 
   if (currentResponses && currentResponses.activity && !currentResponses.activity.hasOwnProperty('allowExport')) {
     activityFlow = currentResponses && currentResponses.activity;
@@ -53,14 +53,20 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
   }
 
   const onSubmit = () => {
+    if (isClicked) {
+      return;
+    }
+
     setIsClicked((prev) => {
       if (!prev) nextActivity(true);
       return true;
     })
-  };
+  }; 
 
   const onBack = () => {
-    nextActivity();
+    if (!isClicked) {
+      nextActivity();
+    }
   }
 
   return (
@@ -105,6 +111,7 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
               rounded
               onPress={onSubmit}
               style={{ marginTop: 25 }}
+              disabled={isClicked}
             >
               <Text
                 style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}

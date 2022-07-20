@@ -645,10 +645,7 @@ export const nextActivity = (isNext = false) => (dispatch, getState) => {
     if (activity.nextAccess) {
       dispatch(setActivityAccess(applet.id + activity.id));
     }
-    sendData('finish_activity', activity.id, applet.id);
-    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
     dispatch(completeResponse(false, true));
-
     dispatch(setActivityFlowOrderIndex({
       activityId: activity.id,
       index: currentActOrderIndex + 1
