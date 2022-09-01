@@ -50,7 +50,7 @@ import { replaceResponses, setLastResponseTime } from "../responses/responses.ac
 import { setActivityFlowOrderIndexList } from "../activities/activities.actions";
 
 import { sync } from "../app/app.thunks";
-import { transformApplet } from "../../models/json-ld";
+import {fixArray, transformApplet} from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
 import { waitFor } from "../../services/helper";
@@ -102,7 +102,7 @@ export const setReminder = () => async (dispatch, getState) => {
     applets.forEach((applet, i) => {
       const validEvents = [];
 
-      Object.keys(applet.schedule.events).forEach(key => {
+      Object.keys(fixArray(applet.schedule.events)).forEach(key => {
         const event = applet.schedule.events[key];
 
         Object.keys(applet.schedule.data).forEach(date => {
@@ -244,7 +244,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
     currentApplets.forEach(applet => {
       const { contentUpdateTime, id } = applet;
       const response = oldResponses ? oldResponses.find(r => id === r.appletId) : null;
-      const localEvents = Object.keys(applet.schedule.events).map(id => {
+      const localEvents = Object.keys(fixArray(applet.schedule.events)).map(id => {
         event = applet.schedule.events[id];
         return {
           id,
@@ -299,11 +299,11 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             if (!appletInfo.applet) {
               const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
               if (appletInfo.schedule) {
-                const events = currentApplet.schedule.events;
+                const events = fixArray(currentApplet.schedule.events);
                 currentApplet.schedule = appletInfo.schedule;
 
-                if (!R.isEmpty(appletInfo.schedule.events)) {
-                  Object.keys(appletInfo.schedule.events).forEach(eventId => {
+                if (!R.isEmpty(fixArray(appletInfo.schedule.events))) {
+                  Object.keys(fixArray(appletInfo.schedule.events)).forEach(eventId => {
                     events[eventId] = appletInfo.schedule.events[eventId];
                     scheduleUpdated = true;
                   })

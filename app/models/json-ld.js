@@ -129,6 +129,13 @@ const ACTIVITY_TYPE = "reprolib:terms/activityType";
 
 export const ORDER = "reprolib:terms/order";
 
+export const fixArray = (array) => {
+    if (!Array.isArray(array)) {
+        return [];
+    }
+    return array.filter(a => !!a);
+}
+
 export const languageListToObject = (list) => {
   if (
     typeof list === "undefined" ||
@@ -923,11 +930,11 @@ export const transformApplet = (payload, currentApplets = null) => {
       }
 
       if (payload.schedule) {
-        const events = currentApplet.schedule.events;
+        const events = fixArray(currentApplet.schedule.events);
         applet.schedule = payload.schedule;
 
-        if (!R.isEmpty(payload.schedule.events)) {
-          Object.keys(payload.schedule.events).forEach(eventId => {
+        if (!R.isEmpty(fixArray(payload.schedule.events))) {
+          Object.keys(fixArray(payload.schedule.events)).forEach(eventId => {
             events[eventId] = payload.schedule.events[eventId];
           })
         }
@@ -1028,7 +1035,7 @@ export const transformApplet = (payload, currentApplets = null) => {
 
 export const dateParser = (schedule) => {
   const output = {};
-  Object.keys(schedule.events).forEach(key => {
+  Object.keys(fixArray(schedule.events)).forEach(key => {
     const e = schedule.events[key];
     const uri = e.data.URI;
     if (!output[uri]) {
@@ -1114,7 +1121,7 @@ export const parseAppletEvents = (applet) => {
     const events = [];
     const availability = getActivityAbility(applet.schedule, act.id);
 
-    for (let eventId in applet.schedule.events) {
+    for (let eventId in fixArray(applet.schedule.events)) {
       const event = applet.schedule.events[eventId];
 
       if (event.data.title === act.name.en) {
@@ -1145,7 +1152,7 @@ export const parseAppletEvents = (applet) => {
     const events = [];
 
     const availability = getActivityAbility(applet.schedule, activityFlow.name, false);
-    for (let eventId in applet.schedule.events) {
+    for (let eventId in fixArray(applet.schedule.events)) {
       const event = applet.schedule.events[eventId];
 
       if (event.data.title === activityFlow.name) {
@@ -1183,7 +1190,7 @@ export const parseAppletEvents = (applet) => {
 const getActivityAbility = (schedule, value, isActivity = true) => {
   let availability = false;
 
-  Object.keys(schedule.events).forEach(key => {
+  Object.keys(fixArray(schedule.events)).forEach(key => {
     const e = schedule.events[key];
 
     if (e.data.activity_id === value.substring(9) && isActivity) {

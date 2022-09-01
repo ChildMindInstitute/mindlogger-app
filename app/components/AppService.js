@@ -22,6 +22,7 @@ import { sendResponseReuploadRequest } from '../services/network';
 import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
 import sortActivities from './ActivityList/sortActivities';
+import {fixArray} from "../models/json-ld";
 
 const AndroidChannelId = 'MindLoggerChannelId';
 const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
@@ -232,7 +233,7 @@ class AppService extends Component {
 
     let event = {};
 
-    Object.keys(applet.schedule.events).forEach(key => {
+    Object.keys(fixArray(applet.schedule.events)).forEach(key => {
       const e = applet.schedule.events[key];
       if (e.id === eventId) {
         event = e;
@@ -319,39 +320,34 @@ class AppService extends Component {
       // Ignore the notification if some data is missing.
       if (!eventId || !appletId || !activityId) return;
 
-      const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
-
-      if (!applet) {
-        return Alert.alert(
-          i18n.t('firebase_messaging:applet_not_found_1'),
-          i18n.t('firebase_messaging:applet_not_found_2'),
-        );
-      }
-
-      const activity = this.findActivityById(eventId, applet, activityId);
-
-      let event = {};
-
-      Object.keys(applet.schedule.events).forEach(key => {
-        const e = applet.schedule.events[key];
-        if (e.id.endsWith(eventId)) {
-          event = e;
-        }
-      });
-
-      if (activity) {
-        return this.prepareAndOpenActivity(applet, activity, event);
-      }
-
-      if (Actions.currentScene !== 'applet_list') {
-        Actions.push('applet_list');
-      }
-
-      // If the activity ID is not found in the applet, that means the applet is
-      // out of sync.
       this.props.syncTargetApplet(appletId, () => {
-        activity = this.findActivityById(eventId, applet, activityId);
-        this.prepareAndOpenActivity(applet, activity, event);
+        const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+
+        if (!applet) {
+          return Alert.alert(
+              i18n.t('firebase_messaging:applet_not_found_1'),
+              i18n.t('firebase_messaging:applet_not_found_2'),
+          );
+        }
+
+        const activity = this.findActivityById(eventId, applet, activityId);
+
+        let event = {};
+
+        Object.keys(fixArray(applet.schedule.events)).forEach(key => {
+          const e = applet.schedule.events[key];
+          if (e.id.endsWith(eventId)) {
+            event = e;
+          }
+        });
+
+        if (activity) {
+          return this.prepareAndOpenActivity(applet, activity, event);
+        }
+
+        if (Actions.currentScene !== 'applet_list') {
+          Actions.push('applet_list');
+        }
       });
     }
   };
@@ -378,7 +374,7 @@ class AppService extends Component {
   prepareAndOpenActivity = (applet, activity, event) => {
     const today = new Date();
     const todayEnd = moment().endOf("day").utc();
-    const { scheduledTime, data } = event;
+    const {scheduledTime, data} = Object.keys(event).length > 0 ? event : activity.event;
     const activityTimeout = data.timeout.day * 864000000
       + data.timeout.hour * 3600000
       + data.timeout.minute * 60000;
@@ -416,7 +412,7 @@ class AppService extends Component {
       );
     }
 
-    if (activity.status !== 'scheduled' || event.data.timeout.access) {
+    if (activity.status !== 'scheduled' || data.timeout.access) {
       if (Actions.currentScene == 'take_act') {
         Actions.pop();
       }

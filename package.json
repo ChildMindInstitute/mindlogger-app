@@ -158,6 +158,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.0",
+    "fs-extra": "^10.1.0",
     "inliner": "https://github.com/shnizzedy/inliner.git",
     "jest": "^25.1.0",
     "jetifier": "^1.6.5",

@@ -20,7 +20,7 @@ export const getUnscheduled = (
     } else {
       let actStatus = false;
       let selectedEvent = null;
-      let todayEvents = scheduleData[Object.keys(scheduleData)[0]];
+      let todayEvents = scheduleData ? scheduleData[Object.keys(scheduleData)[0]] : [];
 
       for (const event of activity.events) {
         const { data, id } = event;
