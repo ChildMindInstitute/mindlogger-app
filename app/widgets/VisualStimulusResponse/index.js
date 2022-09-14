@@ -63,10 +63,11 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
 
 export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
   const [loading, setLoading] = useState(true);
+  const [scriptInjected, setScriptInjected] = useState(false);
   const [responses, setResponses] = useState([]);
   const webView = useRef();
-
-  let onEndGame = (result: Object) => {
+ 
+  let onEndGame = (result) => {
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
@@ -135,15 +136,22 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
   });
 
   useEffect(() => {
-    if (isCurrent) {
-      if(Platform.OS === 'ios') {
-        NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0, JSON.stringify(configObj));
-        NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
-      } else {
-        webView.current.injectJavaScript(injectConfig);
-      }
+    if(!isCurrent || Platform.OS !== 'ios') {
+      return;
     }
+    NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0, JSON.stringify(configObj));
+    NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
   }, [isCurrent])
+
+  useEffect(() => {
+    if(!isCurrent || Platform.OS !== 'android') {
+      return;
+    }
+    if(!loading && !scriptInjected) {
+      webView.current.injectJavaScript(injectConfig);
+      setScriptInjected(true);
+    }
+  }, [isCurrent, loading, scriptInjected])
 
   const parseResponse = (record) => ({
     trial_index: Platform.OS === 'ios' ? record.trial_index : Math.ceil((record.trial_index + 1) / screenCountPerTrial),
