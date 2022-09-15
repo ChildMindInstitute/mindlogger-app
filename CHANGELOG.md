@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.49] - 2022-09-15
+- Bugfixes: 2842, 2822, 2867
+
 ## [0.21.48] - 2022-07-19
 - Fix activity flow issue
 
