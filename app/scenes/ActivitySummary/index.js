@@ -165,7 +165,11 @@ const ActivitySummary = (props) => {
 
                     <View style={{ flex: 1, marginRight: 8 }}>
                       <Text
-                        style={{ fontSize: 18, color: score.flagScore ? '#D33134' : 'black' }}
+                        style={{ 
+                          fontSize: 18,
+                          fontWeight: score.flagScore ? 'bold' : 'normal',
+                          color: score.flagScore ? '#D33134' : 'black',
+                        }}
                       >
                         { score.label }
                       </Text>
@@ -174,7 +178,7 @@ const ActivitySummary = (props) => {
                     <View
                       style={{
                         borderRadius: 10,
-                        paddingHorizontal: score.flagScore ? 40 : 0,
+                        paddingHorizontal: 40,
                         paddingVertical: 5,
                         backgroundColor: score.flagScore ? '#FFE2E2' : 'white'
                       }}
