@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.51] - 2022-09-01
+- Fixed appletId not found
+
 ## [0.21.48] - 2022-07-19
 - Fix activity flow issue
 
