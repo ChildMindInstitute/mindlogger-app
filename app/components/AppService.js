@@ -223,8 +223,14 @@ class AppService extends Component {
    *
    * @returns {object} the requested activity.
    */
-  findActivityById(eventId, applet, activityId) {
-    let activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+  findActivityById(eventId, applet, activityId, activityFlowId) {
+    let activity = null;
+    
+    if(activityId) {
+      activity = applet.activities.find(({ id }) => id.endsWith(activityId));
+    } else {
+      activity = applet.activityFlows.find(({ id }) => id.endsWith(activityFlowId));
+    }
 
     if (!activity) {
       return null;
@@ -244,13 +250,15 @@ class AppService extends Component {
     }
 
     const sortedActivities = sortActivities(
-      applet.activities,
+      activityId ? applet.activities : applet.activityFlows,
       this.props.inProgress,
       this.props.finishedEvents,
       applet.schedule.data
     );
 
-    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(activityId));
+    const id = activityId || activityFlowId;
+
+    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(id));
     if (sortedActivity) {
       return sortedActivity;
     }
@@ -315,43 +323,44 @@ class AppService extends Component {
     } else {
       const eventId = _.get(notificationObj, 'notification._data.event_id', '');
       const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
-      const activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-      // Ignore the notification if some data is missing.
-      if (!eventId || !appletId || !activityId) return;
+      let activityId = _.get(notificationObj, 'notification._data.activity_id', '');
+      let activityFlowId = _.get(notificationObj, 'notification._data.activity_flow_id', '');
 
-      const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+      activityId = activityId === "None" ? null : activityId;
+      activityFlowId = activityFlowId === "None" ? null : activityFlowId;
 
-      if (!applet) {
-        return Alert.alert(
-          i18n.t('firebase_messaging:applet_not_found_1'),
-          i18n.t('firebase_messaging:applet_not_found_2'),
-        );
-      }
-
-      const activity = this.findActivityById(eventId, applet, activityId);
-
-      let event = {};
-
-      Object.keys(applet.schedule.events).forEach(key => {
-        const e = applet.schedule.events[key];
-        if (e.id.endsWith(eventId)) {
-          event = e;
-        }
-      });
-
-      if (activity) {
-        return this.prepareAndOpenActivity(applet, activity, event);
-      }
-
-      if (Actions.currentScene !== 'applet_list') {
-        Actions.push('applet_list');
-      }
-
-      // If the activity ID is not found in the applet, that means the applet is
-      // out of sync.
       this.props.syncTargetApplet(appletId, () => {
-        activity = this.findActivityById(eventId, applet, activityId);
-        this.prepareAndOpenActivity(applet, activity, event);
+        // Ignore the notification if some data is missing.
+        if (!eventId || !appletId) return;
+        if (!activityId && !activityFlowId) return;
+
+        const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+
+        if (!applet) {
+          return Alert.alert(
+            i18n.t('firebase_messaging:applet_not_found_1'),
+            i18n.t('firebase_messaging:applet_not_found_2'),
+          );
+        }
+
+        const activity = this.findActivityById(eventId, applet, activityId, activityFlowId);
+
+        let event = {};
+
+        Object.keys(applet.schedule.events).forEach(key => {
+          const e = applet.schedule.events[key];
+          if (e.id.endsWith(eventId)) {
+            event = e;
+          }
+        });
+
+        if (activity) {
+          return this.prepareAndOpenActivity(applet, activity, event);
+        }
+
+        if (Actions.currentScene !== 'applet_list') {
+          Actions.push('applet_list');
+        }
       });
     }
   };

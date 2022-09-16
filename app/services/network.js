@@ -195,7 +195,8 @@ export const getTargetApplet = (authToken, appletId, nextActivity = '') => {
     retrieveSchedule: true,
     role: "user",
     getAllApplets: true,
-    nextActivity
+    nextActivity,
+    numberOfDays: 7
   }).then(resp => {
     if (resp.nextActivity) {
       return new Promise(resolve => setTimeout(() => resolve(getTargetApplet(authToken, appletId, resp.nextActivity).then(next => {
