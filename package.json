@@ -16,8 +16,8 @@
     "test-build": "cd android && ./gradlew clean && ./gradlew assembleDebug",
     "prod-bundle": "react-native bundle --platform android --dev false --entry-file ./index.js --bundle-output ./android/app/src/main/assets/index.android.bundle --assets-dest ./android/app/src/main/res",
     "prod-build": "cd android && ./gradlew bundleRelease",
-    "postinstall": "jetify",
-    "patchinstall": "npx patch-package",
+    "postinstall": "jetify; npx patch-package",
+    "patchinstall": "",
     "ios-build": "cd ios && fastlane ios beta",
     "prepare": "./node_modules/.bin/rn-nodeify --hack --install",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/NewApp/main.jsbundle' --dev=false --platform='ios' --assets-dest='./iOS'"

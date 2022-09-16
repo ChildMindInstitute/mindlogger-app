@@ -821,10 +821,12 @@ export const transformApplet = (payload, currentApplets = null) => {
 
   if (payload.applet[ACTIVITY_FLOW_PROPERTIES]) {
     applet.activityFlows = Object.keys(payload.activityFlows).map((key) => {
-      return activityFlowTransformJson(
+      const flow = activityFlowTransformJson(
         payload.activityFlows[key],
         payload.applet[ACTIVITY_FLOW_PROPERTIES]
       );
+      flow.schema = key;
+      return flow;
     });
   } else {
     applet.activityFlows = [];
