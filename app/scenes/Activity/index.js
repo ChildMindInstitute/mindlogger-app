@@ -48,7 +48,6 @@ import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import ActivityButtons from "../../components/ActivityButtons";
 import Modal from 'react-native-modal';
-import { colors } from "../..//themes/colors";
 import {
   getNextPos,
   getNextLabel,
@@ -59,6 +58,7 @@ import {
 } from "../../services/activityNavigation";
 import Timer from "../../services/timer";
 import { sendData } from "../../services/socket";
+import { getSummaryScreenDataForActivity } from "../../services/alert";
 
 const styles = StyleSheet.create({
   buttonArea: {
@@ -255,14 +255,21 @@ class Activity extends React.Component {
 
       const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
 
-      if (
+      const summaryScreenIsComing = !!(
         next === -1 &&
         !isSummaryScreen &&
         (
           flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
           !flow && !activity.summaryDisabled
         )
-      ) {
+      )
+
+      const singleActityScreenHasData = 
+        summaryScreenIsComing && 
+        !flow && 
+        getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
+
+      if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
         this.setState({ isSummaryScreen: true });
         setSummaryScreen(currentResponse.activity, true);
       } else {
@@ -447,14 +454,21 @@ class Activity extends React.Component {
 
     const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
 
-    if (
+    const summaryScreenIsComing = !!(
       next === -1 &&
       !isSummaryScreen &&
       (
         flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
         !flow && !activity.summaryDisabled
       )
-    ) {
+    )
+
+    const singleActityScreenHasData = 
+      summaryScreenIsComing && 
+      !flow && 
+      getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
+
+    if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
       this.setState({ isSummaryScreen: true });
       setSummaryScreen(currentResponse.activity, true);
     } else {
@@ -468,7 +482,6 @@ class Activity extends React.Component {
           this.completed = true;
         }
         nextScreen();
-
         setSelected(false);
       }
     }

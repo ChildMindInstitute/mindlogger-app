@@ -12,8 +12,7 @@ import {
 import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
 import { currentAppletResponsesSelector } from "../../state/responses/responses.selectors";
-import { getAlertsFromResponse } from "../../services/alert";
-import { evaluateReports } from "../../services/scoring";
+import { getSummaryScreenDataForActivity } from "../../services/alert";
 const alertMessageIcon = require("../../../img/alert-message.png");
 const scoreAlertIcon = require("../../../img/score-alert.png");
 
@@ -66,45 +65,12 @@ const ActivitySummary = (props) => {
     const activities = flow ? applet.activities.filter(act => flow.order.includes(act.name.en)) : [activity];
 
     for (const activity of activities) {
-      if (activity.summaryDisabled) {
-        continue;
-      }
-
-      let lastResponse = [];
-      if (activity.id == props.activity.id) {
-        lastResponse = responses;
-      } else {
-        for (let item of activity.items) {
-          const itemResponses = responseHistory.responses[item.schema];
-
-          if (itemResponses && itemResponses.length) {
-            lastResponse.push(itemResponses[itemResponses.length-1]);
-          } else {
-            lastResponse.push(null);
-          }
-        }
-      }
-
-      reports.push({
-        activity,
-        data: evaluateReports(lastResponse, activity)
-      });
-
-      for (let i = 0; i < lastResponse.length; i++) {
-        const item = activity.items[i];
-
-        if (item.valueConstraints) {
-          const { responseAlert } = item.valueConstraints;
-          if (lastResponse[i] !== null && lastResponse[i] !== undefined && responseAlert) {
-            const messages = getAlertsFromResponse(item, lastResponse[i].value !== undefined ? lastResponse[i].value : lastResponse[i]);
-            alerts = alerts.concat(messages);
-          }
-        }
-      }
+      const activityReportData = getSummaryScreenDataForActivity(activity, props.activity.id, responseHistory, responses);
+      alerts = alerts.concat(activityReportData.alerts);
+      reports = reports.concat(activityReportData.reports);
     }
-
     setAlerts(alerts);
-    setReports(reports.filter(report => report.data.length > 0));
+    setReports(reports);
   }, []);
 
   return (

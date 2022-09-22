@@ -1,3 +1,5 @@
+import { evaluateReports } from "./scoring";
+
 const getAlertsFromOptionList = (itemList, value) => {
   let response = value;
   const alerts = [];
@@ -79,4 +81,53 @@ export const getAlertsFromResponse = (item, value) => {
 
     return [];
   }
+}
+
+export const getSummaryScreenDataForActivity = (activity, currentActivityId, responseHistory, responses) => {
+  const result = {
+    alerts: [], 
+    reports: [],
+    hasData: function() {
+      return !!this.alerts.length || !!this.reports.length;
+    }
+  }
+  
+  if (activity.summaryDisabled) {
+    return result;
+  }
+
+  let lastResponse = [];
+  if (activity.id == currentActivityId) {
+    lastResponse = responses;
+  } else {
+    for (let item of activity.items) {
+      const itemResponses = responseHistory.responses[item.schema];
+
+      if (itemResponses && itemResponses.length) {
+        lastResponse.push(itemResponses[itemResponses.length-1]);
+      } else {
+        lastResponse.push(null);
+      }
+    }
+  }
+
+  result.reports.push({
+    activity,
+    data: evaluateReports(lastResponse, activity)
+  });
+
+  for (let i = 0; i < lastResponse.length; i++) {
+    const item = activity.items[i];
+
+    if (item.valueConstraints) {
+      const { responseAlert } = item.valueConstraints;
+      if (lastResponse[i] !== null && lastResponse[i] !== undefined && responseAlert) {
+        const messages = getAlertsFromResponse(item, lastResponse[i].value !== undefined ? lastResponse[i].value : lastResponse[i]);
+        result.alerts = result.alerts.concat(messages);
+      }
+    }
+  }
+
+  result.reports = result.reports.filter(report => report.data.length > 0);
+  return result;
 }
