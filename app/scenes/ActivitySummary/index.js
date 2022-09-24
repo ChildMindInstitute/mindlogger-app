@@ -13,6 +13,7 @@ import BaseText from "../../components/base_text/base_text";
 import { newAppletSelector } from "../../state/app/app.selectors";
 import { currentAppletResponsesSelector } from "../../state/responses/responses.selectors";
 import { getSummaryScreenDataForActivity } from "../../services/alert";
+import { getActivitiesOfFlow } from "../../services/activityFlow";
 const alertMessageIcon = require("../../../img/alert-message.png");
 const scoreAlertIcon = require("../../../img/score-alert.png");
 
@@ -62,7 +63,7 @@ const ActivitySummary = (props) => {
 
   useEffect(() => {
     let alerts = [], reports = [];
-    const activities = flow ? applet.activities.filter(act => flow.order.includes(act.name.en)) : [activity];
+    const activities = flow ? getActivitiesOfFlow(applet, flow) : [activity];
 
     for (const activity of activities) {
       const activityReportData = getSummaryScreenDataForActivity(activity, props.activity.id, responseHistory, responses);
