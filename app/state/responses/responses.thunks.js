@@ -4,7 +4,6 @@ import { Alert } from "react-native";
 import { Actions } from "react-native-router-flux";
 import * as RNLocalize from "react-native-localize";
 import i18n from "i18next";
-import moment from "moment";
 import NetInfo from "@react-native-community/netinfo";
 import { getSchedule, replaceResponseData, updateUserTokenBalance } from "../../services/network";
 import { downloadAllResponses, downloadAppletResponse, uploadResponseQueue } from "../../services/api";
@@ -17,7 +16,6 @@ import {
 import { storeData } from "../../services/storage";
 import { appletsSelector } from "../applets/applets.selectors";
 import {
-  setCumulativeActivities,
   setActivityFlowOrderIndex
 } from "../activities/activities.actions";
 import {
@@ -47,7 +45,6 @@ import {
   shiftUploadQueue,
   setCurrentScreen,
   setLastResponseTime,
-  setSummaryScreen,
   setUploaderId,
   replaceAppletResponses,
   setActivityOpened,
@@ -78,6 +75,7 @@ import { getAESKey, getPublicKey } from "../../services/encryption";
 import { sendData } from "../../services/socket";
 import config from "../../config";
 import { sync } from "../app/app.thunks";
+import { getActivitiesOfFlow } from "../../services/activityFlow";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
@@ -105,6 +103,21 @@ export const updateKeys = (applet, userInfo) => (dispatch) => {
   );
 };
 
+const evaluateIfActivityInFlowHasSplashScreen = (state, activityFlow, currentActivity) => {
+  if(!activityFlow.isActivityFlow) {
+    return false;
+  }
+
+  if(currentActivity) {
+    return !!(currentActivity.splash && currentActivity.splash.en);
+  }
+  
+  const applet = currentAppletSelector(state);
+  const activities = getActivitiesOfFlow(applet, activityFlow);
+
+  return !!(activities.length && activities[0].splash && activities[0].splash.en);
+}
+
 export const startFreshResponse = (activity) => (dispatch, getState) => {
   const state = getState();
   const { user } = state;
@@ -115,11 +128,11 @@ export const startFreshResponse = (activity) => (dispatch, getState) => {
 
   const visibilityArray = itemVisiblitySelector(state);
   const next = getNextPos(-1, visibilityArray);
+  const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(state, activity);
 
   // There is no response in progress, so start a new one
-
   dispatch(
-    createResponseInProgress(applet.id, activity, subjectId, timeStarted)
+    createResponseInProgress(applet.id, activity, subjectId, timeStarted, undefined, flowHasSplashScreen)
   );
   dispatch(setCurrentScreen(event ? activity.id + event : activity.id, 0));
   dispatch(setCurrentActivity(activity.id));
@@ -167,8 +180,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
       const currentActOrderIndex = orderIndex[activity.id] || 0;
       const currentActName = activity.order[currentActOrderIndex];
       const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+      const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(state, activity, currentActivity);
 
-      dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items));
+      dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items, flowHasSplashScreen));
     } else {
       dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, activity.items));
     }
@@ -204,8 +218,9 @@ export const startResponse = (activity) => (dispatch, getState) => {
               const currentActOrderIndex = orderIndex[activity.id] || 0;
               const currentActName = activity.order[currentActOrderIndex];
               const currentActivity = applet.activities.find(act => act.name.en === currentActName);
+              const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(state, activity, currentActivity);
 
-              dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items));
+              dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, currentActivity.items, flowHasSplashScreen));
             } else {
               dispatch(createResponseInProgress(applet.id, activity, subjectId, timeStarted, activity.items));
             }
@@ -606,10 +621,11 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
         const nextOrderIndex = ((orderIndex[flowId] || 0) + 1) % activity.activityFlowOrder.length;
         const currentActName = activity.activityFlowOrder[nextOrderIndex];
         const nextActivity = applet.activities.find(act => act.name.en === currentActName);
-
         const currentFlow = applet.activityFlows.find(flow => flow.id == flowId);
+        const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(state, currentFlow, nextActivity);
+
         dispatch(
-          createResponseInProgress(applet.id, { ...currentFlow, event: activity.event }, subjectId, Date.now(), nextActivity.items)
+          createResponseInProgress(applet.id, { ...currentFlow, event: activity.event }, subjectId, Date.now(), nextActivity.items, flowHasSplashScreen)
         );
         Actions.replace("take_act");
       }

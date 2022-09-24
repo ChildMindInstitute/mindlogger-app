@@ -113,7 +113,9 @@ export default (state = initialState, action = {}) => {
             timeStarted: action.payload.timeStarted,
             screenIndex: 0,
             isSummaryScreen: false,
-            isSplashScreen: activity.isActivityFlow ? true : activity.splash && activity.splash.en,
+            isSplashScreen: activity.isActivityFlow ? 
+              action.payload.activityFlowHasSplashScreen : 
+              activity.splash && activity.splash.en,
             events: []
           },
         },

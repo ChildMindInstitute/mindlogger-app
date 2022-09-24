@@ -52,7 +52,7 @@ export const removeResponseInProgress = activityId => ({
   payload: activityId,
 });
 
-export const createResponseInProgress = (appletId, activity, subjectId, timeStarted, items) => ({
+export const createResponseInProgress = (appletId, activity, subjectId, timeStarted, items, activityFlowHasSplashScreen) => ({
   type: RESPONSES_CONSTANTS.CREATE_RESPONSE_IN_PROGRESS,
   payload: {
     appletId,
@@ -60,6 +60,7 @@ export const createResponseInProgress = (appletId, activity, subjectId, timeStar
     subjectId,
     timeStarted,
     items,
+    activityFlowHasSplashScreen: !!activityFlowHasSplashScreen
   },
 });
 
