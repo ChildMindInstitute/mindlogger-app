@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { ImageBackground, Image, View, StyleSheet } from "react-native";
+import { ImageBackground, Image, View, StyleSheet, ActivityIndicator } from "react-native";
 import { Actions } from "react-native-router-flux";
 import i18n from "i18next";
 import { BodyText } from "../../components/core";
@@ -106,11 +106,18 @@ const ActivityFlowSubmit = ({ currentApplet, currentResponses, orderIndex, nextA
               onPress={onSubmit}
               style={{ marginTop: 25 }}
             >
-              <Text
-                style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
-              >
-                {i18n.t("change_study:submit")}
-              </Text>
+              {!isClicked && (
+                <Text
+                  style={{ fontFamily: theme.fontFamily, fontSize: 17, fontWeight: "bold" }}
+                >
+                  {i18n.t("change_study:submit")}
+                </Text>
+              )}
+
+              {isClicked && (
+                <ActivityIndicator color={colors.lightGrey} />
+              )}
+
             </Button>
             {!activityFlow.backDisabled && <Button
                 full
