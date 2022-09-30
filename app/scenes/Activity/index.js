@@ -5,14 +5,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as R from "ramda";
 import _ from "lodash";
-import { Actions } from "react-native-router-flux";
 import i18n from "i18next";
 import { addUserActivityEvents } from "../../state/responses/responses.actions";
 import {
   nextScreen,
   prevScreen,
   completeResponse,
-  finishActivity
+  finishActivity,
+  finishActivityDueToTimer
 } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
@@ -315,15 +315,7 @@ class Activity extends React.Component {
   handleTimeIsUp = () => {
     if (this.props.currentResponse) {
       this.updateStore();
-      this.props.completeResponse(true);
-
-      sendData(
-        'finish_activity',
-        this.props.currentResponse.activity.id,
-        this.props.currentApplet.id
-      );
-
-      Actions.replace("activity_flow_submit")
+      this.props.finishActivityDueToTimer(this.props.currentResponse.activity);
     }
   }
 
@@ -809,6 +801,7 @@ const mapDispatchToProps = {
   setSplashScreen,
   setCurrentScreen,
   finishActivity,
+  finishActivityDueToTimer,
   addUserActivityEvents
 };
 
