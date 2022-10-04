@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Text, StyleSheet } from 'react-native';
@@ -16,35 +16,40 @@ const styles = StyleSheet.create({
 });
 
 const ActivityTime = ({ activity, startedTimes, finishActivity }) => {
-  const startedTime = startedTimes ? startedTimes[activity.id + activity.event.id] : null;
-  let { allow, hour, minute, second } = activity.event.data.timedActivity;
-
-  if (startedTime && allow) {
-    const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
-    const difference = Math.abs(Date.now() - startedTime);
-
-    if (activityTime > difference) {
-      hour = Math.floor((activityTime - difference) / 60000 / 60);
-      minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
-      second = Math.floor(((activityTime - difference) % 60000) / 1000);
+  const canculateInitialState = () => {
+    const startedTime = startedTimes ? startedTimes[activity.id + activity.event.id] : null;
+    let { allow, hour, minute, second } = activity.event.data.timedActivity;
+    
+    if (startedTime && allow) {
+      const activityTime = hour * (60000 * 60) + minute * 60000 + second * 1000;
+      const difference = Math.abs(Date.now() - startedTime);
+  
+      if (activityTime > difference) {
+        hour = Math.floor((activityTime - difference) / 60000 / 60);
+        minute = Math.floor(((activityTime - difference) % (60000 * 60)) / 60000);
+        second = Math.floor(((activityTime - difference) % 60000) / 1000);
+      } else {
+        hour = null;
+      }
     } else {
       hour = null;
     }
-  } else {
-    hour = null;
-  }
-
-  const initialState = (hour !== null) ? {
-    eventDate: moment.duration().add({
+  
+    const initialState = (hour !== null) ? {
+      eventDate: moment.duration().add({
+        hours: hour,
+        minutes: minute,
+        seconds: second
+      }),
       hours: hour,
-      minutes: minute,
-      seconds: second
-    }),
-    hours: hour,
-    mins: minute,
-    secs: second,
-    allow: true
-  } : null;
+      mins: minute,
+      secs: second,
+      allow: true
+    } : null;
+    return initialState;
+  }
+  
+  const initialState = useMemo(() => canculateInitialState(), []);
 
   const [activityTime, setActivityTime] = useState(initialState);
 

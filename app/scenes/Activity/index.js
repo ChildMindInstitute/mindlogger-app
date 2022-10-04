@@ -11,8 +11,8 @@ import {
   nextScreen,
   prevScreen,
   completeResponse,
-  finishActivity,
-  finishActivityDueToTimer
+  finishActivityDueToTimer,
+  finishActivityDueToIdleTimer
 } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
@@ -148,7 +148,7 @@ class Activity extends React.Component {
       if (idleTime) {
         this.idleTimer.startCountdown(
           idleTime, // Time in seconds.
-          this.handleTimeIsUp // Callback.
+          this.handleIdleTimeIsUp // Callback.
         );
       }
       this.setState({
@@ -245,7 +245,14 @@ class Activity extends React.Component {
     return null;
   };
 
-  handleTimeIsUp = () => {
+  handleIdleTimeIsUp = () => {
+    if (this.props.currentResponse) {
+      this.updateStore();
+      this.props.finishActivityDueToIdleTimer(this.props.currentResponse.activity);
+    }
+  }
+
+  handleTimerExpired = () => {
     if (this.props.currentResponse) {
       this.updateStore();
       this.props.finishActivityDueToTimer(this.props.currentResponse.activity);
@@ -627,12 +634,7 @@ class Activity extends React.Component {
         {(currentResponse.activity.event && currentResponse.activity.event.data.timedActivity.allow) &&
           <ActivityTime 
             activity={currentResponse.activity}
-            finishActivity={(activity) => {
-              this.updateStore();
-              this.props.finishActivity(activity);
-
-              sendData('finish_activity', activity.id, currentApplet.id);
-            }}
+            finishActivity={this.handleTimerExpired}
           />
         }
         {!isSummaryScreen && !isSplashScreen && isActivityShow && (
@@ -831,8 +833,8 @@ const mapDispatchToProps = {
   setSummaryScreen,
   setSplashScreen,
   setCurrentScreen,
-  finishActivity,
   finishActivityDueToTimer,
+  finishActivityDueToIdleTimer,
   addUserActivityEvents
 };
 
