@@ -17,6 +17,7 @@ import { inProgressSelector } from '../state/responses/responses.selectors';
 import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
 import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
 import { syncTargetApplet, sync, showToast, syncUploadQueue } from '../state/app/app.thunks';
+import NetInfo from '@react-native-community/netinfo';
 
 import { sendResponseReuploadRequest } from '../services/network';
 import { delayedExec, clearExec } from '../services/timing';
@@ -329,8 +330,7 @@ class AppService extends Component {
       activityId = activityId === "None" ? null : activityId;
       activityFlowId = activityFlowId === "None" ? null : activityFlowId;
 
-      this.props.syncTargetApplet(appletId, () => {
-        // Ignore the notification if some data is missing.
+      const processNotification = () => {
         if (!eventId || !appletId) return;
         if (!activityId && !activityFlowId) return;
 
@@ -360,6 +360,16 @@ class AppService extends Component {
 
         if (Actions.currentScene !== 'applet_list') {
           Actions.push('applet_list');
+        }
+      }
+
+      NetInfo.fetch().then(state => {
+        if (state.isConnected) {
+          this.props.syncTargetApplet(appletId, () => {
+            processNotification();
+          });    
+        } else {
+          processNotification();
         }
       });
     }
