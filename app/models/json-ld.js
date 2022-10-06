@@ -802,7 +802,7 @@ export const activityFlowTransformJson = (activityFlowObj, activityFlows) => {
     id: activityFlowObj._id,
     name: R.path([NAME, 0, "@value"], activityFlowObj),
     description: R.path([DESCRIPTION, 0, "@value"], activityFlowObj),
-    hideBadge: R.path([SHOW_BADGE, 0, "@value"], activityFlowObj),
+    hideBadge: !R.path([SHOW_BADGE, 0, "@value"], activityFlowObj),
     combineReports: R.path([COMBINE_REPORTS, 0, "@value"], activityFlowObj),
     order: flattenIdList(R.path([ORDER, 0, "@list"], activityFlowObj))
   }
