@@ -55,20 +55,38 @@ export const getUnscheduled = (
 
 export const getScheduled = (activityList, finishedEvents) => {
   const scheduledActivities = [];
+  const finishedEventsKeys = Object.keys(finishedEvents);
 
   activityList.forEach(activity => {
     activity.events.forEach(event => {
       const today = new Date();
       const { scheduledTime, data } = event;
+      
+      const activityNotAvailable = !activity.availability;
+      const eventScheduledInFuture = scheduledTime > today;
+      const completionFalseInEventData = !data.completion;
+      const isTimeoutAccessInEventData = data.timeout.access;
+      const eventScheduledToday = moment().isSame(moment(scheduledTime), 'day');
 
-      if (!activity.availability
-        && scheduledTime > today
-        && !data.completion
-        && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
-        && (data.timeout.access || moment().isSame(moment(scheduledTime), 'day'))) {
+      const eventIdNotInFinishedKeys = !finishedEventsKeys.includes(event.id);
+      
+      let finishedEventDayIsNotToday;
+
+      if (!eventIdNotInFinishedKeys) {
+        const currentFinishedEvent = finishedEvents[event.id];
+        const finishedEventDate = new Date(currentFinishedEvent);
+        finishedEventDayIsNotToday = !moment().isSame(moment(finishedEventDate), 'day');
+      }
+
+      if (activityNotAvailable
+        && eventScheduledInFuture
+        && completionFalseInEventData
+        && (isTimeoutAccessInEventData || eventScheduledToday) 
+        && (eventIdNotInFinishedKeys || finishedEventDayIsNotToday)) {
+        
         const scheduledActivity = { ...activity };
-
         delete scheduledActivity.events;
+
         scheduledActivity.event = event;
         scheduledActivities.push(scheduledActivity);
       }
@@ -116,76 +134,115 @@ export const getPastdue = (activityList, finishedEvents) => {
   return pastActivities;
 }
 
-const addSectionHeader = (array, headerText) => (array.length > 0 ? [{ isHeader: true, text: headerText }, ...array] : []);
+const addSectionHeader = (array, headerText) => {
+  if (array.length > 0) {
+    return [{ isHeader: true, text: headerText }, ...array];
+  } else {
+    return [];
+  }
+};
 
 const addProp = (key, val, arr) => arr.map(obj => R.assoc(key, val, obj));
 
-// Sort the activities into categories and inject header labels, e.g. "In Progress",
-// before the activities that fit into that category.
-export default (activityList, inProgress, finishedEvents, scheduleData) => {
-  let notInProgress = [];
+// into categories
+const sortActivities = (activityList, inProgress, finishedEvents, scheduleData) => {
+  let notInProgressActivities = [];
   let inProgressActivities = [];
+
   const inProgressKeys = Object.keys(inProgress);
 
+  if (!inProgressKeys) {
+    notInProgressActivities = activityList;
+  }
+
   if (inProgressKeys) {
-    activityList.forEach(activity => {
+    const activitiesWithEvents = activityList.filter(activity => activity.events.length);
+    const activitiesWithoutEvents = activityList.filter(activity => !activity.events.length)
+
+    activitiesWithEvents.forEach(activity => {
+      const inProgressEvents = [];
       const notInProgressEvents = [];
 
-      if (activity.events.length) {
-        activity.events.forEach(event => {
-          if (!inProgressKeys.includes(activity.id + event.id)) {
-            notInProgressEvents.push(event);
-          } else {
-            inProgressActivities.push({
-              ...activity,
-              event,
-            });
-          }
-        });
-
-        if (notInProgressEvents.length) {
-          notInProgress.push({
-            ...activity,
-            events: notInProgressEvents,
-          })
-        }
-      } else {
-        if (inProgressKeys.includes(activity.id)) {
-          inProgressActivities.push({
-            ...activity,
-          });
+      activity.events.forEach(event => {
+        const hasKey = inProgressKeys.includes(activity.id + event.id);        
+        if (hasKey) {
+          inProgressEvents.push(event);
         } else {
-          notInProgress.push({ ...activity });
+          notInProgressEvents.push(event);
         }
+      });
+
+      if(inProgressEvents.length) {
+        inProgressEvents.forEach(event => {
+          const inProgressActivity = {
+            ...activity,
+            event,
+          };
+          inProgressActivities.push(inProgressActivity);
+        })
+      }
+
+      if (notInProgressEvents.length) {
+        const notInProgressActivity = {
+          ...activity,
+          events: notInProgressEvents,
+        };
+        notInProgressActivities.push(notInProgressActivity);
       }
     })
-  } else {
-    notInProgress = activityList;
+
+    activitiesWithoutEvents.forEach(activity => {
+      const activityClone = { ...activity };
+      const hasKey = inProgressKeys.includes(activity.id);
+
+      if (hasKey) {
+        inProgressActivities.push(activityClone);
+      } else {
+        notInProgressActivities.push(activityClone);
+      }
+    })
   }
 
   // Activities currently scheduled - or - previously scheduled and not yet completed.
   // Activities scheduled some time in the future.
-  const pastdue = getPastdue(notInProgress, finishedEvents)
+  const pastdue = getPastdue(notInProgressActivities, finishedEvents)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
-  const scheduled = getScheduled(notInProgress, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
-  // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgress, pastdue, scheduled, finishedEvents, scheduleData);
-  // Activities which have been completed and have no more scheduled occurrences.
-  // const completed = getCompleted(notInProgress).reverse();
 
-  return [
-    ...addSectionHeader(
-      addProp('status', 'in-progress', inProgressActivities),
-      i18n.t('additional:in_progress'),
-    ),
-    ...addSectionHeader(
-      [
-        ...addProp('status', 'pastdue', pastdue),
-        ...addProp('status', 'unscheduled', unscheduled)
-      ],
-      i18n.t('additional:available')
-    ),
-    ...addSectionHeader(addProp('status', 'scheduled', scheduled), i18n.t('additional:scheduled')),
+  const scheduled = getScheduled(notInProgressActivities, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
+  
+  // Activities with no schedule.
+  const unscheduled = getUnscheduled(notInProgressActivities, pastdue, scheduled, finishedEvents, scheduleData);
+  
+  const inProgressWithProp = addProp('status', 'in-progress', inProgressActivities);
+
+  const inProgressWithHeader = addSectionHeader(
+    inProgressWithProp,
+    i18n.t('additional:in_progress'),
+  );
+
+  const pastDueWithProp = addProp('status', 'pastdue', pastdue);
+
+  const unscheduledWithProp = addProp('status', 'unscheduled', unscheduled);
+
+  const pastDueAndUnscheduledWithHeader = addSectionHeader(
+    [
+      ...pastDueWithProp,
+      ...unscheduledWithProp
+    ],
+    i18n.t('additional:available')
+  );
+
+  const scheduledWithProp = addProp('status', 'scheduled', scheduled);
+
+  const scheduledWithHeader = addSectionHeader(scheduledWithProp, i18n.t('additional:scheduled'));
+
+  const result = [
+    ...inProgressWithHeader,
+    ...pastDueAndUnscheduledWithHeader,
+    ...scheduledWithHeader
   ];
+  return result;
 };
+
+export default sortActivities
