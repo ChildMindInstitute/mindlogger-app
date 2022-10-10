@@ -84,6 +84,13 @@ Continuous integration: changes to the master branch will be automatically built
 
 iOS:
 
+Install cocoapods dependencies
+```
+brew install cocoapods
+cd ios
+pod install
+```
+
 You can use [fastlane](https://fastlane.tools/)
 From root directory of repository
 
@@ -97,6 +104,7 @@ It will archive release build for iOS and push to appstore. It will take several
 ### Xcode (iOS)
 
 Otherwise, you can build and archive manually using Xcode.
+Please note that you should open `MDCApp.xcworkspace` with Xcode.
 
 ### yarn (Android)
 
