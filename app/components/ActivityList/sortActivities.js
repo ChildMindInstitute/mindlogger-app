@@ -55,7 +55,7 @@ export const getUnscheduled = (
 
 export const getScheduled = (activityList, finishedEvents) => {
   const scheduledActivities = [];
-  const finishedEventsKeys = Object.keys(finishedEvents);
+  const finishedEventsKeys = finishedEvents ? Object.keys(finishedEvents) : [];
 
   activityList.forEach(activity => {
     activity.events.forEach(event => {
