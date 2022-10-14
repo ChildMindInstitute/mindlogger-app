@@ -153,6 +153,8 @@ export const getScoreFromLookupTable = (
   for (let i = 0; i < responses.length; i++) {
     if (responses[i]) {
       scores.push(getScoreFromResponse(items[i], responses[i].value));
+    } else {
+      scores.push(0);
     }
   }
 
