@@ -130,7 +130,7 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 611
+        versionCode 612
         versionName "0.21.54"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
@@ -234,7 +234,7 @@ dependencies {
 
 configurations.all {
     resolutionStrategy {
-        force "com.facebook.soloader:soloader:0.8.2"
+        force "com.facebook.soloader:soloader:0.10.4"
     }
 }
 
