@@ -130,7 +130,7 @@ android {
         applicationId "lab.childmindinstitute.data"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 607
+        versionCode 611
         versionName "0.21.54"
         missingDimensionStrategy 'react-native-camera', 'general'
         multiDexEnabled true
@@ -143,14 +143,16 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
-//     signingConfigs {
-//         debug {
-//             storeFile file('debug.keystore')
-//             storePassword 'android'
-//             keyAlias 'androiddebugkey'
-//             keyPassword 'android'
-//         }
-//     }
+    signingConfigs {
+        release {
+            if (project.hasProperty('ML_UPLOAD_STORE_FILE')) {
+                storeFile file(ML_UPLOAD_STORE_FILE)
+                storePassword ML_UPLOAD_STORE_PASSWORD
+                keyAlias ML_UPLOAD_KEY_ALIAS
+                keyPassword ML_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
     buildTypes {
 //         debug {
 //             signingConfig signingConfigs.debug
@@ -158,7 +160,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://facebook.github.io/react-native/docs/signed-apk-android.
-//             signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
