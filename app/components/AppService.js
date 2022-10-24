@@ -1,45 +1,58 @@
-import React, { Component, Fragment } from 'react';
-import { Alert, Platform, AppState, AppStateStatus, Linking, NativeModules, ActivityIndicator } from 'react-native';
-import PropTypes from 'prop-types';
-import * as firebase from 'react-native-firebase';
-import { connect } from 'react-redux';
-import _ from 'lodash';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import RNRestart from 'react-native-restart';
-import { Actions } from 'react-native-router-flux';
-import moment from 'moment';
-import i18n from 'i18next';
-import { setFcmToken } from '../state/fcm/fcm.actions';
-import { appletsSelector } from '../state/applets/applets.selectors';
-import { setCurrentApplet, setCurrentActivity, setAppStatus, setLastActiveTime } from '../state/app/app.actions';
-import { startResponse, refreshTokenBehaviors } from '../state/responses/responses.thunks';
-import { inProgressSelector } from '../state/responses/responses.selectors';
-import { lastActiveTimeSelector, finishedEventsSelector } from '../state/app/app.selectors';
-import { updateBadgeNumber, downloadApplets } from '../state/applets/applets.thunks';
-import { syncTargetApplet, sync, showToast, syncUploadQueue } from '../state/app/app.thunks';
-import NetInfo from '@react-native-community/netinfo';
+import React, { Component, Fragment } from "react";
+import { Alert, Platform, AppState, Linking } from "react-native";
+import PropTypes from "prop-types";
+import * as firebase from "react-native-firebase";
+import { connect } from "react-redux";
+import _ from "lodash";
+import PushNotificationIOS from "@react-native-community/push-notification-ios";
+import { Actions } from "react-native-router-flux";
+import moment from "moment";
+import i18n from "i18next";
+import { setFcmToken } from "../state/fcm/fcm.actions";
+import { appletsSelector } from "../state/applets/applets.selectors";
+import {
+  setCurrentApplet,
+  setCurrentActivity,
+  setAppStatus,
+  setLastActiveTime,
+} from "../state/app/app.actions";
+import {
+  startResponse,
+  refreshTokenBehaviors,
+} from "../state/responses/responses.thunks";
+import { inProgressSelector } from "../state/responses/responses.selectors";
+import {
+  lastActiveTimeSelector,
+  finishedEventsSelector,
+} from "../state/app/app.selectors";
+import {
+  updateBadgeNumber,
+  downloadApplets,
+  setLocalNotifications,
+} from "../state/applets/applets.thunks";
+import {
+  syncTargetApplet,
+  sync,
+  showToast,
+  syncUploadQueue,
+} from "../state/app/app.thunks";
+import NetInfo from "@react-native-community/netinfo";
 
-import { sendResponseReuploadRequest } from '../services/network';
-import { delayedExec, clearExec } from '../services/timing';
-import { authTokenSelector } from '../state/user/user.selectors';
-import sortActivities from './ActivityList/sortActivities';
+import { sendResponseReuploadRequest } from "../services/network";
+import { delayedExec, clearExec } from "../services/timing";
+import { authTokenSelector } from "../state/user/user.selectors";
+import sortActivities from "./ActivityList/sortActivities";
 
-const AndroidChannelId = 'MindLoggerChannelId';
-const fMessaging = firebase.messaging.nativeModuleExists && firebase.messaging();
-const fNotifications = firebase.notifications.nativeModuleExists && firebase.notifications();
+const AndroidChannelId = "MindLoggerChannelId";
+const fMessaging =
+  firebase.messaging.nativeModuleExists && firebase.messaging();
+const fNotifications =
+  firebase.notifications.nativeModuleExists && firebase.notifications();
 
-const isAndroid = Platform.OS === 'android';
-const isIOS = Platform.OS === 'ios';
+const isAndroid = Platform.OS === "android";
+const isIOS = Platform.OS === "ios";
 
 class AppService extends Component {
-  /**
-   * Method called when the component is about to be rendered.
-   *
-   * Sets up the notification channels and the handler functions for the
-   * notification events.
-   *
-   * @returns {void}
-   */
   async componentDidMount() {
     this.listeners = [
       fNotifications.onNotification(this.onNotification),
@@ -48,13 +61,12 @@ class AppService extends Component {
       fMessaging.onTokenRefresh(this.onTokenRefresh),
       fMessaging.onMessage(this.onMessage),
     ];
-    this.appState = 'active';
+    this.appState = "active";
     this.pendingNotification = null;
     this.notificationsCount = 0;
     this.refreshIntervalId = 0;
     this.tokenIntervalId = 0;
-
-    // AppState.addEventListener('change', this.handleAppStateChange);
+    this.notificationDelayTimeoutIds = [];
 
     if (isAndroid) {
       this.initAndroidChannel();
@@ -63,30 +75,30 @@ class AppService extends Component {
       this.notificationsCount = await this.getDeliveredNotificationsCount();
       firebase.messaging().ios.registerForRemoteNotifications();
     }
-    // this.notificationsCount = await this.getDeliveredNotificationsCount();
-    AppState.addEventListener('change', this.handleAppStateChange);
 
+    AppState.addEventListener("change", this.handleAppStateChange);
 
     this.requestPermissions();
+
     this.props.setFCMToken(await fMessaging.getToken());
 
     const event = await fNotifications.getInitialNotification();
+    let promise = Promise.resolve();
     if (event) {
-      this.openActivityByEventId(event);
-      // if (isAndroid) NativeModules.DevSettings.reload();
+      promise = this.openActivityByEventId(event);
     }
 
-    this.startTimer();
-
-    this.props.setAppStatus(true);
-    this.props.syncUploadQueue();
+    promise.then(() => {
+      this.startTimer();
+      this.props.setAppStatus(true);
+      this.props.syncUploadQueue();
+    });
   }
 
   /**
    * start timer for app ( automatically refreshes app at 12:00am everyday)
    */
-  startTimer()
-  {
+  startTimer() {
     const { sync, refreshTokenBehaviors } = this.props;
     const day = 24 * 3600 * 1000;
 
@@ -94,7 +106,7 @@ class AppService extends Component {
     const nextDay = new Date(
       currentTime.getFullYear(),
       currentTime.getMonth(),
-      currentTime.getDate() + 1,
+      currentTime.getDate() + 1
     );
     const refreshTimeLeft = nextDay.getTime() - currentTime.getTime() + 1000;
 
@@ -103,7 +115,7 @@ class AppService extends Component {
         sync();
         this.refreshIntervalId = delayedExec(sync, { every: day });
       },
-      { after: refreshTimeLeft },
+      { after: refreshTimeLeft }
     );
 
     nextDay.setHours(3);
@@ -114,14 +126,13 @@ class AppService extends Component {
     this.tokenIntervalId = delayedExec(
       () => {
         refreshTokenBehaviors();
-        this.tokenIntervalId = delayedExec(sync, { every: day })
+        this.tokenIntervalId = delayedExec(sync, { every: day });
       },
       { after: tokenTimeLeft }
-    )
+    );
   }
 
-  clearTimer()
-  {
+  clearTimer() {
     if (this.refreshIntervalId) {
       clearExec(this.refreshIntervalId);
       this.refreshIntervalId = 0;
@@ -135,9 +146,9 @@ class AppService extends Component {
    */
   componentWillUnmount() {
     if (this.listeners) {
-      this.listeners.forEach(removeListener => removeListener());
+      this.listeners.forEach((removeListener) => removeListener());
     }
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    AppState.removeEventListener("change", this.handleAppStateChange);
 
     this.clearTimer();
   }
@@ -156,67 +167,30 @@ class AppService extends Component {
 
     try {
       await fMessaging.requestPermission();
-    } catch (error) {
-    }
+    } catch (error) {}
 
-    if (!await fMessaging.hasPermission()) {
+    if (!(await fMessaging.hasPermission())) {
       Alert.alert(
-        i18n.t('firebase_messaging:alert_title'),
-        i18n.t('firebase_messaging:alert_message'),
+        i18n.t("firebase_messaging:alert_title"),
+        i18n.t("firebase_messaging:alert_message"),
         [
           {
-            text: 'Dismiss',
-            style: 'cancel',
+            text: "Dismiss",
+            style: "cancel",
           },
           {
-            text: i18n.t('firebase_messaging:alert_text'),
+            text: i18n.t("firebase_messaging:alert_text"),
             onPress: Linking.openSettings.bind(Linking),
-            style: 'default',
+            style: "default",
           },
-        ],
+        ]
       );
     }
   }
 
   /**
-   * Checks whether an activity should be shown as completed.
-   *
-   * An activity is considered to be completed if a response for this activity
-   * was created today and there isn't any more scheduled events for this
-   * activity today.
-   *
-   * @param {obj} activity the activity in question.
-   *
-   * @returns {boolean} whether the activity is completed or not.
-   */
-  isCompleted = activity => activity.lastResponseTimestamp
-    && !activity.nextScheduledTimestamp
-    && moment().isSame(moment(activity.lastResponseTimestamp), 'day');
-
-  /**
-   * Checks whether an activity is in progress or not.
-   *
-   * @param {object} applet the parent applet for the activity.
-   * @param {object} activity the activity to be checked.
-   *
-   * @returns {boolean} whether the activity is in progress or not.
-   */
-  isActivityCompleted = (applet, activity) => {
-    const inProgress = this.props.inProgress || {};
-    const id = applet.id + activity.id;
-
-    if (id in inProgress) {
-      return false;
-    }
-
-    return this.isCompleted(activity);
-  };
-
-  /**
    * Finds an activity.
-   *
-   * It tries to get the activity by ID. If it fails to do that, it tries to get
-   * the event by ID and extract the activity data from it.
+   * Also it checks if applet contains needed event
    *
    * @param {string} eventId the unique ID for the scheduled event.
    * @param {object} applet the applet instance.
@@ -226,11 +200,13 @@ class AppService extends Component {
    */
   findActivityById(eventId, applet, activityId, activityFlowId) {
     let activity = null;
-    
-    if(activityId) {
+
+    if (activityId) {
       activity = applet.activities.find(({ id }) => id.endsWith(activityId));
     } else {
-      activity = applet.activityFlows.find(({ id }) => id.endsWith(activityFlowId));
+      activity = applet.activityFlows.find(({ id }) =>
+        id.endsWith(activityFlowId)
+      );
     }
 
     if (!activity) {
@@ -239,7 +215,7 @@ class AppService extends Component {
 
     let event = {};
 
-    Object.keys(applet.schedule.events).forEach(key => {
+    Object.keys(applet.schedule.events).forEach((key) => {
       const e = applet.schedule.events[key];
       if (e.id === eventId) {
         event = e;
@@ -259,7 +235,9 @@ class AppService extends Component {
 
     const id = activityId || activityFlowId;
 
-    let sortedActivity = sortedActivities.find(activity => activity.id && activity.id.endsWith(id));
+    let sortedActivity = sortedActivities.find(
+      (activity) => activity.id && activity.id.endsWith(id)
+    );
     if (sortedActivity) {
       return sortedActivity;
     }
@@ -278,184 +256,181 @@ class AppService extends Component {
    *
    * @returns {void}
    */
-  openActivityByEventId = (notificationObj) => {
-    const type = _.get(notificationObj, 'notification._data.type');
+  openActivityByEventId = async (notificationObj) => {
+    const type = notificationObj.notification.data.type;
 
-    if (type === 'response-data-alert') {
+    if (type === "response-data-alert") {
       Alert.alert(
-        i18n.t('firebase_messaging:response_refresh_request'),
-        i18n.t('firebase_messaging:refresh_request_details'),
+        i18n.t("firebase_messaging:response_refresh_request"),
+        i18n.t("firebase_messaging:refresh_request_details"),
         [
           {
-            text: 'Request Refresh',
+            text: "Request Refresh",
             onPress: () => {
               sendResponseReuploadRequest({
                 authToken: this.props.authToken,
-                userPublicKeys: this.props.applets.reduce((previousValue, applet) => {
-                  if (applet.userPublicKey) {
-                    previousValue[applet.id.split('/')[1]] = applet.userPublicKey;
-                  }
-                  return previousValue;
-                }, {}),
+                userPublicKeys: this.props.applets.reduce(
+                  (previousValue, applet) => {
+                    if (applet.userPublicKey) {
+                      previousValue[applet.id.split("/")[1]] =
+                        applet.userPublicKey;
+                    }
+                    return previousValue;
+                  },
+                  {}
+                ),
               }).then(() => {
                 this.props.showToast({
-                  text: i18n.t('firebase_messaging:refresh_request_text'),
-                  position: 'bottom',
-                  type: 'success',
+                  text: i18n.t("firebase_messaging:refresh_request_text"),
+                  position: "bottom",
+                  type: "success",
                   duration: 1000,
                 });
               });
             },
           },
           {
-            text: 'No',
+            text: "No",
             onPress: () => {},
           },
         ],
-        { cancelable: false },
+        { cancelable: false }
       );
-    } else if (type === 'applet-update-alert' || type === 'applet-delete-alert') {
-      const appletId = _.get(notificationObj, 'notification._data.applet_id');
+    }
 
-      this.props.downloadApplets(() => {
-        // this.props.setCurrentApplet(appletId);
-        // Actions.push('applet_details', { initialTab: 'data' });
-      });
-    } else {
-      const eventId = _.get(notificationObj, 'notification._data.event_id', '');
-      const appletId = _.get(notificationObj, 'notification._data.applet_id', '');
-      let activityId = _.get(notificationObj, 'notification._data.activity_id', '');
-      let activityFlowId = _.get(notificationObj, 'notification._data.activity_flow_id', '');
+    if (
+      type === "applet-update-alert" ||
+      type === "applet-delete-alert" ||
+      type === "schedule-updated"
+    ) {
+      const networkState = await NetInfo.fetch();
+      if (networkState.isConnected) {
+        this.props.downloadApplets();
+      }
+    }
 
-      activityId = activityId === "None" ? null : activityId;
-      activityFlowId = activityFlowId === "None" ? null : activityFlowId;
+    if (type === "request-to-reschedule-dueto-limit") {
+      this.props.setLocalNotifications();
+    }
 
-      const processNotification = () => {
-        if (!eventId || !appletId) return;
-        if (!activityId && !activityFlowId) return;
+    if (type === "schedule-event-alert") {
+      const {
+        eventId,
+        appletId,
+        activityId,
+        activityFlowId,
+      } = notificationObj.notification.data;
 
-        const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
+      if (!eventId || !appletId) return;
+      if (!activityId && !activityFlowId) return;
 
-        if (!applet) {
-          return Alert.alert(
-            i18n.t('firebase_messaging:applet_not_found_1'),
-            i18n.t('firebase_messaging:applet_not_found_2'),
-          );
-        }
+      const applet = this.props.applets.find(({ id }) => id.endsWith(appletId));
 
-        const activity = this.findActivityById(eventId, applet, activityId, activityFlowId);
-
-        let event = {};
-
-        Object.keys(applet.schedule.events).forEach(key => {
-          const e = applet.schedule.events[key];
-          if (e.id.endsWith(eventId)) {
-            event = e;
-          }
-        });
-
-        if (activity) {
-          return this.prepareAndOpenActivity(applet, activity, event);
-        }
-
-        if (Actions.currentScene !== 'applet_list') {
-          Actions.push('applet_list');
-        }
+      if (!applet) {
+        return Alert.alert(
+          i18n.t("firebase_messaging:applet_not_found_1"),
+          i18n.t("firebase_messaging:applet_not_found_2")
+        );
       }
 
-      NetInfo.fetch().then(state => {
-        if (state.isConnected) {
-          this.props.syncTargetApplet(appletId, () => {
-            processNotification();
-          });    
-        } else {
-          processNotification();
+      const activity = this.findActivityById(
+        eventId,
+        applet,
+        activityId,
+        activityFlowId
+      );
+
+      let event = {};
+
+      Object.keys(applet.schedule.events).forEach((key) => {
+        const e = applet.schedule.events[key];
+        if (e.id.endsWith(eventId)) {
+          event = e;
         }
       });
+
+      if (activity) {
+        return this.prepareAndOpenActivity(applet, activity, event);
+      }
+
+      if (Actions.currentScene !== "applet_list") {
+        Actions.push("applet_list");
+      }
     }
   };
 
-  /**
-   * Returns the given date as the number of miliseconds elapsed since the UNIX
-   * epoch.
-   *
-   * @param {Date} date the date to be converted to miliseconds.
-   *
-   * @returns {number} the corresponding number of miliseconds.
-   */
-  getMilliseconds = date => (date
-    ? moment(date)
-      .toDate()
-      .getTime()
-    : 0);
-
-  /**
-   *
-   *
-   * @returns {void}
-   */
   prepareAndOpenActivity = (applet, activity, event) => {
     const today = new Date();
-    const todayEnd = moment().endOf("day").utc();
+    const todayEnd = moment()
+      .endOf("day")
+      .utc();
     const { scheduledTime, data } = event;
-    const activityTimeout = data.timeout.day * 864000000
-      + data.timeout.hour * 3600000
-      + data.timeout.minute * 60000;
+    const activityTimeout =
+      data.timeout.day * 864000000 +
+      data.timeout.hour * 3600000 +
+      data.timeout.minute * 60000;
 
     if (!activity) {
-      return Alert.alert(i18n.t('firebase_messaging:activity_not_found'));
+      return Alert.alert(i18n.t("firebase_messaging:activity_not_found"));
     }
 
     this.props.setCurrentApplet(applet.id);
 
     if (activity.isCompleted) {
-      Actions.push('applet_details', { initialTab: 'data' });
+      Actions.push("applet_details", { initialTab: "data" });
       return Alert.alert(
-        '',
-        `${i18n.t('firebase_messaging:already_completed')} ‘${activity.name.en}’`,
+        "",
+        `${i18n.t("firebase_messaging:already_completed")} ‘${
+          activity.name.en
+        }’`
       );
     }
 
-    if (Actions.currentScene === 'applet_details') {
-      Actions.replace('applet_details');
+    if (Actions.currentScene === "applet_details") {
+      Actions.replace("applet_details");
     } else {
-      Actions.push('applet_details');
+      Actions.push("applet_details");
     }
 
-    if (scheduledTime > todayEnd._d
-      || (data.timeout.allow && (today.getTime() - scheduledTime.getTime() > activityTimeout))) {
+    if (
+      scheduledTime > todayEnd._d ||
+      (data.timeout.allow &&
+        today.getTime() - scheduledTime.getTime() > activityTimeout)
+    ) {
       return Alert.alert(
-        '',
-        `${`${i18n.t('firebase_messaging:activity_was_due_at')} ${scheduledTime}. ${i18n.t(
-          'firebase_messaging:if_progress_was_made_on_the',
-        )} `
-        + `${activity.name.en}, ${i18n.t(
-          'firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken',
-        )} `}${i18n.t('firebase_messaging:today')}`,
+        "",
+        `${`${i18n.t(
+          "firebase_messaging:activity_was_due_at"
+        )} ${scheduledTime}. ${i18n.t(
+          "firebase_messaging:if_progress_was_made_on_the"
+        )} ` +
+          `${activity.name.en}, ${i18n.t(
+            "firebase_messaging:it_was_saved_but_it_can_no_longer_be_taken"
+          )} `}${i18n.t("firebase_messaging:today")}`
       );
     }
 
-    if (activity.status !== 'scheduled' || event.data.timeout.access) {
-      if (Actions.currentScene == 'take_act') {
+    if (activity.status !== "scheduled" || event.data.timeout.access) {
+      if (Actions.currentScene == "take_act") {
         Actions.pop();
       }
 
       this.props.setCurrentActivity(activity.id);
       this.props.startResponse({
         ...activity,
-        event
+        event,
       });
     } else {
-      const time = moment(activity.event.scheduledTime).format('HH:mm');
+      const time = moment(activity.event.scheduledTime).format("HH:mm");
 
       Alert.alert(
-        i18n.t('firebase_messaging:today'),
-        `${i18n.t('firebase_messaging:not_able_to_start')}, ‘${activity.name.en}’ ${i18n.t(
-          'firebase_messaging:is',
-        )} `
-          + `${i18n.t('firebase_messaging:scheduled_to_start_at')} ${time} ${i18n.t(
-            'firebase_messaging:today',
-          )}`,
+        i18n.t("firebase_messaging:today"),
+        `${i18n.t("firebase_messaging:not_able_to_start")}, ‘${
+          activity.name.en
+        }’ ${i18n.t("firebase_messaging:is")} ` +
+          `${i18n.t(
+            "firebase_messaging:scheduled_to_start_at"
+          )} ${time} ${i18n.t("firebase_messaging:today")}`
       );
     }
   };
@@ -468,11 +443,10 @@ class AppService extends Component {
   async initAndroidChannel() {
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
-      'MindLogger Channel',
-      firebase.notifications.Android.Importance.Max,
-    ).setDescription('MindLogger Channel');
+      "MindLogger Channel",
+      firebase.notifications.Android.Importance.Max
+    ).setDescription("MindLogger Channel");
 
-    // Create the channel
     await firebase.notifications().android.createChannel(channel);
   }
 
@@ -480,12 +454,11 @@ class AppService extends Component {
    * Method called when a notification has been displayed.
    *
    * @param {object} notification the notification data.
+   * Data type of notification: firebase.RNFirebase.notifications.Notification
    *
    * @returns {void}
    */
-  onNotificationDisplayed = async (
-    notification: firebase.RNFirebase.notifications.Notification,
-  ) => {
+  onNotificationDisplayed = async (notification) => {
     if (isIOS) {
       this.notificationsCount = await this.getDeliveredNotificationsCount();
 
@@ -498,9 +471,28 @@ class AppService extends Component {
    *
    * @returns {Promise} promise that resolves to the notification count.
    */
-  getDeliveredNotificationsCount(): Promise<number> {
-    return new Promise(resolve => PushNotificationIOS.getDeliveredNotifications(({ length }) => resolve(length)));
+  getDeliveredNotificationsCount() {
+    return new Promise((resolve) =>
+      PushNotificationIOS.getDeliveredNotifications(({ length }) =>
+        resolve(length)
+      )
+    );
   }
+
+  /*
+  Data type of message: firebase.RNFirebase.messaging.RemoteMessage
+  */
+  onMessage = async (message) => {
+    const { data } = message;
+    const localNotification = this.newNotification({
+      notificationId: message.messageId,
+      title: data.title || "Push Notification",
+      subtitle: data.subtitle || null,
+      data,
+    });
+
+    await this.handleForegroundNotification(localNotification);
+  };
 
   /**
    * This method is called when a notification is received while the app is in
@@ -522,15 +514,63 @@ class AppService extends Component {
       subtitle: notification.subtitle,
       body: notification.body,
       data: notification.data,
-      // iosBadge: notification.ios.badge,
     });
 
+    await this.handleForegroundNotification(localNotification);
+  };
 
-    try {
-      await firebase.notifications().displayNotification(localNotification);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn(`FCM[${Platform.OS}]: error `, error);
+  handleForegroundNotification = async (localNotification) => {
+    const isActivityPerforming = () => {
+      return (
+        Actions.currentScene === "take_act" ||
+        Actions.currentScene === "activity_summary" ||
+        Actions.currentScene === "activity_thanks" ||
+        Actions.currentScene === "activity_flow_submit" ||
+        Actions.currentScene === "activity_end"
+      );
+    };
+
+    const showNotification = async () => {
+      try {
+        await firebase.notifications().displayNotification(localNotification);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.warn(`FCM[${Platform.OS}]: error `, error);
+      }
+    };
+
+    if (!isActivityPerforming()) {
+      await showNotification();
+    }
+
+    if (isActivityPerforming()) {
+      const CheckActivityPerformingInternal = 10000;
+
+      const timeoutHandler = async () => {
+        if (!isActivityPerforming()) {
+          await showNotification();
+        } else {
+          await checkLater();
+        }
+      };
+
+      const deleteTimeoutId = (timeoutId) => {
+        const index = this.notificationDelayTimeoutIds.indexOf(timeoutId);
+        if (index >= 0) {
+          this.notificationDelayTimeoutIds.splice(index, 1);
+        }
+      };
+
+      const checkLater = async () => {
+        const timeoutId = setTimeout(async () => {
+          await timeoutHandler();
+          deleteTimeoutId(timeoutId);
+        }, CheckActivityPerformingInternal);
+
+        this.notificationDelayTimeoutIds.push(timeoutId);
+      };
+
+      await checkLater();
     }
   };
 
@@ -538,16 +578,16 @@ class AppService extends Component {
    * Method called when the notification is pressed.
    *
    * @param {object} notificationOpen the notification data.
+   * Data type of notificationOpen:
+   * firebase.RNFirebase.notifications.NotificationOpen
    *
    * @returns {void}
    */
-  onNotificationOpened = async (
-    notificationOpen: firebase.RNFirebase.notifications.NotificationOpen,
-  ) => {
-    if (this.appState == 'background') {
+  onNotificationOpened = async (notificationOpen) => {
+    if (this.appState == "background") {
       this.pendingNotification = notificationOpen;
     } else {
-      this.openActivityByEventId(notificationOpen);
+      await this.openActivityByEventId(notificationOpen);
     }
 
     if (isIOS) {
@@ -574,25 +614,8 @@ class AppService extends Component {
    *
    * @returns {void}
    */
-  onTokenRefresh = (fcmToken: string) => {
+  onTokenRefresh = (fcmToken) => {
     this.props.setFCMToken(fcmToken);
-  };
-
-  onMessage = async (message: firebase.RNFirebase.messaging.RemoteMessage) => {
-    const { data } = message;
-    const localNotification = this.newNotification({
-      notificationId: message.messageId,
-      title: data.title || 'Push Notification',
-      subtitle: data.subtitle || null,
-      data,
-    });
-
-    try {
-      await firebase.notifications().displayNotification(localNotification);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn(`FCM[${Platform.OS}]: error `, error);
-    }
   };
 
   /**
@@ -606,12 +629,19 @@ class AppService extends Component {
    *
    * @return {Notification} a firebase notification instance.
    */
-  newNotification = ({ notificationId, title, subtitle, body, iosBadge = 1, data }) => {
+  newNotification = ({
+    notificationId,
+    title,
+    subtitle,
+    body,
+    iosBadge = 1,
+    data,
+  }) => {
     const localNotification = new firebase.notifications.Notification()
       .setNotificationId(notificationId)
       .setTitle(title)
       .setBody(body)
-      .setSound('default')
+      .setSound("default")
       .setData(data);
 
     if (subtitle) {
@@ -620,7 +650,9 @@ class AppService extends Component {
 
     if (isAndroid) {
       localNotification.android.setChannelId(AndroidChannelId);
-      localNotification.android.setPriority(firebase.notifications.Android.Priority.High);
+      localNotification.android.setPriority(
+        firebase.notifications.Android.Priority.High
+      );
       localNotification.android.setAutoCancel(true);
     } else if (isIOS) {
       localNotification.ios.setBadge(iosBadge);
@@ -636,26 +668,35 @@ class AppService extends Component {
    *
    * @returns {boolean} whether the application is in the background.
    */
-  isBackgroundState = state => state?.match(/inactive|background/);
+  isBackgroundState = (state) => state?.match(/inactive|background/);
 
   /**
    * Handles the switching of the app from foreground to background or the other
    * way around.
    *
    * @param {string} nextAppState the state the app is switching to.
+   * DataType of nextAppState: AppStateStatus
    *
    * @returns {void}
    */
-  handleAppStateChange = async (nextAppState: AppStateStatus) => {
-    const { setAppStatus, updateBadgeNumber, setLastActiveTime, sync, lastActive, syncUploadQueue } = this.props;
-    const goingToBackground = this.isBackgroundState(nextAppState) && this.appState === 'active';
-    const goingToForeground = this.isBackgroundState(this.appState) && nextAppState === 'active';
+  handleAppStateChange = async (nextAppState) => {
+    const {
+      setAppStatus,
+      updateBadgeNumber,
+      setLastActiveTime,
+      syncUploadQueue,
+      setLocalNotifications,
+    } = this.props;
+
+    const goingToBackground =
+      this.isBackgroundState(nextAppState) && this.appState === "active";
+    const goingToForeground =
+      this.isBackgroundState(this.appState) && nextAppState === "active";
     const stateChanged = nextAppState !== this.appState;
 
     if (goingToBackground) {
       setAppStatus(false);
       setLastActiveTime(new Date().getTime());
-
       this.clearTimer();
     } else if (goingToForeground) {
       setAppStatus(true);
@@ -665,18 +706,19 @@ class AppService extends Component {
 
     if (stateChanged && isIOS) {
       this.notificationsCount = await this.getDeliveredNotificationsCount();
-
       updateBadgeNumber(this.notificationsCount);
     }
 
-    this.appState = nextAppState;
-
-    if (this.appState == 'active') {
-      if (this.pendingNotification) {
-        this.openActivityByEventId(this.pendingNotification);
-        this.pendingNotification = null;
-      }
+    if (goingToForeground) {
+      await setLocalNotifications();
     }
+
+    if (goingToForeground && this.pendingNotification) {
+      await this.openActivityByEventId(this.pendingNotification);
+      this.pendingNotification = null;
+    }
+
+    this.appState = nextAppState;
   };
 
   /**
@@ -708,7 +750,7 @@ AppService.defaultProps = {
   inProgress: {},
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   applets: appletsSelector(state),
   inProgress: inProgressSelector(state),
   authToken: authTokenSelector(state),
@@ -716,25 +758,26 @@ const mapStateToProps = state => ({
   finishedEvents: finishedEventsSelector(state),
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
   },
-  setAppStatus: appStatus => dispatch(setAppStatus(appStatus)),
-  setCurrentApplet: id => dispatch(setCurrentApplet(id)),
-  startResponse: activity => dispatch(startResponse(activity)),
-  updateBadgeNumber: badgeNumber => dispatch(updateBadgeNumber(badgeNumber)),
+  setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
+  setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
+  startResponse: (activity) => dispatch(startResponse(activity)),
+  updateBadgeNumber: (badgeNumber) => dispatch(updateBadgeNumber(badgeNumber)),
   downloadApplets: (cb) => dispatch(downloadApplets(cb)),
-  sync: cb => dispatch(sync(cb)),
+  sync: (cb) => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
-  showToast: toast => dispatch(showToast(toast)),
-  setLastActiveTime: time => dispatch(setLastActiveTime(time)),
+  showToast: (toast) => dispatch(showToast(toast)),
+  setLastActiveTime: (time) => dispatch(setLastActiveTime(time)),
   refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
-  setCurrentActivity: activityId => dispatch(setCurrentActivity(activityId)),
+  setCurrentActivity: (activityId) => dispatch(setCurrentActivity(activityId)),
   syncUploadQueue: () => dispatch(syncUploadQueue()),
+  setLocalNotifications: () => dispatch(setLocalNotifications()),
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
+  mapDispatchToProps
 )(AppService);

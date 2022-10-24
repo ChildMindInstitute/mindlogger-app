@@ -20,7 +20,7 @@ import { getData, storeData } from "../../services/storage";
 import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
-import { responsesSelector } from '../responses/responses.selectors';
+import { inProgressSelector, responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNotificationsReminder } from "./applets.actions";
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
@@ -31,8 +31,6 @@ import {
   setDownloadingApplets,
   replaceApplets,
   setInvites,
-  setNotificationReminder,
-  clearNotificationReminder,
   saveAppletResponseData,
   replaceTargetApplet,
   setDownloadingTargetApplet,
@@ -44,7 +42,6 @@ import {
   userInfoSelector,
   loggedInSelector,
 } from "../user/user.selectors";
-import { isReminderSetSelector, timersSelector } from "./applets.selectors";
 import { setCurrentApplet, setClosedEvents } from "../app/app.actions";
 import { replaceResponses, setLastResponseTime } from "../responses/responses.actions";
 import { setActivityFlowOrderIndexList } from "../activities/activities.actions";
@@ -53,7 +50,8 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
-import { waitFor } from "../../services/helper";
+import { buildScheduleNotifications, getNotificationArray } from '../../services/scheduleNotifications';
+
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -90,101 +88,78 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
     });
 };
 
-export const setReminder = () => async (dispatch, getState) => {
-  const state = getState();
-  const applets = allAppletsSelector(state);
-  const isReminderSet = isReminderSetSelector(state);
-  const notifications = [];
-
-  dispatch(cancelReminder());
-
+export const setLocalNotifications = () => async (dispatch, getState) => {
   try {
-    applets.forEach((applet, i) => {
-      const validEvents = [];
-
-      Object.keys(applet.schedule.events).forEach(key => {
-        const event = applet.schedule.events[key];
-
-        Object.keys(applet.schedule.data).forEach(date => {
-          const data = applet.schedule.data[date];
-
-          // const isValid = data.find(d => d.id === key && d.valid);
-          const isValid = data.find(d => d.id === key);
-          if (isValid) {
-            const validEvent = {
-              ...event,
-              date,
-            }
-            validEvents.push(validEvent);
-          }
-        })
-      });
-
-      _.uniqBy(validEvents, 'id').forEach(event => {
-        event?.data?.notifications?.forEach(notification => {
-          if (notification.start) {
-            const values = notification.start.split(':');
-            const date = new Date(event.date);
-
-            date.setHours(values[0]);
-            date.setMinutes(values[1]);
-
-            if (date.getTime() > Date.now()) {
-              notifications.push({
-                eventId: event.id,
-                appletId: applet.id.split('/').pop(),
-                activityId: event.data.activity_id,
-                activityName: event.data.title,
-                date: date.getTime()
-              });
-            }
-          }
-        })
-      })
-    });
-
+    await setLocalNotificationsInternal(dispatch, getState)
   } catch (error) {
-    console.log(error)
-  }
+    console.warn('Error in scheduling local notifications', error);
+  }  
+}
 
-  if (!isReminderSet) {
-    if (notifications.length) dispatch(setNotificationReminder());
-    const AndroidChannelId = 'MindLoggerChannelId';
-    const settings = { showInForeground: true };
+const setLocalNotificationsInternal = async (dispatch, getState) => {
+  firebase.notifications().cancelAllNotifications();
 
-    for (let index = 0; index < notifications.length; index++) {
-      const notification = notifications[index];
+  const state = getState();
 
-      const localNotification = new firebase.notifications.Notification(settings)
-        .setNotificationId(`${notification.activityId}-${Math.random()}`) // Any random ID
-        .setTitle(notification.activityName) // Title of the notification
-        .setData({
-          event_id: notification.eventId,
-          applet_id: notification.appletId,
-          activity_id: notification.activityId,
-          type: "event-alert"
-        })
-        .android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
-        .android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
-        .android.setAutoCancel(true); // To remove notification when tapped on it
+  const applets = allAppletsSelector(state);
 
-      // firebase.notifications()
-      //   .scheduleNotification(localNotification, {
-      //     fireDate: notification.date,
-      //     repeatInterval: 'day',
-      //     exact: true,
-      //   })
-      //   .catch(err => {
-      //     console.error(err)
-      //   });
+  const { finishedTimes } = state.app;
 
-      const timer = scheduleNotificationsRN(localNotification, notification.date - moment().valueOf());
-      dispatch(addScheduleNotificationsReminder(timer));
+  const appletsNotifications = {
+    applets: []
+  };
 
-      await waitFor(0.1);
+  applets.forEach((applet) => {
+    const appletNotifications = buildScheduleNotifications(applet, finishedTimes);
+    if(appletNotifications.events.some(x => x.notifications.length)) {
+      appletsNotifications.applets.push(appletNotifications);
     }
+  });
+
+  console.log('appletsNotifications:', appletsNotifications);
+
+  const notificationArray = getNotificationArray(appletsNotifications);
+
+  console.log('notificationArray', notificationArray);
+
+  const settings = { showInForeground: true };
+  const AndroidChannelId = 'MindLoggerChannelId';
+  
+  for (let notificationData of notificationArray.slice(0, 63)) {
+    const notification = new firebase.notifications.Notification(settings)
+      .setNotificationId(notificationData.notificationId)
+      .setTitle("! " + notificationData.notificationHeader)
+      .setBody(notificationData.notificationBody)
+      .setSound('default')
+      .setData({
+        eventId: notificationData.eventId,
+        appletId: notificationData.appletId,
+        activityId: notificationData.activityId,
+        activityFlowId: notificationData.activityFlowId,
+        scheduledAtString: notificationData.scheduledAtString,
+        type: 'schedule-event-alert',
+        isLocal: true
+      })
+      .android.setPriority(firebase.notifications.Android.Priority.High)
+      .android.setChannelId(AndroidChannelId)
+      .android.setAutoCancel(true);
+
+    firebase
+      .notifications()
+      .scheduleNotification(notification, {
+        fireDate: notificationData.scheduledAt,
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
-};
+
+  firebase.notifications().getScheduledNotifications().then(n => {
+    console.log('scheduled from fb api', n)
+  });
+
+  console.log('notifications scheduled');
+}
 
 export const scheduleNotificationsRN = (notification, ms) => {
   return setTimeout(() => {
@@ -192,52 +167,7 @@ export const scheduleNotificationsRN = (notification, ms) => {
   }, ms);
 }
 
-export const cancelReminder = () => async (dispatch, getState) => {
-  const state = getState();
-  const timers = timersSelector(state);
-  const isReminderSet = isReminderSetSelector(state);
-
-  if (isReminderSet && timers) {
-    firebase.notifications().cancelAllNotifications();
-    for (const timer of timers) {
-      clearTimeout(timer);
-    }
-    dispatch(clearNotificationReminder());
-    dispatch(clearScheduleNotificationsReminder());
-  }
-}
-
-// const buildNotification = async (activity) => {
-//   const title = Platform.OS === "android" ? "Daily Reminder" : "";
-//   const AndroidChannelId = 'MindLoggerChannelId';
-//   const notificationData = {
-//     event_id: 1,
-//     applet_id: activity.appletId.split('/').pop(),
-//     activity_id: activity.id.split('/').pop(),
-//     type: "event-alert"
-//   }
-//   const settings = { showInForeground: true };
-//   const notification = new firebase.notifications.Notification(settings)
-//     .setNotificationId(`${activity.id}-${Math.random()}`) // Any random ID
-//     .setTitle(title) // Title of the notification
-//     .setBody("This is a notification") // body of notification
-//     .setData(notificationData);
-
-
-//   notification.android.setPriority(firebase.notifications.Android.Priority.High) // set priority in Android
-//   notification.android.setChannelId(AndroidChannelId) // should be the same when creating channel for Android
-//   notification.android.setAutoCancel(true); // To remove notification when tapped on it
-
-//   return notification;
-// };
-
-export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
-  const state = getState();
-  const auth = authSelector(state);
-  const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
-  let currentApplets = allApplets && allApplets.length ? allApplets : await getData('ml_applets');
-  let oldResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
-
+const buildLocalInfo = (currentApplets, oldResponses) => {
   let localInfo = {};
 
   if (currentApplets) {
@@ -265,8 +195,82 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
   } else {
     localInfo = {};
   }
+  return localInfo;
+}
 
-  dispatch(setDownloadingApplets(true));
+const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
+  const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfoDto.id);
+  let scheduleUpdated = false;
+
+  if (appletInfoDto.schedule) {
+    
+    const currentEvents = currentApplet.schedule.events;
+    
+    currentApplet.schedule = appletInfoDto.schedule;
+
+    const updatedCurrentSchedule =  currentApplet.schedule;
+
+    const eventsExistInDto = !R.isEmpty(appletInfoDto.schedule.events);
+
+    let notificationEventsTemp = null;
+
+    if (eventsExistInDto) {
+      const dtoEventIds = Object.keys(appletInfoDto.schedule.events);
+
+      dtoEventIds.forEach(dtoEventId => {
+        currentEvents[dtoEventId] = appletInfoDto.schedule.events[dtoEventId];
+        scheduleUpdated = true;
+      })
+
+      notificationEventsTemp = { ...appletInfoDto.schedule.events };
+    } else {
+      notificationEventsTemp = { ...currentEvents };
+    }
+
+    for (const eventId in currentEvents) {
+      let isEventInDates = false;
+
+      const dataDto = updatedCurrentSchedule.data;
+
+      for (const eventDate in dataDto) {
+        const eventsInDate = dataDto[eventDate];
+
+        if (eventsInDate.find(({ id }) => id === eventId)) {
+          isEventInDates = true;
+        }
+      }
+
+      if (!isEventInDates) {
+        delete currentEvents[eventId];
+      }
+    }
+
+    updatedCurrentSchedule.events = currentEvents;
+    updatedCurrentSchedule.notificationEventsTemp = notificationEventsTemp;
+  }
+
+  responses.push({
+    ...decryptAppletResponses(currentApplet, appletInfoDto.responses),
+    appletId: 'applet/' + appletInfoDto.id
+  });
+
+  if (!currentApplet.activityFlows) {
+    currentApplet.activityFlows = [];
+  }
+
+  return { currentApplet, scheduleUpdated };
+}
+
+export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
+  const state = getState();
+  const auth = authSelector(state);
+  const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
+  let currentApplets = allApplets && allApplets.length ? allApplets : await getData('ml_applets');
+  let oldResponses = allResponses && allResponses.length ? allResponses : await getData('ml_responses');
+
+  let localInfo = buildLocalInfo(currentApplets, oldResponses);
+
+  dispatch(setDownloadingApplets(true)); 
 
   return getApplets(auth.token, localInfo)
     .then(async (resp) => {
@@ -297,43 +301,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
             }
 
             if (!appletInfo.applet) {
-              const currentApplet = currentApplets.find(({ id }) => id.split("/").pop() === appletInfo.id)
-              if (appletInfo.schedule) {
-                const events = currentApplet.schedule.events;
-                currentApplet.schedule = appletInfo.schedule;
 
-                if (!R.isEmpty(appletInfo.schedule.events)) {
-                  Object.keys(appletInfo.schedule.events).forEach(eventId => {
-                    events[eventId] = appletInfo.schedule.events[eventId];
-                    scheduleUpdated = true;
-                  })
-                }
+              const mergeResult = mergeExistingApplet(currentApplets, appletInfo, responses);
+              scheduleUpdated = scheduleUpdated || mergeResult.scheduleUpdated;
+              
+              return mergeResult.currentApplet;
 
-                for (const eventId in events) {
-                  let isValid = false;
-                  for (const eventDate in currentApplet.schedule.data) {
-                    if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
-                      isValid = true;
-                    }
-                  }
-
-                  if (!isValid) {
-                    delete events[eventId];
-                  }
-                }
-
-                currentApplet.schedule.events = events;
-              }
-
-              responses.push({
-                ...decryptAppletResponses(currentApplet, appletInfo.responses),
-                appletId: 'applet/' + appletInfo.id
-              });
-
-              if (!currentApplet.activityFlows) {
-                currentApplet.activityFlows = [];
-              }
-              return currentApplet;
             } else {
               const applet = transformApplet(appletInfo, currentApplets);
               if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
@@ -396,6 +369,8 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
         if (onAppletsDownloaded) {
           onAppletsDownloaded();
         }
+
+        dispatch(setLocalNotifications());
       }
     })
     .catch((err) => console.warn(err.message))
@@ -428,6 +403,7 @@ export const downloadTargetApplet = (appletId, cb = null) => (
           dispatch(downloadAppletMedia(transformedApplet));
         }
         dispatch(setDownloadingTargetApplet(false));
+        dispatch(setLocalNotifications());
         if (cb) {
           cb();
         }

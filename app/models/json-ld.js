@@ -928,11 +928,18 @@ export const transformApplet = (payload, currentApplets = null) => {
         const events = currentApplet.schedule.events;
         applet.schedule = payload.schedule;
 
+        let notificationEventsTemp = null;
+
         if (!R.isEmpty(payload.schedule.events)) {
           Object.keys(payload.schedule.events).forEach(eventId => {
             events[eventId] = payload.schedule.events[eventId];
           })
+          notificationEventsTemp = Object.keys(payload.schedule.events).length ? 
+            payload.schedule.events : events;
+        } else {
+          notificationEventsTemp = events;
         }
+        notificationEventsTemp = { ...notificationEventsTemp };
 
         for (const eventId in events) {
           let isValid = false;
@@ -947,6 +954,7 @@ export const transformApplet = (payload, currentApplets = null) => {
           }
         }
         applet.schedule.events = events;
+        applet.schedule.notificationEventsTemp = notificationEventsTemp;
       }
     }
 

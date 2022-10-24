@@ -12,7 +12,7 @@ import {
   prevScreen,
   completeResponse,
   finishActivityDueToTimer,
-  finishActivityDueToIdleTimer
+  finishActivityDueToIdleTimer,
 } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
@@ -22,15 +22,21 @@ import {
   currentScreenSelector,
   lastResponseTimeSelector,
 } from "../../state/responses/responses.selectors";
-import { tutorials } from '../../widgets/ABTrails/TrailsData';
+import { tutorials } from "../../widgets/ABTrails/TrailsData";
 import {
   currentAppletSelector,
   appStatusSelector,
   tutorialStatusSelector,
   tutorialIndexSelector,
 } from "../../state/app/app.selectors";
-import { setTutorialStatus, setTutorialIndex } from '../../state/app/app.actions';
-import { collectResponseTimes, getItemsVisibility } from "../../services/visibility";
+import {
+  setTutorialStatus,
+  setTutorialIndex,
+} from "../../state/app/app.actions";
+import {
+  collectResponseTimes,
+  getItemsVisibility,
+} from "../../services/visibility";
 import {
   setAnswer,
   setSummaryScreen,
@@ -47,7 +53,7 @@ import ActivitySplash from "../ActivitySplash";
 import ActHeader from "../../components/header";
 import ActProgress from "../../components/progress";
 import ActivityButtons from "../../components/ActivityButtons";
-import Modal from 'react-native-modal';
+import Modal from "react-native-modal";
 import {
   getNextPos,
   getNextLabel,
@@ -73,23 +79,35 @@ const styles = StyleSheet.create({
   modal: {
     borderRadius: 10,
     padding: 5,
-    backgroundColor: 'grey',
+    backgroundColor: "grey",
     opacity: 0.9,
-    width: '75%',
-    alignSelf: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
+    width: "75%",
+    alignSelf: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 const inputTypeCollection = [
-  'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
-  'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
-  'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
+  "radio",
+  "stackedRadio",
+  "slider",
+  "stackedSlider",
+  "timeRange",
+  "duration",
+  "date",
+  "ageSelector",
+  "select",
+  "text",
+  "time",
+  "geolocation",
+  "pastBehaviorTracker",
+  "futureBehaviorTracker",
+  "dropdownList",
 ];
 
-const clock = require('../../../img/clock.png');
+const clock = require("../../../img/clock.png");
 
 class Activity extends React.Component {
   constructor() {
@@ -104,7 +122,7 @@ class Activity extends React.Component {
       responses: [],
       visibleAct: null,
       visibility: [],
-      optionalTextChanged: false
+      optionalTextChanged: false,
     };
     this.userEvents = [];
     this.idleTimer = new Timer();
@@ -112,16 +130,21 @@ class Activity extends React.Component {
   }
 
   get currentItem() {
-    return R.path(
-      ["items", this.props.currentScreen],
-      this.state.visibleAct
-    );
+    return R.path(["items", this.props.currentScreen], this.state.visibleAct);
   }
 
   componentDidMount() {
-    const { isSummaryScreen, isSplashScreen, currentResponse, currentScreen, itemVisibility } = this.props;
+    const {
+      isSummaryScreen,
+      isSplashScreen,
+      currentResponse,
+      currentScreen,
+      itemVisibility,
+    } = this.props;
     const { activity, responses } = currentResponse;
-    const visibleAct = activity.isActivityFlow ? this.getActivityData() : activity;
+    const visibleAct = activity.isActivityFlow
+      ? this.getActivityData()
+      : activity;
     const idleTime = this.getIdleTime();
 
     if (activity.isActivityFlow) {
@@ -137,31 +160,41 @@ class Activity extends React.Component {
       }
     }
 
-    this.setState({
-      isSummaryScreen,
-      idleTime,
-      hasSplashScreen: visibleAct.splash && visibleAct.splash.en && currentScreen === 0 && !isSummaryScreen,
-      responses,
-      visibleAct,
-      visibility: itemVisibility
-    }, () => {
-      if (idleTime) {
-        this.idleTimer.startCountdown(
-          idleTime, // Time in seconds.
-          this.handleIdleTimeIsUp // Callback.
-        );
+    this.setState(
+      {
+        isSummaryScreen,
+        idleTime,
+        hasSplashScreen:
+          visibleAct.splash &&
+          visibleAct.splash.en &&
+          currentScreen === 0 &&
+          !isSummaryScreen,
+        responses,
+        visibleAct,
+        visibility: itemVisibility,
+      },
+      () => {
+        if (idleTime) {
+          this.idleTimer.startCountdown(
+            idleTime, // Time in seconds.
+            this.handleIdleTimeIsUp // Callback.
+          );
+        }
+        this.setState({
+          isActivityShow: true,
+        });
       }
-      this.setState({
-        isActivityShow: true
-      })
-    });
+    );
   }
 
   componentDidUpdate(oldProps) {
     if (!this.props.currentResponse) {
       this.idleTimer.clear();
     }
-    if (oldProps.appStatus != this.props.appStatus && oldProps.appStatus == true) {
+    if (
+      oldProps.appStatus != this.props.appStatus &&
+      oldProps.appStatus == true
+    ) {
       this.updateStore();
     }
 
@@ -171,17 +204,19 @@ class Activity extends React.Component {
 
     if (
       this.props.currentResponse &&
-      (!oldProps.currentResponse || oldProps.currentResponse.responses != this.props.currentResponse.responses)
+      (!oldProps.currentResponse ||
+        oldProps.currentResponse.responses !=
+          this.props.currentResponse.responses)
     ) {
-      this.setState({ responses: this.props.currentResponse.responses })
+      this.setState({ responses: this.props.currentResponse.responses });
     }
   }
 
   processSetAnswerEvent(activity, responses, currentScreen) {
     const userEvent = {
-      type: 'SET_ANSWER',
+      type: "SET_ANSWER",
       time: Date.now(),
-      screen: currentScreen
+      screen: currentScreen,
     };
 
     const inputType = activity.items[currentScreen].inputType;
@@ -190,22 +225,35 @@ class Activity extends React.Component {
 
     if (currentScreenResponses) {
       if (inputTypeCollection.indexOf(inputType) >= 0) {
-        const parsedResponses = JSON.parse(JSON.stringify(currentScreenResponses));
+        const parsedResponses = JSON.parse(
+          JSON.stringify(currentScreenResponses)
+        );
         userEvent.response = parsedResponses;
-      } else if (typeof responses[currentScreen] == 'object' && responses[currentScreen].text) {
-        userEvent.response = { 
-          text: responses[currentScreen].text 
+      } else if (
+        typeof responses[currentScreen] == "object" &&
+        responses[currentScreen].text
+      ) {
+        userEvent.response = {
+          text: responses[currentScreen].text,
         };
       }
     }
 
     if (this.userEvents.length > 0) {
-      const lastEvent = this.userEvents[this.userEvents.length-1];
+      const lastEvent = this.userEvents[this.userEvents.length - 1];
 
-      if ((inputType == 'trail' || inputType == 'drawing' || inputType == 'text') && lastEvent.type == 'SET_ANSWER') {
+      if (
+        (inputType == "trail" ||
+          inputType == "drawing" ||
+          inputType == "text") &&
+        lastEvent.type == "SET_ANSWER"
+      ) {
         this.userEvents.pop();
       } else if (
-        userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
+        userEvent.response &&
+        lastEvent.response &&
+        typeof lastEvent.response == "object" &&
+        typeof userEvent.response == "object"
       ) {
         if (lastEvent.response.text != userEvent.response.text) {
           if (this.state.optionalTextChanged) {
@@ -218,7 +266,11 @@ class Activity extends React.Component {
         }
       }
 
-      if (inputType == 'trail' && responses[currentScreen] && !responses[currentScreen].value.updated) {
+      if (
+        inputType == "trail" &&
+        responses[currentScreen] &&
+        !responses[currentScreen].value.updated
+      ) {
         userEvent.time = lastEvent.time;
       }
     }
@@ -229,7 +281,7 @@ class Activity extends React.Component {
   findActivity = (name, activities = []) => {
     if (!name) return undefined;
     return _.find(activities, { name: { en: name } });
-  }
+  };
 
   getIdleTime = () => {
     const { activity } = this.props.currentResponse;
@@ -248,16 +300,18 @@ class Activity extends React.Component {
   handleIdleTimeIsUp = () => {
     if (this.props.currentResponse) {
       this.updateStore();
-      this.props.finishActivityDueToIdleTimer(this.props.currentResponse.activity);
+      this.props.finishActivityDueToIdleTimer(
+        this.props.currentResponse.activity
+      );
     }
-  }
+  };
 
   handleTimerExpired = () => {
     if (this.props.currentResponse) {
       this.updateStore();
       this.props.finishActivityDueToTimer(this.props.currentResponse.activity);
     }
-  }
+  };
 
   processTrailTutrial(activity) {
     const {
@@ -265,14 +319,14 @@ class Activity extends React.Component {
       setTutorialIndex,
       tutorialStatus,
       tutorialIndex,
-      currentScreen
+      currentScreen,
     } = this.props;
-  
-    const screen = activity.items[currentScreen].variableName;
-    let currentActivity = 'activity1';    
 
-    if (activity.name && activity.name.en.includes('iPad')) {
-      currentActivity = 'activity2';
+    const screen = activity.items[currentScreen].variableName;
+    let currentActivity = "activity1";
+
+    if (activity.name && activity.name.en.includes("iPad")) {
+      currentActivity = "activity2";
     }
 
     if (activity.items[currentScreen].inputType === "trail") {
@@ -284,9 +338,9 @@ class Activity extends React.Component {
           setTutorialIndex(0);
         }
         this.userEvents.push({
-          type: 'NEXT',
+          type: "NEXT",
           time: Date.now(),
-          screen: currentScreen
+          screen: currentScreen,
         });
         this.updateStore();
         return true;
@@ -321,17 +375,17 @@ class Activity extends React.Component {
   }
 
   addEventOnNextClick(nextLabel, isSummaryScreen, currentScreen) {
-    let eventType = 'NEXT';
-    if (nextLabel == i18n.t('activity_navigation:skip')) {
-      eventType = 'SKIP';
-    } else if (nextLabel == i18n.t('activity_navigation:done')) {
-      eventType = 'DONE';
+    let eventType = "NEXT";
+    if (nextLabel == i18n.t("activity_navigation:skip")) {
+      eventType = "SKIP";
+    } else if (nextLabel == i18n.t("activity_navigation:done")) {
+      eventType = "DONE";
     }
 
     this.userEvents.push({
       type: eventType,
       time: Date.now(),
-      screen: isSummaryScreen ? 'summary' : currentScreen
+      screen: isSummaryScreen ? "summary" : currentScreen,
     });
   }
 
@@ -342,37 +396,44 @@ class Activity extends React.Component {
       nextScreen,
       setSelected,
       orderIndex,
-      currentScreen
+      currentScreen,
     } = this.props;
 
     const { isSummaryScreen } = this.state;
 
     const next = getNextPos(currentScreen, itemVisibility);
 
-    const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
+    const flow = currentResponse.activity.isActivityFlow
+      ? currentResponse.activity
+      : null;
 
     const activity = this.state.visibleAct;
 
     const summaryScreenIsComing = !!(
       next === -1 &&
       !isSummaryScreen &&
-      (
-        flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-        !flow && !activity.summaryDisabled
-      )
-    )
+      ((flow &&
+        !flow.summaryDisabled &&
+        flow.order.length == 1 + orderIndex[flow.id]) ||
+        (!flow && !activity.summaryDisabled))
+    );
 
-    const singleActityScreenHasData = 
-      summaryScreenIsComing && 
-      !flow && 
-      getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
+    const singleActityScreenHasData =
+      summaryScreenIsComing &&
+      !flow &&
+      getSummaryScreenDataForActivity(
+        currentResponse.activity,
+        currentResponse.activity.id,
+        null,
+        this.state.responses
+      ).hasData();
 
     if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
       this.setState({ isSummaryScreen: true });
       setSummaryScreen(currentResponse.activity, true);
       return;
     }
-    
+
     if (trigger.isNextButton) {
       if (isSummaryScreen) {
         this.setState({ isSummaryScreen: false });
@@ -387,7 +448,7 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
-    
+
     if (trigger.isUserSelect) {
       if (isSummaryScreen) {
         this.setState({ isSummaryScreen: false });
@@ -402,20 +463,20 @@ class Activity extends React.Component {
     }
   }
 
-  handleChange(responses, goToNext=false, timeElapsed=0) {
-    const {
-      currentScreen,
-      currentApplet,
-      lastResponseTime
-    } = this.props;
+  handleChange(responses, goToNext = false, timeElapsed = 0) {
+    const { currentScreen, currentApplet, lastResponseTime } = this.props;
 
     const activity = this.state.visibleAct;
-    
+
     if (!goToNext || !timeElapsed) {
-      this.processSetAnswerEvent(activity, responses, currentScreen)
+      this.processSetAnswerEvent(activity, responses, currentScreen);
     }
 
-    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
+    if (
+      !goToNext &&
+      (this.currentItem.inputType === "stackedRadio" ||
+        this.currentItem.inputType == "stackedSlider")
+    ) {
       return;
     }
 
@@ -423,7 +484,8 @@ class Activity extends React.Component {
     const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
     const optionalText = this.currentItem.isOptionalText;
 
-    const evaluateNextScreen = (autoAdvance || fullScreen) && !optionalText || goToNext;
+    const evaluateNextScreen =
+      ((autoAdvance || fullScreen) && !optionalText) || goToNext;
 
     if (!evaluateNextScreen) {
       return;
@@ -435,11 +497,17 @@ class Activity extends React.Component {
 
     const responseTimes = collectResponseTimes(currentApplet, lastResponseTime);
 
-    const itemsVisibility = getItemsVisibility(activity, responses, responseTimes);
+    const itemsVisibility = getItemsVisibility(
+      activity,
+      responses,
+      responseTimes
+    );
 
     this.setState({ itemsVisibility });
 
-    this.moveToSummaryOrToNextScreen(itemsVisibility, timeElapsed, { isUserSelect: true });
+    this.moveToSummaryOrToNextScreen(itemsVisibility, timeElapsed, {
+      isUserSelect: true,
+    });
   }
 
   handlePressNextScreen = (nextLabel = null) => {
@@ -459,7 +527,7 @@ class Activity extends React.Component {
       return;
     }
 
-    this.addEventOnNextClick(nextLabel, isSummaryScreen, currentScreen)
+    this.addEventOnNextClick(nextLabel, isSummaryScreen, currentScreen);
 
     this.setState({ optionalTextChanged: false });
 
@@ -469,9 +537,11 @@ class Activity extends React.Component {
 
     if (isSplashScreen) {
       let activityObj = currentResponse.activity;
-      const objectId = activityObj.event ? activityObj.id + activityObj.event.id : activityObj.id;
+      const objectId = activityObj.event
+        ? activityObj.id + activityObj.event.id
+        : activityObj.id;
       setSplashScreen(activityObj, false);
-      setCurrentScreen(objectId, currentScreen)
+      setCurrentScreen(objectId, currentScreen);
       return;
     }
 
@@ -481,8 +551,10 @@ class Activity extends React.Component {
 
     this.setState({ isContentError: false });
 
-    this.moveToSummaryOrToNextScreen(itemVisibility, undefined, { isNextButton: true });
-  }
+    this.moveToSummaryOrToNextScreen(itemVisibility, undefined, {
+      isNextButton: true,
+    });
+  };
 
   handlePressPrevScreen = () => {
     const { isSummaryScreen, visibleAct } = this.state;
@@ -496,9 +568,9 @@ class Activity extends React.Component {
     } = this.props;
 
     this.userEvents.push({
-      type: 'PREV',
+      type: "PREV",
       time: Date.now(),
-      screen: currentScreen
+      screen: currentScreen,
     });
 
     this.setState({ optionalTextChanged: false });
@@ -515,9 +587,9 @@ class Activity extends React.Component {
         setSelected(false);
       }
     }
-  }
+  };
 
-  updateStore () {
+  updateStore() {
     const { currentScreen, addUserActivityEvents } = this.props;
     if (!this.props.currentResponse) return;
 
@@ -544,7 +616,9 @@ class Activity extends React.Component {
       ? activity.activityFlowOrder[orderIndex[activity.activityFlowId] || 0]
       : activity.order[orderIndex[activity.id] || 0];
 
-    return currentApplet.activities.find(act => act.name.en === orderActivity);
+    return currentApplet.activities.find(
+      (act) => act.name.en === orderActivity
+    );
   }
 
   componentWillUnmount() {
@@ -565,46 +639,58 @@ class Activity extends React.Component {
       appStatus,
       orderIndex,
     } = this.props;
-    const { visibility, isSummaryScreen, isActivityShow, hasSplashScreen, modalVisible } = this.state;
+    const {
+      visibility,
+      isSummaryScreen,
+      isActivityShow,
+      hasSplashScreen,
+      modalVisible,
+    } = this.state;
     const isSplashScreen = this.props.isSplashScreen && hasSplashScreen;
 
     if (!currentResponse || !this.currentItem) {
       return <View />;
     }
 
-    const timerEnabled = this.currentItem.inputType == 'futureBehaviorTracker';
+    const timerEnabled = this.currentItem.inputType == "futureBehaviorTracker";
     const { responses } = this.state;
-    const activity = currentResponse.activity.isActivityFlow ? this.getActivityData() : currentResponse.activity;
+    const activity = currentResponse.activity.isActivityFlow
+      ? this.getActivityData()
+      : currentResponse.activity;
     const { removeUndoOption } = this.currentItem.valueConstraints;
     const { topNavigation } = this.currentItem.valueConstraints;
-    const fullScreen = (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
+    const fullScreen =
+      (this.currentItem && this.currentItem.fullScreen) || activity.fullScreen;
     const nextLabel = isSummaryScreen
-      ? i18n.t('activity_navigation:done')
+      ? i18n.t("activity_navigation:done")
       : getNextLabel(
-        currentScreen,
-        isSplashScreen,
-        visibility,
-        activity,
-        responses,
-        this.state.isContentError,
-        tutorialStatus
-      );
-    const actionLabel = (isSummaryScreen || removeUndoOption)
-      ? ""
-      : getActionLabel(currentScreen, responses, activity.items);
+          currentScreen,
+          isSplashScreen,
+          visibility,
+          activity,
+          responses,
+          this.state.isContentError,
+          tutorialStatus
+        );
+    const actionLabel =
+      isSummaryScreen || removeUndoOption
+        ? ""
+        : getActionLabel(currentScreen, responses, activity.items);
     let prevLabel = isSummaryScreen
       ? "Back"
       : getPrevLabel(currentScreen, visibility);
 
-    if (this.currentItem.valueConstraints
-      && this.currentItem.valueConstraints.removeBackOption) {
+    if (
+      this.currentItem.valueConstraints &&
+      this.currentItem.valueConstraints.removeBackOption
+    ) {
       prevLabel = "";
     }
 
     return (
       <Container style={{ flex: 1 }}>
         <StatusBar hidden />
-        {!fullScreen && topNavigation &&
+        {!fullScreen && topNavigation && (
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
@@ -613,7 +699,9 @@ class Activity extends React.Component {
             prevLabel={prevLabel}
             topNavigation={topNavigation}
             disableCloseIcon={false}
-            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            prevEnabled={
+              !isSummaryScreen && isPrevEnabled(currentScreen, activity)
+            }
             onPressPrevScreen={this.handlePressPrevScreen}
             nextEnabled={isNextEnabled(currentScreen, activity, responses)}
             onPressNextScreen={this.handlePressNextScreen}
@@ -622,21 +710,26 @@ class Activity extends React.Component {
               this.setState({ responses });
 
               this.userEvents.push({
-                type: 'UNDO',
+                type: "UNDO",
                 time: Date.now(),
-                screen: currentScreen
-              })
+                screen: currentScreen,
+              });
 
-              sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
+              sendData(
+                "set_response",
+                { [activity.items[currentScreen].id]: undefined },
+                currentApplet.id
+              );
             }}
           />
-        }
-        {(currentResponse.activity.event && currentResponse.activity.event.data.timedActivity.allow) &&
-          <ActivityTime 
-            activity={currentResponse.activity}
-            finishActivity={this.handleTimerExpired}
-          />
-        }
+        )}
+        {currentResponse.activity.event &&
+          currentResponse.activity.event.data.timedActivity.allow && (
+            <ActivityTime
+              activity={currentResponse.activity}
+              finishActivity={this.handleTimerExpired}
+            />
+          )}
         {!isSummaryScreen && !isSplashScreen && isActivityShow && (
           <ActivityScreens
             activity={activity}
@@ -645,10 +738,17 @@ class Activity extends React.Component {
             hasSplashScreen={hasSplashScreen}
             onChange={(answer, goToNext = false, timeElapsed = 0) => {
               responses[currentScreen] = answer;
-              if (this.currentItem.inputType != 'drawing' && this.currentItem.inputType != 'trail') {
-                sendData('set_response', { [activity.items[currentScreen].id]: answer }, currentApplet.id);
+              if (
+                this.currentItem.inputType != "drawing" &&
+                this.currentItem.inputType != "trail"
+              ) {
+                sendData(
+                  "set_response",
+                  { [activity.items[currentScreen].id]: answer },
+                  currentApplet.id
+                );
               }
-              this.setState({ responses })
+              this.setState({ responses });
               this.handleChange(responses, goToNext, timeElapsed);
             }}
             authToken={authToken}
@@ -660,14 +760,16 @@ class Activity extends React.Component {
           <ActivitySummary
             responses={responses}
             activity={activity}
-            flow={currentResponse.activity.isActivityFlow ? currentResponse.activity : null}
+            flow={
+              currentResponse.activity.isActivityFlow
+                ? currentResponse.activity
+                : null
+            }
             orderIndex={orderIndex}
           />
         )}
-        {!!isSplashScreen && (
-          <ActivitySplash activity={activity} />
-        )}
-        {!fullScreen &&
+        {!!isSplashScreen && <ActivitySplash activity={activity} />}
+        {!fullScreen && (
           <ActHeader
             title={activity.name.en}
             actionLabel={actionLabel}
@@ -676,7 +778,9 @@ class Activity extends React.Component {
             watermark={currentApplet.watermark}
             disableCloseIcon={topNavigation}
             topNavigation={false}
-            prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+            prevEnabled={
+              !isSummaryScreen && isPrevEnabled(currentScreen, activity)
+            }
             onPressPrevScreen={this.handlePressPrevScreen}
             nextEnabled={isNextEnabled(currentScreen, activity, responses)}
             onPressNextScreen={this.handlePressNextScreen}
@@ -684,45 +788,65 @@ class Activity extends React.Component {
               responses[currentScreen] = undefined;
               this.setState({ responses });
 
-              sendData('set_response', { [activity.items[currentScreen].id]: undefined }, currentApplet.id);
+              sendData(
+                "set_response",
+                { [activity.items[currentScreen].id]: undefined },
+                currentApplet.id
+              );
             }}
           />
-        }
+        )}
         {!fullScreen && (
           <View
             onTouchStart={this.idleTimer.resetCountdown}
             style={styles.buttonArea}
           >
-            {
-              !timerEnabled && activity.items.length > 1 && (
-                <ActProgress
-                  index={currentScreen}
-                  length={activity.items.length}
-                />
-              )
-            }
-            {!topNavigation &&
+            {!timerEnabled && activity.items.length > 1 && (
+              <ActProgress
+                index={currentScreen}
+                length={activity.items.length}
+              />
+            )}
+            {!topNavigation && (
               <ActivityButtons
                 nextLabel={nextLabel}
-                nextEnabled={isSplashScreen || isNextEnabled(currentScreen, activity, responses, tutorialStatus)}
+                nextEnabled={
+                  isSplashScreen ||
+                  isNextEnabled(
+                    currentScreen,
+                    activity,
+                    responses,
+                    tutorialStatus
+                  )
+                }
                 onPressNext={() => this.handlePressNextScreen(nextLabel)}
                 prevLabel={prevLabel}
-                prevEnabled={!isSummaryScreen && isPrevEnabled(currentScreen, activity)}
+                prevEnabled={
+                  !isSummaryScreen && isPrevEnabled(currentScreen, activity)
+                }
                 onPressPrev={() => this.handlePressPrevScreen()}
                 actionLabel={actionLabel}
                 timerEnabled={timerEnabled}
-                timeLeft={timerEnabled && responses[currentScreen]?.timeLeft || 0}
-                timeLimit={timerEnabled && responses[currentScreen]?.timeLimit || 0}
+                timeLeft={
+                  (timerEnabled && responses[currentScreen]?.timeLeft) || 0
+                }
+                timeLimit={
+                  (timerEnabled && responses[currentScreen]?.timeLimit) || 0
+                }
                 timerActive={responses[currentScreen]?.timerActive}
                 lastAvailableTime={responses[currentScreen]?.lastAvailableTime}
                 appStatus={appStatus}
-                setTimerStatus={(timerActive, timeLeft, lastAvailableTime=0) => {
+                setTimerStatus={(
+                  timerActive,
+                  timeLeft,
+                  lastAvailableTime = 0
+                ) => {
                   const response = responses[currentScreen] || {};
 
                   if (timeLeft <= 0 && response.timeLimit) {
                     this.setState({
-                      modalVisible: true
-                    })
+                      modalVisible: true,
+                    });
                   }
 
                   responses[currentScreen] = {
@@ -730,7 +854,7 @@ class Activity extends React.Component {
                     timerActive,
                     timeLeft,
                     timeLimit: response.timeLimit,
-                    lastAvailableTime
+                    lastAvailableTime,
                   };
 
                   this.setState({ responses });
@@ -745,7 +869,10 @@ class Activity extends React.Component {
                 }}
                 onPressAction={() => {
                   if (timerEnabled) {
-                    responses[currentScreen] = { ...responses[currentScreen], value: undefined };
+                    responses[currentScreen] = {
+                      ...responses[currentScreen],
+                      value: undefined,
+                    };
                   } else {
                     responses[currentScreen] = undefined;
                   }
@@ -753,15 +880,22 @@ class Activity extends React.Component {
                   this.setState({ responses, optionalTextChanged: false });
 
                   this.userEvents.push({
-                    type: 'UNDO',
+                    type: "UNDO",
                     time: Date.now(),
-                    screen: currentScreen
-                  })
+                    screen: currentScreen,
+                  });
 
-                  sendData('set_response', { [activity.items[currentScreen].id]: responses[currentScreen] }, currentApplet.id);
+                  sendData(
+                    "set_response",
+                    {
+                      [activity.items[currentScreen].id]:
+                        responses[currentScreen],
+                    },
+                    currentApplet.id
+                  );
                 }}
               />
-            }
+            )}
           </View>
         )}
 
@@ -771,10 +905,10 @@ class Activity extends React.Component {
           backdropOpacity={0}
         >
           <View style={styles.modal}>
-            <Image
-              source={ clock }
-            />
-            <Text style={{ color: 'white', fontSize: 25, marginLeft: 10 }}>Time's up!</Text>
+            <Image source={clock} />
+            <Text style={{ color: "white", fontSize: 25, marginLeft: 10 }}>
+              Time's up!
+            </Text>
           </View>
         </Modal>
       </Container>
@@ -835,7 +969,7 @@ const mapDispatchToProps = {
   setCurrentScreen,
   finishActivityDueToTimer,
   finishActivityDueToIdleTimer,
-  addUserActivityEvents
+  addUserActivityEvents,
 };
 
 export default connect(

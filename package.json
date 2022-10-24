@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "server": "node node_modules/.bin/react-native start",
+    "ios_iph7": "./node_modules/.bin/react-native run-ios --simulator=\"iPhone 7\" ",
     "ios": "./node_modules/.bin/react-native run-ios",
     "android": "./node_modules/.bin/react-native run-android",
     "log-ios": "./node_modules/.bin/react-native log-ios",
@@ -145,6 +146,7 @@
     "tty-browserify": "0.0.0",
     "url": "^0.10.3",
     "util": "^0.10.4",
+    "uuid": "3.4.0",
     "vm-browserify": "0.0.4"
   },
   "devDependencies": {

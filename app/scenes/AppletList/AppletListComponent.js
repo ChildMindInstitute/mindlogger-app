@@ -18,7 +18,6 @@ import { Container, Header, Title, Button, Icon, Body, Right, Left } from 'nativ
 import NetInfo, { useNetInfo } from '@react-native-community/netinfo';
 import { colors } from '../../theme';
 import { connectionSelector } from '../../state/app/app.selectors';
-import { setReminder, cancelReminder } from '../../state/applets/applets.thunks';
 import { setConnection } from '../../state/app/app.actions';
 import AppletListItem from '../../components/AppletListItem';
 import AppletInvite from '../../components/AppletInvite';
@@ -58,8 +57,6 @@ const AppletListComponent = ({
   title,
   isConnected,
   setConnection,
-  setReminder,
-  cancelReminder,
   onPressDrawer,
   onPressRefresh,
   onUploadQueue,
@@ -94,8 +91,6 @@ const AppletListComponent = ({
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
-      cancelReminder();
-
       if (!isConnected && !currentConnection) {
         currentConnection = true;
         setConnection(true);
@@ -104,7 +99,6 @@ const AppletListComponent = ({
     } else {
       currentConnection = false;
       setConnection(false);
-      setReminder();
     }
   }
 
@@ -214,8 +208,6 @@ AppletListComponent.propTypes = {
   isDownloadingApplets: PropTypes.bool.isRequired,
   isDownloadingTargetApplet: PropTypes.bool.isRequired,
   onPressDrawer: PropTypes.func.isRequired,
-  setReminder: PropTypes.func.isRequired,
-  cancelReminder: PropTypes.func.isRequired,
   setConnection: PropTypes.func.isRequired,
   onPressAbout: PropTypes.func.isRequired,
   onPressRefresh: PropTypes.func.isRequired,
@@ -236,9 +228,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = {
-  setReminder,
   setConnection,
-  cancelReminder,
 };
 
 export default connect(

@@ -71,7 +71,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
-  firebase.notifications().cancelAllNotifications();
+  firebase.notifications().cancelAllNotifications(); // todo - stop background process
 };
 
 export const logout = () => (dispatch, getState) => {
