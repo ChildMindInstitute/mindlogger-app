@@ -64,6 +64,7 @@ import {
   currentAppletSelector,
   startedTimesSelector,
   currentActivitySelector,
+  currentActivityIdSelector,
 } from "../app/app.selectors";
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 import { getTokenIncreaseForNegativeBehaviors } from "../../services/tokens";
@@ -674,6 +675,16 @@ export const nextActivity = (isNext = false) => (dispatch, getState) => {
   }
 }
 
+export const deleteActivityStartTime = () => (dispatch, getState) => {
+  const state = getState();
+  const activityId = currentActivityIdSelector(state);
+  const eventId = currentEventSelector(state);
+  
+  if (activityId && eventId) {
+    dispatch(clearActivityStartTime(activityId + eventId));
+  }
+}
+
 export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
@@ -733,26 +744,7 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 
   if (next === -1) {
-    if (activity.isActivityFlow && currentActOrderIndex < activity.order.length - 1) {
-      Actions.replace("activity_flow_submit");
-    } else {
-      setTimeout(() => {
-        if (activity.nextAccess) {
-          dispatch(setActivityAccess(applet.id + activity.id));
-        }
-        sendData('finish_activity', activity.id, applet.id);
-        dispatch(completeResponse());
-        dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
-        if (activity.isActivityFlow) {
-          dispatch(setActivityFlowOrderIndex({
-            activityId: activity.id,
-            index: 0
-          }));
-        }
-      });
-
-      Actions.replace("activity_thanks");
-    }
+    finishActivityInternal(dispatch, activity, applet, event, currentActOrderIndex);
   } else {
     dispatch(setCurrentScreen(event ? activity.id + event : activity.id, next, new Date().getTime() - timeElapsed));
 
@@ -773,18 +765,70 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 };
 
-export const finishActivity = (activity) => (dispatch, getState) => {
+export const finishActivityDueToIdleTimer = (activity) => (dispatch, getState) => {
+  const state = getState();
+  const applet = currentAppletSelector(state);
+  const event = currentEventSelector(state);
+  const orderIndex = orderIndexSelector(state);
+  const currentActOrderIndex = orderIndex[activity.id] || 0;
+  
+  finishActivityInternal(dispatch, activity, applet, event, currentActOrderIndex);
+}
+
+const finishActivityInternal = (dispatch, activity, applet, event, currentActOrderIndex) => {
+  if (activity.isActivityFlow && currentActOrderIndex < activity.order.length - 1) {
+    Actions.replace("activity_flow_submit");
+  } else {
+    setTimeout(() => {
+      if (activity.nextAccess) {
+        dispatch(setActivityAccess(applet.id + activity.id));
+      }
+      sendData('finish_activity', activity.id, applet.id);
+      
+      dispatch(completeResponse());
+      
+      dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+      
+      if (activity.isActivityFlow) {
+        dispatch(setActivityFlowOrderIndex({
+          activityId: activity.id,
+          index: 0
+        }));
+      }
+    });
+    Actions.replace("activity_thanks");
+  }
+}
+
+export const finishActivityDueToTimer = (activity) => (dispatch, getState) => {
   const state = getState();
   const event = currentEventSelector(state);
+  const applet = currentAppletSelector(state);  
+  const orderIndex = orderIndexSelector(state);
+  const currentActOrderIndex = orderIndex[activity.id] || 0;
+
+  sendData('finish_activity', activity.id, applet.id);
 
   dispatch(
     clearActivityStartTime(activity.event ? activity.id + activity.event.id : activity.id)
   );
+
   dispatch(completeResponse());
+
   dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
 
   dispatch(setCurrentActivity(null));
+
   Actions.push("activity_end");
+
+  setTimeout(() => {
+    if (activity.isActivityFlow) {
+      dispatch(setActivityFlowOrderIndex({
+        activityId: activity.id,
+        index: 0
+      }));
+    }
+  });
 };
 
 export const endActivity = (activity) => (dispatch) => {

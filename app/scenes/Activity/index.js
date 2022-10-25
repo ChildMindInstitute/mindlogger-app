@@ -5,14 +5,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as R from "ramda";
 import _ from "lodash";
-import { Actions } from "react-native-router-flux";
 import i18n from "i18next";
 import { addUserActivityEvents } from "../../state/responses/responses.actions";
 import {
   nextScreen,
   prevScreen,
   completeResponse,
-  finishActivity
+  finishActivityDueToTimer,
+  finishActivityDueToIdleTimer
 } from "../../state/responses/responses.thunks";
 import {
   currentResponsesSelector,
@@ -30,7 +30,7 @@ import {
   tutorialIndexSelector,
 } from "../../state/app/app.selectors";
 import { setTutorialStatus, setTutorialIndex } from '../../state/app/app.actions';
-import { testVisibility } from "../../services/visibility";
+import { collectResponseTimes, getItemsVisibility } from "../../services/visibility";
 import {
   setAnswer,
   setSummaryScreen,
@@ -83,6 +83,12 @@ const styles = StyleSheet.create({
   }
 });
 
+const inputTypeCollection = [
+  'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
+  'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
+  'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
+];
+
 const clock = require('../../../img/clock.png');
 
 class Activity extends React.Component {
@@ -103,6 +109,13 @@ class Activity extends React.Component {
     this.userEvents = [];
     this.idleTimer = new Timer();
     this.completed = false;
+  }
+
+  get currentItem() {
+    return R.path(
+      ["items", this.props.currentScreen],
+      this.state.visibleAct
+    );
   }
 
   componentDidMount() {
@@ -135,7 +148,7 @@ class Activity extends React.Component {
       if (idleTime) {
         this.idleTimer.startCountdown(
           idleTime, // Time in seconds.
-          this.handleTimeIsUp // Callback.
+          this.handleIdleTimeIsUp // Callback.
         );
       }
       this.setState({
@@ -164,138 +177,58 @@ class Activity extends React.Component {
     }
   }
 
-  handleChange(responses, goToNext=false, timeElapsed=0) {
-    const { isSummaryScreen } = this.state;
-    const {
-      currentResponse,
-      currentScreen,
-      nextScreen,
-      setTutorialStatus,
-      setSummaryScreen,
-      setSelected,
-      currentApplet,
-      lastResponseTime,
-      orderIndex,
-    } = this.props;
-    const activity = this.state.visibleAct;
-    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
-    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
-    const optionalText = this.currentItem.isOptionalText;
-    const responseTimes = {};
+  processSetAnswerEvent(activity, responses, currentScreen) {
+    const userEvent = {
+      type: 'SET_ANSWER',
+      time: Date.now(),
+      screen: currentScreen
+    };
 
-    for (const activity of currentApplet.activities) {
-      responseTimes[activity.name.en.replace(/\s/g, '_')] = (lastResponseTime[currentApplet.id] || {})[activity.id];
+    const inputType = activity.items[currentScreen].inputType;
+
+    const currentScreenResponses = responses[currentScreen];
+
+    if (currentScreenResponses) {
+      if (inputTypeCollection.indexOf(inputType) >= 0) {
+        const parsedResponses = JSON.parse(JSON.stringify(currentScreenResponses));
+        userEvent.response = parsedResponses;
+      } else if (typeof responses[currentScreen] == 'object' && responses[currentScreen].text) {
+        userEvent.response = { 
+          text: responses[currentScreen].text 
+        };
+      }
     }
 
-    const visibility = activity.items.map((item) => {
-      if (item.isVis) {
-        return false;
-      }
-      return testVisibility(item.visibility, activity.items, responses, responseTimes)
-    });
-    const next = getNextPos(currentScreen, visibility);
+    if (this.userEvents.length > 0) {
+      const lastEvent = this.userEvents[this.userEvents.length-1];
 
-    this.setState({ visibility });
-
-    if (!goToNext || !timeElapsed) {
-      const userEvent = {
-        type: 'SET_ANSWER',
-        time: Date.now(),
-        screen: currentScreen
-      };
-
-      const inputType = activity.items[currentScreen].inputType;
-      if (responses[currentScreen]) {
-        if ([
-          'radio', 'stackedRadio', 'slider', 'stackedSlider', 'timeRange', 'duration',
-          'date', 'ageSelector', 'select', 'text', 'time', 'geolocation',
-          'pastBehaviorTracker', 'futureBehaviorTracker', 'dropdownList'
-        ].indexOf(inputType) >= 0) {
-          userEvent.response = JSON.parse(JSON.stringify(responses[currentScreen]));
-        } else if (typeof responses[currentScreen] == 'object' && responses[currentScreen].text) {
-          userEvent.response = { text: responses[currentScreen].text };
-        }
-      }
-
-      if (this.userEvents.length > 0) {
-        const lastEvent = this.userEvents[this.userEvents.length-1];
-
-        if ((inputType == 'trail' || inputType == 'drawing' || inputType == 'text') && lastEvent.type == 'SET_ANSWER') {
-          this.userEvents.pop();
-        } else if (
-          userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
-        ) {
-          if (lastEvent.response.text != userEvent.response.text) {
-            if (this.state.optionalTextChanged) {
-              this.userEvents.pop();
-            }
-
-            this.setState({ optionalTextChanged: true });
-          } else {
-            this.setState({ optionalTextChanged: false });
+      if ((inputType == 'trail' || inputType == 'drawing' || inputType == 'text') && lastEvent.type == 'SET_ANSWER') {
+        this.userEvents.pop();
+      } else if (
+        userEvent.response && lastEvent.response && typeof lastEvent.response == 'object' && typeof userEvent.response == 'object'
+      ) {
+        if (lastEvent.response.text != userEvent.response.text) {
+          if (this.state.optionalTextChanged) {
+            this.userEvents.pop();
           }
-        }
 
-        if (inputType == 'trail' && responses[currentScreen] && !responses[currentScreen].value.updated) {
-          userEvent.time = lastEvent.time;
+          this.setState({ optionalTextChanged: true });
+        } else {
+          this.setState({ optionalTextChanged: false });
         }
       }
 
-      this.userEvents.push(userEvent);
-    }
-
-    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
-      return;
-    }
-
-    if ((autoAdvance || fullScreen) && !optionalText || goToNext) {
-      if (!this.completed) {
-        this.updateStore();
-      }
-
-      const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
-
-      const summaryScreenIsComing = !!(
-        next === -1 &&
-        !isSummaryScreen &&
-        (
-          flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-          !flow && !activity.summaryDisabled
-        )
-      )
-
-      const singleActityScreenHasData = 
-        summaryScreenIsComing && 
-        !flow && 
-        getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
-
-      if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
-        this.setState({ isSummaryScreen: true });
-        setSummaryScreen(currentResponse.activity, true);
-      } else {
-        if (isSummaryScreen) {
-          this.setState({ isSummaryScreen: false });
-        }
-        if (activity.items[currentScreen].inputType === "trail") {
-          setTutorialStatus(1);
-        }
-
-        nextScreen(timeElapsed);
-        setSelected(false);
+      if (inputType == 'trail' && responses[currentScreen] && !responses[currentScreen].value.updated) {
+        userEvent.time = lastEvent.time;
       }
     }
+
+    this.userEvents.push(userEvent);
   }
 
   findActivity = (name, activities = []) => {
     if (!name) return undefined;
     return _.find(activities, { name: { en: name } });
-  }
-
-  get currentItem() {
-    return R.path(
-      ["items", this.props.currentScreen],
-      this.state.visibleAct
-    );
   }
 
   getIdleTime = () => {
@@ -312,19 +245,243 @@ class Activity extends React.Component {
     return null;
   };
 
-  handleTimeIsUp = () => {
+  handleIdleTimeIsUp = () => {
     if (this.props.currentResponse) {
       this.updateStore();
-      this.props.completeResponse(true);
-
-      sendData(
-        'finish_activity',
-        this.props.currentResponse.activity.id,
-        this.props.currentApplet.id
-      );
-
-      Actions.replace("activity_flow_submit")
+      this.props.finishActivityDueToIdleTimer(this.props.currentResponse.activity);
     }
+  }
+
+  handleTimerExpired = () => {
+    if (this.props.currentResponse) {
+      this.updateStore();
+      this.props.finishActivityDueToTimer(this.props.currentResponse.activity);
+    }
+  }
+
+  processTrailTutrial(activity) {
+    const {
+      setTutorialStatus,
+      setTutorialIndex,
+      tutorialStatus,
+      tutorialIndex,
+      currentScreen
+    } = this.props;
+  
+    const screen = activity.items[currentScreen].variableName;
+    let currentActivity = 'activity1';    
+
+    if (activity.name && activity.name.en.includes('iPad')) {
+      currentActivity = 'activity2';
+    }
+
+    if (activity.items[currentScreen].inputType === "trail") {
+      if (tutorialStatus !== 0) {
+        if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
+          setTutorialIndex(tutorialIndex + 1);
+        } else {
+          setTutorialStatus(0);
+          setTutorialIndex(0);
+        }
+        this.userEvents.push({
+          type: 'NEXT',
+          time: Date.now(),
+          screen: currentScreen
+        });
+        this.updateStore();
+        return true;
+      } else if (currentScreen !== 3) {
+        setTutorialStatus(1);
+      }
+    }
+    return false;
+  }
+
+  showAlertForIncorrectAnswer(activity, currentScreen) {
+    if (
+      activity.items[currentScreen].correctAnswer &&
+      activity.items[currentScreen].correctAnswer["en"]
+    ) {
+      const correctAnswer = activity.items[currentScreen].correctAnswer["en"];
+      if (this.state.responses[currentScreen] !== correctAnswer) {
+        Alert.alert(
+          i18n.t("activity:failed"),
+          i18n.t("activity:incorrect_answer"),
+          [
+            {
+              text: "OK",
+              onPress: () => console.log("Incorrect!"),
+            },
+          ]
+        );
+        return true;
+      }
+    }
+    return false;
+  }
+
+  addEventOnNextClick(nextLabel, isSummaryScreen, currentScreen) {
+    let eventType = 'NEXT';
+    if (nextLabel == i18n.t('activity_navigation:skip')) {
+      eventType = 'SKIP';
+    } else if (nextLabel == i18n.t('activity_navigation:done')) {
+      eventType = 'DONE';
+    }
+
+    this.userEvents.push({
+      type: eventType,
+      time: Date.now(),
+      screen: isSummaryScreen ? 'summary' : currentScreen
+    });
+  }
+
+  moveToSummaryOrToNextScreen(itemVisibility, timeElapsed, trigger) {
+    const {
+      currentResponse,
+      setSummaryScreen,
+      nextScreen,
+      setSelected,
+      orderIndex,
+      currentScreen
+    } = this.props;
+
+    const { isSummaryScreen } = this.state;
+
+    const next = getNextPos(currentScreen, itemVisibility);
+
+    const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
+
+    const activity = this.state.visibleAct;
+
+    const summaryScreenIsComing = !!(
+      next === -1 &&
+      !isSummaryScreen &&
+      (
+        flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
+        !flow && !activity.summaryDisabled
+      )
+    )
+
+    const singleActityScreenHasData = 
+      summaryScreenIsComing && 
+      !flow && 
+      getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
+
+    if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
+      this.setState({ isSummaryScreen: true });
+      setSummaryScreen(currentResponse.activity, true);
+      return;
+    }
+    
+    if (trigger.isNextButton) {
+      if (isSummaryScreen) {
+        this.setState({ isSummaryScreen: false });
+        setSummaryScreen(currentResponse.activity, false);
+      }
+
+      if (!this.completed) {
+        if (next == -1) {
+          this.completed = true;
+        }
+        nextScreen();
+        setSelected(false);
+      }
+    }
+    
+    if (trigger.isUserSelect) {
+      if (isSummaryScreen) {
+        this.setState({ isSummaryScreen: false });
+      }
+
+      if (activity.items[currentScreen].inputType === "trail") {
+        setTutorialStatus(1);
+      }
+
+      nextScreen(timeElapsed);
+      setSelected(false);
+    }
+  }
+
+  handleChange(responses, goToNext=false, timeElapsed=0) {
+    const {
+      currentScreen,
+      currentApplet,
+      lastResponseTime
+    } = this.props;
+
+    const activity = this.state.visibleAct;
+    
+    if (!goToNext || !timeElapsed) {
+      this.processSetAnswerEvent(activity, responses, currentScreen)
+    }
+
+    if (!goToNext && (this.currentItem.inputType === 'stackedRadio' || this.currentItem.inputType == 'stackedSlider')) {
+      return;
+    }
+
+    const fullScreen = this.currentItem.fullScreen || activity.fullScreen;
+    const autoAdvance = this.currentItem.autoAdvance || activity.autoAdvance;
+    const optionalText = this.currentItem.isOptionalText;
+
+    const evaluateNextScreen = (autoAdvance || fullScreen) && !optionalText || goToNext;
+
+    if (!evaluateNextScreen) {
+      return;
+    }
+
+    if (!this.completed) {
+      this.updateStore();
+    }
+
+    const responseTimes = collectResponseTimes(currentApplet, lastResponseTime);
+
+    const itemsVisibility = getItemsVisibility(activity, responses, responseTimes);
+
+    this.setState({ itemsVisibility });
+
+    this.moveToSummaryOrToNextScreen(itemsVisibility, timeElapsed, { isUserSelect: true });
+  }
+
+  handlePressNextScreen = (nextLabel = null) => {
+    const {
+      currentResponse,
+      currentScreen,
+      itemVisibility,
+      setSplashScreen,
+      setCurrentScreen,
+      isSplashScreen,
+    } = this.props;
+
+    const { isSummaryScreen } = this.state;
+    const activity = this.state.visibleAct;
+
+    if (this.processTrailTutrial(activity)) {
+      return;
+    }
+
+    this.addEventOnNextClick(nextLabel, isSummaryScreen, currentScreen)
+
+    this.setState({ optionalTextChanged: false });
+
+    if (!this.completed) {
+      this.updateStore();
+    }
+
+    if (isSplashScreen) {
+      let activityObj = currentResponse.activity;
+      const objectId = activityObj.event ? activityObj.id + activityObj.event.id : activityObj.id;
+      setSplashScreen(activityObj, false);
+      setCurrentScreen(objectId, currentScreen)
+      return;
+    }
+
+    if (this.showAlertForIncorrectAnswer(activity, currentScreen)) {
+      return;
+    }
+
+    this.setState({ isContentError: false });
+
+    this.moveToSummaryOrToNextScreen(itemVisibility, undefined, { isNextButton: true });
   }
 
   handlePressPrevScreen = () => {
@@ -355,133 +512,6 @@ class Activity extends React.Component {
     } else {
       prevScreen();
       if (isSelected) {
-        setSelected(false);
-      }
-    }
-  }
-
-  handlePressNextScreen = (nextLabel = null) => {
-    const {
-      currentResponse,
-      setSummaryScreen,
-      setTutorialStatus,
-      setTutorialIndex,
-      tutorialStatus,
-      tutorialIndex,
-      currentScreen,
-      nextScreen,
-      setSelected,
-      itemVisibility,
-      setSplashScreen,
-      setCurrentScreen,
-      isSplashScreen,
-      orderIndex,
-    } = this.props;
-    const { isSummaryScreen } = this.state;
-    const activity = this.state.visibleAct;
-    const screen = activity.items[currentScreen].variableName;
-    let currentActivity = 'activity1';
-    const next = getNextPos(currentScreen, itemVisibility);
-
-    if (activity.name && activity.name.en.includes('iPad')) {
-      currentActivity = 'activity2';
-    }
-    if (activity.items[currentScreen].inputType === "trail") {
-      if (tutorialStatus !== 0) {
-        if (tutorialIndex + 1 < tutorials[currentActivity][screen].length) {
-          setTutorialIndex(tutorialIndex + 1);
-        } else {
-          setTutorialStatus(0);
-          setTutorialIndex(0);
-        }
-        this.userEvents.push({
-          type: 'NEXT',
-          time: Date.now(),
-          screen: currentScreen
-        });
-        this.updateStore();
-        return;
-      } else if (currentScreen !== 3) {
-        setTutorialStatus(1);
-      }
-    }
-
-    let eventType = 'NEXT';
-    if (nextLabel == i18n.t('activity_navigation:skip')) {
-      eventType = 'SKIP';
-    } else if (nextLabel == i18n.t('activity_navigation:done')) {
-      eventType = 'DONE';
-    }
-
-    this.userEvents.push({
-      type: eventType,
-      time: Date.now(),
-      screen: isSummaryScreen ? 'summary' : currentScreen
-    });
-
-    this.setState({ optionalTextChanged: false });
-
-    if (!this.completed) {
-      this.updateStore();
-    }
-
-    if (isSplashScreen) {
-      let activityObj = currentResponse.activity;
-      setSplashScreen(activityObj, false);
-      setCurrentScreen(activityObj.event ? activityObj.id + activityObj.event.id : activityObj.id, currentScreen)
-      return;
-    }
-    if (
-      activity.items[currentScreen].correctAnswer &&
-      activity.items[currentScreen].correctAnswer["en"]
-    ) {
-      const correctAnswer = activity.items[currentScreen].correctAnswer["en"];
-      if (this.state.responses[currentScreen] !== correctAnswer) {
-        Alert.alert(
-          i18n.t("activity:failed"),
-          i18n.t("activity:incorrect_answer"),
-          [
-            {
-              text: "OK",
-              onPress: () => console.log("Incorrect!"),
-            },
-          ]
-        );
-        return;
-      }
-    }
-    this.setState({ isContentError: false });
-
-    const flow = currentResponse.activity.isActivityFlow ? currentResponse.activity : null;
-
-    const summaryScreenIsComing = !!(
-      next === -1 &&
-      !isSummaryScreen &&
-      (
-        flow && !flow.summaryDisabled && flow.order.length == 1 + orderIndex[flow.id] ||
-        !flow && !activity.summaryDisabled
-      )
-    )
-
-    const singleActityScreenHasData = 
-      summaryScreenIsComing && 
-      !flow && 
-      getSummaryScreenDataForActivity(currentResponse.activity, currentResponse.activity.id, null, this.state.responses).hasData();
-
-    if (summaryScreenIsComing && (flow || singleActityScreenHasData)) {
-      this.setState({ isSummaryScreen: true });
-      setSummaryScreen(currentResponse.activity, true);
-    } else {
-      if (isSummaryScreen) {
-        this.setState({ isSummaryScreen: false });
-        setSummaryScreen(currentResponse.activity, false);
-      }
-
-      if (!this.completed) {
-        if (next == -1) {
-          this.completed = true;
-        }
-        nextScreen();
         setSelected(false);
       }
     }
@@ -604,12 +634,7 @@ class Activity extends React.Component {
         {(currentResponse.activity.event && currentResponse.activity.event.data.timedActivity.allow) &&
           <ActivityTime 
             activity={currentResponse.activity}
-            finishActivity={(activity) => {
-              this.updateStore();
-              this.props.finishActivity(activity);
-
-              sendData('finish_activity', activity.id, currentApplet.id);
-            }}
+            finishActivity={this.handleTimerExpired}
           />
         }
         {!isSummaryScreen && !isSplashScreen && isActivityShow && (
@@ -808,7 +833,8 @@ const mapDispatchToProps = {
   setSummaryScreen,
   setSplashScreen,
   setCurrentScreen,
-  finishActivity,
+  finishActivityDueToTimer,
+  finishActivityDueToIdleTimer,
   addUserActivityEvents
 };
 

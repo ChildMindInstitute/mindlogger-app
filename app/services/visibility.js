@@ -84,3 +84,24 @@ export const testVisibility = (testExpression = true, items = [], responses = []
     return true; // Default to true if we can't parse the expression
   }
 };
+
+export const collectResponseTimes = (currentApplet, lastResponseTime) => {
+  const responseTimes = {};
+
+  for (const activity of currentApplet.activities) {
+    const activityNameKey = activity.name.en.replace(/\s/g, '_');
+    const lastResponseTimeForApplet = lastResponseTime[currentApplet.id] || {};
+    responseTimes[activityNameKey] = lastResponseTimeForApplet[activity.id];
+  }
+  return responseTimes;
+}
+
+export const getItemsVisibility = (activity, responses, responseTimes) => {
+  const result = activity.items.map((item) => {
+    if (item.isVis) {
+      return false;
+    }
+    return testVisibility(item.visibility, activity.items, responses, responseTimes)
+  });
+  return result;
+}

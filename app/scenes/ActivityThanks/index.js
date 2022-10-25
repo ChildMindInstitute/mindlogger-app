@@ -13,6 +13,9 @@ import {
 } from "../../state/app/app.selectors";
 import { currentResponsesSelector } from "../../state/responses/responses.selectors";
 import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
+import {
+  deleteActivityStartTime
+} from "../../state/responses/responses.thunks";
 
 const styles = StyleSheet.create({
   box: {
@@ -25,11 +28,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActivityThanks = ({ currentApplet, currentResponses }) => {
+const ActivityThanks = (props) => {
+  const { currentApplet, currentResponses } = props;
+  
   const tokenLogger = isTokenLoggerApplet(currentApplet);
   const onClose = () => {
+    props.deleteActivityStartTime();
     Actions.replace("applet_details");
-  };
+  }; 
 
   return (
     <ImageBackground
@@ -63,14 +69,18 @@ const ActivityThanks = ({ currentApplet, currentResponses }) => {
   );
 };
 
-ActivityThanks.propTypes = {};
+ActivityThanks.propTypes = {
+  deleteActivityStartTime: PropTypes.func.isRequired
+};
 
 const mapStateToProps = (state) => ({
   currentApplet: currentAppletSelector(state),
   currentResponses: currentResponsesSelector(state)
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  deleteActivityStartTime
+};
 
 export default connect(
   mapStateToProps,
