@@ -22,6 +22,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { sendResponseReuploadRequest } from '../services/network';
 import { delayedExec, clearExec } from '../services/timing';
 import { authTokenSelector } from '../state/user/user.selectors';
+import { notificationService, notificationScheduler } from '../features/Notifications'
 import sortActivities from './ActivityList/sortActivities';
 
 const AndroidChannelId = 'MindLoggerChannelId';
@@ -32,6 +33,23 @@ const isAndroid = Platform.OS === 'android';
 const isIOS = Platform.OS === 'ios';
 
 class AppService extends Component {
+  constructor(props) {
+    super(props);
+
+    // notificationService.cancelAllLocalNotifications();
+
+    notificationScheduler.scheduleLocalNotification({
+      title: 'Hi',
+      message: 'this is test message',
+      notificationTag: 'test-notification'
+    }, { date: moment().clone().add({ seconds: 30 }).toDate() })
+
+    setImmediate(() => {
+      notificationService
+        .getScheduledLocalNotifications()
+        .then(notifications => console.log('notifications', notifications))
+    })
+  }
   /**
    * Method called when the component is about to be rendered.
    *
@@ -47,6 +65,8 @@ class AppService extends Component {
       fNotifications.onNotificationOpened(this.onNotificationOpened),
       fMessaging.onTokenRefresh(this.onTokenRefresh),
       fMessaging.onMessage(this.onMessage),
+      notificationService.onLocalNotification(this.onLocalNotification),
+      notificationService.onRemoteNotification(this.onRemoteNotification),
     ];
     this.appState = 'active';
     this.pendingNotification = null;
@@ -525,7 +545,6 @@ class AppService extends Component {
       // iosBadge: notification.ios.badge,
     });
 
-
     try {
       await firebase.notifications().displayNotification(localNotification);
     } catch (error) {
@@ -533,6 +552,14 @@ class AppService extends Component {
       console.warn(`FCM[${Platform.OS}]: error `, error);
     }
   };
+
+  onLocalNotification = (data) => {
+    console.log('onLocalNotification', data);
+  }
+
+  onRemoteNotification = (data) => {
+    console.log('onRemoteNotification', data);
+  }
 
   /**
    * Method called when the notification is pressed.

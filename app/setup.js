@@ -17,6 +17,13 @@ import { clearUser } from './state/user/user.actions';
 // import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 import AppService from './components/AppService';
+import { notificationService } from "./features/Notifications";
+
+notificationService.initialize();
+
+notificationService.onLocalNotification((data) => {
+  console.log(data)
+})
 
 const isAndroid = Platform.OS === 'android';
 const checkAuthToken = (store) => {
