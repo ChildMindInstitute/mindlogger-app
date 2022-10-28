@@ -46,20 +46,20 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
       })
     }
 
-    const encrypted = crypto.publicEncrypt(
-      configs.publicEncryptionKey,
-      Buffer.from(JSON.stringify(
-        params
-          .filter(param => param.allowed)
-          .map(param => ({ activityId: param.activityId, data: param.data }))
-      ))
+    const encrypted = encryptData(
+        configs.publicEncryptionKey,
+        JSON.stringify(
+            params
+                .filter(param => param.allowed)
+                .map(param => ({ activityId: param.activityId, data: param.data }))
+        )
     );
     const now = moment().format('MM/DD/YYYY');
 
     exportPDF(
       configs.serverIp,
       authToken,
-      encrypted.toString('base64'),
+      encrypted,
       now,
       applet.id.split('/').pop(),
       flowId && flowId.split('/').pop(),
@@ -67,4 +67,15 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
       responseId
     )
   }
+}
+
+function encryptData(publicKey, data) {
+  const encrypted = [];
+  const chunkSize = parseInt(publicKey.length * 0.58);
+  const array = Buffer.from(data);
+  for (let i = 0; i < array.length; i += chunkSize) {
+    const chunk = array.slice(i, i + chunkSize);
+    encrypted.push(crypto.publicEncrypt(publicKey, chunk).toString('base64'));
+  }
+  return encrypted;
 }
