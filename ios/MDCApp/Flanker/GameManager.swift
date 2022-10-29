@@ -361,6 +361,14 @@ class GameManager {
 
     Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
   }
+
+  func clearData() {
+    resultManager.cleanData()
+    countTest = 0
+    correctAnswers = 0
+    arrayTimes = []
+    invalidateTimers()
+  }
 }
 
 private extension GameManager {
@@ -394,14 +402,6 @@ private extension GameManager {
     } else {
       return false
     }
-  }
-
-  func clearData() {
-    resultManager.cleanData()
-    countTest = 0
-    correctAnswers = 0
-    arrayTimes = []
-    invalidateTimers()
   }
 
   func invalidateTimers() {

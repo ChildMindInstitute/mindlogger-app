@@ -175,6 +175,12 @@ class FlankerView: UIView {
     super.init(coder: coder)
   }
 
+
+  override func removeFromSuperview() {
+    self.gameManager.clearData()
+    super.removeFromSuperview()
+  }
+
   func parameterGame() {
     DispatchQueue.main.async {
       self.finishView.isHidden = true
