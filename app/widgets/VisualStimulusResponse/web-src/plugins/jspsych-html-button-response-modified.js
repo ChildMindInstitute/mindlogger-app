@@ -8,6 +8,9 @@
  *
  **/
 
+var greyColors = ['#D0D0D0', '#C1C1C1', '#AEAEB0'];
+var colorIndex = 0;
+
 jsPsych.plugins["html-button-response"] = (function() {
 
   var plugin = {};
@@ -77,8 +80,7 @@ jsPsych.plugins["html-button-response"] = (function() {
 
   plugin.trial = function(display_element, trial) {
     var start_time = performance.now();
-    var greyColors = ['#585858', '#696969', '#808080', '#989898', '#A9A9A9', '#C0C0C0', '#BEBEBE', '#D3D3D3', '#DCDCDC', '#F5F5F5'];
-    var randomColorIndex = Math.floor(Math.random() * 10);
+    
     // display stimulus
     var html = '<div id="jspsych-html-button-response-stimulus">' + `<div class="${trial.data.tag == 'trial' ? 'question' : 'result'}">` + trial.stimulus + '</div>' + '</div>';
 
@@ -113,8 +115,12 @@ jsPsych.plugins["html-button-response"] = (function() {
     if (trial.prompt !== null) {
       html += trial.prompt;
     }
-    if (trial.choices.length > 1) {
-      html += '<div class="square" style="background-color:' + greyColors[randomColorIndex] + '"></div>';
+    if (trial.choices.length > 0) {
+      colorIndex++;
+      if (colorIndex == 1000000000) {
+        colorIndex = 0;
+      }
+      html += '<div class="square" style="background-color:' + greyColors[colorIndex % greyColors.length] + '"></div>';
     }
     display_element.innerHTML = html;
 

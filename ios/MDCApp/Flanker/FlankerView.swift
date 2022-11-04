@@ -47,6 +47,14 @@ class FlankerView: UIView {
     return label
   }()
 
+  private lazy var grayedPixel: UIView = {
+    let pixelView = UIView()
+    pixelView.backgroundColor = UIColor(red: 255, green: 255, blue: 255)
+    pixelView.translatesAutoresizingMaskIntoConstraints = false
+    pixelView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    return pixelView
+  }()
+
   private lazy var fixationImage: ImageLoader = {
     let imageView = ImageLoader()
     imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -66,7 +74,6 @@ class FlankerView: UIView {
         self.testFeedbackMediaTime = date
       case .response: break
       }
-//      self.testStartMediaTime = date
     }
     return imageView
   }()
@@ -149,6 +156,10 @@ class FlankerView: UIView {
   var testFeedbackMediaTime: CFTimeInterval?
   var firstDate: Date!
   var firstCFTime: CFTimeInterval!
+  let pixelColorArray = [UIColor(red: 208, green: 208, blue: 208),
+                         UIColor(red: 193, green: 193, blue: 193),
+                         UIColor(red: 174, green: 174, blue: 176)]
+  var pixelArrayIndex: Int = 0
 
   var isFirstScreen = true
 
@@ -187,6 +198,15 @@ class FlankerView: UIView {
       self.gameManager.parameterGame()
     }
   }
+
+  @objc func drawPixel() {
+    pixelArrayIndex += 1
+    if (pixelArrayIndex == 1000000000) {
+      pixelArrayIndex = 0
+    }
+    let color = pixelColorArray[pixelArrayIndex % pixelColorArray.count]
+    grayedPixel.backgroundColor = color
+  }
   
   func setText(text: String, color: UIColor = .black) {
     textLabel.text = text
@@ -205,6 +225,7 @@ class FlankerView: UIView {
   private func setupConstraint() {
     addSubview(textLabel)
     addSubview(timeLabel)
+    addSubview(grayedPixel)
     addSubview(buttonStackView)
     addSubview(finishView)
     addSubview(fixationImage)
@@ -231,7 +252,12 @@ class FlankerView: UIView {
       finishView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
       finishView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
       finishView.topAnchor.constraint(equalTo: self.topAnchor),
-      finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+      finishView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+
+      grayedPixel.topAnchor.constraint(equalTo: self.topAnchor, constant: 0),
+      grayedPixel.bottomAnchor.constraint(equalTo: self.topAnchor, constant: 5),
+      grayedPixel.rightAnchor.constraint(equalTo: self.leftAnchor, constant: 10),
+      grayedPixel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5)
     ])
   }
 
@@ -315,6 +341,7 @@ extension FlankerView: GameManagerProtocol {
     print("Marker: self.displayLink?.isPaused = false: \(time)")
     textLabel.isHidden = false
     fixationImage.isHidden = true
+    drawPixel()
   }
 
   func updateTitleButton(left: String?, right: String?, leftImage: URL?, rightImage: URL?, countButton: Int) {
@@ -378,6 +405,7 @@ extension FlankerView: GameManagerProtocol {
       print("Marker: self.displayLink?.isPaused = false: \(time)")
       fixationImage.isHidden = false
       fixationImage.loadImageWithUrl(url)
+      drawPixel()
     }
   }
 
@@ -398,6 +426,7 @@ extension FlankerView: GameManagerProtocol {
       let procentCorrect = procentCorrect {
       if isShowResults {
         fixationImage.isHidden = true
+        drawPixel()
         finishView.configureView(text: "nvklfsdnblkvndflbnlkdfn", typeButton: typeResult, avrgTime: avrgTime, procentCorrect: procentCorrect, minAccuracy: minAccuracy, isLast: isLast) {
           guard
             let jsonData = try? JSONEncoder().encode(dataArray),
@@ -408,6 +437,7 @@ extension FlankerView: GameManagerProtocol {
           onEndGame(result)
         }
         finishView.isHidden = false
+        drawPixel()
       } else {
         guard
           let jsonData = try? JSONEncoder().encode(dataArray),
