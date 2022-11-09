@@ -61,7 +61,7 @@ const getTrials = (stimulusScreens, blocks, buttons, samplingMethod) => {
   return trials;
 }
 
-export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }) => {
+export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId, flankerPosition }) => {
   const [loading, setLoading] = useState(true);
   const [scriptInjected, setScriptInjected] = useState(false);
   const [responses, setResponses] = useState([]);
@@ -71,8 +71,9 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     const dataString = result.nativeEvent.data;
     const dataObject = JSON.parse(dataString);
     const dataType = result.nativeEvent.type;
-    if (dataObject.trial_index > configObj.trials.length) return ;
-    console.log(parseResponse(dataObject))
+    
+    if (dataObject.trial_index > configObj.trials.length) return
+    
     if (dataType == 'response') {
       setResponses(responses.concat([dataObject]));
 
@@ -139,12 +140,24 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     if(!isCurrent || Platform.OS !== 'ios') {
       return;
     }
-    NativeModules.FlankerViewManager.parameterGameType(config.blockType == "test" ? 1 : 0, JSON.stringify(configObj));
-    NativeModules.FlankerViewManager.parameterGame(true, configObj.trials.length, 0);
+
+    // todo - review how to avoid setTimeout. Currently it's needed because of
+    // race condition: FlankerView.swift may be created later than startGame
+    setTimeout(() => {
+      NativeModules.FlankerViewManager.setGameParameters(JSON.stringify(configObj))
+      NativeModules.FlankerViewManager.startGame(flankerPosition.isFirst, flankerPosition.isLast)
+    }, 600)
   }, [isCurrent])
 
   useEffect(() => {
-    if(!isCurrent || Platform.OS !== 'android') {
+    if(Platform.OS !== 'ios') {
+      return;
+    }
+    NativeModules.FlankerViewManager.preloadGameImages(JSON.stringify(configObj))
+  })
+
+  useEffect(() => {
+    if(!isCurrent || Platform.OS !== 'android') { 
       return;
     }
     if(!loading && !scriptInjected) {
@@ -165,6 +178,18 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
     tag: record.tag,
     response_touch_timestamp: Platform.OS === 'ios' ? record.response_touch_timestamp : (record.rt ? record.start_timestamp + record.rt : null)
   })
+
+  if (!isCurrent) {
+    return (
+      <View
+        style={{
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        <Text>DEBUG: Is not current</Text>
+      </View>)
+  }
 
   if (Platform.OS === 'ios') {
     return (
@@ -194,8 +219,8 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId }
             position: 'absolute',
             alignItems: 'center',
             justifyContent: 'center' }}
-            onEndGame={onEndGame}
-            dataJson ={JSON.stringify(configObj)}
+
+        onEndGame = { onEndGame }
       />
       </View>
       </View>

@@ -55,6 +55,7 @@ const Widget = ({
   onContentError,
   appletTokenBalance,
   handleReplaceBehaviourResponse,
+  flankerPosition
 }) => {
   const valueType = R.path(['valueConstraints', 'valueType'], screen);
 
@@ -273,6 +274,7 @@ const Widget = ({
         config={screen.inputs}
         appletId={applet.id}
         isCurrent={isCurrent}
+        flankerPosition={flankerPosition}
       />
     );
   }

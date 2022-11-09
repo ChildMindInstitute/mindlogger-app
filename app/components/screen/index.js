@@ -338,8 +338,24 @@ class ActivityScreen extends Component {
   }
 
   render() {
-    const { activity, screen, answer, isCurrent, onContentError, currentScreen, lastResponseTime, profiles, answers } = this.props;
-    const { orientation, scrollEnabled, inputDelayed, timerActive } = this.state;
+    const {
+      activity,
+      screen,
+      answer,
+      isCurrent,
+      onContentError,
+      currentScreen,
+      lastResponseTime,
+      profiles,
+      answers,
+      flankerPosition,
+    } = this.props;
+    const {
+      orientation,
+      scrollEnabled,
+      inputDelayed,
+      timerActive,
+    } = this.state;
 
     return (
       <View
@@ -399,6 +415,7 @@ class ActivityScreen extends Component {
                       this.setState({ scrollEnabled: true });
                     }}
                     handleReplaceBehaviourResponse={this.handleReplaceBehaviourResponse.bind(this)}
+                    flankerPosition={flankerPosition}
                   />
                 </View>
               </View>
@@ -417,6 +434,7 @@ class ActivityScreen extends Component {
                 }}
                 onContentError={onContentError}
                 handleReplaceBehaviourResponse={this.handleReplaceBehaviourResponse.bind(this)}
+                flankerPosition={flankerPosition}
               />
             )}
           </ScrollView>

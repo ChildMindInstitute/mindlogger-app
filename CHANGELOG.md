@@ -4,6 +4,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.59] - 2022-10-31
+- Bugfixes: 2842 (fix for iOS), 2834, 1064 
+
 ## [0.21.52] - 2022-09-15
 - Bugfixes: 2842, 2822, 2867
 

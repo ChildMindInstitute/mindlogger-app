@@ -26,12 +26,36 @@ class ActivityScreens extends React.PureComponent {
     const activity = this.props.activity;
 
     for (let i = 0; i < activity.items.length; i++) {
-      if (activity.items[i].inputType == 'visual-stimulus-response' && !activeScreens.includes(i)) {
+      if (
+        activity.items[i].inputType == "visual-stimulus-response" &&
+        !activeScreens.includes(i)
+      ) {
         activeScreens.unshift(i);
       }
     }
-
     return activeScreens;
+  }
+
+  defineFlankerPosition() {
+    const activity = this.props.activity;
+    const currentScreen = this.props.currentScreen;
+
+    const flankerIndexes = [];
+
+    for (let i = 0; i < activity.items.length; i++) {
+      if (activity.items[i].inputType == "visual-stimulus-response") {
+        flankerIndexes.push(i);
+      }
+    }
+
+    if (!flankerIndexes.length) {
+      return null;
+    }
+
+    return {
+      isFirst: currentScreen === flankerIndexes[0],
+      isLast: currentScreen === flankerIndexes.pop(),
+    };
   }
 
   componentDidUpdate(oldProps) {
@@ -41,7 +65,10 @@ class ActivityScreens extends React.PureComponent {
 
       this.setState({
         activeScreens: this.preLoadFlanker(activeScreens),
-        direction: calcPosition(oldProps.currentScreen, this.props.currentScreen),
+        direction: calcPosition(
+          oldProps.currentScreen,
+          this.props.currentScreen
+        ),
       });
     }
   }
@@ -58,15 +85,20 @@ class ActivityScreens extends React.PureComponent {
     } = this.props;
     const { activeScreens, direction } = this.state;
 
+    const flankerPosition = this.defineFlankerPosition()
+
     return (
-      <View onTouchStart={this.props.onAnyTouch} style={{ flex: 1, width: '100%', position: 'relative' }}>
-        {activeScreens.map(index => (
+      <View
+        onTouchStart={this.props.onAnyTouch}
+        style={{ flex: 1, width: "100%", position: "relative" }}
+      >
+        {activeScreens.map((index) => (
           <SlideInView
             key={`${activity.id}-screen-${index}`}
             style={{
-              position: 'absolute',
-              height: '100%',
-              width: '100%',
+              position: "absolute",
+              height: "100%",
+              width: "100%",
             }}
             position={calcPosition(currentScreen, index)}
             slideInFrom={direction}
@@ -82,6 +114,7 @@ class ActivityScreens extends React.PureComponent {
               currentScreen={currentScreen}
               isCurrent={index === currentScreen}
               onContentError={onContentError}
+              flankerPosition={flankerPosition}
             />
           </SlideInView>
         ))}

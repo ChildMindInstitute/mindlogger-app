@@ -361,6 +361,14 @@ class GameManager {
 
     Timer.scheduledTimer(timeInterval: Constants.lowTimeInterval, target: self, selector: #selector(self.setDefaultText), userInfo: nil, repeats: false)
   }
+
+  func clearData() {
+    resultManager.cleanData()
+    countTest = 0
+    correctAnswers = 0
+    arrayTimes = []
+    invalidateTimers()
+  }
 }
 
 private extension GameManager {
@@ -380,7 +388,10 @@ private extension GameManager {
     
     if countTest == gameParameters.trials.count {
       let sumArray = arrayTimes.reduce(0, +)
-      let avrgArray = sumArray / arrayTimes.count
+      var avrgArray: Int = 0
+      if arrayTimes.count != 0 {
+        avrgArray = sumArray / arrayTimes.count
+      }
       let procentsCorrect = Float(correctAnswers) / Float(countAllGame) * 100
       if !gameParameters.showFixation {
         setEndTimeViewingImage(time: CACurrentMediaTime(), isStart: true, type: .fixations)
@@ -391,14 +402,6 @@ private extension GameManager {
     } else {
       return false
     }
-  }
-
-  func clearData() {
-    resultManager.cleanData()
-    countTest = 0
-    correctAnswers = 0
-    arrayTimes = []
-    invalidateTimers()
   }
 
   func invalidateTimers() {
