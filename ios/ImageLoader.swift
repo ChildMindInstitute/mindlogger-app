@@ -12,25 +12,39 @@ import Foundation
 let imageCache = NSCache<AnyObject, AnyObject>()
 
 class ImageLoader: UIView {
+  var isShowPixel: Bool = false
 
-    var imageURL: URL?
+  private lazy var pixelView: UIView = {
+    let view = UIView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.backgroundColor = .gray
 
-    let activityIndicator = UIActivityIndicatorView()
+    view.isHidden = true
+    return view
+  }()
 
-    var closureDate: ((CFTimeInterval) -> Void)? = nil
+  var imageURL: URL?
 
-    var image: UIImage?  {
-        didSet {
-            self.setNeedsDisplay()
-        }
+  let activityIndicator = UIActivityIndicatorView()
+
+  var closureDate: ((CFTimeInterval) -> Void)? = nil
+
+  var image: UIImage?  {
+    didSet {
+      self.setNeedsDisplay()
     }
+  }
+
+  override init(frame: CGRect) {
+    super.init(frame: frame)
+    self.addSubview(pixelView)
+  }
+
+  required init?(coder: NSCoder) {
+    super.init(coder: coder)
+  }
 
   override func draw(_ rect: CGRect) {
-
-
-
-
-    print("Marker Draw Start: \(CACurrentMediaTime())")
     guard let ctx = UIGraphicsGetCurrentContext() else { return }
 
     ctx.addRect(bounds)
@@ -61,14 +75,17 @@ class ImageLoader: UIView {
       ctx.setFillColor(UIColor.white.cgColor)
       ctx.fillPath()
       ctx.draw(cgImg, in: CGRect(x: (bounds.width - size.width) / 2, y: (bounds.height - size.height) / 2, width: size.width, height: size.height))
+
+      if isShowPixel {
+        pixelView.frame = CGRect(x: bounds.minX, y: ((bounds.height - size.height) / 2) + size.height, width: 15, height: 15)
+        pixelView.backgroundColor = UIColor.gray.withAlphaComponent(CGFloat.random(in: 0.1..<1.0))
+        pixelView.isHidden = false
+      }
+      
       UIGraphicsEndImageContext()
 
       if #available(iOS 10.0, *) {
         super.draw(rect)
-        print("MarkerDate: endDraw: \(CACurrentMediaTime())")
-      }
-      DispatchQueue.main.async {
-        print("Marker Draw End: \(CACurrentMediaTime())")
       }
     }
 
@@ -78,52 +95,55 @@ class ImageLoader: UIView {
 
   }
 
-    func loadImageWithUrl(_ url: URL) {
+  func hidePixel() {
+    pixelView.isHidden = true
+  }
 
-        // setup activityIndicator...
-        activityIndicator.color = .darkGray
+  func loadImageWithUrl(_ url: URL) {
+    // setup activityIndicator...
+    activityIndicator.color = .darkGray
 
-        addSubview(activityIndicator)
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+    addSubview(activityIndicator)
+    activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+    activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+    activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
 
-        imageURL = url
+    imageURL = url
 
-        image = nil
-        activityIndicator.startAnimating()
+    image = nil
+    activityIndicator.startAnimating()
 
-        // retrieves image if already available in cache
-        if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage {
+    // retrieves image if already available in cache
+    if let imageFromCache = imageCache.object(forKey: url as AnyObject) as? UIImage {
 
-            self.image = imageFromCache
-            activityIndicator.stopAnimating()
-            return
-        }
-
-        // image does not available in cache.. so retrieving it from url...
-        URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
-
-            if error != nil {
-                print(error as Any)
-                DispatchQueue.main.async(execute: {
-                    self.activityIndicator.stopAnimating()
-                })
-                return
-            }
-
-            DispatchQueue.main.async(execute: {
-
-                if let unwrappedData = data, let imageToCache = UIImage(data: unwrappedData) {
-
-                    if self.imageURL == url {
-                        self.image = imageToCache
-                    }
-
-                    imageCache.setObject(imageToCache, forKey: url as AnyObject)
-                }
-                self.activityIndicator.stopAnimating()
-            })
-        }).resume()
+      self.image = imageFromCache
+      activityIndicator.stopAnimating()
+      return
     }
+
+    // image does not available in cache.. so retrieving it from url...
+    URLSession.shared.dataTask(with: url, completionHandler: { (data, response, error) in
+
+      if error != nil {
+        print(error as Any)
+        DispatchQueue.main.async(execute: {
+          self.activityIndicator.stopAnimating()
+        })
+        return
+      }
+      
+      DispatchQueue.main.async(execute: {
+
+        if let unwrappedData = data, let imageToCache = UIImage(data: unwrappedData) {
+
+          if self.imageURL == url {
+            self.image = imageToCache
+          }
+
+          imageCache.setObject(imageToCache, forKey: url as AnyObject)
+        }
+        self.activityIndicator.stopAnimating()
+      })
+    }).resume()
+  }
 }
