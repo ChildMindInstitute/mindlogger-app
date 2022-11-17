@@ -6,11 +6,17 @@ import {
 import setup from './app/setup';
 import * as Sentry from '@sentry/react-native';
 
+import { BackgroundWorker } from './app/features/system'
+import { NotificationManager } from './app/features/notifications'
 
 // if (!__DEV__) {
 //   Sentry.init({
 //     dsn: 'https://9bd31f61c40541cfb0057e85e09b2cda@o414302.ingest.sentry.io/5313182',
 //   });
 // }
+
+BackgroundWorker.setAndroidHeadlessTask(() => {
+  NotificationManager.topUpNotificationsFromQueue();
+})
 
 AppRegistry.registerComponent('MDCApp', setup);
