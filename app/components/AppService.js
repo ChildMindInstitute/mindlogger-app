@@ -38,6 +38,9 @@ import {
 } from "../state/app/app.thunks";
 import NetInfo from "@react-native-community/netinfo";
 
+import { BackgroundWorker } from '../features/system'
+import { NotificationManager } from '../features/notifications'
+
 import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
 import { authTokenSelector } from "../state/user/user.selectors";
@@ -93,6 +96,10 @@ class AppService extends Component {
       this.props.setAppStatus(true);
       this.props.syncUploadQueue();
     });
+
+    BackgroundWorker.setTask(() => {
+      NotificationManager.topUpNotificationsFromQueue();
+    })
   }
 
   /**

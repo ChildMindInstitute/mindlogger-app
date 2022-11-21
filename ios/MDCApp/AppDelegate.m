@@ -16,6 +16,7 @@
 #import <React/RCTRootView.h>
 
 #import <RNCPushNotificationIOS.h>
+#import <TSBackgroundFetch/TSBackgroundFetch.h>
 
 @implementation AppDelegate
 
@@ -48,6 +49,8 @@
 
   [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
   [application registerForRemoteNotifications];
+
+  [[TSBackgroundFetch sharedInstance] didFinishLaunching];
 
   return YES;
 }
