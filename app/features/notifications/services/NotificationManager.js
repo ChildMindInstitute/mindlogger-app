@@ -1,7 +1,7 @@
 import { getData, storeData } from '../../../services/storage'
 
-import { MAX_SCHEDULED_NOTIFICATIONS_SIZE, isAndroid, SYSTEM_RESCHEDULING_NOTIFICATION_ID } from '../constants'
-import { mapToTriggerNotifications } from '../utils'
+import { MAX_SCHEDULED_NOTIFICATIONS_SIZE, isAndroid, SYSTEM_RESCHEDULING_NOTIFICATION_ID, SYSTEM_NOTIFICATION_DELAY } from '../constants'
+import { mapToTriggerNotifications, splitArray } from '../utils'
 
 import NotificationQueue from './NotificationQueue'
 import Scheduler from './NotificationScheduler'
@@ -36,10 +36,8 @@ function NotificationManager() {
     const notificationQueue = NotificationQueue(StorageAdapter);
 
     async function restackNotifications(notifications, amount) {
-        const notificationsCopy = [...notifications];
+        const [notificationsToSchedule, notificationsToQueue] = splitArray(notifications, amount);
 
-        const notificationsToSchedule = notificationQueue.splice(0, amount);
-        const notificationsToQueue = notificationsCopy;
         const triggerNotifications = mapToTriggerNotifications(notificationsToSchedule);
 
         triggerNotifications.forEach(({ notification, trigger }) => {
@@ -72,6 +70,8 @@ function NotificationManager() {
 
         const queuedNotifications = await notificationQueue.get();
         const filteredQueuedNotifications = filterNotificationsByDate(queuedNotifications, Date.now())
+
+        if (!filteredQueuedNotifications.length) return;
 
         restackNotifications(filteredQueuedNotifications, freeSlotsCount);
     }
