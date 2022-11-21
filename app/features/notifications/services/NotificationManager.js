@@ -65,7 +65,7 @@ function NotificationManager() {
 
         Scheduler.cancelAllNotifications();
 
-        restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
+        await restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
     }
 
     async function topUpNotificationsFromQueue() {

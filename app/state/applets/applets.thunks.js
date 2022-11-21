@@ -51,6 +51,7 @@ import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
 import { buildScheduleNotifications, getNotificationArray } from '../../services/scheduleNotifications';
+import { NotificationManager, NotificationQueue, NotificationScheduler } from '../../features/notifications';
 
 
 /* deprecated */
@@ -122,43 +123,10 @@ const setLocalNotificationsInternal = async (dispatch, getState) => {
 
   console.log('notificationArray', notificationArray);
 
-  const settings = { showInForeground: true };
-  const AndroidChannelId = 'MindLoggerChannelId';
-  
-  for (let notificationData of notificationArray.slice(0, 63)) {
-    const notification = new firebase.notifications.Notification(settings)
-      .setNotificationId(notificationData.notificationId)
-      .setTitle("! " + notificationData.notificationHeader)
-      .setBody(notificationData.notificationBody)
-      .setSound('default')
-      .setData({
-        eventId: notificationData.eventId,
-        appletId: notificationData.appletId,
-        activityId: notificationData.activityId,
-        activityFlowId: notificationData.activityFlowId,
-        scheduledAtString: notificationData.scheduledAtString,
-        type: 'schedule-event-alert',
-        isLocal: true
-      })
-      .android.setPriority(firebase.notifications.Android.Priority.High)
-      .android.setChannelId(AndroidChannelId)
-      .android.setAutoCancel(true);
+  await NotificationManager.scheduleNotifications(notificationArray);
 
-    firebase
-      .notifications()
-      .scheduleNotification(notification, {
-        fireDate: notificationData.scheduledAt,
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  }
-
-  firebase.notifications().getScheduledNotifications().then(n => {
-    console.log('scheduled from fb api', n)
-  });
-
-  console.log('notifications scheduled');
+  //NotificationQueue
+  //NotificationScheduler
 }
 
 export const scheduleNotificationsRN = (notification, ms) => {
