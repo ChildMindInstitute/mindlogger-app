@@ -2,7 +2,6 @@ import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
 import _ from 'lodash';
-import moment from "moment";
 import {
   getApplets,
   registerOpenApplet,
@@ -17,17 +16,17 @@ import {
   getAppletSchedule,
 } from "../../services/network";
 import { getData, storeData } from "../../services/storage";
-import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { inProgressSelector, responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNotificationsReminder } from "./applets.actions";
 
+import { debugScheduledNotifications } from '../../utils/debug-utils'
+
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
-  setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
@@ -50,17 +49,9 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
-import { buildScheduleNotifications, getNotificationArray } from '../../services/scheduleNotifications';
-
-
-/* deprecated */
-export const scheduleAndSetNotifications = () => (dispatch, getState) => {
-  const state = getState();
-  const activities = activitiesSelector(state);
-  // This call schedules the notifications and returns a list of scheduled notifications
-  const updatedNotifications = scheduleNotifications(activities);
-  dispatch(setNotifications(updatedNotifications));
-};
+import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
+import { NotificationManager, NotificationBuilder } from '../../features/notifications';
+import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
 
 export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
@@ -88,17 +79,18 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
     });
 };
 
-export const setLocalNotifications = () => async (dispatch, getState) => {
+export const setLocalNotifications = (trigger) => async (
+  dispatch,
+  getState
+) => {
   try {
-    await setLocalNotificationsInternal(dispatch, getState)
+    await setLocalNotificationsInternal(dispatch, getState, trigger);
   } catch (error) {
-    console.warn('Error in scheduling local notifications', error);
-  }  
-}
+    console.warn("Error in scheduling local notifications", error);
+  }
+};
 
-const setLocalNotificationsInternal = async (dispatch, getState) => {
-  firebase.notifications().cancelAllNotifications();
-
+const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   const state = getState();
 
   const applets = allAppletsSelector(state);
@@ -106,66 +98,41 @@ const setLocalNotificationsInternal = async (dispatch, getState) => {
   const { finishedTimes } = state.app;
 
   const appletsNotifications = {
-    applets: []
+    applets: [],
   };
 
   applets.forEach((applet) => {
-    const appletNotifications = buildScheduleNotifications(applet, finishedTimes);
-    if(appletNotifications.events.some(x => x.notifications.length)) {
+    const appletNotifications = NotificationBuilder.build(
+      applet,
+      finishedTimes
+    );
+    if (appletNotifications.events.some((x) => x.notifications.length)) {
       appletsNotifications.applets.push(appletNotifications);
     }
   });
 
-  console.log('appletsNotifications:', appletsNotifications);
-
   const notificationArray = getNotificationArray(appletsNotifications);
 
-  console.log('notificationArray', notificationArray);
-
-  const settings = { showInForeground: true };
-  const AndroidChannelId = 'MindLoggerChannelId';
-  
-  for (let notificationData of notificationArray.slice(0, 63)) {
-    const notification = new firebase.notifications.Notification(settings)
-      .setNotificationId(notificationData.notificationId)
-      .setTitle("! " + notificationData.notificationHeader)
-      .setBody(notificationData.notificationBody)
-      .setSound('default')
-      .setData({
-        eventId: notificationData.eventId,
-        appletId: notificationData.appletId,
-        activityId: notificationData.activityId,
-        activityFlowId: notificationData.activityFlowId,
-        scheduledAtString: notificationData.scheduledAtString,
-        type: 'schedule-event-alert',
-        isLocal: true
-      })
-      .android.setPriority(firebase.notifications.Android.Priority.High)
-      .android.setChannelId(AndroidChannelId)
-      .android.setAutoCancel(true);
-
-    firebase
-      .notifications()
-      .scheduleNotification(notification, {
-        fireDate: notificationData.scheduledAt,
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  if (NotificationManagerMutex.isBusy()) {
+    console.warn(
+      "[setLocalNotificationsInternal]: NotificationManagerMutex is busy. Operation rejected"
+    );
+    return;
   }
 
-  firebase.notifications().getScheduledNotifications().then(n => {
-    console.log('scheduled from fb api', n)
-  });
+  try {
+    NotificationManagerMutex.setBusy();
 
-  console.log('notifications scheduled');
-}
+    await NotificationManager.scheduleNotifications(notificationArray);
 
-export const scheduleNotificationsRN = (notification, ms) => {
-  return setTimeout(() => {
-    firebase.notifications().displayNotification(notification)
-  }, ms);
-}
+    await debugScheduledNotifications({
+      notificationDescriptions: appletsNotifications,
+      actionType: `totalReschedule_${trigger}`,
+    });
+  } finally {
+    NotificationManagerMutex.release();
+  }
+};
 
 const buildLocalInfo = (currentApplets, oldResponses) => {
   let localInfo = {};
@@ -212,8 +179,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
 
     const eventsExistInDto = !R.isEmpty(appletInfoDto.schedule.events);
 
-    let notificationEventsTemp = null;
-
     if (eventsExistInDto) {
       const dtoEventIds = Object.keys(appletInfoDto.schedule.events);
 
@@ -221,10 +186,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
         currentEvents[dtoEventId] = appletInfoDto.schedule.events[dtoEventId];
         scheduleUpdated = true;
       })
-
-      notificationEventsTemp = { ...appletInfoDto.schedule.events };
-    } else {
-      notificationEventsTemp = { ...currentEvents };
     }
 
     for (const eventId in currentEvents) {
@@ -246,7 +207,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
     }
 
     updatedCurrentSchedule.events = currentEvents;
-    updatedCurrentSchedule.notificationEventsTemp = notificationEventsTemp;
   }
 
   responses.push({
@@ -261,7 +221,7 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
   return { currentApplet, scheduleUpdated };
 }
 
-export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null, keys = null, trigger = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
@@ -370,14 +330,12 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           onAppletsDownloaded();
         }
 
-        dispatch(setLocalNotifications());
+        dispatch(setLocalNotifications(`getApplets.then${!trigger ? "" : "-" + trigger}`));
       }
     })
     .catch((err) => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
-      // dispatch(scheduleAndSetNotifications());
-      // dispatch(getInvitations());
     });
 };
 
@@ -403,7 +361,7 @@ export const downloadTargetApplet = (appletId, cb = null) => (
           dispatch(downloadAppletMedia(transformedApplet));
         }
         dispatch(setDownloadingTargetApplet(false));
-        dispatch(setLocalNotifications());
+        dispatch(setLocalNotifications("getTargetApplet.then"));
         if (cb) {
           cb();
         }

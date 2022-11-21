@@ -7,8 +7,7 @@ function NotificationScheduler() {
         notificationId,
         title,
         body,
-        data,
-        subtitle,
+        data
     }) {
         if (!notificationId) throw Error('[NotificationScheduler] notificationId is required');
 
@@ -18,14 +17,11 @@ function NotificationScheduler() {
             .setBody(body)
             .setSound('default')
             .setData(data)
-            .setSubtitle(subtitle ?? null)
 
         if (isAndroid) {
             notification.android.setChannelId(ANDROID_DEFAULT_CHANNEL_ID);
             notification.android.setPriority(firebase.notifications.Android.Priority.High);
             notification.android.setAutoCancel(true);
-        } else {
-            notification.ios.setBadge(iosBadge);
         }
 
         return notification;
@@ -44,8 +40,11 @@ function NotificationScheduler() {
             })
     }
 
-    function getAllScheduledNotifications() {
-        return firebase.notifications().getScheduledNotifications();
+    async function getAllScheduledNotifications() {
+        const items = await firebase.notifications().getScheduledNotifications();
+        items.sort((x, y) => x.data.scheduledAt - y.data.scheduledAt);
+        
+        return items;
     }
 
     async function getScheduledNotification(notificationId) {
@@ -58,8 +57,8 @@ function NotificationScheduler() {
         return notification;
     }
 
-    function cancelAllNotifications() {
-        firebase.notifications().cancelAllNotifications();
+    async function cancelAllNotifications() {
+        await firebase.notifications().cancelAllNotifications();
     }
 
     function cancelNotification(notificationId) {

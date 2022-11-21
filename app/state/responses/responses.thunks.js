@@ -790,7 +790,7 @@ const finishActivityInternal = (dispatch, activity, applet, event, currentActOrd
       
       dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
       
-      dispatch(setLocalNotifications());
+      dispatch(setLocalNotifications("finishActivityInternal"));
       
       if (activity.isActivityFlow) {
         dispatch(setActivityFlowOrderIndex({
@@ -820,7 +820,7 @@ export const finishActivityDueToTimer = (activity) => (dispatch, getState) => {
 
   dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
   
-  dispatch(setLocalNotifications());
+  dispatch(setLocalNotifications("finishActivityDueToTimer"));
 
   dispatch(setCurrentActivity(null));
 

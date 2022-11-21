@@ -1,7 +1,7 @@
 import { getData, storeData } from '../../../services/storage'
 
 import { MAX_SCHEDULED_NOTIFICATIONS_SIZE, isAndroid, SYSTEM_RESCHEDULING_NOTIFICATION_ID, SYSTEM_NOTIFICATION_DELAY } from '../constants'
-import { mapToTriggerNotifications, splitArray, filterNotificationsByDate } from '../utils'
+import { mapToTriggerNotifications, splitArray, filterNotificationsByDate, getMutex } from '../utils'
 
 import NotificationQueue from './NotificationQueue'
 import Scheduler from './NotificationScheduler'
@@ -11,7 +11,7 @@ const StorageAdapter = {
     setItem: storeData,
 }
 
-function scheduleSystemIOSNotification(fireDate) {
+async function scheduleSystemIOSNotification(fireDate) {
     if (isAndroid) return;
 
     const localNotification = Scheduler.createLocalNotification({
@@ -19,8 +19,10 @@ function scheduleSystemIOSNotification(fireDate) {
         body: 'Tap to update the schedule',
         notificationId: SYSTEM_RESCHEDULING_NOTIFICATION_ID,
         data: {
-            is_local: true,
-            is_trigger_for_rescheduling: true,
+            isLocal: true,
+            type: "request-to-reschedule-dueto-limit",
+            scheduledAt: fireDate,
+            scheduledAtString: new Date(fireDate).toString()
         }
     });
 
@@ -29,7 +31,7 @@ function scheduleSystemIOSNotification(fireDate) {
         repeatInterval: 'hour',
     }
 
-    Scheduler.scheduleLocalNotification(localNotification, trigger);
+    return Scheduler.scheduleLocalNotification(localNotification, trigger);
 }
 
 function NotificationManager() {
@@ -38,34 +40,37 @@ function NotificationManager() {
     async function restackNotifications(notifications, amount) {
         const [notificationsToSchedule, notificationsToQueue] = splitArray(notifications, amount);
 
+        await notificationQueue.set(notificationsToQueue);
+
         const triggerNotifications = mapToTriggerNotifications(notificationsToSchedule);
 
-        triggerNotifications.forEach(({ notification, trigger }) => {
-            const localNotification = Scheduler.createLocalNotification(notification);
+        for (let item of triggerNotifications) {
+          const { notification, trigger } = item;
+          const localNotification = Scheduler.createLocalNotification(notification);
 
-            Scheduler.scheduleLocalNotification(localNotification, trigger)
-        });
+          await Scheduler.scheduleLocalNotification(localNotification, trigger)
+        }
 
-        console.log({
+        console.log("restackNotifications", {
             notifications,
             notificationsToSchedule,
             notificationsToQueue,
             triggerNotifications,
         })
 
+        if (!triggerNotifications.length) {
+          return;
+        }
+
         const lastTriggerNotification = triggerNotifications[triggerNotifications.length - 1];
 
-        scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
-
-        notificationQueue.set(notificationsToQueue);
+        await scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
     }
 
     async function scheduleNotifications(notifications = []) {
-        if (!notifications.length) return;
-
-        Scheduler.cancelAllNotifications();
-
-        restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
+        await Scheduler.cancelAllNotifications();
+      
+        await restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
     }
 
     async function topUpNotificationsFromQueue() {
@@ -78,15 +83,21 @@ function NotificationManager() {
         const queuedNotifications = await notificationQueue.get();
         const filteredQueuedNotifications = filterNotificationsByDate(queuedNotifications, Date.now())
 
-        if (!filteredQueuedNotifications.length) return;
+        await restackNotifications(filteredQueuedNotifications, freeSlotsCount);
+    }
 
-        restackNotifications(filteredQueuedNotifications, freeSlotsCount);
+    function clearScheduledNotifications() {
+        Scheduler.cancelAllNotifications();
+        notificationQueue.clear();
     }
 
     return {
         scheduleNotifications,
         topUpNotificationsFromQueue,
+        clearScheduledNotifications,
     }
 }
+
+export const NotificationManagerMutex = getMutex();
 
 export default NotificationManager();

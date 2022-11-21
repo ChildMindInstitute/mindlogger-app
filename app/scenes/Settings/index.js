@@ -31,6 +31,8 @@ import { colors } from '../../themes/colors';
 
 /* STYLES */
 import styles from './styles';
+import { getStringHashCode } from '../../utils/debug-utils';
+import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
 
 const IOSHeaderPadding = Platform.OS === 'ios' ? 24 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
@@ -76,8 +78,12 @@ class SettingsScreen extends React.Component {
       logout,
       userInfo,
       removeAccount,
+      fcmToken,
     } = this.props;
     const { showAlert } = this.state;
+    const { email } = userInfo ?? {};
+    const deviceIdHash = getStringHashCode(fcmToken ?? "");
+    const staging = true;
 
     return (
       <Container>
@@ -121,6 +127,11 @@ class SettingsScreen extends React.Component {
               <Text>
                 {userInfo.firstName} {userInfo.lastName}
               </Text>
+              { staging &&
+                <Text>
+                  {email ?? ""} {deviceIdHash}
+                </Text> 
+              }
               <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
             </View>
           ) : (
@@ -211,6 +222,7 @@ const mapStateToProps = state => ({
   skin: skinSelector(state),
   mobileDataAllowed: mobileDataAllowedSelector(state),
   userInfo: userInfoSelector(state),
+  fcmToken: fcmFcmTokenSelector(state),
   appLanguage: state.app.appLanguage,
 });
 

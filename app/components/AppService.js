@@ -8,6 +8,9 @@ import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { Actions } from "react-native-router-flux";
 import moment from "moment";
 import i18n from "i18next";
+import EncryptedStorage from 'react-native-encrypted-storage'
+
+import config from '../config'
 import { setFcmToken } from "../state/fcm/fcm.actions";
 import { appletsSelector } from "../state/applets/applets.selectors";
 import {
@@ -38,13 +41,16 @@ import {
 } from "../state/app/app.thunks";
 import NetInfo from "@react-native-community/netinfo";
 
-import { BackgroundWorker } from '../features/system'
+import { BackgroundWorker, UserInfoStorage } from '../features/system'
 import { NotificationManager } from '../features/notifications'
+
+import { debugScheduledNotifications } from '../utils/debug-utils'
 
 import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
 import { authTokenSelector } from "../state/user/user.selectors";
 import sortActivities from "./ActivityList/sortActivities";
+import { NotificationManagerMutex } from "../features/notifications/services/NotificationManager";
 
 const AndroidChannelId = "MindLoggerChannelId";
 const fMessaging =
@@ -54,6 +60,17 @@ const fNotifications =
 
 const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
+
+
+const setDefaultApiHost = async () => {
+  const apiHost = await userInfoStorage.getApiHost();
+
+  if (apiHost) return;
+
+  userInfoStorage.setApiHost(config.defaultApiHost);
+}
 
 class AppService extends Component {
   async componentDidMount() {
@@ -97,8 +114,29 @@ class AppService extends Component {
       this.props.syncUploadQueue();
     });
 
-    BackgroundWorker.setTask(() => {
-      NotificationManager.topUpNotificationsFromQueue();
+    BackgroundWorker.setTask(async () => {
+      const isForeground = AppState.currentState === 'active';
+
+      if (isForeground) return;
+
+      if (NotificationManagerMutex.isBusy()) {
+        console.warn(
+          "[AppService.componentDidMount:BackgroundWorker.setTask]: NotificationManagerMutex is busy. Operation rejected"
+        );
+        return;
+      }
+
+      try {
+        NotificationManagerMutex.setBusy();
+
+        await NotificationManager.topUpNotificationsFromQueue();
+
+        await debugScheduledNotifications({
+          actionType: 'backgroundAddition-AppService-componentDidMount',
+        });
+      } finally {
+        NotificationManagerMutex.release();
+      }
     })
   }
 
@@ -312,12 +350,13 @@ class AppService extends Component {
     ) {
       const networkState = await NetInfo.fetch();
       if (networkState.isConnected) {
-        this.props.downloadApplets();
+        this.props.downloadApplets(null, null, type);
       }
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
-      this.props.setLocalNotifications();
+      console.log('request-to-reschedule-dueto-limit received->')
+      this.props.setLocalNotifications(`notification-tap:${type}`);
     }
 
     if (type === "schedule-event-alert") {
@@ -717,7 +756,7 @@ class AppService extends Component {
     }
 
     if (goingToForeground) {
-      await setLocalNotifications();
+      await setLocalNotifications('goingToForeground');
     }
 
     if (goingToForeground && this.pendingNotification) {
@@ -766,14 +805,17 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setFCMToken: (token) => {
+  setFCMToken: async (token) => {
     dispatch(setFcmToken(token));
+
+    await userInfoStorage.setFCMToken(token);
+    setDefaultApiHost();
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
   setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
   startResponse: (activity) => dispatch(startResponse(activity)),
   updateBadgeNumber: (badgeNumber) => dispatch(updateBadgeNumber(badgeNumber)),
-  downloadApplets: (cb) => dispatch(downloadApplets(cb)),
+  downloadApplets: (cb, keys, trigger) => dispatch(downloadApplets(cb, keys, trigger)),
   sync: (cb) => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: (toast) => dispatch(showToast(toast)),
@@ -781,7 +823,7 @@ const mapDispatchToProps = (dispatch) => ({
   refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
   setCurrentActivity: (activityId) => dispatch(setCurrentActivity(activityId)),
   syncUploadQueue: () => dispatch(syncUploadQueue()),
-  setLocalNotifications: () => dispatch(setLocalNotifications()),
+  setLocalNotifications: (trigger) => dispatch(setLocalNotifications(trigger)),
 });
 
 export default connect(

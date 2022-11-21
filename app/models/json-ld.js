@@ -928,18 +928,11 @@ export const transformApplet = (payload, currentApplets = null) => {
         const events = currentApplet.schedule.events;
         applet.schedule = payload.schedule;
 
-        let notificationEventsTemp = null;
-
         if (!R.isEmpty(payload.schedule.events)) {
           Object.keys(payload.schedule.events).forEach(eventId => {
             events[eventId] = payload.schedule.events[eventId];
           })
-          notificationEventsTemp = Object.keys(payload.schedule.events).length ? 
-            payload.schedule.events : events;
-        } else {
-          notificationEventsTemp = events;
         }
-        notificationEventsTemp = { ...notificationEventsTemp };
 
         for (const eventId in events) {
           let isValid = false;
@@ -954,7 +947,6 @@ export const transformApplet = (payload, currentApplets = null) => {
           }
         }
         applet.schedule.events = events;
-        applet.schedule.notificationEventsTemp = notificationEventsTemp;
       }
     }
 
@@ -1182,6 +1174,23 @@ export const parseAppletEvents = (applet) => {
       events
     }
   })
+
+  for(let eventId in applet.schedule.actual_events) {
+    const event = applet.schedule.actual_events[eventId];
+
+    const date = new Date();
+    date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+
+    const futureSchedule = Parse.schedule(event.schedule).forecast(
+      Day.fromDate(date),
+      true,
+      1,
+      0,
+      true,
+    );
+
+    event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+  }
 
   return {
     ...applet,

@@ -88,6 +88,7 @@
     "react-native-canvas": "^0.1.38",
     "react-native-crypto": "^2.2.0",
     "react-native-elements": "^1.2.7",
+    "react-native-encrypted-storage": "^4.0.3",
     "react-native-file-viewer": "^2.1.4",
     "react-native-firebase": "5.6.0",
     "react-native-fix-image": "^2.0.1",

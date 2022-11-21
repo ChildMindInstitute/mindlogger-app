@@ -17,7 +17,6 @@ export const initialState = {
     total: 0,
     downloaded: 0,
   },
-  notifications: {},
   invites: [],
   currentInvite: '',
   appletResponseData: {},
@@ -130,11 +129,6 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         isDownloadingTargetApplet: action.payload,
-      };
-    case APPLET_CONSTANTS.SET_NOTIFICATIONS:
-      return {
-        ...state,
-        notifications: action.payload,
       };
     case APPLET_CONSTANTS.SET_INVITES:
       return {

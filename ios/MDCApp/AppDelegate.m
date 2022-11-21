@@ -18,10 +18,32 @@
 #import <RNCPushNotificationIOS.h>
 #import <TSBackgroundFetch/TSBackgroundFetch.h>
 
+static void ClearKeychainIfNecessary() {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"HAS_RUN_BEFORE"] == NO) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"HAS_RUN_BEFORE"];
+
+        NSArray *secItemClasses = @[
+            (__bridge id)kSecClassGenericPassword,
+            (__bridge id)kSecClassInternetPassword,
+            (__bridge id)kSecClassCertificate,
+            (__bridge id)kSecClassKey,
+            (__bridge id)kSecClassIdentity
+        ];
+
+        // Maps through all Keychain classes and deletes all items that match
+        for (id secItemClass in secItemClasses) {
+            NSDictionary *spec = @{(__bridge id)kSecClass: secItemClass};
+            SecItemDelete((__bridge CFDictionaryRef)spec);
+        }
+    }
+}
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  ClearKeychainIfNecessary();
+
   [FIRApp configure];
   [RNFirebaseNotifications configure];
 
