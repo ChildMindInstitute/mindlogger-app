@@ -60,7 +60,6 @@ const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
-
 class AppService extends Component {
   async componentDidMount() {
     this.listeners = [

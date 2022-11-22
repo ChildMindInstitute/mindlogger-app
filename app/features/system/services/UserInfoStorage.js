@@ -11,7 +11,7 @@ function UserInfoStorage(storage) {
     }
 
     function set(value) {
-        if (!(value)) throw Error('[UserInfoStorage] value is required')
+        if (!(value)) throw Error('[UserInfoStorage] value is required');
 
         return Promise.resolve(storage.setItem(USER_INFO_STORAGE_KEY, JSON.stringify(value)));
     }
@@ -40,11 +40,11 @@ function UserInfoStorage(storage) {
     }
 
     async function setFCMToken(token) {
-        setKey('fcmToken', token);
+        return setKey('fcmToken', token);
     }
 
     async function setUserEmail(email) {
-        setKey('email', email);
+        return setKey('email', email);
     }
 
     async function clear() {
