@@ -29,7 +29,7 @@ export function filterNotificationsByDate(notifications = [], date) {
     })
 }
 
-export function splitArray(leftArraySize) {
+export function splitArray(array, leftArraySize) {
     if (!leftArraySize) throw Error('[splitArray] leftArraySize is required');
     if (typeof leftArraySize !== 'number') throw Error('[splitArray] leftArraySize must be number');
 
