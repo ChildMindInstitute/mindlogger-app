@@ -15,6 +15,7 @@ Structure of object:
       notifications: [
         {
           notificationId: 567100500,
+          shortId: 56_500,
           appletId: 34567,
           activityId: '234100500',
           activityFlowId: '345100500',
@@ -52,6 +53,26 @@ const InactiveReason = {
 };
 
 export const buildScheduleNotifications = (applet, finishedTimes) => {
+  if (!applet) {
+    throw new Error("[scheduleNotifications] applet is not defined");
+  }
+  if (!finishedTimes) {
+    throw new Error("[scheduleNotifications] finishedTimes is not defined");
+  }
+  if (!applet.schedule.actual_events) {
+    throw new Error(
+      "[scheduleNotifications] applet.schedule.actual_events is not defined"
+    );
+  }
+  if (
+    Array.isArray(applet.schedule.actual_events) &&
+    applet.schedule.actual_events.some((e) => !e.scheduledTime)
+  ) {
+    throw new Error(
+      "[scheduleNotifications] applet.schedule.actual_events[x].scheduledTime is not defined"
+    );
+  }
+
   const result = {
     appletId: getIdBySplit(applet.id),
     appletName: applet.name.en,
@@ -59,33 +80,37 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
   };
 
   const numberOfDaysForSchedule = 14;
+
   const firstScheduleDay = moment().startOf("day");
+
   const lastScheduleDay = moment()
     .startOf("day")
     .add(numberOfDaysForSchedule - 1, "day");
+
   const today = moment().startOf("day");
 
   const appletActivityIds = applet.activities.map((a) => getIdBySplit(a.id));
 
   const weekDays = getWeekDays(numberOfDaysForSchedule);
 
-  for (let eventId in applet.schedule.notificationEventsTemp) {
+  for (let eventId in applet.schedule.actual_events) {
     const eventResult = {
       eventId,
       notifications: [],
     };
     result.events.push(eventResult);
 
-    const event = applet.schedule.notificationEventsTemp[eventId];
+    const event = applet.schedule.actual_events[eventId];
 
-    const { scheduledTime: scheduledTimeString } = event;
-    const { schedule } = event;
-    const { data } = event;
+    const { scheduledTime: scheduledTimeString, schedule, data } = event;
+
     const { activity_id: activityId, activity_flow_id: activityFlowId } = data;
+
     const appletId = getIdBySplit(applet.id);
 
     if (!appletActivityIds.includes(activityId)) {
-      continue; // todo remove it after fix on prod
+      // must be fixed on BE
+      continue;
     }
 
     const scheduledTimeDate = new moment(scheduledTimeString);
@@ -109,8 +134,7 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
     if (
       periodicity === PeriodType.Weekly &&
       schedule.dayOfWeek &&
-      schedule.dayOfWeek.length === 5 &&
-      schedule.dayOfWeek.every((x) => [1, 2, 3, 4, 5].includes(x))
+      schedule.dayOfWeek.length === 5
     ) {
       periodicity = PeriodType.Weekday;
     }
@@ -120,6 +144,7 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
       activityId,
       activityFlowId
     );
+
     const activityOrFlowDescription = getActivityDescription(
       applet,
       activityId,
@@ -203,6 +228,7 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
       dayFrom =
         periodStartDate > firstScheduleDay ? periodStartDate : firstScheduleDay;
     }
+
     if (!periodEndDate) {
       dayTo = lastScheduleDay;
     } else {
@@ -211,20 +237,27 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
 
     if (periodicity === PeriodType.Daily) {
       let day = moment(dayFrom);
+
       while (day <= dayTo) {
         daysForNotifications.push(moment(day));
         day = day.add(1, "day");
       }
-    } else if (periodicity === PeriodType.Weekly) {
+    }
+
+    if (periodicity === PeriodType.Weekly) {
       let day = moment(scheduledTimeDate);
+
       while (day <= dayTo) {
         if (day >= firstScheduleDay) {
           daysForNotifications.push(moment(day));
         }
         day = day.add(7, "days");
       }
-    } else if (periodicity === PeriodType.Weekday) {
+    }
+
+    if (periodicity === PeriodType.Weekday) {
       let day = moment(dayFrom);
+
       while (day <= dayTo) {
         const found = weekDays.find((x) => x.isSame(day));
         if (found) {
@@ -232,8 +265,11 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
         }
         day = day.add(1, "day");
       }
-    } else if (periodicity === PeriodType.Monthly) {
+    }
+
+    if (periodicity === PeriodType.Monthly) {
       let day = moment(scheduledTimeDate);
+
       while (day <= dayTo) {
         if (day >= firstScheduleDay) {
           daysForNotifications.push(moment(day));
@@ -390,8 +426,12 @@ const createNotification = ({
     resultScheduledAt = startsAt;
   }
 
+  const id = uuidv4();
+  const shortId = `${id.slice(0, 2)}_${id.slice(-3)}`;
+
   const notification = {
-    notificationId: uuidv4(),
+    notificationId: id,
+    shortId,
     appletId,
     activityId,
     activityFlowId,

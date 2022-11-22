@@ -48,7 +48,7 @@ function NotificationManager() {
             Scheduler.scheduleLocalNotification(localNotification, trigger)
         });
 
-        console.log({
+        console.log("restackNotifications", {
             notifications,
             notificationsToSchedule,
             notificationsToQueue,

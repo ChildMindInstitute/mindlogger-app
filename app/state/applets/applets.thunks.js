@@ -51,7 +51,7 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
-import { buildScheduleNotifications, getNotificationArray } from '../../services/scheduleNotifications';
+import { buildScheduleNotifications, getNotificationArray } from '../../services/notificationsBuilder';
 import { NotificationManager, NotificationQueue, NotificationScheduler } from '../../features/notifications';
 
 
@@ -182,8 +182,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
 
     const eventsExistInDto = !R.isEmpty(appletInfoDto.schedule.events);
 
-    let notificationEventsTemp = null;
-
     if (eventsExistInDto) {
       const dtoEventIds = Object.keys(appletInfoDto.schedule.events);
 
@@ -191,10 +189,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
         currentEvents[dtoEventId] = appletInfoDto.schedule.events[dtoEventId];
         scheduleUpdated = true;
       })
-
-      notificationEventsTemp = { ...appletInfoDto.schedule.events };
-    } else {
-      notificationEventsTemp = { ...currentEvents };
     }
 
     for (const eventId in currentEvents) {
@@ -216,7 +210,6 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
     }
 
     updatedCurrentSchedule.events = currentEvents;
-    updatedCurrentSchedule.notificationEventsTemp = notificationEventsTemp;
   }
 
   responses.push({
