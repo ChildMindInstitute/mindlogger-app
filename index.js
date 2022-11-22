@@ -3,11 +3,10 @@ import './shim.js'
 import {
   AppRegistry,
 } from 'react-native';
-import setup from './app/setup';
 import * as Sentry from '@sentry/react-native';
 
-import { BackgroundWorker } from './app/features/system'
-import { NotificationManager } from './app/features/notifications'
+import setup from './app/setup';
+import runBackgroundProcess from './app/runBackgroundProcess'
 
 // if (!__DEV__) {
 //   Sentry.init({
@@ -15,8 +14,6 @@ import { NotificationManager } from './app/features/notifications'
 //   });
 // }
 
-BackgroundWorker.setAndroidHeadlessTask(() => {
-  NotificationManager.topUpNotificationsFromQueue();
-})
+runBackgroundProcess();
 
 AppRegistry.registerComponent('MDCApp', setup);

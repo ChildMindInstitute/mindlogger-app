@@ -8,6 +8,8 @@ import PushNotificationIOS from "@react-native-community/push-notification-ios";
 import { Actions } from "react-native-router-flux";
 import moment from "moment";
 import i18n from "i18next";
+import EncryptedStorage from 'react-native-encrypted-storage'
+
 import { setFcmToken } from "../state/fcm/fcm.actions";
 import { appletsSelector } from "../state/applets/applets.selectors";
 import {
@@ -38,8 +40,10 @@ import {
 } from "../state/app/app.thunks";
 import NetInfo from "@react-native-community/netinfo";
 
-import { BackgroundWorker } from '../features/system'
+import { BackgroundWorker, UserInfoStorage } from '../features/system'
 import { NotificationManager } from '../features/notifications'
+
+import { debugScheduledNotifications } from '../utils/debug-utils'
 
 import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
@@ -54,6 +58,8 @@ const fNotifications =
 
 const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
 class AppService extends Component {
   async componentDidMount() {
@@ -97,8 +103,16 @@ class AppService extends Component {
       this.props.syncUploadQueue();
     });
 
-    BackgroundWorker.setTask(() => {
-      NotificationManager.topUpNotificationsFromQueue();
+    BackgroundWorker.setTask(async () => {
+      const isForeground = AppState.currentState === 'active';
+
+      if (isForeground) return;
+
+      await NotificationManager.topUpNotificationsFromQueue();
+
+      debugScheduledNotifications({
+        actionType: 'backgroundAddition',
+      });
     })
   }
 
@@ -768,6 +782,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   setFCMToken: (token) => {
     dispatch(setFcmToken(token));
+    userInfoStorage.setFCMToken(token);
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
   setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),

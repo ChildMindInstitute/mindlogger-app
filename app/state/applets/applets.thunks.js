@@ -2,7 +2,6 @@ import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
 import _ from 'lodash';
-import moment from "moment";
 import {
   getApplets,
   registerOpenApplet,
@@ -22,6 +21,8 @@ import { scheduleNotifications } from "../../services/pushNotifications";
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { inProgressSelector, responsesSelector } from '../responses/responses.selectors';
 import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNotificationsReminder } from "./applets.actions";
+
+import { debugScheduledNotifications } from '../../utils/debug-utils'
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
@@ -125,8 +126,9 @@ const setLocalNotificationsInternal = async (dispatch, getState) => {
 
   await NotificationManager.scheduleNotifications(notificationArray);
 
-  //NotificationQueue
-  //NotificationScheduler
+  debugScheduledNotifications({
+    notificationDescriptions: appletsNotifications,
+  })
 }
 
 export const scheduleNotificationsRN = (notification, ms) => {

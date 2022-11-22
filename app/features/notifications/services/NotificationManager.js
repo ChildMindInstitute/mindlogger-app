@@ -38,6 +38,8 @@ function NotificationManager() {
     async function restackNotifications(notifications, amount) {
         const [notificationsToSchedule, notificationsToQueue] = splitArray(notifications, amount);
 
+        await notificationQueue.set(notificationsToQueue);
+
         const triggerNotifications = mapToTriggerNotifications(notificationsToSchedule);
 
         triggerNotifications.forEach(({ notification, trigger }) => {
@@ -56,8 +58,6 @@ function NotificationManager() {
         const lastTriggerNotification = triggerNotifications[triggerNotifications.length - 1];
 
         scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
-
-        notificationQueue.set(notificationsToQueue);
     }
 
     async function scheduleNotifications(notifications = []) {
@@ -80,7 +80,7 @@ function NotificationManager() {
 
         if (!filteredQueuedNotifications.length) return;
 
-        restackNotifications(filteredQueuedNotifications, freeSlotsCount);
+        await restackNotifications(filteredQueuedNotifications, freeSlotsCount);
     }
 
     return {
