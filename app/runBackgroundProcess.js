@@ -6,7 +6,7 @@ function runBackgroundProcess() {
     await NotificationManager.topUpNotificationsFromQueue();
 
     debugScheduledNotifications({
-      actionType: 'backgroundAddition',
+      actionType: 'backgroundAddition-runBackgroundProcess',
     });
   })
 }

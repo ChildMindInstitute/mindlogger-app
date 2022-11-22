@@ -543,7 +543,7 @@ export const updateUserTokenBalance = (authToken, appletId, cumulative, changes,
 /*
 Add a new notification object.
 Parameters:
-actionType: 1 totalReschedule, 2 backgroundAddition
+actionType: 1 totalReschedule-[trigger], 2 backgroundAddition
 From background passed:
   notificationsInQueue, 
   scheduledNotifications
@@ -560,22 +560,20 @@ export const addScheduleNotificationDebugObjects = ({
   notificationsInQueue,
   scheduledNotifications,
 }) => {
-  const url = `${apiHost()}/notification-debug-objects`;
+  const url = `${apiHost()}/notification/logs`;
   const headers = {};
-  const accessKey = "8ba2348dd0d84d979b0a0de66d87867f";
 
   return fetch(url, {
     method: "post",
     mode: "cors",
     headers,
-    body: objectToFormData({
+    body: JSON.stringify({
       userId,
       deviceId,
       actionType,
       notificationDescriptions,
       notificationsInQueue,
       scheduledNotifications,
-      accessKey,
     }),
   }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

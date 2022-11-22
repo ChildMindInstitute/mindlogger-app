@@ -110,7 +110,7 @@ class AppService extends Component {
       await NotificationManager.topUpNotificationsFromQueue();
 
       debugScheduledNotifications({
-        actionType: 'backgroundAddition',
+        actionType: 'backgroundAddition-AppService-componentDidMount',
       });
     })
   }
@@ -330,7 +330,7 @@ class AppService extends Component {
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
-      this.props.setLocalNotifications();
+      this.props.setLocalNotifications(`notification-tap:${type}`);
     }
 
     if (type === "schedule-event-alert") {
@@ -730,7 +730,7 @@ class AppService extends Component {
     }
 
     if (goingToForeground) {
-      await setLocalNotifications();
+      await setLocalNotifications('goingToForeground');
     }
 
     if (goingToForeground && this.pendingNotification) {

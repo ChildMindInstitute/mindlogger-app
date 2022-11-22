@@ -14,6 +14,17 @@ const StorageAdapter = {
 const notificationQueue = NotificationQueue(StorageAdapter);
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
+export const getStringHashCode = inputString => {
+  if (!inputString ) {
+    throw new Error("[getStringHashCode] inputString is not defined");
+  }
+  let result = 0
+  for (let i = 0; i < inputString.length; i++) {
+    result = Math.imul(31, result) + inputString.charCodeAt(i)
+  }
+  return Math.abs(result);
+}
+
 export async function debugScheduledNotifications(additionalPayload) {
     const queuedNotifications = await notificationQueue.get()
     const scheduledNotifications = await NotificationScheduler.getAllScheduledNotifications();
@@ -21,8 +32,8 @@ export async function debugScheduledNotifications(additionalPayload) {
 
     addScheduleNotificationDebugObjects({
         userId: email,
-        actionType: 'totalReschedule',
-        deviceId: fcmToken,
+        actionType: 'undefined',
+        deviceId: getStringHashCode(fcmToken).toString(),
         notificationsInQueue: queuedNotifications,
         scheduledNotifications,
         ...additionalPayload,

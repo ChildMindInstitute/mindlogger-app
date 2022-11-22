@@ -90,15 +90,15 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
     });
 };
 
-export const setLocalNotifications = () => async (dispatch, getState) => {
+export const setLocalNotifications = (trigger) => async (dispatch, getState) => {
   try {
-    await setLocalNotificationsInternal(dispatch, getState)
+    await setLocalNotificationsInternal(dispatch, getState, trigger)
   } catch (error) {
     console.warn('Error in scheduling local notifications', error);
   }  
 }
 
-const setLocalNotificationsInternal = async (dispatch, getState) => {
+const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   firebase.notifications().cancelAllNotifications();
 
   const state = getState();
@@ -118,16 +118,17 @@ const setLocalNotificationsInternal = async (dispatch, getState) => {
     }
   });
 
-  console.log('appletsNotifications:', appletsNotifications);
+  // console.log('appletsNotifications:', appletsNotifications);
 
   const notificationArray = getNotificationArray(appletsNotifications);
 
-  console.log('notificationArray', notificationArray);
+  // console.log('notificationArray', notificationArray);
 
   await NotificationManager.scheduleNotifications(notificationArray);
 
   debugScheduledNotifications({
     notificationDescriptions: appletsNotifications,
+    actionType: `totalReschedule_${trigger}`
   })
 }
 
@@ -333,7 +334,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           onAppletsDownloaded();
         }
 
-        dispatch(setLocalNotifications());
+        dispatch(setLocalNotifications("getApplets.then"));
       }
     })
     .catch((err) => console.warn(err.message))
@@ -366,7 +367,7 @@ export const downloadTargetApplet = (appletId, cb = null) => (
           dispatch(downloadAppletMedia(transformedApplet));
         }
         dispatch(setDownloadingTargetApplet(false));
-        dispatch(setLocalNotifications());
+        dispatch(setLocalNotifications("getTargetApplet.then"));
         if (cb) {
           cb();
         }
