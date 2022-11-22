@@ -3,6 +3,7 @@ import * as R from 'ramda';
 // import PushNotification from 'react-native-push-notification';
 import * as firebase from 'react-native-firebase';
 import { Toast } from 'native-base';
+import EncryptedStorage from 'react-native-encrypted-storage'
 
 import { clearApplets } from '../applets/applets.actions';
 import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks';
@@ -16,6 +17,9 @@ import { uploadQueueSelector, inProgressSelector } from '../responses/responses.
 import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
 import { clearActivities } from '../activities/activities.actions';
+import { UserInfoStorage } from '../../features/system'
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
 export const showToast = toast => () => {
   Toast.show(toast);
@@ -72,6 +76,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
   firebase.notifications().cancelAllNotifications(); // todo - stop background process
+  userInfoStorage.clear();
 };
 
 export const logout = () => (dispatch, getState) => {

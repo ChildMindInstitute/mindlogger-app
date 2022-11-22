@@ -7,6 +7,10 @@ import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { I18nextProvider } from 'react-i18next';
+import EncryptedStorage from 'react-native-encrypted-storage'
+
+import { UserInfoStorage } from './features/system'
+
 import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
@@ -18,17 +22,22 @@ import { clearUser } from './state/user/user.actions';
 import { currentAppletSelector } from './state/app/app.selectors';
 import AppService from './components/AppService';
 
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
+
 const isAndroid = Platform.OS === 'android';
 const checkAuthToken = (store) => {
   const state = store.getState();
   if (state.user.auth === null) {
     store.dispatch(clearUser()); // Just in case
+    userInfoStorage.clear();
+
     return false;
   }
 
   const authExpiration = moment(state.user.auth.expires);
   if (moment().isAfter(authExpiration)) {
     store.dispatch(clearUser()); // Auth token expired
+    userInfoStorage.clear();
     return false;
   }
 
