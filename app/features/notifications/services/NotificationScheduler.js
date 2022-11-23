@@ -24,8 +24,6 @@ function NotificationScheduler() {
             notification.android.setChannelId(ANDROID_DEFAULT_CHANNEL_ID);
             notification.android.setPriority(firebase.notifications.Android.Priority.High);
             notification.android.setAutoCancel(true);
-        } else {
-            notification.ios.setBadge(iosBadge);
         }
 
         return notification;
