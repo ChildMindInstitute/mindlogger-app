@@ -64,14 +64,6 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
       "[scheduleNotifications] applet.schedule.actual_events is not defined"
     );
   }
-  if (
-    Array.isArray(applet.schedule.actual_events) &&
-    applet.schedule.actual_events.some((e) => !e.scheduledTime)
-  ) {
-    throw new Error(
-      "[scheduleNotifications] applet.schedule.actual_events[x].scheduledTime is not defined"
-    );
-  }
 
   const result = {
     appletId: getIdBySplit(applet.id),
@@ -89,7 +81,7 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
 
   const today = moment().startOf("day");
 
-  const appletActivityIds = applet.activities.map((a) => getIdBySplit(a.id));
+  const appletActivityIds = applet.activities.map((a) => a.id ? getIdBySplit(a.id) : 0);
 
   const weekDays = getWeekDays(numberOfDaysForSchedule);
 
@@ -109,7 +101,10 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
     const appletId = getIdBySplit(applet.id);
 
     if (!appletActivityIds.includes(activityId)) {
-      // must be fixed on BE
+      console.warn("[buildScheduleNotifications] Applet activities identifiers do not contain event.data.activity_id")
+      continue;
+    }
+    if (!scheduledTimeString) {
       continue;
     }
 
