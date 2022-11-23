@@ -118,7 +118,7 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
     }
   });
 
-  // console.log('appletsNotifications:', appletsNotifications);
+  console.log('appletsNotifications:::', appletsNotifications);
 
   const notificationArray = getNotificationArray(appletsNotifications);
 

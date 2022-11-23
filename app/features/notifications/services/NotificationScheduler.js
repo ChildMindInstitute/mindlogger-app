@@ -7,8 +7,7 @@ function NotificationScheduler() {
         notificationId,
         title,
         body,
-        data,
-        subtitle,
+        data
     }) {
         if (!notificationId) throw Error('[NotificationScheduler] notificationId is required');
 
@@ -18,7 +17,6 @@ function NotificationScheduler() {
             .setBody(body)
             .setSound('default')
             .setData(data)
-            .setSubtitle(subtitle ?? null)
 
         if (isAndroid) {
             notification.android.setChannelId(ANDROID_DEFAULT_CHANNEL_ID);

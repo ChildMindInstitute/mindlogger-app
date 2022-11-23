@@ -7,7 +7,7 @@ function UserInfoStorage(storage) {
     async function get() {
         const useInfo = await Promise.resolve(storage.getItem(USER_INFO_STORAGE_KEY));
 
-        return JSON.parse(useInfo) ?? {};
+        return useInfo ? JSON.parse(useInfo) : {};
     }
 
     function set(value) {
