@@ -83,9 +83,15 @@ function NotificationManager() {
         await restackNotifications(filteredQueuedNotifications, freeSlotsCount);
     }
 
+    function clearScheduledNotifications() {
+        Scheduler.cancelAllNotifications();
+        notificationQueue.clear();
+    }
+
     return {
         scheduleNotifications,
         topUpNotificationsFromQueue,
+        clearScheduledNotifications,
     }
 }
 

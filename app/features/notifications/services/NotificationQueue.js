@@ -15,10 +15,15 @@ function NotificationQueue(storage) {
 
         return Promise.resolve(storage.setItem(QUEUE_STORAGE_KEY, value));
     }
+
+    function clear() {
+        return set([]);
+    }
     
     return {
         get,
         set,
+        clear,
     }
 }
 

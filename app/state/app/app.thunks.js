@@ -18,6 +18,7 @@ import { cleanFiles } from '../../services/file';
 import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
 import { clearActivities } from '../activities/activities.actions';
 import { UserInfoStorage } from '../../features/system'
+import { NotificationManager } from '../../features/notifications';
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -75,7 +76,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
-  firebase.notifications().cancelAllNotifications(); // todo - stop background process
+  NotificationManager.clearScheduledNotifications();
   userInfoStorage.clear();
 };
 
