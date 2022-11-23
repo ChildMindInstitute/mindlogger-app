@@ -29,7 +29,6 @@ const checkAuthToken = (store) => {
   const state = store.getState();
   if (state.user.auth === null) {
     store.dispatch(clearUser()); // Just in case
-    userInfoStorage.clear();
 
     return false;
   }
