@@ -7,17 +7,15 @@ function NotificationQueue(storage) {
     async function get() {
         const queue = await Promise.resolve(storage.getItem(QUEUE_STORAGE_KEY));
 
-        return queue ?? [];
+        return queue ? JSON.parse(queue) : [];
     }
 
     function set(value) {
-        if (!Array.isArray(value)) throw Error('[NotificationQueue] Wrong array provided')
-
-        return Promise.resolve(storage.setItem(QUEUE_STORAGE_KEY, value));
+        return Promise.resolve(storage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(value)));
     }
 
     function clear() {
-        return set([]);
+        return set('');
     }
     
     return {
