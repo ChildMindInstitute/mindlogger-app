@@ -330,6 +330,7 @@ class AppService extends Component {
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
+      console.log('request-to-reschedule-dueto-limit received->')
       this.props.setLocalNotifications(`notification-tap:${type}`);
     }
 
@@ -795,7 +796,7 @@ const mapDispatchToProps = (dispatch) => ({
   refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
   setCurrentActivity: (activityId) => dispatch(setCurrentActivity(activityId)),
   syncUploadQueue: () => dispatch(syncUploadQueue()),
-  setLocalNotifications: () => dispatch(setLocalNotifications()),
+  setLocalNotifications: (trigger) => dispatch(setLocalNotifications(trigger)),
 });
 
 export default connect(

@@ -14,7 +14,7 @@ export function mapToTriggerNotifications(notifications = []) {
                 activityFlowId: notification.activityId,
                 eventId: notification.eventId,
                 isLocal: true,
-                type: notification.type,
+                type: "schedule-event-alert",
             }
         },
         trigger: {

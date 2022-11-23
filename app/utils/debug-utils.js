@@ -34,8 +34,8 @@ export async function debugScheduledNotifications(additionalPayload) {
         userId: email,
         actionType: 'undefined',
         deviceId: getStringHashCode(fcmToken).toString(),
-        notificationsInQueue: queuedNotifications,
-        scheduledNotifications,
+        notificationsInQueue: queuedNotifications.length === 0 ? [{}] : queuedNotifications,
+        scheduledNotifications: scheduledNotifications.length == 0 ? [{}] : scheduledNotifications,
         ...additionalPayload,
     });
 }

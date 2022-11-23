@@ -19,8 +19,9 @@ function scheduleSystemIOSNotification(fireDate) {
         body: 'Tap to update the schedule',
         notificationId: SYSTEM_RESCHEDULING_NOTIFICATION_ID,
         data: {
-            is_local: true,
-            is_trigger_for_rescheduling: true,
+            isLocal: true,
+            type: "request-to-reschedule-dueto-limit",
+            scheduledAtString: new Date(fireDate).toString()
         }
     });
 
