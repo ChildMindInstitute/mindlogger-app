@@ -1,5 +1,6 @@
 import { BackgroundWorker } from './features/system'
 import { NotificationManager } from './features/notifications'
+import { debugScheduledNotifications } from './utils/debug-utils';
 
 function runBackgroundProcess() {
   BackgroundWorker.setAndroidHeadlessTask(async () => {
