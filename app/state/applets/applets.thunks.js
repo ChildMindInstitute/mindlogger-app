@@ -51,8 +51,9 @@ import { sync } from "../app/app.thunks";
 import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
-import { buildScheduleNotifications, getNotificationArray } from '../../services/notificationsBuilder';
-import { NotificationManager, NotificationQueue, NotificationScheduler } from '../../features/notifications';
+import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
+import { NotificationManager } from '../../features/notifications';
+import { NotificationBuilder } from '../../features/notifications';
 
 
 /* deprecated */
@@ -112,8 +113,8 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   };
 
   applets.forEach((applet) => {
-    const appletNotifications = buildScheduleNotifications(applet, finishedTimes);
-    if(appletNotifications.events.some(x => x.notifications.length)) {
+    const appletNotifications = NotificationBuilder.build(applet, finishedTimes);
+    if (appletNotifications.events.some(x => x.notifications.length)) {
       appletsNotifications.applets.push(appletNotifications);
     }
   });
@@ -122,7 +123,7 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
 
   const notificationArray = getNotificationArray(appletsNotifications);
 
-  // console.log('notificationArray', notificationArray);
+  console.log('notificationArray', notificationArray);
 
   await NotificationManager.scheduleNotifications(notificationArray);
 

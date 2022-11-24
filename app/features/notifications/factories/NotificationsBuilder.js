@@ -52,16 +52,16 @@ const InactiveReason = {
   Outdated: "Outdated",
 };
 
-export const buildScheduleNotifications = (applet, finishedTimes) => {
+const build = (applet, finishedTimes) => {
   if (!applet) {
-    throw new Error("[scheduleNotifications] applet is not defined");
+    throw new Error("[NotificationsBuilder.build] applet is not defined");
   }
   if (!finishedTimes) {
-    throw new Error("[scheduleNotifications] finishedTimes is not defined");
+    throw new Error("[NotificationsBuilder.build] finishedTimes is not defined");
   }
   if (!applet.schedule.actual_events) {
     throw new Error(
-      "[scheduleNotifications] applet.schedule.actual_events is not defined"
+      "[NotificationsBuilder.build] applet.schedule.actual_events is not defined"
     );
   }
 
@@ -287,7 +287,7 @@ export const buildScheduleNotifications = (applet, finishedTimes) => {
       processEvent(eventId);
     } catch (err) {
       console.warn(
-        "[buildScheduleNotifications.processEvent] error occured: ",
+        "[NotificationsBuilder.processEvent] error occured: ",
         err
       );
     }
@@ -632,3 +632,5 @@ export const getNotificationArray = (notificationsObject) => {
   result = result.sort((a, b) => a.scheduledAt - b.scheduledAt);
   return result;
 };
+
+export default { build }
