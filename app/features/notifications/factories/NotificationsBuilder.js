@@ -57,7 +57,9 @@ const build = (applet, finishedTimes) => {
     throw new Error("[NotificationsBuilder.build] applet is not defined");
   }
   if (!finishedTimes) {
-    throw new Error("[NotificationsBuilder.build] finishedTimes is not defined");
+    throw new Error(
+      "[NotificationsBuilder.build] finishedTimes is not defined"
+    );
   }
   if (!applet.schedule.actual_events) {
     throw new Error(
@@ -89,7 +91,10 @@ const build = (applet, finishedTimes) => {
     a.id ? getIdBySplit(a.id) : 0
   );
 
-  const appletActivityOrFlowIds = [...appletActivityIds, ...appletActivityFlowIds]
+  const appletActivityOrFlowIds = [
+    ...appletActivityIds,
+    ...appletActivityFlowIds,
+  ];
 
   const weekDays = getWeekDays(numberOfDaysForSchedule);
 
@@ -231,7 +236,7 @@ const build = (applet, finishedTimes) => {
       periodEndDate,
       periodicity,
       scheduledTimeDate,
-      weekDays
+      weekDays,
     });
 
     for (let day of daysForNotifications) {
@@ -286,10 +291,7 @@ const build = (applet, finishedTimes) => {
     try {
       processEvent(eventId);
     } catch (err) {
-      console.warn(
-        "[NotificationsBuilder.processEvent] error occured: ",
-        err
-      );
+      console.warn("[NotificationsBuilder.processEvent] error occured: ", err);
     }
   }
   return result;
@@ -302,7 +304,7 @@ const getEventDays = ({
   periodEndDate,
   periodicity,
   scheduledTimeDate,
-  weekDays
+  weekDays,
 }) => {
   const eventDays = [];
   let dayFrom, dayTo;
@@ -633,4 +635,4 @@ export const getNotificationArray = (notificationsObject) => {
   return result;
 };
 
-export default { build }
+export default { build };

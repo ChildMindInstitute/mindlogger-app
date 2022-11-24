@@ -52,9 +52,7 @@ import { transformApplet } from "../../models/json-ld";
 import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
 import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
-import { NotificationManager } from '../../features/notifications';
-import { NotificationBuilder } from '../../features/notifications';
-
+import { NotificationManager, NotificationBuilder } from '../../features/notifications';
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
@@ -100,8 +98,6 @@ export const setLocalNotifications = (trigger) => async (dispatch, getState) => 
 }
 
 const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
-  firebase.notifications().cancelAllNotifications();
-
   const state = getState();
 
   const applets = allAppletsSelector(state);
@@ -127,7 +123,7 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
 
   await NotificationManager.scheduleNotifications(notificationArray);
 
-  debugScheduledNotifications({
+  await debugScheduledNotifications({
     notificationDescriptions: appletsNotifications,
     actionType: `totalReschedule_${trigger}`
   })

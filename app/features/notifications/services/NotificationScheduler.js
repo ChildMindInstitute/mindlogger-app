@@ -54,8 +54,8 @@ function NotificationScheduler() {
         return notification;
     }
 
-    function cancelAllNotifications() {
-        firebase.notifications().cancelAllNotifications();
+    async function cancelAllNotifications() {
+        await firebase.notifications().cancelAllNotifications();
     }
 
     function cancelNotification(notificationId) {

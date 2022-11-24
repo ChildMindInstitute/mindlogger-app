@@ -109,7 +109,7 @@ class AppService extends Component {
 
       await NotificationManager.topUpNotificationsFromQueue();
 
-      debugScheduledNotifications({
+      await debugScheduledNotifications({
         actionType: 'backgroundAddition-AppService-componentDidMount',
       });
     })

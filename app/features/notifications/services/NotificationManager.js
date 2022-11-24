@@ -56,16 +56,18 @@ function NotificationManager() {
             triggerNotifications,
         })
 
+        if (!triggerNotifications.length) {
+          return;
+        }
+
         const lastTriggerNotification = triggerNotifications[triggerNotifications.length - 1];
 
         await scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
     }
 
     async function scheduleNotifications(notifications = []) {
-        if (!notifications.length) return;
-
         await Scheduler.cancelAllNotifications();
-
+      
         await restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
     }
 
@@ -78,8 +80,6 @@ function NotificationManager() {
 
         const queuedNotifications = await notificationQueue.get();
         const filteredQueuedNotifications = filterNotificationsByDate(queuedNotifications, Date.now())
-
-        if (!filteredQueuedNotifications.length) return;
 
         await restackNotifications(filteredQueuedNotifications, freeSlotsCount);
     }

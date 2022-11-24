@@ -30,7 +30,7 @@ export async function debugScheduledNotifications(additionalPayload) {
     const scheduledNotifications = await NotificationScheduler.getAllScheduledNotifications();
     const { fcmToken, email } = await userInfoStorage.get()
 
-    addScheduleNotificationDebugObjects({
+    await addScheduleNotificationDebugObjects({
         userId: email,
         actionType: 'undefined',
         deviceId: getStringHashCode(fcmToken).toString(),

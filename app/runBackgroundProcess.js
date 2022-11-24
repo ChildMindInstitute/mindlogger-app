@@ -5,7 +5,7 @@ function runBackgroundProcess() {
   BackgroundWorker.setAndroidHeadlessTask(async () => {
     await NotificationManager.topUpNotificationsFromQueue();
 
-    debugScheduledNotifications({
+    await debugScheduledNotifications({
       actionType: 'backgroundAddition-runBackgroundProcess',
     });
   })
