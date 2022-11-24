@@ -11,7 +11,7 @@ const StorageAdapter = {
     setItem: storeData,
 }
 
-function scheduleSystemIOSNotification(fireDate) {
+async function scheduleSystemIOSNotification(fireDate) {
     if (isAndroid) return;
 
     const localNotification = Scheduler.createLocalNotification({
@@ -30,7 +30,7 @@ function scheduleSystemIOSNotification(fireDate) {
         repeatInterval: 'hour',
     }
 
-    Scheduler.scheduleLocalNotification(localNotification, trigger);
+    return Scheduler.scheduleLocalNotification(localNotification, trigger);
 }
 
 function NotificationManager() {
@@ -58,13 +58,13 @@ function NotificationManager() {
 
         const lastTriggerNotification = triggerNotifications[triggerNotifications.length - 1];
 
-        scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
+        await scheduleSystemIOSNotification(lastTriggerNotification.trigger.fireDate + SYSTEM_NOTIFICATION_DELAY);
     }
 
     async function scheduleNotifications(notifications = []) {
         if (!notifications.length) return;
 
-        Scheduler.cancelAllNotifications();
+        await Scheduler.cancelAllNotifications();
 
         await restackNotifications(notifications, MAX_SCHEDULED_NOTIFICATIONS_SIZE);
     }
