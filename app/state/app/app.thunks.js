@@ -77,7 +77,7 @@ const doLogout = (dispatch, getState) => {
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
   NotificationManager.clearScheduledNotifications();
-  userInfoStorage.clear();
+  userInfoStorage.clearUserEmail();
 };
 
 export const logout = () => (dispatch, getState) => {

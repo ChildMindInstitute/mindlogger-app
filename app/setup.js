@@ -36,7 +36,7 @@ const checkAuthToken = (store) => {
   const authExpiration = moment(state.user.auth.expires);
   if (moment().isAfter(authExpiration)) {
     store.dispatch(clearUser()); // Auth token expired
-    userInfoStorage.clear();
+    userInfoStorage.clearUserEmail();
     return false;
   }
 

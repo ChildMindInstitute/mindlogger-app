@@ -36,7 +36,7 @@ function UserInfoStorage(storage) {
 
         useInfo[key] = value;
 
-        set(useInfo);
+        return set(useInfo);
     }
 
     async function setFCMToken(token) {
@@ -51,6 +51,14 @@ function UserInfoStorage(storage) {
         await storage.removeItem(USER_INFO_STORAGE_KEY);
     }
 
+    async function clearUserEmail() {
+        const useInfo = (await get()) ?? {};
+
+        delete useInfo.email;
+
+        return set(useInfo);
+    }
+
     return {
         get,
         set,
@@ -58,6 +66,7 @@ function UserInfoStorage(storage) {
 
         getUserEmail,
         setUserEmail,
+        clearUserEmail,
 
         getFCMToken,
         setFCMToken,
