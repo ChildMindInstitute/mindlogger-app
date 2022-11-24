@@ -7,7 +7,7 @@ function NotificationQueue(storage) {
     async function get() {
         const queue = await Promise.resolve(storage.getItem(QUEUE_STORAGE_KEY));
 
-        return queue ? JSON.parse(queue) : [];
+        return queue === '' ? JSON.parse(queue) : [];
     }
 
     function set(value) {
