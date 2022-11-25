@@ -18,8 +18,6 @@ export const isReminderSetSelector = R.path(['applets', 'isReminderSet']);
 
 export const timersSelector = R.path(['applets', 'timers']);
 
-export const notificationsSelector = R.path(['applets', 'notifications']);
-
 export const invitesSelector = R.path(['applets', 'invites']);
 
 export const activityAccessSelector = R.path(['applets', 'activityAccess']);

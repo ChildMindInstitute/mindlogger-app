@@ -14,7 +14,6 @@ import { UserInfoStorage } from './features/system'
 import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
 import configureStore from './store';
-// import { initializePushNotifications } from './services/pushNotifications';
 import { sync } from './state/app/app.thunks';
 import { clearUser } from './state/user/user.actions';
 // import { setCurrentActivity, setCurrentApplet } from './state/app/app.actions';

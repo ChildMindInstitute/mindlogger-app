@@ -16,7 +16,6 @@ import {
   getAppletSchedule,
 } from "../../services/network";
 import { getData, storeData } from "../../services/storage";
-import { scheduleNotifications } from "../../services/pushNotifications";
 // eslint-disable-next-line
 import { downloadAppletResponses, updateKeys } from '../responses/responses.thunks';
 import { inProgressSelector, responsesSelector } from '../responses/responses.selectors';
@@ -28,7 +27,6 @@ import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks
 import { activitiesSelector, allAppletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
-  setNotifications,
   setDownloadingApplets,
   replaceApplets,
   setInvites,
@@ -54,15 +52,6 @@ import config from "../../config";
 import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
 import { NotificationManager, NotificationBuilder } from '../../features/notifications';
 import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
-
-/* deprecated */
-export const scheduleAndSetNotifications = () => (dispatch, getState) => {
-  // const state = getState();
-  // const activities = activitiesSelector(state);
-  // This call schedules the notifications and returns a list of scheduled notifications
-  // const updatedNotifications = scheduleNotifications(activities);
-  // dispatch(setNotifications(updatedNotifications));
-};
 
 export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
@@ -144,12 +133,6 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
     NotificationManagerMutex.release();
   }
 };
-
-export const scheduleNotificationsRN = (notification, ms) => {
-  return setTimeout(() => {
-    firebase.notifications().displayNotification(notification)
-  }, ms);
-}
 
 const buildLocalInfo = (currentApplets, oldResponses) => {
   let localInfo = {};
@@ -353,8 +336,6 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null, trigger
     .catch((err) => console.warn(err.message))
     .finally(() => {
       dispatch(setDownloadingApplets(false));
-      // dispatch(scheduleAndSetNotifications());
-      // dispatch(getInvitations());
     });
 };
 
