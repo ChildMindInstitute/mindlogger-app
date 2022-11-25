@@ -1,11 +1,16 @@
 import objectToFormData from "object-to-formdata";
 import RNFetchBlob from "rn-fetch-blob";
 import RNFS from 'react-native-fs';
+import EncryptedStorage from 'react-native-encrypted-storage'
 
 import { getStore } from "../store";
+import { UserInfoStorage } from '../features/system'
+
 // eslint-disable-next-line
 import { btoa } from "./helper";
 import { apiHostSelector } from "../state/app/app.selectors";
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage)
 
 const apiHost = () => {
   const state = getStore().getState(); // Get redux state
@@ -552,7 +557,7 @@ From re-scheduling: all three properties passed:
   notificationsInQueue, 
   scheduledNotifications
 */
-export const addScheduleNotificationDebugObjects = ({
+export const addScheduleNotificationDebugObjects = async ({
   userId,
   deviceId,
   actionType,
@@ -560,7 +565,8 @@ export const addScheduleNotificationDebugObjects = ({
   notificationsInQueue,
   scheduledNotifications,
 }) => {
-  const url = `${apiHost()}/notification/logs`;
+  const apiHost = await userInfoStorage.getApiHost();
+  const url = `${apiHost}/notification/logs`;
   const headers = {};
 
   return fetch(url, {

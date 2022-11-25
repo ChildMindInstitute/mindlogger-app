@@ -47,6 +47,18 @@ function UserInfoStorage(storage) {
         return setKey('email', email);
     }
 
+    async function getApiHost() {
+        const useInfo = await get();
+
+        return useInfo?.apiHost;
+    }
+
+    async function setApiHost(value) {
+        const apiHost = value.trim();
+
+        return setKey('apiHost', apiHost);
+    }
+
     async function clear() {
         await storage.removeItem(USER_INFO_STORAGE_KEY);
     }
@@ -70,6 +82,9 @@ function UserInfoStorage(storage) {
 
         getFCMToken,
         setFCMToken,
+
+        getApiHost,
+        setApiHost,
     }
 }
 

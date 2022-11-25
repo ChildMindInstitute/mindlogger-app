@@ -15,8 +15,9 @@ import { Actions } from "react-native-router-flux";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import { Platform, Alert } from "react-native";
 import i18n from "i18next";
-
 import Permissions, { PERMISSIONS } from "react-native-permissions";
+import EncryptedStorage from 'react-native-encrypted-storage'
+
 import styles from "./styles";
 import { getSkin } from "../../services/network";
 import { setApiHost, resetApiHost, setSkin } from "../../state/app/app.actions";
@@ -24,9 +25,12 @@ import { apiHostSelector, skinSelector } from "../../state/app/app.selectors";
 import { showToast } from "../../state/app/app.thunks";
 import ChangeStudyForm from "./ChangeStudyForm";
 import config from "../../config";
+import { UserInfoStorage } from '../../features/system';
 
 const IOSHeaderPadding = Platform.OS === "ios" ? 24 : 0;
 const IOSBodyPadding = Platform.OS === "ios" ? 9 : 0;
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
 class ChangeStudy extends Component {
   constructor(props) {
@@ -196,12 +200,18 @@ const mapStateToProps = (state) => ({
   skin: skinSelector(state),
 });
 
-const mapDispatchToProps = {
+const mapDispatchToProps = (dispatch) => ({
   showToast,
-  setApiHost,
-  resetApiHost,
+  setApiHost: (apiHost) => {
+    dispatch(setApiHost(apiHost));
+    userInfoStorage.setApiHost(apiHost);
+  },
+  resetApiHost: () => {
+    dispatch(setApiHost(config.defaultApiHost));
+    userInfoStorage.setApiHost(config.defaultApiHost);
+  },
   setSkin,
-};
+});
 
 export default connect(
   mapStateToProps,

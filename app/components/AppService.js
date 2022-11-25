@@ -10,6 +10,7 @@ import moment from "moment";
 import i18n from "i18next";
 import EncryptedStorage from 'react-native-encrypted-storage'
 
+import config from '../config'
 import { setFcmToken } from "../state/fcm/fcm.actions";
 import { appletsSelector } from "../state/applets/applets.selectors";
 import {
@@ -61,6 +62,16 @@ const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
+
+
+const setDefaultApiHost = async () => {
+  const apiHost = await userInfoStorage.getApiHost();
+
+  if (apiHost) return;
+
+  userInfoStorage.setApiHost(config.defaultApiHost);
+}
+
 class AppService extends Component {
   async componentDidMount() {
     this.listeners = [
@@ -794,9 +805,11 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  setFCMToken: (token) => {
+  setFCMToken: async (token) => {
     dispatch(setFcmToken(token));
-    userInfoStorage.setFCMToken(token);
+
+    await userInfoStorage.setFCMToken(token);
+    setDefaultApiHost();
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
   setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
