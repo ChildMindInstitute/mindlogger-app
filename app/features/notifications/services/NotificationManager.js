@@ -1,7 +1,7 @@
 import { getData, storeData } from '../../../services/storage'
 
 import { MAX_SCHEDULED_NOTIFICATIONS_SIZE, isAndroid, SYSTEM_RESCHEDULING_NOTIFICATION_ID, SYSTEM_NOTIFICATION_DELAY } from '../constants'
-import { mapToTriggerNotifications, splitArray, filterNotificationsByDate } from '../utils'
+import { mapToTriggerNotifications, splitArray, filterNotificationsByDate, getMutex } from '../utils'
 
 import NotificationQueue from './NotificationQueue'
 import Scheduler from './NotificationScheduler'
@@ -95,5 +95,7 @@ function NotificationManager() {
         clearScheduledNotifications,
     }
 }
+
+export const NotificationManagerMutex = getMutex();
 
 export default NotificationManager();

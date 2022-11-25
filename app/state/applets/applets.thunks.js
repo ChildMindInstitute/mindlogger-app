@@ -53,14 +53,15 @@ import { decryptAppletResponses, mergeResponses } from "../../models/response";
 import config from "../../config";
 import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
 import { NotificationManager, NotificationBuilder } from '../../features/notifications';
+import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
 
 /* deprecated */
 export const scheduleAndSetNotifications = () => (dispatch, getState) => {
-  const state = getState();
-  const activities = activitiesSelector(state);
+  // const state = getState();
+  // const activities = activitiesSelector(state);
   // This call schedules the notifications and returns a list of scheduled notifications
-  const updatedNotifications = scheduleNotifications(activities);
-  dispatch(setNotifications(updatedNotifications));
+  // const updatedNotifications = scheduleNotifications(activities);
+  // dispatch(setNotifications(updatedNotifications));
 };
 
 export const getInvitations = () => (dispatch, getState) => {
@@ -89,13 +90,16 @@ export const getSchedules = (appletId) => (dispatch, getState) => {
     });
 };
 
-export const setLocalNotifications = (trigger) => async (dispatch, getState) => {
+export const setLocalNotifications = (trigger) => async (
+  dispatch,
+  getState
+) => {
   try {
-    await setLocalNotificationsInternal(dispatch, getState, trigger)
+    await setLocalNotificationsInternal(dispatch, getState, trigger);
   } catch (error) {
-    console.warn('Error in scheduling local notifications', error);
-  }  
-}
+    console.warn("Error in scheduling local notifications", error);
+  }
+};
 
 const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   const state = getState();
@@ -105,29 +109,41 @@ const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   const { finishedTimes } = state.app;
 
   const appletsNotifications = {
-    applets: []
+    applets: [],
   };
 
   applets.forEach((applet) => {
-    const appletNotifications = NotificationBuilder.build(applet, finishedTimes);
-    if (appletNotifications.events.some(x => x.notifications.length)) {
+    const appletNotifications = NotificationBuilder.build(
+      applet,
+      finishedTimes
+    );
+    if (appletNotifications.events.some((x) => x.notifications.length)) {
       appletsNotifications.applets.push(appletNotifications);
     }
   });
 
-  console.log('appletsNotifications:::', appletsNotifications);
-
   const notificationArray = getNotificationArray(appletsNotifications);
 
-  console.log('notificationArray', notificationArray);
+  if (NotificationManagerMutex.isBusy()) {
+    console.warn(
+      "[setLocalNotificationsInternal]: NotificationManagerMutex is busy. Operation rejected"
+    );
+    return;
+  }
 
-  await NotificationManager.scheduleNotifications(notificationArray);
+  try {
+    NotificationManagerMutex.setBusy();
 
-  await debugScheduledNotifications({
-    notificationDescriptions: appletsNotifications,
-    actionType: `totalReschedule_${trigger}`
-  })
-}
+    await NotificationManager.scheduleNotifications(notificationArray);
+
+    await debugScheduledNotifications({
+      notificationDescriptions: appletsNotifications,
+      actionType: `totalReschedule_${trigger}`,
+    });
+  } finally {
+    NotificationManagerMutex.release();
+  }
+};
 
 export const scheduleNotificationsRN = (notification, ms) => {
   return setTimeout(() => {
@@ -222,7 +238,7 @@ const mergeExistingApplet = (currentApplets, appletInfoDto, responses) => {
   return { currentApplet, scheduleUpdated };
 }
 
-export const downloadApplets = (onAppletsDownloaded = null, keys = null) => async (dispatch, getState) => {
+export const downloadApplets = (onAppletsDownloaded = null, keys = null, trigger = null) => async (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
   const allApplets = allAppletsSelector(state), allResponses = responsesSelector(state);
@@ -331,7 +347,7 @@ export const downloadApplets = (onAppletsDownloaded = null, keys = null) => asyn
           onAppletsDownloaded();
         }
 
-        dispatch(setLocalNotifications("getApplets.then"));
+        dispatch(setLocalNotifications(`getApplets.then${!trigger ? "" : "-" + trigger}`));
       }
     })
     .catch((err) => console.warn(err.message))

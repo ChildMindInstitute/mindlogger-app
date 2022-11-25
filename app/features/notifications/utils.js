@@ -42,3 +42,18 @@ export function splitArray(array, leftArraySize) {
     return [leftArray, rightArray];
 }
 
+export const getMutex = () => {
+  const mutex = {
+    busy: false,
+    setBusy: function() {
+      this.busy = true;
+    },
+    release: function() {
+      this.busy = false;
+    },
+    isBusy: function() {
+      return this.busy;
+    },
+  };
+  return mutex;
+};

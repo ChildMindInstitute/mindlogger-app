@@ -49,6 +49,7 @@ import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
 import { authTokenSelector } from "../state/user/user.selectors";
 import sortActivities from "./ActivityList/sortActivities";
+import { NotificationManagerMutex } from "../features/notifications/services/NotificationManager";
 
 const AndroidChannelId = "MindLoggerChannelId";
 const fMessaging =
@@ -107,11 +108,24 @@ class AppService extends Component {
 
       if (isForeground) return;
 
-      await NotificationManager.topUpNotificationsFromQueue();
+      if (NotificationManagerMutex.isBusy()) {
+        console.warn(
+          "[AppService.componentDidMount:BackgroundWorker.setTask]: NotificationManagerMutex is busy. Operation rejected"
+        );
+        return;
+      }
 
-      await debugScheduledNotifications({
-        actionType: 'backgroundAddition-AppService-componentDidMount',
-      });
+      try {
+        NotificationManagerMutex.setBusy();
+
+        await NotificationManager.topUpNotificationsFromQueue();
+
+        await debugScheduledNotifications({
+          actionType: 'backgroundAddition-AppService-componentDidMount',
+        });
+      } finally {
+        NotificationManagerMutex.release();
+      }
     })
   }
 
@@ -325,7 +339,7 @@ class AppService extends Component {
     ) {
       const networkState = await NetInfo.fetch();
       if (networkState.isConnected) {
-        this.props.downloadApplets();
+        this.props.downloadApplets(null, null, type);
       }
     }
 

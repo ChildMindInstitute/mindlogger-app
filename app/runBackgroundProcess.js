@@ -1,14 +1,28 @@
 import { BackgroundWorker } from './features/system'
 import { NotificationManager } from './features/notifications'
 import { debugScheduledNotifications } from './utils/debug-utils';
+import { NotificationManagerMutex } from './features/notifications/services/NotificationManager';
 
 function runBackgroundProcess() {
   BackgroundWorker.setAndroidHeadlessTask(async () => {
-    await NotificationManager.topUpNotificationsFromQueue();
+    if (NotificationManagerMutex.isBusy()) {
+      console.warn(
+        "[BackgroundWorker.setAndroidHeadlessTask]: NotificationManagerMutex is busy. Operation rejected"
+      );
+      return;
+    }
+    try {
+      NotificationManagerMutex.setBusy();
 
-    await debugScheduledNotifications({
-      actionType: 'backgroundAddition-runBackgroundProcess',
-    });
+      await NotificationManager.topUpNotificationsFromQueue();
+
+      await debugScheduledNotifications({
+        actionType: 'backgroundAddition-runBackgroundProcess',
+      });
+
+    } finally {
+      NotificationManagerMutex.release();
+    }
   })
 }
 
