@@ -8,6 +8,7 @@ export function mapToTriggerNotifications(notifications = []) {
             notificationId: notification.notificationId,
             data: {
                 shortId: notification.shortId,
+                scheduledAt: notification.scheduledAt,
                 scheduledAtString: notification.scheduledAtString,
                 appletId: notification.appletId,
                 activityId: notification.activityId,

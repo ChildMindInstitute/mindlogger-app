@@ -42,7 +42,7 @@ function NotificationScheduler() {
 
     async function getAllScheduledNotifications() {
         const items = await firebase.notifications().getScheduledNotifications();
-        items.sort((x, y) => x.schedule.fireDate - y.schedule.fireDate);
+        items.sort((x, y) => x.data.scheduledAt - y.data.scheduledAt);
         
         return items;
     }

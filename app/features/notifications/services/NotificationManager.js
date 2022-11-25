@@ -21,6 +21,7 @@ async function scheduleSystemIOSNotification(fireDate) {
         data: {
             isLocal: true,
             type: "request-to-reschedule-dueto-limit",
+            scheduledAt: fireDate,
             scheduledAtString: new Date(fireDate).toString()
         }
     });
