@@ -43,11 +43,12 @@ function NotificationManager() {
 
         const triggerNotifications = mapToTriggerNotifications(notificationsToSchedule);
 
-        triggerNotifications.forEach(({ notification, trigger }) => {
-            const localNotification = Scheduler.createLocalNotification(notification);
+        for (let item of triggerNotifications) {
+          const { notification, trigger } = item;
+          const localNotification = Scheduler.createLocalNotification(notification);
 
-            Scheduler.scheduleLocalNotification(localNotification, trigger)
-        });
+          await Scheduler.scheduleLocalNotification(localNotification, trigger)
+        }
 
         console.log("restackNotifications", {
             notifications,

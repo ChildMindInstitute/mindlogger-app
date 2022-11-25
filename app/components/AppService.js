@@ -815,7 +815,7 @@ const mapDispatchToProps = (dispatch) => ({
   setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
   startResponse: (activity) => dispatch(startResponse(activity)),
   updateBadgeNumber: (badgeNumber) => dispatch(updateBadgeNumber(badgeNumber)),
-  downloadApplets: (cb) => dispatch(downloadApplets(cb)),
+  downloadApplets: (cb, keys, trigger) => dispatch(downloadApplets(cb, keys, trigger)),
   sync: (cb) => dispatch(sync(cb)),
   syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
   showToast: (toast) => dispatch(showToast(toast)),

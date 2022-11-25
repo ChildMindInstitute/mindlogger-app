@@ -40,8 +40,11 @@ function NotificationScheduler() {
             })
     }
 
-    function getAllScheduledNotifications() {
-        return firebase.notifications().getScheduledNotifications();
+    async function getAllScheduledNotifications() {
+        const items = await firebase.notifications().getScheduledNotifications();
+        items.sort((x, y) => x.schedule.fireDate - y.schedule.fireDate);
+        
+        return items;
     }
 
     async function getScheduledNotification(notificationId) {
