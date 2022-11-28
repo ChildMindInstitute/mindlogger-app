@@ -49,6 +49,7 @@ const NotificationType = {
 
 const InactiveReason = {
   ActivityCompleted: "ActivityCompleted",
+  ActivityCompletedInReminderInterval: "ActivityCompletedInReminderInterval",
   Outdated: "Outdated",
 };
 
@@ -125,15 +126,15 @@ const build = (applet, finishedTimes) => {
 
     const scheduledTimeDate = new moment(scheduledTimeString);
 
-    let periodStartDate = null,
-      periodEndDate = null;
+    let periodStartDay = null,
+      periodEndDay = null;
 
     if (schedule.start) {
-      periodStartDate = moment(schedule.start).startOf("day");
+      periodStartDay = moment(schedule.start).startOf("day");
     }
 
     if (schedule.end) {
-      periodEndDate = moment(schedule.end).startOf("day");
+      periodEndDay = moment(schedule.end).startOf("day");
     }
 
     let periodicity = null;
@@ -168,13 +169,15 @@ const build = (applet, finishedTimes) => {
       data.reminder
     );
 
-    if (!periodicity && scheduledTimeDate < today) {
+    const aboutWeekAgoDay = moment(today).add(-8, "days");
+
+    if (!periodicity && scheduledTimeDate < aboutWeekAgoDay) {
       return;
     }
-    if (periodicity && periodEndDate && periodEndDate < today) {
+    if (periodicity && periodEndDay && periodEndDay < today) {
       return;
     }
-    if (periodicity && periodStartDate && periodStartDate > lastScheduleDay) {
+    if (periodicity && periodStartDay && periodStartDay > lastScheduleDay) {
       return;
     }
     if (!data.notifications || !data.notifications.length) {
@@ -183,7 +186,7 @@ const build = (applet, finishedTimes) => {
 
     if (!periodicity) {
       for (let notificationData of data.notifications) {
-        if (!notificationData.start) {
+        if (!notificationData.start || !data.useNotifications) {
           continue;
         }
         const notification = createNotification({
@@ -222,26 +225,30 @@ const build = (applet, finishedTimes) => {
         finishedTimes,
       });
 
-      if (reminder) {
+      if (reminder && reminder.isActive) {
         markIfNotificationOutdated(reminder);
+      }
+      if (reminder) {
         eventResult.notifications.push(reminder);
       }
+
       return;
     }
 
     const daysForNotifications = getEventDays({
       firstScheduleDay,
       lastScheduleDay,
-      periodStartDate,
-      periodEndDate,
+      periodStartDay,
+      periodEndDay,
       periodicity,
+      aboutWeekAgoDay,
       scheduledTimeDate,
       weekDays,
     });
 
     for (let day of daysForNotifications) {
       for (let notificationData of data.notifications) {
-        if (!notificationData.start) {
+        if (!notificationData.start || !data.useNotifications) {
           continue;
         }
         const notification = createNotification({
@@ -280,8 +287,10 @@ const build = (applet, finishedTimes) => {
         finishedTimes,
       });
 
-      if (reminder) {
+      if (reminder && reminder.isActive) {
         markIfNotificationOutdated(reminder);
+      }
+      if (reminder) {
         eventResult.notifications.push(reminder);
       }
     }
@@ -300,29 +309,35 @@ const build = (applet, finishedTimes) => {
 const getEventDays = ({
   firstScheduleDay,
   lastScheduleDay,
-  periodStartDate,
-  periodEndDate,
+  periodStartDay,
+  periodEndDay,
   periodicity,
+  aboutWeekAgoDay,
   scheduledTimeDate,
   weekDays,
 }) => {
   const eventDays = [];
-  let dayFrom, dayTo;
-
-  if (!periodStartDate) {
-    dayFrom = firstScheduleDay;
-  } else {
-    dayFrom =
-      periodStartDate > firstScheduleDay ? periodStartDate : firstScheduleDay;
+  
+  const getDayFrom = (anchorDay) => {
+    let dayFrom;
+    if (!periodStartDay) {
+      dayFrom = anchorDay;
+    } else {
+      dayFrom =
+        periodStartDay > anchorDay ? periodStartDay : anchorDay;
+    }
+    return dayFrom;
   }
 
-  if (!periodEndDate) {
+  let dayTo;
+  if (!periodEndDay) {
     dayTo = lastScheduleDay;
   } else {
-    dayTo = periodEndDate < lastScheduleDay ? periodEndDate : lastScheduleDay;
+    dayTo = periodEndDay < lastScheduleDay ? periodEndDay : lastScheduleDay;
   }
 
   if (periodicity === PeriodType.Daily) {
+    const dayFrom = getDayFrom(firstScheduleDay);
     let day = moment(dayFrom);
 
     while (day <= dayTo) {
@@ -335,7 +350,7 @@ const getEventDays = ({
     let day = moment(scheduledTimeDate);
 
     while (day <= dayTo) {
-      if (day >= firstScheduleDay) {
+      if (day >= aboutWeekAgoDay) {
         eventDays.push(moment(day));
       }
       day = day.add(7, "days");
@@ -343,6 +358,7 @@ const getEventDays = ({
   }
 
   if (periodicity === PeriodType.Weekday) {
+    const dayFrom = getDayFrom(firstScheduleDay);
     let day = moment(dayFrom);
 
     while (day <= dayTo) {
@@ -355,10 +371,12 @@ const getEventDays = ({
   }
 
   if (periodicity === PeriodType.Monthly) {
+    const monthAgoDay = moment().startOf("day").add(-1, "month");
+    
     let day = moment(scheduledTimeDate);
 
     while (day <= dayTo) {
-      if (day >= firstScheduleDay) {
+      if (day >= monthAgoDay) {
         eventDays.push(moment(day));
       }
       day = day.add(1, "month");
@@ -558,9 +576,11 @@ const createReminder = ({
 
   if (responseDateTime) {
     const responseDay = moment(responseDateTime).startOf("day");
-    if (responseDay.isSame(day)) {
+    
+    if (day <= responseDay && responseDay <= fireDay) {
       notification.isActive = false;
-      notification.inactiveReason = InactiveReason.ActivityCompleted;
+      notification.inactiveReason =
+        InactiveReason.ActivityCompletedInReminderInterval;
       return notification;
     }
   }
