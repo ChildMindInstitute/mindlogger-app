@@ -1175,6 +1175,23 @@ export const parseAppletEvents = (applet) => {
     }
   })
 
+  for(let eventId in applet.schedule.actual_events) {
+    const event = applet.schedule.actual_events[eventId];
+
+    const date = new Date();
+    date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+
+    const futureSchedule = Parse.schedule(event.schedule).forecast(
+      Day.fromDate(date),
+      true,
+      1,
+      0,
+      true,
+    );
+
+    event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+  }
+
   return {
     ...applet,
     activities: extraInfoActivities,

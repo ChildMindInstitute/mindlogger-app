@@ -77,6 +77,7 @@ import { sendData } from "../../services/socket";
 import config from "../../config";
 import { sync } from "../app/app.thunks";
 import { getActivitiesOfFlow } from "../../services/activityFlow";
+import { setLocalNotifications } from "../applets/applets.thunks";
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
@@ -663,10 +664,10 @@ export const nextActivity = (isNext = false) => (dispatch, getState) => {
       dispatch(setActivityAccess(applet.id + activity.id));
     }
     sendData('finish_activity', activity.id, applet.id);
-    dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+    
     dispatch(completeResponse(false, true));
 
-    dispatch(setActivityFlowOrderIndex({
+    dispatch(setActivityFlowOrderIndex({ 
       activityId: activity.id,
       index: currentActOrderIndex + 1
     }));
@@ -789,6 +790,8 @@ const finishActivityInternal = (dispatch, activity, applet, event, currentActOrd
       
       dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
       
+      dispatch(setLocalNotifications("finishActivityInternal"));
+      
       if (activity.isActivityFlow) {
         dispatch(setActivityFlowOrderIndex({
           activityId: activity.id,
@@ -816,6 +819,8 @@ export const finishActivityDueToTimer = (activity) => (dispatch, getState) => {
   dispatch(completeResponse());
 
   dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
+  
+  dispatch(setLocalNotifications("finishActivityDueToTimer"));
 
   dispatch(setCurrentActivity(null));
 

@@ -73,12 +73,6 @@ export const setDownloadingTargetApplet = isDownloading => ({
   payload: isDownloading,
 });
 
-/* deprecated */
-export const setNotifications = notifications => ({
-  type: APPLET_CONSTANTS.SET_NOTIFICATIONS,
-  payload: notifications,
-});
-
 export const setInvites = invites => ({
   type: APPLET_CONSTANTS.SET_INVITES,
   payload: invites,
@@ -93,4 +87,3 @@ export const saveAppletResponseData = (appletId, data) => ({
   type: APPLET_CONSTANTS.SAVE_APPLET_RESPONSE_DATA,
   payload: { appletId, data },
 });
-

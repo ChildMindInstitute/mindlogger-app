@@ -1,0 +1,2 @@
+export const MINIMUM_ALLOWED_BG_TASK_INTERVAL_MINUTES = 15;
+export const USER_INFO_STORAGE_KEY = 'UserInfo'

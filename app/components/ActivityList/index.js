@@ -16,7 +16,7 @@ import {
   finishedEventsSelector,
 } from '../../state/app/app.selectors';
 import { activityAccessSelector } from '../../state/applets/applets.selectors';
-import { getSchedules, setReminder, cancelReminder } from '../../state/applets/applets.thunks';
+import { getSchedules } from '../../state/applets/applets.thunks';
 import { syncUploadQueue } from '../../state/app/app.thunks';
 import { setUpdatedTime, setAppStatus, setConnection } from '../../state/app/app.actions';
 import { setActivityFlows } from '../../state/activityFlows/activityFlows.actions';
@@ -35,8 +35,6 @@ const ActivityList = ({
   syncUploadQueue,
   appStatus,
   setConnection,
-  setReminder,
-  cancelReminder,
   scheduleUpdated,
   isConnected,
   setScheduleUpdated,
@@ -71,8 +69,6 @@ const ActivityList = ({
 
   const handleConnectivityChange = (connection) => {
     if (connection.isConnected) {
-      cancelReminder();
-
       if (!isConnected && !currentConnection) {
         currentConnection = true;
         setConnection(true);
@@ -81,7 +77,6 @@ const ActivityList = ({
     } else {
       currentConnection = false;
       setConnection(false);
-      setReminder();
     }
   }
 
@@ -148,7 +143,7 @@ const ActivityList = ({
         <ActivityListItem
           disabled={activity.status === 'scheduled' && !activity.event.data.timeout.access}
           onPress={() => onPressActivity(activity)}
-          onLongPress={() => onLongPressActivity(activity)}
+          //onLongPress={() => onLongPressActivity(activity)}
           activity={activity}
           applet={applet}
           orderIndex={orderIndex || {}}
@@ -159,7 +154,7 @@ const ActivityList = ({
       {prizeActivity && (
         <ActivityListItem
           onPress={() => onPressActivity(prizeActivity)}
-          onLongPress={() => onLongPressActivity(prizeActivity)}
+          //onLongPress={() => onLongPressActivity(prizeActivity)}
           activity={prizeActivity}
         />
       )}
@@ -184,9 +179,7 @@ ActivityList.propTypes = {
   setScheduleUpdated: PropTypes.func.isRequired,
   isConnected: PropTypes.bool.isRequired,
   scheduleUpdated: PropTypes.bool.isRequired,
-  syncUploadQueue: PropTypes.func.isRequired,
-  setReminder: PropTypes.func.isRequired,
-  cancelReminder: PropTypes.func.isRequired,
+  syncUploadQueue: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => {
@@ -213,8 +206,6 @@ const mapDispatchToProps = {
   setConnection,
   setScheduleUpdated,
   syncUploadQueue,
-  setReminder,
-  cancelReminder,
   setActivities,
 };
 

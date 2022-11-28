@@ -62,11 +62,11 @@ body {
 }
 
 .square {
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  bottom: 10;
-  right: 10;
+  width: 5px;
+  height: 5px;
+  position: fixed;
+  top: 0px;
+  left: 5px;
 }
 
 .mindlogger-flanker-image-button{

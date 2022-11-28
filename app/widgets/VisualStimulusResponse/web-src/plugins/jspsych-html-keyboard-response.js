@@ -77,7 +77,6 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
     var new_html = '<div id="jspsych-html-keyboard-response-stimulus">'+trial.stimulus+'</div>';
 
     // add prompt
@@ -98,6 +97,14 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
       new_html += '<div class="' + classes + '" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-button-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
     }
     new_html += '</div>';
+
+    if (trial.choices.length > 0) {
+      colorIndex++;
+      if (colorIndex == 1000000000) {
+        colorIndex = 0;
+      }
+      new_html += '<div class="square" style="background-color:' + greyColors[colorIndex % greyColors.length] + '"></div>';
+    }
 
     // draw
     display_element.innerHTML = new_html;
@@ -181,8 +188,8 @@ jsPsych.plugins["html-keyboard-response"] = (function() {
         end_trial();
       }, trial.trial_duration);
     }
-
   };
 
   return plugin;
 })();
+ 

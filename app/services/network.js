@@ -1,11 +1,16 @@
 import objectToFormData from "object-to-formdata";
 import RNFetchBlob from "rn-fetch-blob";
 import RNFS from 'react-native-fs';
+import EncryptedStorage from 'react-native-encrypted-storage'
 
 import { getStore } from "../store";
+import { UserInfoStorage } from '../features/system'
+
 // eslint-disable-next-line
 import { btoa } from "./helper";
 import { apiHostSelector } from "../state/app/app.selectors";
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage)
 
 const apiHost = () => {
   const state = getStore().getState(); // Get redux state
@@ -538,4 +543,43 @@ export const updateUserTokenBalance = (authToken, appletId, cumulative, changes,
       })
     })
   }).then(res => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
+
+/*
+Add a new notification object.
+Parameters:
+actionType: 1 totalReschedule-[trigger], 2 backgroundAddition
+From background passed:
+  notificationsInQueue, 
+  scheduledNotifications
+From re-scheduling: all three properties passed:
+  notificationDescriptions, 
+  notificationsInQueue, 
+  scheduledNotifications
+*/
+export const addScheduleNotificationDebugObjects = async ({
+  userId,
+  deviceId,
+  actionType,
+  notificationDescriptions,
+  notificationsInQueue,
+  scheduledNotifications,
+}) => {
+  const apiHost = await userInfoStorage.getApiHost();
+  const url = `${apiHost}/notification/logs`;
+  const headers = {};
+
+  return fetch(url, {
+    method: "post",
+    mode: "cors",
+    headers,
+    body: JSON.stringify({
+      userId,
+      deviceId,
+      actionType,
+      notificationDescriptions,
+      notificationsInQueue,
+      scheduledNotifications,
+    }),
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

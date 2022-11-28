@@ -127,6 +127,17 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId, 
   }
 
   const injectConfig = `
+    try {
+      const consoleLog = (type, log) => window.ReactNativeWebView.postMessage(JSON.stringify({'type': 'Console', 'data': {'type': type, 'log': log}}));
+      console = {
+        log: (log) => consoleLog('log', log),
+        debug: (log) => consoleLog('debug', log),
+        info: (log) => consoleLog('info', log),
+        warn: (log) => consoleLog('warn', log),
+        error: (log) => consoleLog('error', log),
+      };
+    } catch {}
+
     window.CONFIG = ${JSON.stringify(configObj)};
     start();
   `;
@@ -247,7 +258,11 @@ export const VisualStimulusResponse = ({ onChange, config, isCurrent, appletId, 
 
               if (type == 'response') {
                 sendData('live_event', parseResponse(data), appletId);
-                return ;
+                return;
+              } else if (type == 'Console') {
+                // Uncomment below to observe console.log from webview
+                //console.info(`[Console] ${JSON.stringify(data)}`);
+                return;
               }
 
               setLoading(true);

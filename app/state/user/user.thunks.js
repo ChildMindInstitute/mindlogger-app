@@ -1,12 +1,18 @@
 import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
+import EncryptedStorage from 'react-native-encrypted-storage'
+
 import { sync, showToast } from '../app/app.thunks';
 import { setInfo, setAuth, setLanguage } from './user.actions';
 
 import { getUserUpdates } from '../../services/network';
 import { refreshTokenBehaviors } from '../responses/responses.thunks';
 
-export const signInSuccessful = response => (dispatch) => {
+import { UserInfoStorage } from '../../features/system'
+
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
+
+export const signInSuccessful = response => async (dispatch) => {
   dispatch(setInfo(response.user));
   dispatch(setAuth(response.authToken));
   dispatch(
@@ -14,6 +20,8 @@ export const signInSuccessful = response => (dispatch) => {
       authToken: response.authToken.token,
     }).then(() => dispatch(refreshTokenBehaviors())), response.keys),
   );
+
+  userInfoStorage.setUserEmail(response.user.email)
   Actions.replace('applet_list');
 };
 
