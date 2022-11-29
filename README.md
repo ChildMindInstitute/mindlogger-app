@@ -136,3 +136,4 @@ See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 ## License
 
 CPAL 1.0
+
