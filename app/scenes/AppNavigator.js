@@ -38,6 +38,8 @@ import BehaviorTime from "./BehaviorTime";
 import AppletInviteFlow from "./AppletInviteFlow";
 import AppletSettings from "./AppletSettings";
 import AppLanguage from "./AppLanguage";
+import FlankerProtoImg from "./FlankerProtoImg";
+import FlankerProto from "./FlankerProto";
 
 const theme = getTheme(platform);
 theme["NativeBase.Footer"].height = 80;
@@ -68,6 +70,8 @@ const Navigator = Actions.create(
           <Scene key="sign_up" component={Signup} />
           <Scene key="applet_settings" component={AppletSettings} />
           <Scene key="app_language" component={AppLanguage} />
+          <Scene key="flanker_proto_img" component={FlankerProtoImg} />
+          <Scene key="flanker_proto_text" component={FlankerProto} />
         </Scene>
         {/* </Drawer> */}
       </Scene>

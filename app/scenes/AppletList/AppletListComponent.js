@@ -24,6 +24,7 @@ import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
+import { Actions } from 'react-native-router-flux';
 
 const isIOS = Platform.OS === 'ios';
 
@@ -78,6 +79,14 @@ const AppletListComponent = ({
       setOnSettings(currentTime);
       onPressDrawer();
     }
+  };
+
+  const onPressFlankerProto = () => {
+    Actions.push('flanker_proto_text');
+  };
+
+  const onPressFlankerProtoImg = () => {
+    Actions.push('flanker_proto_img');
   };
 
   const onHandleAbout = () => {
@@ -135,6 +144,12 @@ const AppletListComponent = ({
           <Right style={{ flexDirection: 'row' }}>
             <Button transparent onPress={onPressSettings}>
               <Icon style={{ color: '#333333' }} type="FontAwesome" name="user" />
+            </Button>
+            <Button transparent onPress={onPressFlankerProto}>
+              <Icon style={{ color: '#88AABB' }} type="FontAwesome" name="camera-retro" />
+            </Button>
+            <Button transparent onPress={onPressFlankerProtoImg}>
+              <Icon style={{ color: '#AA88BB' }} type="FontAwesome" name="camera-retro" />
             </Button>
           </Right>
         </Header>
