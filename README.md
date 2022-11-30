@@ -1,4 +1,4 @@
-# MindLogger 0.21.61
+# MindLogger 0.21.62
 
 _Note: v0.1 is deprecated as of June 12, 2019._
 
@@ -136,3 +136,4 @@ See [:link: CONTRIBUTING#Deployment](./CONTRIBUTING.md#Deployment).
 ## License
 
 CPAL 1.0
+
