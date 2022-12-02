@@ -42,7 +42,7 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 
 import { BackgroundWorker, UserInfoStorage } from '../features/system'
-import { NotificationManager } from '../features/notifications'
+import { NotificationManager, NotificationRenderer } from '../features/notifications'
 
 import { debugScheduledNotifications } from '../utils/debug-utils'
 
@@ -566,58 +566,7 @@ class AppService extends Component {
   };
 
   handleForegroundNotification = async (localNotification) => {
-    const isActivityPerforming = () => {
-      return (
-        Actions.currentScene === "take_act" ||
-        Actions.currentScene === "activity_summary" ||
-        Actions.currentScene === "activity_thanks" ||
-        Actions.currentScene === "activity_flow_submit" ||
-        Actions.currentScene === "activity_end"
-      );
-    };
-
-    const showNotification = async () => {
-      try {
-        await firebase.notifications().displayNotification(localNotification);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn(`FCM[${Platform.OS}]: error `, error);
-      }
-    };
-
-    if (!isActivityPerforming()) {
-      await showNotification();
-    }
-
-    if (isActivityPerforming()) {
-      const CheckActivityPerformingInternal = 10000;
-
-      const timeoutHandler = async () => {
-        if (!isActivityPerforming()) {
-          await showNotification();
-        } else {
-          await checkLater();
-        }
-      };
-
-      const deleteTimeoutId = (timeoutId) => {
-        const index = this.notificationDelayTimeoutIds.indexOf(timeoutId);
-        if (index >= 0) {
-          this.notificationDelayTimeoutIds.splice(index, 1);
-        }
-      };
-
-      const checkLater = async () => {
-        const timeoutId = setTimeout(async () => {
-          await timeoutHandler();
-          deleteTimeoutId(timeoutId);
-        }, CheckActivityPerformingInternal);
-
-        this.notificationDelayTimeoutIds.push(timeoutId);
-      };
-
-      await checkLater();
-    }
+    return NotificationRenderer.render(localNotification);
   };
 
   /**
