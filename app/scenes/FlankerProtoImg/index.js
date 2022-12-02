@@ -80,6 +80,8 @@ const FlankerProtoImg = () => {
 
   const logsRef = useRef([]);
 
+  const ratioRef = useRef(0);
+
   useEffect(() => {
     const promises = [];
 
@@ -109,6 +111,10 @@ const FlankerProtoImg = () => {
     valueIndexRef.current++;
     const value = imgUrlValues[valueIndexRef.current % imgUrlValues.length];
     setCurrentImageValue(value);
+
+    if (ratioRef.current === 0) {
+      ratioRef.current = value.size.w / value.size.h;
+    }
 
     const now = getNow();
     const log =
@@ -215,6 +221,10 @@ const FlankerProtoImg = () => {
 
     setIndex((x) => x + 1);
 
+    ratioRef.current = currentImageValue.size.w / currentImageValue.size.h;
+
+    console.log("ratioRef.current", ratioRef.current);
+
     stimulusTimeoutRef.current = setTimeout(() => {
       setStimulus();
     }, StimulusInterval);
@@ -243,15 +253,12 @@ const FlankerProtoImg = () => {
       <Content style={styles.content}>
         <View style={styles.stimulusWrapper}>
           {currentMode === Mode.Stimulus && (
-            <View style={{ width: 400, height: 300, marginTop: 100 }}>
+            <View style={{ width: "100%", height: "100%", marginTop: 100 }}>
               {imagesPrefetched && !!currentImageValue ? (
                 <Image
-                  style={
-                    styles.tinyLogo && {
-                      aspectRatio:
-                        currentImageValue.size.w / currentImageValue.size.h,
-                    }
-                  }
+                  style={{
+                    aspectRatio: ratioRef.current,
+                  }}
                   source={{ uri: currentImageValue.url }}
                   onLoad={(params) => onImageLoaded(params)}
                 />
@@ -361,9 +368,6 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 16,
-  },
-  tinyLogo: {
-    width: 400,
   },
 });
 
