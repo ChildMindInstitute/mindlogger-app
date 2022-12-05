@@ -12,7 +12,7 @@ export function mapToTriggerNotifications(notifications = []) {
                 scheduledAtString: notification.scheduledAtString,
                 appletId: notification.appletId,
                 activityId: notification.activityId,
-                activityFlowId: notification.activityId,
+                activityFlowId: notification.activityFlowId,
                 eventId: notification.eventId,
                 isLocal: true,
                 type: "schedule-event-alert",
@@ -58,3 +58,29 @@ export const getMutex = () => {
   };
   return mutex;
 };
+
+export const getActivityPrefixedId = (uid) => "activity/" + uid;
+export const getActivityFlowPrefixedId = (uid) => "activity_flow/" + uid;
+
+export const getActivityResponseDateTime = ({
+  activityId,
+  activityFlowId,
+  eventId,
+  finishedTimes
+}) => {
+  let fullId;
+
+  if (activityId) {
+    fullId = getActivityPrefixedId(activityId + eventId);
+  }
+
+  if (activityFlowId) {
+    fullId = getActivityFlowPrefixedId(activityFlowId + eventId);
+  }
+
+  const responseDateTime = finishedTimes[fullId];
+
+  return responseDateTime ? moment(Number(responseDateTime)) : null;
+};
+
+export const getIdBySplit = (sid) => sid.split("/").pop();

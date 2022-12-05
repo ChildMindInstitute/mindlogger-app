@@ -69,7 +69,6 @@ import {
 import { getNextPos, getLastPos } from "../../services/activityNavigation";
 import { getTokenIncreaseForNegativeBehaviors } from "../../services/tokens";
 import { sendPDFExport } from "../../services/reports";
-import { NotificationRenderer } from '../../features/notifications'
 
 import { prepareResponseKeys, setActivityAccess } from "../applets/applets.actions";
 
@@ -767,13 +766,6 @@ export const nextScreen = (timeElapsed = 0) => (dispatch, getState) => {
   }
 };
 
-const cancelPostponedNotificationByActivityId = (activityId) => {
-  const postponedNotifications = NotificationRenderer.getPostponedNotifications();
-  const notification = postponedNotifications.find(notification => notification.data.activityId === activityId);
-
-  NotificationRenderer.cancel(notification);
-}
-
 export const finishActivityDueToIdleTimer = (activity) => (dispatch, getState) => {
   const state = getState();
   const applet = currentAppletSelector(state);
@@ -799,8 +791,6 @@ const finishActivityInternal = (dispatch, activity, applet, event, currentActOrd
       dispatch(setActivityEndTime(event ? activity.id + event : activity.id));
       
       dispatch(setLocalNotifications("finishActivityInternal"));
-
-      cancelPostponedNotificationByActivityId(activity.id.split('/').pop());
       
       if (activity.isActivityFlow) {
         dispatch(setActivityFlowOrderIndex({

@@ -27,6 +27,7 @@ import { inProgressSelector } from "../state/responses/responses.selectors";
 import {
   lastActiveTimeSelector,
   finishedEventsSelector,
+  finishedTimesSelector,
 } from "../state/app/app.selectors";
 import {
   updateBadgeNumber,
@@ -42,8 +43,14 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 
 import { BackgroundWorker, UserInfoStorage } from '../features/system'
-import { NotificationManager, NotificationRenderer } from '../features/notifications'
+import {
+  NotificationManager,
+  NotificationRenderer,
+  CanShowActivityNotificationStrategy,
+  CanShowNotificationsOnScreenStrategy,
+} from '../features/notifications'
 
+import { withDelayer } from '../utils'
 import { debugScheduledNotifications } from '../utils/debug-utils'
 
 import { sendResponseReuploadRequest } from "../services/network";
@@ -566,7 +573,27 @@ class AppService extends Component {
   };
 
   handleForegroundNotification = async (localNotification) => {
-    return NotificationRenderer.render(localNotification);
+    const canShowActivityNotification = CanShowActivityNotificationStrategy({
+      getFinishedTimes: () => this.props.finishedTimes
+    });
+    const canShowActivityOnScreen = CanShowNotificationsOnScreenStrategy();
+
+    const renderNotification = withDelayer(NotificationRenderer.render, {
+      canExecute: (cancel) => {
+        if (!canShowActivityOnScreen()) return false;
+
+        if (!canShowActivityNotification(localNotification.data)) {
+          cancel();
+
+          return false;
+        }
+
+        return true;
+      },
+      repeatIn: 10000,
+    })
+
+    return renderNotification(localNotification);
   };
 
   /**
@@ -751,6 +778,7 @@ const mapStateToProps = (state) => ({
   authToken: authTokenSelector(state),
   lastActive: lastActiveTimeSelector(state),
   finishedEvents: finishedEventsSelector(state),
+  finishedTimes: finishedTimesSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
