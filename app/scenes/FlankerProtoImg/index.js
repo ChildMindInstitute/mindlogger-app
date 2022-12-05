@@ -80,8 +80,6 @@ const FlankerProtoImg = () => {
 
   const logsRef = useRef([]);
 
-  const ratioRef = useRef(0);
-
   useEffect(() => {
     const promises = [];
 
@@ -111,10 +109,6 @@ const FlankerProtoImg = () => {
     valueIndexRef.current++;
     const value = imgUrlValues[valueIndexRef.current % imgUrlValues.length];
     setCurrentImageValue(value);
-
-    if (ratioRef.current === 0) {
-      ratioRef.current = value.size.w / value.size.h;
-    }
 
     const now = getNow();
     const log =
@@ -221,10 +215,6 @@ const FlankerProtoImg = () => {
 
     setIndex((x) => x + 1);
 
-    ratioRef.current = currentImageValue.size.w / currentImageValue.size.h;
-
-    console.log("ratioRef.current", ratioRef.current);
-
     stimulusTimeoutRef.current = setTimeout(() => {
       setStimulus();
     }, StimulusInterval);
@@ -254,21 +244,28 @@ const FlankerProtoImg = () => {
         <View style={styles.stimulusWrapper}>
           {currentMode === Mode.Stimulus && (
             <View style={{ width: "100%", height: "100%", marginTop: 100 }}>
-              {imagesPrefetched && !!currentImageValue ? (
-                <Image
-                  style={{
-                    aspectRatio: ratioRef.current,
-                  }}
-                  source={{ uri: currentImageValue.url }}
-                  onLoad={(params) => onImageLoaded(params)}
-                />
-              ) : (
+              {!imagesPrefetched && (
                 <BaseText
                   style={{ fontSize: 24, textAlign: "center", marginTop: 100 }}
                 >
                   Loading...
                 </BaseText>
               )}
+              {imagesPrefetched &&
+                imgUrlValues.map(
+                  (x) =>
+                    currentImageValue?.url === x.url && (
+                      <Image
+                        key={currentImageValue.url}
+                        style={{
+                          aspectRatio: x.size.w / x.size.h,
+                          opacity: valueIndexRef.current === index ? 1 : 0
+                        }}
+                        source={{ uri: x.url }}
+                        onLoad={(params) => onImageLoaded(params)}
+                      />
+                    )
+                )}
             </View>
           )}
           {currentMode === Mode.Feedback && (
