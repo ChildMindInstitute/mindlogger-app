@@ -57,6 +57,7 @@ const InactiveReason = {
   ActivityCompleted: "ActivityCompleted",
   ActivityCompletedInReminderInterval: "ActivityCompletedInReminderInterval",
   Outdated: "Outdated",
+  ActivityOrFlowHidden: "ActivityOrFlowHidden",
 };
 
 const build = (applet, finishedTimes) => {
@@ -117,6 +118,8 @@ const build = (applet, finishedTimes) => {
     const { scheduledTime: scheduledTimeString, schedule, data } = event;
 
     const { activity_id: activityId, activity_flow_id: activityFlowId } = data;
+
+    const isActivityOrFlowHidden = event.isHidden;
 
     const appletId = getIdBySplit(applet.id);
 
@@ -238,6 +241,10 @@ const build = (applet, finishedTimes) => {
         eventResult.notifications.push(reminder);
       }
 
+      if (isActivityOrFlowHidden) {
+        markAllAsInactiveDueToActivityHidden(eventResult.notifications);      
+      }
+
       return;
     }
 
@@ -300,6 +307,10 @@ const build = (applet, finishedTimes) => {
         eventResult.notifications.push(reminder);
       }
     }
+
+    if (isActivityOrFlowHidden) {
+      markAllAsInactiveDueToActivityHidden(eventResult.notifications);      
+    }
   };
 
   for (let eventId in applet.schedule.actual_events) {
@@ -323,17 +334,16 @@ const getEventDays = ({
   weekDays,
 }) => {
   const eventDays = [];
-  
+
   const getDayFrom = (anchorDay) => {
     let dayFrom;
     if (!periodStartDay) {
       dayFrom = anchorDay;
     } else {
-      dayFrom =
-        periodStartDay > anchorDay ? periodStartDay : anchorDay;
+      dayFrom = periodStartDay > anchorDay ? periodStartDay : anchorDay;
     }
     return dayFrom;
-  }
+  };
 
   let dayTo;
   if (!periodEndDay) {
@@ -377,8 +387,10 @@ const getEventDays = ({
   }
 
   if (periodicity === PeriodType.Monthly) {
-    const monthAgoDay = moment().startOf("day").add(-1, "month");
-    
+    const monthAgoDay = moment()
+      .startOf("day")
+      .add(-1, "month");
+
     let day = moment(scheduledTimeDate);
 
     while (day <= dayTo) {
@@ -574,7 +586,7 @@ const createReminder = ({
 
   if (responseDateTime) {
     const responseDay = moment(responseDateTime).startOf("day");
-    
+
     if (day <= responseDay && responseDay <= fireDay) {
       notification.isActive = false;
       notification.inactiveReason =
@@ -602,6 +614,13 @@ const markIfNotificationOutdated = (notification) => {
     notification.inactiveReason = InactiveReason.Outdated;
   }
 };
+
+const markAllAsInactiveDueToActivityHidden = (notifications) => {
+  for (let notification of notifications) {
+    notification.isActive = false;
+    notification.inactiveReason = InactiveReason.ActivityOrFlowHidden;
+  }
+}
 
 const generateEventName = (
   activityOrFlowName,

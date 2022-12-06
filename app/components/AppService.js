@@ -122,7 +122,7 @@ class AppService extends Component {
     });
 
     BackgroundWorker.setTask(async () => {
-      const isForeground = AppState.currentState === 'active';
+      const isForeground = AppState.currentState === "active";
 
       if (isForeground) return;
 
@@ -139,12 +139,12 @@ class AppService extends Component {
         await NotificationManager.topUpNotificationsFromQueue();
 
         await debugScheduledNotifications({
-          actionType: 'backgroundAddition-AppService-componentDidMount',
+          actionType: "backgroundAddition-AppService-componentDidMount",
         });
       } finally {
         NotificationManagerMutex.release();
       }
-    })
+    });
   }
 
   /**
@@ -265,14 +265,7 @@ class AppService extends Component {
       return null;
     }
 
-    let event = {};
-
-    Object.keys(applet.schedule.events).forEach((key) => {
-      const e = applet.schedule.events[key];
-      if (e.id === eventId) {
-        event = e;
-      }
-    });
+    let event = this.getEventFromAppletSchedule(eventId, applet);
 
     if (!event) {
       return null;
@@ -366,7 +359,6 @@ class AppService extends Component {
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
-      console.log('request-to-reschedule-dueto-limit received->')
       this.props.setLocalNotifications(`notification-tap:${type}`);
     }
 
@@ -397,16 +389,8 @@ class AppService extends Component {
         activityFlowId
       );
 
-      let event = {};
-
-      Object.keys(applet.schedule.events).forEach((key) => {
-        const e = applet.schedule.events[key];
-        if (e.id.endsWith(eventId)) {
-          event = e;
-        }
-      });
-
       if (activity) {
+        const event = this.getEventFromAppletSchedule(eventId, applet);
         return this.prepareAndOpenActivity(applet, activity, event);
       }
 
@@ -416,7 +400,33 @@ class AppService extends Component {
     }
   };
 
+  getEventFromAppletSchedule = (eventId, applet) => {
+    let result = null;
+
+    for (let key in applet.schedule.events) {
+      const event = applet.schedule.events[key];
+      if (event.id.endsWith(eventId)) {
+        result = event;
+      }
+    }
+    if (result) {
+      return result;
+    }
+    for (let key in applet.schedule.actual_events) {
+      const event = applet.schedule.actual_events[key];
+      if (event.id.endsWith(eventId)) {
+        result = event;
+      }
+    }
+    return result;
+  };
+
   prepareAndOpenActivity = (applet, activity, event) => {
+    if (!event) {
+      throw new Error(
+        "[prepareAndOpenActivity] event parameter is not defined"
+      );
+    }
     const today = new Date();
     const todayEnd = moment()
       .endOf("day")
@@ -734,7 +744,7 @@ class AppService extends Component {
     }
 
     if (goingToForeground) {
-      await setLocalNotifications('goingToForeground');
+      await setLocalNotifications("goingToForeground");
     }
 
     if (goingToForeground && this.pendingNotification) {
