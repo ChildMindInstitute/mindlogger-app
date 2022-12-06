@@ -1,4 +1,7 @@
 import moment from 'moment'
+import { Actions } from "react-native-router-flux";
+
+import { SCENES_TO_NOT_RENDER_NOTIFICATIONS } from './constants';
 
 export function mapToTriggerNotifications(notifications = []) {
     return notifications.map(notification => ({
@@ -84,3 +87,23 @@ export const getActivityResponseDateTime = ({
 };
 
 export const getIdBySplit = (sid) => sid.split("/").pop();
+
+export function isActivityCompletedToday({ activityId, activityFlowId, eventId, getFinishedTimes }) {
+  const responseDateTime = getActivityResponseDateTime({
+    activityId,
+    activityFlowId,
+    eventId,
+    finishedTimes: getFinishedTimes(),
+  });
+
+  if (!responseDateTime) return false;
+
+  const responseStartOfDay = responseDateTime.startOf('day');
+  const startOfCurrentDay = moment().startOf('day');
+
+  return responseStartOfDay.isSame(startOfCurrentDay);
+}
+
+export function canShowNotificationOnCurrentScreen() {
+  return !SCENES_TO_NOT_RENDER_NOTIFICATIONS.includes(Actions.currentScene);
+}

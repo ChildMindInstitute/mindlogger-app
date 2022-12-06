@@ -46,8 +46,8 @@ import { BackgroundWorker, UserInfoStorage } from '../features/system'
 import {
   NotificationManager,
   NotificationRenderer,
-  CanShowActivityNotificationStrategy,
-  CanShowNotificationsOnScreenStrategy,
+  isActivityCompletedToday,
+  canShowNotificationOnCurrentScreen,
 } from '../features/notifications'
 
 import { withDelayer } from '../utils'
@@ -573,22 +573,15 @@ class AppService extends Component {
   };
 
   handleForegroundNotification = async (localNotification) => {
-    const canShowActivityNotification = CanShowActivityNotificationStrategy({
-      getFinishedTimes: () => this.props.finishedTimes
-    });
-    const canShowActivityOnScreen = CanShowNotificationsOnScreenStrategy();
-
     const renderNotification = withDelayer(NotificationRenderer.render, {
       canExecute: (cancel) => {
-        if (!canShowActivityOnScreen()) return false;
-
-        if (!canShowActivityNotification(localNotification.data)) {
+        if (isActivityCompletedToday({ ...localNotification.data, getFinishedTimes: () => this.props.finishedTimes })) {
           cancel();
 
           return false;
         }
 
-        return true;
+        return canShowNotificationOnCurrentScreen();
       },
       repeatIn: 10000,
     })
