@@ -359,6 +359,10 @@ class AppService extends Component {
       if (networkState.isConnected) {
         this.props.downloadApplets(null, null, type);
       }
+
+      if (Actions.currentScene !== "applet_list") {
+        Actions.push("applet_list");
+      }
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
@@ -574,14 +578,19 @@ class AppService extends Component {
 
   handleForegroundNotification = async (localNotification) => {
     const renderNotification = withDelayer(NotificationRenderer.render, {
-      canExecute: (cancel) => {
-        if (isActivityCompletedToday({ ...localNotification.data, getFinishedTimes: () => this.props.finishedTimes })) {
-          cancel();
+      check: ({ DelayCheckResult }) => {
+        const activityCompleted = isActivityCompletedToday({
+          ...localNotification.data,
+          getFinishedTimes: () => this.props.finishedTimes
+        });
 
-          return false;
-        }
+        if (activityCompleted) return DelayCheckResult.Cancel;
 
-        return canShowNotificationOnCurrentScreen();
+        const canShow = canShowNotificationOnCurrentScreen();
+
+        if (!canShow) return DelayCheckResult.Postpone;
+
+        return DelayCheckResult.ExecuteAndExit;
       },
       repeatIn: 10000,
     })

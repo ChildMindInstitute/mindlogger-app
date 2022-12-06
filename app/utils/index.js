@@ -1,5 +1,17 @@
-export function withDelayer(fn, { repeatIn = 1000, canExecute }) {
+const DelayCheckResult = {
+    Cancel: 1,
+    Postpone: 2,
+    ExecuteAndExit: 3,
+}
+
+export function withDelayer(fn, { repeatIn = 1000, check }) {
     let timerId;
+
+    const actions = {
+        [DelayCheckResult.Cancel]: cancel,
+        [DelayCheckResult.Postpone]: repeat,
+        [DelayCheckResult.ExecuteAndExit]: fn,
+    }
 
     function repeat(...args) {
         timerId = setTimeout(() => {
@@ -8,11 +20,9 @@ export function withDelayer(fn, { repeatIn = 1000, canExecute }) {
     }
 
     function tryToExecute(...args) {
-        if (canExecute(cancel)) {
-            fn(...args);
-        } else {
-            repeat(...args);
-        }
+        const checkResult = check({ DelayCheckResult });
+
+        actions?.[checkResult](...args);
     }
 
     function cancel() {
