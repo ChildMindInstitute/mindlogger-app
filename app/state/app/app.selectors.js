@@ -8,6 +8,8 @@ export const skinSelector = R.path(['app', 'skin']);
 
 export const startedTimesSelector = R.path(['app', 'startedTimes']);
 
+export const finishedTimesSelector = R.path(['app', 'finishedTimes']);
+
 export const finishedEventsSelector = R.path(['app', 'finishedEvents']);
 
 export const connectionSelector = R.path(['app', 'isConnected']);

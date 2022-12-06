@@ -58,9 +58,8 @@ function NotificationManager() {
             triggerNotifications,
         })
 
-        if (!triggerNotifications.length) {
-          return;
-        }
+        if (!triggerNotifications.length) return;
+        if (triggerNotifications.length !== MAX_SCHEDULED_NOTIFICATIONS_SIZE) return;
 
         const lastTriggerNotification = triggerNotifications[triggerNotifications.length - 1];
 

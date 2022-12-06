@@ -1,6 +1,12 @@
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 
+import {
+  getActivityPrefixedId,
+  getActivityFlowPrefixedId,
+  getActivityResponseDateTime,
+ } from '../utils'
+
 /*
 This module is responsible for creation notification object for an incomming applet.
 This object descibes notifications that will be created locally.
@@ -403,14 +409,6 @@ const getIdBySplit = (sid) => {
   return sid.split("/").pop();
 };
 
-const getActivityPrefixedId = (uid) => {
-  return "activity/" + uid;
-};
-
-const getActivityFlowPrefixedId = (uid) => {
-  return "activity_flow/" + uid;
-};
-
 const getActivityName = (applet, activityId, activityFlowId) => {
   if (activityId) {
     return applet.activities.find(
@@ -512,12 +510,12 @@ const markNotificationIfActivityCompleted = (
   finishedTimes,
   notification
 ) => {
-  const responseDateTime = getResponseDateTime(
+  const responseDateTime = getActivityResponseDateTime({
     activityId,
     activityFlowId,
     eventId,
     finishedTimes
-  );
+  });
   if (!responseDateTime) {
     return;
   }
@@ -567,12 +565,12 @@ const createReminder = ({
     appletId,
   });
 
-  const responseDateTime = getResponseDateTime(
+  const responseDateTime = getActivityResponseDateTime({
     activityId,
     activityFlowId,
     eventId,
     finishedTimes
-  );
+  });
 
   if (responseDateTime) {
     const responseDay = moment(responseDateTime).startOf("day");
@@ -596,27 +594,6 @@ const isReminderSet = (reminderData) => {
     !reminderData.time ||
     !reminderData.valid;
   return !unset;
-};
-
-const getResponseDateTime = (
-  activityId,
-  activityFlowId,
-  eventId,
-  finishedTimes
-) => {
-  let fullId;
-  if (activityId) {
-    fullId = getActivityPrefixedId(activityId + eventId);
-  }
-  if (activityFlowId) {
-    fullId = getActivityFlowPrefixedId(activityFlowId + eventId);
-  }
-  const sresponseDateTime = finishedTimes[fullId];
-  if (!sresponseDateTime) {
-    return null;
-  }
-  const responseDateTime = moment(Number(sresponseDateTime));
-  return responseDateTime;
 };
 
 const markIfNotificationOutdated = (notification) => {

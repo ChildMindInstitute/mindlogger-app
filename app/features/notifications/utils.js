@@ -1,4 +1,7 @@
 import moment from 'moment'
+import { Actions } from "react-native-router-flux";
+
+import { SCENES_TO_NOT_RENDER_NOTIFICATIONS } from './constants';
 
 export function mapToTriggerNotifications(notifications = []) {
     return notifications.map(notification => ({
@@ -12,7 +15,7 @@ export function mapToTriggerNotifications(notifications = []) {
                 scheduledAtString: notification.scheduledAtString,
                 appletId: notification.appletId,
                 activityId: notification.activityId,
-                activityFlowId: notification.activityId,
+                activityFlowId: notification.activityFlowId,
                 eventId: notification.eventId,
                 isLocal: true,
                 type: "schedule-event-alert",
@@ -58,3 +61,49 @@ export const getMutex = () => {
   };
   return mutex;
 };
+
+export const getActivityPrefixedId = (uid) => "activity/" + uid;
+export const getActivityFlowPrefixedId = (uid) => "activity_flow/" + uid;
+
+export const getActivityResponseDateTime = ({
+  activityId,
+  activityFlowId,
+  eventId,
+  finishedTimes
+}) => {
+  let fullId;
+
+  if (activityId) {
+    fullId = getActivityPrefixedId(activityId + eventId);
+  }
+
+  if (activityFlowId) {
+    fullId = getActivityFlowPrefixedId(activityFlowId + eventId);
+  }
+
+  const responseDateTime = finishedTimes[fullId];
+
+  return responseDateTime ? moment(Number(responseDateTime)) : null;
+};
+
+export const getIdBySplit = (sid) => sid.split("/").pop();
+
+export function isActivityCompletedToday({ activityId, activityFlowId, eventId, getFinishedTimes }) {
+  const responseDateTime = getActivityResponseDateTime({
+    activityId,
+    activityFlowId,
+    eventId,
+    finishedTimes: getFinishedTimes(),
+  });
+
+  if (!responseDateTime) return false;
+
+  const responseStartOfDay = responseDateTime.startOf('day');
+  const startOfCurrentDay = moment().startOf('day');
+
+  return responseStartOfDay.isSame(startOfCurrentDay);
+}
+
+export function canShowNotificationOnCurrentScreen() {
+  return !SCENES_TO_NOT_RENDER_NOTIFICATIONS.includes(Actions.currentScene);
+}

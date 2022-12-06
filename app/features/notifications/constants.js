@@ -23,3 +23,5 @@ export const MAX_SCHEDULED_NOTIFICATIONS_SIZE =
     ) - SYSTEM_RESERVED_CAPACITY;
 
 export const SYSTEM_NOTIFICATION_DELAY = ONE_MINUTE * 30;
+
+export const SCENES_TO_NOT_RENDER_NOTIFICATIONS = ['take_act', 'activity_summary', 'activity_thanks', 'activity_flow_submit', 'activity_end'];

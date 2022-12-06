@@ -27,6 +27,7 @@ import { inProgressSelector } from "../state/responses/responses.selectors";
 import {
   lastActiveTimeSelector,
   finishedEventsSelector,
+  finishedTimesSelector,
 } from "../state/app/app.selectors";
 import {
   updateBadgeNumber,
@@ -42,8 +43,14 @@ import {
 import NetInfo from "@react-native-community/netinfo";
 
 import { BackgroundWorker, UserInfoStorage } from '../features/system'
-import { NotificationManager } from '../features/notifications'
+import {
+  NotificationManager,
+  NotificationRenderer,
+  isActivityCompletedToday,
+  canShowNotificationOnCurrentScreen,
+} from '../features/notifications'
 
+import { withDelayer } from '../utils'
 import { debugScheduledNotifications } from '../utils/debug-utils'
 
 import { sendResponseReuploadRequest } from "../services/network";
@@ -352,6 +359,10 @@ class AppService extends Component {
       if (networkState.isConnected) {
         this.props.downloadApplets(null, null, type);
       }
+
+      if (Actions.currentScene !== "applet_list") {
+        Actions.push("applet_list");
+      }
     }
 
     if (type === "request-to-reschedule-dueto-limit") {
@@ -566,58 +577,25 @@ class AppService extends Component {
   };
 
   handleForegroundNotification = async (localNotification) => {
-    const isActivityPerforming = () => {
-      return (
-        Actions.currentScene === "take_act" ||
-        Actions.currentScene === "activity_summary" ||
-        Actions.currentScene === "activity_thanks" ||
-        Actions.currentScene === "activity_flow_submit" ||
-        Actions.currentScene === "activity_end"
-      );
-    };
+    const renderNotification = withDelayer(NotificationRenderer.render, {
+      check: ({ DelayCheckResult }) => {
+        const activityCompleted = isActivityCompletedToday({
+          ...localNotification.data,
+          getFinishedTimes: () => this.props.finishedTimes
+        });
 
-    const showNotification = async () => {
-      try {
-        await firebase.notifications().displayNotification(localNotification);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.warn(`FCM[${Platform.OS}]: error `, error);
-      }
-    };
+        if (activityCompleted) return DelayCheckResult.Cancel;
 
-    if (!isActivityPerforming()) {
-      await showNotification();
-    }
+        const canShow = canShowNotificationOnCurrentScreen();
 
-    if (isActivityPerforming()) {
-      const CheckActivityPerformingInternal = 10000;
+        if (!canShow) return DelayCheckResult.Postpone;
 
-      const timeoutHandler = async () => {
-        if (!isActivityPerforming()) {
-          await showNotification();
-        } else {
-          await checkLater();
-        }
-      };
+        return DelayCheckResult.ExecuteAndExit;
+      },
+      repeatIn: 10000,
+    })
 
-      const deleteTimeoutId = (timeoutId) => {
-        const index = this.notificationDelayTimeoutIds.indexOf(timeoutId);
-        if (index >= 0) {
-          this.notificationDelayTimeoutIds.splice(index, 1);
-        }
-      };
-
-      const checkLater = async () => {
-        const timeoutId = setTimeout(async () => {
-          await timeoutHandler();
-          deleteTimeoutId(timeoutId);
-        }, CheckActivityPerformingInternal);
-
-        this.notificationDelayTimeoutIds.push(timeoutId);
-      };
-
-      await checkLater();
-    }
+    return renderNotification(localNotification);
   };
 
   /**
@@ -802,6 +780,7 @@ const mapStateToProps = (state) => ({
   authToken: authTokenSelector(state),
   lastActive: lastActiveTimeSelector(state),
   finishedEvents: finishedEventsSelector(state),
+  finishedTimes: finishedTimesSelector(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
