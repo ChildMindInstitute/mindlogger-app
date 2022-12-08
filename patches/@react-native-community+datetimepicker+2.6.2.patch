@@ -1,0 +1,47 @@
+diff --git a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java b/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java
+index 4f14c6f..ba44bcd 100644
+--- a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java
++++ b/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java
+@@ -95,7 +95,7 @@ public class RNTimePickerDialogModule extends ReactContextBaseJavaModule {
+     }
+     // We want to support both android.app.Activity and the pre-Honeycomb FragmentActivity
+     // (for apps that use it for legacy reasons). This unfortunately leads to some code duplication.
+-    FragmentManager fragmentManager = activity.getSupportFragmentManager();
++    final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+     final RNTimePickerDialogFragment oldFragment = (RNTimePickerDialogFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+ 
+     if (oldFragment != null && options != null) {
+@@ -109,17 +109,24 @@ public class RNTimePickerDialogModule extends ReactContextBaseJavaModule {
+       return;
+     }
+ 
+-    RNTimePickerDialogFragment fragment = new RNTimePickerDialogFragment();
++    final Promise prom = promise;
+ 
+-    if (options != null) {
+-      fragment.setArguments(createFragmentArguments(options));
+-    }
++    UiThreadUtil.runOnUiThread(new Runnable() {
++      @Override
++      public void run() {
++        RNTimePickerDialogFragment fragment = new RNTimePickerDialogFragment();
++
++        if (options != null) {
++          fragment.setArguments(createFragmentArguments(options));
++        }
+ 
+-    final TimePickerDialogListener listener = new TimePickerDialogListener(promise);
+-    fragment.setOnDismissListener(listener);
+-    fragment.setOnTimeSetListener(listener);
+-    fragment.setOnNeutralButtonActionListener(listener);
+-    fragment.show(fragmentManager, FRAGMENT_TAG);
++        final TimePickerDialogListener listener = new TimePickerDialogListener(prom);
++        fragment.setOnDismissListener(listener);
++        fragment.setOnTimeSetListener(listener);
++        fragment.setOnNeutralButtonActionListener(listener);
++        fragment.show(fragmentManager, FRAGMENT_TAG);
++      }
++    });
+   }
+ 
+   private Bundle createFragmentArguments(ReadableMap options) {
