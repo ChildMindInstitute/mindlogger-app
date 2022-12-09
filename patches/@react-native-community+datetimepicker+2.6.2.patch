@@ -1,3 +1,50 @@
+diff --git a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNDatePickerDialogModule.java b/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNDatePickerDialogModule.java
+index a7dc5e6..453e7dd 100644
+--- a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNDatePickerDialogModule.java
++++ b/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNDatePickerDialogModule.java
+@@ -119,7 +119,7 @@ public class RNDatePickerDialogModule extends ReactContextBaseJavaModule {
+       return;
+     }
+ 
+-    FragmentManager fragmentManager = activity.getSupportFragmentManager();
++    final FragmentManager fragmentManager = activity.getSupportFragmentManager();
+     final RNDatePickerDialogFragment oldFragment = (RNDatePickerDialogFragment) fragmentManager.findFragmentByTag(FRAGMENT_TAG);
+ 
+     if (oldFragment != null && options != null) {
+@@ -133,17 +133,24 @@ public class RNDatePickerDialogModule extends ReactContextBaseJavaModule {
+       return;
+     }
+ 
+-    RNDatePickerDialogFragment fragment = new RNDatePickerDialogFragment();
++    final Promise prom = promise;
+ 
+-    if (options != null) {
+-      fragment.setArguments(createFragmentArguments(options));
+-    }
++    UiThreadUtil.runOnUiThread(new Runnable() {
++      @Override
++      public void run() {
++        RNDatePickerDialogFragment fragment = new RNDatePickerDialogFragment();
++
++        if (options != null) {
++          fragment.setArguments(createFragmentArguments(options));
++        }
+ 
+-    final DatePickerDialogListener listener = new DatePickerDialogListener(promise);
+-    fragment.setOnDismissListener(listener);
+-    fragment.setOnDateSetListener(listener);
+-    fragment.setOnNeutralButtonActionListener(listener);
+-    fragment.show(fragmentManager, FRAGMENT_TAG);
++        final DatePickerDialogListener listener = new DatePickerDialogListener(prom);
++        fragment.setOnDismissListener(listener);
++        fragment.setOnDateSetListener(listener);
++        fragment.setOnNeutralButtonActionListener(listener);
++        fragment.show(fragmentManager, FRAGMENT_TAG);
++      }
++    });
+   }
+ 
+   private Bundle createFragmentArguments(ReadableMap options) {
 diff --git a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java b/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java
 index 4f14c6f..ba44bcd 100644
 --- a/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/RNTimePickerDialogModule.java
