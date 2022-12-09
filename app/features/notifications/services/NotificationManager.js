@@ -52,11 +52,11 @@ function NotificationManager() {
         }
 
         console.log("restackNotifications", {
-            notifications,
-            notificationsToSchedule,
-            notificationsToQueue,
-            triggerNotifications,
-        })
+            amount,
+            incommingInFunction: notifications,
+            mappedForScheduleToApi: triggerNotifications,
+            savedToQueue: notificationsToQueue
+        });
 
         if (!triggerNotifications.length) return;
         if (triggerNotifications.length !== MAX_SCHEDULED_NOTIFICATIONS_SIZE) return;

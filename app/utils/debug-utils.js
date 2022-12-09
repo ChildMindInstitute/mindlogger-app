@@ -1,4 +1,5 @@
 import EncryptedStorage from 'react-native-encrypted-storage'
+import NetInfo from "@react-native-community/netinfo";
 
 import { UserInfoStorage } from '../features/system'
 import { NotificationScheduler, NotificationQueue } from '../features/notifications'
@@ -26,6 +27,12 @@ export const getStringHashCode = inputString => {
 }
 
 export async function debugScheduledNotifications(additionalPayload) {
+    const networkState = await NetInfo.fetch();
+    if (!networkState.isConnected) {
+      console.info("[debugScheduledNotifications]: Loggs will not be added due to offline");
+      return;
+    }
+  
     const queuedNotifications = await notificationQueue.get()
     const scheduledNotifications = await NotificationScheduler.getAllScheduledNotifications();
     const { fcmToken, email } = await userInfoStorage.get()
