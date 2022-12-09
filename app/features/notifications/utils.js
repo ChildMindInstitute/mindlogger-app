@@ -6,7 +6,7 @@ import { SCENES_TO_NOT_RENDER_NOTIFICATIONS } from './constants';
 export function mapToTriggerNotifications(notifications = []) {
     return notifications.map(notification => ({
         notification: {
-            title: notification.notificationHeader + ": " + new Date().toString(),
+            title: notification.notificationHeader + ": " + notification.scheduledAtString,
             body: notification.notificationBody,
             notificationId: notification.notificationId,
             data: {
