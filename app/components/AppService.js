@@ -59,7 +59,7 @@ import { authTokenSelector } from "../state/user/user.selectors";
 import sortActivities from "./ActivityList/sortActivities";
 import { NotificationManagerMutex } from "../features/notifications/services/NotificationManager";
 
-const AndroidChannelId = "MindLoggerChannelId";
+const AndroidChannelId = "MindLoggerChannelId2";
 const fMessaging =
   firebase.messaging.nativeModuleExists && firebase.messaging();
 const fNotifications =
@@ -501,7 +501,7 @@ class AppService extends Component {
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
       "MindLogger Channel",
-      firebase.notifications.Android.Importance.Max
+      firebase.notifications.Android.Importance.High
     ).setDescription("MindLogger Channel");
 
     await firebase.notifications().android.createChannel(channel);

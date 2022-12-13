@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">MindLogger</string>
-    <string name="default_notification_channel_id">MindLoggerChannelId</string>
+    <string name="default_notification_channel_id">MindLoggerChannelId2</string>
 </resources>

@@ -63,7 +63,7 @@ class AppletDetails extends Component {
         activity_id: activity.id.split("/").pop(),
       });
 
-    notification.android.setChannelId("MindLoggerChannelId");
+    notification.android.setChannelId("MindLoggerChannelId2");
     notification.android.setPriority(
       firebase.notifications.Android.Priority.High
     );

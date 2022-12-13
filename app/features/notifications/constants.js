@@ -6,7 +6,7 @@ const MAX_SCHEDULED_NOTIFICATION_SIZE_ANDROID = 50;
 const MAX_SCHEDULED_NOTIFICATIONS_SIZE_IOS = 64;
 
 export const QUEUE_STORAGE_KEY = 'NotificationQueue'
-export const ANDROID_DEFAULT_CHANNEL_ID = 'MindLoggerChannelId';
+export const ANDROID_DEFAULT_CHANNEL_ID = 'MindLoggerChannelId2';
 
 export const SYSTEM_RESCHEDULING_NOTIFICATION_ID = 'system_trigger_for_rescheduling';
 
