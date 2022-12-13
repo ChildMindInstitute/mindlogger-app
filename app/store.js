@@ -43,9 +43,9 @@ export default function configureStore(onCompletion) {
 
   store = createStore(persistedReducer, {}, composeEnhancers(applyMiddleware(...middlewares)));
 
-  persistStore(store, null, onCompletion);
+  const persister = persistStore(store, null, onCompletion);
 
-  return store;
+  return {store, persister};
 }
 
 export const getStore = () => store;
