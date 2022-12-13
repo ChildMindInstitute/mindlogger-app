@@ -581,5 +581,9 @@ export const addScheduleNotificationDebugObjects = async ({
       notificationsInQueue,
       scheduledNotifications,
     }),
-  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+  })
+    .then((res) => (res.status === 200 ? res.json() : Promise.reject(res)))
+    .catch((err) =>
+      console.warn("[addScheduleNotificationDebugObjects] error occured. ", err)
+    );
 };

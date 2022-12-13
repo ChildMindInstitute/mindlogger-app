@@ -19,8 +19,11 @@ function runBackgroundProcess() {
       await debugScheduledNotifications({
         actionType: 'backgroundAddition-runBackgroundProcess',
       });
-
-    } finally {
+    }
+    catch (err) {
+      console.warn("[BackgroundWorker.setAndroidHeadlessTask]: Error occured. ", err);
+    }
+    finally {
       NotificationManagerMutex.release();
     }
   })

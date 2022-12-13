@@ -21,6 +21,7 @@ function NotificationScheduler() {
         if (isAndroid) {
             notification.android.setChannelId(ANDROID_DEFAULT_CHANNEL_ID);
             notification.android.setPriority(firebase.notifications.Android.Priority.High);
+            // notification.android.setCategory("reminder")
             notification.android.setAutoCancel(true);
         }
 
