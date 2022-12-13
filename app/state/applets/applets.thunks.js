@@ -1,3 +1,4 @@
+import { Platform } from 'react-native'
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
@@ -53,6 +54,8 @@ import { getNotificationArray } from '../../features/notifications/factories/Not
 import { NotificationManager, NotificationBuilder } from '../../features/notifications';
 import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
 
+const isAndroid12orHigher = Platform.Version > 30;
+
 export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
   const auth = authSelector(state);
@@ -91,6 +94,8 @@ export const setLocalNotifications = (trigger) => async (
 };
 
 const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
+  if (isAndroid12orHigher) return;
+
   const state = getState();
 
   const applets = allAppletsSelector(state);

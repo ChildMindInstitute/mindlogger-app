@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Platform } from "react-native"
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Actions } from "react-native-router-flux";
@@ -24,6 +25,8 @@ import {
 } from "../../state/app/app.actions";
 import { startResponse } from "../../state/responses/responses.thunks";
 
+const isAndroid12orHigher = Platform.Version > 30;
+
 class AppletDetails extends Component {
   /**
    * Method called when the activity is tapped.
@@ -47,6 +50,8 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handleLongPressActivity = async (activity) => {
+    if (isAndroid12orHigher) return;
+
     if (!__DEV__) {
       return null;
     }

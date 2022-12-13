@@ -48,6 +48,7 @@ import {
   NotificationRenderer,
   isActivityCompletedToday,
   canShowNotificationOnCurrentScreen,
+  fakeFirebase,
 } from '../features/notifications'
 
 import { withDelayer } from '../utils'
@@ -59,14 +60,13 @@ import { authTokenSelector } from "../state/user/user.selectors";
 import sortActivities from "./ActivityList/sortActivities";
 import { NotificationManagerMutex } from "../features/notifications/services/NotificationManager";
 
-const AndroidChannelId = "MindLoggerChannelId";
-const fMessaging =
-  firebase.messaging.nativeModuleExists && firebase.messaging();
-const fNotifications =
-  firebase.notifications.nativeModuleExists && firebase.notifications();
-
 const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
+const isAndroid12orHigher = Platform.Version > 30;
+
+const AndroidChannelId = "MindLoggerChannelId";
+const fMessaging = isAndroid12orHigher ? fakeFirebase.messaging() : firebase.messaging();
+const fNotifications = isAndroid12orHigher ? fakeFirebase.notifications() : firebase.notifications();
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -125,6 +125,7 @@ class AppService extends Component {
       const isForeground = AppState.currentState === "active";
 
       if (isForeground) return;
+      if (isAndroid12orHigher) return;
 
       if (NotificationManagerMutex.isBusy()) {
         console.warn(
@@ -508,6 +509,8 @@ class AppService extends Component {
    * @return {void}
    */
   async initAndroidChannel() {
+    if (isAndroid12orHigher) return;
+
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
       "MindLogger Channel",
@@ -797,7 +800,7 @@ const mapDispatchToProps = (dispatch) => ({
   setFCMToken: async (token) => {
     dispatch(setFcmToken(token));
 
-    await userInfoStorage.setFCMToken(token);
+    !isAndroid12orHigher && await userInfoStorage.setFCMToken(token);
     setDefaultApiHost();
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
