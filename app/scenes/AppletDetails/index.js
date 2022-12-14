@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Platform } from "react-native"
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { Actions } from "react-native-router-flux";
@@ -23,6 +24,7 @@ import {
   setAppletSelectionDisabled,
 } from "../../state/app/app.actions";
 import { startResponse } from "../../state/responses/responses.thunks";
+import { canSupportNotifications } from '../../utils/constants'
 
 class AppletDetails extends Component {
   /**
@@ -47,6 +49,8 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handleLongPressActivity = async (activity) => {
+    if (!canSupportNotifications) return;
+
     if (!__DEV__) {
       return null;
     }

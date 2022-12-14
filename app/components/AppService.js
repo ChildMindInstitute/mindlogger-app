@@ -48,10 +48,12 @@ import {
   NotificationRenderer,
   isActivityCompletedToday,
   canShowNotificationOnCurrentScreen,
+  fakeFirebase,
 } from '../features/notifications'
 
 import { withDelayer } from '../utils'
 import { debugScheduledNotifications } from '../utils/debug-utils'
+import { canSupportNotifications } from '../utils/constants'
 
 import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
@@ -59,17 +61,14 @@ import { authTokenSelector } from "../state/user/user.selectors";
 import sortActivities from "./ActivityList/sortActivities";
 import { NotificationManagerMutex } from "../features/notifications/services/NotificationManager";
 
-const AndroidChannelId = "MindLoggerChannelId";
-const fMessaging =
-  firebase.messaging.nativeModuleExists && firebase.messaging();
-const fNotifications =
-  firebase.notifications.nativeModuleExists && firebase.notifications();
-
 const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
 
-const userInfoStorage = UserInfoStorage(EncryptedStorage);
+const AndroidChannelId = "MindLoggerChannelId";
+const fMessaging = canSupportNotifications ? firebase.messaging() : fakeFirebase.messaging();
+const fNotifications = canSupportNotifications ? firebase.notifications() : fakeFirebase.notifications();
 
+const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
 const setDefaultApiHost = async () => {
   const apiHost = await userInfoStorage.getApiHost();
@@ -121,10 +120,15 @@ class AppService extends Component {
       this.props.syncUploadQueue();
     });
 
+    if (!canSupportNotifications) {
+      firebase.messaging().deleteToken();
+    }
+
     BackgroundWorker.setTask(async () => {
       const isForeground = AppState.currentState === "active";
 
       if (isForeground) return;
+      if (!canSupportNotifications) return;
 
       if (NotificationManagerMutex.isBusy()) {
         console.warn(
@@ -508,6 +512,8 @@ class AppService extends Component {
    * @return {void}
    */
   async initAndroidChannel() {
+    if (!canSupportNotifications) return;
+
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
       "MindLogger Channel",
@@ -797,7 +803,9 @@ const mapDispatchToProps = (dispatch) => ({
   setFCMToken: async (token) => {
     dispatch(setFcmToken(token));
 
-    await userInfoStorage.setFCMToken(token);
+    if (canSupportNotifications) {
+      await userInfoStorage.setFCMToken(token);
+    }
     setDefaultApiHost();
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),

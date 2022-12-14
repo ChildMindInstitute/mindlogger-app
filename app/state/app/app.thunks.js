@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import * as R from 'ramda';
 // import PushNotification from 'react-native-push-notification';
@@ -19,6 +20,7 @@ import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
 import { clearActivities } from '../activities/activities.actions';
 import { UserInfoStorage } from '../../features/system'
 import { NotificationManager } from '../../features/notifications';
+import { canSupportNotifications } from '../../utils/constants'
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -76,7 +78,9 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
-  NotificationManager.clearScheduledNotifications();
+  if (canSupportNotifications) {
+    NotificationManager.clearScheduledNotifications();
+  }
   userInfoStorage.clearUserEmail();
 };
 
@@ -116,7 +120,9 @@ export const removeAccount = () => (dispatch, getState) => {
     dispatch(clearResponses());
     dispatch(deleteAndClearMedia());
     // PushNotification.cancelAllLocalNotifications();
-    firebase.notifications().cancelAllNotifications();
+    if (canSupportNotifications) {
+      firebase.notifications().cancelAllNotifications();
+    }
     Actions.push('login'); // Set screen back to login
   });
 };

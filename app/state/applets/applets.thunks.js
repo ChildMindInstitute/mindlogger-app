@@ -1,3 +1,4 @@
+import { Platform } from 'react-native'
 import { Actions } from 'react-native-router-flux';
 import * as firebase from 'react-native-firebase';
 import * as R from 'ramda';
@@ -52,6 +53,7 @@ import config from "../../config";
 import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
 import { NotificationManager, NotificationBuilder } from '../../features/notifications';
 import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
+import { canSupportNotifications } from '../../utils/constants'
 
 export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
@@ -83,6 +85,8 @@ export const setLocalNotifications = (trigger) => async (
   dispatch,
   getState
 ) => {
+  if (!canSupportNotifications) return;
+
   try {
     await setLocalNotificationsInternal(dispatch, getState, trigger);
   } catch (error) {
