@@ -936,8 +936,8 @@ export const transformApplet = (payload, currentApplets = null) => {
 
         for (const eventId in events) {
           let isValid = false;
-          for (const eventDate in currentApplet.schedule.data) {
-            if (currentApplet.schedule.data[eventDate].find(({ id }) => id === eventId)) {
+          for (const eventDate in payload.schedule.data) {
+            if (payload.schedule.data[eventDate].find(({ id }) => id === eventId)) {
               isValid = true;
             }
           }
