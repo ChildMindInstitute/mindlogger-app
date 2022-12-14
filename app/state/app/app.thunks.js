@@ -20,8 +20,7 @@ import { authTokenSelector, userInfoSelector } from '../user/user.selectors';
 import { clearActivities } from '../activities/activities.actions';
 import { UserInfoStorage } from '../../features/system'
 import { NotificationManager } from '../../features/notifications';
-
-const isAndroid12orHigher = Platform.Version > 30;
+import { canSupportNotifications } from '../../utils/constants'
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -79,7 +78,9 @@ const doLogout = (dispatch, getState) => {
   dispatch(clearResponses());
   dispatch(deleteAndClearMedia());
   // dispatch(clearActivities());
-  !isAndroid12orHigher && NotificationManager.clearScheduledNotifications();
+  if (canSupportNotifications) {
+    NotificationManager.clearScheduledNotifications();
+  }
   userInfoStorage.clearUserEmail();
 };
 
@@ -119,7 +120,9 @@ export const removeAccount = () => (dispatch, getState) => {
     dispatch(clearResponses());
     dispatch(deleteAndClearMedia());
     // PushNotification.cancelAllLocalNotifications();
-    !isAndroid12orHigher && firebase.notifications().cancelAllNotifications();
+    if (canSupportNotifications) {
+      firebase.notifications().cancelAllNotifications();
+    }
     Actions.push('login'); // Set screen back to login
   });
 };

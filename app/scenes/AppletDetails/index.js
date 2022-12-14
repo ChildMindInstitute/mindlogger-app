@@ -24,8 +24,7 @@ import {
   setAppletSelectionDisabled,
 } from "../../state/app/app.actions";
 import { startResponse } from "../../state/responses/responses.thunks";
-
-const isAndroid12orHigher = Platform.Version > 30;
+import { canSupportNotifications } from '../../utils/constants'
 
 class AppletDetails extends Component {
   /**
@@ -50,7 +49,7 @@ class AppletDetails extends Component {
    * @returns {void}
    */
   handleLongPressActivity = async (activity) => {
-    if (isAndroid12orHigher) return;
+    if (!canSupportNotifications) return;
 
     if (!__DEV__) {
       return null;

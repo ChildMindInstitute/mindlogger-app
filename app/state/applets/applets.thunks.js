@@ -53,8 +53,7 @@ import config from "../../config";
 import { getNotificationArray } from '../../features/notifications/factories/NotificationsBuilder';
 import { NotificationManager, NotificationBuilder } from '../../features/notifications';
 import { NotificationManagerMutex } from '../../features/notifications/services/NotificationManager';
-
-const isAndroid12orHigher = Platform.Version > 30;
+import { canSupportNotifications } from '../../utils/constants'
 
 export const getInvitations = () => (dispatch, getState) => {
   const state = getState();
@@ -86,6 +85,8 @@ export const setLocalNotifications = (trigger) => async (
   dispatch,
   getState
 ) => {
+  if (!canSupportNotifications) return;
+
   try {
     await setLocalNotificationsInternal(dispatch, getState, trigger);
   } catch (error) {
@@ -94,8 +95,6 @@ export const setLocalNotifications = (trigger) => async (
 };
 
 const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
-  if (isAndroid12orHigher) return;
-
   const state = getState();
 
   const applets = allAppletsSelector(state);

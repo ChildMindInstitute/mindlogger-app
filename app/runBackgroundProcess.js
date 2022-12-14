@@ -5,11 +5,11 @@ import { NotificationManager } from './features/notifications'
 import { debugScheduledNotifications } from './utils/debug-utils';
 import { NotificationManagerMutex } from './features/notifications/services/NotificationManager';
 
-const isAndroid12orHigher = Platform.Version > 30;
+import { canSupportNotifications } from './utils/constants'
 
 function runBackgroundProcess() {
   BackgroundWorker.setAndroidHeadlessTask(async () => {
-    if (isAndroid12orHigher) return;
+    if (!canSupportNotifications) return;
 
     if (NotificationManagerMutex.isBusy()) {
       console.warn(

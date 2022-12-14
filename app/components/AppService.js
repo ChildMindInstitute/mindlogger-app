@@ -53,6 +53,7 @@ import {
 
 import { withDelayer } from '../utils'
 import { debugScheduledNotifications } from '../utils/debug-utils'
+import { canSupportNotifications } from '../utils/constants'
 
 import { sendResponseReuploadRequest } from "../services/network";
 import { delayedExec, clearExec } from "../services/timing";
@@ -62,14 +63,12 @@ import { NotificationManagerMutex } from "../features/notifications/services/Not
 
 const isAndroid = Platform.OS === "android";
 const isIOS = Platform.OS === "ios";
-const isAndroid12orHigher = Platform.Version > 30;
 
 const AndroidChannelId = "MindLoggerChannelId";
-const fMessaging = isAndroid12orHigher ? fakeFirebase.messaging() : firebase.messaging();
-const fNotifications = isAndroid12orHigher ? fakeFirebase.notifications() : firebase.notifications();
+const fMessaging = canSupportNotifications ? firebase.messaging() : fakeFirebase.messaging();
+const fNotifications = canSupportNotifications ? firebase.notifications() : fakeFirebase.notifications();
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
-
 
 const setDefaultApiHost = async () => {
   const apiHost = await userInfoStorage.getApiHost();
@@ -121,11 +120,15 @@ class AppService extends Component {
       this.props.syncUploadQueue();
     });
 
+    if (!canSupportNotifications) {
+      firebase.messaging().deleteToken();
+    }
+
     BackgroundWorker.setTask(async () => {
       const isForeground = AppState.currentState === "active";
 
       if (isForeground) return;
-      if (isAndroid12orHigher) return;
+      if (!canSupportNotifications) return;
 
       if (NotificationManagerMutex.isBusy()) {
         console.warn(
@@ -509,7 +512,7 @@ class AppService extends Component {
    * @return {void}
    */
   async initAndroidChannel() {
-    if (isAndroid12orHigher) return;
+    if (!canSupportNotifications) return;
 
     const channel = new firebase.notifications.Android.Channel(
       AndroidChannelId,
@@ -800,7 +803,9 @@ const mapDispatchToProps = (dispatch) => ({
   setFCMToken: async (token) => {
     dispatch(setFcmToken(token));
 
-    !isAndroid12orHigher && await userInfoStorage.setFCMToken(token);
+    if (canSupportNotifications) {
+      await userInfoStorage.setFCMToken(token);
+    }
     setDefaultApiHost();
   },
   setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
