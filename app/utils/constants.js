@@ -1,3 +1,3 @@
 import { Platform } from 'react-native'
 
-export const canSupportNotifications = Platform.Version < 31;
+export const canSupportNotifications = Platform.OS === 'ios' || Platform.Version < 31;
