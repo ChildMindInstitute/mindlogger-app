@@ -13,7 +13,7 @@ export const SYSTEM_RESCHEDULING_NOTIFICATION_ID = 'system_trigger_for_reschedul
 export const isAndroid = Platform.OS === 'android';
 export const isIOS = Platform.OS === 'ios';
 
-export const SYSTEM_RESERVED_CAPACITY = isIOS ? 1 : 0;
+export const SYSTEM_RESERVED_CAPACITY = isIOS ? 1 : 1;
 
 export const MAX_SCHEDULED_NOTIFICATIONS_SIZE =
     (
@@ -22,6 +22,6 @@ export const MAX_SCHEDULED_NOTIFICATIONS_SIZE =
             : MAX_SCHEDULED_NOTIFICATIONS_SIZE_IOS
     ) - SYSTEM_RESERVED_CAPACITY;
 
-export const SYSTEM_NOTIFICATION_DELAY = ONE_MINUTE * 30;
+export const SYSTEM_NOTIFICATION_DELAY = ONE_MINUTE * 10;
 
 export const SCENES_TO_NOT_RENDER_NOTIFICATIONS = ['take_act', 'activity_summary', 'activity_thanks', 'activity_flow_submit', 'activity_end'];

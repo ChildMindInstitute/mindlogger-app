@@ -12,10 +12,10 @@ const StorageAdapter = {
 }
 
 async function scheduleSystemIOSNotification(fireDate) {
-    if (isAndroid) return;
+//    if (isAndroid) return;
 
     const localNotification = Scheduler.createLocalNotification({
-        title: 'MindLogger' + ": " + Date(fireDate).toString(),
+        title: 'MindLogger' + ": " + new Date(fireDate).toString(),
         body: 'Tap to update the schedule',
         notificationId: SYSTEM_RESCHEDULING_NOTIFICATION_ID,
         data: {
@@ -73,6 +73,7 @@ function NotificationManager() {
     }
 
     async function topUpNotificationsFromQueue() {
+        return;
         const scheduledNotifications = await Scheduler.getAllScheduledNotifications();
         const freeSlotsCount = MAX_SCHEDULED_NOTIFICATIONS_SIZE - scheduledNotifications.length;
         const canScheduleMore = freeSlotsCount > 0;
