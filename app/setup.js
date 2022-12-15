@@ -20,6 +20,8 @@ import { clearUser } from './state/user/user.actions';
 // import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 import AppService from './components/AppService';
+import { PersistGate } from 'redux-persist/integration/react'
+
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -53,7 +55,7 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  const store = configureStore(() => {
+  const {store, persister} = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {
       store.dispatch(sync());
@@ -92,9 +94,11 @@ const setup = () => {
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
           <Root>
-            <AppService>
-              <AppNavigator />
-            </AppService>
+            <PersistGate loading={null} persistor={persister}>
+              <AppService>
+                <AppNavigator />
+              </AppService>
+            </PersistGate>
           </Root>
         </I18nextProvider>
       </Provider>
