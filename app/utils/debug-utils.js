@@ -16,7 +16,7 @@ const notificationQueue = NotificationQueue(StorageAdapter);
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
 export const getStringHashCode = inputString => {
-  if (!inputString ) {
+  if (!inputString) {
     throw new Error("[getStringHashCode] inputString is not defined");
   }
   let result = 0
