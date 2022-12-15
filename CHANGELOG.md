@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.21.70] - 2022-12-15
+fix for: M2-171 Activity cards are missing timestamps (activities visibility isn't updated) according to the refreshed schedule if there is the flow
+fix for ML-227: The "There is no applet for given id" pop up after tapping the activity/flow notification when app is killed
+fix for ML-19: The "There is no applet for given id" error after tapping the notification in offline if app is in
+
 ## [0.21.68] - 2022-12-09
 test notification with date-time
 

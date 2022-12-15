@@ -114,7 +114,7 @@ export const getPastdue = (activityList, finishedEvents) => {
         data.timeout.hour * secondsPerHour * 1000 +
         data.timeout.minute * secondsPerMinute * 1000;
 
-      const scheduledTimeInMs = scheduledTime?.getTime();
+      const scheduledTimeInMs = scheduledTime?.getTime() ?? 0;
       const scheduledTimeIsToday = scheduledTime
         ? moment().isSame(moment(scheduledTime), "day")
         : false;
