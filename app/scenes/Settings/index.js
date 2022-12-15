@@ -82,7 +82,7 @@ class SettingsScreen extends React.Component {
     } = this.props;
     const { showAlert } = this.state;
     const { email } = userInfo ?? {};
-    const deviceIdHash = getStringHashCode(fcmToken ?? "");
+    const deviceIdHash = fcmToken ? getStringHashCode(fcmToken) : null;
     const staging = true;
 
     return (
@@ -129,7 +129,7 @@ class SettingsScreen extends React.Component {
               </Text>
               { staging &&
                 <Text>
-                  {email ?? ""} {deviceIdHash}
+                  {email ?? ""} {deviceIdHash ?? ""}
                 </Text> 
               }
               <Text style={{ fontWeight: 'bold' }}>{userInfo.login}</Text>
