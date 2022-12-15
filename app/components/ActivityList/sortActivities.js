@@ -99,40 +99,69 @@ export const getScheduled = (activityList, finishedEvents) => {
 export const getPastdue = (activityList, finishedEvents) => {
   const pastActivities = [];
 
-  activityList.forEach(activity => {
-    activity.events.forEach(event => {
-      const today = new Date();
+  activityList.forEach((activity) => {
+    activity.events.forEach((event) => {
+      const now = new Date();
+
       const { scheduledTime, data } = event;
-      const activityTimeout = data.timeout.day * 864000000
-        + data.timeout.hour * 3600000
-        + data.timeout.minute * 60000;
+
+      const secondsPerDay = 864000;
+      const secondsPerHour = 3600;
+      const secondsPerMinute = 60;
+
+      const activityTimeout =
+        data.timeout.day * secondsPerDay * 1000 +
+        data.timeout.hour * secondsPerHour * 1000 +
+        data.timeout.minute * secondsPerMinute * 1000;
+
+      const scheduledTimeInMs = scheduledTime?.getTime();
+      const scheduledTimeIsToday = scheduledTime
+        ? moment().isSame(moment(scheduledTime), "day")
+        : false;
+
+      const finishedEventsIncludeEventIdKey = Object.keys(
+        finishedEvents
+      ).includes(event.id);
+      const eventFinishedAt = finishedEvents[event.id];
+      const eventFinishedAtMoment = eventFinishedAt
+        ? moment(new Date(eventFinishedAt))
+        : null;
+      const eventFinishedToday = eventFinishedAtMoment
+        ? moment().isSame(eventFinishedAtMoment, "day")
+        : false;
+
+      const scheduledTimeAndNowDiff = now.getTime() - scheduledTime.getTime();
 
       if (activity.availability) {
-        if (!data.completion
-          || !finishedEvents[event.id]
-          || scheduledTime.getTime() > finishedEvents[event.id]) {
-            const pastActivity = { ...activity };
+        if (
+          !data.completion ||
+          !eventFinishedAt ||
+          scheduledTimeInMs > eventFinishedAt
+        ) {
+          const pastActivity = { ...activity };
 
-            delete pastActivity.events;
-            pastActivity.event = event;
-            pastActivities.push(pastActivity);
+          delete pastActivity.events;
+          pastActivity.event = event;
+          pastActivities.push(pastActivity);
         }
-      } else if (!activity.availability
-        && scheduledTime <= today
-        && (!Object.keys(finishedEvents).includes(event.id) || !moment().isSame(moment(new Date(finishedEvents[event.id])), 'day'))
-        && moment().isSame(moment(scheduledTime), 'day')
-        && (!data.timeout.allow || today.getTime() - scheduledTime.getTime() < activityTimeout)) {
+      } else if (
+        !activity.availability &&
+        scheduledTime <= now &&
+        (!finishedEventsIncludeEventIdKey || !eventFinishedToday) &&
+        scheduledTimeIsToday &&
+        (!data.timeout.allow || scheduledTimeAndNowDiff < activityTimeout)
+      ) {
         const pastActivity = { ...activity };
 
         delete pastActivity.events;
         pastActivity.event = event;
         pastActivities.push(pastActivity);
       }
-    })
+    });
   });
 
   return pastActivities;
-}
+};
 
 const addSectionHeader = (array, headerText) => {
   if (array.length > 0) {
