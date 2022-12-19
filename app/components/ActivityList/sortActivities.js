@@ -7,51 +7,55 @@ const compareByTimestamp = propName => (a, b) => moment(a[propName]) - moment(b[
 
 export const getUnscheduled = (
   activityList,
-  pastActivities,
+  actualActivities,
   scheduledActivities,
   finishedEvents,
-  scheduleData,
+  scheduleData
 ) => {
   const unscheduledActivities = [];
 
   for (const activity of activityList) {
     if (!activity.events.length) {
       unscheduledActivities.push({ ...activity });
-    } else {
-      let actStatus = false;
-      let selectedEvent = null;
-      let todayEvents = scheduleData[Object.keys(scheduleData)[0]];
+      continue;
+    }
 
-      for (const event of activity.events) {
-        const { data, id } = event;
-        let currentEvent = todayEvents.find((event) => event.id === id);
+    let actStatus = false;
+    let selectedEvent = null;
+    let todayEvents = scheduleData[Object.keys(scheduleData)[0]];
 
-        if (Object.keys(finishedEvents).includes(id)
-          || (currentEvent && !currentEvent.valid)) {
-          actStatus = false;
-          break;
-        }
+    for (const event of activity.events) {
+      const { data, id } = event;
+      let currentEvent = todayEvents.find((event) => event.id === id);
 
-        if (!scheduledActivities.find(({ schema }) => schema === activity.schema)
-          && !pastActivities.find(({ schema }) => schema === activity.schema)
-          && !unscheduledActivities.find(({ schema }) => schema === activity.schema)
-        ) {
-          actStatus = true;
-          selectedEvent = event;
-        }
+      if (
+        Object.keys(finishedEvents).includes(id) ||
+        (currentEvent && !currentEvent.valid)
+      ) {
+        actStatus = false;
+        break;
       }
 
-      if (actStatus) {
-        unscheduledActivities.push({
-          ...activity,
-          event: selectedEvent
-        });
+      if (
+        !scheduledActivities.find(({ schema }) => schema === activity.schema) &&
+        !actualActivities.find(({ schema }) => schema === activity.schema) &&
+        !unscheduledActivities.find(({ schema }) => schema === activity.schema)
+      ) {
+        actStatus = true;
+        selectedEvent = event;
       }
+    }
+
+    if (actStatus) {
+      unscheduledActivities.push({
+        ...activity,
+        event: selectedEvent,
+      });
     }
   }
 
   return unscheduledActivities;
-}
+};
 
 export const getScheduled = (activityList, finishedEvents) => {
   const scheduledActivities = [];
@@ -96,8 +100,8 @@ export const getScheduled = (activityList, finishedEvents) => {
   return scheduledActivities;
 }
 
-export const getPastdue = (activityList, finishedEvents) => {
-  const pastActivities = [];
+export const getActual = (activityList, finishedEvents) => {
+  const resultActivities = [];
 
   activityList.forEach((activity) => {
     activity.events.forEach((event) => {
@@ -109,10 +113,12 @@ export const getPastdue = (activityList, finishedEvents) => {
       const secondsPerHour = 3600;
       const secondsPerMinute = 60;
 
-      const activityTimeout =
+      const activityDuration =
         data.timeout.day * secondsPerDay * 1000 +
         data.timeout.hour * secondsPerHour * 1000 +
         data.timeout.minute * secondsPerMinute * 1000;
+
+      const alwaysAvailableSetInEvent = activity.availability;
 
       const scheduledTimeInMs = scheduledTime?.getTime() ?? 0;
       const scheduledTimeIsToday = scheduledTime
@@ -132,35 +138,83 @@ export const getPastdue = (activityList, finishedEvents) => {
 
       const scheduledTimeAndNowDiff = now.getTime() - scheduledTime.getTime();
 
-      if (activity.availability) {
+      const isInAllowedTimeWindowOrCheckNotNeeded =
+        !data.timeout.allow || scheduledTimeAndNowDiff < activityDuration;
+
+      const notCompletedOrCompletedInPreviousDays =
+        !finishedEventsIncludeEventIdKey || !eventFinishedToday;
+
+      if (alwaysAvailableSetInEvent) {
         if (
           !data.completion ||
           !eventFinishedAt ||
-          scheduledTimeInMs > eventFinishedAt
+          eventFinishedAt < scheduledTimeInMs
         ) {
-          const pastActivity = { ...activity };
+          const resultActivity = { ...activity };
 
-          delete pastActivity.events;
-          pastActivity.event = event;
-          pastActivities.push(pastActivity);
+          delete resultActivity.events;
+          resultActivity.event = event;
+          resultActivities.push(resultActivity);
         }
-      } else if (
-        !activity.availability &&
-        scheduledTime <= now &&
-        (!finishedEventsIncludeEventIdKey || !eventFinishedToday) &&
-        scheduledTimeIsToday &&
-        (!data.timeout.allow || scheduledTimeAndNowDiff < activityTimeout)
-      ) {
-        const pastActivity = { ...activity };
+      } else {
+        if (
+          scheduledTime <= now &&
+          scheduledTimeIsToday &&
+          isInAllowedTimeWindowOrCheckNotNeeded &&
+          notCompletedOrCompletedInPreviousDays
+        ) {
+          const resultActivity = { ...activity };
 
-        delete pastActivity.events;
-        pastActivity.event = event;
-        pastActivities.push(pastActivity);
+          delete resultActivity.events;
+          resultActivity.event = event;
+          resultActivities.push(resultActivity);
+        }
       }
     });
   });
 
-  return pastActivities;
+  return resultActivities;
+};
+
+const filterTodaysButOutOfTimeWindow = (activities) => {
+  const result = [];
+  const now = new Date();
+
+  const secondsPerDay = 864000;
+  const secondsPerHour = 3600;
+  const secondsPerMinute = 60;
+
+  for (let activity of activities) {
+    let outOfWindow = false;
+
+    if (activity.event) {
+      const { scheduledTime, data } = activity.event;
+
+      const scheduledTimeIsToday = scheduledTime
+        ? moment().isSame(moment(scheduledTime), "day")
+        : false;
+
+      const activityDuration =
+        data.timeout.day * secondsPerDay * 1000 +
+        data.timeout.hour * secondsPerHour * 1000 +
+        data.timeout.minute * secondsPerMinute * 1000;
+
+      const scheduledTimeAndNowDiff = now.getTime() - scheduledTime.getTime();
+
+      const isOutOfAllowedTimeWindow =
+        data.timeout.allow && scheduledTimeAndNowDiff > activityDuration;
+
+      if (scheduledTimeIsToday && isOutOfAllowedTimeWindow) {
+        outOfWindow = true;
+      }
+    }
+
+    if (!outOfWindow) {
+      result.push(activity);
+    }
+  }
+
+  return result;
 };
 
 const addSectionHeader = (array, headerText) => {
@@ -232,16 +286,17 @@ const sortActivities = (activityList, inProgress, finishedEvents, scheduleData) 
     })
   }
 
-  // Activities currently scheduled - or - previously scheduled and not yet completed.
-  // Activities scheduled some time in the future.
-  const pastdue = getPastdue(notInProgressActivities, finishedEvents)
+  // Activities scheduled today and in allowed time period or period not set
+  // Activities scheduled in the future day with set always-available flag.
+  // They should not be completed in schedule day
+  const actual = getActual(notInProgressActivities, finishedEvents)
     .sort(compareByTimestamp('lastScheduledTimestamp'))
     .reverse();
 
   const scheduled = getScheduled(notInProgressActivities, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
   
-  // Activities with no schedule.
-  const unscheduled = getUnscheduled(notInProgressActivities, pastdue, scheduled, finishedEvents, scheduleData);
+  let unscheduled = getUnscheduled(notInProgressActivities, actual, scheduled, finishedEvents, scheduleData);
+  unscheduled = filterTodaysButOutOfTimeWindow(unscheduled);
   
   const inProgressWithProp = addProp('status', 'in-progress', inProgressActivities);
 
@@ -250,7 +305,7 @@ const sortActivities = (activityList, inProgress, finishedEvents, scheduleData) 
     i18n.t('additional:in_progress'),
   );
 
-  const pastDueWithProp = addProp('status', 'pastdue', pastdue);
+  const pastDueWithProp = addProp('status', 'pastdue', actual);
 
   const unscheduledWithProp = addProp('status', 'unscheduled', unscheduled);
 

@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import moment from 'moment';
-import { getUnscheduled, getScheduled, getPastdue } from './sortActivities';
+import { getUnscheduled, getScheduled, getActual } from './sortActivities';
 
 const unscheduled = {
   // Note the _id prop is used only to help debugging.
@@ -120,8 +120,8 @@ describe('getScheduled', () => {
   });
 });
 
-describe('getPastdue', () => {
+describe('getActual', () => {
   test('should return empty array if passed empty list', () => {
-    expect(getPastdue([])).toEqual([]);
+    expect(getActual([])).toEqual([]);
   });
 });
