@@ -1,3 +1,29 @@
+diff --git a/node_modules/react-native-firebase/android/src/main/java/io/invertase/firebase/notifications/RNFirebaseNotificationManager.java b/node_modules/react-native-firebase/android/src/main/java/io/invertase/firebase/notifications/RNFirebaseNotificationManager.java
+index 70f51cc..08a3a9e 100644
+--- a/node_modules/react-native-firebase/android/src/main/java/io/invertase/firebase/notifications/RNFirebaseNotificationManager.java
++++ b/node_modules/react-native-firebase/android/src/main/java/io/invertase/firebase/notifications/RNFirebaseNotificationManager.java
+@@ -17,8 +17,8 @@ import android.os.Build;
+ import android.os.Bundle;
+ import android.provider.OpenableColumns;
+ import android.service.notification.StatusBarNotification;
+-import android.support.annotation.RequiresApi;
+-import android.support.v4.content.LocalBroadcastManager;
++import androidx.annotation.RequiresApi;
++import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+ import android.util.Log;
+ 
+ import com.facebook.react.bridge.Arguments;
+@@ -647,8 +647,8 @@ class RNFirebaseNotificationManager {
+     } else {
+       if (schedule.containsKey("exact")
+         && schedule.getBoolean("exact")
+-        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
++        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
++        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+       } else {
+         alarmManager.set(AlarmManager.RTC_WAKEUP, fireDate, pendingIntent);
+       }
 diff --git a/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m b/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m
 index d3aa1e3..b0e6d76 100644
 --- a/node_modules/react-native-firebase/ios/RNFirebase/notifications/RNFirebaseNotifications.m
