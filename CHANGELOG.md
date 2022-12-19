@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## [0.21.73] - 2022-12-19
+M2-269, 2826
 
 ## [0.21.70] - 2022-12-15
 fix for: M2-171 Activity cards are missing timestamps (activities visibility isn't updated) according to the refreshed schedule if there is the flow
