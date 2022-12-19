@@ -133,6 +133,8 @@ const build = (applet, finishedTimes) => {
       return;
     }
 
+    // todo - when time-window of event is set - scheduledTimeDate acquires time
+    // it should not affect on any BL, but it's better to check it later and apply startOfDay
     const scheduledTimeDate = new moment(scheduledTimeString);
 
     let periodStartDay = null,
@@ -224,7 +226,7 @@ const build = (applet, finishedTimes) => {
       }
 
       const reminder = createReminder({
-        day: moment(scheduledTimeDate),
+        dateTime: moment(scheduledTimeDate),
         activityId,
         activityFlowId,
         activityOrFlowName,
@@ -290,7 +292,7 @@ const build = (applet, finishedTimes) => {
       }
 
       const reminder = createReminder({
-        day: moment(day),
+        dateTime: moment(day),
         activityId,
         activityFlowId,
         activityOrFlowName,
@@ -543,7 +545,7 @@ const markNotificationIfActivityCompleted = (
 };
 
 const createReminder = ({
-  day,
+  dateTime,
   activityId,
   activityFlowId,
   activityOrFlowName,
@@ -552,6 +554,9 @@ const createReminder = ({
   reminderData,
   finishedTimes,
 }) => {
+  // todo - should be applied in the origin place later
+  const day = moment(dateTime).startOf('day'); 
+
   if (!isReminderSet(reminderData)) {
     return null;
   }
