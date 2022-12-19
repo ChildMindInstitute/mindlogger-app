@@ -143,6 +143,9 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 //     signingConfigs {
 //         debug {
 //             storeFile file('debug.keystore')
@@ -195,14 +198,13 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation "com.google.android.gms:play-services-base:16.1.0"
-    implementation "com.google.firebase:firebase-core:16.0.9"
-    implementation "com.google.firebase:firebase-messaging:18.0.0"
+    implementation platform("com.google.firebase:firebase-bom:24.5.0")
+    implementation "com.google.firebase:firebase-messaging"
     implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
 
     compile project(':react-native-video')
-    implementation "androidx.appcompat:appcompat:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.5.1"
     // implementation project(':@react-native-community_audio-toolkit')
 
     compile project(':react-native-file-viewer')
