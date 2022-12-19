@@ -750,7 +750,8 @@ class AppService extends Component {
     }
 
     if (goingToForeground) {
-      await setLocalNotifications("goingToForeground");
+      // Do NOT merge this change to master
+      // await setLocalNotifications("goingToForeground");
     }
 
     if (goingToForeground && this.pendingNotification) {
