@@ -1175,21 +1175,40 @@ export const parseAppletEvents = (applet) => {
     }
   })
 
-  for(let eventId in applet.schedule.actual_events) {
+  const map = new Map();
+
+  const date = new Date();
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+
+  for (let eventId in applet.schedule.actual_events) {
     const event = applet.schedule.actual_events[eventId];
 
-    const date = new Date();
-    date.setHours(0); date.setMinutes(0); date.setSeconds(0);
+    const json = JSON.stringify(event.schedule);
+    const keyString = json + date.getTime().toString();
 
-    const futureSchedule = Parse.schedule(event.schedule).forecast(
-      Day.fromDate(date),
-      true,
-      1,
-      0,
-      true,
-    );
+    if (map.has(keyString)) {
+      const value = map.get(keyString);
+      
+      event.scheduledTime =
+        value && typeof value.getTime === "function"
+          ? new Date(value.getTime())
+          : value;
 
-    event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+    } else {
+      const parsedSchedule = Parse.schedule(event.schedule);
+      const futureSchedule = parsedSchedule.forecast(
+        Day.fromDate(date),
+        true,
+        1,
+        0,
+        true
+      );
+
+      event.scheduledTime = getStartOfInterval(futureSchedule.array()[0]);
+      map.set(keyString, event.scheduledTime);
+    }
   }
 
   return {
