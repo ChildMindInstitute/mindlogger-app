@@ -567,12 +567,10 @@ export const addScheduleNotificationDebugObjects = async ({
 }) => {
   const apiHost = await userInfoStorage.getApiHost();
   const url = `${apiHost}/notification/logs`;
-  const headers = {};
 
   return fetch(url, {
     method: "post",
     mode: "cors",
-    headers,
     body: JSON.stringify({
       userId,
       deviceId,
