@@ -61,44 +61,49 @@ export const getScheduled = (activityList, finishedEvents) => {
   const scheduledActivities = [];
   const finishedEventsKeys = finishedEvents ? Object.keys(finishedEvents) : [];
 
-  activityList.forEach(activity => {
-    activity.events.forEach(event => {
+  activityList.forEach((activity) => {
+    activity.events.forEach((event) => {
       const today = new Date();
       const { scheduledTime, data } = event;
-      
-      const activityNotAvailable = !activity.availability;
+
+      const alwaysAvailableIsNotSetInEvent = !activity.availability;
+
       const eventScheduledInFuture = scheduledTime > today;
       const completionFalseInEventData = !data.completion;
       const isTimeoutAccessInEventData = data.timeout.access;
-      const eventScheduledToday = moment().isSame(moment(scheduledTime), 'day');
+      const eventScheduledToday = moment().isSame(moment(scheduledTime), "day");
 
       const eventIdNotInFinishedKeys = !finishedEventsKeys.includes(event.id);
-      
+
       let finishedEventDayIsNotToday;
 
       if (!eventIdNotInFinishedKeys) {
         const currentFinishedEvent = finishedEvents[event.id];
         const finishedEventDate = new Date(currentFinishedEvent);
-        finishedEventDayIsNotToday = !moment().isSame(moment(finishedEventDate), 'day');
+        finishedEventDayIsNotToday = !moment().isSame(
+          moment(finishedEventDate),
+          "day"
+        );
       }
 
-      if (activityNotAvailable
-        && eventScheduledInFuture
-        && completionFalseInEventData
-        && (isTimeoutAccessInEventData || eventScheduledToday) 
-        && (eventIdNotInFinishedKeys || finishedEventDayIsNotToday)) {
-        
+      if (
+        alwaysAvailableIsNotSetInEvent &&
+        eventScheduledInFuture &&
+        completionFalseInEventData &&
+        (isTimeoutAccessInEventData || eventScheduledToday) &&
+        (eventIdNotInFinishedKeys || finishedEventDayIsNotToday)
+      ) {
         const scheduledActivity = { ...activity };
         delete scheduledActivity.events;
 
         scheduledActivity.event = event;
         scheduledActivities.push(scheduledActivity);
       }
-    })
+    });
   });
 
   return scheduledActivities;
-}
+};
 
 export const getActual = (activityList, finishedEvents) => {
   const resultActivities = [];
@@ -217,6 +222,31 @@ const filterTodaysButOutOfTimeWindow = (activities) => {
   return result;
 };
 
+const filterScheduledFromTomorrowAndLater = (activities) => {
+  const result = [];
+
+  const today = moment().startOf("day");
+
+  for (let activity of activities) {
+    if (!activity.event) {
+      result.push(activity);
+      continue;
+    }
+
+    const { scheduledTime } = activity.event;
+
+    const scheduledDay = moment(scheduledTime).startOf("day");
+
+    const isLaterOrEqualTomorrow = scheduledDay.isAfter(today);
+
+    if (!isLaterOrEqualTomorrow) {
+      result.push(activity);
+    }
+  }
+
+  return result;
+};
+
 const addSectionHeader = (array, headerText) => {
   if (array.length > 0) {
     return [{ isHeader: true, text: headerText }, ...array];
@@ -296,7 +326,10 @@ const sortActivities = (activityList, inProgress, finishedEvents, scheduleData) 
   const scheduled = getScheduled(notInProgressActivities, finishedEvents).sort(compareByTimestamp('nextScheduledTimestamp'));
   
   let unscheduled = getUnscheduled(notInProgressActivities, actual, scheduled, finishedEvents, scheduleData);
+  
   unscheduled = filterTodaysButOutOfTimeWindow(unscheduled);
+
+  unscheduled = filterScheduledFromTomorrowAndLater(unscheduled)
   
   const inProgressWithProp = addProp('status', 'in-progress', inProgressActivities);
 
