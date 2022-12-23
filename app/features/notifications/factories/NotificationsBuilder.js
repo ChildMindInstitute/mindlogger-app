@@ -141,11 +141,15 @@ const build = (applet, finishedTimes) => {
       periodEndDay = null;
 
     if (schedule.start) {
-      periodStartDay = moment(schedule.start).startOf("day");
+      periodStartDay = moment(
+        buildExactDateFromUTC(schedule.start)
+      ).startOf("day");
     }
 
     if (schedule.end) {
-      periodEndDay = moment(schedule.end).startOf("day");
+      periodEndDay = moment(
+        buildExactDateFromUTC(schedule.end)
+      ).startOf("day");
     }
 
     let periodicity = null;
@@ -655,5 +659,17 @@ export const getNotificationArray = (notificationsObject) => {
   result = result.sort((a, b) => a.scheduledAt - b.scheduledAt);
   return result;
 };
+
+function buildExactDateFromUTC(date) {
+  const utcMoment = moment.utc(date);
+
+  const year = utcMoment.year();
+  const month = utcMoment.month();
+  const day = utcMoment.date();
+  const hours = utcMoment.hours();
+  const minutes = utcMoment.minutes();
+
+  return new Date(year, month, day, hours, minutes);
+}
 
 export default { build };
