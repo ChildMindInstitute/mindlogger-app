@@ -35,3 +35,5 @@ export function withDelayer(fn, { repeatIn = 1000, check }) {
         tryToExecute(...args)
     }
 }
+
+export const getIdBySplit = (sid) => sid.split("/").pop();
