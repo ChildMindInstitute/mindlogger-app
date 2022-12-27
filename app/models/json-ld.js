@@ -8,6 +8,7 @@ import {
   getNextScheduled,
   getScheduledNotifications,
 } from '../services/time';
+import { getIdBySplit } from '../utils'
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -1115,11 +1116,12 @@ export const parseAppletEvents = (applet) => {
   const extraInfoActivities = applet.activities.map((act) => {
     const events = [];
     const availability = getActivityAbility(applet.schedule, act.id);
+    const activityId = getIdBySplit(act.id)
 
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
 
-      if (event.data.title === act.name.en) {
+      if (event.data.activity_id === activityId) {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
