@@ -1,6 +1,8 @@
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 
+import { buildExactDateFromUTC } from '../../../utils'
+
 import {
   getActivityPrefixedId,
   getActivityFlowPrefixedId,
@@ -659,17 +661,5 @@ export const getNotificationArray = (notificationsObject) => {
   result = result.sort((a, b) => a.scheduledAt - b.scheduledAt);
   return result;
 };
-
-function buildExactDateFromUTC(date) {
-  const utcMoment = moment.utc(date);
-
-  const year = utcMoment.year();
-  const month = utcMoment.month();
-  const day = utcMoment.date();
-  const hours = utcMoment.hours();
-  const minutes = utcMoment.minutes();
-
-  return new Date(year, month, day, hours, minutes);
-}
 
 export default { build };

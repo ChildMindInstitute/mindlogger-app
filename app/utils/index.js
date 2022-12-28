@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const DelayCheckResult = {
     Cancel: 1,
     Postpone: 2,
@@ -37,3 +39,15 @@ export function withDelayer(fn, { repeatIn = 1000, check }) {
 }
 
 export const getIdBySplit = (sid) => sid.split("/").pop();
+
+export function buildExactDateFromUTC(date) {
+    const utcMoment = moment.utc(date);
+  
+    const year = utcMoment.year();
+    const month = utcMoment.month();
+    const day = utcMoment.date();
+    const hours = utcMoment.hours();
+    const minutes = utcMoment.minutes();
+  
+    return new Date(year, month, day, hours, minutes);
+  }
