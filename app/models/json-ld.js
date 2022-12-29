@@ -1112,6 +1112,14 @@ export const dateParser = (schedule) => {
   return output;
 };
 
+const transformScheduleDatesFromUTC = (schedule) => {
+ return {
+    ...schedule,
+    start: schedule.start ? buildExactDateFromUTC(schedule.start).valueOf() : undefined,
+    end: schedule.end ? buildExactDateFromUTC(schedule.end).valueOf() : undefined,
+  };
+}
+
 export const parseAppletEvents = (applet) => {
   const extraInfoActivities = applet.activities.map((act) => {
     const events = [];
@@ -1125,11 +1133,7 @@ export const parseAppletEvents = (applet) => {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
-        const eventSchedule = {
-          ...event.schedule,
-          start: buildExactDateFromUTC(event.schedule.start).valueOf(),
-          end: buildExactDateFromUTC(event.schedule.end).valueOf(),
-        };
+        const eventSchedule = transformScheduleDatesFromUTC(event.schedule);
 
         const futureSchedule = Parse.schedule(eventSchedule).forecast(
           Day.fromDate(date),
@@ -1163,11 +1167,7 @@ export const parseAppletEvents = (applet) => {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
-        const eventSchedule = {
-          ...event.schedule,
-          start: buildExactDateFromUTC(event.schedule.start).valueOf(),
-          end: buildExactDateFromUTC(event.schedule.end).valueOf(),
-        };
+        const eventSchedule = transformScheduleDatesFromUTC(event.schedule);
 
         const futureSchedule = Parse.schedule(eventSchedule).forecast(
           Day.fromDate(date),
@@ -1212,11 +1212,7 @@ export const parseAppletEvents = (applet) => {
           : value;
 
     } else {
-      const eventSchedule = {
-        ...event.schedule,
-        start: buildExactDateFromUTC(event.schedule.start).valueOf(),
-        end: buildExactDateFromUTC(event.schedule.end).valueOf(),
-      }; 
+      const eventSchedule = transformScheduleDatesFromUTC(event.schedule); 
 
       const parsedSchedule = Parse.schedule(eventSchedule);
       const futureSchedule = parsedSchedule.forecast(
