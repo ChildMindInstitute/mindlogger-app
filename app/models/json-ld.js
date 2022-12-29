@@ -8,7 +8,7 @@ import {
   getNextScheduled,
   getScheduledNotifications,
 } from '../services/time';
-import { getIdBySplit } from '../utils'
+import { getIdBySplit, buildExactDateFromUTC } from '../utils'
 
 const ALLOW = "reprolib:terms/allow";
 const ABOUT = "reprolib:terms/landingPage";
@@ -1112,6 +1112,14 @@ export const dateParser = (schedule) => {
   return output;
 };
 
+const transformScheduleDatesFromUTC = (schedule) => {
+ return {
+    ...schedule,
+    start: schedule.start ? buildExactDateFromUTC(schedule.start).valueOf() : undefined,
+    end: schedule.end ? buildExactDateFromUTC(schedule.end).valueOf() : undefined,
+  };
+}
+
 export const parseAppletEvents = (applet) => {
   const extraInfoActivities = applet.activities.map((act) => {
     const events = [];
@@ -1125,7 +1133,9 @@ export const parseAppletEvents = (applet) => {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
-        const futureSchedule = Parse.schedule(event.schedule).forecast(
+        const eventSchedule = transformScheduleDatesFromUTC(event.schedule);
+
+        const futureSchedule = Parse.schedule(eventSchedule).forecast(
           Day.fromDate(date),
           true,
           1,
@@ -1147,16 +1157,19 @@ export const parseAppletEvents = (applet) => {
 
   const activityFlows = applet.activityFlows.map(activityFlow => {
     const events = [];
-
+    const activityFlowId = getIdBySplit(activityFlow.id);
     const availability = getActivityAbility(applet.schedule, activityFlow.name, false);
+
     for (let eventId in applet.schedule.events) {
       const event = applet.schedule.events[eventId];
 
-      if (event.data.title === activityFlow.name) {
+      if (event.data.activity_flow_id === activityFlowId) {
         const date = new Date();
         date.setHours(0); date.setMinutes(0); date.setSeconds(0);
 
-        const futureSchedule = Parse.schedule(event.schedule).forecast(
+        const eventSchedule = transformScheduleDatesFromUTC(event.schedule);
+
+        const futureSchedule = Parse.schedule(eventSchedule).forecast(
           Day.fromDate(date),
           true,
           1,
@@ -1199,7 +1212,9 @@ export const parseAppletEvents = (applet) => {
           : value;
 
     } else {
-      const parsedSchedule = Parse.schedule(event.schedule);
+      const eventSchedule = transformScheduleDatesFromUTC(event.schedule); 
+
+      const parsedSchedule = Parse.schedule(eventSchedule);
       const futureSchedule = parsedSchedule.forecast(
         Day.fromDate(date),
         true,

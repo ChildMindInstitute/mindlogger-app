@@ -114,7 +114,7 @@ export const getActual = (activityList, finishedEvents) => {
 
       const { scheduledTime, data } = event;
 
-      const secondsPerDay = 864000;
+      const secondsPerDay = 86400;
       const secondsPerHour = 3600;
       const secondsPerMinute = 60;
 

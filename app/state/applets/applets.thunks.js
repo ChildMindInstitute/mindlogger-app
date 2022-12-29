@@ -25,7 +25,7 @@ import { prepareResponseKeys, addScheduleNotificationsReminder, clearScheduleNot
 import { debugScheduledNotifications } from '../../utils/debug-utils'
 
 import { downloadAppletsMedia, downloadAppletMedia } from '../media/media.thunks';
-import { activitiesSelector, allAppletsSelector } from './applets.selectors';
+import { activitiesSelector, allAppletsSelector, appletsSelector } from './applets.selectors';
 import {
   replaceTargetAppletSchedule,
   setDownloadingApplets,
@@ -97,7 +97,7 @@ export const setLocalNotifications = (trigger) => async (
 const setLocalNotificationsInternal = async (dispatch, getState, trigger) => {
   const state = getState();
 
-  const applets = allAppletsSelector(state);
+  const applets = appletsSelector(state);
 
   const { finishedTimes } = state.app;
 
