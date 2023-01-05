@@ -15,7 +15,7 @@ async function scheduleSystemIOSNotification(fireDate) {
     if (isAndroid) return;
 
     const localNotification = Scheduler.createLocalNotification({
-        title: 'MindLogger' + ": " + Date(fireDate).toString(),
+        title: 'MindLogger',
         body: 'Tap to update the schedule',
         notificationId: SYSTEM_RESCHEDULING_NOTIFICATION_ID,
         data: {
