@@ -86,6 +86,7 @@ class AppService extends Component {
       fNotifications.onNotificationOpened(this.onNotificationOpened),
       fMessaging.onTokenRefresh(this.onTokenRefresh),
       fMessaging.onMessage(this.onMessage),
+      NetInfo.addEventListener(this.handleNetworkChange)
     ];
     this.appState = "active";
     this.pendingNotification = null;
@@ -701,6 +702,12 @@ class AppService extends Component {
     return localNotification;
   };
 
+  handleNetworkChange = ({ isConnected }) => {
+    if (isConnected) {
+      this.props.syncUploadQueue();
+    }
+  }
+
   /**
    * Checks whether the application is in the background.
    *
@@ -799,29 +806,38 @@ const mapStateToProps = (state) => ({
   finishedTimes: finishedTimesSelector(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setFCMToken: async (token) => {
-    dispatch(setFcmToken(token));
+const mapDispatchToProps = (dispatch) => {
+  const debouncedSyncUploadQueue = _.debounce(() => {
+    dispatch(syncUploadQueue())
+  }, 500);
 
-    if (canSupportNotifications) {
-      await userInfoStorage.setFCMToken(token);
-    }
-    setDefaultApiHost();
-  },
-  setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
-  setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
-  startResponse: (activity) => dispatch(startResponse(activity)),
-  updateBadgeNumber: (badgeNumber) => dispatch(updateBadgeNumber(badgeNumber)),
-  downloadApplets: (cb, keys, trigger) => dispatch(downloadApplets(cb, keys, trigger)),
-  sync: (cb) => dispatch(sync(cb)),
-  syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
-  showToast: (toast) => dispatch(showToast(toast)),
-  setLastActiveTime: (time) => dispatch(setLastActiveTime(time)),
-  refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
-  setCurrentActivity: (activityId) => dispatch(setCurrentActivity(activityId)),
-  syncUploadQueue: () => dispatch(syncUploadQueue()),
-  setLocalNotifications: (trigger) => dispatch(setLocalNotifications(trigger)),
-});
+  return {
+    setFCMToken: async (token) => {
+      dispatch(setFcmToken(token));
+  
+      if (canSupportNotifications) {
+        await userInfoStorage.setFCMToken(token);
+      }
+      setDefaultApiHost();
+    },
+    setAppStatus: (appStatus) => dispatch(setAppStatus(appStatus)),
+    setCurrentApplet: (id) => dispatch(setCurrentApplet(id)),
+    startResponse: (activity) => dispatch(startResponse(activity)),
+    updateBadgeNumber: (badgeNumber) => dispatch(updateBadgeNumber(badgeNumber)),
+    downloadApplets: (cb, keys, trigger) => dispatch(downloadApplets(cb, keys, trigger)),
+    sync: (cb) => dispatch(sync(cb)),
+    syncTargetApplet: (appletId, cb) => dispatch(syncTargetApplet(appletId, cb)),
+    showToast: (toast) => dispatch(showToast(toast)),
+    setLastActiveTime: (time) => dispatch(setLastActiveTime(time)),
+    refreshTokenBehaviors: () => dispatch(refreshTokenBehaviors()),
+    setCurrentActivity: (activityId) => dispatch(setCurrentActivity(activityId)),
+    syncUploadQueue: () => {
+      debouncedSyncUploadQueue.cancel();
+      debouncedSyncUploadQueue();
+    },
+    setLocalNotifications: (trigger) => dispatch(setLocalNotifications(trigger)),
+  }
+};
 
 export default connect(
   mapStateToProps,

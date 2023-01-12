@@ -1,6 +1,6 @@
 {
   "name": "MindLogger",
-  "version": "0.21.79",
+  "version": "0.21.80",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -30,7 +30,7 @@
     "@react-native-community/audio-toolkit": "^2.0.2",
     "@react-native-community/datetimepicker": "^2.2.3",
     "@react-native-community/geolocation": "^2.0.2",
-    "@react-native-community/netinfo": "^9.3.7",
+    "@react-native-community/netinfo": "7.1.12",
     "@react-native-community/push-notification-ios": "1.8.0",
     "@react-native-community/slider": "^2.0.8",
     "@sentry/react-native": "^2.2.2",
