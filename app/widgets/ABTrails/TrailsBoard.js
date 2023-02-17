@@ -420,6 +420,14 @@ export default class TrailsBoard extends Component {
       itemColor = trailsData.colors.passed;
     }
 
+    if (errorPoints.length) {
+      const isLastPassedPoint = errorPoints.find(errorPoint => (
+        errorPoint.start === item.label
+      ))
+
+      itemColor = isLastPassedPoint ? trailsData.colors.passed : itemColor;
+    }
+
     return (
       <>
         <Circle
