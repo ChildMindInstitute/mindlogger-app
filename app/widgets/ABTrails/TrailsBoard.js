@@ -197,6 +197,17 @@ export default class TrailsBoard extends Component {
           point.valid = false;
           point.actual = item && item.label || 'none';
         }
+
+        // Add an error point object when the user stops drawing in the middle of the board
+        // but not at a point.
+        if (!item) {
+          this.setState({ errorPoints: [...this.state.errorPoints, point] });
+
+          // Remove the error point object in 1 second.
+          setTimeout(() => {    
+            this.setState({ errorPoints: this.state.errorPoints.filter(x => x != point) });
+          }, 1000);
+        }
       });
 
       // pop stack
