@@ -87,6 +87,10 @@ export const shiftUploadQueue = () => ({
   type: RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE,
 });
 
+export const swapUploadQueue = () => ({
+  type: RESPONSES_CONSTANTS.SWAP_UPLOAD_QUEUE,
+});
+
 export const setCurrentScreen = (activityId, screenIndex, startTime) => ({
   type: RESPONSES_CONSTANTS.SET_CURRENT_SCREEN,
   payload: {

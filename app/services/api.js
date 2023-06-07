@@ -188,33 +188,25 @@ const uploadResponse = (authToken, response) =>
       cleanFiles(responses);
     });
 
-export const uploadResponseQueue = (
+export const uploadResponseQueue = async (
   authToken,
-  responseQueue,
-  progressCallback,
-  uploaderId,
-  getUploaderId
+  getQueue, 
+  shiftQueue, 
+  swapQueue
 ) => {
-  const queue = [...responseQueue];
+  let queue = getQueue();
+  const length = queue.length;
 
-  let hasNewProcess = false;
-
-  return queue.reduce(
-    (prev, response, index) => {
-      return prev
-        .then(() => new Promise(resolve => {
-          if (hasNewProcess || index && uploaderId != getUploaderId()) {
-            hasNewProcess = true;
-            resolve();
-          } else {
-            progressCallback();
-
-            uploadResponse(authToken, response).finally(() => {
-              resolve();
-            });
-          }
-        }))
-    },
-    Promise.resolve()
-  )
+  for (let i = 0; i < length; i++) {
+    const response = queue[0];
+    try {
+      await uploadResponse(authToken, response);
+      shiftQueue();
+    } catch (error) {
+      console.warn('[uploadResponseQueue]: Upload error occurred', error);
+      swapQueue();
+    } finally {
+      queue = getQueue();
+    } 
+  }
 };
