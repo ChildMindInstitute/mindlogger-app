@@ -81,8 +81,6 @@ import { getActivitiesOfFlow } from "../../services/activityFlow";
 import { setLocalNotifications } from "../applets/applets.thunks";
 //import { getMutex } from "../../features/notifications";
 
-//export const QueueUploadMutex = getMutex();
-
 export const getMutex = () => {
   const mutex = {
     busy: false,
@@ -98,6 +96,8 @@ export const getMutex = () => {
   };
   return mutex;
 };
+
+export const QueueUploadMutex = getMutex();
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
