@@ -109,7 +109,7 @@ const prepareFile = (file) => {
     .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
 };
 
-const uploadFiles = (authToken, response, item) => {
+const uploadFiles = (authToken, response, itemId) => {
   const answers = R.pathOr([], ["responses"], response);
   const appletId = response.applet.id;
   const activityId = response.activity.id;
@@ -158,7 +158,7 @@ const uploadFiles = (authToken, response, item) => {
         authToken,
         file,
         parentType: 'item',
-        parentId: item._id,
+        parentId: itemId,
         appletId,
         activityId,
         appletVersion: response.applet.schemaVersion
@@ -177,16 +177,20 @@ const uploadFiles = (authToken, response, item) => {
   return Promise.all(uploadRequests);
 };
 
-const uploadResponse = (authToken, response) =>
-  postResponse({
+const uploadAnswers = (authToken, response) => {
+  return postResponse({
     authToken,
     response,
-  })
-    .then((item) => uploadFiles(authToken, response, item))
+  });
+}
+
+const uploadFile = (authToken, response, itemId) => {
+  return uploadFiles(authToken, response, itemId)
     .then(() => {
       const responses = R.pathOr([], ["payload", "responses"], response);
       cleanFiles(responses);
-    });
+    })
+}
 
 export const uploadResponseQueue = async (
   authToken,
@@ -199,14 +203,24 @@ export const uploadResponseQueue = async (
 
   for (let i = 0; i < length; i++) {
     const response = queue[0];
+    
+    let itemId = response.uploadedItemId;
+    const answersUploaded = !!itemId;
+    
     try {
-      await uploadResponse(authToken, response);
+      if (!answersUploaded) {
+        const item = await uploadAnswers(authToken, response);
+        itemId  = item._id;
+      }
+      
+      await uploadFile(authToken, response, itemId);
+
       shiftQueue();
     } catch (error) {
       console.warn('[uploadResponseQueue]: Upload error occurred', error);
-      swapQueue();
+      swapQueue(itemId);
     } finally {
       queue = getQueue();
     } 
-  }
+  } 
 };

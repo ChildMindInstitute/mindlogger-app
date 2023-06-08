@@ -219,6 +219,9 @@ export default (state = initialState, action = {}) => {
       };
       
       const first = state.uploadQueue[0];
+      
+      first.uploadedItemId = action.payload;
+      
       const array = [...state.uploadQueue];
       const swappedArray = [...array.slice(1), first]
 

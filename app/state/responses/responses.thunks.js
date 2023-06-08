@@ -415,7 +415,7 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
 
   const shiftQueue = () => dispatch(shiftUploadQueue());
 
-  const swapQueue = () => dispatch(swapUploadQueue());
+  const swapQueue = (uploadedItemId) => dispatch(swapUploadQueue(uploadedItemId));
 
   const getQueue = () => {
     const currentState = getState();
