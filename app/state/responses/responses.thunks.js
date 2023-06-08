@@ -49,6 +49,7 @@ import {
   replaceAppletResponses,
   setActivityOpened,
   setAnswer,
+  swapUploadQueue,
 } from "./responses.actions";
 import {
   setActivityStartTime,
@@ -78,6 +79,9 @@ import config from "../../config";
 import { sync } from "../app/app.thunks";
 import { getActivitiesOfFlow } from "../../services/activityFlow";
 import { setLocalNotifications } from "../applets/applets.thunks";
+import { getMutex } from "../../features/notifications";
+
+export const QueueUploadMutex = getMutex();
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
@@ -379,7 +383,7 @@ export const downloadAppletResponses = (applet) => (dispatch, getState) => {
   });
 };
 
-export const startUploadQueue = (activityId) => (dispatch, getState) => {
+export const startUploadQueue = (activityId) => async (dispatch, getState) => {
   const state = getState();
   const uploadQueue = uploadQueueSelector(state);
   const authToken = authTokenSelector(state);
@@ -390,47 +394,60 @@ export const startUploadQueue = (activityId) => (dispatch, getState) => {
     return Promise.resolve();
   }
 
-  const uploaderId = Date.now();
-
-  dispatch(setUploaderId(uploaderId));
-
-  const getUploaderId = () => {
-    const state = getState();
-    return uploaderIdSelector(state);
+  const keepResponseTime = () => {
+    dispatch(setLastResponseTime({
+      ...lastResponseTime, 
+      [applet.id]: {
+        ...lastResponseTime[applet.id], 
+        [activityId]: new Date().toISOString() 
+      }
+    }));
   }
+  
+  const connectionState = await NetInfo.fetch();
 
-  if (!state.app.isConnected) {
+  if (!connectionState.isConnected) {
     if (activityId) {
-      dispatch(setLastResponseTime({ ...lastResponseTime, [applet.id]: { ...lastResponseTime[applet.id], [activityId]: new Date().toISOString() } }));
+      keepResponseTime();
     }
-
-    return Promise.resolve();
+    return;
   }
 
-  return uploadResponseQueue(authToken, uploadQueue, () => {
-    // Progress - response is being processed
-    dispatch(shiftUploadQueue());
-  }, uploaderId, getUploaderId).finally(() => {
-    if (getUploaderId() != uploaderId) {
-      return;
-    }
+  const shiftQueue = () => dispatch(shiftUploadQueue());
 
-    try {
-      NetInfo.fetch().then(state => {
-        if (!state.isConnected && activityId) {
-          dispatch(setLastResponseTime({ ...lastResponseTime, [applet.id]: { ...lastResponseTime[applet.id], [activityId]: new Date().toISOString() } }));
-        }
-      });
-    } catch (error) {
-      console.warn(error);
-    }
+  const swapQueue = (uploadedItemId) => dispatch(swapUploadQueue(uploadedItemId));
+
+  const getQueue = () => {
+    const currentState = getState();
+    return uploadQueueSelector(currentState);
+  }
+
+  const postProcessQueueUpload = () => {
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected && activityId) {
+        keepResponseTime();
+      }
+    });
 
     if (applet) {
       return dispatch(downloadResponse());
     }
 
     return dispatch(sync());
-  });
+  }
+
+  if (QueueUploadMutex.isBusy()) {
+    return Promise.resolve();
+  }
+
+  QueueUploadMutex.setBusy();
+
+  return uploadResponseQueue(authToken, getQueue, shiftQueue, swapQueue)
+    .finally(postProcessQueueUpload)
+    .finally(() => {
+      QueueUploadMutex.release();
+      return Promise.resolve();
+    });
 };
 
 export const refreshTokenBehaviors = () => (dispatch, getState) => {

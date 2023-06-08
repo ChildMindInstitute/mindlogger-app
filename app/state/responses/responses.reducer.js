@@ -211,6 +211,25 @@ export default (state = initialState, action = {}) => {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
+    case RESPONSES_CONSTANTS.SWAP_UPLOAD_QUEUE: {
+      if (!state.uploadQueue.length) {
+        return {
+          ...state
+        };
+      };
+      
+      const first = state.uploadQueue[0];
+      
+      first.uploadedItemId = action.payload;
+      
+      const array = [...state.uploadQueue];
+      const swappedArray = [...array.slice(1), first]
+
+      return {
+        ...state,
+        uploadQueue: swappedArray,
+      };
+    }
     case RESPONSES_CONSTANTS.SET_LAST_RESPONSE_TIME:
       return {
         ...state,

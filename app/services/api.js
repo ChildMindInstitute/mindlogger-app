@@ -109,7 +109,7 @@ const prepareFile = (file) => {
     .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
 };
 
-const uploadFiles = (authToken, response, item) => {
+const uploadFiles = (authToken, response, itemId) => {
   const answers = R.pathOr([], ["responses"], response);
   const appletId = response.applet.id;
   const activityId = response.activity.id;
@@ -158,7 +158,7 @@ const uploadFiles = (authToken, response, item) => {
         authToken,
         file,
         parentType: 'item',
-        parentId: item._id,
+        parentId: itemId,
         appletId,
         activityId,
         appletVersion: response.applet.schemaVersion
@@ -177,44 +177,50 @@ const uploadFiles = (authToken, response, item) => {
   return Promise.all(uploadRequests);
 };
 
-const uploadResponse = (authToken, response) =>
-  postResponse({
+const uploadAnswers = (authToken, response) => {
+  return postResponse({
     authToken,
     response,
-  })
-    .then((item) => uploadFiles(authToken, response, item))
+  });
+}
+
+const uploadFile = (authToken, response, itemId) => {
+  return uploadFiles(authToken, response, itemId)
     .then(() => {
       const responses = R.pathOr([], ["payload", "responses"], response);
       cleanFiles(responses);
-    });
+    })
+}
 
-export const uploadResponseQueue = (
+export const uploadResponseQueue = async (
   authToken,
-  responseQueue,
-  progressCallback,
-  uploaderId,
-  getUploaderId
+  getQueue, 
+  shiftQueue, 
+  swapQueue
 ) => {
-  const queue = [...responseQueue];
+  let queue = getQueue();
+  const length = queue.length;
 
-  let hasNewProcess = false;
+  for (let i = 0; i < length; i++) {
+    const response = queue[0];
+    
+    let itemId = response.uploadedItemId;
+    const answersUploaded = !!itemId;
+    
+    try {
+      if (!answersUploaded) {
+        const item = await uploadAnswers(authToken, response);
+        itemId  = item._id;
+      }
+      
+      await uploadFile(authToken, response, itemId);
 
-  return queue.reduce(
-    (prev, response, index) => {
-      return prev
-        .then(() => new Promise(resolve => {
-          if (hasNewProcess || index && uploaderId != getUploaderId()) {
-            hasNewProcess = true;
-            resolve();
-          } else {
-            progressCallback();
-
-            uploadResponse(authToken, response).finally(() => {
-              resolve();
-            });
-          }
-        }))
-    },
-    Promise.resolve()
-  )
+      shiftQueue();
+    } catch (error) {
+      console.warn('[uploadResponseQueue]: Upload error occurred', error);
+      swapQueue(itemId);
+    } finally {
+      queue = getQueue();
+    } 
+  } 
 };
