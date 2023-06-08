@@ -79,9 +79,25 @@ import config from "../../config";
 import { sync } from "../app/app.thunks";
 import { getActivitiesOfFlow } from "../../services/activityFlow";
 import { setLocalNotifications } from "../applets/applets.thunks";
-import { getMutex } from "../../features/notifications";
+//import { getMutex } from "../../features/notifications";
 
-export const QueueUploadMutex = getMutex();
+//export const QueueUploadMutex = getMutex();
+
+export const getMutex = () => {
+  const mutex = {
+    busy: false,
+    setBusy: function() {
+      this.busy = true;
+    },
+    release: function() {
+      this.busy = false;
+    },
+    isBusy: function() {
+      return this.busy;
+    },
+  };
+  return mutex;
+};
 
 export const updateKeys = (applet, userInfo) => (dispatch) => {
   if (!applet.encryption) return;
