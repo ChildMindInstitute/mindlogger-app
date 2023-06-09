@@ -167,7 +167,6 @@
     "jest": "^25.1.0",
     "jetifier": "^1.6.5",
     "metro-react-native-babel-preset": "^0.58.0",
-    "react-devtools": "^3.6.3",
     "react-test-renderer": "16.9.0",
     "rn-nodeify": "github:tradle/rn-nodeify",
     "schedule": "0.4.0"
