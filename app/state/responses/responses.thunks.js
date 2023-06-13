@@ -49,7 +49,7 @@ import {
   replaceAppletResponses,
   setActivityOpened,
   setAnswer,
-  swapUploadQueue,
+  incrementUploadQueueAttempts,
 } from "./responses.actions";
 import {
   setActivityStartTime,
@@ -415,7 +415,7 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
 
   const shiftQueue = () => dispatch(shiftUploadQueue());
 
-  const swapQueue = (uploadedItemId) => dispatch(swapUploadQueue(uploadedItemId));
+  const incrementUploadAttempts = () => dispatch(incrementUploadQueueAttempts());
 
   const getQueue = () => {
     const currentState = getState();
@@ -442,7 +442,7 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
 
   QueueUploadMutex.setBusy();
 
-  return uploadResponseQueue(authToken, getQueue, shiftQueue, swapQueue)
+  return uploadResponseQueue(authToken, getQueue, shiftQueue, incrementUploadAttempts)
     .finally(postProcessQueueUpload)
     .finally(() => {
       QueueUploadMutex.release();

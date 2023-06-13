@@ -73,7 +73,7 @@ export const postFile = async ({ authToken, file, appletId, activityId, appletVe
     const form = new FormData();
 
     form.append(file.key, {
-      name: file.filename,
+      name: file.fileId,
       type: file.type,
       uri: Platform.OS === 'ios' ?
            file.uri.replace('file://', '')
@@ -98,11 +98,11 @@ export const postFile = async ({ authToken, file, appletId, activityId, appletVe
     files: [
       {
         name: file.key,
-        filename: file.filename,
+        filename: file.fileId,
         filepath: Platform.OS === 'ios' ?
           file.uri.replace('file://', '')
           : file.uri,
-        filetype: file.type
+        filetype: file.type,
       }
     ],
     method: 'POST',
@@ -114,6 +114,26 @@ export const postFile = async ({ authToken, file, appletId, activityId, appletVe
       Promise.reject(err);
       console.log(err)
     })
+};
+
+export const checkIfResponseExists = async (
+  appletId,
+  authToken,
+  activityId,
+  activityStartedAt
+) => {
+  const response = await get(`response/${appletId}/checkResponseExists`, authToken, {
+    activity: activityId,
+    activityStartedAt,
+  });
+  return response.exists;
+};
+
+export const checkIfFilesExist = (appletId, authToken, fileIds) => {
+  const identifiers = Array.isArray(fileIds) ? fileIds.join(",") : fileIds;
+  return get(`response/${appletId}/checkFileUploaded`, authToken, {
+    fileIds: identifiers,
+  });
 };
 
 export const getSkin = () => get("context/skin", null, null);

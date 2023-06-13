@@ -1,15 +1,14 @@
 import * as R from "ramda";
 import RNFetchBlob from "rn-fetch-blob";
-import randomString from "random-string";
 import {
-  // getResponses,
   getLast7DaysData,
   postResponse,
   postFile,
-  downloadTokenResponses
+  downloadTokenResponses,
+  checkIfFilesExist,
+  checkIfResponseExists
 } from "./network";
 import { getData } from "./storage";
-import { cleanFiles } from "./file";
 import { transformResponses, decryptAppletResponses } from "../models/response";
 import { decryptData } from "./encryption";
 
@@ -95,132 +94,290 @@ export const downloadAllResponses = async (authToken, applets, onProgress) => {
 };
 
 const prepareFile = (file) => {
-  if (file.svgString && file.uri) {
-    return RNFetchBlob.fs.writeFile(file.uri, file.svgString)
-      .then((result) => {
-        return Promise.resolve(file);
-      }).then(file => RNFetchBlob.fs.stat(file.uri))
-      .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
-  }
   if (file.size) {
     return Promise.resolve(file);
   }
-  return RNFetchBlob.fs.stat(file.uri)
-    .then(fileInfo => Promise.resolve({ ...file, size: fileInfo.size }));
+
+  if (file.svgString && file.uri) {
+    return RNFetchBlob.fs
+      .writeFile(file.uri, file.svgString)
+      .then(() => {
+        return Promise.resolve(file);
+      })
+      .then((file) => RNFetchBlob.fs.stat(file.uri))
+      .then((fileInfo) => Promise.resolve({ ...file, size: fileInfo.size }));
+  }
+
+  return RNFetchBlob.fs
+    .stat(file.uri)
+    .then((fileInfo) => Promise.resolve({ ...file, size: fileInfo.size }));
 };
 
-const uploadFiles = (authToken, response, itemId) => {
-  const answers = R.pathOr([], ["responses"], response);
-  const appletId = response.applet.id;
-  const activityId = response.activity.id;
-
-  // Each "response" has number of "answers", each of which may have a file
-  // associated with it
-  const uploadRequests = Object.keys(answers).reduce((accumulator, key) => {
+const buildFileDescriptions = (answers, responseStartedAt) => {
+  return Object.keys(answers).reduce((accumulator, activityWithItemIds) => {
+    const key = activityWithItemIds;
     const answer = answers[key];
+    const fileId = `${key.split("/").pop()}_${responseStartedAt}`;
 
-    // Surveys with a "uri" value and canvas with a "uri" will have files to upload
     let file;
-    if (R.path(["survey", "uri"], answer)) {
+    if (answer?.survey?.uri) {
       file = {
-        key,
         uri: answer.survey.uri,
         filename: answer.survey.filename,
         type: "image/png",
       };
-    } else if (R.path(["canvas", "uri"], answer)) {
+    } else if (answer?.canvas?.uri) {
       file = {
-        key,
         uri: answer.canvas.uri,
         filename: answer.canvas.filename,
         type: "image/jpg",
       };
     } else if (answer && answer.uri && answer.filename) {
-      file = {
-        key,
-        ...answer
-      };
+      file = { ...answer };
     } else if (answer && answer.lines && answer.svgString) {
-      const filename = `${randomString({ length: 20 })}.svg`;
       file = {
-        key,
         svgString: answer.svgString,
-        filename,
-        type: 'image/svg',
-        uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${filename}`,
+        filename: `${fileId}.svg`,
+        type: "image/svg",
+        uri: `${RNFetchBlob.fs.dirs.DocumentDir}/${fileId}`,
       };
-    } else {
-      return accumulator; // Break early
     }
 
-    const request = prepareFile(file)
-      .then(file => postFile({
-        authToken,
-        file,
-        parentType: 'item',
-        parentId: itemId,
-        appletId,
-        activityId,
-        appletVersion: response.applet.schemaVersion
-      }))
-      .then((res) => {
-        try {
-          /** delete file from local storage after uploading */
-          RNFetchBlob.fs.unlink(file.uri.split("///").pop());
-        } catch (error) { }
-      }).catch((err) => {
-        console.log('uploadFiles error', err.message, err);
-      });
+    if (file) {
+      file.fileId = `${key.split("/").pop()}_${responseStartedAt}`;
+      file.key = key;
+      accumulator.push(file);
+    }
 
-    return [...accumulator, request];
+    return accumulator;
   }, []);
-  return Promise.all(uploadRequests);
 };
 
-const uploadAnswers = (authToken, response) => {
-  return postResponse({
-    authToken,
-    response,
-  });
-}
+const uploadFileWithExistenceCheck = async ({
+  file,
+  checkResults,
+  authToken,
+  appletId,
+  activityId,
+  appletVersion,
+}) => {
+  const successResult = { uploaded: true, fileId: file.fileId };
+  const errorResult = { uploaded: false, fileId: file.fileId };
 
-const uploadFile = (authToken, response, itemId) => {
-  return uploadFiles(authToken, response, itemId)
-    .then(() => {
-      const responses = R.pathOr([], ["payload", "responses"], response);
-      cleanFiles(responses);
-    })
-}
+  const checkResult = checkResults.find((x) => x.fileId === file.fileId);
+
+  if (!checkResult) {
+    console.warn("[uploadFileWithExistenceCheck]: checkResult not found")
+    return errorResult;
+  }
+
+  if (checkResult.exists) {
+    return successResult;
+  }
+
+  try {
+    const preparedFile = await prepareFile(file);
+
+    await postFile({
+      authToken,
+      file: preparedFile,
+      appletId,
+      activityId,
+      appletVersion,
+    });
+
+    return successResult;
+  } catch (error) {
+    console.warn(
+      "[uploadFileWithExistenceCheck.prepareFile|postFile]: File prepare or upload error occurred.\n\n",
+      error
+    );
+    return errorResult;
+  }
+};
+
+const uploadFiles = async (authToken, response) => {
+  let fileDescriptions = null;
+
+  try {
+    fileDescriptions = await buildFileDescriptions(
+      response?.responses ?? [],
+      response.responseStarted
+    );
+  } catch (error) {
+    console.warn(
+      "[uploadFiles.buildFileDescriptions]: Error occurred while build file descriptions\n\n",
+      error
+    );
+    return false;
+  }
+
+  if (!fileDescriptions.length) {
+    return true;
+  }
+
+  const appletId = response.applet.id;
+  const activityId = response.activity.id;
+
+  let checkResults;
+
+  try {
+    checkResults = await checkIfFilesExist(
+      appletId,
+      authToken,
+      fileDescriptions.map((x) => x.fileId)
+    );
+  } catch (error) {
+    console.warn(
+      "[uploadFiles.checkIfFilesExist]: Error occurred while 1nd check if files uploaded\n\n",
+      error
+    );
+    return false;
+  }
+
+  const uploadingFiles = fileDescriptions.map(async (file) => {
+    await uploadFileWithExistenceCheck({
+      activityId,
+      appletId,
+      authToken,
+      checkResults,
+      file,
+      appletVersion: response.applet.schemaVersion,
+    });
+  });
+
+  await Promise.all(uploadingFiles);
+
+  try {
+    checkResults = await checkIfFilesExist(
+      appletId,
+      authToken,
+      fileDescriptions.map((x) => x.fileId)
+    );
+  } catch (error) {
+    console.warn(
+      "[uploadFiles.checkIfFilesExist]: Error occurred while 2nd check if files uploaded\n\n",
+      error
+    );
+    return false;
+  }
+
+  if (checkResults.length !== fileDescriptions.length) {
+    console.warn("[uploadFiles]: Some check results weren't received from server")
+    return false;
+  }
+
+  for (let checkResult of checkResults) {
+    const { fileId, exists } = checkResult;
+    const file = fileDescriptions.find((x) => x.fileId === fileId);
+
+    if (exists) {
+      try {
+        await RNFetchBlob.fs.unlink(file.uri.split("///").pop());
+      } catch (error) {
+        console.warn(
+          "[uploadFiles.RNFetchBlob.fs.unlink]: File clean up error\n\n",
+          error
+        );
+      }
+    }
+  }
+
+  return checkResults.every((x) => x.exists);
+};
+
+const uploadAnswers = async (authToken, response) => {
+  const { responseStarted, activity, applet } = response;
+
+  let responseExist;
+
+  try {
+    responseExist = await checkIfResponseExists(
+      applet.id,
+      authToken,
+      activity.id,
+      responseStarted
+    );
+    if (responseExist === undefined) {
+      throw new Error('[uploadAnswers]: responseExist is undefined');
+    }
+  } catch (error) {
+    console.warn(
+      "[uploadAnswers]: Error occurred while 1st check if response exists",
+      error
+    );
+    return false;
+  }
+
+  if (responseExist) {
+    return true;
+  }
+
+  try {
+    await postResponse({
+      authToken,
+      response,
+    });
+  } catch (error) {
+    console.warn("[postResponse]: Error occurred while response upload");
+  }
+
+  try {
+    responseExist = await checkIfResponseExists(
+      applet.id,
+      authToken,
+      activity.id,
+      responseStarted
+    );
+    if (responseExist === undefined) {
+      throw new Error('[uploadAnswers]: responseExist is undefined');
+    }
+    return responseExist;
+  } catch (error) {
+    console.warn(
+      "[uploadAnswers]: Error occurred while 2nd check if response exists",
+      error
+    );
+    return false;
+  }
+}; 
 
 export const uploadResponseQueue = async (
   authToken,
-  getQueue, 
-  shiftQueue, 
-  swapQueue
+  getQueue,
+  shiftQueue,
+  incrementUploadAttempts
 ) => {
   let queue = getQueue();
   const length = queue.length;
 
   for (let i = 0; i < length; i++) {
     const response = queue[0];
-    
-    let itemId = response.uploadedItemId;
-    const answersUploaded = !!itemId;
-    
+
     try {
-      if (!answersUploaded) {
-        const item = await uploadAnswers(authToken, response);
-        itemId  = item._id;
-      }
+      const answersUploaded = await uploadAnswers(authToken, response);
       
-      await uploadFile(authToken, response, itemId);
+      if (!answersUploaded) {
+        incrementUploadAttempts();
+        return;
+      }
+
+      const filesUploaded = await uploadFiles(
+        authToken,
+        response,
+      );
+      
+      if (!filesUploaded) {
+        incrementUploadAttempts();
+        return;
+      }
 
       shiftQueue();
     } catch (error) {
-      console.warn('[uploadResponseQueue]: Upload error occurred', error);
-      swapQueue(itemId);
+      console.warn("[uploadResponseQueue]: Upload error occurred", error);
+      incrementUploadAttempts();
     } finally {
       queue = getQueue();
-    } 
-  } 
+    }
+  }
 };
