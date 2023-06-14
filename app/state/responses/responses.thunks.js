@@ -538,7 +538,10 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   })
 }
 
-export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch, getState) => {
+export const completeResponse = (isTimeout = false, isFlow = false) => (
+  dispatch,
+  getState
+) => {
   const state = getState();
   const subjectId = R.path(["info", "_id"], state.user);
   const authToken = authTokenSelector(state);
@@ -550,15 +553,16 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
   let activity = currentActivitySelector(state);
 
   if (!activity) {
-    const currentActName = inProgressResponse.activity.order[currentActOrderIndex];
-    activity = applet.activities.find(act => act.name.en === currentActName);
+    const currentActName =
+      inProgressResponse.activity.order[currentActOrderIndex];
+    activity = applet.activities.find((act) => act.name.en === currentActName);
     inProgressResponse.activity = {
       ...inProgressResponse.activity,
       ...activity,
       activityFlowId: inProgressResponse.activity.id,
       activityFlowOrder: inProgressResponse.activity.order,
-      events: inProgressResponse.activity.events
-    }
+      events: inProgressResponse.activity.events,
+    };
   }
 
   if ((!applet.AESKey || !applet.userPublicKey) && config.encryptResponse) {
@@ -571,27 +575,32 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
 
   if (activity.isPrize === true) {
     const selectedPrizeIndex = inProgressResponse["responses"][0];
-    const selectedPrize = activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
+    const selectedPrize =
+      activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
 
     const updates = getTokenUpdateInfo(
       -selectedPrize.price,
       responseHistory[i].token,
-      applet,
+      applet
     );
 
     uploader = updateUserTokenBalance(
       authToken,
-      applet.id.split('/').pop(),
+      applet.id.split("/").pop(),
       updates.cumulative,
       updates.changes,
       applet.schemaVersion.en,
       updates.userPublicKey || null
     ).then(() => {
-      return dispatch(downloadResponses())
-    })
+      return dispatch(downloadResponses());
+    });
   } else {
     const preparedResponse = prepareResponseForUpload(
-      inProgressResponse, applet, responseHistory, isTimeout, finishedTime
+      inProgressResponse,
+      applet,
+      responseHistory,
+      isTimeout,
+      finishedTime
     );
 
     dispatch(addToUploadQueue(preparedResponse));
@@ -599,58 +608,82 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
   }
 
   if (event) {
-    dispatch(setClosedEvents({
-      [event]: finishedTime.getTime()
-    }))
+    dispatch(
+      setClosedEvents({
+        [event]: finishedTime.getTime(),
+      })
+    );
   }
 
   uploader.finally(() => {
     const activity = {
-      ...inProgressResponse.activity
+      ...inProgressResponse.activity,
     };
 
     if (activity.activityFlowId) {
       const flowId = activity.activityFlowId;
 
       dispatch(
-        removeResponseInProgress(activity.event ? flowId + activity.event.id : flowId)
+        removeResponseInProgress(
+          activity.event ? flowId + activity.event.id : flowId
+        )
       );
 
       if (!activity.combineReports) {
         sendPDFExport(
           authToken,
           applet,
-          applet.activities.filter(act => act.id == activity.id),
+          applet.activities.filter((act) => act.id == activity.id),
           currentAppletResponsesSelector(getState()),
           activity.id,
-          '',
+          ""
         );
       } else if (!isFlow) {
         sendPDFExport(
           authToken,
           applet,
-          applet.activities.filter(act => activity.activityFlowOrder.includes(act.name.en)),
+          applet.activities.filter((act) =>
+            activity.activityFlowOrder.includes(act.name.en)
+          ),
           currentAppletResponsesSelector(getState()),
           activity.id,
-          flowId,
+          flowId
         );
       }
 
       if (isFlow) {
-        const nextOrderIndex = ((orderIndex[flowId] || 0) + 1) % activity.activityFlowOrder.length;
+        const nextOrderIndex =
+          ((orderIndex[flowId] || 0) + 1) % activity.activityFlowOrder.length;
         const currentActName = activity.activityFlowOrder[nextOrderIndex];
-        const nextActivity = applet.activities.find(act => act.name.en === currentActName);
-        const currentFlow = applet.activityFlows.find(flow => flow.id == flowId);
-        const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(state, currentFlow, nextActivity);
+        const nextActivity = applet.activities.find(
+          (act) => act.name.en === currentActName
+        );
+        const currentFlow = applet.activityFlows.find(
+          (flow) => flow.id == flowId
+        );
+        const flowHasSplashScreen = evaluateIfActivityInFlowHasSplashScreen(
+          state,
+          currentFlow,
+          nextActivity
+        );
 
         dispatch(
-          createResponseInProgress(applet.id, { ...currentFlow, event: activity.event }, subjectId, Date.now(), nextActivity.items, flowHasSplashScreen)
+          createResponseInProgress(
+            applet.id,
+            { ...currentFlow, event: activity.event },
+            subjectId,
+            Date.now(),
+            nextActivity.items,
+            flowHasSplashScreen
+          )
         );
         Actions.replace("take_act");
       }
     } else {
       dispatch(
-        removeResponseInProgress(activity.event ? activity.id + activity.event.id : activity.id)
+        removeResponseInProgress(
+          activity.event ? activity.id + activity.event.id : activity.id
+        )
       );
 
       if (activity.allowExport) {
@@ -659,11 +692,11 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (dispatch
           applet,
           [activity],
           currentAppletResponsesSelector(getState()),
-          activity.id,
+          activity.id
         );
       }
     }
-  })
+  });
 };
 
 export const nextActivity = (isNext = false) => (dispatch, getState) => {
