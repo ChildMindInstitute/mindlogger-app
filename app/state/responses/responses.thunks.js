@@ -391,19 +391,21 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
   const lastResponseTime = lastResponseTimeSelector(state);
 
   if (!uploadQueue.length) {
-    return Promise.resolve();
+    return;
   }
 
   const keepResponseTime = () => {
-    dispatch(setLastResponseTime({
-      ...lastResponseTime, 
-      [applet.id]: {
-        ...lastResponseTime[applet.id], 
-        [activityId]: new Date().toISOString() 
-      }
-    }));
-  }
-  
+    dispatch(
+      setLastResponseTime({
+        ...lastResponseTime,
+        [applet.id]: {
+          ...lastResponseTime[applet.id],
+          [activityId]: new Date().toISOString(),
+        },
+      })
+    );
+  };
+
   const connectionState = await NetInfo.fetch();
 
   if (!connectionState.isConnected) {
@@ -415,15 +417,16 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
 
   const shiftQueue = () => dispatch(shiftUploadQueue());
 
-  const incrementUploadAttempts = () => dispatch(incrementUploadQueueAttempts());
+  const incrementUploadAttempts = () =>
+    dispatch(incrementUploadQueueAttempts());
 
   const getQueue = () => {
     const currentState = getState();
     return uploadQueueSelector(currentState);
-  }
+  };
 
   const postProcessQueueUpload = () => {
-    NetInfo.fetch().then(state => {
+    NetInfo.fetch().then((state) => {
       if (!state.isConnected && activityId) {
         keepResponseTime();
       }
@@ -434,20 +437,26 @@ export const startUploadQueue = (activityId) => async (dispatch, getState) => {
     }
 
     return dispatch(sync());
-  }
+  };
 
   if (QueueUploadMutex.isBusy()) {
-    return Promise.resolve();
+    return;
   }
 
   QueueUploadMutex.setBusy();
 
-  return uploadResponseQueue(authToken, getQueue, shiftQueue, incrementUploadAttempts)
+  return uploadResponseQueue(
+    authToken,
+    getQueue,
+    shiftQueue,
+    incrementUploadAttempts
+  )
+    .then((success) => ({ isUploadError: !success }))
     .finally(postProcessQueueUpload)
     .finally(() => {
       QueueUploadMutex.release();
-      return Promise.resolve();
-    });
+    })
+    .catch(() => ({ isUploadError: true }));
 };
 
 export const refreshTokenBehaviors = () => (dispatch, getState) => {
@@ -538,6 +547,30 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   })
 }
 
+const onUploadError = () => {
+  return new Promise((resolve) => {
+    Alert.alert(
+      i18n.t("Upload error"),
+      i18n.t("Upload error occurred. Would you like to retry?"),
+      [
+        {
+          text: i18n.t("Retry"),
+          onPress: () => {
+            resolve({ choose: "retry" });
+          },
+        },
+        {
+          text: i18n.t("Postpone"),
+          onPress: () => {
+            resolve({ choose: "postpone" });
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  });
+};
+
 export const completeResponse = (isTimeout = false, isFlow = false) => (
   dispatch,
   getState
@@ -574,6 +607,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (
   let uploader = Promise.resolve();
 
   if (activity.isPrize === true) {
+    // not supported
     const selectedPrizeIndex = inProgressResponse["responses"][0];
     const selectedPrize =
       activity.items[0].valueConstraints.itemList[selectedPrizeIndex];
@@ -615,7 +649,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (
     );
   }
 
-  uploader.finally(() => {
+  const onAfterUpload = () => {
     const activity = {
       ...inProgressResponse.activity,
     };
@@ -696,7 +730,39 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (
         );
       }
     }
-  });
+  };
+
+  uploader
+    .catch((error) => {
+      console.warn("[uploader.catch]", error);
+    })
+    .then(async (uploadResult) => {
+      if (!uploadResult?.isUploadError) {
+        onAfterUpload();
+        return;
+      }
+
+      while (true) {
+        const { choose } = await onUploadError();
+
+        if (choose === "postpone") {
+          onAfterUpload();
+          break;
+        }
+        
+        if (choose === "retry") {
+          const retryResult = await dispatch(
+            startUploadQueue()
+          ).catch((error) => {
+            console.warn("[uploader-retry.catch]", error);
+          });
+          if (!retryResult?.isUploadError) {
+            onAfterUpload();
+            break;
+          }
+        }
+      }
+    });
 };
 
 export const nextActivity = (isNext = false) => (dispatch, getState) => {

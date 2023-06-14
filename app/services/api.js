@@ -347,7 +347,7 @@ export const uploadResponseQueue = async (
   getQueue,
   shiftQueue,
   incrementUploadAttempts
-) => {
+) => {  
   let queue = getQueue();
   const length = queue.length;
 
@@ -359,7 +359,7 @@ export const uploadResponseQueue = async (
       
       if (!answersUploaded) {
         incrementUploadAttempts();
-        return;
+        return false;
       }
 
       const filesUploaded = await uploadFiles(
@@ -369,15 +369,18 @@ export const uploadResponseQueue = async (
       
       if (!filesUploaded) {
         incrementUploadAttempts();
-        return;
+        return false;
       }
 
       shiftQueue();
     } catch (error) {
       console.warn("[uploadResponseQueue]: Upload error occurred", error);
       incrementUploadAttempts();
+      return false;
     } finally {
       queue = getQueue();
     }
   }
+  
+  return true;
 };
