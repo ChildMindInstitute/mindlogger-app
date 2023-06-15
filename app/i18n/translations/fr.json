@@ -277,7 +277,11 @@
     "cellular_data_title": "Les données cellulaires sont désactivées",
     "cellular_data_subtitle": "Veuillez vous connecter au wi-fi ou autoriser les données mobiles.",
     "cellular_data_text": "Masquer",
-    "use_cellular_data": "Utiliser les données mobiles"
+    "use_cellular_data": "Utiliser les données mobiles",
+    "upload_error": "Erreur de téléversement",
+    "try_upload_again": "Les informations n'ont pas été téléchargées. Veuillez réessayer.",
+    "retry": "Recommencez",
+    "postpone": "Reporter"
   },
   "timing": {
     "provide_option": "Vous devez fournir l'option \"aprèz\" ou \"tout\".",

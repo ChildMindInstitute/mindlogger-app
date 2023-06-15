@@ -11,6 +11,7 @@ import {
 import { getData } from "./storage";
 import { transformResponses, decryptAppletResponses } from "../models/response";
 import { decryptData } from "./encryption";
+import { getHashedDeviceId } from "../utils/debug-utils";
 
 export const downloadAppletResponse = async (authToken, applet) => {
   const currentResponses = await getData('ml_responses');
@@ -155,23 +156,25 @@ const buildFileDescriptions = (answers, responseStartedAt) => {
 
 const uploadFileWithExistenceCheck = async ({
   file,
-  checkResults,
+  uploadChecks,
   authToken,
   appletId,
   activityId,
   appletVersion,
+  deviceId,
+  activityStartedAt
 }) => {
   const successResult = { uploaded: true, fileId: file.fileId };
   const errorResult = { uploaded: false, fileId: file.fileId };
 
-  const checkResult = checkResults.find((x) => x.fileId === file.fileId);
+  const uploadCheck = uploadChecks.find((x) => x.fileId === file.fileId);
 
-  if (!checkResult) {
-    console.warn("[uploadFileWithExistenceCheck]: checkResult not found")
+  if (!uploadCheck) {
+    console.warn("[uploadFileWithExistenceCheck]: uploadCheck not found")
     return errorResult;
   }
 
-  if (checkResult.exists) {
+  if (uploadCheck.exists) {
     return successResult;
   }
 
@@ -184,6 +187,8 @@ const uploadFileWithExistenceCheck = async ({
       appletId,
       activityId,
       appletVersion,
+      deviceId,
+      activityStartedAt
     });
 
     return successResult;
@@ -196,7 +201,7 @@ const uploadFileWithExistenceCheck = async ({
   }
 };
 
-const uploadFiles = async (authToken, response) => {
+const uploadFiles = async (authToken, response, deviceId) => {
   let fileDescriptions = null;
 
   try {
@@ -218,15 +223,19 @@ const uploadFiles = async (authToken, response) => {
 
   const appletId = response.applet.id;
   const activityId = response.activity.id;
+  const activityStartedAt = response.responseStarted;
 
   let checkResults;
 
   try {
-    checkResults = await checkIfFilesExist(
+    checkResults = await checkIfFilesExist({
       appletId,
       authToken,
-      fileDescriptions.map((x) => x.fileId)
-    );
+      fileIds: fileDescriptions.map((x) => x.fileId),
+      activityId,
+      deviceId,
+      activityStartedAt,
+    });
   } catch (error) {
     console.warn(
       "[uploadFiles.checkIfFilesExist]: Error occurred while 1nd check if files uploaded\n\n",
@@ -240,20 +249,25 @@ const uploadFiles = async (authToken, response) => {
       activityId,
       appletId,
       authToken,
-      checkResults,
+      uploadChecks: checkResults,
       file,
       appletVersion: response.applet.schemaVersion,
+      deviceId,
+      activityStartedAt,
     });
   });
 
   await Promise.all(uploadingFiles);
 
   try {
-    checkResults = await checkIfFilesExist(
+    checkResults = await checkIfFilesExist({
       appletId,
       authToken,
-      fileDescriptions.map((x) => x.fileId)
-    );
+      fileIds: fileDescriptions.map((x) => x.fileId),
+      activityId,
+      deviceId,
+      activityStartedAt,
+    });
   } catch (error) {
     console.warn(
       "[uploadFiles.checkIfFilesExist]: Error occurred while 2nd check if files uploaded\n\n",
@@ -263,7 +277,9 @@ const uploadFiles = async (authToken, response) => {
   }
 
   if (checkResults.length !== fileDescriptions.length) {
-    console.warn("[uploadFiles]: Some check results weren't received from server")
+    console.warn(
+      "[uploadFiles]: Some check results weren't received from server"
+    );
     return false;
   }
 
@@ -286,20 +302,21 @@ const uploadFiles = async (authToken, response) => {
   return checkResults.every((x) => x.exists);
 };
 
-const uploadAnswers = async (authToken, response) => {
+const uploadAnswers = async (authToken, response, deviceId) => {
   const { responseStarted, activity, applet } = response;
 
   let responseExist;
 
   try {
-    responseExist = await checkIfResponseExists(
-      applet.id,
+    responseExist = await checkIfResponseExists({
+      appletId: applet.id,
       authToken,
-      activity.id,
-      responseStarted
-    );
+      activityId: activity.id,
+      activityStartedAt: responseStarted,
+      deviceId,
+    });
     if (responseExist === undefined) {
-      throw new Error('[uploadAnswers]: responseExist is undefined');
+      throw new Error("[uploadAnswers]: responseExist is undefined");
     }
   } catch (error) {
     console.warn(
@@ -317,20 +334,23 @@ const uploadAnswers = async (authToken, response) => {
     await postResponse({
       authToken,
       response,
+      activityStartedAt: responseStarted,
+      deviceId,
     });
   } catch (error) {
     console.warn("[postResponse]: Error occurred while response upload");
   }
 
   try {
-    responseExist = await checkIfResponseExists(
-      applet.id,
+    responseExist = await checkIfResponseExists({
+      appletId: applet.id,
       authToken,
-      activity.id,
-      responseStarted
-    );
+      activityId: activity.id,
+      activityStartedAt: responseStarted,
+      deviceId,
+    });
     if (responseExist === undefined) {
-      throw new Error('[uploadAnswers]: responseExist is undefined');
+      throw new Error("[uploadAnswers]: responseExist is undefined");
     }
     return responseExist;
   } catch (error) {
@@ -347,26 +367,34 @@ export const uploadResponseQueue = async (
   getQueue,
   shiftQueue,
   incrementUploadAttempts
-) => {  
+) => {
   let queue = getQueue();
   const length = queue.length;
+
+  let deviceId;
+  try {
+    deviceId = await getHashedDeviceId();
+  } catch (error) {
+    console.warn("[uploadResponseQueue.getHashedDeviceId]: Error occurred");
+  }
 
   for (let i = 0; i < length; i++) {
     const response = queue[0];
 
     try {
-      const answersUploaded = await uploadAnswers(authToken, response);
-      
+      const answersUploaded = await uploadAnswers(
+        authToken,
+        response,
+        deviceId
+      );
+
       if (!answersUploaded) {
         incrementUploadAttempts();
         return false;
       }
 
-      const filesUploaded = await uploadFiles(
-        authToken,
-        response,
-      );
-      
+      const filesUploaded = await uploadFiles(authToken, response, deviceId);
+
       if (!filesUploaded) {
         incrementUploadAttempts();
         return false;
@@ -381,6 +409,6 @@ export const uploadResponseQueue = async (
       queue = getQueue();
     }
   }
-  
+
   return true;
 };
