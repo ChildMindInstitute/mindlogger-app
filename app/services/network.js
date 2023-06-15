@@ -55,42 +55,50 @@ export const postFormData = (route, authToken, body, extraHeaders = {}) => {
   })
 };
 
-export const postFile = async ({ authToken, file, appletId, activityId, appletVersion }) => {
-  const url = `${apiHost()}/response/${appletId}/${activityId}`;
+export const postFile = async ({
+  authToken,
+  file,
+  appletId,
+  activityId,
+  appletVersion,
+  deviceId,
+  activityStartedAt,
+}) => {
+  const url = `${apiHost()}/response/${appletId}/${activityId}?deviceId=${deviceId}&activityStartedAt=${activityStartedAt}`;
 
   const headers = {
     "Girder-Token": authToken,
   };
   const metadata = JSON.stringify({
-    "applet": { "schemaVersion": appletVersion },
-    "subject": { "@id": "asasa", "timezone": "US" },
-    "responses": {
-      [file.key]: { "size": file.size, "type": file.type }
-    }
+    applet: { schemaVersion: appletVersion },
+    subject: { "@id": "asasa", timezone: "US" },
+    responses: {
+      [file.key]: { size: file.size, type: file.type },
+    },
   });
 
-  if (file.uri.includes('content://')) {
+  if (file.uri.includes("content://")) {
     const form = new FormData();
 
     form.append(file.key, {
       name: file.fileId,
       type: file.type,
-      uri: Platform.OS === 'ios' ?
-           file.uri.replace('file://', '')
-           : file.uri,
+      uri: Platform.OS === "ios" ? file.uri.replace("file://", "") : file.uri,
     });
 
-    form.append('metadata', metadata);
+    form.append("metadata", metadata);
     return fetch(url, {
-      method: 'post',
+      method: "post",
       headers,
-      body: form
-    }).then(async res => {
-      return res.status === 200 ? await res.json() : Promise.reject(res);
-    }).catch(err => {
-      Promise.reject(err);
-      console.log(err)
+      body: form,
     })
+      .then(async (res) => {
+        return res.status === 200 ? await res.json() : Promise.reject(res);
+      })
+      .catch((err) => {
+        Promise.reject(err);
+        console.log(err);
+      });
   }
 
   return RNFS.uploadFiles({
@@ -99,40 +107,57 @@ export const postFile = async ({ authToken, file, appletId, activityId, appletVe
       {
         name: file.key,
         filename: file.fileId,
-        filepath: Platform.OS === 'ios' ?
-          file.uri.replace('file://', '')
-          : file.uri,
+        filepath:
+          Platform.OS === "ios" ? file.uri.replace("file://", "") : file.uri,
         filetype: file.type,
-      }
+      },
     ],
-    method: 'POST',
+    method: "POST",
     headers,
     fields: { metadata },
-  }).promise.then(async res => {
+  })
+    .promise.then(async (res) => {
       return res.statusCode === 200 ? res.body : Promise.reject(res);
-    }).catch(err => {
-      Promise.reject(err);
-      console.log(err)
     })
+    .catch((err) => {
+      Promise.reject(err);
+      console.log(err);
+    });
 };
 
-export const checkIfResponseExists = async (
+export const checkIfResponseExists = async ({
   appletId,
   authToken,
   activityId,
-  activityStartedAt
-) => {
-  const response = await get(`response/${appletId}/checkResponseExists`, authToken, {
-    activity: activityId,
-    activityStartedAt,
-  });
+  activityStartedAt,
+  deviceId,
+}) => {
+  const response = await get(
+    `response/${appletId}/checkResponseExists`,
+    authToken,
+    {
+      activityId,
+      activityStartedAt,
+      deviceId,
+    }
+  );
   return response.exists;
 };
 
-export const checkIfFilesExist = (appletId, authToken, fileIds) => {
+export const checkIfFilesExist = ({
+  appletId,
+  authToken,
+  fileIds,
+  activityId,
+  deviceId,
+  activityStartedAt,
+}) => {
   const identifiers = Array.isArray(fileIds) ? fileIds.join(",") : fileIds;
   return get(`response/${appletId}/checkFileUploaded`, authToken, {
     fileIds: identifiers,
+    activityId,
+    deviceId,
+    activityStartedAt,
   });
 };
 
@@ -191,12 +216,6 @@ export const getApplets = (authToken, localInfo, currentApplet = '', nextActivit
   })
 }
 
-// export const getTargetApplet = (authToken, appletId) => get(
-//   `applet/${appletId}`,
-//   authToken,
-//   { retrieveSchedule: true, retrieveAllEvents: true, retrieveItems: true },
-// );
-
 export const exportPDF = (serverIP, authToken, responses, now, appletId, activityFlowId, activityId, responseId) => {
   const queryParams = objectToQueryParams({ appletId, activityFlowId, activityId, responseId });
   const url = serverIP + (serverIP.endsWith('/') ? '' : '/') + 'send-pdf-report';
@@ -241,13 +260,20 @@ export const getTargetApplet = (authToken, appletId, nextActivity = '') => {
   })
 }
 
-export const postResponse = ({ authToken, response }) => {
+export const postResponse = ({
+  authToken,
+  response,
+  activityStartedAt,
+  deviceId,
+}) => {
   return postFormData(
-    `response/${response.applet.id}/${response.activity.id}`,
+    `response/${response.applet.id}/${
+      response.activity.id
+    }?deviceId=${deviceId}&activityStartedAt=${activityStartedAt}`,
     authToken,
     {
       metadata: JSON.stringify(response),
-    },
+    }
   );
 };
 

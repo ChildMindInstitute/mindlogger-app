@@ -547,20 +547,20 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
   })
 }
 
-const onUploadError = () => {
+const showUploadErrorAlert = () => {
   return new Promise((resolve) => {
     Alert.alert(
-      i18n.t("Upload error"),
-      i18n.t("Upload error occurred. Would you like to retry?"),
+      i18n.t("network_alerts:upload_error"),
+      i18n.t("network_alerts:try_upload_again"),
       [
         {
-          text: i18n.t("Retry"),
+          text: i18n.t("network_alerts:retry"),
           onPress: () => {
             resolve({ choose: "retry" });
           },
         },
         {
-          text: i18n.t("Postpone"),
+          text: i18n.t("network_alerts:postpone"),
           onPress: () => {
             resolve({ choose: "postpone" });
           },
@@ -743,7 +743,7 @@ export const completeResponse = (isTimeout = false, isFlow = false) => (
       }
 
       while (true) {
-        const { choose } = await onUploadError();
+        const { choose } = await showUploadErrorAlert();
 
         if (choose === "postpone") {
           onAfterUpload();

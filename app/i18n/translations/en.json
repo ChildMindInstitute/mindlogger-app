@@ -283,7 +283,11 @@
     "cellular_data_title": "Cellular Data is Disabled",
     "cellular_data_subtitle": "Please connect to wi-fi or allow cellular data",
     "cellular_data_text": "Dismiss",
-    "use_cellular_data": "Use Cellular Data"
+    "use_cellular_data": "Use Cellular Data",
+    "upload_error": "Upload Error",
+    "try_upload_again": "Information has not been uploaded. Please try again.",
+    "retry": "Retry",
+    "postpone": "Postpone"
   },
   "timing": {
     "provide_option": "You must provide the \"after\" or \"every\" option",
