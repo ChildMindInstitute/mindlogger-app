@@ -21,7 +21,6 @@ import {
 import {
   responsesSelector,
   uploadQueueSelector,
-  uploaderIdSelector,
   currentResponsesSelector,
   currentAppletResponsesSelector,
   currentScreenSelector,
@@ -45,7 +44,6 @@ import {
   shiftUploadQueue,
   setCurrentScreen,
   setLastResponseTime,
-  setUploaderId,
   replaceAppletResponses,
   setActivityOpened,
   setAnswer,
@@ -550,7 +548,7 @@ export const refreshTokenBehaviors = () => (dispatch, getState) => {
 const showUploadErrorAlert = () => {
   return new Promise((resolve) => {
     Alert.alert(
-      i18n.t("network_alerts:upload_error"),
+      null,
       i18n.t("network_alerts:try_upload_again"),
       [
         {

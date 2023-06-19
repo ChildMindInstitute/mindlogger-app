@@ -285,9 +285,10 @@
     "cellular_data_text": "Dismiss",
     "use_cellular_data": "Use Cellular Data",
     "upload_error": "Upload Error",
-    "try_upload_again": "Information has not been uploaded. Please try again.",
+    "try_upload_again": "Your Internet may be unstable. We weren't able to send your data.",
     "retry": "Retry",
-    "postpone": "Postpone"
+    "postpone": "Later",
+    "data_not_sent": "Data not sent (keep app open while we try)"
   },
   "timing": {
     "provide_option": "You must provide the \"after\" or \"every\" option",

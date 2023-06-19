@@ -13,6 +13,7 @@ export const initialState = {
     downloaded: 0,
   },
   uploadQueue: [],
+  isUploadInProgress: false,
   schedule: {},
   activityOpened: false,
   currentBehavior: {},
@@ -210,6 +211,11 @@ export default (state = initialState, action = {}) => {
       return {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
+      };
+    case RESPONSES_CONSTANTS.SET_UPLOAD_IS_IN_PROGRESS:
+      return {
+        ...state,
+        isUploadInProgress: action.payload,
       };
     case RESPONSES_CONSTANTS.INCREMENT_UPLOAD_QUEUE_ATTEMPTS: {
       const first = state.uploadQueue[0];
