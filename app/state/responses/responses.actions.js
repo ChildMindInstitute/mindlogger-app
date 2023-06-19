@@ -87,6 +87,11 @@ export const shiftUploadQueue = () => ({
   type: RESPONSES_CONSTANTS.SHIFT_UPLOAD_QUEUE,
 });
 
+export const setUploadIsInProgress = (isInProgress) => ({
+  type: RESPONSES_CONSTANTS.SET_UPLOAD_IS_IN_PROGRESS,
+  payload: isInProgress
+});
+
 export const incrementUploadQueueAttempts = () => ({
   type: RESPONSES_CONSTANTS.INCREMENT_UPLOAD_QUEUE_ATTEMPTS,
 });

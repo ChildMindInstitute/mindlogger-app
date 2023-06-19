@@ -8,7 +8,8 @@ import { IS_VIS } from "../../models/json-ld";
 export const responsesSelector = R.path(["responses", "responseHistory"]);
 
 export const uploadQueueSelector = R.path(["responses", "uploadQueue"]);
-export const uploaderIdSelector = R.path(["responses", "uploaderId"])
+
+export const isUploadInProgressSelector = R.path(["responses", "isUploadInProgress"]);
 
 export const currentBehaviorSelector = R.path(["responses", "currentBehavior"]);
 

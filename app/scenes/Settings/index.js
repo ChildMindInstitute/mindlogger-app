@@ -33,6 +33,7 @@ import { colors } from '../../themes/colors';
 import styles from './styles';
 import { getStringHashCode } from '../../utils/debug-utils';
 import { fcmFcmTokenSelector } from '../../state/fcm/fcm.selectors';
+import UploadRetry from '../../components/UploadRetry';
 
 const IOSHeaderPadding = Platform.OS === 'ios' ? 24 : 0;
 const IOSBodyPadding = Platform.OS === 'ios' ? 9 : 0;
@@ -103,6 +104,9 @@ class SettingsScreen extends React.Component {
           </Body>
           <Right />
         </Header>
+
+        <UploadRetry />
+
         <Content>
           {userInfo ? (
             <View
