@@ -8,7 +8,7 @@ import EncryptedStorage from 'react-native-encrypted-storage'
 
 import { clearApplets } from '../applets/applets.actions';
 import { downloadApplets, downloadTargetApplet } from '../applets/applets.thunks';
-import { clearResponses } from '../responses/responses.actions';
+import { clearResponses, setUploadIsInProgress } from '../responses/responses.actions';
 import { deleteAndClearMedia } from '../media/media.thunks';
 import { startUploadQueue } from '../responses/responses.thunks';
 import { clearStorage } from "../../services/storage";
@@ -40,7 +40,10 @@ export const sync = (onAppletsDownloaded = null, keys = null) => (dispatch, getS
 export const syncUploadQueue = () => (dispatch, getState) => {
   const state = getState();
   if (state.user.auth !== null) {
-    dispatch(startUploadQueue());
+    dispatch(setUploadIsInProgress(true));
+    dispatch(startUploadQueue()).finally(() => {
+      dispatch(setUploadIsInProgress(false));
+    });
   }
 };
 

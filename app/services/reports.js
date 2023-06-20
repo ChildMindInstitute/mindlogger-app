@@ -22,6 +22,9 @@ export const sendPDFExport = (authToken, applet, activities, appletResponse, cur
         activityId: activity.id.split('/').pop(),
         data: activity.items.map(item => {
           const itemResponses = responses[item.schema];
+          if (!itemResponses) {
+            return;
+          }
 
           for (let i = itemResponses.length-1; i >= 0; i--) {
             const response = itemResponses[i];

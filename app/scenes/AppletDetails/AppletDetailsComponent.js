@@ -17,6 +17,7 @@ import { contrast } from '../../utils/utils.color';
 import { isTokenLoggerApplet } from '../../services/tokens';
 
 import TokenLoggerBackground from '../../../img/tokenlogger_background.png'
+import UploadRetry from '../../components/UploadRetry';
 
 const isIOS = Platform.OS === 'ios';
 const IOSHeaderPadding = isIOS ? 24 : 0;
@@ -188,6 +189,9 @@ class AppletDetailsComponent extends React.Component {
             </Right>
           }
         </Header>
+        
+        <UploadRetry />
+
         <ImageBackground
           style={{ width: '100%', height: '100%', flex: 1 }}
           source={

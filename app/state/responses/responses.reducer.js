@@ -13,6 +13,7 @@ export const initialState = {
     downloaded: 0,
   },
   uploadQueue: [],
+  isUploadInProgress: false,
   schedule: {},
   activityOpened: false,
   currentBehavior: {},
@@ -211,23 +212,17 @@ export default (state = initialState, action = {}) => {
         ...state,
         uploadQueue: R.remove(0, 1, state.uploadQueue),
       };
-    case RESPONSES_CONSTANTS.SWAP_UPLOAD_QUEUE: {
-      if (!state.uploadQueue.length) {
-        return {
-          ...state
-        };
-      };
-      
-      const first = state.uploadQueue[0];
-      
-      first.uploadedItemId = action.payload;
-      
-      const array = [...state.uploadQueue];
-      const swappedArray = [...array.slice(1), first]
-
+    case RESPONSES_CONSTANTS.SET_UPLOAD_IS_IN_PROGRESS:
       return {
         ...state,
-        uploadQueue: swappedArray,
+        isUploadInProgress: action.payload,
+      };
+    case RESPONSES_CONSTANTS.INCREMENT_UPLOAD_QUEUE_ATTEMPTS: {
+      const first = state.uploadQueue[0];
+      first.uploadAttempts = (first.uploadAttempts ?? 0) + 1;
+      return {
+        ...state,
+        uploadQueue: [first, ...state.uploadQueue.slice(1)]
       };
     }
     case RESPONSES_CONSTANTS.SET_LAST_RESPONSE_TIME:

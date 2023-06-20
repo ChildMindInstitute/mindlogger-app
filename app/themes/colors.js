@@ -7,6 +7,7 @@ export const colors = {
   mediumGrey: '#B6B6B6',
   lightGrey: '#F0F0F0',
   alert: 'rgb(230, 50, 50)',
+  alertLight: '#FFCCCC',
   blue: '#005fa3',
   lightBlue: '#dbf2ff',
   yellow: '#FFBD32'

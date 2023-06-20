@@ -21,6 +21,7 @@ import { skinSelector } from '../../state/app/app.selectors';
 import { Markdown } from '../../components/core';
 import BaseText from '../../components/base_text/base_text';
 import i18n from '../../i18n/i18n';
+import UploadRetry from '../../components/UploadRetry';
 
 const isIOS = Platform.OS === 'ios';
 const IOSHeaderPadding = isIOS ? 24 : 0;
@@ -87,6 +88,9 @@ class AboutApp extends Component {
           </Body>
           <Right style={{ flex: 0.5 }} />
         </Header>
+
+        <UploadRetry />
+
         <Content>
           <View style={styles.content}>
             <Markdown>{mindloggerAbout}</Markdown>

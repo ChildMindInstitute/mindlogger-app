@@ -24,6 +24,7 @@ import AppletInvite from '../../components/AppletInvite';
 // import NotificationService from '../../components/LocalNotification';
 import { connectionAlert, mobileDataAlert } from '../../services/networkAlerts';
 import BaseText from '../../components/base_text/base_text';
+import UploadRetry from '../../components/UploadRetry';
 
 const isIOS = Platform.OS === 'ios';
 
@@ -138,9 +139,9 @@ const AppletListComponent = ({
             </Button>
           </Right>
         </Header>
-        {/* <View style={{ flex: 1, backgroundColor: 'transparent' }}> */}
 
-        {/* <BackgroundBlobs /> */}
+        <UploadRetry />
+
         <ScrollView
           style={styles.activityList}
           refreshControl={(

@@ -46,3 +46,8 @@ export async function debugScheduledNotifications(additionalPayload) {
         ...additionalPayload,
     });
 }
+
+export const getHashedDeviceId = async () => {
+  const { fcmToken } = await userInfoStorage.get();
+  return getStringHashCode(fcmToken).toString();
+}
