@@ -830,14 +830,14 @@
 				CODE_SIGN_ENTITLEMENTS = MDCApp/MDCApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 640;
+				CURRENT_PROJECT_VERSION = 645;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.21.83;
+				MARKETING_VERSION = 0.21.88;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -863,12 +863,12 @@
 				CODE_SIGN_ENTITLEMENTS = MDCApp/MDCApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 640;
+				CURRENT_PROJECT_VERSION = 645;
 				DEVELOPMENT_TEAM = 8RHKE85KB6;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = MDCApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.21.83;
+				MARKETING_VERSION = 0.21.88;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
