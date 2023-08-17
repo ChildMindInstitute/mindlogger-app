@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
 const MINIMUM_UPDATEABLE_VERSION_NUMBER = 22;
+const FETCH_URL = 'https://api-staging.mindlogger.org/api/v1/applet/mobile-upgrade-info';
 
-const fetchUpdateInformation = async () => {
+const fetchUpdateInformationMock = async () => {
   const mockResponse = {
     version: '0.22.0',
     links: {
@@ -20,14 +21,23 @@ const fetchUpdateInformation = async () => {
 };
 
 
+const fetchUpdateInformation = async () => {
+  const response = await fetch(FETCH_URL);
+  const updateData = await response.json();
+
+  return updateData;
+};
+
 const checkIfVersionIsUpdateable = (versionString) => {
   const [firstDigit, secondDigit] = versionString.split('.');
+
   if (Number(firstDigit) > 0) {
     return true;
   }
   if (Number(secondDigit) >= MINIMUM_UPDATEABLE_VERSION_NUMBER) {
     return true;
   }
+
   return false;
 };
 
@@ -37,7 +47,10 @@ const useShouldUpdateApplication = () => {
 
   const checkIfUpdateAppIsNeeded = async () => {
     try {
-      const result = await fetchUpdateInformation();
+      const result = await fetchUpdateInformationMock();
+      // @todo uncomment below line and comment the line above after testing is done
+      // const result = await fetchUpdateInformation();
+
       if (
         !result?.version?.length
             || !result?.links?.ios?.length
@@ -52,6 +65,7 @@ const useShouldUpdateApplication = () => {
 
       setStoreUrl(storeUrlToUpdate);
       setShouldUpdateApplication(true);
+
       return null;
     } catch (e) {
       return null;
