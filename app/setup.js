@@ -1,15 +1,16 @@
 import React from 'react';
 import {
-  Text, TextInput, AppState, Platform
+  Text, TextInput, AppState, Platform,
 } from 'react-native';
 import { Provider } from 'react-redux';
 import { Root } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { I18nextProvider } from 'react-i18next';
-import EncryptedStorage from 'react-native-encrypted-storage'
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-import { UserInfoStorage } from './features/system'
+import { PersistGate } from 'redux-persist/integration/react';
+import { UserInfoStorage } from './features/system';
 
 import i18n, { setApplicationLanguage } from './i18n/i18n';
 import AppNavigator from './scenes/AppNavigator';
@@ -20,8 +21,7 @@ import { clearUser } from './state/user/user.actions';
 // import { startFreshResponse } from './state/responses/responses.thunks';
 import { currentAppletSelector } from './state/app/app.selectors';
 import AppService from './components/AppService';
-import { PersistGate } from 'redux-persist/integration/react'
-
+import { useShouldUpdateApplication, NewAppRequiredScreen } from './features/new-app-required';
 
 const userInfoStorage = UserInfoStorage(EncryptedStorage);
 
@@ -55,7 +55,7 @@ const setInitialScreen = (authOk, state) => {
 };
 
 const setup = () => {
-  const {store, persister} = configureStore(() => {
+  const { store, persister } = configureStore(() => {
     const authOk = checkAuthToken(store);
     if (authOk) {
       store.dispatch(sync());
@@ -86,10 +86,17 @@ const setup = () => {
   // Root component
   // eslint-disable-next-line react/prop-types
   return ({ isHeadless }) => {
+    const { shouldUpdateApplication, storeUrl } = useShouldUpdateApplication();
     if (isHeadless) {
       // App has been launched in the background by iOS, ignore
       return null;
     }
+
+
+    if (shouldUpdateApplication) {
+      return <NewAppRequiredScreen storeUrl={storeUrl} />;
+    }
+
     return (
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
