@@ -8,7 +8,9 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions
 } from "react-native";
+
 
 import {
   Logo,
@@ -19,8 +21,10 @@ import {
 
 const clouds = require("../../../img/update-required/clouds.png");
 
+const { width: VIEWPORT_WIDTH } = Dimensions.get('window');
 const IS_IOS = Platform.OS === "ios";
 const MAIN_COLOR = '#0167a0';
+const IS_SMALL_SIZE_DEVICE = VIEWPORT_WIDTH <= 375;
 
 const AppStoreLink = ({ storeUrl }) => {
   const onPress = () => {
@@ -71,6 +75,8 @@ const NewAppRequiredScreen = ({ storeUrl }) => {
 };
 
 
+
+
 const styles = StyleSheet.create({
   cloudsBackground: {
     flex: 1,
@@ -87,11 +93,11 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
     width: "100%",
     flex: 1,
-    marginTop: "10%",
+    marginTop: IS_SMALL_SIZE_DEVICE ? '5%' : '10%',
   },
   headerText: {
     fontWeight: "400",
-    fontSize: 12,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 10 : 12,
     color: "#D5E4F7",
   },
   content: {
@@ -107,19 +113,19 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
-    fontSize: 16,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 13 : 16,
     fontWeight: "400",
     color: "#001D32",
   },
   getNewAppText: {
     color: MAIN_COLOR,
-    fontSize: 32,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 26 : 32,
     fontWeight: "700",
     marginVertical: 15,
   },
   keepUsingText: {
     color: "#001D32",
-    fontSize: 16,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 13 : 16,
     fontWeight: "400",
   },
   storeIconContainer: {
@@ -130,11 +136,11 @@ const styles = StyleSheet.create({
   bottomText: {
     color: "#51606F",
     fontWeight: "400",
-    fontSize: 14,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 12 : 14,
   },
   bottomBoldText: {
     fontWeight: "700",
-    fontSize: 14,
+    fontSize: IS_SMALL_SIZE_DEVICE ? 12 : 14,
     color: "#51606f",
   },
   centeredText: {
