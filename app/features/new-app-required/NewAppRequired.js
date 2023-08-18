@@ -3,7 +3,6 @@ import {
   ImageBackground,
   Linking,
   Platform,
-  SafeAreaView,
   StatusBar,
   StyleSheet,
   Text,
@@ -37,7 +36,7 @@ const AppStoreLink = ({ storeUrl }) => {
 
 const NewAppRequiredScreen = ({ storeUrl }) => {
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <>
       <StatusBar
         animated={true}
         backgroundColor={MAIN_COLOR}
@@ -67,15 +66,12 @@ const NewAppRequiredScreen = ({ storeUrl }) => {
           </View>
         </View>
       </ImageBackground>
-    </SafeAreaView>
+    </>
   );
 };
 
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   cloudsBackground: {
     flex: 1,
     backgroundColor: MAIN_COLOR,
