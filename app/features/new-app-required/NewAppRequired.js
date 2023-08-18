@@ -1,7 +1,5 @@
-/* eslint-disable */
 import React from "react";
 import {
-  Image,
   ImageBackground,
   Linking,
   Platform,
@@ -13,25 +11,26 @@ import {
   View,
 } from "react-native";
 
-import { Logo, MindLoggerTitle, AppStore } from '../../../img/update-required/svg-images';
+import {
+  Logo,
+  MindLoggerTitle,
+  AppStore,
+  PlayStore,
+} from "../../../img/update-required/svg-images";
 
 const clouds = require("../../../img/update-required/clouds.png");
-const playStore = require("../../../img/update-required/play-store.png");
 
 const IS_IOS = Platform.OS === "ios";
-const MAIN_COLOR = '#0167a0'
+const MAIN_COLOR = '#0167a0';
 
 const AppStoreLink = ({ storeUrl }) => {
   const onPress = () => {
     Linking.openURL(storeUrl);
   };
 
-
   return (
     <TouchableOpacity onPress={onPress} style={styles.storeIconContainer}>
-      {
-        IS_IOS ? <AppStore /> : <Image source={playStore} />
-      }
+      {IS_IOS ? <AppStore /> : <PlayStore />}
     </TouchableOpacity>
   );
 };

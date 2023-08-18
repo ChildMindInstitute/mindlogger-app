@@ -1,44 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
+import { checkIfVersionUpdateExists } from '../../services/network';
 
 const MINIMUM_UPDATEABLE_VERSION_NUMBER = 22;
-const FETCH_URL = 'https://api-staging.mindlogger.org/api/v1/applet/mobile-upgrade-info';
 
-const fetchUpdateInformationMock = async () => {
-  const mockResponse = {
-    version: '0.22.0',
-    links: {
-      ios: 'https://apps.apple.com/jm/app/mindlogger-pilot/id1301092229',
-      android: 'https://play.google.com/store/apps/details?id=com.childmindinstitute.exposuretherapy',
-    },
-  };
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      return resolve(mockResponse);
-    }, 3000);
-  });
-};
-
-
-const fetchUpdateInformation = async () => {
-  const response = await fetch(FETCH_URL);
-  const updateData = await response.json();
-
-  return updateData;
-};
-
-const checkIfVersionIsUpdateable = (versionString) => {
+const checkIfVersionUpdated = (versionString) => {
   const [firstDigit, secondDigit] = versionString.split('.');
+  const majorVersionUpdated = Number(firstDigit) > 0;
+  const minorVersionUpdated = Number(secondDigit) >= MINIMUM_UPDATEABLE_VERSION_NUMBER;
 
-  if (Number(firstDigit) > 0) {
-    return true;
-  }
-  if (Number(secondDigit) >= MINIMUM_UPDATEABLE_VERSION_NUMBER) {
-    return true;
-  }
-
-  return false;
+  return majorVersionUpdated || minorVersionUpdated;
 };
 
 const useShouldUpdateApplication = () => {
@@ -47,28 +18,22 @@ const useShouldUpdateApplication = () => {
 
   const checkIfUpdateAppIsNeeded = async () => {
     try {
-      const result = await fetchUpdateInformationMock();
-      // @todo uncomment below line and comment the line above after testing is done
-      // const result = await fetchUpdateInformation();
+      const result = await checkIfVersionUpdateExists();
 
-      if (
-        !result?.version?.length
-            || !result?.links?.ios?.length
-            || !result?.links?.android?.length
-      ) {
-        return null;
-      }
 
-      if (!checkIfVersionIsUpdateable(result.version)) return null;
+      const link = Platform.select({ ios: result?.links?.ios, android: result?.links?.android });
+
+      if (!result?.version || !link) return;
+
+
+      if (!checkIfVersionUpdated(result.version)) return;
 
       const storeUrlToUpdate = Platform.OS === 'ios' ? result.links.ios : result.links.android;
 
       setStoreUrl(storeUrlToUpdate);
       setShouldUpdateApplication(true);
-
-      return null;
     } catch (e) {
-      return null;
+      console.warn('[useShouldUpdateApplication]: Error', e);
     }
   };
 

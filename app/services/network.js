@@ -631,3 +631,11 @@ export const addScheduleNotificationDebugObjects = async ({
       console.warn("[addScheduleNotificationDebugObjects] error occured. ", err)
     );
 };
+
+export const checkIfVersionUpdateExists = async () => {
+  const response = await get(
+    'applet/mobile-upgrade-info',
+  );
+
+  return response;
+};
