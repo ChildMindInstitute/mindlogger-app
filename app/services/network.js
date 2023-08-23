@@ -631,3 +631,13 @@ export const addScheduleNotificationDebugObjects = async ({
       console.warn("[addScheduleNotificationDebugObjects] error occured. ", err)
     );
 };
+
+export const checkIfVersionUpdateExists = async () => {
+  const apiHost = await userInfoStorage.getApiHost();
+  const url = `${apiHost}/applet/mobile-upgrade-info`;
+
+  return fetch(url, {
+    method: "get",
+    mode: "cors",
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
+};
