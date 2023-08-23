@@ -633,9 +633,11 @@ export const addScheduleNotificationDebugObjects = async ({
 };
 
 export const checkIfVersionUpdateExists = async () => {
-  const response = await get(
-    'applet/mobile-upgrade-info',
-  );
+  const apiHost = await userInfoStorage.getApiHost();
+  const url = `${apiHost}/applet/mobile-upgrade-info`;
 
-  return response;
+  return fetch(url, {
+    method: "get",
+    mode: "cors",
+  }).then((res) => (res.status === 200 ? res.json() : Promise.reject(res)));
 };

@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: "auto",
     width: "100%",
-    flex: 1,
-    marginTop: IS_SMALL_SIZE_DEVICE ? '5%' : '10%',
+    flex: 4,
+    marginTop: IS_SMALL_SIZE_DEVICE ? '5%' : '15%',
   },
   headerText: {
     fontWeight: "400",
@@ -101,8 +101,9 @@ const styles = StyleSheet.create({
     color: "#D5E4F7",
   },
   content: {
-    flex: 2,
-    paddingTop: 120,
+    flex: 5,
+    paddingBottom: IS_SMALL_SIZE_DEVICE ? '5%' : '15%',
+    paddingHorizontal: 24,
   },
   pardonTextContainer: {
     justifyContent: "center",
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     width: "80%",
   },
   roboto: {
-    fontFamily: "Roboto",
+    fontFamily: "System",
   },
 });
 
