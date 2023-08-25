@@ -12,11 +12,18 @@ const checkIfVersionUpdated = (versionString) => {
   return majorVersionUpdated || minorVersionUpdated;
 };
 
-const useShouldUpdateApplication = () => {
+const useShouldUpdateApplication = (userInfoStorage) => {
   const [shouldUpdateApplication, setShouldUpdateApplication] = useState(false);
   const [storeUrl, setStoreUrl] = useState(false);
 
   const checkIfUpdateAppIsNeeded = async () => {
+    const appUpdateInformation = await userInfoStorage.getAppUpdateInformation();
+    if (appUpdateInformation) {
+      setStoreUrl(appUpdateInformation.storeUrl);
+      setShouldUpdateApplication(appUpdateInformation.shouldUpdateApplication);
+      return;
+    }
+
     try {
       const result = await checkIfVersionUpdateExists();
 
@@ -32,6 +39,10 @@ const useShouldUpdateApplication = () => {
 
       setStoreUrl(storeUrlToUpdate);
       setShouldUpdateApplication(true);
+      userInfoStorage.setAppUpdateInformation({
+        shouldUpdateApplication: true,
+        storeUrl: storeUrlToUpdate,
+      });
     } catch (e) {
       console.warn('[useShouldUpdateApplication]: Error', e);
     }
