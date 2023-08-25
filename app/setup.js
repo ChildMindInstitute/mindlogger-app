@@ -86,7 +86,7 @@ const setup = () => {
   // Root component
   // eslint-disable-next-line react/prop-types
   return ({ isHeadless }) => {
-    const { shouldUpdateApplication, storeUrl } = useShouldUpdateApplication();
+    const { shouldUpdateApplication, storeUrl } = useShouldUpdateApplication(userInfoStorage);
     if (isHeadless) {
       // App has been launched in the background by iOS, ignore
       return null;

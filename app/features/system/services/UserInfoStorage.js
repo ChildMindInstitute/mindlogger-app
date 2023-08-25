@@ -59,6 +59,22 @@ function UserInfoStorage(storage) {
         return setKey('apiHost', apiHost);
     }
 
+    async function getAppUpdateInformation() {
+        const useInfo = await get();
+        const appUpdateInformation = useInfo?.appUpdateInformation;
+
+        if (appUpdateInformation) {
+           return appUpdateInformation;
+        }
+
+        return null;
+    }
+
+    async function setAppUpdateInformation(value) {
+        return setKey('appUpdateInformation', value);
+    }
+
+
     async function clear() {
         await storage.removeItem(USER_INFO_STORAGE_KEY);
     }
@@ -85,6 +101,9 @@ function UserInfoStorage(storage) {
 
         getApiHost,
         setApiHost,
+
+        getAppUpdateInformation,
+        setAppUpdateInformation
     }
 }
 
