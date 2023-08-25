@@ -64,16 +64,14 @@ function UserInfoStorage(storage) {
         const appUpdateInformation = useInfo?.appUpdateInformation;
 
         if (appUpdateInformation) {
-           return JSON.parse(appUpdateInformation);
+           return appUpdateInformation;
         }
 
         return null;
     }
 
     async function setAppUpdateInformation(value) {
-        const appUpdateInformation = JSON.stringify(value);
-
-        return setKey('appUpdateInformation', appUpdateInformation);
+        return setKey('appUpdateInformation', value);
     }
 
 

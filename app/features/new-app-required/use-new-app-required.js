@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
+import { useNetInfo } from '@react-native-community/netinfo';
 import { checkIfVersionUpdateExists } from '../../services/network';
 
 const MINIMUM_UPDATEABLE_VERSION_NUMBER = 22;
@@ -15,10 +16,11 @@ const checkIfVersionUpdated = (versionString) => {
 const useShouldUpdateApplication = (userInfoStorage) => {
   const [shouldUpdateApplication, setShouldUpdateApplication] = useState(false);
   const [storeUrl, setStoreUrl] = useState(false);
+  const netInfo = useNetInfo();
 
   const checkIfUpdateAppIsNeeded = async () => {
     const appUpdateInformation = await userInfoStorage.getAppUpdateInformation();
-    if (appUpdateInformation) {
+    if (appUpdateInformation?.storeUrl) {
       setStoreUrl(appUpdateInformation.storeUrl);
       setShouldUpdateApplication(appUpdateInformation.shouldUpdateApplication);
       return;
@@ -50,7 +52,7 @@ const useShouldUpdateApplication = (userInfoStorage) => {
 
   useEffect(() => {
     checkIfUpdateAppIsNeeded();
-  }, []);
+  }, [netInfo.isConnected]);
 
   return { shouldUpdateApplication, storeUrl };
 };
