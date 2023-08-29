@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Platform } from 'react-native';
+import { AppState, Platform } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { checkIfVersionUpdateExists } from '../../services/network';
 
@@ -49,6 +49,18 @@ const useShouldUpdateApplication = (userInfoStorage) => {
       console.warn('[useShouldUpdateApplication]: Error', e);
     }
   };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        checkIfUpdateAppIsNeeded();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     checkIfUpdateAppIsNeeded();
